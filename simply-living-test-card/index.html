@@ -2,72 +2,107 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Simply Living — Four-Jar Test Card</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bark:#3D2B1F; --cream:#FAF6F1; --sage:#4A5D4E; --honey:#C8A26E;
-    --line:#E3D9CC; --warn:#9B3B2E;
+    --slate:#6b7f8c; --line:#E3D9CC; --warn:#9B3B2E; --paper:#fff;
   }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:#EDE6DC;color:var(--bark);font-family:'Inter',sans-serif;padding:24px;line-height:1.4;}
-  .page{max-width:1080px;margin:0 auto;background:var(--cream);border:1px solid var(--line);
-        border-radius:10px;padding:30px 34px;box-shadow:0 2px 14px rgba(61,43,31,.08);}
-  h1{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;letter-spacing:.3px;}
-  .sub{color:var(--sage);font-size:13px;font-weight:600;margin-top:2px;}
-  .lead{font-size:13px;margin-top:10px;color:#5b4a3c;max-width:760px;}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-text-size-adjust:100%;}
+  html{scroll-behavior:smooth;}
+  body{background:#EDE6DC;color:var(--bark);font-family:'Inter',system-ui,sans-serif;
+       line-height:1.45;padding:10px;}
+  .page{max-width:760px;margin:0 auto;background:var(--cream);border:1px solid var(--line);
+        border-radius:14px;padding:18px 16px 24px;}
+
+  h1{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;line-height:1.1;}
+  .sub{color:var(--sage);font-size:13px;font-weight:600;margin-top:4px;}
+  .lead{font-size:14px;margin-top:10px;color:#5b4a3c;}
   .lead b{color:var(--bark);}
-  h2{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;margin:22px 0 10px;
-     padding-bottom:5px;border-bottom:2px solid var(--honey);}
-  .jars{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
-  .jar{border:1px solid var(--line);border-radius:9px;padding:14px 16px;background:#fff;}
-  .jar .tag{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:var(--sage);
-            border-radius:20px;padding:2px 10px;letter-spacing:.4px;}
-  .jar .tag.hot{background:var(--honey);color:var(--bark);}
-  .jar .tag.cold{background:#6b7f8c;}
-  .jar h3{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;margin:8px 0 2px;}
-  .jar .role{font-size:12px;font-style:italic;color:var(--sage);margin-bottom:8px;}
-  .jar ol{margin:0 0 0 16px;font-size:12.5px;}
-  .jar ol li{margin-bottom:3px;}
-  .jar .odds{font-size:11.5px;font-weight:700;margin-top:8px;padding-top:7px;border-top:1px dashed var(--line);}
-  .ess{font-size:11px;color:#7a6a5b;}
-  .safe{background:#FBEFEA;border:1px solid #E7C9C0;border-radius:9px;padding:13px 16px;margin-top:6px;}
-  .safe h2{border:0;margin:0 0 7px;color:var(--warn);font-size:18px;}
-  .safe ul{margin:0 0 0 17px;font-size:12.5px;}
-  .safe ul li{margin-bottom:4px;}
+
+  .sec{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;
+       margin:26px 0 12px;padding-bottom:5px;border-bottom:2px solid var(--honey);}
+
+  /* recipe jars */
+  .jars{display:grid;grid-template-columns:1fr;gap:12px;}
+  .jar{border:1px solid var(--line);border-radius:12px;padding:14px 15px;background:var(--paper);}
+  .tag{display:inline-block;font-size:11.5px;font-weight:700;color:#fff;background:var(--sage);
+       border-radius:20px;padding:3px 11px;letter-spacing:.3px;}
+  .tag.cold{background:var(--slate);}
+  .tag.hot{background:var(--honey);color:var(--bark);}
+  .jar h3{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:700;margin:9px 0 2px;}
+  .jar .role{font-size:13px;font-style:italic;color:var(--sage);margin-bottom:9px;}
+  .jar ol{margin:0 0 0 18px;font-size:14px;}
+  .jar ol li{margin-bottom:4px;}
+  .jar .odds{font-size:12.5px;font-weight:600;margin-top:10px;padding-top:9px;
+             border-top:1px dashed var(--line);color:#5b4a3c;}
+
+  /* safety */
+  .safe{background:#FBEFEA;border:1px solid #E7C9C0;border-radius:12px;padding:14px 16px;margin-top:8px;}
+  .safe h2{font-family:'Cormorant Garamond',serif;color:var(--warn);font-size:19px;font-weight:700;margin-bottom:8px;}
+  .safe ul{margin:0 0 0 18px;font-size:13.5px;}
+  .safe ul li{margin-bottom:7px;}
   .safe b{color:var(--warn);}
-  table{width:100%;border-collapse:collapse;margin-top:6px;font-size:12px;}
-  th,td{border:1px solid var(--line);padding:7px 8px;text-align:center;}
-  th{background:var(--bark);color:var(--cream);font-weight:600;font-size:11.5px;}
-  td.q{text-align:left;font-weight:600;background:#F4EDE3;width:34%;}
-  .scorecell{height:30px;}
-  .foot{margin-top:14px;font-size:11.5px;color:#6b5b4c;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-  .pill{background:var(--sage);color:#fff;border-radius:20px;padding:3px 12px;font-weight:600;}
-  /* editable score cells */
-  td.fill{cursor:text;}
-  td.fill:focus{outline:2px solid var(--honey);outline-offset:-2px;background:#FFFDF8;}
-  td.fill:empty::before{content:"";}
-  /* notes box */
-  .notes-wrap{margin-top:18px;}
-  .notes-wrap label{display:block;font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;
-                    margin-bottom:6px;border-bottom:2px solid var(--honey);padding-bottom:4px;}
-  textarea#notes{width:100%;min-height:130px;border:1px solid var(--line);border-radius:9px;
-                 padding:12px 14px;font-family:'Inter',sans-serif;font-size:13px;color:var(--bark);
-                 background:#fff;resize:vertical;line-height:1.5;}
+
+  /* score cards */
+  .scorewrap{display:grid;grid-template-columns:1fr;gap:14px;}
+  .scard{border:1px solid var(--line);border-radius:12px;background:var(--paper);overflow:hidden;}
+  .schead{display:flex;align-items:center;gap:10px;padding:11px 14px;color:#fff;background:var(--sage);}
+  .schead.cold{background:var(--slate);}
+  .schead.hot{background:var(--honey);color:var(--bark);}
+  .schead .lt{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;line-height:1;
+              width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+              background:rgba(255,255,255,.22);border-radius:50%;}
+  .schead.hot .lt{background:rgba(61,43,31,.14);}
+  .schead .nm{font-size:15px;font-weight:700;}
+  .schead .nm small{display:block;font-size:11.5px;font-weight:500;opacity:.85;}
+  .srow{display:flex;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid var(--line);}
+  .srow .q{flex:1;font-size:13.5px;font-weight:500;}
+  .srow input{width:42%;min-width:120px;min-height:42px;border:1px solid var(--line);
+              border-radius:8px;padding:8px 10px;font-family:'Inter',sans-serif;
+              font-size:16px;color:var(--bark);background:#FFFDF8;}
+  .srow input:focus{outline:2px solid var(--honey);outline-offset:-1px;background:#fff;}
+
+  /* notes */
+  .notes-wrap{margin-top:8px;}
+  textarea#notes{width:100%;min-height:150px;border:1px solid var(--line);border-radius:12px;
+                 padding:13px 14px;font-family:'Inter',sans-serif;font-size:16px;color:var(--bark);
+                 background:var(--paper);resize:vertical;line-height:1.55;}
   textarea#notes:focus{outline:2px solid var(--honey);outline-offset:-1px;}
-  .savebar{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:11.5px;color:var(--sage);}
-  .savebar button{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;
-                  border:1px solid var(--line);background:#fff;color:var(--bark);border-radius:7px;padding:6px 13px;}
-  .savebar button:hover{background:#F4EDE3;}
-  .savebar .saved{color:var(--sage);font-weight:600;}
+
+  .savebar{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
+  #savestatus{font-size:13px;color:var(--sage);font-weight:600;}
+  .btns{display:flex;gap:10px;}
+  .btns button{flex:1;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;
+               border:1px solid var(--line);background:var(--paper);color:var(--bark);
+               border-radius:10px;padding:13px 10px;min-height:48px;}
+  .btns button:active{transform:scale(.98);}
+  .btns button.primary{background:var(--sage);color:#fff;border-color:var(--sage);}
+
+  .foot{margin-top:16px;font-size:13px;color:#6b5b4c;}
+  .foot .pill{display:inline-block;background:var(--sage);color:#fff;border-radius:20px;
+              padding:3px 11px;font-weight:600;font-size:12.5px;margin:0 1px;}
+
+  /* tablet / desktop enhancements */
+  @media (min-width:640px){
+    body{padding:24px;}
+    .page{padding:30px 32px;border-radius:14px;}
+    h1{font-size:32px;}
+    .jars{grid-template-columns:1fr 1fr;}
+    .scorewrap{grid-template-columns:1fr 1fr;}
+    .savebar{flex-direction:row;align-items:center;justify-content:space-between;}
+    .btns{flex:0 0 auto;}
+    .btns button{flex:0 0 auto;}
+  }
+
   @media print{
     body{background:#fff;padding:0;}
-    .page{box-shadow:none;border:0;border-radius:0;max-width:100%;padding:14px 18px;}
-    h2{margin:14px 0 8px;}
-    .jar{padding:10px 12px;}
+    .page{border:0;border-radius:0;max-width:100%;padding:10px 14px;}
+    .jars,.scorewrap{grid-template-columns:1fr 1fr;}
     .savebar{display:none;}
-    textarea#notes{border:1px solid #999;}
+    .srow input{background:#fff;border:1px solid #999;}
   }
 </style>
 </head>
@@ -75,21 +110,21 @@
 <div class="page">
 
   <h1>The Four-Jar Test</h1>
-  <div class="sub">Simply Living · all-purpose cleaner · settle the dry-vs-liquid question for good</div>
-  <p class="lead">Make four small <b>~8&nbsp;oz (1 cup)</b> jars. Let them sit <b>24 hours</b>, then run each through a spray nozzle on a <b>greasy stovetop</b> and a <b>mirror</b>. You're not hoping they all win — each jar is built to <b>answer one question</b>. The gel and the clog are findings, not failures.</p>
+  <div class="sub">Simply Living · all-purpose cleaner · settle dry-vs-liquid for good</div>
+  <p class="lead">Make four small <b>~8&nbsp;oz (1 cup)</b> jars. Let them sit <b>24 hours</b>, then spray each on a <b>greasy stovetop</b> and a <b>mirror</b>. Each jar answers <b>one question</b> — the gel and the clog are findings, not failures.</p>
 
-  <h2>The four jars</h2>
+  <div class="sec">The four jars</div>
   <div class="jars">
 
     <div class="jar">
       <span class="tag">JAR A · the likely winner</span>
       <h3>Liquid castile</h3>
-      <div class="role">Your most likely real product (~90% confidence)</div>
+      <div class="role">Your most likely real product (~90%)</div>
       <ol>
         <li>8&nbsp;oz <b>warm</b> water</li>
         <li>Stir in <b>½ tsp washing soda</b> until clear</li>
         <li><i>(hard water?)</i> stir in <b>½ tsp sodium citrate</b></li>
-        <li>Let cool, then gently stir in <b>1 Tbsp liquid castile</b> (your Yoken) — don't whip to suds</li>
+        <li>Let cool, gently stir in <b>1 Tbsp liquid castile</b> — don't whip to suds</li>
         <li><b>4 drops</b> essential oil</li>
       </ol>
       <div class="odds">Expect: stays clear, sprays clean, cuts grease.</div>
@@ -105,7 +140,7 @@
         <li><b>1 tsp finely grated</b> Dr. Bronner's bar</li>
         <li><b>Shake hard 1 minute</b></li>
       </ol>
-      <div class="odds">Expect it to gel ("soap snot"). That's the lesson — learned for pennies, not at the counter.</div>
+      <div class="odds">Expect it to gel ("soap snot"). That's the lesson — learned for pennies.</div>
     </div>
 
     <div class="jar">
@@ -115,10 +150,10 @@
       <ol>
         <li>8&nbsp;oz <b>hot</b> water</li>
         <li><b>½ tsp washing soda</b></li>
-        <li><b>1 tsp grated</b> bar — stir till fully dissolved</li>
+        <li><b>1 tsp grated</b> bar — stir till dissolved</li>
         <li>Let it <b>cool</b> and watch: does it re-gel?</li>
       </ol>
-      <div class="odds">Tells you if a "add warm water" label could ever work, or if sodium soap just re-gels.</div>
+      <div class="odds">Tells you if an "add warm water" label could ever work.</div>
     </div>
 
     <div class="jar">
@@ -130,7 +165,7 @@
         <li><b>¾ tsp washing soda</b> — only</li>
         <li>Stir till clear</li>
       </ol>
-      <div class="odds">Dissolves easily &amp; cold. Question: does it cut grease <i>well enough</i> on its own?</div>
+      <div class="odds">Dissolves easily &amp; cold. Does it cut grease <i>well enough</i> alone?</div>
     </div>
 
   </div>
@@ -138,93 +173,114 @@
   <div class="safe">
     <h2>⚠ Safety — read once before you start</h2>
     <ul>
-      <li><b>Never add vinegar, lemon, or raw citric acid to any soap jar</b> — acid curdles soap into white clumps. (That's why we use <i>sodium</i> citrate, the already-neutralized form.)</li>
-      <li><b>Washing soda is alkaline (pH ~11).</b> Wear gloves, keep it out of your eyes, and don't breathe the dry powder while measuring.</li>
-      <li><b>Don't test on:</b> aluminum, marble / soft stone, waxed or unsealed wood, delicate painted finishes. <b>Safe on:</b> sealed counters, glazed tile, glass, stainless, sealed wood (used lightly).</li>
-      <li><b>Glass always needs its own step</b> — any true soap streaks on glass. Wipe glass with a plain vinegar-water cloth <i>after</i>, never mixed into the jar.</li>
+      <li><b>Never add vinegar, lemon, or raw citric acid to a soap jar</b> — acid curdles soap into white clumps. (That's why we use <i>sodium</i> citrate, the neutralized form.)</li>
+      <li><b>Washing soda is alkaline (pH ~11).</b> Wear gloves, keep it out of your eyes, don't breathe the dry powder.</li>
+      <li><b>Don't test on:</b> aluminum, marble / soft stone, waxed or unsealed wood, delicate paint. <b>Safe on:</b> sealed counters, glazed tile, glass, stainless, sealed wood (lightly).</li>
+      <li><b>Glass needs its own step</b> — soap streaks glass. Wipe with plain vinegar-water <i>after</i>, never in the jar.</li>
     </ul>
   </div>
 
-  <h2>Score sheet — fill this in after 24 hrs + a real spray test</h2>
-  <table>
-    <thead>
-      <tr><th>Question</th><th>Jar A<br>liquid castile</th><th>Jar B<br>dry · cold</th><th>Jar C<br>dry · hot</th><th>Jar D<br>soap-free</th></tr>
-    </thead>
-    <tbody>
-      <tr><td class="q">Stayed clear, or gel / floaty bits?</td><td class="fill scorecell" data-k="r1a"></td><td class="fill" data-k="r1b"></td><td class="fill" data-k="r1c"></td><td class="fill" data-k="r1d"></td></tr>
-      <tr><td class="q">Sprayed clean, or clogged the nozzle?</td><td class="fill scorecell" data-k="r2a"></td><td class="fill" data-k="r2b"></td><td class="fill" data-k="r2c"></td><td class="fill" data-k="r2d"></td></tr>
-      <tr><td class="q">Cut the stovetop grease?</td><td class="fill scorecell" data-k="r3a"></td><td class="fill" data-k="r3b"></td><td class="fill" data-k="r3c"></td><td class="fill" data-k="r3d"></td></tr>
-      <tr><td class="q">Streaked the glass / mirror?</td><td class="fill scorecell" data-k="r4a"></td><td class="fill" data-k="r4b"></td><td class="fill" data-k="r4c"></td><td class="fill" data-k="r4d"></td></tr>
-      <tr><td class="q">Left white residue when dry?</td><td class="fill scorecell" data-k="r5a"></td><td class="fill" data-k="r5b"></td><td class="fill" data-k="r5c"></td><td class="fill" data-k="r5d"></td></tr>
-      <tr><td class="q">Overall — keep, tweak, or kill?</td><td class="fill scorecell" data-k="r6a"></td><td class="fill" data-k="r6b"></td><td class="fill" data-k="r6c"></td><td class="fill" data-k="r6d"></td></tr>
-    </tbody>
-  </table>
+  <div class="sec">Score each jar — tap a box and type</div>
+  <div class="scorewrap">
 
-  <div class="foot">
-    <span>You have everything except <span class="pill">a fine grater / microplane</span> &amp; <span class="pill">a spray bottle</span>.</span>
-    <span>Snap a photo of each result and send it back — we iterate from real data, not guesses.</span>
+    <div class="scard">
+      <div class="schead"><span class="lt">A</span><span class="nm">Liquid castile<small>the likely winner</small></span></div>
+      <div class="srow"><span class="q">Clear, or gel / bits?</span><input data-k="a1" placeholder="…"></div>
+      <div class="srow"><span class="q">Sprayed clean, or clogged?</span><input data-k="a2" placeholder="…"></div>
+      <div class="srow"><span class="q">Cut the stovetop grease?</span><input data-k="a3" placeholder="…"></div>
+      <div class="srow"><span class="q">Streaked the glass?</span><input data-k="a4" placeholder="…"></div>
+      <div class="srow"><span class="q">White residue when dry?</span><input data-k="a5" placeholder="…"></div>
+      <div class="srow"><span class="q">Keep, tweak, or kill?</span><input data-k="a6" placeholder="…"></div>
+    </div>
+
+    <div class="scard">
+      <div class="schead cold"><span class="lt">B</span><span class="nm">Dry + cold<small>the dream</small></span></div>
+      <div class="srow"><span class="q">Clear, or gel / bits?</span><input data-k="b1" placeholder="…"></div>
+      <div class="srow"><span class="q">Sprayed clean, or clogged?</span><input data-k="b2" placeholder="…"></div>
+      <div class="srow"><span class="q">Cut the stovetop grease?</span><input data-k="b3" placeholder="…"></div>
+      <div class="srow"><span class="q">Streaked the glass?</span><input data-k="b4" placeholder="…"></div>
+      <div class="srow"><span class="q">White residue when dry?</span><input data-k="b5" placeholder="…"></div>
+      <div class="srow"><span class="q">Keep, tweak, or kill?</span><input data-k="b6" placeholder="…"></div>
+    </div>
+
+    <div class="scard">
+      <div class="schead hot"><span class="lt">C</span><span class="nm">Dry + hot<small>warm-water test</small></span></div>
+      <div class="srow"><span class="q">Clear, or gel / bits?</span><input data-k="c1" placeholder="…"></div>
+      <div class="srow"><span class="q">Sprayed clean, or clogged?</span><input data-k="c2" placeholder="…"></div>
+      <div class="srow"><span class="q">Cut the stovetop grease?</span><input data-k="c3" placeholder="…"></div>
+      <div class="srow"><span class="q">Streaked the glass?</span><input data-k="c4" placeholder="…"></div>
+      <div class="srow"><span class="q">White residue when dry?</span><input data-k="c5" placeholder="…"></div>
+      <div class="srow"><span class="q">Re-gelled as it cooled?</span><input data-k="c6" placeholder="…"></div>
+    </div>
+
+    <div class="scard">
+      <div class="schead hot"><span class="lt">D</span><span class="nm">Soap-free<small>the fallback</small></span></div>
+      <div class="srow"><span class="q">Clear, or gritty?</span><input data-k="d1" placeholder="…"></div>
+      <div class="srow"><span class="q">Sprayed clean, or clogged?</span><input data-k="d2" placeholder="…"></div>
+      <div class="srow"><span class="q">Cut the stovetop grease?</span><input data-k="d3" placeholder="…"></div>
+      <div class="srow"><span class="q">Streaked the glass?</span><input data-k="d4" placeholder="…"></div>
+      <div class="srow"><span class="q">White residue when dry?</span><input data-k="d5" placeholder="…"></div>
+      <div class="srow"><span class="q">Keep, tweak, or kill?</span><input data-k="d6" placeholder="…"></div>
+    </div>
+
   </div>
 
+  <div class="sec">Notes — type anything as you test</div>
   <div class="notes-wrap">
-    <label for="notes">Notes — type anything here as you test</label>
-    <textarea id="notes" placeholder="e.g. Jar B gelled within 10 min and clogged the nozzle. Jar A sprayed clean, cut the stovetop grease, slight streak on the mirror until I buffed it dry..."></textarea>
+    <textarea id="notes" placeholder="e.g. Jar B gelled within 10 min and clogged the nozzle. Jar A sprayed clean, cut the stovetop grease, slight streak on the mirror until I buffed it dry…"></textarea>
     <div class="savebar">
-      <span id="savestatus">Your notes &amp; scores save automatically in this browser.</span>
-      <button type="button" id="clearbtn">Clear all</button>
-      <button type="button" id="printbtn">Print / Save as PDF</button>
+      <span id="savestatus">Saves automatically on this phone.</span>
+      <div class="btns">
+        <button type="button" id="clearbtn">Clear all</button>
+        <button type="button" id="printbtn" class="primary">Save as PDF</button>
+      </div>
     </div>
+  </div>
+
+  <div class="foot">
+    You have everything except <span class="pill">a fine grater</span> and <span class="pill">a spray bottle</span>. Snap a photo of each result and send it back — we iterate from real data, not guesses.
   </div>
 
 </div>
 
 <script>
 (function(){
-  var KEY = "simplyliving_fourjar_v1";
+  var KEY = "simplyliving_fourjar_v2";
   var notes = document.getElementById("notes");
   var status = document.getElementById("savestatus");
-  var cells = Array.prototype.slice.call(document.querySelectorAll("td.fill"));
-  cells.forEach(function(c){ c.setAttribute("contenteditable","true"); });
+  var inputs = Array.prototype.slice.call(document.querySelectorAll(".srow input"));
 
   function load(){
-    var raw;
-    try { raw = window.localStorage.getItem(KEY); } catch(e){ raw = null; }
+    var raw; try { raw = localStorage.getItem(KEY); } catch(e){ return; }
     if(!raw) return;
-    var data;
-    try { data = JSON.parse(raw); } catch(e){ return; }
+    var data; try { data = JSON.parse(raw); } catch(e){ return; }
     if(data.notes) notes.value = data.notes;
-    if(data.cells){
-      cells.forEach(function(c){
-        var k = c.getAttribute("data-k");
-        if(data.cells[k]) c.textContent = data.cells[k];
-      });
-    }
+    if(data.cells) inputs.forEach(function(i){ var k=i.getAttribute("data-k"); if(data.cells[k]!=null) i.value=data.cells[k]; });
   }
   function save(){
     var data = { notes: notes.value, cells: {} };
-    cells.forEach(function(c){ data.cells[c.getAttribute("data-k")] = c.textContent; });
+    inputs.forEach(function(i){ data.cells[i.getAttribute("data-k")] = i.value; });
     try {
-      window.localStorage.setItem(KEY, JSON.stringify(data));
-      status.textContent = "Saved ✓  (stays in this browser on this device)";
-      status.className = "saved";
+      localStorage.setItem(KEY, JSON.stringify(data));
+      status.textContent = "Saved ✓";
     } catch(e){
-      status.textContent = "Couldn't save automatically — print or copy your notes before closing.";
+      status.textContent = "Couldn't save — copy your notes before closing.";
     }
   }
   load();
   notes.addEventListener("input", save);
-  cells.forEach(function(c){ c.addEventListener("input", save); });
+  inputs.forEach(function(i){ i.addEventListener("input", save); });
   document.getElementById("printbtn").addEventListener("click", function(){ window.print(); });
   document.getElementById("clearbtn").addEventListener("click", function(){
-    if(!window.confirm("Clear all notes and scores on this card?")) return;
+    if(!confirm("Clear all notes and scores on this card?")) return;
     notes.value = "";
-    cells.forEach(function(c){ c.textContent = ""; });
-    try { window.localStorage.removeItem(KEY); } catch(e){}
+    inputs.forEach(function(i){ i.value=""; });
+    try { localStorage.removeItem(KEY); } catch(e){}
     status.textContent = "Cleared.";
-    status.className = "";
   });
 })();
 </script>
 </body>
 </html>
 
-<!-- make-it-live 1781550203 -->
+<!-- make-it-live 1781550917 -->
