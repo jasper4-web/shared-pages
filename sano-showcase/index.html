@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SANO Systems — Beta · Campaign Showcase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060608; --bg2:#0c0d12; --card:#101218; --line:#1d2030;
+  --blue:#0070F3; --cyan:#00D4FF; --amber:#E8943A; --cream:#F2EBE0;
+  --muted:#9aa0b0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--cream);
+  font-family:'Space Grotesk',system-ui,sans-serif;
+  line-height:1.55; -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:var(--cyan);text-decoration:none}
+img,video{display:block;max-width:100%}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(6,6,8,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.nav-in{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:8px;
+  padding:12px 18px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:15px;letter-spacing:.2px;margin-right:auto;
+  display:flex;align-items:center;gap:9px}
+.dot{width:9px;height:9px;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,var(--cyan),var(--blue));
+  box-shadow:0 0 12px var(--cyan)}
+.nav-in a.link{color:var(--muted);font-size:13px;padding:6px 10px;border-radius:8px;
+  transition:.2s;white-space:nowrap}
+.nav-in a.link:hover{color:var(--cream);background:var(--card)}
+
+.wrap{max-width:1100px;margin:0 auto;padding:0 18px}
+section{padding:62px 0;border-top:1px solid transparent}
+.eyebrow{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--amber);
+  background:rgba(232,148,58,.1);border:1px solid rgba(232,148,58,.3);
+  padding:5px 12px;border-radius:999px;margin-bottom:18px}
+h2{font-size:clamp(26px,5vw,40px);line-height:1.1;font-weight:700;letter-spacing:-.02em;
+  margin-bottom:14px}
+h3{font-size:18px;font-weight:600;margin:34px 0 14px;color:var(--cream);
+  display:flex;align-items:center;gap:10px}
+h3 .pill{font-size:11px;font-weight:600;color:var(--cyan);
+  border:1px solid var(--line);background:var(--bg2);padding:3px 9px;border-radius:999px}
+.lead{color:var(--muted);font-size:16px;max-width:680px;margin-bottom:8px}
+
+/* HERO */
+.hero{
+  position:relative;padding:88px 0 70px;text-align:center;overflow:hidden;
+}
+.hero::before{
+  content:"";position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(60% 50% at 50% 0%,rgba(0,112,243,.28),transparent 70%),
+    radial-gradient(40% 40% at 80% 30%,rgba(0,212,255,.16),transparent 70%),
+    radial-gradient(40% 40% at 15% 40%,rgba(232,148,58,.1),transparent 70%);
+}
+.hero>*{position:relative;z-index:1}
+.hero h1{font-size:clamp(34px,7.5vw,64px);line-height:1.04;font-weight:700;
+  letter-spacing:-.03em;margin:18px auto 16px;max-width:880px}
+.hero h1 .grad{background:linear-gradient(100deg,var(--cyan),var(--blue));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);font-size:17px;max-width:560px;margin:0 auto 30px}
+.btn{display:inline-flex;align-items:center;gap:9px;
+  background:linear-gradient(100deg,var(--blue),var(--cyan));
+  color:#04121f;font-weight:700;font-size:15px;
+  padding:15px 26px;border-radius:13px;
+  box-shadow:0 10px 34px -8px rgba(0,140,255,.6);transition:.22s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 16px 40px -8px rgba(0,180,255,.7)}
+.hero-stats{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;
+  margin-top:42px;color:var(--muted);font-size:13px}
+.hero-stats b{color:var(--cream);font-size:19px;display:block;font-weight:700}
+
+/* GRIDS */
+.grid{display:grid;gap:16px}
+.g-reels{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+.g-graphics{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.g-broll{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+.g-glow{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+  overflow:hidden;transition:.22s}
+.card:hover{border-color:#2c3450;transform:translateY(-3px);
+  box-shadow:0 14px 34px -16px rgba(0,0,0,.8)}
+.card video,.card .frame{width:100%;aspect-ratio:9/16;object-fit:cover;background:#000}
+.card .cap{padding:10px 12px;font-size:12.5px;color:var(--muted);
+  border-top:1px solid var(--line)}
+.card .cap b{color:var(--cream);display:block;font-size:13px;font-weight:600;margin-bottom:2px}
+
+/* tall scrolling demo thumbs */
+.demo .scrollbox{height:380px;overflow:hidden;position:relative;background:#000}
+.demo .scrollbox img{width:100%;height:auto}
+.demo .scrollbox::after{content:"scroll capture ↧";position:absolute;bottom:8px;right:8px;
+  font-size:10px;color:var(--cream);background:rgba(0,0,0,.6);padding:3px 8px;border-radius:6px;
+  letter-spacing:.05em}
+
+/* glow feature block */
+.glow-hero{background:var(--card);border:1px solid var(--line);border-radius:18px;
+  overflow:hidden;margin-bottom:18px}
+.glow-hero video{width:100%;aspect-ratio:9/16;max-height:640px;object-fit:contain;background:#000}
+
+/* DOCS */
+.doc{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  margin-bottom:14px;overflow:hidden}
+.doc>summary{cursor:pointer;list-style:none;padding:18px 20px;
+  font-weight:600;font-size:16px;display:flex;align-items:center;gap:12px;
+  transition:.2s}
+.doc>summary::-webkit-details-marker{display:none}
+.doc>summary:hover{background:var(--bg2)}
+.doc>summary .chev{margin-left:auto;color:var(--muted);transition:.25s;font-size:18px}
+.doc[open]>summary .chev{transform:rotate(90deg)}
+.doc>summary .tag{font-size:11px;color:var(--amber);border:1px solid rgba(232,148,58,.3);
+  background:rgba(232,148,58,.08);padding:3px 9px;border-radius:999px;font-weight:600}
+.doc-body{padding:6px 22px 26px;border-top:1px solid var(--line);
+  font-size:14.5px;color:#cdd2dd;max-height:560px;overflow:auto}
+.doc-body h1{font-size:22px;margin:20px 0 10px;color:var(--cream)}
+.doc-body h2{font-size:18px;margin:22px 0 8px;color:var(--cyan);border:0;padding:0}
+.doc-body h3{font-size:15px;margin:16px 0 6px;color:var(--cream);display:block}
+.doc-body p{margin:9px 0}
+.doc-body ul,.doc-body ol{margin:9px 0 9px 22px}
+.doc-body li{margin:4px 0}
+.doc-body a{color:var(--cyan);word-break:break-word}
+.doc-body code{background:#0a0b10;padding:2px 6px;border-radius:5px;font-size:13px}
+.doc-body blockquote{border-left:3px solid var(--amber);padding:4px 0 4px 14px;
+  margin:12px 0;color:var(--muted)}
+.doc-body table{width:100%;border-collapse:collapse;margin:14px 0;font-size:12.5px;
+  display:block;overflow-x:auto}
+.doc-body th,.doc-body td{border:1px solid var(--line);padding:8px 10px;text-align:left;
+  vertical-align:top;min-width:90px}
+.doc-body th{background:var(--bg2);color:var(--cream);font-weight:600}
+.doc-body strong{color:var(--cream)}
+.doc-body hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+
+footer{border-top:1px solid var(--line);padding:46px 0 60px;text-align:center;
+  color:var(--muted);font-size:13px}
+footer .fb{font-weight:700;color:var(--cream);font-size:15px;margin-bottom:8px;
+  display:flex;align-items:center;gap:9px;justify-content:center}
+.private{margin-top:14px;font-size:12px;color:#6b7080;
+  border:1px solid var(--line);border-radius:999px;padding:7px 16px;display:inline-block}
+
+@media(max-width:560px){
+  section{padding:48px 0}
+  .nav-in a.link{padding:5px 7px}
+  .g-graphics{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <span class="brand"><span class="dot"></span>SANO Systems · Beta</span>
+    <a class="link" href="#glowup">The 3-Day Glow-Up</a>
+    <a class="link" href="#library">Content Library</a>
+    <a class="link" href="#strategy">Strategy</a>
+    <a class="link" href="https://jasper4-web.github.io/shared-pages/sano-beta/" target="_blank" rel="noopener">Beta Site ↗</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Beta · Campaign Showcase</span>
+    <h1>SANO Systems —<br><span class="grad">a whole campaign, in one link.</span></h1>
+    <p>A faceless marketing-content machine for a $350 done-for-you website with an AI front desk that never sleeps. Here's everything we built — reels, graphics, real demo sites, and the strategy behind it.</p>
+    <a class="btn" href="https://jasper4-web.github.io/shared-pages/sano-beta/" target="_blank" rel="noopener">View the live SANO beta site →</a>
+    <div class="hero-stats">
+      <div><b>7</b> videos</div>
+      <div><b>18</b> graphics</div>
+      <div><b>4</b> live demo sites</div>
+      <div><b>$350</b> · live in 1–3 days</div>
+    </div>
+  </div>
+</header>
+
+<section id="glowup">
+  <div class="wrap">
+    <span class="eyebrow">The new direction</span>
+    <h2>The 3-Day Glow-Up.</h2>
+    <p class="lead">A relatable ugly site becomes a beautiful new one — then the AI catches a real lead at 2am and emails it over. $350. Live in three days. This is today's lead concept.</p>
+    <div class="glow-hero">
+      <video controls muted loop playsinline preload="metadata" src="glowup-plumbing.mp4"></video>
+    </div>
+    <div class="grid g-glow">
+      <div class="card"><img class="frame" loading="lazy" src="glowup-before-after.jpg" alt="Before / after still"><div class="cap"><b>Before / after still</b>The transformation, one frame</div></div>
+      <div class="card"><img class="frame" loading="lazy" src="glowup-hero.jpg" alt="Hero still"><div class="cap"><b>Hero still</b>Phone-in-scene, finished site</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="library" style="background:linear-gradient(180deg,transparent,var(--bg2),transparent)">
+  <div class="wrap">
+    <span class="eyebrow">Round 1 · the first content library</span>
+    <h2>The first round.</h2>
+    <p class="lead">The original library that kicked things off — four faceless reels, eighteen designed graphics, the real demo-site captures the content is built on, and the b-roll.</p>
+
+    <h3>The reels <span class="pill">4 videos</span></h3>
+    <div class="grid g-reels"><div class="card"><video controls muted loop playsinline preload="metadata" src="reel-price-shock.mp4"></video><div class="cap"><b>Price shock</b>$12,000 → $350. Same site.</div></div><div class="card"><video controls muted loop playsinline preload="metadata" src="reel-answers-2am.mp4"></video><div class="cap"><b>Answers at 2am</b>SANO AI catches the lead while you sleep.</div></div><div class="card"><video controls muted loop playsinline preload="metadata" src="reel-built-3-days.mp4"></video><div class="cap"><b>Built in 3 days</b>Agencies take months. This took days.</div></div><div class="card"><video controls muted loop playsinline preload="metadata" src="reel-teardown.mp4"></video><div class="cap"><b>Website teardown</b>The free 60-second site roast.</div></div></div>
+
+    <h3>Designed graphics <span class="pill">18 assets</span></h3>
+    <div class="grid g-graphics"><div class="card"><img class="frame" loading="lazy" src="g-price-anchor-reel.jpg" alt="Price anchor (reel)"><div class="cap"><b>Price anchor (reel)</b>$12k → $350 cold-open</div></div><div class="card"><img class="frame" loading="lazy" src="g-price-anchor-feed.jpg" alt="Price anchor (feed)"><div class="cap"><b>Price anchor (feed)</b>Agency vs SANO</div></div><div class="card"><img class="frame" loading="lazy" src="g-no-monthly.jpg" alt="No monthly"><div class="cap"><b>No monthly</b>$0/month, forever</div></div><div class="card"><img class="frame" loading="lazy" src="g-offer-card.jpg" alt="Offer card"><div class="cap"><b>Offer card</b>The $350 package</div></div><div class="card"><img class="frame" loading="lazy" src="g-diy-vs-dfy.jpg" alt="DIY vs done-for-you"><div class="cap"><b>DIY vs done-for-you</b>Empty shell vs finished</div></div><div class="card"><img class="frame" loading="lazy" src="g-brand-statement.jpg" alt="Brand statement"><div class="cap"><b>Brand statement</b>Your worst salesperson</div></div><div class="card"><img class="frame" loading="lazy" src="g-cta-card.jpg" alt="CTA end card"><div class="cap"><b>CTA end card</b>Comment SITE</div></div><div class="card"><img class="frame" loading="lazy" src="g-hook-costing-customers.jpg" alt="Hook · costing customers"><div class="cap"><b>Hook · costing customers</b>Cold-open title</div></div><div class="card"><img class="frame" loading="lazy" src="g-hook-answer-2am.jpg" alt="Hook · answer at 2am"><div class="cap"><b>Hook · answer at 2am</b>Cold-open title</div></div><div class="card"><img class="frame" loading="lazy" src="g-hook-3-months-3-days.jpg" alt="Hook · 3 months → 3 days"><div class="cap"><b>Hook · 3 months → 3 days</b>Cold-open title</div></div><div class="card"><img class="frame" loading="lazy" src="g-hook-pov-sleep.jpg" alt="Hook · POV works while you sleep"><div class="cap"><b>Hook · POV works while you sleep</b>Cold-open title</div></div><div class="card"><img class="frame" loading="lazy" src="g-hook-send-website.jpg" alt="Hook · send me your website"><div class="cap"><b>Hook · send me your website</b>Cold-open title</div></div><div class="card"><img class="frame" loading="lazy" src="g-carousel-1.jpg" alt="Carousel 1"><div class="cap"><b>Carousel 1</b>5 things killing your site</div></div><div class="card"><img class="frame" loading="lazy" src="g-carousel-2.jpg" alt="Carousel 2"><div class="cap"><b>Carousel 2</b>It's slow</div></div><div class="card"><img class="frame" loading="lazy" src="g-carousel-3.jpg" alt="Carousel 3"><div class="cap"><b>Carousel 3</b>Breaks on a phone</div></div><div class="card"><img class="frame" loading="lazy" src="g-carousel-4.jpg" alt="Carousel 4"><div class="cap"><b>Carousel 4</b>No clear next step</div></div><div class="card"><img class="frame" loading="lazy" src="g-carousel-5.jpg" alt="Carousel 5"><div class="cap"><b>Carousel 5</b>Can't catch the lead</div></div><div class="card"><img class="frame" loading="lazy" src="g-carousel-6.jpg" alt="Carousel 6"><div class="cap"><b>Carousel 6</b>The $350 fix</div></div></div>
+
+    <h3>Real demo-site captures <span class="pill">4 sites · mobile + desktop</span></h3>
+    <div class="grid g-broll"><div class="card demo"><div class="scrollbox"><img loading="lazy" src="demo-plumbing-mobile.jpg" alt="Rapid Flow Plumbing"></div><div class="cap"><b>Rapid Flow Plumbing</b>Live demo · mobile</div></div><div class="card demo"><div class="scrollbox"><img loading="lazy" src="demo-tree-mobile.jpg" alt="Summit Tree Care"></div><div class="cap"><b>Summit Tree Care</b>Live demo · mobile</div></div><div class="card demo"><div class="scrollbox"><img loading="lazy" src="demo-lawn-mobile.jpg" alt="Evergreen Lawn &amp; Landscape"></div><div class="cap"><b>Evergreen Lawn &amp; Landscape</b>Live demo · mobile</div></div><div class="card demo"><div class="scrollbox"><img loading="lazy" src="demo-transport-mobile.jpg" alt="Premier Event Transport"></div><div class="cap"><b>Premier Event Transport</b>Live demo · mobile</div></div><div class="card demo"><div class="scrollbox"><img loading="lazy" src="demo-plumbing-desktop.jpg" alt="Rapid Flow Plumbing"></div><div class="cap"><b>Rapid Flow Plumbing</b>Live demo · desktop</div></div><div class="card demo"><div class="scrollbox"><img loading="lazy" src="demo-tree-desktop.jpg" alt="Summit Tree Care"></div><div class="cap"><b>Summit Tree Care</b>Live demo · desktop</div></div><div class="card demo"><div class="scrollbox"><img loading="lazy" src="demo-lawn-desktop.jpg" alt="Evergreen Lawn &amp; Landscape"></div><div class="cap"><b>Evergreen Lawn &amp; Landscape</b>Live demo · desktop</div></div><div class="card demo"><div class="scrollbox"><img loading="lazy" src="demo-transport-desktop.jpg" alt="Premier Event Transport"></div><div class="cap"><b>Premier Event Transport</b>Live demo · desktop</div></div></div>
+
+    <h3>B-roll <span class="pill">4 images + 2 videos</span></h3>
+    <div class="grid g-broll"><div class="card"><video controls muted loop playsinline preload="metadata" src="broll-vid-phone-2am.mp4"></video><div class="cap"><b>Phone glowing · 2am</b>Lead-capture opener</div></div><div class="card"><video controls muted loop playsinline preload="metadata" src="broll-vid-afterhours.mp4"></video><div class="cap"><b>After-hours</b>Mood loop</div></div><div class="card"><img class="frame" loading="lazy" src="broll-phone-2am.jpg" alt="Phone at 2am"><div class="cap"><b>Phone at 2am</b>After-hours mood</div></div><div class="card"><img class="frame" loading="lazy" src="broll-afterhours-counter.jpg" alt="After-hours counter"><div class="cap"><b>After-hours counter</b>Empty shop, late night</div></div><div class="card"><img class="frame" loading="lazy" src="broll-abstract-tech.jpg" alt="Abstract tech"><div class="cap"><b>Abstract tech</b>Atmosphere</div></div><div class="card"><img class="frame" loading="lazy" src="broll-particles.jpg" alt="Particles"><div class="cap"><b>Particles</b>Transition texture</div></div></div>
+  </div>
+</section>
+
+<section id="strategy">
+  <div class="wrap">
+    <span class="eyebrow">Strategy &amp; research</span>
+    <h2>The thinking behind it.</h2>
+    <p class="lead">The research, sound design, copy bank and storyboards that drove every asset above. Tap to expand.</p>
+    <div style="margin-top:26px"><details class="doc"><summary>Content &amp; ad research<span class="tag">strategy</span><span class="chev">›</span></summary><div class="doc-body"><h1>SANO Systems Beta — Faceless Social + Paid-Ad Research</h1>
+<p><strong>Prepared:</strong> 2026-06-17 · <strong>Re-check by:</strong> 2026-09-17 (~90-day shelf life)
+<strong>For:</strong> Jasper / SANO Systems beta — $350 done-for-you website + on-site AI chatbot ("SANO AI"), live in 1–3 days, optional +$350 admin dashboard. Sold to small/local businesses, no geo limit.
+<strong>Scope:</strong> SANO's OWN social (IG Reels/feed, FB feed, TikTok) + PAID ADS (Meta, TikTok). <strong>FACELESS brand content only</strong> — screen recordings, before/after website reveals, chatbot demos, text-on-video, b-roll. No person on camera. NOT influencer seeding.</p>
+<p><strong>How to read the flags:</strong>
+- ⚠ = number the campaign should treat as soft (single-source, undated, or contested). The flag travels with the number everywhere it appears.
+- "(~1.5 sources)" = two citations that appear to share one upstream dataset.
+- Every claim is tiered: <strong>NOW</strong> (≤12 mo, multi-source) / <strong>EVERGREEN BENCHMARK</strong> (planning numbers, pub dates old/unstated) / <strong>DATED CASE STUDY</strong> (mechanics valid, numbers not current-market).</p>
+<hr />
+<h2>0. THE ONE FINDING THAT CHANGES THE STRATEGY</h2>
+<p><strong>SMBs are actively choosing NOT to buy "website chat."</strong> In LocaliQ's <em>Big Small Business Marketing Trends Report for 2026</em> (survey of 300+ SMB owners), <strong>website chat tops the list of tactics small businesses plan NOT to invest in — only 13% say they'll add it</strong> (LocaliQ, report dated for 2026; fetched live 2026-06-17 — primary-verified). Independently, the <em>Qualtrics 2026 Customer Experience Trends Report</em> found <strong>nearly 1 in 5 consumers who used AI customer service saw no benefit</strong>, and consumers rank AI customer service "among the worst for convenience, time savings, and usefulness" (reported by Entrepreneur / CNBC, both Apr 2026 — ⚠ ~1.5 sources: both likely trace to one Qualtrics press release; not primary-verified at Qualtrics this pass). The LocaliQ 13% finding is the load-bearing one and is solid on its own.</p>
+<p><strong>Implication for SANO:</strong> the chatbot is the part of the offer the market is most skeptical of. <strong>Do NOT lead cold ads with "AI chatbot."</strong> Lead with the <em>website</em> (the thing they know they need and undervalue) and position SANO AI as <strong>lead-capture / "a front desk that never sleeps that emails YOU the lead"</strong> — an owner-benefit (you stop losing leads), not a customer-facing gimmick (annoying pop-up bot). The objection content in §5 leans hard on this.</p>
+<hr />
+<h2>1. NOW — WHAT'S WINNING (sourced, dated, ≤12 mo, multi-source)</h2>
+<h3>1a. The hook physics (platform-level, well-corroborated)</h3>
+<ul>
+<li><strong>First 3 seconds decide everything.</strong> TikTok for Business research: <strong>63% of the highest-CTR videos hook viewers in the first 3 seconds.</strong> Corroborated across 4 independent write-ups (Opus.pro, SendShort, House of Marketers, KNKV, all 2025–2026). <strong>Strong / multi-source.</strong></li>
+<li><strong>TikTok makes its first algorithmic call in ~1.5 seconds</strong>; a missed hook drops the video into a "cold start it almost never escapes" (Opus.pro, <em>Best TikTok Hooks 2026</em>, 2026). Single strong source — treat the exact "1.5s" as directional.</li>
+<li><strong>Text overlay is not optional.</strong> TikTok for Business: <strong>40% of top-performing ads by view-through-rate use text overlays</strong> (cited via Conbersa/KNKV, 2026). For a faceless brand with no talking head, on-screen text <em>is</em> the narrator. <strong>Acts as corroboration for the all-text-on-screen approach SANO must use.</strong></li>
+<li><strong>Highest-performing hook type = "Product/Outcome Showcase"</strong> — show the finished result/transformation in the first 2 seconds; the viewer knows instantly what they get if they stay (Opus.pro 2026; ALM Corp 2026). <strong>This is the single most important format fact for SANO</strong> — it means <em>open on the finished website</em>, not on a problem.</li>
+</ul>
+<h3>1b. Faceless formats that are working RIGHT NOW for this offer type</h3>
+<p>Sourced from 2026 faceless-content roundups (FluxNote <em>27 Faceless Reels Ideas [2026]</em>; FlowShorts <em>30 Faceless Reels Ideas by Niche 2026</em>; Influish <em>Viral Content Reel Ideas 2026</em>; InVideo <em>Faceless Reels with AI 2026</em>) cross-referenced with the hook data above. These roundups are content-marketing pieces (treat as directional, not lab data), but they converge on the same formats:</p>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>First-3-sec hook pattern</th>
+<th>Why it works (sourced)</th>
+<th>Length</th>
+<th>Caption/CTA pattern</th>
+<th>Organic or paid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Before/After website reveal</strong> (screen rec: old/ugly site → SANO site)</td>
+<td>Open ON the <em>worst</em> state — "This is what your customers see at 11pm" / a janky old site mid-scroll</td>
+<td>Outcome-Showcase + transformation = top hook category; before/after is the canonical faceless transformation structure</td>
+<td>8–15s</td>
+<td>Caption names the business type; CTA "Want yours? Comment SITE"</td>
+<td><strong>Both</strong> — best single asset to test in paid</td>
+</tr>
+<tr>
+<td><strong>Screen-recording build walkthrough</strong> (timelapse of a SANO site scrolling)</td>
+<td>Bold text-on-screen contrarian statement over scrolling site</td>
+<td>Text-on-screen explainers with a strong hook repeatedly cited hitting 100K+ in faceless roundups ⚠ (claim from FluxNote 2026, single-source — directional)</td>
+<td>10–20s</td>
+<td>"Built in 1–3 days. $350. No monthly."</td>
+<td>Organic-first</td>
+</tr>
+<tr>
+<td><strong>Live AI-chatbot demo</strong> (screen rec of SANO AI answering + capturing a lead to inbox)</td>
+<td>Type a real customer question on screen, bot answers in &lt;2s</td>
+<td>Demonstrates the owner-benefit (lead capture) and pre-empts "AI is annoying" by showing it being <em>useful and fast</em></td>
+<td>10–15s</td>
+<td>"It answered at 2am and emailed me the lead"</td>
+<td>Both</td>
+</tr>
+<tr>
+<td><strong>"Your website vs your competitor's"</strong> side-by-side</td>
+<td>Split screen, two phones, "One of these gets the call"</td>
+<td>Comparison/controversy hooks force a reaction (agree/disagree both = positive algo signal) — Lemonlight, Opus.pro 2026</td>
+<td>8–12s</td>
+<td>"Which one are you?"</td>
+<td>Organic</td>
+</tr>
+<tr>
+<td><strong>Problem-agitate ("you're losing customers because…")</strong></td>
+<td>"You're losing customers and you don't even know it" over b-roll of a phone ringing out</td>
+<td>Challenge-a-belief / negative-hook openers stop the scroll (Influish 2026; Opus controversy hook)</td>
+<td>10–15s</td>
+<td>Drive to "free site teardown"</td>
+<td>Paid (cold)</td>
+</tr>
+<tr>
+<td><strong>"$350 vs a $10k agency"</strong> price-anchor reveal</td>
+<td>Big "$12,000" on screen → slash → "$350"</td>
+<td>Price is the most-tagged ad message angle in agency teardowns (adlibrary.com 2026, §2); anchoring is a proven lever</td>
+<td>8–12s</td>
+<td>"Same site. 1/30th the price."</td>
+<td>Both</td>
+</tr>
+<tr>
+<td><strong>POV / text-on-screen</strong> ("POV: you finally got a website that works")</td>
+<td>POV line + the finished site</td>
+<td>POV + text-on-screen is a top faceless structure across all 2026 roundups</td>
+<td>8–12s</td>
+<td>soft CTA</td>
+<td>Organic</td>
+</tr>
+<tr>
+<td><strong>Carousel teardown</strong> (IG/FB feed): "5 things wrong with your current site"</td>
+<td>Slide 1 is the verdict, not the build-up</td>
+<td>Carousels drive saves; Meta benchmark page notes carousel formats "often drive higher CTR and more cost-effective acquisitions" than single image (TheeDigital/Lebesgue/Bestever, 2026)</td>
+<td>6–8 slides</td>
+<td>"Save this / DM AUDIT"</td>
+<td>Both</td>
+</tr>
+</tbody>
+</table>
+<h3>1c. Paid creative — what converts NOW (faceless-compatible)</h3>
+<ul>
+<li><strong>UGC-/creator-STYLE faceless beats polished brand-shot openers.</strong> A review of <strong>480 ad units (Nov 2025–Mar 2026)</strong> found UGC/creator-style openers <strong>outperform brand-shot openers by 20–40% on thumb-stop rate</strong> on Reels/TikTok (adlibrary.com, <em>Best DTC Meta Ads Examples 2026</em>). Crucially, "UGC-style" here = a phone-shot, raw, pattern-interrupt <em>look</em> — <strong>achievable faceless</strong> via a hand-holding-a-phone screen recording of the site/bot, not a person talking. ⚠ The specific 20–40% range is single-source; corroborated <em>directionally</em> (not on the exact figure) by Meta's 2024 internal "15–25% higher thumb-stop for UGC-style on cold audiences" (see §3).</li>
+<li><strong>Thumb-stop targets:</strong> aim <strong>≥30% on Reels/Stories</strong>, <strong>20–30% on feed</strong>; <strong>&gt;35% is rare</strong> and usually a UGC opener with motion + on-screen text (adlibrary.com 2026). Use as creative pass/fail gate.</li>
+<li><strong>Lead Ads (instant form) are the workhorse objective for service SMBs</strong> — they collect the lead inside Meta without a landing-page bounce (TheeDigital 2026, citing WordStream). For SANO, this competes with driving to the landing page / chatbot; <strong>test both</strong> (see §6 hypothesis).</li>
+<li><strong>Ship 10x more hook variants than the body.</strong> Winning 2026 advertisers "treat the first 1.5 seconds as a separate, testable surface and ship 10x more variants of it" (adlibrary.com 2026). For SANO: cut ONE good 12s demo, then make 10 different first-3-second openers over it.</li>
+</ul>
+<hr />
+<h2>2. COMPETITOR &amp; ANALOGUE TEARDOWN</h2>
+<h3>2a. AI site builders (the DIY threat SANO must out-position)</h3>
+<ul>
+<li><strong>Durable</strong> positions on <strong>speed + all-in-one</strong>: "complete mobile-responsive website … in ~30 seconds," sold as an "AI business partner available 24/7" with CRM, booking, marketing automation bundled (Durable.com + multiple 2026 reviews: Cybernews, WebsitePlanet, Neo.space). <strong>Takeaway for SANO:</strong> Durable's wedge is <em>speed-and-DIY-cheap</em>; SANO's counter is <strong>done-FOR-you + custom (not a template) + a human (Jasper) + no subscription.</strong> SANO must never compete on "fastest AI generation" — it loses that race; it wins on "you don't have to touch it, and it's actually custom."</li>
+<li>The whole AI-builder category sells <strong>"you can do it yourself in minutes for $X/month."</strong> That is the exact objection SANO's content must beat (see §5): the DIY builder is <em>cheaper on paper</em> but the owner still has to do the work, the writing, the SEO, and it looks templated.</li>
+</ul>
+<h3>2b. Web-design agencies / freelancers on social + paid</h3>
+<ul>
+<li><strong>Meta Ad Library is the teardown tool.</strong> Practitioners tag competitor ads by <strong>format</strong> (video / carousel / static) and <strong>message angle</strong> (price, social proof, problem-solution, feature-led); a <strong>90-day ad run = a proven, profitable creative</strong> worth modeling (adlibrary.com, <em>Meta Ads for Marketing Agencies: 2026 Operations Playbook</em> + <em>What Meta Ad Library Doesn't Show You 2026</em>). <strong>Action for Jasper:</strong> before launch, pull active ads from 5–8 web-design/AI-builder advertisers in the Ad Library, sort by longest-running, and model the openers. (I could not render live individual advertiser creative in this pass — flagged as a gap in §7; this is a 30-minute manual task in facebook.com/ads/library.)</li>
+<li><strong>The dominant agency lead-gen angle is the "free website audit"</strong> as a lead magnet — the ad isn't the conversion, the follow-up sequence is (adlibrary.com 2026). <strong>SANO analogue: "free site teardown" / "free 60-second audit of your current site"</strong> — a faceless screen-recorded roast of a volunteer's site is both the lead magnet AND native content.</li>
+</ul>
+<h3>2c. GoHighLevel-style agency creators (the closest analogue to SANO's content lane)</h3>
+<ul>
+<li>This crowd's signature organic angle on TikTok: <strong>"local businesses NEED this setup and almost no one is offering it right"</strong> (TikTok discovery results, 2026). It's a problem-agitate + authority hook, delivered faceless via screen recordings of dashboards.</li>
+<li>They lean on <strong>income/outcome proof and faceless screen-recordings of the product</strong> rather than face-to-camera. The transferable mechanic for SANO: <strong>screen-record the actual deliverable (the 4 demo sites + the live SANO AI), let the product be the "face."</strong></li>
+</ul>
+<h3>2d. Pricing/positioning anchors observed</h3>
+<ul>
+<li>AI builders: <strong>$0–~$25+/mo subscription</strong> framing.</li>
+<li>Agencies/freelancers: <strong>$3,000–$15,000</strong> is repeatedly cited as the "real" small-business build range; <strong>$3k–$10k tier "dramatically more powerful than two years ago" due to AI</strong> (SuperDupr <em>Affordable Web Design 2026</em>; Seota). SANO's own page cites <strong>$8,000–$15,000</strong> agency anchor. <strong>For creative: put SANO's page anchor ($8k–$15k, e.g. "$12,000") on screen as the comparison number</strong> — the broader market floor (~$3k) exists but should NOT be used as the anchor, because a lower number weakens the price-shock hook.</li>
+<li><strong>SANO's $350 flat sits in a near-empty gap:</strong> above "free DIY builder" and far below "agency." That gap is the whole pitch — but it also triggers the "too cheap to trust" objection (§5).</li>
+</ul>
+<hr />
+<h2>3. EVERGREEN BENCHMARKS</h2>
+<blockquote>
+<p>⚠ <strong>NOT "now" claims. Planning numbers only.</strong> Several underlying figures are 2025 actuals projected to 2026, or single-provider rollups. <strong>Pub dates partly old/unstated, fetched live 2026-06-17.</strong> Use as guardrails, not promises. ≥2 sources noted where available.</p>
+</blockquote>
+<p><strong>Meta paid (TheeDigital <em>2026 Facebook Ads Benchmarks</em>, pub 2025-05-05, updated 2026-06-02, citing WordStream 2025 dataset — so TheeDigital + WordStream ≈ ~1.5 sources, shared upstream):</strong>
+- Facebook <strong>Lead Ads average CPL ≈ $27.66</strong>, average <strong>CVR ≈ 7.72%</strong>, <strong>CPC ≈ $1.92</strong> (2025 actuals). ⚠ ~1.5 sources (shared WordStream data).
+- Overall <strong>CTR band "good" = 0.9%–1.6%</strong>; lead campaigns ~2.59%, traffic ~1.71% (2025). Projected 2026 average CTR ~1.4–1.7%.
+- <strong>Home services</strong> (closest analogue to SANO's buyer pool): 2025→2026 projected <strong>CTR 1.99%→2.1%</strong>, <strong>CPC $2.08→$2.30</strong>, <strong>CPL $30.57→$34</strong>, <strong>CVR 6.51%→7%</strong>. ⚠ 2026 figures are TheeDigital <em>projections</em>, single-source.
+- Construction (before/after-creative-heavy vertical): CPL $41.26→$45 projected; "before-and-after examples and video" explicitly called out as the high-CTR creative. Single-source projection ⚠.
+- <strong>Carousel &amp; video formats</strong> "often drive higher CTR and more cost-effective acquisitions than single image ads" (TheeDigital citing Lebesgue + Bestever — corroborating pair, but for ecommerce/storytelling brands; extrapolate to SANO with caution ⚠).</p>
+<p><strong>SMB market context (for sizing the audience mood):</strong>
+- <strong>~40% of SMBs increasing marketing budget in 2026, 54% holding, only 8% cutting</strong> (RevenueMemo / LocaliQ 2026). Reasonable corroboration across two write-ups.
+- <strong>72% of SMB marketing budget now goes to digital channels</strong> (LocaliQ 2026). Single report.
+- <strong>66% of SMBs expect economic uncertainty to be challenging</strong> (up from 48% prior year); ~⅔ have &lt;3 months operating cash (US Chamber / BofA / Revenued Q1 2026). Multi-source, directional. <strong>Implication: price-pain is real — SANO's "no monthly" is on-message; but "too cheap = junk" risk is also real (§5).</strong></p>
+<p><strong>Thumb-stop / UGC (planning guardrails — see contradiction note §4):</strong>
+- Target thumb-stop <strong>≥30% Reels/Stories, 20–30% feed</strong> (adlibrary.com 2026, single strong source).
+- Meta <strong>2024 internal:</strong> UGC-style thumb-stop on cold audiences <strong>15–25% higher</strong> than produced branded video (cited 2026, ~1.5 sources as it recurs from one upstream Meta claim) ⚠.</p>
+<hr />
+<h2>4. CONTRADICTIONS SURFACED</h2>
+<ol>
+<li><strong>"How much better is UGC-style than branded?" — sources disagree wildly.</strong> Reported lifts include <strong>+20–40% thumb-stop</strong> (adlibrary.com, 480-unit review, Nov25–Mar26), <strong>+15–25% thumb-stop</strong> (Meta internal 2024), <strong>+48% CTR / −26% CPA</strong> (saadkhanads 2026), <strong>+64% CTR / −20–35% CPC</strong> (Modliflex 2026), and <strong>+102% conversions</strong> (multiple UGC-vendor blogs). <strong>Reconciliation:</strong> the <em>direction</em> is unanimous and reliable — faceless UGC-<em>style</em> (raw, phone-shot, pattern-interrupt) beats polished brand-shot openers. <strong>The specific percentages are NOT reliable</strong> — they come largely from UGC-vendor marketing with incentive to inflate, and span a 5x range. ⚠ <strong>Use only the direction in planning; never quote a specific % to Jasper as a forecast.</strong> Carry this flag to §1c and §3.</li>
+<li><strong>Chatbot value: "table stakes" vs "actively unwanted."</strong> AI-builder marketing (Durable et al.) and pro-chatbot vendor content say bots are essential 24/7 lead-capture; LocaliQ's SMB survey says chat is the #1 tactic SMBs are <em>declining</em> to add (13%) and Qualtrics/CNBC say consumers dislike AI service. <strong>Reconciliation:</strong> both are true at different layers — <em>owners</em> are cooling on "website chat" as a line item, and <em>consumers</em> dislike bad bots, BUT the underlying job (never miss an after-hours lead) is still valued. <strong>SANO's resolution: sell the JOB (captured lead in your inbox), not the FEATURE (a chatbot).</strong> This is the spine of the §5 chatbot objection map.</li>
+<li><strong>CPL direction:</strong> TheeDigital projects CPL <em>rising</em> 5–10% into 2026; same page's takeaway box says CPL will "stabilize or decrease due to smarter targeting." Internal contradiction within one source ⚠ — treat CPL as <strong>flat-to-up</strong>, plan for the higher end ($34 home-services).</li>
+</ol>
+<hr />
+<h2>5. CONTENT TYPES SHORTLIST — THE DELIVERABLE (ranked, producible faceless)</h2>
+<p>Ranked by conviction. Every item is producible with <strong>zero person on camera</strong> using SANO's real assets: the <strong>4 live demo sites</strong> (Summit Tree Care, Evergreen Lawn &amp; Landscape, Premier Event Transport, Rapid Flow Plumbing) and the <strong>live SANO AI chatbot</strong>. Funnel stage: <strong>Cold</strong> (stop the scroll, problem-aware), <strong>Warm</strong> (proof/comparison, solution-aware), <strong>Ready</strong> (offer/CTA, most-aware).</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Content type</th>
+<th>Platform(s)</th>
+<th>Funnel</th>
+<th>Hook (first 3s)</th>
+<th>SANO angle / objection it hits</th>
+<th>Org/Paid</th>
+<th>Proof asset</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td><strong>Before/After website reveal</strong> (screen rec: old janky site → SANO demo site, scroll both)</td>
+<td>IG Reels, TikTok, FB</td>
+<td>Cold→Warm</td>
+<td>Open ON the ugly/old site mid-scroll: "This is costing you customers every single day"</td>
+<td>"Your website is your worst salesperson"; beats "I already have a site/FB page"</td>
+<td><strong>Both</strong> (your #1 paid test)</td>
+<td>The 4 demo sites (use as the "after")</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td><strong>SANO AI lead-capture demo</strong> (screen rec: type a customer Q at "2am" → bot answers → lead lands in inbox)</td>
+<td>IG Reels, TikTok</td>
+<td>Warm</td>
+<td>"Watch it answer a customer at 2am — and email me the lead"</td>
+<td>Reframes chatbot as <strong>owner lead-capture, not annoying bot</strong> (beats the §0/§4 chatbot skepticism head-on)</td>
+<td>Both</td>
+<td>Live SANO AI on a demo site</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td><strong>$350 vs $10k–$15k agency</strong> price-anchor reveal</td>
+<td>TikTok, IG Reels, FB</td>
+<td>Cold→Ready</td>
+<td>Big "$12,000" → slash → "$350. Same site."</td>
+<td>Anti-agency price shock; the dominant winning ad angle is <em>price</em> (§2)</td>
+<td><strong>Both</strong></td>
+<td>Split: agency invoice graphic vs SANO demo</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td><strong>Free "60-second site teardown"</strong> (faceless screen-rec roasting a real volunteer site, then "here's the fix")</td>
+<td>TikTok, IG Reels</td>
+<td>Cold (lead magnet)</td>
+<td>"Send me your website and I'll tell you why it's not making you money"</td>
+<td>Mirrors the proven agency "free audit" funnel (§2b); generates endless native content + leads</td>
+<td><strong>Both</strong></td>
+<td>Volunteer sites + your redesign</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td><strong>"Your site vs your competitor's"</strong> two-phone split</td>
+<td>IG Reels, TikTok</td>
+<td>Warm</td>
+<td>"One of these gets the call. Which one are you?"</td>
+<td>Comparison/controversy hook; agitates the cost of a bad site</td>
+<td>Organic</td>
+<td>Two demo sites (good vs deliberately weak)</td>
+</tr>
+<tr>
+<td><strong>6</strong></td>
+<td><strong>Carousel teardown</strong> — "5 things killing your website (and the $350 fix)"</td>
+<td>IG feed, FB feed</td>
+<td>Cold→Warm</td>
+<td>Slide 1 = the verdict ("Your homepage fails in 3 seconds"), not a slow build</td>
+<td>Drives saves; carousels = higher CTR/cheaper acq per Meta benchmark (§3)</td>
+<td>Both</td>
+<td>Annotated screenshots of demo sites</td>
+</tr>
+<tr>
+<td><strong>7</strong></td>
+<td><strong>"Built in 1–3 days" timelapse</strong> (screen-rec build / page scroll set to a beat)</td>
+<td>TikTok, Reels</td>
+<td>Warm→Ready</td>
+<td>"Most agencies take 3 months. This took 3 days."</td>
+<td>Speed differentiator vs agencies; matches Outcome-Showcase hook</td>
+<td>Organic</td>
+<td>Any demo site</td>
+</tr>
+<tr>
+<td><strong>8</strong></td>
+<td><strong>POV text-on-screen</strong> — "POV: you finally have a website that works for you while you sleep"</td>
+<td>Reels, TikTok</td>
+<td>Warm</td>
+<td>POV line over the finished site + bot ping</td>
+<td>Soft, top-of-funnel familiarity; pairs the site + the lead-capture benefit</td>
+<td>Organic</td>
+<td>Demo site + bot notification</td>
+</tr>
+<tr>
+<td><strong>9</strong></td>
+<td><strong>"DIY builder vs done-for-you"</strong> screen-rec (blank Durable/Wix dashboard → "still your job" → SANO finished)</td>
+<td>TikTok, IG</td>
+<td>Warm</td>
+<td>"AI built me a website in 30 seconds. Then I had to do everything else."</td>
+<td>Beats the cheap-DIY-builder objection directly (§2a)</td>
+<td>Both</td>
+<td>DIY builder screen-rec vs demo site</td>
+</tr>
+<tr>
+<td><strong>10</strong></td>
+<td><strong>"No monthly" myth-bust</strong> text-on-video</td>
+<td>Reels, FB</td>
+<td>Ready</td>
+<td>"$0/month. Forever. Yes, really."</td>
+<td>The repeated core differentiator; lands with cash-tight SMBs (§3 economic context)</td>
+<td>Both</td>
+<td>Price card graphic in brand style</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Producer notes (load-bearing):</strong>
+- <strong>Open on the OUTCOME, not the problem narration.</strong> Top hook category = Product/Outcome Showcase (§1a). Even the problem-agitate items should show <em>the contrast visually</em> in frame 1.
+- <strong>Text-on-screen is mandatory</strong> (no narrator face) — 40% of top VTR ads use it (§1a). Use SANO brand: dark near-black bg, blue <code>#0070F3</code>/cyan <code>#00D4FF</code>, amber <code>#E8943A</code> for "beta/$350" tags, Space Grotesk.
+- <strong>Go raw, not glossy, on the OPENER.</strong> UGC-<em>style</em> (hand-holding-phone screen capture, slight imperfection) beats polished brand-shot openers on thumb-stop (§1c) — and it's fully faceless.
+- <strong>One body, ten hooks.</strong> Cut each demo once, then produce 10 different 3-second openers (§1c). (Grounded on the solid multi-source 3-second/63% finding; the exact "1.5-second first call" number is single-source ⚠ directional — the <em>practice</em> of shipping many short openers holds regardless.)</p>
+<hr />
+<h2>6. NON-OBVIOUS TACTICS (label: hypothesis to validate)</h2>
+<ol>
+<li><strong>"Roast my competitor's website" UGC engine, but faceless.</strong> <em>Hypothesis to validate.</em> Invite owners to <strong>DM a competitor's URL</strong>; reply with a faceless screen-rec teardown of the competitor and a "here's what yours could look like." Weaponizes the rival-fixation that powers the "vs competitor" hook (§1b), is endlessly producible, and every teardown is a warm lead. Native + lead magnet in one.</li>
+<li><strong>Make the chatbot the content, not the pitch.</strong> <em>Hypothesis to validate.</em> Given SMBs are declining "website chat" (§0), run a faceless series: <strong>"I asked 5 local-business websites a question at midnight — here's who answered."</strong> Position SANO AI as the only one that responded and captured the lead. This sells the <em>job</em> (never miss a lead) while sidestepping the "annoying bot" frame the market is rejecting — turning the category's biggest objection into the hook.</li>
+<li><strong>Niche-swap the SAME demo, not new demos.</strong> <em>Hypothesis to validate.</em> You have 4 vertical demos. Re-cut the <strong>identical before/after structure</strong> with the industry word swapped per audience ("plumbers," "dentists," "landscapers," "salons") and let Meta/TikTok find the vertical that converts cheapest. This is "Advantage+ creative testing" with near-zero extra production — exploit the no-geo-limit, all-industries mandate by testing vertical, not geography.</li>
+<li><strong>Anchor against the owner's TIME, not just the agency's price.</strong> <em>Hypothesis to validate.</em> The DIY-builder objection ("I'll just use Wix for $20") is beaten not on price but on <strong>"30 seconds to generate, 30 hours to actually finish."</strong> A faceless screen-rec showing the <em>empty</em> AI-builder dashboard you still have to fill in vs the <em>finished</em> SANO site reframes $350 as buying back a weekend (ties to §2a + the 66% cash-stressed/time-poor SMB context, §3).</li>
+<li><strong>Run the "free site teardown" as the paid cold ad, not a hard offer.</strong> <em>Hypothesis to validate.</em> The proven agency funnel is audit-as-lead-magnet (§2b). For cold Meta/TikTok, the $350 offer may be too much of an ask in 3 seconds; <strong>the teardown is the conversion event, the $350 is the follow-up</strong> — likely a lower CPL than selling the package cold.</li>
+</ol>
+<hr />
+<h2>7. SOURCE QUALITY NOTES</h2>
+<p><strong>Strongest (use with confidence):</strong>
+- <strong>TikTok 3-second / 63% hook</strong> — 4 independent sources, 2025–2026. Solid.
+- <strong>"Open on the outcome" as top hook type</strong> — Opus.pro + ALM Corp, 2026.
+- <strong>TheeDigital 2026 Facebook benchmarks</strong> — explicit pub/updated dates (2025-05-05 / 2026-06-02), exact figures verified in-page, transparent that it's built on WordStream's 2025 dataset.
+- <strong>LocaliQ "13% website chat" + Qualtrics "1 in 5 saw no benefit"</strong> — two independent surveys pointing the same way; the strategic backbone of §0.</p>
+<p><strong>Flagged single-source / soft (gate before acting):</strong>
+- ⚠ <strong>All UGC-vs-branded percentages</strong> (20–40% / 48% / 64% / 102%) — vendor-sourced, 5x spread, contradictory (§4). Use direction only.
+- ⚠ <strong>adlibrary.com thumb-stop targets (≥30%)</strong> and the <strong>480-unit review</strong> — single source, plausible, not independently corroborated.
+- ⚠ <strong>TheeDigital 2026 projections</strong> (home-services CPL $34, CPC $2.30, etc.) — these are <em>projections</em>, single-source, and the page internally contradicts itself on CPL direction (§4).
+- ⚠ <strong>Faceless-roundup "100K+ views from text-on-screen"</strong> and similar — content-marketing claims, directional only.
+- ⚠ <strong>"~1.5 source" items:</strong> Facebook CPL $27.66 / CVR 7.72% / CPC $1.92 (TheeDigital ← WordStream, shared upstream).</p>
+<p><strong>Honest gaps (need a manual pass before spend):</strong>
+- <strong>No live individual-advertiser creative was rendered from the Meta Ad Library in this pass.</strong> The mechanics of how to mine it are sourced and correct, but Jasper (or a follow-up) should spend ~30 min in facebook.com/ads/library pulling the longest-running ads from 5–8 named web-design/AI-builder advertisers and modeling their openers. <strong>This is the single highest-value follow-up.</strong>
+- <strong>No SANO-category CPL benchmark exists</strong> (nobody publishes "$350 done-for-you website + bot" ad costs). Home-services CPL ($30–34) is the closest proxy and is itself a projection.
+- <strong>TikTok-specific paid benchmarks</strong> for this offer were thinner than Meta's; most TikTok data here is organic-hook data, applied to paid by analogy.
+- <strong>Seasonal/timing:</strong> the mid-2026 launch lands in a <strong>cautious-but-not-cutting SMB spending climate</strong> (40% increasing budgets, 66% wary of the economy). No strong "June is the season for X" signal surfaced — the timing angle is <strong>macro (price-sensitive, ROI-demanding buyers → lead with "no monthly" + cost-of-a-bad-site)</strong>, not calendar-seasonal. Treat any "Q3 budget refresh" pitch as unverified.</p>
+<p><strong>Re-check date: 2026-09-17.</strong> Hook formats, thumb-stop norms, and SMB sentiment all move on ~quarterly cycles; the LocaliQ/Qualtrics survey reads should be refreshed when 2026 mid-year updates publish.</p></div></details><details class="doc"><summary>Sound &amp; narration research<span class="tag">strategy</span><span class="chev">›</span></summary><div class="doc-body"><h1>01b — Sound &amp; Narration Research</h1>
+<p><strong>Question:</strong> For FACELESS "satisfying transformation" / before→after content selling a website-redesign / "get-your-business-online" service to small-business owners on Instagram Reels, TikTok, and Facebook — what audio/narration approach performs best, and why?</p>
+<p><strong>Compiled:</strong> 2026-06-17 · <strong>Re-check by:</strong> 2026-09-17 (90-day half-life on the reach/algorithm claims)
+<strong>Date discipline:</strong> every citation carries a <em>publication</em> date (not fetch date). "Current" = ≤12 months (≥2025-06). Anything older is flagged <strong>[BACKGROUND]</strong>. Actionable claims need ≥2 independent sources, else flagged <strong>⚠ single-source</strong>.</p>
+<hr />
+<h2>★ RECOMMENDATION</h2>
+<p><strong>Go with (c) a real human voiceover as the spine, with a low trending/beat-driven track ducked underneath and SFX on the reveal — i.e., a blend of (c)+(d), not pure music-led and not AI TTS.</strong> A spoken voice is the single best fix for your "text-only reels felt incoherent" problem: on rapid multi-clip before→after edits, on-screen text forces the viewer to <em>read and watch in the same visual channel</em> at once (split-attention overload), while narration carries the storyline through the separate auditory channel and frees the eyes to follow the visuals — the established modality effect, and the most defensible reason text-only feels disjointed. Meta's own 2025 ad data shows Reels with music <strong>or</strong> voiceover deliver up to <strong>+13% incremental conversions</strong>, and on TikTok your spoken words are <em>also</em> a search/categorization signal that pure music clips never get. <strong>Avoid flat default TTS</strong> (especially TikTok's built-in voice): the only peer-reviewed test on real TikTok ad data plus the two best 2026 consumer surveys all show AI voice underperforming human voice on engagement and trust in commercial content — and disclosure of AI voice is now an audience expectation and a platform requirement. If you must scale with AI, use an expressive neural voice (ElevenLabs-tier), lower the pitch, and disclose it.</p>
+<p><strong>Reveal sound-design recipe (the exact stack, left→right on the timeline):</strong>
+1. <strong>Continuous music bed</strong> (a trending track if your account can legally use it — see ⚠ business-account note in Q2).
+2. <strong>RISER / uplifter</strong> in the ~1–2s of the "before" build-up — its <em>peak</em> must land exactly on the cut.
+3. <strong>(Optional) one beat of near-silence / drop-out</strong> right before the cut — makes the impact land harder.
+4. <strong>WHOOSH / swish</strong> <em>covering</em> the transition cut itself.
+5. <strong>IMPACT / bass hit</strong> <em>on</em> the reveal frame — layered for frequency separation (high metallic click + mid whoosh body + low thump), not one sound.
+6. <strong>DING / sparkle / chime</strong> on the <em>clean finished</em> result (the satisfaction payoff — reserved for the "after," never the "before").
+7. Time it so the <strong>music's beat drop falls on the reveal frame</strong>, within <strong>~250 ms</strong> of the cut or it stops reading as "in sync."</p>
+<p><strong>Captions:</strong> auto-captions that track the voice (word-by-word / kinetic), bold sans-serif ≥45px at 1080p, white with a ~2px black stroke, kept inside the central ~70–80% safe zone — clear of the bottom ~25–30% (UI/caption/audio rail) and the right ~84–120px (button rail). On Facebook/Instagram feed assume sound-off and make the video legible silent; on TikTok assume sound-on.</p>
+<hr />
+<h2>Q1 — Does a voiceover improve RETENTION and COHERENCE on multi-clip/story videos vs text-only?</h2>
+<p><strong>Directionally YES on retention; STRONGLY yes on coherence — but no clean A/B "voiceover vs text-only" watch-time study exists. The coherence case is the better-supported one.</strong></p>
+<ul>
+<li><strong>Meta (platform data): Reels campaigns with music <em>or</em> voiceover deliver up to +13% incremental conversions.</strong> Via Social Media Today reporting on Meta's official "Science of the Hook" blog — <strong>pub. 2025-12-17</strong>. ⚠ Caveat: Meta bundles <em>music OR voiceover</em> together (does not isolate voice vs text-only) and it's an ads context. Best recent hard number available, but <strong>single-source</strong> (Meta self-reported).</li>
+<li>
+<p>https://www.socialmediatoday.com/news/meta-shares-tips-on-reels-hooks-creative-diversification-in-ads-and-threa/808182/</p>
+</li>
+<li>
+<p><strong>Coherence mechanism — the Modality Effect [BACKGROUND but foundational]:</strong> people retain narrated visuals better than visuals + on-screen text, because text and visuals compete for the <em>same visual channel</em> (split-attention / cognitive overload), whereas narration uses the separate <em>auditory</em> channel. This directly explains why your fast-cut, text-only before→after reels "felt incoherent" — viewers were forced to read AND watch across rapid cuts, overloading one channel. Mayer's Cognitive Theory of Multimedia Learning; modality-effect meta-analysis. Foundational 2003–2016 → <strong>[BACKGROUND]</strong>. Mechanism transfers plausibly to story/before-after but is from instructional research, not feed watch-time.</p>
+</li>
+<li>
+<p>Dinçer, N. (2022), <em>Journal of Pedagogical Research</em> 6(3) — https://files.eric.ed.gov/fulltext/EJ1341358.pdf</p>
+</li>
+<li>
+<p><strong>TikTok ranking: spoken words + on-screen text are categorization signals.</strong> "The algorithm can also analyze on-screen text and spoken words to understand what your video is about… your voiceover and text overlays are categorization signals too." A structural <em>discovery</em> advantage that pure music-led clips don't get. Hootsuite, "How the TikTok algorithm works in 2026," <strong>pub. 2026-06-01</strong>.</p>
+</li>
+<li>
+<p>https://blog.hootsuite.com/tiktok-algorithm/</p>
+</li>
+<li>
+<p><strong>Watch-time/completion is the dominant ranking signal on all three platforms</strong>, which rewards whatever holds attention (often voiceover storytelling) over music alone. TikTok: watch time + completion are "the single strongest signals" (Hootsuite, 2026-06-01). Instagram: watch time + DM sends dominate Reels (Buffer, <strong>2026-03-24</strong>, https://buffer.com/resources/instagram-algorithms/). Facebook: watch time leads Reels (Metricool, 2026). Multi-source. Audio choice is <em>secondary</em> to retention on every platform.</p>
+</li>
+<li>
+<p><strong>⚠ DISCARD:</strong> "voiceover = +47% / +58% retention," "voice-led beats text reels by 76%," "music-only vs subtitles +35%." These recur across AI-voiceover SaaS blogs (narrationbox, voice.ai, vidnoz, syllaby, heytrendy) with <strong>no traceable primary study</strong> — circular SEO content from vendors selling voice tools. Do not cite.</p>
+</li>
+</ul>
+<p><strong>Net:</strong> Add a voiceover. Retention lift is real but only quantified by Meta's bundled +13% (single-source). The coherence fix is the stronger, well-mechanism'd reason and squarely addresses your problem.</p>
+<hr />
+<h2>Q2 — How big is the trending-audio / original-sound effect on reach in the last ~12 months?</h2>
+<p><strong>Still a real lever on TikTok &amp; Instagram Reels, but now a SECONDARY / tie-breaker signal — not a standalone reach multiplier. It only helps when watch-through is already strong. On Facebook it barely registers.</strong></p>
+<ul>
+<li><strong>TikTok: sounds are "Video information" = MEDIUM ranking weight, explicitly below "User interactions" (watch time, completion, shares) = HIGH.</strong> "Add trending sounds and music" is tip #8 of 12. Hootsuite, <strong>2026-06-01</strong> (URL above).</li>
+<li><strong>Instagram: trending audio is one of several "information about the reel" inputs</strong>, but watch time and DM sends are the dominant Reels signals. Buffer, <strong>2026-03-24</strong> (URL above). Buffer's trending-audio guide adds the discovery angle: a trending sound "could provide the boost you need to get your video on Explore… an art, not a science" — and warns "you don't need to awkwardly force trending audio into everything." Buffer, "13 Trending Sounds on Instagram in June 2026," <strong>2026-06-05</strong> — https://buffer.com/resources/trending-audio-instagram/</li>
+<li><strong>⚠ No reputable verified source quantifies a "trending audio = +X% reach" figure for 2025–2026.</strong> Multiple AI search summaries asserted specific multipliers ("3× Explore," "+40–60% reach"); none appeared on the actual reputable pages when fetched. <strong>Treat any "+X% from trending audio" stat as unsubstantiated.</strong></li>
+</ul>
+<p><strong>The bigger 2025–26 shift is "original content &gt; reposts/aggregators," not "original audio &gt; trending music":</strong>
+- <strong>Instagram (platform-official): as of 2026-04-30, will no longer recommend photos/carousels from aggregator accounts</strong> in Explore — expanding the Reels-era policy. Assessed on a rolling 30-day basis. Meta also reported <strong>views + time spent on original Reels on Facebook ~doubled YoY</strong> in H2 2025. Social Media Today, <strong>2026-04-30</strong>, citing Instagram's official creators blog (corroborated by Engadget, Tubefilter, PetaPixel, same date).
+  - https://www.socialmediatoday.com/news/instagram-updates-algorithm-to-benefit-original-creators/819016/
+- <strong>TikTok lists "unoriginal content" (watermarked re-uploads, simple GIFs) as ineligible for For You recommendation.</strong> Hootsuite, 2026-06-01.
+- <strong>⚠ MYTH to avoid:</strong> "the algorithm now favors <em>original audio over trending sounds</em>." This appears only in SEO summaries; the verified Buffer/Hootsuite pages still recommend trending audio as a useful secondary tactic. What's verified is original <em>content/creators</em> are rewarded — different claim.</p>
+<p><strong>Faceless / business-account specifics (matters for SANO):</strong>
+- <strong>Account type does not change ranking weight</strong> — "reach depends on engagement and relevance, not account type" (Buffer, 2026-03-24, citing Instagram/TechCrunch).
+- <strong>⚠ BUT business accounts are restricted to commercially-cleared music</strong> (Meta Sound Collection, ~14k tracks); most chart/trending songs are licensed for personal/creator non-commercial use only — using restricted audio on a business account can mute it or cut distribution. <strong>Practical fix widely repeated: use a Creator account, not a Business account, to access the full trending-music catalog.</strong> Sources: MaaS (trymaas.com), SRIP Law, ProTunes One, all 2025–2026 — <strong>⚠ mid-tier blogs, consistent across several but not confirmed by a top-tier analyst.</strong>
+- <strong>⚠ DISCARD</strong> all "faceless posts get 50K–500K views" figures — SEO-spam only (fluxnote, flowshorts, nexlev).</p>
+<p><strong>Facebook Reels:</strong>
+- <strong>Trending audio is NOT a distinct lever on Facebook.</strong> Ranking = Watch time, Engagement, Content quality (audio sits inside the generic "content quality" bucket), Account activity. The lever that <em>did</em> move is <strong>recency</strong>: the Oct-2025 update surfaces <strong>up to 50% more Reels uploaded the same day</strong>. Metricool, "How the Facebook Algorithm Works in 2026" (Oct-2025 update) — https://metricool.com/facebook-algorithm/ — <strong>⚠ effectively single top-source</strong> (corroborated only by lower-tier blogs).</p>
+<p><strong>Net:</strong> Use a trending track when it genuinely fits — as a tie-breaker, ducked under the voice — and don't expect it to rescue weak retention. Use a <strong>Creator account</strong> if you want the full music catalog. On Facebook, prioritize same-day posting and watch-time over the sound choice.</p>
+<hr />
+<h2>Q3 — What does "satisfying transformation" sound design actually use, and what makes a reveal feel satisfying audibly?</h2>
+<p><strong>A layered, time-staggered stack — riser → whoosh → impact → ding — with the music beat drop synced to the reveal frame. Each SFX has a distinct job at a distinct timestamp; they are not interchangeable.</strong></p>
+<p><strong>The core reveal SFX taxonomy (multi-source, converging):</strong>
+| SFX | Job | When |
+|---|---|---|
+| Whoosh / swish | covers the cut, sells motion | <em>during</em> the transition |
+| Impact / bass hit | punctuates the reveal | <em>on</em> the reveal frame |
+| Riser / uplifter | builds anticipation | <em>before</em> the cut, peak on the cut |
+| Ding / sparkle / chime | signals the clean finished result | <em>on</em> the "after" state |</p>
+<p>Sources: SFX Engine "TikTok sound effects" (whooshes/impacts/risers/gasps) and "Ultimate Guide to the Impact Sound Effect" (<strong>2025-10-19</strong>) — https://sfxengine.com/blog/impact-sound-effect ; Finchley Learning ("a whoosh works for a fast swipe… a sharp 'ding' is perfect for a sudden reveal"); CapCut sound-effects tool + tutorials ("Swish/Woosh" on the cut point). Sparkle/chime is a distinct stocked category sold as "logo/transformation reveal" (Orange Free Sounds, Pond5). Most SFX-library/tutorial pages carry no surfaced pub date → <strong>[BACKGROUND]</strong> (acceptable for stable craft; not used for trend/data claims).</p>
+<p><strong>Beat drop synced to the reveal — best-documented technique:</strong>
+- <strong>OpusClip, "Beat-Drop Reveal Timing," pub. 2026-02-11:</strong> "structure your most important visual moment to coincide with the audio's climactic moment." Worked example: product obscured during the 8-second build; <em>on the beat drop at 8s, lighting floods and the product is revealed in a snap zoom.</em> — https://www.opus.pro/blog/sync-video-to-music-beats-seedance
+- Corroborated: Bitcut "Beat Sync Video Editing," Splice "dramatic transitions on the drop" — hold a static shot across the build, then cut on the strongest downbeat. Manual method (tap <strong>M</strong> to drop beat markers, trim each cut to a marker): Corel, Canva Beat Sync, Richard Harrington AE tutorial (<strong>2025-01-13</strong>).
+- <strong>Sync tolerance (the one hard number):</strong> audiovisual asynchrony generally isn't consciously noticed until audio lags video by <strong>~250 ms</strong> — so the reveal hit must land within ~¼ second of the cut. Synchronous AV events show higher integration in the superior temporal sulcus. Peer-reviewed but <strong>[BACKGROUND]</strong> (2010–2012): PMC6633449, PMC3498728.
+- <strong>⚠ Data caveat:</strong> no quantified A/B study isolates beat-synced vs unsynced reveals on platform retention. "Drives more views" is established <em>practice/consensus</em>, not measured effect. The 250 ms window is a lab-perception number, not a social-analytics one.</p>
+<p><strong>Riser / build-up — strongly established:</strong>
+- <strong>Soundstripe, "What Are Cinematic Riser Sound Effects?", pub. 2025-10-30:</strong> risers "build suspense, create anticipation before a music drop… add a cinematic feel to a major reveal." <strong>Key rule: place the riser so its PEAK aligns exactly with the key moment.</strong> — https://www.soundstripe.com/blogs/what-are-cinematic-riser-sound-effects
+- Epidemic Sound, Lens Distortions, Uppbeat, Artlist all stock "riser/uplifter" as a standard transition category. A creator-ordered sequence (riser before → whoosh during → impact after) recurs across tutorials. Several sources (Sight Sound &amp; Story, MasteringBox) note a <strong>beat of near-silence right before the drop makes the impact land harder</strong> (EDM "drop-out" analogy).</p>
+<p><strong>ASMR / oddly-satisfying — separate the science from the engagement claim:</strong>
+- <strong>Physiological effect is proven &amp; recent:</strong> Oxford <em>Neuroscience of Consciousness</em>, <strong>2025</strong>, niaf012 — ASMR videos lowered pulse rate <em>more</em> than nature videos, with peripheral vasodilation (stronger parasympathetic activation). https://academic.oup.com/nc/article/2025/1/niaf012/8127084
+- <strong>Replay/watch-time claim is weaker:</strong> the "loop paradox" (seamless loops trigger dopamine; viewers rewatch "to catch the cut") is multi-source (Wikipedia "Oddly satisfying videos," YouTube Official Blog) but mechanistic, not measured. "ASMR clips get longer watch times" is <strong>⚠ single-source vendor blog</strong>.
+- <strong>Honest gap:</strong> ASMR demonstrably <em>relaxes</em> people ≠ ASMR demonstrably <em>increases retention</em>. Don't conflate. For a website-redesign reveal, ASMR textures (subtle UI clicks, typing, a soft "clean" swipe) are a reasonable garnish, not the load-bearing element.</p>
+<p><strong>Layering rule (most-repeated technical point):</strong> an impact is <em>never one sound</em> — layer high (metallic click) + mid (whoosh body) + low (thump), EQ-carved so each occupies its own frequency band, glued with light compression. SFX Engine "How to layer sound effects" + "Impact" guide (2025-10-19); corroborated by VisualFoodie (swoosh+crack+thump), Pixflow, Krotos. Frequency separation keeps simultaneous reveal hits from turning to mud.</p>
+<hr />
+<h2>Q4 — AI voiceover acceptance: do viewers disengage from robotic TTS?</h2>
+<p><strong>Yes for flat/default TTS; expressive neural voices fare far better but still carry a trust penalty in commercial content. The tolerance line is NOT "AI vs human" — it's "expressive-neural-with-pitch-control (OK) vs flat-default-TTS, esp. TikTok's built-in voice (kills it)." Disclosure is now required.</strong></p>
+<ul>
+<li><strong>Peer-reviewed, on real TikTok ad data — the strongest source:</strong> Lei, Ngai et al., "Voices that captivate: the impact of AI-generated voiceover on video ad engagement," <em>International Journal of Information Management</em> Vol. 88, art. 103030, <strong>online ~2026-05</strong>. Finding: <strong>AI voice → lower engagement vs human; a LOWER PITCH narrows the gap; AI <em>celebrity</em> voices reach parity with human.</strong> ⚠ Ad data, not organic; full effect sizes paywalled. — https://www.sciencedirect.com/science/article/abs/pii/S0268401225000945</li>
+<li><strong>Two 2026 consumer surveys converge in the same direction:</strong></li>
+<li><strong>Adobe Express, "Voices of AI," pub. 2026-02-18</strong> (850 consumers + 205 marketers, US): <strong>77% trust human voices most; 58% would trust a brand LESS if it used AI voices in ads;</strong> 88% have heard a voice and wondered if it was AI. (Adobe sells AI tools, yet the finding cuts <em>against</em> AI audio → raises credibility.) — https://www.adobe.com/express/learn/blog/ai-audio-consumer-trust</li>
+<li><strong>Meltwater + YouGov, "Trust in the Age of AI," pub. 2026-04-27</strong> (~10,000 consumers, 7 markets): <strong>32% trust a brand LESS when content is AI-generated, only 15% more;</strong> acceptance is context-dependent (advertising 47% OK). — https://www.meltwater.com/en/blog/generative-ai-trust-yougov</li>
+<li><strong>Acceptable AI-voice styles:</strong> realistic, expressive neural voices (ElevenLabs, Murf, Speechify, PlayHT, Resemble) with natural intonation and pitch/emotion control. ElevenLabs blog, <strong>updated 2026-03-14</strong> — "the best AI voice tools produce human-like speech… without sounding robotic." ⚠ vendor source, but aligns with the academic pitch/expressiveness finding. — https://elevenlabs.io/blog/7-of-the-best-ai-voices-for-tiktok-and-instagram-content</li>
+<li><strong>The specific killer:</strong> TikTok's built-in TTS — "reads everything at the same emotional temperature; a joke and a warning sound identical." ⚠ vendor blogs (Fliki, VoiceClone AI), illustrative not data, but consistent with the academic finding that flat/robotic TTS underperforms.</li>
+<li><strong>Disclosure is now required, not optional:</strong> TikTok requires labeling realistic AI content incl. audio and auto-labels via C2PA (launched 2024-05, audio labeling rolling out → <strong>[BACKGROUND]</strong> for the original launch, but the obligation stands). YouTube's <strong>2025-07-15</strong> "inauthentic content" rule targets mass-produced/templated uploads — faceless+TTS still monetizes IF it has original scripting, format variation, human creative direction, and AI disclosure. (⚠ "TikTok labeled 1.3B AI videos / removed 51,000" = unverifiable SEO blogs — discard.)</li>
+<li><strong>⚠ DISCARD:</strong> "natural AI voice lifts watch time 15–40%" — content-mill, no primary source, and contradicted by the three credible sources above.</li>
+</ul>
+<p><strong>Net for SANO:</strong> Human founder voice is the safe, higher-trust choice for a service you're selling to skeptical small-business owners. If you scale with AI, use an expressive neural voice, drop the pitch slightly, disclose it, and never use the default TikTok robot voice.</p>
+<hr />
+<h2>Q5 — Caption / text-on-screen best practices per audio choice</h2>
+<p><strong>Match the caption style to the audio mode, keep text out of the platform UI zones, and design FB/IG for sound-off but TikTok for sound-on.</strong></p>
+<ul>
+<li><strong>When there's a VOICEOVER:</strong> auto-captions that track the spoken words (word-by-word / kinetic). Plausible and industry-standard (gives the eye motion to track) — but ⚠ the specific "+15–40% retention from kinetic captions" figures are content-mill with no primary study; treat kinetic captions as a craft default and A/B test in-platform.</li>
+<li><strong>When it's MUSIC-LED:</strong> bold statement/headline text carries the message (no voice to track). Convention across Sprout Social and Storykit, not measured.</li>
+<li><strong>Placement / legibility (strong multi-source consensus):</strong> keep core text in the central <strong>~70–80% safe zone</strong>; clear the bottom <strong>~25–30%</strong> (caption/audio/like-comment-share rail) and the right <strong>~84–120px</strong> (button rail); ~108px top / ~320px bottom clear on Reels; font <strong>≥45px @1080p</strong>, <strong>bold sans-serif</strong>, white with a <strong>~2px black stroke</strong>, ≤~10 words on screen at once. Sources: Sprout Social specs (maintained 2026), Kreatli/Outfy/Zeely safe-zone guides (2026). ⚠ Exact pixels drift as platforms change UI — verify against a live safe-zone template before a campaign; the <em>principle</em> is rock-solid.</li>
+<li><strong>Sound-off vs sound-on is platform-specific (real contradiction to the old orthodoxy):</strong></li>
+<li>The famous "85% watched on mute" is <strong>Digiday 2016 [BACKGROUND]</strong>, Facebook-specific; "80% finish with captions" is <strong>Verizon/Publicis 2019 [BACKGROUND]</strong>. Do <strong>not</strong> cite these as current universals.</li>
+<li>Current pattern (Storykit, updated <strong>2025-12-10</strong>, aggregating Teads/LinkedIn/Meta data): FB/IG feed = mostly muted → design legible silent; <strong>TikTok = sound-ON (TikTok's own data: 88% of users say sound is essential)</strong>; YouTube ~60–65% sound-on; IG Stories ~60% sound-on. — https://storykit.io/blog/social-media-videos-does-sound-matter</li>
+</ul>
+<p><strong>Net:</strong> Captions are mandatory regardless (accessibility + the muted FB/IG share). Auto-caption the voice on voiceover cuts; use bold headline text on music-led cuts. Build every reel to make sense on mute <em>and</em> reward sound-on.</p>
+<hr />
+<h2>⚠ WEAKEST / UNDER-SOURCED CLAIMS (gate these before betting on them)</h2>
+<ol>
+<li><strong>Meta's "+13% incremental conversions with music/voiceover" (Q1)</strong> — the only recent hard retention/conversion number, but it is <strong>single-source, Meta self-reported, ads-only, and bundles music + voiceover together</strong> (does not isolate voice vs text-only). Gate: treat as directional support for "add audio," not proof that voiceover specifically beats text.</li>
+<li><strong>Business-account music restriction → "use a Creator account" (Q2)</strong> — actionable and consistent across several sources, but all are <strong>⚠ mid-tier blogs (MaaS, SRIP Law, ProTunes One)</strong>, none top-tier or platform-official. Gate: verify against Meta's current Sound Collection / account-type music terms before committing the account setup.</li>
+<li><em>(Supporting flags)</em> Facebook "trending audio is a non-lever" rests on <strong>effectively a single top source (Metricool)</strong>. The <strong>~250 ms beat-sync window</strong> and <strong>modality effect</strong> are solid but <strong>[BACKGROUND]</strong> (lab/instructional, not social-feed). All "+X% retention from voiceover / kinetic captions / AI voice" percentages are <strong>content-mill, discarded</strong>. No clean A/B "voiceover vs text-only" watch-time study exists anywhere — the coherence case rests on mechanism, not a feed measurement.</li>
+</ol>
+<p><strong>Re-check date: 2026-09-17.</strong> Reach/algorithm claims (Q2) and AI-voice sentiment (Q4) move fast; the sound-design craft (Q3) and caption placement (Q5) are stable. Re-pull Buffer/Hootsuite/Metricool algorithm guides and any newer AI-voice consumer survey at re-check.</p></div></details><details class="doc"><summary>Caption library<span class="tag">copy</span><span class="chev">›</span></summary><div class="doc-body"><h1>SANO Systems — Beta · Caption Library</h1>
+<p>Voice: confident, plain, anti-agency. No hype. Lowercase-casual is fine. No performance stats, percentages, or view counts in any customer-facing copy (research rule). Approved copy bank used verbatim.</p>
+<p>Brand: <strong>SANO Systems · Beta</strong> · jasper@sanosolutions.ai</p>
+<blockquote>
+<p>One caption block per research-shortlist format (§5). Where the platform changes the writing (IG / FB / TikTok), it's split out. Otherwise the IG caption doubles for all three with the noted hashtag swap.</p>
+</blockquote>
+<hr />
+<h2>1 — Before/After website reveal  ·  <em>Cold → Warm</em>  ·  Both (your #1 paid test)</h2>
+<p><strong>Hook (first line / on-screen):</strong> This is costing you customers every single day.</p>
+<p><strong>IG / TikTok caption:</strong>
+your website is your worst salesperson.</p>
+<p>it loads slow. it doesn't work on a phone. there's no clear next step. so people leave — and you never even see the lead.</p>
+<p>here's the same business, rebuilt. custom design, not a template. an AI chatbot that catches the lead when you're busy. live in 1–3 days.</p>
+<p>$350 flat. one-time. no monthly. forever.</p>
+<p>comment SITE and i'll send details.</p>
+<p><strong>FB caption (slightly fuller, older-skewing audience):</strong>
+Your website is your worst salesperson. If it's slow, hard to use on a phone, and never asks for the sale — it's quietly costing you customers every single day.</p>
+<p>This is the same kind of business, rebuilt: a custom-designed site (not a template), an AI chatbot that catches the lead when you're busy, on-page SEO, domain and hosting included. Live in 1–3 days. $350 flat, one-time, no monthly.</p>
+<p>Comment SITE or email jasper@sanosolutions.ai and I'll send details.</p>
+<p><strong>CTA:</strong> Comment SITE and I'll send details.
+<strong>Hashtags (IG/FB):</strong> #smallbusiness #localbusiness #smallbusinessowner #websitedesign #webdesign #smallbiz #getfound
+<strong>Hashtags (TikTok):</strong> #smallbusiness #smallbusinesscheck #localbusiness #websitedesign #beforeandafter #smallbusinessowner #fyp</p>
+<hr />
+<h2>2 — SANO AI lead-capture demo  ·  <em>Warm</em>  ·  Both</h2>
+<p><strong>Hook (first line / on-screen):</strong> Watch it answer a customer at 2am — and email me the lead.</p>
+<p><strong>IG / TikTok caption:</strong>
+a front desk that never sleeps — and emails you the lead.</p>
+<p>a customer messages your site at 2am with a real question. the AI answers in seconds, then drops their name and number straight into your inbox.</p>
+<p>you wake up to a lead instead of a missed one.</p>
+<p>that's part of the $350 build. custom website. AI chatbot. live in 1–3 days.</p>
+<p>comment SITE and i'll send details.</p>
+<p><strong>FB caption:</strong>
+Think of it as a front desk that never sleeps — and emails you the lead. A customer lands on your site at 2am, asks a question, and the AI chatbot answers in seconds — then sends their name and number straight to your inbox. You wake up to a lead, not a missed call.</p>
+<p>It's built into every SANO site. Custom website + AI chatbot, live in 1–3 days, $350 flat — no monthly.</p>
+<p>Email jasper@sanosolutions.ai to claim your beta spot.</p>
+<p><strong>CTA:</strong> Comment SITE and I'll send details.  /  Email jasper@sanosolutions.ai
+<strong>Hashtags (IG/FB):</strong> #smallbusiness #localbusiness #leadgeneration #smallbusinessowner #aiforbusiness #smallbiz #nevermissalead
+<strong>Hashtags (TikTok):</strong> #smallbusiness #localbusiness #smallbusinesstips #aitools #smallbusinessowner #fyp</p>
+<hr />
+<h2>3 — $350 vs $10k–$15k agency price-anchor reveal  ·  <em>Cold → Ready</em>  ·  Both</h2>
+<p><strong>Hook (first line / on-screen):</strong> $12,000 → $350. Same site.</p>
+<p><strong>IG / TikTok caption:</strong>
+most agencies charge $8,000–$15,000. and take months.</p>
+<p>same site. a fraction of the price.</p>
+<p>$350. flat. one-time. no monthly. forever.</p>
+<p>custom website. AI chatbot. live in 1–3 days.</p>
+<p>comment SITE and i'll send details.</p>
+<p><strong>FB caption:</strong>
+Most agencies charge $8,000–$15,000 for a website alone — and it takes months. SANO does the same kind of build for $350. Flat. One-time. No monthly, forever.</p>
+<p>Custom website, AI chatbot, on-page SEO, domain and hosting — live in 1–3 days. Yes, really.</p>
+<p>Comment SITE or email jasper@sanosolutions.ai.</p>
+<p><strong>CTA:</strong> Claim your beta spot. Email jasper@sanosolutions.ai
+<strong>Hashtags (IG/FB):</strong> #smallbusiness #localbusiness #webdesign #smallbusinessowner #affordablewebsite #smallbiz #smallbusinesstips
+<strong>Hashtags (TikTok):</strong> #smallbusiness #pricecheck #webdesign #smallbusinessowner #localbusiness #fyp</p>
+<hr />
+<h2>4 — Free "60-second site teardown" (lead magnet)  ·  <em>Cold</em>  ·  Both</h2>
+<p><strong>Hook (first line / on-screen):</strong> Send me your website. I'll tell you why it's not making you money.</p>
+<p><strong>IG / TikTok caption:</strong>
+send me your website. i'll tell you why it's not making you money.</p>
+<p>no pitch. i'll screen-record a 60-second teardown — what's slow, what's confusing, where you're losing the lead — and show you the fix.</p>
+<p>free. just comment SITE or drop your link below.</p>
+<p>(and if you want it rebuilt: $350 flat, live in 1–3 days.)</p>
+<p><strong>FB caption:</strong>
+Send me your website and I'll tell you why it's not making you money. I'll record a quick 60-second teardown — what's slow, what's confusing on a phone, and where you're losing the lead — and show you exactly what to fix. Free, no pitch.</p>
+<p>Comment SITE or drop your link below. And if you want it rebuilt: $350 flat, custom, live in 1–3 days.</p>
+<p><strong>CTA:</strong> Comment SITE and I'll send details.
+<strong>Hashtags (IG/FB):</strong> #smallbusiness #localbusiness #websiteaudit #webdesign #smallbusinessowner #smallbiz #freeaudit
+<strong>Hashtags (TikTok):</strong> #smallbusiness #websiteaudit #smallbusinesscheck #webdesign #localbusiness #fyp</p>
+<hr />
+<h2>5 — "Your site vs your competitor's" two-phone split  ·  <em>Warm</em>  ·  Organic</h2>
+<p><strong>Hook (first line / on-screen):</strong> One of these gets the call. Which one are you?</p>
+<p><strong>IG / TikTok caption:</strong>
+one of these gets the call. which one are you?</p>
+<p>same town, same service. one site loads fast, works on a phone, and asks for the sale. the other makes people wait, pinch, and leave.</p>
+<p>guess which owner wonders why the phone's quiet.</p>
+<p>yours can be the one that gets the call. $350. custom. live in 1–3 days.</p>
+<p>comment SITE and i'll send details.</p>
+<p><strong>FB caption:</strong>
+Two businesses, same town, same service. One website loads fast, works on a phone, and makes it easy to call. The other makes people wait and leave. One of these gets the call — which one are you?</p>
+<p>Yours can be the one that gets the call. Custom site, $350 flat, live in 1–3 days. Comment SITE and I'll send details.</p>
+<p><strong>CTA:</strong> Comment SITE and I'll send details.
+<strong>Hashtags (IG/FB):</strong> #smallbusiness #localbusiness #webdesign #smallbusinessowner #competitivedge #smallbiz #getfound
+<strong>Hashtags (TikTok):</strong> #smallbusiness #localbusiness #smallbusinesscheck #webdesign #smallbusinessowner #fyp</p>
+<hr />
+<h2>6 — Carousel teardown: "5 things killing your website (and the $350 fix)"  ·  <em>Cold → Warm</em>  ·  Both (IG/FB feed)</h2>
+<p><strong>Hook (slide 1 / first line):</strong> Your website is your worst salesperson.</p>
+<p><strong>IG / FB caption:</strong>
+your website is your worst salesperson — and here's why.</p>
+<p>it's slow, so people leave before it loads.
+it doesn't work on a phone.
+there's no clear next step, so nobody calls.
+and it can't catch the lead when you're busy.</p>
+<p>the fix: a custom site + AI chatbot, built for you, live in 1–3 days. $350 flat. no monthly.</p>
+<p>save this for when you're ready. comment SITE and i'll send details.</p>
+<p><strong>CTA:</strong> Save this. Comment SITE and I'll send details.
+<strong>Hashtags (IG/FB):</strong> #smallbusiness #localbusiness #websitetips #webdesign #smallbusinessowner #smallbiz #smallbusinessmarketing #getfound</p>
+<p><em>(Carousel is feed-native; no separate TikTok cut. For TikTok, use format #1 video instead.)</em></p>
+<hr />
+<h2>7 — "Built in 1–3 days" timelapse  ·  <em>Warm → Ready</em>  ·  Organic</h2>
+<p><strong>Hook (first line / on-screen):</strong> Most agencies take 3 months. This took 3 days.</p>
+<p><strong>IG / TikTok caption:</strong>
+most agencies take 3 months. this took 3 days.</p>
+<p>custom website. AI chatbot. on-page SEO. domain and hosting. all done for you.</p>
+<p>live in 1–3 days. $350 flat, one-time, no monthly.</p>
+<p>comment SITE and i'll send details.</p>
+<p><strong>FB caption:</strong>
+Most agencies take three months. This took three days. Custom website, AI chatbot, on-page SEO, domain and hosting — done for you and live in 1–3 days. $350 flat, one-time, no monthly.</p>
+<p>Comment SITE or email jasper@sanosolutions.ai.</p>
+<p><strong>CTA:</strong> Comment SITE and I'll send details.
+<strong>Hashtags (IG/FB):</strong> #smallbusiness #localbusiness #webdesign #smallbusinessowner #smallbiz #fastturnaround #getfound
+<strong>Hashtags (TikTok):</strong> #smallbusiness #webdesign #smallbusinessowner #localbusiness #timelapse #fyp</p>
+<hr />
+<h2>8 — POV text-on-screen: "a website that works while you sleep"  ·  <em>Warm</em>  ·  Organic</h2>
+<p><strong>Hook (first line / on-screen):</strong> POV: you finally have a website that works while you sleep.</p>
+<p><strong>IG / TikTok caption:</strong>
+pov: you finally have a website that works while you sleep.</p>
+<p>it loads fast. it looks right on a phone. and the AI chatbot answers customers and emails you the lead while you're off the clock.</p>
+<p>a front desk that never sleeps — and emails you the lead.</p>
+<p>$350. custom. live in 1–3 days. comment SITE and i'll send details.</p>
+<p><strong>FB caption:</strong>
+POV: you finally have a website that works while you sleep. It loads fast, looks right on a phone, and the AI chatbot answers customers and emails you the lead — even at 2am. A front desk that never sleeps.</p>
+<p>Custom site, $350 flat, live in 1–3 days. Comment SITE and I'll send details.</p>
+<p><strong>CTA:</strong> Comment SITE and I'll send details.
+<strong>Hashtags (IG/FB):</strong> #smallbusiness #localbusiness #smallbusinessowner #webdesign #aiforbusiness #smallbiz #passiveleads
+<strong>Hashtags (TikTok):</strong> #smallbusiness #pov #smallbusinessowner #localbusiness #aitools #fyp</p>
+<hr />
+<h2>9 — "DIY builder vs done-for-you"  ·  <em>Warm</em>  ·  Both</h2>
+<p><strong>Hook (first line / on-screen):</strong> AI built me a website in 30 seconds. Then I had to do everything else.</p>
+<p><strong>IG / TikTok caption:</strong>
+30 seconds to generate. 30 hours to actually finish.</p>
+<p>the AI builder hands you an empty shell. the writing, the photos, the SEO — still your job. and it looks like a template, because it is one.</p>
+<p>done-for-you means done. custom, not a template. live in 1–3 days. $350 once — no monthly.</p>
+<p>comment SITE and i'll send details.</p>
+<p><strong>FB caption:</strong>
+AI builders are fast at one thing: generating an empty shell in 30 seconds. Then it's 30 hours of your time — the writing, the photos, the SEO — and it still looks like a template.</p>
+<p>Done-for-you means done. Custom, not a template. Live in 1–3 days. $350 once, no monthly. Comment SITE and I'll send details.</p>
+<p><strong>CTA:</strong> Comment SITE and I'll send details.
+<strong>Hashtags (IG/FB):</strong> #smallbusiness #localbusiness #webdesign #smallbusinessowner #doneforyou #smallbiz #smallbusinesstips
+<strong>Hashtags (TikTok):</strong> #smallbusiness #webdesign #smallbusinessowner #diyfail #localbusiness #fyp</p>
+<hr />
+<h2>10 — "No monthly" myth-bust text-on-video  ·  <em>Ready</em>  ·  Both</h2>
+<p><strong>Hook (first line / on-screen):</strong> No monthly. Forever.</p>
+<p><strong>IG / TikTok caption:</strong>
+no monthly. forever. yes, really.</p>
+<p>one $350 payment. that's it. no subscription, no contract, no "starting at."</p>
+<p>custom website + AI chatbot, live in 1–3 days. need more pages? just $75 each. want to edit it yourself? optional admin dashboard, +$350.</p>
+<p>comment SITE and i'll send details.</p>
+<p><strong>FB caption:</strong>
+No monthly. Forever. Yes, really. One $350 payment and the site is yours — no subscription, no contract, no "starting at."</p>
+<p>Custom website + AI chatbot, live in 1–3 days. Need more pages? Just $75 each. Want to edit it yourself anytime? Optional admin dashboard, +$350.</p>
+<p>Comment SITE or email jasper@sanosolutions.ai.</p>
+<p><strong>CTA:</strong> Comment SITE and I'll send details.  /  Email jasper@sanosolutions.ai
+<strong>Hashtags (IG/FB):</strong> #smallbusiness #localbusiness #nomonthlyfees #webdesign #smallbusinessowner #smallbiz #affordablewebsite
+<strong>Hashtags (TikTok):</strong> #smallbusiness #nomonthly #webdesign #smallbusinessowner #localbusiness #fyp</p></div></details><details class="doc"><summary>Video storyboards<span class="tag">storyboards</span><span class="chev">›</span></summary><div class="doc-body"><h1>SANO Systems — Beta · Faceless Video Storyboards</h1>
+<p>Six screen-record-led concepts. No person on camera in any of them. Each frame is one of three asset types:
+- <strong>[SCREEN REC]</strong> — Jasper screen-records a live demo site or the SANO AI chatbot (the 4 demos: Summit Tree Care, Evergreen Lawn &amp; Landscape, Premier Event Transport, Rapid Flow Plumbing).
+- <strong>[GRAPHIC]</strong> — a designed PNG from <code>02-assets/graphics/</code> (Part A). File named per frame.
+- <strong>[AI b-roll — Higgsfield]</strong> — a mood/atmosphere clip Jasper generates (Jasper handles b-roll).</p>
+<p>Producer rules carried from research §5: open on the OUTCOME not the problem narration; text-on-screen is mandatory (it's the narrator); keep the OPENER raw/phone-shot, not glossy; one body → many 3-second hooks. <strong>No stats, percentages, or view counts on screen.</strong></p>
+<p>End-card for all six: <strong>[GRAPHIC] 03-offer-card-feed.png</strong> held 2s, OR a simple end frame — "$350 flat. One-time. No monthly. / Comment SITE and I'll send details. / SANO Systems · Beta."</p>
+<hr />
+<h2>VIDEO 1 — Before/After website reveal</h2>
+<p><strong>Format:</strong> research §5 #1 · Cold → Warm · the #1 paid test · <strong>Length: 10–14s</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Frame</th>
+<th>Asset</th>
+<th>On-screen text</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hook (0–3s)</td>
+<td>Hand-held phone scrolling a janky/old-style site mid-load — pinch, sideways scroll, slow</td>
+<td>[SCREEN REC] of a deliberately weak/old site (or an AI b-roll mock of an outdated page) — <strong>[AI b-roll — Higgsfield]</strong> for the "old site on a phone in a dim room" mood if no real bad site on hand</td>
+<td>"This is costing you customers every single day."</td>
+</tr>
+<tr>
+<td>2 (3–6s)</td>
+<td>Hard cut. Same phone, now scrolling the SANO demo — fast load, clean hero, crisp on mobile</td>
+<td>[SCREEN REC] tree-mobile or plumbing-mobile demo</td>
+<td>"Same business. Rebuilt."</td>
+</tr>
+<tr>
+<td>3 (6–9s)</td>
+<td>Scroll past the services section and the clear call-to-action button</td>
+<td>[SCREEN REC] demo, scroll to CTA / contact form</td>
+<td>"Custom — not a template."</td>
+</tr>
+<tr>
+<td>4 (9–11s)</td>
+<td>Tap the chat bubble; SANO AI answers a question</td>
+<td>[SCREEN REC] SANO AI on demo site</td>
+<td>"And it catches the lead when you're busy."</td>
+</tr>
+<tr>
+<td>End (11–14s)</td>
+<td>Price + CTA card</td>
+<td>[GRAPHIC] 01-price-anchor-feed.png → 03-offer-card-feed.png</td>
+<td>"$350. Live in 1–3 days. / Comment SITE."</td>
+</tr>
+</tbody>
+</table>
+<p><strong>End CTA card:</strong> Comment SITE and I'll send details. · SANO Systems · Beta.
+<em>Note: cut this body once, then make 10 different 3-second openers over it (research §1c). Hook covers in <code>graphics/06-hook-*</code> can serve as alternate cold-open title frames.</em></p>
+<hr />
+<h2>VIDEO 2 — SANO AI 2am lead-capture demo</h2>
+<p><strong>Format:</strong> §5 #2 · Warm · <strong>Length: 10–15s</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Frame</th>
+<th>Asset</th>
+<th>On-screen text</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hook (0–3s)</td>
+<td>A phone glowing in a dark room, clock reads 2:00am — the "after-hours" mood</td>
+<td><strong>[AI b-roll — Higgsfield]</strong> dark room, phone face-up glowing on a nightstand at 2am</td>
+<td>"Watch it answer a customer at 2am."</td>
+</tr>
+<tr>
+<td>2 (3–7s)</td>
+<td>Cut to screen. A visitor types a real question into the site chat: "do you do emergency calls?"</td>
+<td>[SCREEN REC] SANO AI on plumbing or tree demo</td>
+<td>"A customer asks a question…"</td>
+</tr>
+<tr>
+<td>3 (7–10s)</td>
+<td>The bot replies in seconds, then collects name + number</td>
+<td>[SCREEN REC] SANO AI capturing the lead</td>
+<td>"It answers — then captures the lead."</td>
+</tr>
+<tr>
+<td>4 (10–12s)</td>
+<td>Cut to an inbox notification arriving (email preview with the lead's details)</td>
+<td>[SCREEN REC] inbox/email, OR <strong>[AI b-roll — Higgsfield]</strong> phone buzzing with a new-email notification</td>
+<td>"…and emails it straight to you."</td>
+</tr>
+<tr>
+<td>End (12–15s)</td>
+<td>Reframe line + CTA</td>
+<td>[GRAPHIC] end card</td>
+<td>"A front desk that never sleeps — and emails you the lead."</td>
+</tr>
+</tbody>
+</table>
+<p><strong>End CTA card:</strong> $350. Custom website + AI chatbot. / Comment SITE and I'll send details. · SANO Systems · Beta.
+<em>This video directly answers the market's chatbot skepticism (research §0/§4): sell the JOB (lead in your inbox), not the FEATURE.</em></p>
+<hr />
+<h2>VIDEO 3 — "Built in 1–3 days" timelapse</h2>
+<p><strong>Format:</strong> §5 #7 · Warm → Ready · <strong>Length: 8–12s</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Frame</th>
+<th>Asset</th>
+<th>On-screen text</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hook (0–3s)</td>
+<td>Open ON the finished site scrolling smoothly (outcome-first)</td>
+<td>[SCREEN REC] a demo site, smooth top-to-bottom scroll set to a beat</td>
+<td>"Most agencies take 3 months. This took 3 days."</td>
+</tr>
+<tr>
+<td>2 (3–6s)</td>
+<td>Fast montage: hero → services → testimonials → contact, speed-ramped</td>
+<td>[SCREEN REC] demo, sped-up scroll through sections</td>
+<td>"Custom site. AI chatbot. SEO. Done for you."</td>
+</tr>
+<tr>
+<td>3 (6–9s)</td>
+<td>Day counter ticks up on screen as the page keeps scrolling — "Day 1 / Day 2 / Day 3 → Live"</td>
+<td>[SCREEN REC] demo + on-screen day counter overlay</td>
+<td>"Day 1 → Live."</td>
+</tr>
+<tr>
+<td>End (9–12s)</td>
+<td>Price + CTA</td>
+<td>[GRAPHIC] 06-hook-3-months-3-days.png as a title beat → end card</td>
+<td>"$350 flat. No monthly. / Comment SITE."</td>
+</tr>
+</tbody>
+</table>
+<p><strong>End CTA card:</strong> Live in 1–3 days. $350 flat. / Comment SITE and I'll send details. · SANO Systems · Beta.</p>
+<hr />
+<h2>VIDEO 4 — Free 60-second site teardown</h2>
+<p><strong>Format:</strong> §5 #4 · Cold (lead magnet) · <strong>Length: 30–60s</strong> (longer-form, native value)</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Frame</th>
+<th>Asset</th>
+<th>On-screen text</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hook (0–3s)</td>
+<td>Open on a volunteer's real (weak) site mid-scroll, cursor circling a problem</td>
+<td>[SCREEN REC] volunteer site (with permission)</td>
+<td>"Send me your website. I'll tell you why it's not making you money."</td>
+</tr>
+<tr>
+<td>2 (3–15s)</td>
+<td>Cursor-led walkthrough: point at the slow load, the broken mobile view</td>
+<td>[SCREEN REC] volunteer site, annotate with arrows/circles</td>
+<td>"It's slow." → "It breaks on a phone."</td>
+</tr>
+<tr>
+<td>3 (15–30s)</td>
+<td>Point at the missing/buried call-to-action; scroll for the phone number</td>
+<td>[SCREEN REC] volunteer site</td>
+<td>"No clear next step — so nobody calls."</td>
+</tr>
+<tr>
+<td>4 (30–45s)</td>
+<td>Cut to a SANO demo in the same industry as the "here's the fix"</td>
+<td>[SCREEN REC] matching demo (e.g. lawn or transport)</td>
+<td>"Here's what yours could look like."</td>
+</tr>
+<tr>
+<td>5 (45–55s)</td>
+<td>Show the SANO AI catching a lead</td>
+<td>[SCREEN REC] SANO AI</td>
+<td>"And it catches the lead when you're busy."</td>
+</tr>
+<tr>
+<td>End (55–60s)</td>
+<td>Offer + CTA</td>
+<td>[GRAPHIC] 03-offer-card-feed.png</td>
+<td>"$350. Live in 1–3 days. / Comment SITE."</td>
+</tr>
+</tbody>
+</table>
+<p><strong>End CTA card:</strong> Want yours rebuilt? $350 flat. / Comment SITE and I'll send details. · SANO Systems · Beta.
+<em>The teardown IS the conversion event; the $350 is the follow-up (research §6 #5). Endlessly producible — every volunteer URL is a new video and a warm lead.</em></p>
+<hr />
+<h2>VIDEO 5 — DIY-vs-done-for-you</h2>
+<p><strong>Format:</strong> §5 #9 · Warm · <strong>Length: 10–15s</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Frame</th>
+<th>Asset</th>
+<th>On-screen text</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hook (0–3s)</td>
+<td>Screen-rec of an AI builder spitting out a blank/empty template dashboard</td>
+<td>[SCREEN REC] a DIY AI-builder dashboard (Durable/Wix-style), empty generated shell</td>
+<td>"AI built me a website in 30 seconds."</td>
+</tr>
+<tr>
+<td>2 (3–7s)</td>
+<td>Cursor hovers over all the empty bits still to fill — copy boxes, image placeholders, blank SEO fields</td>
+<td>[SCREEN REC] same builder, empty fields</td>
+<td>"Then I had to do everything else."</td>
+</tr>
+<tr>
+<td>3 (7–9s)</td>
+<td>On-screen contrast line over the still-templated look</td>
+<td>[GRAPHIC] 05-diy-vs-dfy-feed.png held as a beat</td>
+<td>"30 seconds to generate. 30 hours to finish."</td>
+</tr>
+<tr>
+<td>4 (9–12s)</td>
+<td>Hard cut to a finished SANO demo, fully built, scrolling clean</td>
+<td>[SCREEN REC] demo site</td>
+<td>"Done-for-you means done. Custom — not a template."</td>
+</tr>
+<tr>
+<td>End (12–15s)</td>
+<td>Price + CTA</td>
+<td>[GRAPHIC] end card</td>
+<td>"$350 once. No monthly. / Comment SITE."</td>
+</tr>
+</tbody>
+</table>
+<p><strong>End CTA card:</strong> Live in 1–3 days. $350 once. / Comment SITE and I'll send details. · SANO Systems · Beta.
+<em>Anchor against the owner's TIME, not just price (research §6 #4) — "$350 buys back your weekend."</em></p>
+<hr />
+<h2>VIDEO 6 — $350 vs $12k</h2>
+<p><strong>Format:</strong> §5 #3 · Cold → Ready · <strong>Length: 8–12s</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Frame</th>
+<th>Asset</th>
+<th>On-screen text</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hook (0–3s)</td>
+<td>Big "$12,000" slams on screen, then a strike-through and a slash down to "$350."</td>
+<td>[GRAPHIC] 01-price-anchor-reel.png as the animated cold-open (or screen-rec it scrolling)</td>
+<td>"$12,000 → $350. Same site."</td>
+</tr>
+<tr>
+<td>2 (3–6s)</td>
+<td>Cut to a finished SANO demo scrolling — proof the cheap price is a real site</td>
+<td>[SCREEN REC] demo site</td>
+<td>"Same site. A fraction of the price."</td>
+</tr>
+<tr>
+<td>3 (6–9s)</td>
+<td>Quick scroll past services + the AI chat bubble</td>
+<td>[SCREEN REC] demo + SANO AI bubble</td>
+<td>"Custom website. AI chatbot. Live in 1–3 days."</td>
+</tr>
+<tr>
+<td>4 (9–11s)</td>
+<td>"No monthly" beat</td>
+<td>[GRAPHIC] 02-no-monthly-feed.png as a title beat</td>
+<td>"No monthly. Forever. Yes, really."</td>
+</tr>
+<tr>
+<td>End (11–12s)</td>
+<td>Offer + CTA</td>
+<td>[GRAPHIC] 03-offer-card-feed.png</td>
+<td>"$350 flat. / Comment SITE."</td>
+</tr>
+</tbody>
+</table>
+<p><strong>End CTA card:</strong> Most agencies charge $8,000–$15,000. And take months. / $350. Same site. / Comment SITE and I'll send details. · SANO Systems · Beta.
+<em>Optional mood opener: </em><em>[AI b-roll — Higgsfield]</em><em> a stack of invoices / a "$12,000 estimate" paper landing on a desk, for the price-shock cold open before the graphic slams in.</em></p></div></details></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="fb"><span class="dot"></span>SANO Systems · Beta · 2026</div>
+    <div>A faceless content campaign for done-for-you websites + an AI front desk.</div>
+    <div class="private">🔒 Private share — please don't repost</div>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- make-it-live 1781801591 -->
