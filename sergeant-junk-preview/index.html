@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SANO Systems — Website Design Preview for Sergeant Junk Removal</title>
+<meta name="description" content="Two sample website designs prepared by SANO Systems for Sergeant Junk Removal. Pick a direction and we build your real site in days.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#060608;--bg2:#0c0e14;--card:#11141c;--line:rgba(255,255,255,.09);
+    --blue:#0070F3;--cyan:#00D4FF;--amber:#E8943A;--text:#F2EBE0;--muted:#9aa1ad;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  .btn{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(120deg,var(--blue),var(--cyan));color:#04121f;font-weight:700;padding:14px 26px;border-radius:10px;font-size:15.5px;transition:.18s;border:0;cursor:pointer}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,112,243,.32)}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.22);color:var(--text)}
+  header{position:sticky;top:0;z-index:50;background:rgba(6,6,8,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:66px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:18px}
+  .logo .dot{width:11px;height:11px;border-radius:50%;background:linear-gradient(120deg,var(--blue),var(--cyan));box-shadow:0 0 14px var(--cyan)}
+  .navlinks{display:flex;gap:22px;align-items:center;font-size:14.5px}
+  .navlinks a.txt{color:var(--muted)}@media(max-width:680px){.navlinks .txt{display:none}}
+  .hero{text-align:center;padding:80px 0 60px;background:radial-gradient(820px 420px at 50% -14%,rgba(0,112,243,.26),transparent 62%)}
+  .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(0,212,255,.35);background:rgba(0,212,255,.07);color:var(--cyan);padding:7px 15px;border-radius:100px;font-size:13px;font-weight:600;margin-bottom:22px}
+  .hero h1{font-size:clamp(34px,6vw,60px);font-weight:700;line-height:1.06;letter-spacing:-.02em;margin-bottom:18px}
+  .hero h1 .grad{background:linear-gradient(120deg,var(--blue),var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{color:var(--muted);font-size:18px;max-width:620px;margin:0 auto 30px}
+  .hero .prep{margin-top:26px;font-size:13.5px;color:var(--muted)}
+  .notice{max-width:760px;margin:0 auto;background:rgba(232,148,58,.08);border:1px solid rgba(232,148,58,.35);border-radius:14px;padding:20px 24px;font-size:15px;color:#f0e3d2}
+  .notice b{color:var(--amber)}
+  section{padding:60px 0}
+  .eyebrow{color:var(--cyan);text-transform:uppercase;letter-spacing:.14em;font-size:13px;font-weight:600;margin-bottom:12px;text-align:center}
+  .sec-h{font-size:clamp(26px,4.2vw,40px);font-weight:700;text-align:center;letter-spacing:-.02em;margin-bottom:12px}
+  .sec-sub{color:var(--muted);text-align:center;max-width:600px;margin:0 auto 40px;font-size:16.5px}
+  /* options */
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:760px){.opts{grid-template-columns:1fr}}
+  .opt{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.18s;display:flex;flex-direction:column}
+  .opt:hover{border-color:rgba(0,212,255,.4);transform:translateY(-3px)}
+  .opt .top{padding:14px 22px;font-size:12.5px;color:var(--muted);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  .opt .preview{height:200px;display:flex;align-items:center;justify-content:center;position:relative}
+  .opt.a .preview{background:radial-gradient(500px 240px at 70% 0,rgba(255,106,26,.22),transparent 60%),linear-gradient(155deg,#2c331a,#15160f)}
+  .opt.b .preview{background:radial-gradient(500px 240px at 70% 0,rgba(0,112,243,.32),transparent 60%),linear-gradient(155deg,#0d1016,#07080c)}
+  .opt .pv-label{font-size:13px;letter-spacing:.18em;text-transform:uppercase;opacity:.5}
+  .opt .body{padding:24px;flex:1;display:flex;flex-direction:column}
+  .opt h3{font-size:22px;margin-bottom:6px}
+  .opt .tag{font-size:13px;color:var(--cyan);margin-bottom:12px;font-weight:600}
+  .opt p{color:var(--muted);font-size:14.5px;margin-bottom:20px;flex:1}
+  .opt .btn{justify-content:center}
+  .reminder{max-width:760px;margin:34px auto 0;text-align:center;color:var(--muted);font-size:14px}
+  /* included */
+  .inc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+  .inc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px}
+  .inc .ic{font-size:24px;margin-bottom:12px}
+  .inc h4{font-size:17px;margin-bottom:7px}
+  .inc p{color:var(--muted);font-size:14px}
+  .inc .mini{display:inline-block;margin-top:10px;font-size:12px;color:var(--cyan)}
+  /* pricing */
+  .price{background:var(--bg2)}
+  .pcard{max-width:560px;margin:0 auto;background:var(--card);border:1px solid rgba(0,212,255,.25);border-radius:20px;padding:36px;text-align:center}
+  .pcard .amt{font-size:54px;font-weight:700;background:linear-gradient(120deg,var(--blue),var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .pcard .amt small{font-size:18px;color:var(--muted);-webkit-text-fill-color:var(--muted)}
+  .pcard ul{list-style:none;text-align:left;margin:22px auto 0;max-width:420px;display:flex;flex-direction:column;gap:11px}
+  .pcard li{padding-left:28px;position:relative;font-size:15px}
+  .pcard li:before{content:'✓';position:absolute;left:0;color:var(--cyan);font-weight:700}
+  .addons{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:24px}
+  .addon{background:var(--card);border:1px dashed rgba(232,148,58,.4);border-radius:12px;padding:16px 20px;max-width:340px;font-size:14px;color:var(--muted)}
+  .addon b{color:var(--amber)}
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:38px}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;position:relative}
+  .step .n{width:34px;height:34px;border-radius:50%;background:linear-gradient(120deg,var(--blue),var(--cyan));color:#04121f;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:13px}
+  .step h4{font-size:17px;margin-bottom:7px}.step p{color:var(--muted);font-size:14px}
+  /* faq */
+  .faq{max-width:760px;margin:0 auto}
+  details{border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin-bottom:12px;background:var(--card)}
+  summary{font-weight:600;font-size:16px;cursor:pointer;list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary:after{content:'+';float:right;color:var(--cyan);font-size:20px}
+  details[open] summary:after{content:'–'}
+  details p{color:var(--muted);font-size:14.5px;margin-top:12px}
+  /* contact */
+  .contact{text-align:center}
+  .contact .btn{margin-top:8px}
+  footer{padding:40px 0 30px;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:13.5px}
+  footer a{color:var(--cyan)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#"><span class="dot"></span> SANO <span style="color:var(--muted);font-weight:500">Systems</span></a>
+    <nav class="navlinks">
+      <a class="txt" href="#options">Designs</a>
+      <a class="txt" href="#pricing">Pricing</a>
+      <a class="btn" href="mailto:jasper@sanosolutions.ai?subject=Sergeant%20Junk%20Removal%20—%20Website">Get Started</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="pill">● Sample Designs · No Obligation</span>
+    <h1>Two website designs,<br>built for <span class="grad">Sergeant Junk Removal.</span></h1>
+    <p>We put together two completely different directions for your new site. Click through both, see which feels like Sergeant — then we build the real thing for you in days.</p>
+    <a class="btn" href="#options">See the two designs ↓</a>
+    <p class="prep">Prepared by SANO Systems for Sergeant Junk Removal · Los Angeles, CA</p>
+  </div>
+  <div class="wrap" style="margin-top:38px">
+    <div class="notice"><b>Please read this first:</b> The two websites below are <b>samples</b> — they're here to show you the look and style. They are <b>not</b> your finished website, and nothing is locked in. The photos are temporary stand-ins; your real site uses your own job photos and your real Google reviews. If you like a direction, we build it around exactly what you want.</div>
+  </div>
+</section>
+
+<section id="options">
+  <p class="eyebrow">Choose your direction</p>
+  <h2 class="sec-h">Two designs. One Sergeant.</h2>
+  <p class="sec-sub">Same business, same info — two very different looks. There's no wrong answer; we just want to know what feels right to you.</p>
+  <div class="wrap">
+    <div class="opts">
+      <div class="opt a">
+        <div class="top"><span>Option A · Sample</span><span>tap to open ↗</span></div>
+        <a class="preview" href="option-a.html" target="_blank"><span class="pv-label">Field-Rugged</span></a>
+        <div class="body">
+          <h3>Bold &amp; Veteran-Rugged</h3>
+          <div class="tag">Olive &amp; safety-orange · tactical</div>
+          <p>Strong, hard-working, and proud of the veteran-owned roots. Stencil headlines and a no-nonsense, "we get it done" feel.</p>
+          <a class="btn" href="option-a.html" target="_blank">Open Option A ↗</a>
+        </div>
+      </div>
+      <div class="opt b">
+        <div class="top"><span>Option B · Sample</span><span>tap to open ↗</span></div>
+        <a class="preview" href="option-b.html" target="_blank"><span class="pv-label">Sleek &amp; Modern</span></a>
+        <div class="body">
+          <h3>Sleek &amp; Modern Pro</h3>
+          <div class="tag">Near-black &amp; electric blue · premium</div>
+          <p>Clean, high-end, and tech-forward. Looks like a company twice your size — sharp on a phone, glowing accents, modern feel.</p>
+          <a class="btn" href="option-b.html" target="_blank">Open Option B ↗</a>
+        </div>
+      </div>
+    </div>
+    <p class="reminder">Remember: these are just samples. A few details (services, review text, photos) are stand-ins for you to confirm. Nothing here is final.</p>
+  </div>
+</section>
+
+<section id="included">
+  <p class="eyebrow">What's included</p>
+  <h2 class="sec-h">Every Sergeant build comes with this</h2>
+  <p class="sec-sub">Whichever design you pick, here's what you get — built, optimized, and live in days.</p>
+  <div class="wrap">
+    <div class="inc-grid">
+      <div class="inc"><div class="ic">◧</div><h4>A website made just for you</h4><p>Designed around Sergeant — not a copy-paste template. Looks sharp on a phone or a computer.</p></div>
+      <div class="inc"><div class="ic">⌗</div><h4>Set up to show up on Google</h4><p>Built so people in LA searching for junk removal or movers can actually find you.</p></div>
+      <div class="inc"><div class="ic">✦</div><h4>A 24/7 helper that answers customers</h4><p>A friendly assistant on your site that answers common questions any time and writes down the customer's name and number, so you never miss a job.<span class="mini">It'll be on your real site — not in these samples.</span></p></div>
+      <div class="inc"><div class="ic">⬡</div><h4>Web address &amp; hosting — first year free</h4><p>The address people type to find you, plus the service that keeps your site online. Both covered for the first year.</p></div>
+      <div class="inc"><div class="ic">◔</div><h4>Up and running in 1–3 days</h4><p>Once we have your details, your website is live in days — not months.</p></div>
+      <div class="inc"><div class="ic">♺</div><h4>90 days of bug fixes</h4><p>If anything on your live site stops working in the first 90 days, we fix it — free.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="price" id="pricing">
+  <p class="eyebrow">Beta pricing</p>
+  <h2 class="sec-h">One flat fee. No monthly.</h2>
+  <p class="sec-sub">This is our early-client price, and it locks in for good. ("Beta" just means we're getting started — so you get our lowest price and it never goes up.)</p>
+  <div class="wrap">
+    <div class="pcard">
+      <div class="amt">$350<small> flat · one-time</small></div>
+      <p style="color:var(--muted);margin-top:8px">Everything you need to launch — a custom website and AI helper — in one payment. No monthly fees, ever.</p>
+      <ul>
+        <li>A website made just for you (up to 4 pages)</li>
+        <li>A 24/7 helper that answers customers &amp; takes their info</li>
+        <li>Set up so people find you on Google</li>
+        <li>Web address &amp; hosting — first year included</li>
+        <li>90 days of bug fixes, free</li>
+        <li>Live in 1–3 days</li>
+      </ul>
+    </div>
+    <div class="addons">
+      <div class="addon"><b>Admin Dashboard +$350</b> — optional, one-time. Edit your own site from your phone — text, photos, prices, pages — in seconds. It's also your lead inbox. Skip it and our team makes changes for you.</div>
+      <div class="addon"><b>Extra pages $75 each</b> — beyond the 4 included. Most businesses find 4 covers the essentials.</div>
+    </div>
+  </div>
+</section>
+
+<section id="next">
+  <p class="eyebrow">What happens next</p>
+  <h2 class="sec-h">From here, it's easy</h2>
+  <div class="wrap">
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h4>Look at both samples</h4><p>Open Option A and Option B on your phone. Take your time — no rush, no obligation.</p></div>
+      <div class="step"><div class="n">2</div><h4>Tell us which you like</h4><p>Call or email and say which one feels like Sergeant — and anything you'd want different. Like bits of both? That's fine too.</p></div>
+      <div class="step"><div class="n">3</div><h4>We send a few easy questions</h4><p>A simple list — about 20 to 50 plain questions about your business — so we get every detail right. You tell us exactly what you want.</p></div>
+      <div class="step"><div class="n">4</div><h4>We build your real website</h4><p>We add your real photos and details and put it online in 1–3 days. You look it over, and we adjust until you're happy.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <p class="eyebrow">Questions</p>
+  <h2 class="sec-h">Before you decide</h2>
+  <div class="wrap faq">
+    <details><summary>What exactly do I get for $350?</summary><p>A website built just for you (up to 4 pages), a 24/7 helper that answers customer questions and takes down their name and number, setup so people find you on Google, your web address and hosting for the first year, and 90 days of bug fixes — all built and live in 1–3 days. Want to edit the site yourself? You can add that for a one-time $350.</p></details>
+    <details><summary>Is there a monthly fee?</summary><p>No. It's a $350 one-time flat fee, paid up front. Domain and hosting are included for the first year; after that the only cost is renewing your domain and hosting.</p></details>
+    <details><summary>How long until my site is live?</summary><p>1–3 days from the time we have everything we need. You fill out a short questionnaire about your business and services, and we take it from there.</p></details>
+    <details><summary>Do I need to be technical?</summary><p>Not at all. We build and launch everything for you. If you want to make changes yourself, the optional admin dashboard is as simple as editing a document — or just send us the change and we'll handle it.</p></details>
+    <details><summary>Will the samples be my exact site?</summary><p>No — they're just to show you the style. Your real site uses your own photos, your real Google reviews, and any wording you want. We confirm every detail with you before it goes live.</p></details>
+  </div>
+</section>
+
+<section class="contact">
+  <div class="wrap">
+    <h2 class="sec-h">Take your time — then just reach out</h2>
+    <p class="sec-sub">Look over both samples, then let Jasper know which one feels like Sergeant. Questions? Just call — we'll walk you through it in plain English, no pressure.</p>
+    <a class="btn" href="mailto:jasper@sanosolutions.ai?subject=Sergeant%20Junk%20Removal%20—%20Website">Email Jasper to get started</a>
+    <p style="margin-top:16px;color:var(--muted);font-size:15px">or call <a href="tel:+18325557266" style="color:var(--cyan)">(832) 555-SANO</a></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><strong style="color:var(--text)">SANO Systems</strong> — Fortune 500 tools for hard-working local businesses.</p>
+    <p style="margin-top:8px"><a href="mailto:jasper@sanosolutions.ai">jasper@sanosolutions.ai</a></p>
+    <p style="margin-top:14px;opacity:.7">© 2026 SANO Systems · Prepared for Sergeant Junk Removal, Los Angeles, CA</p>
+  </div>
+</footer>
+</body>
+</html>
+
+<!-- make-it-live 1781909257 -->
