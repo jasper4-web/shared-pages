@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S&C Maintenance | Reliable Service You Can Trust — Casper, WY</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='20' fill='%233f4628'/%3E%3Ccircle cx='60' cy='34' r='13' fill='%23d8531f'/%3E%3Cpath d='M24 62 L60 28 L96 62 L96 96 L24 96 Z' fill='%23ece3cd'/%3E%3Cline x1='46' y1='88' x2='70' y2='60' stroke='%233f4628' stroke-width='8' stroke-linecap='round'/%3E%3Ccircle cx='72' cy='57' r='8' fill='none' stroke='%233f4628' stroke-width='6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@400;500;600&family=Saira+Stencil+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --olive:#3f4628; --olive2:#525a33; --olive-dk:#262a17; --olive-dkr:#1c1f10;
+    --tan:#c7bb8e; --tan-lt:#e7dcc1; --paper:#f1ece0; --paper2:#e9e2d0;
+    --ink:#23241d; --muted:#6f6a55; --gold:#c8a24a; --sun:#d8531f; --line:#d6cbab;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Barlow',sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;font-size:16px}
+  img{max-width:100%;display:block}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+  h1,h2,h3,h4,.osw{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.5px;font-weight:600;line-height:1.05}
+  .stencil{font-family:'Saira Stencil One',sans-serif;text-transform:uppercase;letter-spacing:2px}
+  .ey{font-family:'Saira Stencil One',sans-serif;color:var(--gold);letter-spacing:3px;font-size:13px;text-transform:uppercase}
+  .btn{display:inline-flex;align-items:center;gap:9px;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1px;font-weight:600;font-size:15px;padding:14px 26px;cursor:pointer;border:2px solid transparent;transition:.15s}
+  .btn-gold{background:var(--gold);color:var(--olive-dkr)}
+  .btn-gold:hover{background:#d8b257}
+  .btn-sun{background:var(--sun);color:#fff}
+  .btn-sun:hover{background:#c1481a}
+  .btn-olive{background:var(--olive);color:var(--tan-lt)}
+  .btn-olive:hover{background:var(--olive2)}
+  .btn-line{background:transparent;border-color:var(--tan);color:var(--tan-lt)}
+  .btn-line:hover{background:rgba(231,220,193,.12)}
+  .btn-line-dk{background:transparent;border-color:var(--olive);color:var(--olive)}
+  .btn-line-dk:hover{background:rgba(63,70,40,.08)}
+
+  /* MOCK BANNER */
+  .mock{background:var(--sun);color:#fff;text-align:center;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1px;font-size:13px;font-weight:500;padding:7px}
+
+  /* HEADER */
+  header{position:sticky;top:0;z-index:60;background:var(--olive-dkr);border-bottom:3px solid var(--gold)}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:11px 24px;max-width:1140px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:13px}
+  .brand .logo{width:50px;height:50px;flex:0 0 50px}
+  .brand .bn{font-family:'Oswald',sans-serif;font-weight:700;font-size:21px;letter-spacing:1px;color:var(--tan-lt);line-height:1}
+  .brand .bs{font-family:'Saira Stencil One',sans-serif;font-size:9.5px;letter-spacing:2.5px;color:var(--gold);text-transform:uppercase;margin-top:3px}
+  .menu{display:flex;gap:4px;align-items:center}
+  .menu a{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1px;font-size:14px;font-weight:500;color:var(--tan);padding:9px 13px;cursor:pointer}
+  .menu a:hover{color:#fff}
+  .menu .call{background:var(--gold);color:var(--olive-dkr);font-weight:600;padding:10px 16px}
+  .menu .call:hover{background:#d8b257;color:var(--olive-dkr)}
+  .hamb{display:none;background:none;border:none;color:var(--tan-lt);font-size:26px;cursor:pointer}
+
+  /* HERO */
+  .hero{position:relative;background:linear-gradient(rgba(31,35,16,.82),rgba(38,42,23,.9)),url('hero.jpg');background-size:cover;background-position:center;color:var(--tan-lt);border-bottom:5px solid var(--gold)}
+  .hero-in{padding:70px 0 78px;position:relative;z-index:2}
+  .stars{color:var(--gold);letter-spacing:3px;font-size:15px}
+  .vtag{font-family:'Saira Stencil One',sans-serif;text-transform:uppercase;letter-spacing:2px;font-size:12px;color:var(--tan-lt);margin-left:10px}
+  .hero h1{font-size:64px;font-weight:700;color:#fff;margin:16px 0 0;letter-spacing:1px}
+  .hero h1 .gold{color:var(--gold)}
+  .hero .lede{font-size:19px;max-width:560px;margin:18px 0 30px;color:var(--tan-lt);font-family:'Barlow'}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+  .stamp{position:absolute;top:40px;right:0;width:128px;height:128px;border:3px solid var(--gold);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--gold);transform:rotate(-12deg);text-align:center;z-index:3}
+  .stamp .s1{font-family:'Saira Stencil One',sans-serif;font-size:11px;letter-spacing:2px}
+  .stamp .s2{font-family:'Oswald',sans-serif;font-weight:700;font-size:30px;line-height:1}
+  .stamp .s3{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1px}
+  @media(max-width:860px){.hero h1{font-size:42px}.stamp{display:none}}
+
+  /* CRED BAR */
+  .cred{background:var(--olive);border-bottom:3px solid var(--olive-dkr)}
+  .cred-in{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;padding:18px 24px}
+  .tag{display:inline-flex;align-items:center;gap:9px;background:var(--olive-dk);border:1px solid var(--olive2);color:var(--tan-lt);font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1px;font-size:13px;font-weight:500;padding:9px 16px}
+  .tag i{color:var(--gold);font-style:normal;font-weight:700}
+
+  /* SECTIONS */
+  section{padding:72px 0}
+  .sec-h{margin-bottom:40px}
+  .sec-h h2{font-size:40px;color:var(--olive);margin-top:6px}
+  .sec-h.center{text-align:center}
+  .sec-h p{color:var(--muted);max-width:600px;margin-top:10px;font-size:16.5px}
+  .sec-h.center p{margin-left:auto;margin-right:auto}
+  .rule{display:flex;align-items:center;gap:10px;justify-content:flex-start}
+  .center .rule{justify-content:center}
+  .rule .ln{height:2px;width:42px;background:var(--gold)}
+
+  /* ROSTER (services alternating) */
+  .roster{display:flex;flex-direction:column;gap:30px}
+  .rrow{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);background:#fff}
+  .rrow .rphoto{min-height:300px;background-size:cover;background-position:center;filter:saturate(.78) contrast(1.04) sepia(.12)}
+  .rrow .rtext{padding:38px 40px;display:flex;flex-direction:column;justify-content:center}
+  .rrow.flip .rphoto{order:2}
+  .rnum{font-family:'Saira Stencil One',sans-serif;color:var(--gold);font-size:15px;letter-spacing:2px}
+  .rrow h3{font-size:27px;color:var(--olive);margin:6px 0 10px}
+  .rrow p{color:#4a4838;font-size:16px;margin-bottom:16px}
+  .chip{align-self:flex-start;font-family:'Oswald';text-transform:uppercase;letter-spacing:1px;font-size:12.5px;font-weight:600;color:var(--olive);background:var(--paper2);border:1px solid var(--line);padding:6px 13px}
+  @media(max-width:780px){.rrow{grid-template-columns:1fr}.rrow.flip .rphoto{order:0}.rrow .rphoto{min-height:210px}}
+
+  /* GOV BAND */
+  .gov{background:var(--olive-dk);color:var(--tan-lt);border-top:5px solid var(--gold);border-bottom:5px solid var(--gold);background-image:linear-gradient(rgba(31,35,16,.93),rgba(31,35,16,.96)),url('gov.jpg');background-size:cover;background-position:center}
+  .gov h2{color:#fff}
+  .gov .sec-h p{color:var(--tan)}
+  .capgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--olive2);border:1px solid var(--olive2)}
+  .cap{background:var(--olive-dk);padding:24px}
+  .cap .ct{display:flex;gap:9px;align-items:baseline}
+  .cap .cv{color:var(--gold);font-weight:700}
+  .cap h4{font-size:18px;color:var(--tan-lt);margin-bottom:7px}
+  .cap p{color:var(--tan);font-size:14.5px}
+  @media(max-width:780px){.capgrid{grid-template-columns:1fr}}
+  .note{background:rgba(200,162,74,.12);border:1px dashed var(--gold);color:var(--tan-lt);padding:15px 18px;font-size:14px;margin-top:24px}
+  .note b{color:var(--gold)}
+
+  /* MISSION / ABOUT */
+  .mission{background:var(--paper2)}
+  .mission-in{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+  @media(max-width:820px){.mission-in{grid-template-columns:1fr;gap:30px}}
+  .mission p{color:#403e30;margin-bottom:14px;font-size:16.5px}
+  .photoframe{border:6px solid var(--olive);position:relative;filter:saturate(.82) contrast(1.03) sepia(.1)}
+  .photoframe:after{content:"EST. 2026 • CASPER, WY";position:absolute;bottom:0;left:0;right:0;background:var(--olive);color:var(--tan-lt);font-family:'Saira Stencil One';font-size:11px;letter-spacing:2px;padding:7px 12px;text-align:center}
+  .tags{display:flex;gap:16px;margin-top:24px;flex-wrap:wrap}
+  .dogtag{flex:1;min-width:190px;background:var(--olive);color:var(--tan-lt);padding:18px 20px;border-left:4px solid var(--gold)}
+  .dogtag .nm{font-family:'Oswald';font-size:20px;text-transform:uppercase;letter-spacing:1px;color:#fff}
+  .dogtag .rk{font-family:'Saira Stencil One';font-size:10px;letter-spacing:2px;color:var(--gold);margin:3px 0 8px}
+  .dogtag a{font-family:'Oswald';font-weight:600;letter-spacing:.5px}
+  .statline{display:flex;gap:34px;margin-top:26px;flex-wrap:wrap}
+  .statline .n{font-family:'Oswald';font-weight:700;font-size:34px;color:var(--olive);line-height:1}
+  .statline .l{font-family:'Oswald';text-transform:uppercase;font-size:12px;letter-spacing:1px;color:var(--muted)}
+
+  /* CONTACT */
+  .contact{background:var(--olive-dkr);color:var(--tan-lt);border-top:5px solid var(--gold)}
+  .contact h2{color:#fff}
+  .contact .sec-h p{color:var(--tan)}
+  .cgrid{display:grid;grid-template-columns:1fr 1.05fr;gap:44px}
+  @media(max-width:820px){.cgrid{grid-template-columns:1fr;gap:30px}}
+  .callrow{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+  .cinfo .ln2{display:flex;gap:13px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--olive2)}
+  .cinfo .ic{width:40px;height:40px;flex:0 0 40px;background:var(--olive);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700}
+  .cinfo .lbl{font-family:'Saira Stencil One';font-size:10px;letter-spacing:2px;color:var(--gold)}
+  .cinfo .val{font-family:'Oswald';font-size:17px;letter-spacing:.5px;color:#fff}
+  .cinfo a.val:hover{color:var(--gold)}
+  form{background:var(--olive-dk);border:1px solid var(--olive2);padding:28px}
+  form h3{font-size:23px;color:#fff;margin-bottom:4px}
+  form .fs{color:var(--tan);font-size:14px;margin-bottom:18px}
+  .frow{display:flex;gap:14px;flex-wrap:wrap}
+  .fld{flex:1;min-width:150px;margin-bottom:14px}
+  label{display:block;font-family:'Oswald';text-transform:uppercase;font-size:12px;letter-spacing:1px;color:var(--tan-lt);margin-bottom:6px}
+  input,select,textarea{width:100%;padding:11px 13px;background:var(--olive-dkr);border:1px solid var(--olive2);color:#fff;font-family:'Barlow';font-size:15px}
+  input::placeholder,textarea::placeholder{color:#9a9576}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+  textarea{min-height:92px;resize:vertical}
+  .ok{display:none;background:rgba(200,162,74,.15);border:1px solid var(--gold);color:var(--tan-lt);padding:13px;font-size:14px;margin-top:8px}
+
+  /* FOOTER */
+  footer{background:#15170c;color:var(--tan);padding:46px 0 22px}
+  .fgrid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:30px}
+  @media(max-width:700px){.fgrid{grid-template-columns:1fr}}
+  footer h5{font-family:'Oswald';text-transform:uppercase;letter-spacing:2px;color:var(--gold);font-size:13px;margin-bottom:14px}
+  footer a,footer p{display:block;font-size:14.5px;margin-bottom:9px;color:var(--tan);cursor:pointer}
+  footer a:hover{color:#fff}
+  .fbar{border-top:1px solid var(--olive2);margin-top:28px;padding-top:18px;font-size:12.5px;color:#8a855f;text-align:center;font-family:'Oswald';letter-spacing:.5px}
+  @media(max-width:860px){.menu{display:none;position:absolute;top:72px;left:0;right:0;background:var(--olive-dk);flex-direction:column;padding:12px 24px 18px;border-bottom:3px solid var(--gold)}
+    .menu.open{display:flex}.menu a{width:100%;padding:12px 4px}.hamb{display:block}}
+</style>
+</head>
+<body>
+<div class="mock">★ Preview Mock-Up — Version 2 for S&C Maintenance review. Not yet live to the public.</div>
+
+<header>
+  <div class="nav">
+    <a class="brand" href="#top">
+      <svg class="logo" viewBox="0 0 120 120" aria-label="S&C Maintenance logo">
+        <circle cx="60" cy="30" r="15" fill="#d8531f"/>
+        <path d="M20 62 L60 24 L100 62 L100 97 L20 97 Z" fill="#ece3cd"/>
+        <rect x="80" y="30" width="9" height="24" fill="#ece3cd"/>
+        <line x1="46" y1="90" x2="71" y2="60" stroke="#3f4628" stroke-width="9" stroke-linecap="round"/>
+        <circle cx="73" cy="57" r="9" fill="none" stroke="#3f4628" stroke-width="7"/>
+      </svg>
+      <div><div class="bn">S&amp;C Maintenance</div><div class="bs">Reliable Service You Can Trust</div></div>
+    </a>
+    <button class="hamb" onclick="document.getElementById('m').classList.toggle('open')">&#9776;</button>
+    <nav class="menu" id="m">
+      <a href="#services" onclick="closeM()">Services</a>
+      <a href="#gov" onclick="closeM()">Government</a>
+      <a href="#mission" onclick="closeM()">Our Mission</a>
+      <a href="#contact" onclick="closeM()">Contact</a>
+      <a class="call" href="tel:+13072538736">Call (307) 253-8736</a>
+    </nav>
+  </div>
+</header>
+
+<a id="top"></a>
+<section class="hero">
+  <div class="wrap hero-in">
+    <div class="stamp"><div class="s1">Est.</div><div class="s2">2026</div><div class="s3">Casper, WY</div></div>
+    <span class="stars">★★★★★</span><span class="vtag">Veteran-Owned &amp; Operated</span>
+    <h1>Reliable Service<br>You Can <span class="gold">Trust.</span></h1>
+    <p class="lede">Property maintenance, cleanouts, and junk removal in Casper and surrounding areas — run by veterans who show up, do it right, and stand behind the work.</p>
+    <div class="hero-cta">
+      <a class="btn btn-sun" href="#services">Get a free estimate</a>
+      <a class="btn btn-line" href="#gov">Government &amp; contracts</a>
+    </div>
+  </div>
+</section>
+
+<div class="cred"><div class="cred-in">
+  <span class="tag"><i>★</i> 100% Veteran-Owned</span>
+  <span class="tag"><i>⌂</i> Casper &amp; Surrounding</span>
+  <span class="tag"><i>✓</i> Free Estimates</span>
+  <span class="tag"><i>⚑</i> Licensed &amp; Insured*</span>
+  <span class="tag"><i>⏱</i> Fast, Reliable Response</span>
+</div></div>
+
+<section id="services">
+  <div class="wrap">
+    <div class="sec-h center">
+      <div class="rule"><span class="ln"></span><span class="ey">The Roster</span><span class="ln"></span></div>
+      <h2>What we handle</h2>
+      <p>For homeowners, landlords, and businesses across Casper. Free estimate on every job — just tell us the mission.</p>
+    </div>
+    <div class="roster">
+      <div class="rrow">
+        <div class="rphoto" style="background-image:url('mowing.jpg')"></div>
+        <div class="rtext"><div class="rnum">01 — Lawn &amp; Grounds</div><h3>Mowing &amp; Trimming</h3>
+          <p>Clean, even cuts and sharp edges that keep your property looking squared away all season long.</p><span class="chip">Free estimate</span></div>
+      </div>
+      <div class="rrow flip">
+        <div class="rphoto" style="background-image:url('junk.jpg')"></div>
+        <div class="rtext"><div class="rnum">02 — Haul-Off</div><h3>Junk Removal &amp; Hauling</h3>
+          <p>Old furniture, appliances, yard debris — we load it, haul it, and dispose of it. You point, we clear it out.</p><span class="chip">Free estimate</span></div>
+      </div>
+      <div class="rrow">
+        <div class="rphoto" style="background-image:url('cleanout.jpg')"></div>
+        <div class="rtext"><div class="rnum">03 — Turnover</div><h3>Eviction &amp; Property Cleanout</h3>
+          <p>Fast, discreet cleanouts for landlords and property managers — left broom-clean and rent-ready.</p><span class="chip">Free estimate</span></div>
+      </div>
+      <div class="rrow flip">
+        <div class="rphoto" style="background-image:url('maintenance.jpg')"></div>
+        <div class="rtext"><div class="rnum">04 — Upkeep</div><h3>Basic Building Maintenance</h3>
+          <p>The everyday fixes and upkeep that keep your building running and looking its best, inside and out.</p><span class="chip">Free estimate</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="gov" id="gov">
+  <div class="wrap">
+    <div class="sec-h">
+      <div class="rule"><span class="ln"></span><span class="ey">Government &amp; Contract Ops</span></div>
+      <h2>Built for the contract</h2>
+      <p>A veteran-owned crew that agencies and contractors can count on — done to spec, on schedule, no excuses.</p>
+    </div>
+    <div class="capgrid">
+      <div class="cap"><div class="ct"><span class="cv">›</span><h4>Asbestos Abatement &amp; Cleaning*</h4></div><p>Removal and cleaning of hazardous material on qualifying contract jobs, handled with proper procedure.</p></div>
+      <div class="cap"><div class="ct"><span class="cv">›</span><h4>Building Maintenance</h4></div><p>Ongoing and as-needed maintenance to keep facilities operational and compliant.</p></div>
+      <div class="cap"><div class="ct"><span class="cv">›</span><h4>Eviction &amp; Cleanout</h4></div><p>Full clear-outs of units and facilities, turned over clean and ready.</p></div>
+      <div class="cap"><div class="ct"><span class="cv">›</span><h4>Junk &amp; Debris Hauling</h4></div><p>Bulk removal and disposal of debris, scrap, and discarded materials from job sites.</p></div>
+      <div class="cap"><div class="ct"><span class="cv">›</span><h4>Grounds &amp; Lot Maintenance</h4></div><p>Mowing, trimming, and general grounds upkeep for facilities and properties.</p></div>
+      <div class="cap"><div class="ct"><span class="cv">›</span><h4>Veteran Workforce</h4></div><p>A veteran-owned team committed to hiring and growing more veterans.</p></div>
+    </div>
+    <div class="note">★ <b>Note for S&amp;C (not public copy):</b> Items marked <b>*</b> — asbestos abatement and "Licensed &amp; Insured" — should be confirmed against your actual certifications/licenses before going live. Asbestos work is regulated (EPA/AHERA + state licensing); we'll word it to match exactly what you're credentialed to do.</div>
+    <div style="margin-top:28px"><a class="btn btn-gold" href="tel:+13074410303">Call Charles — (307) 441-0303</a></div>
+  </div>
+</section>
+
+<section class="mission" id="mission">
+  <div class="wrap mission-in">
+    <div>
+      <div class="rule"><span class="ln"></span><span class="ey">Our Mission</span></div>
+      <h2 style="font-size:38px;color:var(--olive);margin:6px 0 16px">Veteran-owned. Just getting started.</h2>
+      <p>S&amp;C Maintenance was founded by veterans Sam and Charles right here in Casper, Wyoming. In our first few months we've already earned the trust of homeowners and government contracts alike — by doing exactly what our name stands for: reliable service you can trust.</p>
+      <p>We bring a military work ethic to property maintenance: show up on time, do the job right, and stand behind it. As we grow, we're committed to hiring more veterans and putting them to work close to home.</p>
+      <div class="statline">
+        <div><div class="n">100%</div><div class="l">Veteran-Owned</div></div>
+        <div><div class="n">Est. 2026</div><div class="l">Casper, WY</div></div>
+        <div><div class="n">Free</div><div class="l">Estimates</div></div>
+      </div>
+      <div class="tags">
+        <div class="dogtag"><div class="nm">Sam</div><div class="rk">Co-Owner</div><a href="tel:+13072538736">(307) 253-8736</a></div>
+        <div class="dogtag"><div class="nm">Charles</div><div class="rk">Co-Owner</div><a href="tel:+13074410303">(307) 441-0303</a></div>
+      </div>
+    </div>
+    <div class="photoframe"><img src="about.jpg" alt="S&C Maintenance veteran owners with work truck"></div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="wrap">
+    <div class="sec-h">
+      <div class="rule"><span class="ln"></span><span class="ey">Call In</span></div>
+      <h2>Request a free quote</h2>
+      <p>Call or text us directly, or send the details and we'll report back fast. Serving Casper &amp; surrounding areas.</p>
+    </div>
+    <div class="cgrid">
+      <div class="cinfo">
+        <div class="callrow">
+          <a class="btn btn-sun" href="tel:+13072538736">Call / Text Sam</a>
+          <a class="btn btn-line" href="tel:+13074410303">Call / Text Charles</a>
+        </div>
+        <div class="ln2"><div class="ic">☎</div><div><div class="lbl">Sam</div><a class="val" href="tel:+13072538736">(307) 253-8736</a></div></div>
+        <div class="ln2"><div class="ic">☎</div><div><div class="lbl">Charles</div><a class="val" href="tel:+13074410303">(307) 441-0303</a></div></div>
+        <div class="ln2"><div class="ic">✉</div><div><div class="lbl">Email</div><a class="val" href="mailto:s.and.c.maintenance.50074@gmail.com" style="font-size:14px">s.and.c.maintenance.50074@gmail.com</a></div></div>
+        <div class="ln2"><div class="ic">⌂</div><div><div class="lbl">Address</div><div class="val" style="font-size:15px">411 N. Forest Drive, Unit 50074 · Casper, WY 82609</div></div></div>
+      </div>
+      <form onsubmit="return sub(event)">
+        <h3>Tell us about the job</h3>
+        <p class="fs">No obligation — we'll send you a free estimate.</p>
+        <div class="frow">
+          <div class="fld"><label>Name</label><input required placeholder="Your name"></div>
+          <div class="fld"><label>Phone</label><input required placeholder="(307) 000-0000"></div>
+        </div>
+        <div class="fld"><label>What do you need?</label>
+          <select><option>Mowing &amp; Trimming</option><option>Junk Removal &amp; Hauling</option><option>Eviction / Property Cleanout</option><option>Basic Building Maintenance</option><option>Government / Contract Inquiry</option><option>Something else</option></select>
+        </div>
+        <div class="fld"><label>Details</label><textarea placeholder="Tell us about the job, location, and timing..."></textarea></div>
+        <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center">Send my request</button>
+        <div class="ok" id="ok">✓ Thanks! This is a preview form — on the live site this would email S&amp;C directly. For now, please call (307) 253-8736.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap fgrid">
+    <div>
+      <div class="brand" style="margin-bottom:14px">
+        <svg class="logo" viewBox="0 0 120 120"><circle cx="60" cy="30" r="15" fill="#d8531f"/><path d="M20 62 L60 24 L100 62 L100 97 L20 97 Z" fill="#ece3cd"/><rect x="80" y="30" width="9" height="24" fill="#ece3cd"/><line x1="46" y1="90" x2="71" y2="60" stroke="#15170c" stroke-width="9" stroke-linecap="round"/><circle cx="73" cy="57" r="9" fill="none" stroke="#15170c" stroke-width="7"/></svg>
+        <div><div class="bn">S&amp;C Maintenance</div><div class="bs">Reliable Service You Can Trust</div></div>
+      </div>
+      <p>Veteran-owned property maintenance, cleanouts, and junk removal serving Casper, WY and surrounding areas.</p>
+    </div>
+    <div><h5>Services</h5><a href="#services">Mowing &amp; Trimming</a><a href="#services">Junk Removal</a><a href="#services">Eviction Cleanout</a><a href="#gov">Government &amp; Contracts</a></div>
+    <div><h5>Contact</h5><a href="tel:+13072538736">Sam — (307) 253-8736</a><a href="tel:+13074410303">Charles — (307) 441-0303</a><a href="mailto:s.and.c.maintenance.50074@gmail.com">Email us</a><p>411 N. Forest Drive, Unit 50074<br>Casper, WY 82609</p></div>
+  </div>
+  <div class="wrap fbar">© 2026 S&amp;C Maintenance · Casper, WY · *Licensing &amp; asbestos credentials to be verified before publication.</div>
+</footer>
+
+<script>
+  function closeM(){document.getElementById('m').classList.remove('open')}
+  function sub(e){e.preventDefault();document.getElementById('ok').style.display='block';e.target.querySelector('button').textContent='Request sent';return false;}
+</script>
+</body>
+</html>
+
+<!-- make-it-live 1781887996 -->
