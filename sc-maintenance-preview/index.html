@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SANO Systems — Website Design Preview for S&C Maintenance</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0c10'/%3E%3Ctext x='32' y='43' font-family='Arial' font-size='30' font-weight='bold' fill='%232f80ff' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0c10; --panel:#12151d; --panel2:#171b25; --line:#252b38;
+    --blue:#2f80ff; --blue-dk:#1f63d6; --txt:#eef2f8; --muted:#9aa6bc; --muted2:#6f7c93;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--txt);line-height:1.65;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  .btn{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:15px;padding:13px 24px;border-radius:10px;cursor:pointer;border:1px solid transparent;transition:.15s}
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-blue:hover{background:var(--blue-dk)}
+  .btn-line{background:transparent;border-color:var(--line);color:var(--txt)}
+  .btn-line:hover{border-color:var(--blue);color:#fff}
+  .pill{display:inline-flex;align-items:center;gap:7px;background:rgba(47,128,255,.12);border:1px solid rgba(47,128,255,.35);color:#8fb8ff;font-size:12.5px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:6px 13px;border-radius:30px}
+
+  /* header */
+  header{position:sticky;top:0;z-index:50;background:rgba(10,12,16,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:1080px;margin:0 auto}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.3px}
+  .logo .mk{width:30px;height:30px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:17px}
+  .logo .sub{font-weight:500;color:var(--muted2);font-size:12px;letter-spacing:2px;text-transform:uppercase}
+  .nav .right{display:flex;align-items:center;gap:18px;font-size:14px;color:var(--muted)}
+  .nav .right a:hover{color:#fff}
+  @media(max-width:680px){.nav .right .hide{display:none}}
+
+  /* hero */
+  .hero{padding:74px 0 40px;text-align:center;position:relative;overflow:hidden}
+  .hero:before{content:"";position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:680px;height:380px;background:radial-gradient(ellipse,rgba(47,128,255,.18),transparent 70%);z-index:0}
+  .hero>*{position:relative;z-index:1}
+  .hero h1{font-size:50px;font-weight:800;letter-spacing:-1.4px;line-height:1.05;margin:22px 0 0}
+  .hero h1 .b{color:var(--blue)}
+  .hero .lede{font-size:19px;color:var(--muted);max-width:620px;margin:18px auto 0}
+  .hero .cta{display:flex;gap:13px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+  .hero .micro{margin-top:22px;font-size:13.5px;color:var(--muted2)}
+  @media(max-width:680px){.hero h1{font-size:34px}}
+
+  /* prepared-for strip */
+  .pfor{display:inline-flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 16px;font-size:14px;color:var(--muted);margin-top:6px}
+  .pfor b{color:var(--txt);font-weight:600}
+
+  section{padding:48px 0}
+  .sec-title{text-align:center;margin-bottom:8px}
+  .sec-title h2{font-size:32px;font-weight:800;letter-spacing:-.6px}
+  .sec-title p{color:var(--muted);max-width:600px;margin:10px auto 0}
+  .eyebrow{color:var(--blue);font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;text-align:center;display:block;margin-bottom:6px}
+
+  /* options */
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:34px}
+  @media(max-width:840px){.opts{grid-template-columns:1fr}}
+  .opt{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:.18s}
+  .opt:hover{border-color:var(--blue);transform:translateY(-3px)}
+  .frame{position:relative;height:250px;overflow:hidden;border-bottom:1px solid var(--line);background:#000}
+  .frame iframe{width:1280px;height:900px;border:0;transform:scale(.41);transform-origin:top left;pointer-events:none}
+  .frame .ov{position:absolute;inset:0;z-index:2}
+  .frame .badge{position:absolute;top:12px;left:12px;z-index:3;background:rgba(10,12,16,.82);border:1px solid var(--line);color:#fff;font-size:12px;font-weight:600;padding:5px 11px;border-radius:20px}
+  .opt .ob{padding:24px 24px 26px}
+  .swatches{display:flex;gap:7px;margin-bottom:12px}
+  .sw{width:22px;height:22px;border-radius:6px;border:1px solid rgba(255,255,255,.15)}
+  .opt h3{font-size:21px;font-weight:700;letter-spacing:-.3px}
+  .opt .tagline{color:var(--blue);font-weight:600;font-size:13.5px;margin-top:2px}
+  .opt p{color:var(--muted);font-size:14.5px;margin:11px 0 18px}
+  .opt .obtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto}
+
+  /* features */
+  .feat-wrap{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:34px;margin-top:30px}
+  .feats{display:grid;grid-template-columns:1fr 1fr;gap:20px 30px}
+  @media(max-width:680px){.feats{grid-template-columns:1fr}}
+  .feat{display:flex;gap:14px}
+  .feat .fi{flex:0 0 38px;width:38px;height:38px;border-radius:10px;background:rgba(47,128,255,.12);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700}
+  .feat h4{font-size:16px;font-weight:600}
+  .feat p{color:var(--muted);font-size:14px;margin-top:2px}
+  .feat .nb{color:var(--muted2);font-size:12.5px;font-style:italic}
+
+  /* pricing */
+  .price-grid{display:grid;grid-template-columns:1.3fr .9fr;gap:22px;margin-top:30px;align-items:start}
+  @media(max-width:780px){.price-grid{grid-template-columns:1fr}}
+  .pcard{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:32px}
+  .pcard.main{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue),0 18px 50px rgba(47,128,255,.13)}
+  .pcard . pk{}
+  .pk{font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);font-weight:700}
+  .pamt{font-size:46px;font-weight:800;letter-spacing:-1.5px;margin:8px 0 2px}
+  .pamt span{font-size:17px;font-weight:500;color:var(--muted)}
+  .pdesc{color:var(--muted);font-size:14.5px;margin-bottom:18px}
+  .plist{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .plist li{display:flex;gap:10px;font-size:14.5px;color:#d6deec}
+  .plist li:before{content:"✓";color:var(--blue);font-weight:800}
+  .addon{margin-top:0}
+  .addon h4{font-size:17px;font-weight:700;margin-bottom:4px}
+  .addon .amt{color:var(--blue);font-weight:700}
+  .addon p{color:var(--muted);font-size:14px;margin-top:8px}
+  .pnote{color:var(--muted2);font-size:13px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+  @media(max-width:680px){.steps{grid-template-columns:1fr}}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px}
+  .step .num{width:32px;height:32px;border-radius:9px;background:var(--blue);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+  .step h4{font-size:16.5px;font-weight:600;margin-bottom:5px}
+  .step p{color:var(--muted);font-size:14px}
+
+  /* faq */
+  .faq{max-width:760px;margin:30px auto 0}
+  details{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px 20px;margin-bottom:12px}
+  summary{cursor:pointer;font-weight:600;font-size:16px;padding:14px 0;list-style:none;display:flex;justify-content:space-between;align-items:center}
+  summary::-webkit-details-marker{display:none}
+  summary:after{content:"+";color:var(--blue);font-size:22px;font-weight:400}
+  details[open] summary:after{content:"−"}
+  details p{color:var(--muted);font-size:14.5px;padding:0 0 16px}
+
+  /* final cta */
+  .final{text-align:center;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:20px;padding:50px 30px;margin:10px 0}
+  .final h2{font-size:30px;font-weight:800;letter-spacing:-.6px}
+  .final p{color:var(--muted);max-width:520px;margin:12px auto 26px}
+
+  footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted2);font-size:13.5px;text-align:center;margin-top:20px}
+  footer .fl{color:var(--muted);margin-bottom:8px}
+  footer a:hover{color:#fff}
+  .disc{background:rgba(47,128,255,.06);border:1px dashed var(--line);color:var(--muted);font-size:13px;border-radius:12px;padding:13px 18px;text-align:center;margin-top:18px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo"><span class="mk">S</span> SANO <span class="sub" style="margin-left:-2px">Systems</span></div>
+    <div class="right">
+      <a class="hide" href="#options">Designs</a>
+      <a class="hide" href="#pricing">Pricing</a>
+      <a class="btn btn-blue" style="padding:9px 16px" href="mailto:jasper@sanosolutions.ai?subject=Beta%20Inquiry%20—%20S%26C%20Maintenance">Get started</a>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <span class="pill">● Beta Phase · Design Preview</span>
+    <h1>Two website designs,<br>built for <span class="b">S&amp;C Maintenance</span>.</h1>
+    <p class="lede">We put together two completely different directions for your new site. Click through both, see which feels like S&amp;C — then we build the real thing for you in days.</p>
+    <div class="cta">
+      <a class="btn btn-blue" href="#options">See the two designs ↓</a>
+      <a class="btn btn-line" href="#pricing">View pricing</a>
+    </div>
+    <div class="micro">Prepared by SANO Systems for Sam &amp; Charles · S&amp;C Maintenance, Casper, WY</div>
+  </div>
+</div>
+
+<section id="options" style="padding-top:24px">
+  <div class="wrap">
+    <span class="eyebrow">Choose your direction</span>
+    <div class="sec-title"><h2>Two designs. One S&amp;C.</h2>
+      <p>Same business, same info — two very different looks. There's no wrong answer; we just want to know what feels right to you.</p></div>
+    <div class="opts">
+      <div class="opt">
+        <div class="frame">
+          <span class="badge">Option A · Live preview</span>
+          <iframe src="https://jasper4-web.github.io/shared-pages/sc-maintenance/" title="Version 1 preview" loading="lazy"></iframe>
+          <a class="ov" href="https://jasper4-web.github.io/shared-pages/sc-maintenance/" target="_blank" rel="noopener" aria-label="Open Option A"></a>
+        </div>
+        <div class="ob">
+          <div class="swatches"><span class="sw" style="background:#142544"></span><span class="sw" style="background:#b22234"></span><span class="sw" style="background:#f4f1ea"></span></div>
+          <h3>Polished &amp; Patriotic</h3>
+          <div class="tagline">Clean, professional, established</div>
+          <p>Navy and red with crisp service cards and separate pages for each part of the business. Reads like a company that's been trusted for years.</p>
+          <div class="obtns">
+            <a class="btn btn-blue" href="https://jasper4-web.github.io/shared-pages/sc-maintenance/" target="_blank" rel="noopener">Open Option A ↗</a>
+          </div>
+        </div>
+      </div>
+      <div class="opt">
+        <div class="frame">
+          <span class="badge">Option B · Live preview</span>
+          <iframe src="https://jasper4-web.github.io/shared-pages/sc-maintenance-v2/" title="Version 2 preview" loading="lazy"></iframe>
+          <a class="ov" href="https://jasper4-web.github.io/shared-pages/sc-maintenance-v2/" target="_blank" rel="noopener" aria-label="Open Option B"></a>
+        </div>
+        <div class="ob">
+          <div class="swatches"><span class="sw" style="background:#3f4628"></span><span class="sw" style="background:#c8a24a"></span><span class="sw" style="background:#d8531f"></span></div>
+          <h3>Field-Rugged · Veteran Heritage</h3>
+          <div class="tagline">Bold, military, hard-working</div>
+          <p>Olive drab and brass with stencil headlines and an "Est. 2026" stamp. One scrolling page that leans hard into the veteran-owned identity.</p>
+          <div class="obtns">
+            <a class="btn btn-blue" href="https://jasper4-web.github.io/shared-pages/sc-maintenance-v2/" target="_blank" rel="noopener">Open Option B ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="disc">These are mock designs for your review. Photos are professional stand-ins (we'll swap in real S&amp;C job photos), and a few details — licensing, insurance, and asbestos credentials — are marked for you to confirm before anything goes live.</div>
+  </div>
+</section>
+
+<section id="included">
+  <div class="wrap">
+    <span class="eyebrow">What's included</span>
+    <div class="sec-title"><h2>Every S&amp;C build comes with this</h2>
+      <p>Whichever design you pick, here's what you get — built, optimized, and live in days.</p></div>
+    <div class="feat-wrap">
+      <div class="feats">
+        <div class="feat"><div class="fi">◧</div><div><h4>Custom-designed website</h4><p>Built for S&amp;C — not a template. Mobile-first, fast, and made to look like a company 100x your size.</p></div></div>
+        <div class="feat"><div class="fi">⌗</div><div><h4>Search-engine optimized</h4><p>On-page SEO so customers in Casper find you on Google when they search for your services.</p></div></div>
+        <div class="feat"><div class="fi">✦</div><div><h4>24/7 AI chatbot</h4><p>Trained on your services and FAQs — answers customers around the clock and sends leads straight to your inbox.</p><p class="nb">Lives on your real site — not shown in these visual mockups.</p></div></div>
+        <div class="feat"><div class="fi">⬡</div><div><h4>Domain &amp; hosting, year one</h4><p>Your web address and hosting are covered for the first year (standard domain included).</p></div></div>
+        <div class="feat"><div class="fi">◔</div><div><h4>Live in 1–3 days</h4><p>Once we have your details, your site is built and online in days, not months.</p></div></div>
+        <div class="feat"><div class="fi">♺</div><div><h4>90 days of support</h4><p>Bug fixes and minor updates handled by our team for the first 90 days, free.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <span class="eyebrow">Beta pricing</span>
+    <div class="sec-title"><h2>One flat fee. No monthly.</h2>
+      <p>This is our beta rate — it locks in permanently. When we launch publicly, this package will cost significantly more.</p></div>
+    <div class="price-grid">
+      <div class="pcard main">
+        <div class="pk">Beta Package</div>
+        <div class="pamt">$350 <span>flat · one-time</span></div>
+        <div class="pdesc">Everything you need to launch — a custom website and AI chatbot — in one payment. No monthly fees, ever.</div>
+        <ul class="plist">
+          <li>Custom-designed website (up to 4 pages)</li>
+          <li>24/7 AI chatbot — answers FAQs &amp; captures leads</li>
+          <li>On-page SEO to rank on Google</li>
+          <li>Domain &amp; hosting included for the first year</li>
+          <li>90 days of bug fixes &amp; minor updates</li>
+          <li>Live in 1–3 days</li>
+        </ul>
+        <div class="pnote">A quick note on the two designs: Option B fits the beta as a single page. Option A runs a little longer — any pages beyond the 4 included are just $75 each, so we'll square that up together once you pick.</div>
+      </div>
+      <div>
+        <div class="pcard addon">
+          <h4>Admin Dashboard <span class="amt">+$350</span></h4>
+          <div class="pdesc" style="margin:6px 0 0">Optional, one-time</div>
+          <p>Edit your own site from your phone — text, photos, prices, pages — in seconds. It's also your lead inbox. Skip it and our team makes every change for you, free for your first 90 days.</p>
+        </div>
+        <div class="pcard" style="margin-top:18px">
+          <h4>Extra pages <span class="amt">$75 each</span></h4>
+          <p style="color:var(--muted);font-size:14px;margin-top:8px">Beyond the 4 included. Most businesses find 4 covers the essentials.</p>
+        </div>
+        <a class="btn btn-blue" style="width:100%;justify-content:center;margin-top:18px" href="mailto:jasper@sanosolutions.ai?subject=Beta%20Inquiry%20—%20S%26C%20Maintenance">Claim the beta rate</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="next">
+  <div class="wrap">
+    <span class="eyebrow">What happens next</span>
+    <div class="sec-title"><h2>From here, it's easy</h2></div>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><h4>Look through both</h4><p>Open Option A and Option B on your phone. Take your time clicking around each one.</p></div>
+      <div class="step"><div class="num">2</div><h4>Tell us what you like</h4><p>Reply with the direction that feels like S&amp;C — and anything you'd change. Mix-and-match is welcome.</p></div>
+      <div class="step"><div class="num">3</div><h4>We build it for real</h4><p>We finalize your design, drop in your real photos and details, and put your site live in 1–3 days.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <span class="eyebrow">Questions</span>
+    <div class="sec-title"><h2>Before you decide</h2></div>
+    <div class="faq">
+      <details open><summary>What exactly do I get for $350?</summary><p>A custom-designed website (up to 4 pages), a 24/7 AI chatbot trained on your business that answers questions and captures leads, on-page SEO, domain and hosting for the first year, and 90 days of bug fixes and minor updates — all built and live in 1–3 days. Want to edit the site yourself? Add the admin dashboard for a one-time $350.</p></details>
+      <details><summary>Is there a monthly fee?</summary><p>No. It's a $350 one-time flat fee, paid up front. Domain and hosting are included for the first year; after that the only cost is renewing your domain and hosting.</p></details>
+      <details><summary>How long until my site is live?</summary><p>1–3 days from the time we have everything we need. You fill out a short questionnaire about your business and services, and we take it from there.</p></details>
+      <details><summary>Do I need to be technical?</summary><p>Not at all. We build and launch everything for you. If you want to make changes yourself, the optional admin dashboard is as simple as editing a document — or just send us the change and we'll handle it.</p></details>
+      <details><summary>What's coming after the beta?</summary><p>A lot — CRM, missed-call automation, appointment booking, more AI tools. Beta clients get first access to everything we build next.</p></details>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="final">
+      <h2>Ready to pick a direction?</h2>
+      <p>Open both designs, then let Jasper know which one feels like S&amp;C Maintenance. We'll take it from there.</p>
+      <a class="btn btn-blue" href="mailto:jasper@sanosolutions.ai?subject=Beta%20Inquiry%20—%20S%26C%20Maintenance">Email Jasper to get started</a>
+      <div style="margin-top:16px;color:var(--muted2);font-size:14px">or call (832) 555-SANO</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="fl"><b style="color:#fff">SANO Systems</b> — Fortune 500 tools for hard-working local businesses.</div>
+    <div><a href="mailto:jasper@sanosolutions.ai">jasper@sanosolutions.ai</a> · <a href="tel:8325557266">(832) 555-SANO</a></div>
+    <div style="margin-top:10px">© 2026 SANO Systems · Prepared for S&amp;C Maintenance, Casper, WY</div>
+  </div>
+</footer>
+
+</body>
+</html>
+
+<!-- make-it-live 1781888805 -->
