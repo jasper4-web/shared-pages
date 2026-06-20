@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SANO — The Spanish-Speaking Market Opportunity</title>
+<style>
+  :root{
+    --navy:#0f1c33; --navy2:#16284a; --gold:#c9a24b; --gold-soft:#e7d4a3;
+    --ink:#1b2430; --muted:#5d6b7e; --line:#e6e9ef; --bg:#f6f7fa;
+    --green:#1d9e75; --green-bg:#e6f5ee; --indigo:#3c3489; --indigo-bg:#eeedfe;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:0 22px}
+  /* hero */
+  .hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:64px 0 56px}
+  .hero .wrap{position:relative}
+  .badge{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--gold);border:1px solid rgba(201,162,75,.5);border-radius:30px;padding:6px 14px;margin-bottom:22px}
+  .brand{font-weight:800;letter-spacing:.02em;font-size:15px;color:var(--gold-soft);margin-bottom:30px}
+  h1{font-size:40px;line-height:1.12;font-weight:800;letter-spacing:-.02em;margin-bottom:16px}
+  h1 .hl{color:var(--gold)}
+  .sub{font-size:18px;color:#c4cee0;max-width:680px}
+  .meta{margin-top:26px;font-size:13px;color:#8ea0bd;border-top:1px solid rgba(255,255,255,.12);padding-top:16px}
+  /* sections */
+  section{padding:52px 0;border-bottom:1px solid var(--line)}
+  .kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px}
+  h2{font-size:27px;font-weight:800;letter-spacing:-.01em;margin-bottom:14px;color:var(--navy)}
+  p.lead{font-size:17px;color:var(--muted);max-width:720px;margin-bottom:8px}
+  /* stat cards */
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:28px}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 18px;text-align:center}
+  .stat .n{font-size:30px;font-weight:800;color:var(--navy);letter-spacing:-.02em}
+  .stat .n .u{font-size:17px;color:var(--gold);font-weight:800}
+  .stat .l{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.35}
+  /* moat */
+  .moat{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:26px;align-items:stretch}
+  .moat .col{border-radius:14px;padding:20px;border:1px solid var(--line);background:#fff}
+  .moat .mid{background:var(--navy);color:#fff;border:none}
+  .moat h3{font-size:15px;margin-bottom:8px}
+  .moat .mid h3{color:var(--gold)}
+  .moat p{font-size:13.5px;color:var(--muted)}
+  .moat .mid p{color:#cdd8ea}
+  /* compare table */
+  table{width:100%;border-collapse:separate;border-spacing:0;margin-top:24px;font-size:14px;
+    background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  th{background:var(--navy);color:#fff;text-align:left;padding:13px 16px;font-size:13px}
+  th.es{background:var(--indigo)}
+  td{padding:14px 16px;border-top:1px solid var(--line);vertical-align:top}
+  td.dim{font-weight:700;color:var(--navy);width:22%}
+  td.en{color:var(--muted);width:30%}
+  td.es{background:#f7f6ff;width:48%}
+  td.es b{color:var(--indigo)}
+  /* roi */
+  .roi{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:26px}
+  .roi .item{display:flex;gap:14px;align-items:flex-start;background:var(--green-bg);
+    border:1px solid #bfe8d6;border-radius:14px;padding:18px}
+  .roi .big{font-size:26px;font-weight:800;color:var(--green);line-height:1;min-width:78px}
+  .roi .t{font-size:13.5px;color:#27604c}
+  .roi .t b{color:#0f6e56}
+  /* bar */
+  .bars{margin-top:24px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px}
+  .bar-row{display:flex;align-items:center;gap:14px;margin:10px 0}
+  .bar-row .lab{width:160px;font-size:13.5px;color:var(--ink);font-weight:600}
+  .track{flex:1;background:#eef1f6;border-radius:8px;height:26px;position:relative;overflow:hidden}
+  .fill{height:100%;border-radius:8px;display:flex;align-items:center;justify-content:flex-end;
+    padding-right:10px;color:#fff;font-size:12.5px;font-weight:700}
+  /* play steps */
+  .steps{margin-top:24px;display:grid;gap:12px}
+  .step{display:flex;gap:16px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .step .num{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#fff;
+    font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+  .step h3{font-size:15.5px;color:var(--navy);margin-bottom:3px}
+  .step p{font-size:13.5px;color:var(--muted)}
+  /* callout */
+  .callout{background:var(--navy);color:#fff;border-radius:16px;padding:30px 28px;margin-top:30px}
+  .callout h2{color:#fff}
+  .callout p{color:#c8d3e6;font-size:15.5px;max-width:680px}
+  .callout .gold{color:var(--gold);font-weight:700}
+  /* footer */
+  footer{padding:30px 0 50px;font-size:12px;color:var(--muted)}
+  footer .src{line-height:1.7}
+  .em{color:var(--navy);font-weight:600}
+  @media(max-width:720px){
+    h1{font-size:30px}.grid{grid-template-columns:repeat(2,1fr)}
+    .moat{grid-template-columns:1fr}.roi{grid-template-columns:1fr}
+    .bar-row .lab{width:120px}td.dim,td.en,td.es{display:block;width:100%}
+    table,thead{font-size:13px}.hide-sm{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="brand">SANO SYSTEMS</div>
+    <div class="badge">Partner Brief · Confidential</div>
+    <h1>The Spanish-speaking market is our <span class="hl">biggest untapped opportunity.</span></h1>
+    <p class="sub">Same product. A massive, loyal, underserved audience — and a moat no competitor can copy. Here's the data, the ROI, and exactly how we leverage it differently than the English market.</p>
+    <div class="meta">Prepared for SANO partners · Built on current third-party market data (2024–2026)</div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">The opportunity</div>
+    <h2>A trillion-dollar market hiding in plain sight</h2>
+    <p class="lead">The U.S. Hispanic market isn't a niche — it's one of the fastest-growing economic forces in the country, and most of its businesses are still digitally invisible.</p>
+    <div class="grid">
+      <div class="stat"><div class="n">$2.6–3.4<span class="u">T</span></div><div class="l">U.S. Hispanic buying power</div></div>
+      <div class="stat"><div class="n">375K<span class="u">+</span></div><div class="l">Hispanic-owned businesses (millions more counting all)</div></div>
+      <div class="stat"><div class="n">7.7<span class="u">%</span></div><div class="l">Annual business growth — vs 0.5% for all businesses</div></div>
+      <div class="stat"><div class="n">84<span class="u">%</span></div><div class="l">Of these businesses were profitable in 2024 — they can pay</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">Why it's untapped</div>
+    <h2>Everyone's chasing the same English customers</h2>
+    <p class="lead">The market is wide open for a specific reason: the people who <em>could</em> serve it mostly can't, and the ones who can speak the language don't have the tools.</p>
+    <div class="moat">
+      <div class="col"><h3>Big U.S. agencies</h3><p>Have the tools — but don't speak the language or the culture. A translated page reads cold and loses the customer.</p></div>
+      <div class="col mid"><h3>SANO sits in the gap</h3><p>We bring Fortune-500 AI tools <b>and</b> authentic, culturally-fluent Spanish. Neither side can copy both.</p></div>
+      <div class="col"><h3>Local providers</h3><p>Speak the language — but build on cheap templates with no AI, no automation, no real digital foundation.</p></div>
+    </div>
+    <p class="lead" style="margin-top:26px">And the demand is real: <span class="em">56% of Hispanics say they're more loyal to brands that speak to them in Spanish</span> — yet most Hispanic-owned businesses are on English-only sites or none at all. We're not creating demand. We're meeting demand no one else is serving.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">The channel that changes everything</div>
+    <h2>WhatsApp, not email</h2>
+    <p class="lead">This single fact reshapes how we sell and support in this market. Hispanic adults use WhatsApp at more than double the rate of the general market — and trust it for business in a way email never earns.</p>
+    <div class="bars">
+      <div class="bar-row"><div class="lab">Hispanic adults</div>
+        <div class="track"><div class="fill" style="width:56%;background:var(--green)">56%</div></div></div>
+      <div class="bar-row"><div class="lab">White adults</div>
+        <div class="track"><div class="fill" style="width:23%;background:#9fb0c6">23%</div></div></div>
+      <div class="bar-row"><div class="lab">U.S. overall</div>
+        <div class="track"><div class="fill" style="width:32%;background:#7c8ba2">32%</div></div></div>
+      <div style="font-size:12.5px;color:var(--muted);margin-top:8px">Share of adults using WhatsApp. For this audience it's the default business channel — our outreach, chatbot, and support should live there, not in an inbox.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">Same market, different gravity</div>
+    <h2>How we run it differently than English</h2>
+    <p class="lead">It's mostly the same platforms — but the weighting, the message, and the trust mechanics all shift. This is the playbook.</p>
+    <table>
+      <thead><tr><th>What</th><th>English / general</th><th class="es">Spanish / Hispanic — the difference</th></tr></thead>
+      <tbody>
+        <tr><td class="dim">Where they are</td><td class="en">FB, Instagram, TikTok, YouTube, Google.</td><td class="es">Same platforms <b>plus WhatsApp as the hub</b> — discover on IG/TikTok, convert on WhatsApp.</td></tr>
+        <tr><td class="dim">Outreach &amp; support</td><td class="en">Email, web forms, on-site chat.</td><td class="es"><b>WhatsApp-first.</b> More trusted than email; it's where business actually happens.</td></tr>
+        <tr><td class="dim">The message</td><td class="en">Write it once, in English.</td><td class="es"><b>Transcreate, never translate.</b> Culturally rewritten — a literal translation reads cold and kills trust.</td></tr>
+        <tr><td class="dim">Paid ads</td><td class="en">Standard targeting.</td><td class="es">Don't target "Spanish language" (too narrow) — use <b>Bilingual / Hispanic Affinity.</b> Global LatAm CPMs run a cheap $2–$4.</td></tr>
+        <tr><td class="dim">What builds trust</td><td class="en">Reviews, brand, price.</td><td class="es"><b>Confianza + referrals.</b> Warmth and personal connection close; word-of-mouth is the cheapest lead engine.</td></tr>
+        <tr><td class="dim">How they search</td><td class="en">Desktop + mobile, short queries.</td><td class="es"><b>80%+ mobile, voice &amp; conversational.</b> Our mobile-first sites + Spanish chatbot fit it perfectly.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">The ROI case</div>
+    <h2>Cheaper to reach. Stickier once you win them.</h2>
+    <p class="lead">This isn't just "more people." Every part of the funnel performs better — lower cost, higher trust, higher retention.</p>
+    <div class="roi">
+      <div class="item"><div class="big">+57%</div><div class="t"><b>Transcreated campaigns</b> outperform translated ones — same spend, far better conversion.</div></div>
+      <div class="item"><div class="big">2.5×</div><div class="t"><b>WhatsApp reach &amp; trust</b> vs the general market — a warmer, higher-response channel than email.</div></div>
+      <div class="item"><div class="big">+30%</div><div class="t"><b>Retention lift</b> from culturally-fit messaging — clients stay, which is everything for the recurring upsell.</div></div>
+      <div class="item"><div class="big">83%</div><div class="t"><b>Trust word-of-mouth</b> — a tight-knit, referral-driven market means our cost-to-find keeps dropping.</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">How SANO plays it</div>
+    <h2>The same machine — pointed at the moat</h2>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div><h3>Lead with the beta as the door-opener</h3><p>The $350 site + AI chatbot is our Rolodex-builder: give Spanish-speaking businesses a real AI foundation cheap, bank cash and trust, and build a base of happy clients.</p></div></div>
+      <div class="step"><div class="num">2</div><div><h3>Deliver bilingual, transcreated, WhatsApp-wired</h3><p>Sites that serve their Spanish-speaking customers, copy that's culturally rewritten (not translated), and a chatbot + outreach that live on WhatsApp where this audience actually is.</p></div></div>
+      <div class="step"><div class="num">3</div><div><h3>Come back with the recurring AI tools</h3><p>3–5 months later, we return to the base with the real SANO suite — CRM, missed-call automation, booking, AI tools — as monthly recurring revenue. The beta earns the right to that conversation.</p></div></div>
+      <div class="step"><div class="num">4</div><div><h3>Global is pure upside</h3><p>The playbook works anywhere Spanish is spoken. We aim where willingness-to-pay is highest, and happily take inbound from anywhere in the world.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section style="border:none">
+  <div class="wrap">
+    <div class="callout">
+      <div class="kicker" style="color:var(--gold)">The bottom line</div>
+      <h2>A loyal, trillion-dollar market, an offer they can't get anywhere else, and a language moat competitors can't cross.</h2>
+      <p>Next step is small and smart: a <span class="gold">low-cost validation test</span> — a focused WhatsApp + transcreated-message campaign to a target segment — so we replace these industry averages with <span class="gold">our own real numbers</span> before we scale. Low risk, real data, fast read.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="src">
+      <span class="em">Sources:</span> U.S. Hispanic buying power &amp; business growth — SBA, Brookings, ListenTrust/Hispanic Marketing Council. WhatsApp adoption — Pew Research / Marketing Charts. Transcreation effectiveness &amp; cultural preference — BOLD Hispanic, Yuca Labs. Confianza &amp; word-of-mouth — Collage Group, Ambassador. Ad targeting &amp; CPMs — Nativa, Lebesgue/AdAmigo. Spanish search behavior — RankTracker, Yuca Labs. Figures are third-party estimates compiled for internal planning (2024–2026).
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
+
+<!-- make-it-live 1781984043 -->
