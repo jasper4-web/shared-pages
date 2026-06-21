@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Inspiration — Standout Websites & How to Build Them | SANO</title>
+<meta name="description" content="A curated gallery of the most interesting interactive websites on the internet — the jaw-dropping showpieces AND the techniques you can actually build on a client site. Verified June 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0c11;--bg2:#10131b;--card:#151926;--card2:#1a1f30;--line:rgba(255,255,255,.08);
+    --text:#eef2f8;--muted:#9098a8;--blue:#6ea8fe;--cyan:#3ad0e0;--gold:#e8b425;
+    --green:#34d399;--amber:#fbbf24;--violet:#a78bfa;--pink:#f472b6;--slate:#94a3b8;}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .bgwrap{position:fixed;inset:0;z-index:0;pointer-events:none;background:
+    radial-gradient(820px 480px at 84% -8%,rgba(167,139,250,.18),transparent 60%),
+    radial-gradient(720px 440px at 4% 6%,rgba(58,208,224,.12),transparent 60%),
+    linear-gradient(180deg,#0a0c11,#0a0c11)}
+  .bgwrap:after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);background-size:50px 50px;mask-image:radial-gradient(circle at 50% 0,#000,transparent 80%)}
+  .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 22px}
+  header{padding:56px 0 22px;text-align:center}
+  .kick{color:var(--violet);text-transform:uppercase;letter-spacing:.2em;font-size:12.5px;font-weight:600}
+  h1{font-size:clamp(32px,5.6vw,54px);font-weight:700;letter-spacing:-.02em;margin:12px 0 12px}
+  h1 .g{background:linear-gradient(120deg,var(--violet),var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  header p{color:var(--muted);max-width:640px;margin:0 auto;font-size:16.5px}
+  .verified{display:inline-block;margin-top:14px;font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:100px;padding:5px 13px}
+  /* spark note */
+  .spark{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--violet);border-radius:12px;padding:15px 19px;margin:26px 0 30px;font-size:14.5px;color:#cdd4e0}
+  .spark b{color:var(--text)}
+  /* search */
+  .search{position:sticky;top:0;z-index:5;padding:16px 0;background:linear-gradient(180deg,var(--bg) 72%,transparent);margin-bottom:6px}
+  .search input{width:100%;max-width:560px;display:block;margin:0 auto;padding:14px 18px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font-family:inherit;font-size:16px}
+  .search input:focus{outline:none;border-color:var(--violet)}
+  /* legend */
+  .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:4px 0 26px;font-size:12.5px;color:var(--muted)}
+  .tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 9px;border-radius:5px}
+  .t-show{background:rgba(244,114,182,.16);color:var(--pink)}
+  .t-partly{background:rgba(251,191,36,.16);color:var(--amber)}
+  .t-build{background:rgba(52,211,153,.16);color:var(--green)}
+  .t-easy{background:rgba(52,211,153,.16);color:var(--green)}
+  .t-med{background:rgba(251,191,36,.16);color:var(--amber)}
+  .t-browse{background:rgba(148,163,184,.16);color:var(--slate)}
+  /* sections */
+  .cat{margin-bottom:42px}
+  .cat-h{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;border-bottom:1px solid var(--line);padding-bottom:10px;flex-wrap:wrap}
+  .cat-h .num{font-size:13px;color:var(--cyan);font-weight:700}
+  .cat-h h2{font-size:21px;font-weight:600}
+  .cat-h span{font-size:13px;color:var(--muted)}
+  .cat-intro{font-size:14px;color:var(--muted);margin:12px 0 16px;max-width:760px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+  /* showpiece card */
+  .item{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:.18s}
+  .item:hover{transform:translateY(-4px);border-color:rgba(167,139,250,.45);box-shadow:0 16px 40px rgba(0,0,0,.34)}
+  .thumb{height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:relative;overflow:hidden}
+  .thumb .mono{font-size:30px;font-weight:700;letter-spacing:-.02em;color:#fff;mix-blend-mode:overlay;opacity:.95}
+  .thumb .open{font-size:11px;color:rgba(255,255,255,.85);font-weight:600;text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:5px}
+  .body{padding:16px 18px 18px}
+  .body .nm{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:3px}
+  .body .nm b{font-size:16px;font-weight:600}
+  .url{font-size:12px;color:var(--violet);word-break:break-all;margin-bottom:10px}
+  .wow{font-size:13.7px;color:#dbe1ec;margin-bottom:11px}
+  .wow .lbl,.build .lbl{display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-right:6px}
+  .build{font-size:13px;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px}
+  .build b{color:#cdd4e0;font-weight:600}
+  /* toolkit card */
+  .tool{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 18px;transition:.16s}
+  .tool:hover{transform:translateY(-3px);border-color:rgba(52,211,153,.4);box-shadow:0 12px 30px rgba(0,0,0,.3)}
+  .tool .nm{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+  .tool .nm b{font-size:15.5px}
+  .tool .what{font-size:13.5px;color:var(--muted);margin-bottom:9px}
+  .tool .with{font-size:12.5px}
+  .tool .with a{color:var(--green);font-weight:600}
+  .tool .with span{color:var(--muted)}
+  .empty{display:none;text-align:center;color:var(--muted);padding:40px;font-size:15px}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 0 54px;border-top:1px solid var(--line);margin-top:14px}
+  footer a{color:var(--violet)}
+  .hide{display:none!important}
+</style>
+</head>
+<body>
+<div class="bgwrap"></div>
+<div class="wrap">
+  <header>
+    <p class="kick">SANO · Inspiration Deck</p>
+    <h1>Interactive <span class="g">Inspiration</span></h1>
+    <p>The most interesting interactive sites on the internet — the kind that make people stop and say "how did they do that." Split into the jaw-dropping showpieces and the parts you can actually build.</p>
+    <span class="verified">✓ Curated &amp; verified June 2026</span>
+  </header>
+
+  <div class="spark">✨ <b>The spark:</b> this deck started from a reel by <b>@ihmd007</b> — <i>"I didn't just build a website… I built a reaction."</i> That "reaction" feeling is what every site below is engineered to create. Here's the playbook behind it.</div>
+
+  <div class="search"><input id="q" type="text" placeholder="🔍 Search — try '3D', 'scroll', 'cursor', 'typography', 'buildable'..."></div>
+
+  <div class="legend">
+    <span><span class="tag t-show">Showpiece</span> admire it — huge build</span>
+    <span><span class="tag t-partly">Partly buildable</span> borrow one piece</span>
+    <span><span class="tag t-build">Buildable</span> we can do this</span>
+  </div>
+
+  <div id="cats">
+
+  <!-- SECTION 1: WOW GALLERY -->
+  <div class="cat">
+    <div class="cat-h"><span class="num">01</span><h2>The Wow Gallery</h2><span>the "how did they do that" hall of fame</span></div>
+    <p class="cat-intro">These are the references every top developer points to. Most are months of work by whole studios — open them, feel the reaction, and notice the <b>one idea</b> each is built around. The "Build it" line tells you the realistic version for a client site.</p>
+    <div class="grid">
+
+      <a class="item" href="https://bruno-simon.com" target="_blank" rel="noopener">
+        <div class="thumb" style="background:linear-gradient(120deg,#ff5a3c,#ffb03a)"><span class="mono">BS</span><span class="open">Open ↗</span></div>
+        <div class="body">
+          <div class="nm"><b>Bruno Simon</b><span class="tag t-show">Showpiece</span></div>
+          <div class="url">bruno-simon.com</div>
+          <div class="wow"><span class="lbl">Wow</span>You <b>drive a toy car</b> through a 3D world to explore his work — honk the horn, knock things over, real physics. Navigation IS a game.</div>
+          <div class="build"><span class="lbl">Build it</span>Don't clone the game. Steal the <b>idea of one playful interaction</b> — e.g. a hero object the visitor can drag or toss (Three.js).</div>
+        </div>
+      </a>
+
+      <a class="item" href="https://lusion.co" target="_blank" rel="noopener">
+        <div class="thumb" style="background:linear-gradient(120deg,#6e8bff,#3ad0e0)"><span class="mono">LU</span><span class="open">Open ↗</span></div>
+        <div class="body">
+          <div class="nm"><b>Lusion</b><span class="tag t-show">Showpiece</span></div>
+          <div class="url">lusion.co</div>
+          <div class="wow"><span class="lbl">Wow</span>Liquid 3D worlds and particle clouds that <b>bend toward your cursor</b>; every page change is a full 3D sequence.</div>
+          <div class="build"><span class="lbl">Build it</span>A cursor-reactive particle hero gets ~70% of the feel with <b>tsParticles</b> for a tiny fraction of the effort.</div>
+        </div>
+      </a>
+
+      <a class="item" href="https://activetheory.net" target="_blank" rel="noopener">
+        <div class="thumb" style="background:linear-gradient(120deg,#1f2433,#3a3f55)"><span class="mono">AT</span><span class="open">Open ↗</span></div>
+        <div class="body">
+          <div class="nm"><b>Active Theory</b><span class="tag t-show">Showpiece</span></div>
+          <div class="url">activetheory.net</div>
+          <div class="wow"><span class="lbl">Wow</span>Dark, cinematic, brand-scale WebGL. Project thumbnails <b>morph into full-screen worlds</b> as you click through.</div>
+          <div class="build"><span class="lbl">Build it</span>Borrow the <b>cinematic page transition</b>: a quick full-screen color/scale wipe between pages (GSAP).</div>
+        </div>
+      </a>
+
+      <a class="item" href="https://resn.co.nz" target="_blank" rel="noopener">
+        <div class="thumb" style="background:linear-gradient(120deg,#a78bfa,#f472b6)"><span class="mono">RE</span><span class="open">Open ↗</span></div>
+        <div class="body">
+          <div class="nm"><b>Resn</b><span class="tag t-show">Showpiece</span></div>
+          <div class="url">resn.co.nz</div>
+          <div class="wow"><span class="lbl">Wow</span>Multiple Awwwards Site-of-the-Year winner. <b>Motion concept comes before layout</b> — the whole site is choreographed.</div>
+          <div class="build"><span class="lbl">Build it</span>The lesson, not the tech: decide the <b>one signature motion</b> first, then design the page around it.</div>
+        </div>
+      </a>
+
+      <a class="item" href="https://immersive-g.com" target="_blank" rel="noopener">
+        <div class="thumb" style="background:linear-gradient(120deg,#34d399,#3ad0e0)"><span class="mono">IG</span><span class="open">Open ↗</span></div>
+        <div class="body">
+          <div class="nm"><b>Immersive Garden</b><span class="tag t-show">Showpiece</span></div>
+          <div class="url">immersive-g.com</div>
+          <div class="wow"><span class="lbl">Wow</span>WebGL scenes that <b>react to your mouse</b>, deep parallax layers, editorial type colliding with 3D.</div>
+          <div class="build"><span class="lbl">Build it</span>Layered <b>parallax depth</b> on scroll/mouse is very doable with Rellax or a few lines of GSAP.</div>
+        </div>
+      </a>
+
+      <a class="item" href="https://obys.agency" target="_blank" rel="noopener">
+        <div class="thumb" style="background:linear-gradient(120deg,#111317,#2b2f3a)"><span class="mono">OB</span><span class="open">Open ↗</span></div>
+        <div class="body">
+          <div class="nm"><b>Obys Agency</b><span class="tag t-partly">Partly buildable</span></div>
+          <div class="url">obys.agency</div>
+          <div class="wow"><span class="lbl">Wow</span><b>Kinetic typography</b> — letters scale, split and morph as you scroll. Feels more like motion design than a webpage.</div>
+          <div class="build"><span class="lbl">Build it</span>Split-text scroll animation on your hero headline is a realistic win — <b>GSAP + SplitText</b> (now free).</div>
+        </div>
+      </a>
+
+      <a class="item" href="https://cuberto.com" target="_blank" rel="noopener">
+        <div class="thumb" style="background:linear-gradient(120deg,#0f1115,#3a3f55)"><span class="mono">CU</span><span class="open">Open ↗</span></div>
+        <div class="body">
+          <div class="nm"><b>Cuberto</b><span class="tag t-partly">Partly buildable</span></div>
+          <div class="url">cuberto.com</div>
+          <div class="wow"><span class="lbl">Wow</span>A <b>magnetic cursor</b> that grabs buttons, elastic hovers, and buttery video case studies in clean black-and-white.</div>
+          <div class="build"><span class="lbl">Build it</span>A <b>magnetic cursor + magnetic buttons</b> is ~50 lines of vanilla JS — high impact, low cost.</div>
+        </div>
+      </a>
+
+      <a class="item" href="https://locomotive.ca" target="_blank" rel="noopener">
+        <div class="thumb" style="background:linear-gradient(120deg,#e8b425,#ff5a3c)"><span class="mono">LO</span><span class="open">Open ↗</span></div>
+        <div class="body">
+          <div class="nm"><b>Locomotive</b><span class="tag t-partly">Partly buildable</span></div>
+          <div class="url">locomotive.ca</div>
+          <div class="wow"><span class="lbl">Wow</span>Smooth-scroll pioneers. <b>Parallax + horizontal-scroll</b> sections so fluid the whole page feels like it's gliding.</div>
+          <div class="build"><span class="lbl">Build it</span>That buttery momentum scroll is <b>Lenis</b> — literally one script tag on any site.</div>
+        </div>
+      </a>
+
+      <a class="item" href="https://www.apple.com/airpods-pro/" target="_blank" rel="noopener">
+        <div class="thumb" style="background:linear-gradient(120deg,#3a3f55,#9098a8)"><span class="mono">AP</span><span class="open">Open ↗</span></div>
+        <div class="body">
+          <div class="nm"><b>Apple Product Pages</b><span class="tag t-partly">Partly buildable</span></div>
+          <div class="url">apple.com/airpods-pro</div>
+          <div class="wow"><span class="lbl">Wow</span>The gold standard of <b>scroll-storytelling that still sells</b>: the product pins in place and animates as you scroll, copy timed to each beat.</div>
+          <div class="build"><span class="lbl">Build it</span>Pin a product image and <b>scrub an animation to scroll</b> with GSAP ScrollTrigger — the single most "premium" trick that's actually practical.</div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- SECTION 2: BUILDABLE TOOLKIT -->
+  <div class="cat">
+    <div class="cat-h"><span class="num">02</span><h2>Make It Yours — The Buildable Toolkit</h2><span>the interactive moves we CAN ship on a client site</span></div>
+    <p class="cat-intro">Every showpiece above is really just a few of these techniques stacked up. Used <b>one or two at a time, with restraint</b>, these are exactly what take a client demo from nice to "whoa." Each links to the tool. Difficulty is honest.</p>
+    <div class="grid">
+
+      <a class="tool" href="https://lenis.darkroom.engineering" target="_blank" rel="noopener">
+        <div class="nm"><b>Buttery smooth scroll</b><span class="tag t-easy">Easy</span></div>
+        <div class="what">Instantly makes a site feel high-end — momentum scrolling instead of choppy jumps. The fastest "premium" upgrade there is.</div>
+        <div class="with"><span>with</span> <a>Lenis ↗</a> <span>· one script tag</span></div>
+      </a>
+
+      <a class="tool" href="https://gsap.com/scroll-trigger/" target="_blank" rel="noopener">
+        <div class="nm"><b>Scroll reveals · pin · scrub</b><span class="tag t-med">Medium</span></div>
+        <div class="what">Elements fade/slide in, sections pin while content animates, images scrub frame-by-frame to scroll. The backbone of scroll-storytelling.</div>
+        <div class="with"><span>with</span> <a>GSAP ScrollTrigger ↗</a> <span>· free</span></div>
+      </a>
+
+      <a class="tool" href="https://gsap.com/docs/v3/Plugins/SplitText/" target="_blank" rel="noopener">
+        <div class="nm"><b>Kinetic split-text headline</b><span class="tag t-med">Medium</span></div>
+        <div class="what">The Obys move — your big headline's letters/words animate in one by one, or react on scroll. Turns plain text into a moment.</div>
+        <div class="with"><span>with</span> <a>GSAP SplitText ↗</a> <span>· now free</span></div>
+      </a>
+
+      <a class="tool" href="https://codepen.io/search/pens?q=magnetic+button" target="_blank" rel="noopener">
+        <div class="nm"><b>Magnetic cursor &amp; buttons</b><span class="tag t-easy">Easy</span></div>
+        <div class="what">Buttons gently "pull" toward the cursor; a custom dot/ring cursor follows along. The Cuberto feel — tiny code, big reaction.</div>
+        <div class="with"><span>with</span> <a>vanilla JS (CodePen recipes) ↗</a></div>
+      </a>
+
+      <a class="tool" href="https://spline.design" target="_blank" rel="noopener">
+        <div class="nm"><b>3D hero — no code</b><span class="tag t-med">Medium</span></div>
+        <div class="what">Build a real 3D object/scene by dragging in a visual editor, wire it to cursor/scroll, and embed it. 3D without writing WebGL.</div>
+        <div class="with"><span>with</span> <a>Spline ↗</a> <span>· free tier</span></div>
+      </a>
+
+      <a class="tool" href="https://rive.app" target="_blank" rel="noopener">
+        <div class="nm"><b>Animated illustrations &amp; UI</b><span class="tag t-easy">Easy</span></div>
+        <div class="what">Lightweight characters, icons and buttons that loop and react to hover/click. Personality without heavy video.</div>
+        <div class="with"><span>with</span> <a>Rive ↗</a> <span>or LottieFiles</span></div>
+      </a>
+
+      <a class="tool" href="https://www.vantajs.com" target="_blank" rel="noopener">
+        <div class="nm"><b>Cursor-reactive hero background</b><span class="tag t-easy">Easy</span></div>
+        <div class="what">Glowing fog/waves/net or particles that ripple toward the mouse — the Lusion "alive background" feeling, drop-in.</div>
+        <div class="with"><span>with</span> <a>Vanta.js ↗</a> <span>or tsParticles</span></div>
+      </a>
+
+      <a class="tool" href="https://tympanus.net/codrops/" target="_blank" rel="noopener">
+        <div class="nm"><b>Hover-reveal · tilt · marquee</b><span class="tag t-easy">Easy</span></div>
+        <div class="what">Image-reveal-on-hover links, 3D tilt cards, infinite logo marquees — small flourishes that signal craft everywhere.</div>
+        <div class="with"><span>with</span> <a>Codrops tutorials ↗</a> <span>· copy &amp; adapt</span></div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- SECTION 3: WHERE TO KEEP FINDING MORE -->
+  <div class="cat">
+    <div class="cat-h"><span class="num">03</span><h2>Where to Keep Hunting</h2><span>fresh interactive inspiration, always</span></div>
+    <p class="cat-intro">The bar moves monthly. These galleries are where the next jaw-droppers show up first — check them when starting any premium build.</p>
+    <div class="grid">
+      <a class="tool" href="https://www.awwwards.com/websites/interaction-design/" target="_blank" rel="noopener"><div class="nm"><b>Awwwards · Interaction</b><span class="tag t-browse">Browse</span></div><div class="what">The daily home of award-winning interactive sites. Filter by "Interaction Design" / "Web Interactive."</div></a>
+      <a class="tool" href="https://thefwa.com" target="_blank" rel="noopener"><div class="nm"><b>The FWA</b><span class="tag t-browse">Browse</span></div><div class="what">Cutting-edge / experimental web showcase — the wildest stuff lands here first.</div></a>
+      <a class="tool" href="https://godly.website" target="_blank" rel="noopener"><div class="nm"><b>Godly</b><span class="tag t-browse">Browse</span></div><div class="what">Tightly curated, genuinely premium design — already in your rolodex, great for interactive too.</div></a>
+      <a class="tool" href="https://tympanus.net/codrops/" target="_blank" rel="noopener"><div class="nm"><b>Codrops</b><span class="tag t-browse">Browse</span></div><div class="what">Not just inspiration — free step-by-step tutorials + demos for the exact effects above.</div></a>
+      <a class="tool" href="https://httpster.net" target="_blank" rel="noopener"><div class="nm"><b>Httpster</b><span class="tag t-browse">Browse</span></div><div class="what">Fresh, bold, often interactive real-world sites. Less polished-corporate, more creative.</div></a>
+      <a class="tool" href="https://minimal.gallery" target="_blank" rel="noopener"><div class="nm"><b>Minimal Gallery</b><span class="tag t-browse">Browse</span></div><div class="what">For when "interactive" should still feel calm and elegant, not busy.</div></a>
+    </div>
+  </div>
+
+  </div>
+  <div class="empty" id="empty">No matches — try another word.</div>
+
+  <footer>SANO · Interactive Inspiration deck · verified June 2026 · companion to the Website Rolodex · click any card to open</footer>
+</div>
+
+<script>
+(function(){
+  var q=document.getElementById('q'),
+      items=[].slice.call(document.querySelectorAll('.item,.tool')),
+      cats=[].slice.call(document.querySelectorAll('.cat')),
+      empty=document.getElementById('empty');
+  q.addEventListener('input',function(){
+    var v=q.value.trim().toLowerCase(), any=false;
+    items.forEach(function(it){var m=it.innerText.toLowerCase().indexOf(v)>-1;it.classList.toggle('hide',!m);if(m)any=true;});
+    cats.forEach(function(c){var vis=c.querySelectorAll('.item:not(.hide),.tool:not(.hide)').length;c.classList.toggle('hide',vis===0);});
+    empty.style.display=any?'none':'block';
+  });
+})();
+</script>
+</body>
+</html>
+
+<!-- make-it-live 1782065592 -->
