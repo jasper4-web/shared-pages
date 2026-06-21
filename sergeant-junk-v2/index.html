@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<script>document.documentElement.className+=' js';</script>
 <style>
   :root{
     --navy:#0a1f3c; --navy2:#0d2748; --navy-deep:#07182e;
@@ -29,6 +29,12 @@
   .eyebrow{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.22em;font-size:13px;font-weight:600;color:var(--red)}
   .gold-text{background:linear-gradient(100deg,var(--gold) 0%,var(--gold2) 25%,#fff7df 45%,var(--gold2) 65%,var(--gold) 100%);background-size:220% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 6s linear infinite}
   @keyframes shimmer{to{background-position:-220% center}}
+
+  /* ---------- SELF-CONTAINED SCROLL REVEAL (no external lib; visible if JS fails) ---------- */
+  html.js [data-aos]{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.22,.61,.36,1),transform .7s cubic-bezier(.22,.61,.36,1);will-change:opacity,transform}
+  html.js [data-aos="fade-right"]{transform:translateX(-34px)}
+  html.js [data-aos="fade-left"]{transform:translateX(34px)}
+  html.js [data-aos].in{opacity:1;transform:none}
 
   /* ---------- NAV ---------- */
   header.nav{position:fixed;top:0;left:0;right:0;z-index:50;transition:.35s}
@@ -429,10 +435,27 @@
 <!-- STICKY MOBILE CALL -->
 <div class="mcall"><a href="tel:+16266731136">📞 Tap to Call — 626-673-1136</a></div>
 
-<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script>
-  // Scroll-reveal
-  AOS.init({duration:750,easing:'ease-out-cubic',once:true,offset:60});
+  // Scroll-reveal — self-contained, with failsafes so content never stays hidden
+  (function(){
+    var els=[].slice.call(document.querySelectorAll('[data-aos]'));
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function showAll(){els.forEach(function(el){el.classList.add('in');});}
+    if(reduce||!('IntersectionObserver'in window)){showAll();return;}
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          var d=e.target.getAttribute('data-aos-delay');
+          if(d){e.target.style.transitionDelay=d+'ms';}
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    },{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+    els.forEach(function(el){io.observe(el);});
+    // Failsafe: nothing should remain invisible after 2.5s regardless
+    setTimeout(showAll,2500);
+  })();
 
   // Sticky nav
   var nav=document.getElementById('nav');
@@ -463,4 +486,4 @@
 </body>
 </html>
 
-<!-- make-it-live 1782064215 -->
+<!-- make-it-live 1782064475 -->
