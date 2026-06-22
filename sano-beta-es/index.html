@@ -538,10 +538,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
         </div>
       </a>
 
-      <a class="ex-card" href="https://jasper4-web.github.io/sano-demo-lawn/" target="_blank" rel="noopener">
+      <a class="ex-card" href="https://jasper4-web.github.io/shared-pages/demo-lawn-es/" target="_blank" rel="noopener">
         <div class="ex-frame">
           <span class="ex-badge" data-es="Demo">Demo</span>
-          <iframe class="ex-frame-iframe" src="https://jasper4-web.github.io/sano-demo-lawn/" loading="lazy" scrolling="no" tabindex="-1" title="Live preview — lawn care demo"></iframe>
+          <iframe class="ex-frame-iframe" src="https://jasper4-web.github.io/shared-pages/demo-lawn-es/" loading="lazy" scrolling="no" tabindex="-1" title="Live preview — lawn care demo"></iframe>
         </div>
         <div class="ex-meta">
           <span class="ex-cap" data-es="Jardinería · Greater Salt Lake">Lawn care · Greater Salt Lake</span>
@@ -551,10 +551,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
         </div>
       </a>
 
-      <a class="ex-card" href="https://jasper4-web.github.io/sano-demo-transport/" target="_blank" rel="noopener">
+      <a class="ex-card" href="https://jasper4-web.github.io/shared-pages/demo-transport-es/" target="_blank" rel="noopener">
         <div class="ex-frame">
           <span class="ex-badge" data-es="Demo">Demo</span>
-          <iframe class="ex-frame-iframe" src="https://jasper4-web.github.io/sano-demo-transport/" loading="lazy" scrolling="no" tabindex="-1" title="Live preview — event transport demo"></iframe>
+          <iframe class="ex-frame-iframe" src="https://jasper4-web.github.io/shared-pages/demo-transport-es/" loading="lazy" scrolling="no" tabindex="-1" title="Live preview — event transport demo"></iframe>
         </div>
         <div class="ex-meta">
           <span class="ex-cap" data-es="Transporte · área de Houston">Transportation · Houston area</span>
@@ -1183,7 +1183,23 @@ document.addEventListener('DOMContentLoaded',function(){
 })();
 </script>
 
+<script>
+(function(){
+  // Keep the embedded demo previews in the same language as the page.
+  // The previews live on the same domain, so they read the same saved
+  // language choice; reloading them after a toggle re-renders them to match.
+  function syncDemos(){
+    document.querySelectorAll('.ex-frame-iframe').forEach(function(f){
+      try { f.contentWindow.location.reload(); } catch(e) { f.src = f.src; }
+    });
+  }
+  document.addEventListener('click', function(e){
+    if (e.target && e.target.closest && e.target.closest('.sano-lang-seg')) setTimeout(syncDemos, 80);
+  });
+})();
+</script>
+
 </body>
 </html>
 
-<!-- make-it-live 1782147742 -->
+<!-- make-it-live 1782151629 -->
