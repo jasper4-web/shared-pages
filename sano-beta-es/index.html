@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-es="SANO Systems — Fase Beta">SANO Systems — Beta Phase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;450;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
+<style>
+@property --beam-angle{syntax:"<angle>";initial-value:0deg;inherits:false}
+*,*:before,*:after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --black:#000;
+  --black-soft:#060608;
+  --black-card:rgba(6,6,10,0.51);
+  --blue:#0070F3;
+  --blue-bright:#338EF7;
+  --cyan:#00D4FF;
+  --amber:#E8943A;
+  --amber-soft:rgba(232,148,58,0.15);
+  --text-primary:#F2EBE0;
+  --text-secondary:#DDD6CB;
+  --text-muted:#B5AEA3;
+  --text-glow:0 1px 3px rgba(0,0,0,0.6),0 0 12px rgba(0,0,0,0.4);
+  --border:rgba(255,255,255,0.06);
+  --border-hover:rgba(255,255,255,0.12);
+  --border-accent:rgba(0,112,243,0.3);
+  --font:"Space Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --radius:6px;
+  --radius-lg:8px;
+  --ease:cubic-bezier(0.16,1,0.3,1)
+}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font);background:var(--black);color:var(--text-primary);line-height:1.6;overflow-x:hidden;text-shadow:var(--text-glow)}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+/* Shader background */
+#shader-bg{position:fixed;inset:0;z-index:0}
+#shader-bg canvas{display:block;width:100%!important;height:100%!important}
+#shader-scrim{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 70% 60% at 50% 45%,#000000b3,#00000080,#00000040);pointer-events:none}
+.site-content{position:relative;z-index:1}
+
+/* Nav — transparent, matching original */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;background:transparent;transition:background .4s var(--ease),border-color .4s var(--ease);border-bottom:1px solid transparent}
+.nav.scrolled{background:#000000e6;border-bottom-color:var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,4vw,48px)}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:23px;font-weight:700;letter-spacing:-.02em}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+.nav-link{font-size:15px;font-weight:400;color:var(--text-muted);transition:color .2s;position:relative}
+.nav-link:hover{color:var(--text-primary)}
+.nav-link:after{content:"";position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--blue);transition:width .3s var(--ease)}
+.nav-link:hover:after{width:100%}
+.nav-phone{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--text-primary)!important;font-weight:500}
+.nav-phone:hover{color:var(--blue-bright)!important}
+.nav-phone:after,.nav-cta-link:after{display:none}
+.nav-cta-link{padding:9px 18px;font-size:15px;display:inline-flex;align-items:center;gap:8px;background:#06060ad9;color:#fff;font-weight:600;border-radius:var(--radius);border:1px solid rgba(0,112,243,.4);transition:all .35s var(--ease)}
+.nav-cta-link:hover{border-color:#0070f3b3;box-shadow:0 0 20px #0070f326;background:#0070f314;transform:translateY(-1px)}
+.beta-tag{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--amber);background:rgba(232,148,58,0.1);border:1px solid rgba(232,148,58,.18);padding:3px 10px;border-radius:100px;margin-left:8px}
+
+/* Hero — full viewport, centered */
+.hero{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding-top:80px;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;background:#e8943a0d;border:1px solid rgba(232,148,58,.18);border-radius:100px;margin-bottom:28px}
+.hero-badge-dot{width:5px;height:5px;background:var(--amber);border-radius:50%;animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,to{opacity:1}50%{opacity:.3}}
+.hero-badge-text{font-size:14px;font-weight:500;color:var(--text-secondary);letter-spacing:.02em}
+.hero-title{font-size:clamp(44px,6.5vw,76px);font-weight:700;line-height:1;letter-spacing:-.045em;max-width:820px;margin-bottom:20px;text-shadow:0 0 20px rgba(0,0,0,.9),0 0 50px rgba(0,0,0,.5)}
+.gradient-text{background:linear-gradient(90deg,var(--cyan) 0%,var(--blue) 25%,var(--amber) 50%,var(--blue) 75%,var(--cyan) 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer-sweep 6s linear infinite}
+@keyframes shimmer-sweep{0%{background-position:-200% center}to{background-position:200% center}}
+.hero-sub{max-width:500px;margin:0 auto 32px;font-weight:450;color:var(--text-primary);font-size:clamp(15px,1.1vw,17px);line-height:1.7;text-shadow:0 0 12px rgba(0,0,0,.8),0 0 30px rgba(0,0,0,.4)}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+
+/* Hero button with animated beam border */
+.btn-hero-wrap{position:relative;display:inline-flex;border-radius:var(--radius);padding:1.5px;background:conic-gradient(from var(--beam-angle,0deg),transparent 0%,transparent 40%,var(--blue) 55%,var(--cyan) 65%,rgba(232,148,58,.6) 75%,transparent 90%,transparent 100%);animation:btn-beam-rotate 3s linear infinite}
+@keyframes btn-beam-rotate{0%{--beam-angle:0deg}to{--beam-angle:360deg}}
+.btn-hero{padding:15px 32px;font-size:17px;border:1px solid transparent;background:#06060aeb;color:#fff;font-weight:600;border-radius:calc(var(--radius) - 1px);transition:all .35s var(--ease);overflow:hidden;display:inline-flex;align-items:center;gap:8px}
+.btn-hero:hover{box-shadow:0 0 30px #0070f31f,0 0 80px #00d4ff0d;background:#0070f30f}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;background:#ffffff05;color:var(--text-secondary);font-weight:500;font-size:16px;border-radius:var(--radius);border:1px solid rgba(255,255,255,.1);transition:all .35s var(--ease)}
+.btn-ghost:hover{border-color:#0070f359;color:var(--text-primary);box-shadow:0 0 20px #0070f314;background:#0070f308}
+
+.hero-proof{display:flex;gap:20px;flex-wrap:wrap;margin-top:28px;justify-content:center}
+.hero-proof-item{display:inline-flex;align-items:center;gap:6px;font-size:15px;color:var(--text-primary);font-weight:500;text-shadow:0 0 12px rgba(0,0,0,.9),0 0 30px rgba(0,0,0,.5)}
+.hero-proof-item svg{color:var(--blue);flex-shrink:0}
+.spots-left{font-family:var(--font);font-size:13px;color:var(--amber);margin-top:16px;font-weight:500}
+
+/* Stats bar — flat, border-top/bottom only */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);border:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);border-radius:0;overflow:hidden;background:rgba(0,0,0,0.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.stat{padding:clamp(24px,3vw,36px);text-align:center;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-number{font-size:clamp(28px,3.5vw,42px);font-weight:700;letter-spacing:-.03em;line-height:1;margin-bottom:6px;background:linear-gradient(180deg,#FFF 0%,var(--blue-bright) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{font-size:15px;color:var(--text-secondary);font-weight:500;line-height:1.4;text-shadow:0 1px 4px rgba(0,0,0,.8),0 0 16px rgba(0,0,0,.5)}
+
+/* Section headers */
+.section{padding:clamp(48px,6vh,80px) 0}
+.section-backdrop{background:rgba(0,0,0,0.78);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.container{max-width:1140px;margin:0 auto;padding:0 clamp(20px,4vw,40px)}
+.section-header{margin-bottom:56px}
+.section-header.center{text-align:center}
+.label{font-size:15px;font-weight:600;text-transform:uppercase;letter-spacing:.2em;color:var(--blue-bright);text-shadow:0 0 12px rgba(0,112,243,.3),0 0 30px rgba(0,0,0,.5)}
+.heading-xl{font-size:clamp(32px,4vw,50px);font-weight:700;line-height:1.06;letter-spacing:-.035em;text-shadow:0 0 20px rgba(0,0,0,.9),0 0 50px rgba(0,0,0,.5)}
+.text-body{font-size:clamp(15px,1.1vw,17px);color:var(--text-primary);line-height:1.7;max-width:560px;font-weight:450;text-shadow:0 0 12px rgba(0,0,0,.8),0 0 30px rgba(0,0,0,.4)}
+.center .text-body{margin-left:auto;margin-right:auto}
+
+/* Feature cards — solid dark bg for legibility */
+.card{background:rgba(6,6,10,0.9);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-lg);padding:clamp(32px,3.5vw,48px);transition:border-color .4s var(--ease),box-shadow .4s var(--ease),transform .4s var(--ease);position:relative;border-top:1px solid rgba(255,255,255,.12);background-image:linear-gradient(180deg,rgba(255,255,255,.03) 0%,transparent 40%);overflow:hidden;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.card:hover{border-color:var(--border-accent);box-shadow:0 0 40px #0070f314,0 0 80px #0070f308;transform:translateY(-2px)}
+.features-grid{display:grid;gap:20px}
+.feature-icon{width:48px;height:48px;border-radius:6px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:22px}
+.feature-icon-blue{background:#0070f322;color:var(--blue-bright)}
+.feature-icon-cyan{background:#00d4ff1a;color:var(--cyan)}
+.feature-icon-green{background:#10f5a01a;color:#10F5A0}
+.feature-card-title{font-size:22px;font-weight:700;margin-bottom:12px;letter-spacing:-.015em}
+.feature-card-desc{font-size:16px;color:var(--text-secondary);line-height:1.7}
+.tier-badge{display:inline-block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:4px 12px;border-radius:100px;margin-top:18px;width:fit-content}
+.tier-starter{background:#0070f31a;color:var(--blue-bright);border:1px solid rgba(0,112,243,.2)}
+.tier-addon{background:var(--amber-soft);color:var(--amber);border:1px solid rgba(232,148,58,.35)}
+
+/* Pricing — matching original card style */
+
+/* Main pricing card — featured style with subtle glow border */
+.pricing-main{position:relative;border-radius:var(--radius-lg);padding:clamp(36px,4vw,48px);background:rgba(6,6,10,0.88);overflow:hidden;border:1px solid rgba(0,112,243,.35);box-shadow:0 0 40px #0070f31a,0 0 80px #0070f30d,inset 0 1px 0 rgba(255,255,255,.06)}
+.pricing-main-inner{position:relative;z-index:1}
+.pricing-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;flex-wrap:wrap;gap:16px}
+.pricing-main h3{font-size:clamp(22px,2.5vw,28px);font-weight:700;letter-spacing:-.02em}
+.pricing-main .price-sub{font-size:15px;color:var(--text-muted);margin-top:4px}
+.price-big{font-size:clamp(36px,4vw,50px);font-weight:700;letter-spacing:-.03em;line-height:1}
+.price-big span{font-size:15px;color:var(--text-muted);font-weight:400}
+.price-monthly{font-size:15px;color:var(--text-muted);margin-top:6px}
+
+.pricing-includes{list-style:none;display:grid;gap:12px;margin-bottom:32px}
+.pricing-includes li{display:flex;align-items:flex-start;gap:10px;font-size:15px;color:var(--text-secondary);line-height:1.5}
+.pricing-check{flex-shrink:0;width:18px;height:18px;border-radius:50%;background:#0070f31a;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.pricing-check svg{width:10px;height:10px;stroke:var(--blue);stroke-width:3;fill:none}
+
+.pricing-guarantee{display:flex;align-items:center;gap:12px;padding:18px;background:rgba(255,255,255,0.04);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:24px}
+.pricing-guarantee p{font-size:15px;color:var(--text-secondary);line-height:1.6}
+.pricing-guarantee strong{color:var(--text-primary);font-weight:600}
+
+.btn-primary-full{width:100%;padding:15px;border-radius:var(--radius);border:1px solid rgba(0,112,243,.4);background:#06060ad9;color:#fff;font-weight:600;font-size:16px;font-family:var(--font);transition:all .35s var(--ease);display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary-full:hover{border-color:#0070f3b3;box-shadow:0 0 20px #0070f326,0 0 60px #0070f30f;background:#0070f314;transform:translateY(-1px)}
+
+/* FAQ — card-based, matching original */
+.faq-grid{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.faq-item{background:rgba(6,6,10,0.85);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .3s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.faq-item[open]{border-color:var(--border-hover)}
+.faq-question{padding:18px 24px;font-size:16px;font-weight:500;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;color:var(--text-primary)}
+.faq-question::-webkit-details-marker{display:none}
+.faq-question::after{content:"+";font-size:20px;font-weight:300;color:var(--text-muted);transition:transform .3s var(--ease);flex-shrink:0;margin-left:16px}
+.faq-item[open] .faq-question::after{content:"-"}
+.faq-answer{padding:0 24px 18px;font-size:16px;color:var(--text-secondary);line-height:1.7}
+
+/* Mission callout strip */
+.mission-strip{padding:clamp(48px,8vh,80px) 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(0,0,0,0.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.mission-text{font-size:clamp(17px,1.4vw,21px);font-weight:450;color:var(--text-primary);line-height:1.75;max-width:680px;margin:0 auto;letter-spacing:-.01em;text-shadow:0 0 16px rgba(0,0,0,.9),0 0 40px rgba(0,0,0,.5)}
+
+/* Footer — 3-col, matching original */
+.footer{border-top:1px solid var(--border);padding:48px 0 32px;background:rgba(0,0,0,0.8);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px}
+.footer-brand-name{font-size:20px;font-weight:700;margin-bottom:8px}
+.footer-tagline{font-size:15px;color:var(--text-muted);margin-bottom:16px}
+.footer-contact-link{display:block;font-size:15px;color:var(--text-muted);margin-bottom:6px;transition:color .2s}
+.footer-contact-link:hover{color:var(--text-primary)}
+.footer-col-title{font-size:15px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-secondary);margin-bottom:16px}
+.footer-links{list-style:none}
+.footer-links li{margin-bottom:10px}
+.footer-links a{font-size:15px;color:var(--text-muted);transition:color .2s}
+.footer-links a:hover{color:var(--text-primary)}
+.footer-copy{font-size:14px;color:var(--text-muted);margin-top:40px;padding-top:24px;border-top:1px solid var(--border)}
+
+/* Chatbot widget — SANO dark theme */
+#chat-launcher{position:fixed;bottom:28px;right:28px;width:60px;height:60px;background:rgba(6,6,10,0.9);border:1px solid rgba(0,112,243,.4);border-radius:50%;box-shadow:0 4px 20px rgba(0,112,243,.2);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:1001;color:#fff;transition:transform .2s,box-shadow .3s}
+#chat-launcher:hover{transform:scale(1.08);box-shadow:0 4px 30px rgba(0,112,243,.35)}
+#chat-widget{position:fixed;bottom:100px;right:28px;width:380px;height:560px;max-height:75vh;background:#0a0a0e;border:1px solid rgba(255,255,255,.08);border-radius:12px;box-shadow:0 16px 60px rgba(0,0,0,.6);display:flex;flex-direction:column;overflow:hidden;font-family:var(--font);z-index:1002;transition:transform .3s cubic-bezier(.175,.885,.32,1.275),opacity .25s;transform-origin:bottom right}
+#chat-widget.chat-closed{transform:scale(0);opacity:0;pointer-events:none}
+.chat-header{background:rgba(6,6,10,0.95);border-bottom:1px solid rgba(255,255,255,.06);padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.chat-brand{margin:0;font-size:16px;font-weight:600;color:var(--text-primary);letter-spacing:-.01em}
+.chat-status{font-size:11px;color:var(--text-muted);font-weight:400}
+.chat-close{cursor:pointer;font-size:22px;color:var(--text-muted);line-height:1;transition:color .2s;padding:4px}
+.chat-close:hover{color:var(--text-primary)}
+.chat-messages{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;background:rgba(6,6,10,0.6)}
+.chat-messages::-webkit-scrollbar{width:4px}
+.chat-messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
+.cmsg{max-width:88%;padding:12px 16px;border-radius:10px;font-size:14px;line-height:1.6;animation:msgFadeIn .3s ease}
+@keyframes msgFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.cmsg.bot{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);color:var(--text-secondary);align-self:flex-start;border-bottom-left-radius:3px}
+.cmsg.user{background:rgba(0,112,243,.15);border:1px solid rgba(0,112,243,.2);color:var(--text-primary);align-self:flex-end;border-bottom-right-radius:3px}
+.bot-follow{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);font-style:italic;color:var(--text-muted);font-size:13px}
+.cmsg a.chat-link{color:var(--blue);text-decoration:none;font-weight:600}
+.cmsg a.chat-link:hover{text-decoration:underline}
+.cmsg .chat-cta-btn{display:block;background:rgba(0,112,243,.15);border:1px solid rgba(0,112,243,.3);color:var(--blue-bright);text-align:center;padding:10px 14px;border-radius:6px;text-decoration:none;font-weight:600;margin-top:12px;font-size:13px;transition:all .2s}
+.cmsg .chat-cta-btn:hover{background:rgba(0,112,243,.25);border-color:rgba(0,112,243,.5)}
+.quick-replies{display:flex;gap:6px;padding:0 16px 10px;background:rgba(6,6,10,0.6);overflow-x:auto;flex-wrap:wrap}
+.quick-replies::-webkit-scrollbar{display:none}
+.qr{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--text-secondary);padding:7px 13px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:var(--font)}
+.qr:hover{border-color:rgba(0,112,243,.4);color:var(--text-primary);background:rgba(0,112,243,.08)}
+.chat-input-bar{padding:12px 16px;background:rgba(6,6,10,0.95);border-top:1px solid rgba(255,255,255,.06);display:flex;gap:8px;align-items:center}
+.chat-input-bar input{flex:1;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);border-radius:6px;padding:10px 14px;font-size:14px;color:var(--text-primary);outline:none;font-family:var(--font);transition:border-color .2s}
+.chat-input-bar input:focus{border-color:rgba(0,112,243,.4)}
+.chat-input-bar input::placeholder{color:var(--text-muted)}
+.chat-input-bar button{background:rgba(0,112,243,.15);border:1px solid rgba(0,112,243,.3);color:var(--blue-bright);width:38px;height:38px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0}
+.chat-input-bar button:hover{background:rgba(0,112,243,.25);border-color:rgba(0,112,243,.5)}
+.lead-captured-toast{background:rgba(0,112,243,.15);border:1px solid rgba(0,112,243,.2);color:var(--blue-bright);padding:10px 16px;text-align:center;font-size:12px;font-weight:600;animation:msgFadeIn .3s ease}
+
+/* Mobile */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .hero-title{font-size:clamp(36px,8vw,48px)}
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(2){border-right:none}
+  .stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--border)}
+  .pricing-header{flex-direction:column}
+  .footer-grid{grid-template-columns:1fr;gap:32px}
+  #chat-widget{bottom:0;right:0;width:100%;height:100%;max-height:100vh;border-radius:0;border:none}
+  #chat-launcher{bottom:20px;right:20px;width:54px;height:54px}
+}
+</style>
+<style>
+/* Agent A — "See it in action" gallery. All classes ex- prefixed. Reuses page CSS vars for color only. */
+.ex-section{padding:clamp(64px,9vh,104px) 0}
+.ex-wrap{max-width:1140px;margin:0 auto;padding:0 clamp(20px,4vw,40px)}
+.ex-head{text-align:center;max-width:660px;margin:0 auto clamp(40px,5vw,56px)}
+.ex-eyebrow{font-size:15px;font-weight:600;text-transform:uppercase;letter-spacing:.2em;color:var(--blue-bright)}
+.ex-title{font-size:clamp(30px,4vw,46px);font-weight:700;line-height:1.08;letter-spacing:-.035em;color:var(--text-primary);margin-top:14px}
+.ex-sub{font-size:clamp(15px,1.1vw,17px);color:var(--text-secondary);line-height:1.7;margin-top:14px}
+.ex-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;align-items:stretch}
+.ex-card{display:flex;flex-direction:column;background:var(--black-card);border:1px solid var(--border);border-radius:16px;overflow:hidden;text-decoration:none;transition:border-color .35s ease,transform .35s ease,box-shadow .35s ease;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.ex-card:hover{border-color:rgba(0,112,243,.3);transform:translateY(-3px);box-shadow:0 0 40px rgba(0,112,243,.08)}
+.ex-frame{position:relative;width:100%;height:232px;overflow:hidden;border-bottom:1px solid var(--border);background:#060608}
+.ex-frame-iframe{position:absolute;top:0;left:0;width:400%;height:400%;border:0;transform:scale(.25);transform-origin:0 0;pointer-events:none}
+.ex-badge{position:absolute;top:10px;left:10px;z-index:2;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--amber);background:rgba(232,148,58,.12);border:1px solid rgba(232,148,58,.35);padding:3px 9px;border-radius:100px}
+.ex-meta{padding:22px 22px 24px;display:flex;flex-direction:column;gap:9px;flex:1}
+.ex-cap{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--amber)}
+.ex-name{font-size:20px;font-weight:700;letter-spacing:-.015em;color:var(--text-primary)}
+.ex-desc{font-size:14.5px;color:var(--text-muted);line-height:1.6;flex:1}
+.ex-btn{margin-top:6px;display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;color:var(--blue-bright);transition:gap .3s ease}
+.ex-card:hover .ex-btn{gap:11px}
+@media (max-width:880px){.ex-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.ex-grid{grid-template-columns:1fr}.ex-frame{height:220px}}
+</style>
+<style>
+/* ===========================================================
+   SANO ADMIN COMMAND CENTER — card-slice + showcase
+   All classes prefixed adm-. No images / no base64.
+   Color tokens reuse the page's existing :root variables.
+   =========================================================== */
+
+/* ---- shared primitives (used by slice + showcase) ---- */
+.adm-caret{display:inline-block;width:2px;height:18px;margin-left:1px;vertical-align:middle;background:var(--blue-bright);animation:adm-blink 1.1s step-end infinite}
+@keyframes adm-blink{0%,100%{opacity:1}50%{opacity:0}}
+.adm-frame{background:rgba(6,6,10,.94);border:1px solid rgba(255,255,255,.1);border-top:1px solid rgba(255,255,255,.14);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.adm-chrome{display:flex;align-items:center;gap:7px;padding:10px 13px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.4)}
+.adm-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.14)}
+.adm-url{margin-left:10px;flex:1;font-size:11.5px;color:var(--text-muted);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:5px 10px}
+.adm-url b{color:var(--text-secondary);font-weight:500}
+.adm-saved{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#10F5A0;font-weight:500;white-space:nowrap}
+.adm-saved::before{content:"";width:6px;height:6px;border-radius:50%;background:#10F5A0;box-shadow:0 0 8px #10f5a0aa}
+.adm-eyebrow{display:flex;align-items:center;gap:7px;font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:10px}
+.adm-eyebrow svg{width:13px;height:13px;stroke:var(--amber);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.adm-input{display:flex;align-items:center;background:rgba(255,255,255,.04);border:1.5px solid rgba(0,112,243,.55);border-radius:9px;padding:11px 13px;font-size:15px;font-weight:600;color:var(--text-primary);box-shadow:0 0 0 3px rgba(0,112,243,.12)}
+.adm-typed{white-space:pre}
+.adm-lead{display:flex;align-items:center;gap:11px;padding:9px 9px;border-radius:8px}
+.adm-lead:nth-child(odd){background:rgba(255,255,255,.025)}
+.adm-lead-dot{width:7px;height:7px;border-radius:50%;background:var(--blue-bright);flex-shrink:0;box-shadow:0 0 8px rgba(51,142,247,.7)}
+.adm-lead-name{flex:1;min-width:0}
+.adm-lead-name b{font-size:13.5px;font-weight:600;color:var(--text-primary);display:block;line-height:1.3}
+.adm-lead-name span{font-size:11.5px;color:var(--text-muted)}
+.adm-lead-phone{font-size:12.5px;color:var(--text-secondary);font-variant-numeric:tabular-nums;white-space:nowrap}
+.adm-lead-time{font-size:11.5px;color:var(--text-muted);white-space:nowrap;min-width:52px;text-align:right}
+
+/* ---------- CARD-SLICE (compact, ~360px) ---------- */
+.adm-slice{margin-top:20px}
+.adm-slice .adm-frame{box-shadow:0 16px 40px rgba(0,0,0,.45)}
+.adm-slice-body{padding:14px}
+.adm-slice-sec{margin-bottom:13px}
+.adm-slice-sec:last-child{margin-bottom:0}
+.adm-slice .adm-input{font-size:14px;padding:9px 11px}
+.adm-slice .adm-caret{height:16px}
+.adm-leads-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.adm-leads-count{font-size:10px;font-weight:600;color:var(--amber);background:var(--amber-soft);border:1px solid rgba(232,148,58,.3);padding:2px 8px;border-radius:100px}
+.adm-slice-cap{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13.5px;font-weight:600;color:var(--text-primary)}
+.adm-slice-cap svg{width:15px;height:15px;stroke:var(--amber);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+/* ---------- SHOWCASE (wide) ---------- */
+.adm-showcase{padding:clamp(48px,8vh,84px) 0}
+.adm-showcase-inner{max-width:1080px;margin:0 auto;padding:0 24px}
+.adm-sc-head{text-align:center;max-width:620px;margin:0 auto 36px}
+.adm-sc-eyebrow{font-size:13px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--blue-bright);margin:0 0 12px}
+.adm-sc-title{font-size:clamp(26px,3.4vw,38px);font-weight:700;letter-spacing:-.025em;line-height:1.15;margin:0 0 14px}
+.adm-sc-sub{font-size:clamp(15px,1.1vw,17px);color:var(--text-secondary);line-height:1.7;margin:0}
+.adm-app{display:grid;grid-template-columns:200px 1fr;background:rgba(6,6,10,.94);border:1px solid rgba(255,255,255,.1);border-top:1px solid rgba(255,255,255,.14);border-radius:16px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+.adm-app .adm-chrome{grid-column:1 / -1}
+.adm-app .adm-url{max-width:320px}
+.adm-side{padding:20px 14px;border-right:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.03),transparent 30%);display:flex;flex-direction:column;gap:5px}
+.adm-brand{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding:0 6px}
+.adm-brand-mark{width:28px;height:28px;border-radius:7px;background:linear-gradient(140deg,var(--blue),var(--blue-bright));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0}
+.adm-brand-name{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.adm-brand-sub{font-size:10.5px;color:var(--text-muted);margin-top:1px}
+.adm-nav-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--text-muted)}
+.adm-nav-item svg{width:16px;height:16px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.adm-nav-item.adm-active{color:var(--text-primary);background:var(--amber-soft);box-shadow:inset 0 0 0 1px rgba(232,148,58,.3)}
+.adm-nav-item.adm-active svg{stroke:var(--amber)}
+.adm-side-foot{margin-top:auto;padding:12px 8px 0;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted)}
+.adm-main{padding:22px 26px 28px}
+.adm-main-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
+.adm-main-title{font-size:17px;font-weight:700;letter-spacing:-.015em;margin:0}
+.adm-main-crumb{font-size:12px;color:var(--text-muted);margin-top:3px}
+.adm-publish{padding:8px 16px;border-radius:8px;background:linear-gradient(180deg,var(--blue-bright),var(--blue));color:#fff;font-weight:600;font-size:13px;border:none;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(0,112,243,.3)}
+.adm-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.adm-block{background:var(--black-card);border:1px solid var(--border);border-radius:12px;padding:16px}
+.adm-block.adm-span{grid-column:1 / -1}
+.adm-field-label{font-size:11.5px;color:var(--text-muted);margin-bottom:7px}
+.adm-hint{margin-top:9px;font-size:11.5px;color:var(--text-muted)}
+.adm-photo{position:relative;height:120px;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:linear-gradient(135deg,rgba(0,112,243,.30),rgba(232,148,58,.22)),repeating-linear-gradient(45deg,rgba(255,255,255,.05) 0 12px,transparent 12px 24px),#0b0b12;display:flex;align-items:flex-end}
+.adm-photo-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:rgba(242,235,224,.55)}
+.adm-photo-ph svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.adm-photo-ph span{font-size:11px;letter-spacing:.04em}
+.adm-photo-bar{position:relative;width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:linear-gradient(0deg,rgba(0,0,0,.78),transparent)}
+.adm-replace{display:inline-flex;align-items:center;gap:6px;background:rgba(6,6,10,.78);border:1px solid rgba(255,255,255,.16);color:var(--text-primary);font-size:12px;font-weight:600;font-family:inherit;padding:6px 11px;border-radius:8px;cursor:pointer}
+.adm-replace svg{width:13px;height:13px;stroke:var(--blue-bright);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.adm-photo-name{font-size:11px;color:var(--text-secondary);background:rgba(6,6,10,.6);padding:3px 8px;border-radius:6px}
+.adm-svc-row{display:flex;align-items:center;gap:11px;padding:11px 4px;border-bottom:1px solid var(--border)}
+.adm-svc-row:last-child{border-bottom:none}
+.adm-svc-name{flex:1;font-size:14px;color:var(--text-primary);font-weight:500}
+.adm-svc-name span{display:block;font-size:11px;color:var(--text-muted);font-weight:400;margin-top:2px}
+.adm-price-edit{display:flex;align-items:center;gap:2px;background:rgba(255,255,255,.05);border:1.5px solid rgba(0,112,243,.55);border-radius:8px;padding:6px 10px;font-size:14px;font-weight:600;color:var(--text-primary);box-shadow:0 0 0 3px rgba(0,112,243,.10)}
+.adm-price-edit .adm-cur{color:var(--text-muted);font-weight:500}
+.adm-price-edit .adm-caret{height:15px}
+.adm-price-static{font-size:14px;font-weight:600;color:var(--text-secondary)}
+.adm-svc-edit-icon{width:28px;height:28px;flex-shrink:0;border-radius:7px;border:1px solid var(--border);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.adm-svc-edit-icon svg{width:13px;height:13px;stroke:var(--text-muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* showcase captions */
+.adm-sc-caps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+.adm-cap{display:flex;align-items:flex-start;gap:11px}
+.adm-cap-ico{width:34px;height:34px;flex-shrink:0;border-radius:8px;background:var(--amber-soft);box-shadow:inset 0 0 0 1px rgba(232,148,58,.3);display:flex;align-items:center;justify-content:center}
+.adm-cap-ico svg{width:16px;height:16px;stroke:var(--amber);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.adm-cap b{display:block;font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:2px}
+.adm-cap span{font-size:12.5px;color:var(--text-muted);line-height:1.5}
+
+@media(max-width:760px){
+  .adm-app{grid-template-columns:1fr}
+  .adm-side{flex-direction:row;flex-wrap:wrap;border-right:none;border-bottom:1px solid var(--border)}
+  .adm-side-foot{display:none}
+  .adm-grid{grid-template-columns:1fr}
+  .adm-sc-caps{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .adm-lead-phone{display:none}
+  .adm-main{padding:18px 16px 22px}
+}
+</style>
+<style>
+/* Admin Agent 1 — slim Admin Dashboard teaser card. All new classes use the adc- prefix.
+   Reuses existing page classes by application only (.card, .feature-icon*, .feature-card-title, .feature-card-desc) — none redefined here. */
+.adc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.adc-optional{flex-shrink:0;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--amber);background:var(--amber-soft);border:1px solid rgba(232,148,58,.35);padding:5px 12px;border-radius:100px;white-space:nowrap}
+.adc-eyebrow{font-size:12px;font-weight:600;letter-spacing:.12em;color:var(--amber);text-transform:uppercase;margin-bottom:6px}
+.adc-price{font-size:15px;font-weight:600;color:var(--amber);margin-top:10px}
+.adc-amount{font-size:18px;font-weight:700;letter-spacing:-.01em}
+.adc-reassure{font-size:13.5px;line-height:1.55;color:var(--text-muted);margin-top:14px}
+.adc-link{display:inline-flex;align-items:center;gap:7px;margin-top:18px;font-size:14px;font-weight:600;color:var(--amber);text-decoration:none;transition:color .25s var(--ease,ease)}
+.adc-link:hover{text-decoration:underline}
+.adc-arrow{transition:transform .25s var(--ease,ease)}
+.adc-link:hover .adc-arrow{transform:translateY(3px)}
+</style>
+
+<style>
+/* ===== AED — Admin in-place editor showcase ===== */
+.aed-section{padding:clamp(48px,8vh,84px) 0}
+.aed-inner{max-width:1000px;margin:0 auto;padding:0 24px}
+.aed-head{text-align:center;max-width:60ch;margin:0 auto 34px}
+.aed-eyebrow{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin:0 0 12px}
+.aed-title{font-size:clamp(26px,3.6vw,38px);font-weight:700;letter-spacing:-.025em;line-height:1.1;margin:0 0 14px}
+.aed-sub{font-size:16.5px;line-height:1.55;color:var(--text-secondary);margin:0}
+.aed-frame{border:1px solid rgba(255,255,255,.12);border-radius:16px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+.aed-chrome{display:flex;align-items:center;gap:9px;padding:11px 15px;background:#141418;border-bottom:1px solid rgba(255,255,255,.08)}
+.aed-dot{width:11px;height:11px;border-radius:50%}
+.aed-url{flex:1;text-align:center;font-size:13px;color:var(--text-muted)}
+.aed-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--amber);border:1px solid rgba(232,148,58,.45);border-radius:999px;padding:4px 11px}
+.aed-pill svg{width:13px;height:13px;stroke:var(--amber);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.aed-publish{font-size:13px;font-weight:600;color:#fff;background:#16a34a;border:none;border-radius:8px;padding:7px 15px;cursor:pointer;font-family:var(--font);transition:filter .2s}
+.aed-publish:hover{filter:brightness(1.08)}
+.aed-canvas{background:#0f1a12}
+.aed-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06)}
+.aed-brand{font-weight:600;font-size:16px;color:#eafff0}
+.aed-brand span{color:#5fd08a}
+.aed-menu{font-size:13px;color:#9fb8a6}
+.aed-hero{position:relative;padding:46px 22px 52px;text-align:center;background-image:linear-gradient(rgba(8,20,12,.5),rgba(8,20,12,.72)),url('https://jasper4-web.github.io/sano-demo-lawn/hero.png');background-size:cover;background-position:center}
+.aed-photo-btn{position:absolute;top:14px;right:16px;display:inline-flex;align-items:center;gap:7px;background:rgba(0,0,0,.55);color:#fff;font-size:12.5px;font-weight:500;padding:7px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.3);cursor:pointer}
+.aed-photo-btn svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.aed-photo-tag{position:absolute;top:16px;left:16px;font-size:11px;color:rgba(255,255,255,.65)}
+.aed-edit{position:relative;display:inline-block;border:1.5px dashed var(--amber);border-radius:9px;padding:8px 16px;margin:8px 0 12px}
+.aed-edit:focus-within{background:rgba(232,148,58,.08)}
+.aed-h1{font-size:clamp(24px,4vw,34px);font-weight:700;color:#fff;outline:none;line-height:1.1}
+.aed-pencil{position:absolute;top:-13px;left:-13px;width:28px;height:28px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.aed-pencil svg{width:15px;height:15px;stroke:#1a1a1a;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.aed-tip{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:11.5px;font-weight:500;background:#1a1a1a;color:#fff;padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.12)}
+.aed-sub2{margin:18px 0 0;font-size:14px;color:#c7dcce}
+.aed-svcs{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;padding:18px 22px 24px}
+.aed-svc{position:relative;background:#15241a;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px}
+.aed-svc-edit{border:1.5px dashed var(--amber)}
+.aed-svc-name{font-size:13.5px;color:#dceede;margin-bottom:7px}
+.aed-price{font-size:18px;font-weight:700;color:#5fd08a}
+.aed-price-edit{font-size:18px;font-weight:700;color:#fff}
+.aed-price-edit .aed-num{outline:none;border-bottom:2px solid #5fd08a}
+.aed-svc .aed-pencil{top:-11px;right:-11px;left:auto;width:24px;height:24px}
+.aed-svc .aed-pencil svg{width:13px;height:13px}
+.aed-caps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+.aed-cap{display:flex;gap:11px;align-items:flex-start}
+.aed-cap-ico{flex-shrink:0;width:34px;height:34px;border-radius:9px;background:var(--amber-soft);display:flex;align-items:center;justify-content:center}
+.aed-cap-ico svg{width:18px;height:18px;stroke:var(--amber);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.aed-cap b{display:block;font-size:14.5px;font-weight:600;color:var(--text-primary);margin-bottom:2px}
+.aed-cap span{font-size:13px;color:var(--text-muted)}
+.aed-toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:8px;background:#16a34a;color:#fff;font-size:14px;font-weight:600;padding:11px 18px;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.4);transition:opacity .3s,transform .3s;z-index:50}
+.aed-toast.aed-show{opacity:1;transform:translateX(-50%) translateY(0)}
+.aed-toast svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:620px){
+  .aed-svcs{grid-template-columns:1fr}
+  .aed-caps{grid-template-columns:1fr;gap:12px}
+  .aed-menu{display:none}
+  .aed-photo-tag{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="shader-bg"></div>
+<div id="shader-scrim"></div>
+
+<div class="site-content">
+
+  <!-- Nav -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <div style="display:flex;align-items:center">
+        <a href="#" class="nav-logo" data-es-html="SANO Systems">SANO Systems</a>
+        <span class="beta-tag" data-es="Beta">Beta</span>
+      </div>
+      <ul class="nav-links" style="margin-left:auto">
+        <li><a href="#features" class="nav-link" data-es="Qué incluye">What's Included</a></li>
+        <li><a href="#pricing" class="nav-link" data-es="Precio">Pricing</a></li>
+        <li><a href="#faq" class="nav-link" data-es="Preguntas">FAQ</a></li>
+        <li><a href="tel:8325557266" class="nav-link nav-phone"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--blue)"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg><span data-es-html="(832) 555-SANO">(832) 555-SANO</span></a></li>
+        <li><a href="#pricing" class="nav-link nav-cta-link" data-es="Agenda una llamada">Book a Consultation</a></li>
+      </ul>
+      <div id="sano-lang-toggle" style="margin-left:18px;display:inline-flex;align-items:center"></div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      <span class="hero-badge-text" data-es="Fase Beta — Aceptando negocios en todo el país">Beta Phase — Now Accepting Houston Businesses</span>
+    </div>
+    <h1 class="hero-title" data-es-html="Tu página web debería ser tu mejor vendedor —<br><span class=&quot;gradient-text&quot;>no el peor.</span>">Your Website Is Your<br><span class="gradient-text">Worst Salesperson.</span></h1>
+    <p class="hero-sub" data-es="SANO construye la misma infraestructura digital en la que las grandes empresas gastan millones — hecha, manejada y optimizada para tu negocio.">SANO builds the digital infrastructure that Fortune 500 companies spend millions on — built, managed, and optimized for your local business.</p>
+    <div class="hero-actions">
+      <span class="btn-hero-wrap"><button class="btn-hero" data-es="Aparta tu lugar en el beta">Claim Your Beta Spot</button></span>
+      <a href="#features" class="btn-ghost" data-es="Mira lo que incluye">See What's Included</a>
+    </div>
+    <div class="hero-proof">
+      <span class="hero-proof-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="En vivo en 1–3 días">Live in 1–3 days</span></span>
+      <span class="hero-proof-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="$350 pago único — sin mensualidades">$350 flat — no monthly fees</span></span>
+      <span class="hero-proof-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-es="90 días de soporte incluidos">90 days of support included</span></span>
+    </div>
+    <p class="spots-left" data-es="Quedan pocos lugares en el beta">Limited beta spots remaining</p>
+  </section>
+
+  <!-- Features -->
+  <section class="section section-backdrop" id="features" style="scroll-margin-top:80px">
+    <div class="container">
+      <div class="section-header center">
+        <p class="label" data-es="Lo que recibes">What You Get</p>
+        <h2 class="heading-xl" style="margin-top:16px" data-es="Tu base digital. Un solo pago.">Your digital foundation. One flat fee.</h2>
+        <p class="text-body" style="margin-top:16px" data-es="Una página web a tu medida y un asistente con IA — hechos para tu negocio, optimizados para Google y en vivo en días. ¿Quieres manejarlo tú mismo? Súmale el panel de control.">A custom website and an AI chatbot — built for your business, optimized for Google, and live in days. Want to manage it yourself? Add the dashboard on.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="card">
+          <div class="feature-icon feature-icon-blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+          <h3 class="feature-card-title" data-es="Página web a tu medida">Custom Website</h3>
+          <p class="feature-card-desc" data-es="Hasta 4 páginas, diseñadas para tu negocio — no una plantilla. Lista para celular, de carga rápida y optimizada para SEO, para que aparezcas más arriba en Google. Hecha con la misma calidad que la de empresas 100 veces más grandes.">Up to 4 pages, custom-designed for your business — not a template. Mobile-first, fast-loading, and SEO-optimized to help you rank higher on Google. Built to match the quality of companies 100x your size.</p>
+          <span class="tier-badge tier-starter" data-es="Incluido en el beta">Included in beta</span>
+        </div>
+
+        <div class="card">
+          <div class="feature-icon feature-icon-cyan"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <h3 class="feature-card-title" data-es="Asistente con IA">AI Chatbot</h3>
+          <p class="feature-card-desc" data-es="Entrenado en tu negocio, tus servicios y tus preguntas frecuentes. Contesta a tus clientes las 24 horas y captura prospectos directo a tu bandeja — para que no se te escape ningún cliente, aunque andes ocupado.">Trained on your business, your services, and your FAQs. Answers customer questions 24/7 and captures leads straight to your inbox — so you never miss an opportunity, even when you're busy.</p>
+          <p class="feature-card-desc" style="margin-top:14px;color:#E74C3C;font-weight:500" data-es="Este es tu primer paso hacia la automatización con IA. Tu asistente resuelve el 80% de las preguntas de siempre que te hacen tus clientes — todo más fácil, y tú contestas el teléfono menos.">This is your first step into AI automation. Your chatbot handles 80% of the everyday questions your customers ask — making the process seamless while you pick up your phone less.</p>
+          <span class="tier-badge tier-starter" data-es="Incluido en el beta">Included in beta</span>
+        </div>
+
+        <div class="card" style="border-color:rgba(232,148,58,.5)">
+  <div class="adc-top">
+    <div class="feature-icon feature-icon-blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
+    <span class="adc-optional" data-es="Opcional">Optional</span>
+  </div>
+  <p class="adc-eyebrow" data-es="Tu centro de control">Your command center</p>
+  <h3 class="feature-card-title" data-es="Panel de control">Admin Dashboard</h3>
+  <p class="adc-price" data-es-html="<span class=&quot;adc-amount&quot;>$350</span> · complemento de pago único"><span class="adc-amount">$350</span> · one-time add-on</p>
+  <p class="feature-card-desc" style="margin-top:14px" data-es="Entra a tu propio panel y maneja tu sitio tú mismo — cambia textos, fotos y precios en el momento que se te ocurra.">Log into your own dashboard and run your site yourself — edit text, swap photos, change prices, the second you think of it.</p>
+  <p class="adc-reassure" data-es="Opcional — o nosotros hacemos cada cambio por ti.">Optional — or we handle every change for you.</p>
+  <a class="adc-link" href="#admin" data-es-html="Mira tu panel en acción <span class=&quot;adc-arrow&quot;>↓</span>">See your dashboard in action <span class="adc-arrow">↓</span></a>
+</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Beta mission callout -->
+  <div class="mission-strip">
+    <div class="container" style="text-align:center">
+      <p class="mission-text" data-es="Esto es el beta. Nuestra misión es simple — darle a los pequeños negocios las mismas herramientas digitales que usan las grandes empresas. Sin barreras. Sin presupuestos de seis cifras. Una página web a tu medida, integración con IA y la base para crecer — hechas para ti en días, no en meses.">This is the beta. Our mission is simple — give small businesses the same digital tools that Fortune 500 companies use. No gatekeeping. No six-figure budgets. A custom website, AI integration, and the foundation to grow — built for you in days, not months.</p>
+    </div>
+  </div>
+
+<section class="ex-section" id="examples">
+  <div class="ex-wrap">
+    <div class="ex-head">
+      <p class="ex-eyebrow" data-es="Pruebas">Proof</p>
+      <h2 class="ex-title" data-es="Míralo en acción">See it in action</h2>
+      <p class="ex-sub" data-es="Sitios reales que hemos hecho — cambiamos los nombres por privacidad. Haz clic en cualquiera para abrir el demo en vivo.">Real sites we've built — names changed for privacy. Click any one to open the live demo.</p>
+    </div>
+    <div class="ex-grid">
+
+      <a class="ex-card" href="https://jasper4-web.github.io/sano-demo-tree/" target="_blank" rel="noopener">
+        <div class="ex-frame">
+          <span class="ex-badge" data-es="Demo">Demo</span>
+          <iframe class="ex-frame-iframe" src="https://jasper4-web.github.io/sano-demo-tree/" loading="lazy" scrolling="no" tabindex="-1" title="Live preview — tree service demo"></iframe>
+        </div>
+        <div class="ex-meta">
+          <span class="ex-cap" data-es="Cuidado de árboles · Antelope Valley, CA">Tree service · Antelope Valley, CA</span>
+          <span class="ex-name" data-es-html="Summit Tree Care">Summit Tree Care</span>
+          <p class="ex-desc" data-es="Diseño oscuro de alto contraste, con cotización al instante y un asistente de chat con IA integrado.">Dark, high-contrast design with instant-quote booking and a built-in AI chat assistant.</p>
+          <span class="ex-btn" data-es="Abre el demo en vivo →">Open the live demo →</span>
+        </div>
+      </a>
+
+      <a class="ex-card" href="https://jasper4-web.github.io/sano-demo-lawn/" target="_blank" rel="noopener">
+        <div class="ex-frame">
+          <span class="ex-badge" data-es="Demo">Demo</span>
+          <iframe class="ex-frame-iframe" src="https://jasper4-web.github.io/sano-demo-lawn/" loading="lazy" scrolling="no" tabindex="-1" title="Live preview — lawn care demo"></iframe>
+        </div>
+        <div class="ex-meta">
+          <span class="ex-cap" data-es="Jardinería · Greater Salt Lake">Lawn care · Greater Salt Lake</span>
+          <span class="ex-name" data-es-html="Evergreen Lawn &amp; Landscape">Evergreen Lawn &amp; Landscape</span>
+          <p class="ex-desc" data-es="Sitio bilingüe lleno de fotos, con menú de servicios, reseñas de clientes y captura de prospectos integrada.">Photo-led, bilingual site with a service menu, customer reviews, and built-in lead capture.</p>
+          <span class="ex-btn" data-es="Abre el demo en vivo →">Open the live demo →</span>
+        </div>
+      </a>
+
+      <a class="ex-card" href="https://jasper4-web.github.io/sano-demo-transport/" target="_blank" rel="noopener">
+        <div class="ex-frame">
+          <span class="ex-badge" data-es="Demo">Demo</span>
+          <iframe class="ex-frame-iframe" src="https://jasper4-web.github.io/sano-demo-transport/" loading="lazy" scrolling="no" tabindex="-1" title="Live preview — event transport demo"></iframe>
+        </div>
+        <div class="ex-meta">
+          <span class="ex-cap" data-es="Transporte · área de Houston">Transportation · Houston area</span>
+          <span class="ex-name" data-es-html="Premier Event Transport">Premier Event Transport</span>
+          <p class="ex-desc" data-es="Diseño elegante en azul marino y dorado, con un conserje de IA que cotiza y agenda eventos.">Upscale navy-and-gold layout with an AI concierge that quotes and books events.</p>
+          <span class="ex-btn" data-es="Abre el demo en vivo →">Open the live demo →</span>
+        </div>
+      </a>
+
+      <a class="ex-card" href="https://jasper4-web.github.io/sano-demo-plumbing/" target="_blank" rel="noopener">
+        <div class="ex-frame">
+          <span class="ex-badge" data-es="Demo">Demo</span>
+          <iframe class="ex-frame-iframe" src="https://jasper4-web.github.io/sano-demo-plumbing/" loading="lazy" scrolling="no" tabindex="-1" title="Live preview — plumbing demo"></iframe>
+        </div>
+        <div class="ex-meta">
+          <span class="ex-cap" data-es="Plomería · área de Houston">Plumbing · Houston area</span>
+          <span class="ex-name" data-es-html="Rapid Flow Plumbing">Rapid Flow Plumbing</span>
+          <p class="ex-desc" data-es="Diseño en azul fuerte con reservación de emergencia 24/7, precios claros por servicio y un asistente de chat integrado.">Bold blue layout with 24/7 emergency booking, upfront service pricing, and a built-in chat assistant.</p>
+          <span class="ex-btn" data-es="Abre el demo en vivo →">Open the live demo →</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<section class="aed-section" id="admin">
+  <div class="aed-inner">
+    <div class="aed-head">
+      <p class="aed-eyebrow" data-es="El complemento del panel">The admin add-on</p>
+      <h2 class="aed-title" data-es="Edita todo tu sitio con solo hacer clic">Edit your whole site by clicking on it</h2>
+      <p class="aed-sub" data-es="Sin código, sin tickets. Este es el sitio de Evergreen de la galería de arriba — en modo edición. Pasa el cursor por cualquier cosa, haz clic y cámbiala. (Ándale — haz clic en el título y escribe.)">No code, no tickets. This is the Evergreen site from the gallery above — in edit mode. Hover anything, click, and change it. (Go ahead — click the headline and type.)</p>
+    </div>
+
+    <div class="aed-frame">
+      <div class="aed-chrome">
+        <span class="aed-dot" style="background:#ff5f57"></span><span class="aed-dot" style="background:#febc2e"></span><span class="aed-dot" style="background:#28c840"></span>
+        <span class="aed-url" data-es-html="evergreenlawn.com">evergreenlawn.com</span>
+        <span class="aed-pill"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-es="Editando">Editing</span></span>
+        <button class="aed-publish" id="aedPublish" data-es="Publicar">Publish</button>
+      </div>
+
+      <div class="aed-canvas">
+        <div class="aed-nav">
+          <span class="aed-brand" data-es-html="Evergreen <span>Lawn &amp; Landscape</span>">Evergreen <span>Lawn &amp; Landscape</span></span>
+          <span class="aed-menu" data-es="Servicios · Reseñas · Contacto">Services · Reviews · Contact</span>
+        </div>
+
+        <div class="aed-hero">
+          <span class="aed-photo-tag" data-es="foto principal">hero photo</span>
+          <button class="aed-photo-btn"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span data-es="Cambiar foto">Replace photo</span></button>
+          <span class="aed-edit">
+            <span class="aed-pencil"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+            <span class="aed-h1" id="aedHeadline" contenteditable="true" spellcheck="false" data-es="Tu jardín merece algo mejor">Your Lawn Deserves Better</span>
+            <span class="aed-tip" data-es="Haz clic para editar">Click to edit</span>
+          </span>
+          <p class="aed-sub2" data-es="Corte semanal, limpieza y cuidado completo del jardín en todo el valle.">Weekly mowing, clean-ups &amp; full yard care across the valley.</p>
+        </div>
+
+        <div class="aed-svcs">
+          <div class="aed-svc"><div class="aed-svc-name" data-es="Corte semanal">Weekly mowing</div><div class="aed-price">$45</div></div>
+          <div class="aed-svc aed-svc-edit">
+            <span class="aed-pencil"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+            <div class="aed-svc-name" data-es="Limpieza de jardín">Yard clean-up</div>
+            <div class="aed-price-edit">$<span class="aed-num" contenteditable="true" spellcheck="false">180</span></div>
+          </div>
+          <div class="aed-svc"><div class="aed-svc-name" data-es="Reparación de riego">Sprinkler repair</div><div class="aed-price">$120</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="aed-caps">
+      <div class="aed-cap"><span class="aed-cap-ico"><svg viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg></span><div><b data-es="Haz clic en cualquier texto para editarlo">Click any text to edit</b><span data-es="Títulos, botones, lo que sea.">Headlines, buttons, anything.</span></div></div>
+      <div class="aed-cap"><span class="aed-cap-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></span><div><b data-es="Cambia cualquier foto">Swap any photo</b><span data-es="Desde tu mismo celular.">Right from your phone.</span></div></div>
+      <div class="aed-cap"><span class="aed-cap-ico"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span><div><b data-es="Actualiza precios y servicios">Update prices &amp; services</b><span data-es="Cambias un número y listo.">Change a number, done.</span></div></div>
+    </div>
+  </div>
+</section>
+<div class="aed-toast" id="aedToast"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg><span data-es="Guardado ✓">Saved ✓</span></div>
+<script>
+(function(){
+  var pub=document.getElementById('aedPublish'), toast=document.getElementById('aedToast');
+  if(pub&&toast){pub.addEventListener('click',function(){toast.classList.add('aed-show');setTimeout(function(){toast.classList.remove('aed-show');},1700);});}
+  var h=document.getElementById('aedHeadline');
+  if(h){h.addEventListener('focus',function(){var r=document.createRange();r.selectNodeContents(h);var s=getSelectionSafe();if(s){s.removeAllRanges();s.addRange(r);}});}
+  function getSelectionSafe(){try{return window.getSelection();}catch(e){return null;}}
+})();
+</script>
+
+  <!-- Pricing -->
+  <section class="section section-backdrop" id="pricing">
+    <div class="container">
+      <div class="section-header center">
+        <p class="label" data-es="Inversión">Investment</p>
+        <h2 class="heading-xl" style="margin-top:16px" data-es="Hecho para negocios que ya no quieren esperar.">Built for businesses that are done waiting.</h2>
+        <p class="text-body" style="margin-top:16px" data-es="El precio del beta se queda fijo para siempre. Cuando lancemos al público, este paquete va a costar bastante más.">The beta price locks in permanently. When we launch publicly, this package will cost significantly more.</p>
+      </div>
+
+      <div class="pricing-main">
+        <div class="pricing-main-inner">
+          <div class="pricing-header">
+            <div>
+              <h3 data-es="Paquete Beta">Beta Package</h3>
+              <p class="price-sub" data-es="Todo lo que necesitas para arrancar — una página web a tu medida y un asistente con IA — en un solo pago.">Everything you need to launch — a custom website and AI chatbot — in one flat fee</p>
+            </div>
+            <div style="text-align:right">
+              <div class="price-big" data-es-html="$350 <span>pago único</span>">$350 <span>flat fee</span></div>
+              <p class="price-monthly" data-es="Una sola vez. Sin mensualidades. Nada más.">One-time. No monthly. Nothing else.</p>
+            </div>
+          </div>
+
+          <ul class="pricing-includes">
+            <li><span class="pricing-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span data-es="Página web a tu medida — hasta 4 páginas">Custom-designed website — up to 4 pages</span></li>
+            <li><span class="pricing-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span data-es="Asistente con IA entrenado en tu negocio — contesta preguntas y captura prospectos">AI chatbot trained on your business — answers FAQs &amp; captures leads</span></li>
+            <li><span class="pricing-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span data-es="Optimización SEO para que te encuentren en Google">On-page SEO optimized to rank on Google</span></li>
+            <li><span class="pricing-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span data-es="Dominio y hosting incluidos el primer año (dominio estándar — los premium cuestan extra)">Domain &amp; hosting included for the first year (standard domain — premium domains cost extra)</span></li>
+            <li><span class="pricing-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span data-es="90 días de corrección de errores por nuestro equipo">90 days of bug fixes by our team</span></li>
+            <li><span class="pricing-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span data-es="En vivo en 1–3 días">Live in 1–3 days</span></li>
+          </ul>
+
+          <div class="pricing-addon" style="display:flex;align-items:center;gap:12px;margin-top:18px;padding:14px 18px;border:1px dashed rgba(232,148,58,.45);border-radius:12px;background:var(--amber-soft)">
+            <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--amber);border:1px solid rgba(232,148,58,.4);border-radius:100px;padding:4px 10px;white-space:nowrap" data-es="Complemento">Add-on</span>
+            <p style="margin:0;font-size:15px;color:var(--text-secondary)" data-es-html="<strong>Panel de control — +$350.</strong> Una mejora opcional para editar y manejar tu propio sitio — textos, fotos, precios y páginas — cuando quieras; o sáltatela y nuestro equipo hace los cambios por ti."><strong>Admin Dashboard — +$350.</strong> An optional upgrade to edit and manage your own site — text, photos, prices, and pages — anytime; skip it and our team makes your changes for you.</p>
+          </div>
+
+          <p style="margin-top:16px;font-size:14px;color:var(--text-muted)" data-es="¿Necesitas más de 4 páginas? Cada página adicional cuesta solo $75.">Need more than 4 pages? Additional pages are just $75 each.</p>
+
+          <div class="pricing-guarantee">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <p data-es-html="<strong>Pago completo para empezar.</strong> Un solo pago de $350. Sin mensualidades, sin cargos ocultos — nunca."><strong>Paid in full to start.</strong> One simple $350 payment. No monthly fees, no hidden charges — ever.</p>
+          </div>
+
+          <a href="mailto:jasper@sanosolutions.ai?subject=Beta%20Inquiry" class="btn-primary-full"><span data-es="Empieza hoy — escríbele a Jasper">Get Started — Email Jasper</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section section-backdrop" id="faq">
+    <div class="container">
+      <div class="section-header center">
+        <p class="label" data-es="Preguntas">Questions</p>
+        <h2 class="heading-xl" style="margin-top:16px" data-es="Antes de que decidas.">Before you decide.</h2>
+      </div>
+
+      <div class="faq-grid">
+        <details class="faq-item">
+          <summary class="faq-question" data-es="¿Qué incluye exactamente por $350?">What exactly do I get for $350?</summary>
+          <div class="faq-answer" data-es="Una página web a tu medida (hasta 4 páginas), un asistente con IA entrenado en tu negocio que contesta a tus clientes y captura prospectos, optimización SEO, dominio y hosting el primer año, y 90 días de corrección de errores por nuestro equipo. Todo hecho y publicado en 1–3 días. ¿Quieres editar el sitio tú mismo? Agrega el panel de control por un pago único de $350.">A custom-designed website (up to 4 pages), an AI chatbot trained on your business that answers customer questions and captures leads, on-page SEO, domain and hosting for the first year, and 90 days of bug fixes from our team. All built and deployed in 1–3 days. Want to edit the site yourself? Add the admin dashboard for a one-time $350.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question" data-es="¿Hay mensualidad?">Is there a monthly fee?</summary>
+          <div class="faq-answer" data-es="No. El beta es un pago único de $350, pagado completo por adelantado. El dominio y el hosting van incluidos el primer año. Después de eso, lo único que pagas es renovar tu dominio y hosting por tu cuenta. Si agregaste el panel de control, tú manejas el sitio — si no, nuestro equipo se encarga de las actualizaciones por ti.">No. The beta is a $350 one-time flat fee, paid in full up front. Domain and hosting are included for the first year. After that, the only cost is renewing your domain and hosting on your own. If you added the admin dashboard, you manage the site yourself — otherwise our team handles updates for you.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question" data-es="¿Cuánto tarda en estar listo mi sitio?">How long until my site is live?</summary>
+          <div class="faq-answer" data-es="De 1 a 3 días desde que tenemos todo lo que necesitamos. Llenas un cuestionario que nos da una idea clara de tu negocio, tus servicios y lo que quieres — y de ahí nos encargamos nosotros.">1–3 days from the time we have everything we need. You'll fill out a questionnaire that gives us a clear picture of your business, your services, and what you want — and we take it from there.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question" data-es="¿Qué pasa después de los 90 días de soporte?">What happens after the 90 days of support?</summary>
+          <div class="faq-answer" data-es="Si agregaste el panel de control, tú manejas el sitio — actualizas textos, imágenes y páginas cuando quieras. Sin él, nuestro equipo hace tus cambios por hora después de los 90 días. De cualquier forma, tu sitio sigue funcionando y tu dominio y hosting quedan cubiertos durante el primer año.">If you added the admin dashboard, you manage the site yourself — update text, images, and pages anytime. Without it, our team handles your updates at an hourly rate after the 90 days. Either way, your site keeps running and your domain &amp; hosting stay covered through the first year.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question" data-es="¿Qué es el complemento del panel de control?">What's the Admin Dashboard add-on?</summary>
+          <div class="faq-answer" data-es="Un panel opcional de +$350 para editar y manejar tu propio sitio — cambia textos, fotos, precios y páginas cuando quieras, sin código y sin esperar a que lo hagamos. También es donde ves y manejas tus prospectos — cada sitio de SANO captura prospectos a tu bandeja, agregues el panel o no; esto solo los junta en un solo lugar. Totalmente opcional: sáltatelo y nuestro equipo hace los cambios por ti.">An optional +$350 dashboard for editing and managing your own site — change text, photos, prices, and pages anytime, no code and no waiting on us. It's also where you view and manage your leads — every SANO site captures leads to your inbox whether or not you add the dashboard; this just puts them in one place. Totally optional: skip it and our team makes your changes for you.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question" data-es="¿Y si necesito más de 4 páginas?">What if I need more than 4 pages?</summary>
+          <div class="faq-answer" data-es="Las páginas adicionales más allá de las 4 que incluye el beta cuestan solo $75 cada una. La mayoría de los negocios pequeños encuentran que 4 páginas cubren lo esencial — inicio, nosotros, servicios y contacto.">Additional pages beyond the 4 included in the beta are just $75 per page. Most small businesses find 4 pages covers the essentials — home, about, services, and contact.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question" data-es="¿Necesito saber de tecnología?">Do I need to be technical?</summary>
+          <div class="faq-answer" data-es="Para nada. Nosotros armamos y publicamos todo por ti. Si quieres hacer cambios tú mismo, el panel de control opcional es tan fácil como editar un documento — si sabes escribir, puedes actualizar tu sitio. ¿Prefieres no batallar? Solo mándanos el cambio y nosotros lo hacemos.">Not at all. We build and launch everything for you. If you want to make changes yourself, the optional admin dashboard is as simple as editing a document — if you can type, you can update your site. Prefer not to bother? Just send us the change and we'll handle it.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question" data-es="¿Qué viene después del beta?">What's coming after the beta?</summary>
+          <div class="faq-answer" data-es="Tenemos mucho más planeado — piensa en CRM, automatización de llamadas perdidas, agendado de citas, herramientas con IA y más. Los clientes del beta tienen acceso primero a todo lo que construyamos después. El beta es apenas el comienzo.">We have a lot more planned — think CRM, missed call automation, appointment booking, AI-powered tools, and more. Beta clients get first access to everything we build next. The beta is just the beginning.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chat Launcher -->
+  <div id="chat-launcher" onclick="toggleChat()">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+  </div>
+
+  <!-- Chat Widget -->
+  <div id="chat-widget" class="chat-closed">
+    <div class="chat-header">
+      <div>
+        <h3 class="chat-brand" data-es-html="SANO AI">SANO AI</h3>
+        <span class="chat-status" data-es="En línea • Responde al instante">Online &bull; Replies instantly</span>
+      </div>
+      <div class="chat-close" onclick="toggleChat()">&times;</div>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="cmsg bot" data-es-html="¡Hola! 👋 Soy el asistente con IA de SANO. Estamos en plena <strong>fase beta</strong> — nuestra misión es darle a los pequeños negocios las mismas herramientas de automatización que usan las grandes empresas. Ahora mismo estamos aceptando a un grupo pequeño de negocios al precio beta antes de abrir al público.<div class=&quot;bot-follow&quot;>Pregúntame lo que quieras del paquete beta, o dime si ya estás listo para empezar. 🚀</div>">Hey! I'm SANO's AI assistant. We're currently in our <strong>beta phase</strong> — our mission is to give small businesses the same automation tools that Fortune 500 companies use. Right now we're accepting a small group of Houston businesses at our beta pricing before we fully roll out.<div class="bot-follow">Ask me anything about the beta package, or let me know if you're ready to get started!</div></div>
+    </div>
+    <div class="quick-replies" id="quick-replies">
+      <div class="qr" data-es="Paquete Beta" data-send-en="What's in the beta package?" data-send-es="¿Qué incluye el paquete beta?" onclick="sendQR(this)">Beta Package</div>
+      <div class="qr" data-es="Precio" data-send-en="How much is the beta?" data-send-es="¿Cuánto cuesta el beta?" onclick="sendQR(this)">Pricing</div>
+      <div class="qr" data-es="Qué sigue" data-send-en="What's coming after the beta?" data-send-es="¿Qué viene después?" onclick="sendQR(this)">What's Next</div>
+      <div class="qr" data-es="Empezar" data-send-en="I want to get started" data-send-es="Quiero empezar" onclick="sendQR(this)">Get Started</div>
+    </div>
+    <form class="chat-input-bar" onsubmit="handleChatSend(event)">
+      <input type="text" id="chatInput" placeholder="Ask anything about SANO..." data-es-placeholder="Pregúntame lo que sea sobre SANO..." autocomplete="off">
+      <button type="submit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand-name" data-es-html="SANO Systems">SANO Systems</div>
+          <p class="footer-tagline" data-es="Herramientas de las grandes empresas para los negocios que más trabajan.">Fortune 500 tools for Houston's hardest-working businesses.</p>
+          <a href="tel:8325557266" class="footer-contact-link" data-es-html="(832) 555-SANO">(832) 555-SANO</a>
+          <a href="mailto:jasper@sanosolutions.ai" class="footer-contact-link" data-es-html="jasper@sanosolutions.ai">jasper@sanosolutions.ai</a>
+        </div>
+        <div>
+          <h4 class="footer-col-title" data-es="Empresa">Company</h4>
+          <ul class="footer-links">
+            <li><a href="#features" data-es="Servicios">Services</a></li>
+            <li><a href="#pricing" data-es="Precio">Pricing</a></li>
+            <li><a href="#faq" data-es="Preguntas">FAQ</a></li>
+            <li><a href="#pricing" data-es="Contacto">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer-copy" data-es="© 2026 SANO Systems. Todos los derechos reservados.">&copy; 2026 SANO Systems. Houston, TX. All rights reserved.</p>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// Shader background
+function initShaderBackground(container){
+  if(!container||!window.THREE)return function(){};
+  var THREE=window.THREE;
+  var camera=new THREE.Camera();camera.position.z=1;
+  var scene=new THREE.Scene();
+  var geometry=new THREE.PlaneBufferGeometry(2,2);
+  var uniforms={time:{type:'f',value:1.0},resolution:{type:'v2',value:new THREE.Vector2()}};
+  var vertexShader='void main(){gl_Position=vec4(position,1.0);}';
+  var fragmentShader=[
+    '#define TWO_PI 6.2831853072','#define PI 3.14159265359','precision highp float;',
+    'uniform vec2 resolution;','uniform float time;','',
+    'float random(in float x){return fract(sin(x)*1e4);}',
+    'float random(vec2 st){return fract(sin(dot(st.xy,vec2(12.9898,78.233)))*43758.5453123);}','',
+    'void main(void){',
+    '  vec2 uv=(gl_FragCoord.xy*2.0-resolution.xy)/min(resolution.x,resolution.y);','',
+    '  vec2 fMosaicScal=vec2(2.5,1.2);','  vec2 vScreenSize=vec2(640.0,480.0);',
+    '  uv.x=floor(uv.x*vScreenSize.x/fMosaicScal.x)/(vScreenSize.x/fMosaicScal.x);',
+    '  uv.y=floor(uv.y*vScreenSize.y/fMosaicScal.y)/(vScreenSize.y/fMosaicScal.y);','',
+    '  float t=time*0.06+random(uv.x)*0.4;','  float lineWidth=0.0006;','  vec3 color=vec3(0.0);',
+    '  for(int j=0;j<3;j++){','    for(int i=0;i<5;i++){',
+    '      color[j]+=lineWidth*float(i*i)/abs(fract(t-0.01*float(j)+float(i)*0.01)*1.0-length(uv));',
+    '    }','  }','  color=pow(color,vec3(1.1));',
+    '  gl_FragColor=vec4(color[2],color[1],color[0],1.0);','}'
+  ].join('\n');
+  var material=new THREE.ShaderMaterial({uniforms:uniforms,vertexShader:vertexShader,fragmentShader:fragmentShader});
+  var mesh=new THREE.Mesh(geometry,material);scene.add(mesh);
+  var renderer=new THREE.WebGLRenderer();renderer.setPixelRatio(window.devicePixelRatio);
+  container.appendChild(renderer.domElement);
+  function onResize(){var w=container.clientWidth||window.innerWidth;var h=container.clientHeight||window.innerHeight;renderer.setSize(w,h);uniforms.resolution.value.x=renderer.domElement.width;uniforms.resolution.value.y=renderer.domElement.height;}
+  onResize();window.addEventListener('resize',onResize,false);
+  var animId;function animate(){animId=requestAnimationFrame(animate);uniforms.time.value+=0.034;renderer.render(scene,camera);}animate();
+  function onVisChange(){if(document.hidden)cancelAnimationFrame(animId);else animId=requestAnimationFrame(animate);}
+  document.addEventListener('visibilitychange',onVisChange);
+  return function(){cancelAnimationFrame(animId);window.removeEventListener('resize',onResize);document.removeEventListener('visibilitychange',onVisChange);renderer.dispose();if(renderer.domElement.parentNode)renderer.domElement.parentNode.removeChild(renderer.domElement);};
+}
+
+// Init
+document.addEventListener('DOMContentLoaded',function(){
+  var attempts=0;
+  function tryInit(){if(window.THREE){initShaderBackground(document.getElementById('shader-bg'));}else if(attempts<50){attempts++;setTimeout(tryInit,100);}}
+  tryInit();
+
+  // Nav scroll effect
+  var nav=document.getElementById('nav');
+  window.addEventListener('scroll',function(){
+    if(window.scrollY>60)nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  });
+});
+
+// ─── SANO AI Chatbot ───
+(function(){
+  var msgDiv=document.getElementById('chat-messages');
+  var inp=document.getElementById('chatInput');
+  var widget=document.getElementById('chat-widget');
+  var qrDiv=document.getElementById('quick-replies');
+  var flow='general';
+  var lead={name:'',business:'',email:'',phone:'',industry:''};
+  var captured=[];
+
+  // Bilingual helpers — chatbot responses follow the page language set by the toggle.
+  function ES(){return document.documentElement.lang==='es';}
+  function P(en,es){return ES()?es:en;}
+
+  window.toggleChat=function(){widget.classList.toggle('chat-closed')};
+
+  function addMsg(html,who){
+    var d=document.createElement('div');
+    d.className='cmsg '+who;
+    d.innerHTML=html;
+    msgDiv.appendChild(d);
+    msgDiv.scrollTop=msgDiv.scrollHeight;
+  }
+
+  function hideQR(){qrDiv.style.display='none'}
+  function showQR(){qrDiv.style.display='flex'}
+
+  // Accepts a string OR a quick-reply element carrying data-send-en / data-send-es.
+  window.sendQR=function(arg){
+    var text;
+    if(typeof arg==='string'){text=arg;}
+    else{text=ES()?(arg.getAttribute('data-send-es')||arg.getAttribute('data-send-en')):(arg.getAttribute('data-send-en')||arg.textContent);}
+    inp.value=text;
+    handleChatSend(new Event('submit'));
+  };
+
+  window.handleChatSend=function(e){
+    e.preventDefault();
+    var text=inp.value.trim();
+    if(!text)return;
+    addMsg(text,'user');
+    inp.value='';
+    hideQR();
+    setTimeout(function(){processChat(text)},600);
+  };
+
+  function processChat(input){
+    var q=input.toLowerCase();
+
+    // ── Lead capture flow ──
+    if(flow==='ask_name'){
+      lead.name=input;flow='ask_business';
+      addMsg(P('Nice to meet you, '+lead.name+'!<div class="bot-follow">What\'s the name of your business?</div>','¡Mucho gusto, '+lead.name+'!<div class="bot-follow">¿Cómo se llama tu negocio?</div>'),'bot');return;
+    }
+    if(flow==='ask_business'){
+      lead.business=input;flow='ask_industry';
+      addMsg(P('Got it — '+lead.business+'.<div class="bot-follow">What industry are you in? (e.g. plumbing, HVAC, landscaping, law, dental, etc.)</div>','Perfecto — '+lead.business+'.<div class="bot-follow">¿En qué giro estás? (por ejemplo: plomería, HVAC, jardinería, abogados, dental, etc.)</div>'),'bot');return;
+    }
+    if(flow==='ask_industry'){
+      lead.industry=input;flow='ask_email';
+      addMsg(P('Perfect — we work with a lot of '+lead.industry+' businesses.<div class="bot-follow">What\'s the best email address to reach you at?</div>','Perfecto — trabajamos con muchos negocios de '+lead.industry+'.<div class="bot-follow">¿Cuál es el mejor correo para contactarte?</div>'),'bot');return;
+    }
+    if(flow==='ask_email'){
+      if(!/\S+@\S+\.\S+/.test(input)){addMsg(P('That doesn\'t look like a valid email. Could you double-check?','Ese correo no se ve válido. ¿Lo puedes revisar?'),'bot');return;}
+      lead.email=input;flow='ask_phone';
+      addMsg(P('Got it.<div class="bot-follow">And the best phone number to reach you?</div>','Listo.<div class="bot-follow">¿Y el mejor número de teléfono para contactarte?</div>'),'bot');return;
+    }
+    if(flow==='ask_phone'){
+      var digits=input.replace(/\D/g,'');
+      if(digits.length<10||digits.length>11){addMsg(P('That doesn\'t look right — could you provide a 10-digit phone number?','Ese número no se ve bien — ¿me das un teléfono de 10 dígitos?'),'bot');return;}
+      lead.phone=digits;flow='complete';
+      captured.push(Object.assign({},lead));
+      console.log('SANO Lead Captured:',lead);
+      addMsg(P('You\'re all set, '+lead.name+'! We\'ve captured your info and Jasper will be in touch shortly to schedule your consultation.<br><br><strong>'+lead.name+'</strong><br>'+lead.business+' ('+lead.industry+')<br>'+lead.email+'<br>'+formatPhone(lead.phone)+'<div class="bot-follow">In the meantime, feel free to ask me anything else about the beta.</div>','¡Todo listo, '+lead.name+'! Ya guardamos tus datos y Jasper te va a contactar pronto para agendar tu llamada.<br><br><strong>'+lead.name+'</strong><br>'+lead.business+' ('+lead.industry+')<br>'+lead.email+'<br>'+formatPhone(lead.phone)+'<div class="bot-follow">Mientras tanto, pregúntame lo que quieras del beta.</div>'),'bot');
+      showQR();lead={name:'',business:'',email:'',phone:'',industry:''};flow='general';return;
+    }
+
+    // ── Trigger lead capture ──
+    if(q.includes('get started')||q.includes('sign up')||q.includes('sign me up')||q.includes('join')||q.includes('interested')||q.includes('ready to')||q.includes('claim')||q.includes('i want in')||q.includes('book a call')||q.includes('consultation')||q.includes('schedule')||q.includes('empezar')||q.includes('quiero empezar')||q.includes('registrar')||q.includes('apúntame')||q.includes('apuntar')||q.includes('me interesa')||q.includes('interesado')||q.includes('quiero unirme')||q.includes('agendar')||q.includes('reservar')){
+      flow='ask_name';
+      addMsg(P('Let\'s get you set up! I\'ll collect a few details so Jasper can reach out personally and schedule your beta consultation.<div class="bot-follow">First — what\'s your name?</div>','¡Vamos a registrarte! Te pido unos datos para que Jasper te contacte personalmente y agende tu llamada del beta.<div class="bot-follow">Primero — ¿cómo te llamas?</div>'),'bot');return;
+    }
+
+    // ── Pricing (beta only) ──
+    if(q.includes('price')||q.includes('cost')||q.includes('how much')||q.includes('pricing')||q.includes('afford')||q.includes('pay')||q.includes('investment')||q.includes('fee')||q.includes('$')||q.includes('deposit')||q.includes('precio')||q.includes('cuánto')||q.includes('cuesta')||q.includes('costo')||q.includes('cobran')||q.includes('pagar')||q.includes('tarifa')||q.includes('anticipo')||q.includes('inversión')){
+      addMsg(P('The beta is a <strong>$350 one-time flat fee</strong>, paid in full up front. No monthly charges, no hidden fees.<br><br>That gets you a custom website (up to 4 pages), an AI chatbot trained on your business, on-page SEO, and domain &amp; hosting for the first year. Plus 90 days of support from our team.<br><br>Want to edit the site yourself? You can add the <strong>admin dashboard for a one-time +$350</strong> — totally optional.<div class="bot-follow">Want to hear what\'s included in more detail, or ready to get started?</div>','El beta es un <strong>pago único de $350</strong>, pagado completo por adelantado. Sin mensualidades, sin cargos ocultos.<br><br>Eso te da una página web a tu medida (hasta 4 páginas), un asistente con IA entrenado en tu negocio, optimización SEO, y dominio y hosting el primer año. Más 90 días de soporte de nuestro equipo.<br><br>¿Quieres editar el sitio tú mismo? Puedes agregar el <strong>panel de control por un pago único de +$350</strong> — totalmente opcional.<div class="bot-follow">¿Te cuento con más detalle lo que incluye, o ya estás listo para empezar?</div>'),'bot');
+      showQR();return;
+    }
+
+    // ── What's included (beta only) ──
+    if(q.includes('include')||q.includes('what do i get')||q.includes('what\'s in')||q.includes('what comes with')||q.includes('features')||q.includes('package')||q.includes('offer')||q.includes('incluye')||q.includes('incluido')||q.includes('paquete')||q.includes('qué trae')||q.includes('qué dan')||q.includes('ofrecen')){
+      addMsg(P('Here\'s exactly what the <strong>beta package</strong> includes for $350 flat:<br><br>&bull; <strong>Custom website</strong> — up to 4 pages, designed specifically for your business<br>&bull; <strong>AI chatbot</strong> — trained on your services and FAQs, answers customers 24/7 and captures leads<br>&bull; <strong>On-page SEO</strong> — optimized to help you rank higher on Google<br>&bull; <strong>Domain &amp; hosting</strong> — first year included (standard domain)<br>&bull; <strong>90 days of support</strong> — bug fixes handled by our team<br><br>Optional add-on: <strong>Admin dashboard (+$350)</strong> to live-edit your site yourself.<br><br>One-time fee. No monthly. Live in 1–3 days.<div class="bot-follow">We have a lot more coming after the beta — want to hear what\'s on the roadmap?</div>','Esto es exactamente lo que incluye el <strong>paquete beta</strong> por $350:<br><br>&bull; <strong>Página web a tu medida</strong> — hasta 4 páginas, diseñadas para tu negocio<br>&bull; <strong>Asistente con IA</strong> — entrenado en tus servicios y preguntas frecuentes, contesta a tus clientes 24/7 y captura prospectos<br>&bull; <strong>Optimización SEO</strong> — para que aparezcas más arriba en Google<br>&bull; <strong>Dominio y hosting</strong> — primer año incluido (dominio estándar)<br>&bull; <strong>90 días de soporte</strong> — corrección de errores por nuestro equipo<br><br>Complemento opcional: <strong>Panel de control (+$350)</strong> para editar tu sitio tú mismo.<br><br>Pago único. Sin mensualidades. En vivo en 1–3 días.<div class="bot-follow">Viene mucho más después del beta — ¿te cuento qué hay en el roadmap?</div>'),'bot');
+      showQR();return;
+    }
+
+    // ── Timeline (beta) ──
+    if(q.includes('how long')||q.includes('timeline')||q.includes('when')||q.includes('how fast')||q.includes('turnaround')||q.includes('launch')||q.includes('live')||q.includes('days')||q.includes('cuánto tarda')||q.includes('cuándo')||q.includes('tiempo')||q.includes('rápido')||q.includes('tarda')||q.includes('demora')||q.includes('días')||q.includes('entrega')){
+      addMsg(P('Beta clients are typically live within <strong>1–3 days</strong>. You fill out a questionnaire about your business, we take it from there, and your full site with AI chatbot is up and running fast.','Los clientes del beta normalmente quedan en vivo en <strong>1–3 días</strong>. Llenas un cuestionario sobre tu negocio, nosotros nos encargamos del resto, y tu sitio completo con asistente de IA queda funcionando rápido.'),'bot');
+      showQR();return;
+    }
+
+    // ── Beta / why beta ──
+    if(q.includes('beta')||q.includes('why beta')||q.includes('what is the beta')||q.includes('early access')||q.includes('por qué beta')||q.includes('qué es el beta')||q.includes('acceso anticipado')){
+      addMsg(P('We\'re in beta right now. Our mission is to give small businesses the same digital tools that Fortune 500 companies use — and we\'re starting by proving the model with a small group of Houston businesses.<br><br>The beta is how we onboard our first clients and dial in the process. In exchange for trusting us early, you get everything for a <strong>$350 flat fee</strong> that will go up significantly when we launch publicly.<div class="bot-follow">Want to know exactly what\'s included, or what we\'re building for the full rollout?</div>','Estamos en beta ahora mismo. Nuestra misión es darle a los pequeños negocios las mismas herramientas digitales que usan las grandes empresas — y estamos empezando por probar el modelo con un grupo pequeño de negocios.<br><br>El beta es como damos de alta a nuestros primeros clientes y afinamos el proceso. A cambio de confiar en nosotros desde temprano, recibes todo por un <strong>pago único de $350</strong> que va a subir bastante cuando lancemos al público.<div class="bot-follow">¿Quieres saber exactamente qué incluye, o qué estamos construyendo para el lanzamiento completo?</div>'),'bot');
+      showQR();return;
+    }
+
+    // ── Guarantee / refund ──
+    if(q.includes('guarantee')||q.includes('refund')||q.includes('money back')||q.includes('risk')||q.includes('garantía')||q.includes('reembolso')||q.includes('devolución')||q.includes('riesgo')){
+      addMsg(P('The beta is built on trust — we\'re proving the model with a small group of businesses who believe in what we\'re building. There\'s no money-back guarantee on the beta, but we stand behind our work and you\'ll see results fast.<br><br>Your site is live in 1–3 days, and you have 90 days of direct support from our team.','El beta se construye sobre confianza — estamos probando el modelo con un grupo pequeño de negocios que creen en lo que estamos construyendo. No hay garantía de devolución en el beta, pero respaldamos nuestro trabajo y vas a ver resultados rápido.<br><br>Tu sitio queda en vivo en 1–3 días, y tienes 90 días de soporte directo de nuestro equipo.'),'bot');
+      showQR();return;
+    }
+
+    // ── What makes SANO different ──
+    if(q.includes('different')||q.includes('why sano')||q.includes('agency')||q.includes('vs')||q.includes('compared')||q.includes('unique')||q.includes('diferente')||q.includes('por qué sano')||q.includes('agencia')||q.includes('comparado')||q.includes('único')){
+      addMsg(P('Most agencies charge $8,000–$15,000 for a website alone — and it takes months. The beta gets you a custom website, AI chatbot, SEO, and 90 days of support for <strong>$350 flat</strong>, live in 1–3 days. (Optional admin dashboard add-on is +$350.)<br><br>And this is just the beginning. We have a lot more planned after the beta.<div class="bot-follow">Want to hear what\'s coming next?</div>','La mayoría de las agencias cobran $8,000–$15,000 solo por una página web — y tardan meses. El beta te da una página web a tu medida, asistente con IA, SEO y 90 días de soporte por <strong>$350 únicos</strong>, en vivo en 1–3 días. (El panel de control opcional es +$350.)<br><br>Y esto es apenas el comienzo. Tenemos mucho más planeado después del beta.<div class="bot-follow">¿Te cuento qué viene después?</div>'),'bot');
+      showQR();return;
+    }
+
+    // ── How it works ──
+    if(q.includes('how does it work')||q.includes('how it works')||q.includes('process')||q.includes('steps')||q.includes('what happens')||q.includes('cómo funciona')||q.includes('proceso')||q.includes('pasos')||q.includes('qué pasa')){
+      addMsg(P('Simple:<br><br><strong>1. Reach out</strong> — Email Jasper or drop your info here.<br><strong>2. Fill out a questionnaire</strong> — Tells us everything we need about your business.<br><strong>3. We build</strong> — Your custom site and chatbot — live in 1–3 days.<br><br>One simple $350 payment up front. No technical skill required.','Muy simple:<br><br><strong>1. Escríbenos</strong> — Mándale un correo a Jasper o deja tus datos aquí.<br><strong>2. Llena un cuestionario</strong> — Nos dice todo lo que necesitamos de tu negocio.<br><strong>3. Nosotros lo construimos</strong> — Tu sitio a la medida y tu asistente — en vivo en 1–3 días.<br><br>Un solo pago de $350 por adelantado. No necesitas saber de tecnología.'),'bot');
+      showQR();return;
+    }
+
+    // ── Chatbot (beta feature) ──
+    if(q.includes('chatbot')||q.includes('chat bot')||q.includes('ai bot')||q.includes('ai assistant')||q.includes('asistente')||q.includes('inteligencia artificial')){
+      addMsg(P('The AI chatbot included in the beta is trained on <strong>your specific business</strong> — your services, FAQs, hours, and key info. It lives on your website and answers customer questions 24/7 while capturing leads straight to your inbox.<br><br>Think of it as a front-desk person who never sleeps and never misses a message.<div class="bot-follow">In the next phase after beta, we\'re planning to add appointment booking and even more capabilities to the chatbot.</div>','El asistente con IA que incluye el beta está entrenado en <strong>tu negocio en específico</strong> — tus servicios, preguntas frecuentes, horarios e info clave. Vive en tu página web y contesta a tus clientes 24/7 mientras captura prospectos directo a tu bandeja.<br><br>Piénsalo como una recepción que nunca duerme y nunca deja pasar un mensaje.<div class="bot-follow">En la siguiente fase después del beta, planeamos agregar agendado de citas y más capacidades al asistente.</div>'),'bot');
+      showQR();return;
+    }
+
+    // ── Website (beta feature) ──
+    if(q.includes('website')||q.includes('web site')||q.includes('web design')||q.includes('site')||q.includes('pages')||q.includes('página')||q.includes('pagina')||q.includes('sitio')){
+      addMsg(P('The beta includes a <strong>custom-designed website — up to 4 pages</strong>. Not a template. Mobile-first, fast-loading, and built with on-page SEO to help you rank higher on Google.<br><br>Need more than 4 pages? Additional pages are just $75 each.<br><br>Domain and hosting are included for the first year. Want to update content yourself anytime? Add the admin dashboard for a one-time +$350.','El beta incluye una <strong>página web a tu medida — hasta 4 páginas</strong>. No una plantilla. Lista para celular, de carga rápida y construida con SEO para que aparezcas más arriba en Google.<br><br>¿Necesitas más de 4 páginas? Cada página adicional cuesta solo $75.<br><br>El dominio y el hosting van incluidos el primer año. ¿Quieres actualizar el contenido tú mismo cuando quieras? Agrega el panel de control por un pago único de +$350.'),'bot');
+      showQR();return;
+    }
+
+    // ── Admin / dashboard ──
+    if(q.includes('admin')||q.includes('dashboard')||q.includes('edit')||q.includes('backend')||q.includes('manage')||q.includes('panel')||q.includes('editar')||q.includes('administrar')||q.includes('manejar')){
+      addMsg(P('The <strong>admin dashboard</strong> is your own command center — an optional add-on (<strong>+$350</strong>) that lets you run your site yourself: change text, images, prices, and pages anytime, no code, no developer needed.<br><br>It\'s designed to be dead simple: if you can type, you can manage your site. Prefer to skip it? Our team handles your updates for you instead.','El <strong>panel de control</strong> es tu propio centro de mando — un complemento opcional (<strong>+$350</strong>) que te deja manejar tu sitio tú mismo: cambia textos, imágenes, precios y páginas cuando quieras, sin código y sin necesitar un desarrollador.<br><br>Está hecho para ser facilísimo: si sabes escribir, puedes manejar tu sitio. ¿Prefieres saltártelo? Nuestro equipo hace tus cambios por ti.'),'bot');
+      showQR();return;
+    }
+
+    // ── SEO ──
+    if(q.includes('seo')||q.includes('google')||q.includes('rank')||q.includes('search')||q.includes('posicionar')||q.includes('buscador')||q.includes('búsqueda')){
+      addMsg(P('Basic on-page SEO is included in the beta — proper meta tags, headings, fast load times, mobile optimization, and clean structure. All the fundamentals that help you show up on Google.<br><br>We build the site the right way from the start so you\'re set up to rank.','El SEO básico va incluido en el beta — etiquetas meta correctas, encabezados, carga rápida, optimización para celular y estructura limpia. Todos los fundamentos que te ayudan a aparecer en Google.<br><br>Construimos el sitio bien desde el principio para que estés listo para posicionarte.'),'bot');
+      showQR();return;
+    }
+
+    // ── Hosting / domain ──
+    if(q.includes('host')||q.includes('domain')||q.includes('server')||q.includes('hosting')||q.includes('dominio')||q.includes('servidor')||q.includes('alojamiento')){
+      addMsg(P('Domain and hosting are both <strong>included for the first year</strong> as part of the $350 beta fee (covers a standard domain — premium domains cost a bit extra). After the first year, you\'d renew the domain and hosting on your own — standard annual costs.','El dominio y el hosting van <strong>incluidos el primer año</strong> como parte del pago de $350 del beta (cubre un dominio estándar — los dominios premium cuestan un poco más). Después del primer año, renuevas el dominio y el hosting por tu cuenta — costos anuales normales.'),'bot');
+      showQR();return;
+    }
+
+    // ── 90 days / support ──
+    if(q.includes('90')||q.includes('support')||q.includes('bug')||q.includes('fix')||q.includes('update')||q.includes('after')||q.includes('soporte')||q.includes('ayuda')||q.includes('errores')||q.includes('arreglar')||q.includes('mantenimiento')){
+      addMsg(P('The beta includes <strong>90 days of support</strong> — bug fixes handled by our team. After that, if you added the admin dashboard you can manage the site yourself; otherwise our team is available at an hourly rate to make changes for you.','El beta incluye <strong>90 días de soporte</strong> — corrección de errores por nuestro equipo. Después de eso, si agregaste el panel de control puedes manejar el sitio tú mismo; si no, nuestro equipo está disponible por hora para hacer los cambios por ti.'),'bot');
+      showQR();return;
+    }
+
+    // ── Industries ──
+    if(q.includes('industry')||q.includes('who is this for')||q.includes('plumb')||q.includes('hvac')||q.includes('landscap')||q.includes('roofing')||q.includes('dental')||q.includes('law')||q.includes('restaurant')||q.includes('local business')||q.includes('small business')||q.includes('contractor')||q.includes('giro')||q.includes('para quién')||q.includes('plomer')||q.includes('jardiner')||q.includes('restaurante')||q.includes('negocio pequeño')||q.includes('contratista')){
+      addMsg(P('The beta is for <strong>any small business in Houston</strong>. Whether you\'re a plumber, dentist, restaurant owner, landscaper, law firm, or anything in between — if you need a professional website with AI integration, this is for you.','El beta es para <strong>cualquier negocio pequeño</strong>. Ya seas plomero, dentista, dueño de restaurante, jardinero, despacho de abogados, o lo que sea — si necesitas una página web profesional con integración de IA, esto es para ti.'),'bot');
+      showQR();return;
+    }
+
+    // ── Houston ──
+    if(q.includes('houston')||q.includes('location')||q.includes('area')||q.includes('where')||q.includes('dónde')||q.includes('ubicación')||q.includes('ciudad')||q.includes('están ubicados')){
+      addMsg(P('We\'re based in <strong>Houston, TX</strong> and the beta is focused on Houston-area businesses. Expansion beyond Houston is part of the plan, but right now our focus is here.','Trabajamos con negocios en todo Estados Unidos — <strong>estés donde estés</strong>, podemos crear tu página web y tu asistente con IA. Todo se hace en línea, así que tu ubicación no es ningún problema.'),'bot');
+      showQR();return;
+    }
+
+    // ── Future plans / what's coming ──
+    if(q.includes('future')||q.includes('roadmap')||q.includes('coming soon')||q.includes('plan to')||q.includes('what\'s next')||q.includes('eventually')||q.includes('more tools')||q.includes('full rollout')||q.includes('what else')||q.includes('after beta')||q.includes('more coming')||q.includes('crm')||q.includes('missed call')||q.includes('text-back')||q.includes('review system')||q.includes('appointment')||q.includes('booking')||q.includes('viene')||q.includes('después')||q.includes('próximo')||q.includes('sigue')||q.includes('futuro')||q.includes('más adelante')||q.includes('qué más')||q.includes('citas')||q.includes('reseñas')){
+      addMsg(P('After the beta, we\'re building out a <strong>lot</strong> more — CRM, missed call automation, appointment booking through the chatbot, review management, and deeper AI tools. Think full business automation.<br><br>Beta clients get first access to everything we roll out next. The beta is just the foundation.<div class="bot-follow">The best part of being early is you grow with us.</div>','Después del beta, estamos construyendo <strong>mucho</strong> más — CRM, automatización de llamadas perdidas, agendado de citas desde el asistente, manejo de reseñas y herramientas con IA más avanzadas. Imagínate la automatización completa de tu negocio.<br><br>Los clientes del beta tienen acceso primero a todo lo que lancemos después. El beta es apenas la base.<div class="bot-follow">Lo mejor de entrar temprano es que creces con nosotros.</div>'),'bot');
+      showQR();return;
+    }
+
+    // ── Technical ──
+    if(q.includes('technical')||q.includes('do i need to know')||q.includes('hard to use')||q.includes('complicated')||q.includes('técnico')||q.includes('tecnología')||q.includes('complicado')||q.includes('difícil')){
+      addMsg(P('Not at all. We build and launch everything for you. If you want to make changes yourself, the optional admin dashboard (+$350) is as simple as editing a document — if you can type, you can manage your site. Prefer not to? Just send us the change and we\'ll handle it.','Para nada. Nosotros armamos y publicamos todo por ti. Si quieres hacer cambios tú mismo, el panel de control opcional (+$350) es tan fácil como editar un documento — si sabes escribir, puedes manejar tu sitio. ¿Prefieres no hacerlo? Solo mándanos el cambio y nosotros lo resolvemos.'),'bot');
+      showQR();return;
+    }
+
+    // ── Spots left ──
+    if(q.includes('spot')||q.includes('how many')||q.includes('availability')||q.includes('left')||q.includes('still open')||q.includes('lugares')||q.includes('cupos')||q.includes('cuántos')||q.includes('disponib')||q.includes('quedan')){
+      addMsg(P('We\'re accepting a <strong>limited number of beta clients</strong>. A few spots have already been claimed. Once they\'re filled, we launch publicly at a higher price.<a href="mailto:jasper@sanosolutions.ai?subject=Beta%20Inquiry" class="chat-cta-btn">Email Jasper to Claim Your Spot</a>','Estamos aceptando un <strong>número limitado de clientes beta</strong>. Ya se apartaron algunos lugares. Cuando se llenen, lanzamos al público a un precio más alto.<a href="mailto:jasper@sanosolutions.ai?subject=Beta%20Inquiry" class="chat-cta-btn">Escríbele a Jasper para apartar tu lugar</a>'),'bot');
+      showQR();return;
+    }
+
+    // ── Jasper / founder ──
+    if(q.includes('jasper')||q.includes('founder')||q.includes('who runs')||q.includes('who built')||q.includes('ceo')||q.includes('owner')||q.includes('fundador')||q.includes('dueño')||q.includes('quién dirige')||q.includes('quién hizo')){
+      addMsg(P('SANO was founded by Jasper. During the beta, he\'s directly involved with every client — you work with the person who built the system, not a support queue.','SANO fue fundada por Jasper. Durante el beta, él está involucrado directamente con cada cliente — trabajas con la persona que construyó el sistema, no con una fila de soporte.'),'bot');
+      showQR();return;
+    }
+
+    // ── Contract ──
+    if(q.includes('contract')||q.includes('lock in')||q.includes('commitment')||q.includes('long term')||q.includes('long-term')||q.includes('cancel')||q.includes('contrato')||q.includes('compromiso')||q.includes('cancelar')||q.includes('permanencia')||q.includes('amarrado')){
+      addMsg(P('No contracts, no monthly fees. The beta is a <strong>$350 one-time flat fee</strong>. You own your site, and after the first year you just handle your own domain and hosting renewal.','Sin contratos, sin mensualidades. El beta es un <strong>pago único de $350</strong>. Tu sitio es tuyo, y después del primer año solo te encargas de renovar tu propio dominio y hosting.'),'bot');
+      showQR();return;
+    }
+
+    // ── Questionnaire ──
+    if(q.includes('questionnaire')||q.includes('form')||q.includes('what do you need from me')||q.includes('get started')||q.includes('cuestionario')||q.includes('formulario')||q.includes('qué necesitan')||q.includes('qué necesitas')){
+      flow='ask_name';
+      addMsg(P('Once you\'re in, you\'ll fill out a questionnaire that tells us everything about your business — services, goals, branding, the works. That\'s how we build something that actually fits you.<br><br>But first, let me grab your info so Jasper can reach out.<div class="bot-follow">What\'s your name?</div>','Una vez que entras, llenas un cuestionario que nos dice todo sobre tu negocio — servicios, metas, marca, todo. Así construimos algo que de verdad te quede.<br><br>Pero primero, déjame tomar tus datos para que Jasper te contacte.<div class="bot-follow">¿Cómo te llamas?</div>'),'bot');
+      return;
+    }
+
+    // ── Greeting ──
+    if(q.includes('hello')||q.includes('hi')||q.includes('hey')||q==='yo'||q==='sup'||q.includes('hola')||q.includes('buenas')||q.includes('qué tal')||q.includes('saludos')){
+      addMsg(P('Hey! Welcome to SANO. We\'re in beta right now — building Fortune 500 digital tools for small businesses at a price that actually makes sense.<div class="bot-follow">I can tell you about the beta package, pricing, or what we\'re building next. What are you curious about?</div>','¡Hola! 👋 Bienvenido a SANO. Estamos en beta ahora mismo — creando las herramientas digitales de las grandes empresas para los pequeños negocios, a un precio que de verdad tiene sentido.<div class="bot-follow">Te puedo contar del paquete beta, del precio, o de lo que estamos construyendo. ¿Qué te interesa?</div>'),'bot');
+      showQR();return;
+    }
+
+    // ── Thanks ──
+    if(q.includes('thank')||q.includes('thanks')||q.includes('appreciate')||q.includes('gracias')||q.includes('agradezco')){
+      addMsg(P('You\'re welcome! If you have any other questions about the beta, I\'m here. When you\'re ready, just say "get started" and I\'ll grab your info for Jasper.','¡De nada! Si tienes cualquier otra pregunta sobre el beta, aquí estoy. Cuando estés listo, solo di "quiero empezar" y tomo tus datos para Jasper.'),'bot');
+      showQR();return;
+    }
+
+    // ── Fallback ──
+    addMsg(P('Good question — the best way to get a detailed answer on that is to reach out to Jasper directly. He handles every beta client personally.<a href="mailto:jasper@sanosolutions.ai?subject=Beta%20Inquiry" class="chat-cta-btn">Email Jasper</a><div class="bot-follow">Or ask me about what\'s in the beta package, pricing, or what we have planned next!</div>','Buena pregunta — la mejor forma de obtener una respuesta detallada sobre eso es contactar a Jasper directamente. Él atiende a cada cliente del beta personalmente.<a href="mailto:jasper@sanosolutions.ai?subject=Beta%20Inquiry" class="chat-cta-btn">Escríbele a Jasper</a><div class="bot-follow">O pregúntame qué incluye el paquete beta, el precio, o qué tenemos planeado.</div>'),'bot');
+    showQR();
+  }
+
+  function formatPhone(d){
+    if(d.length===11)d=d.substring(1);
+    return '('+d.substring(0,3)+') '+d.substring(3,6)+'-'+d.substring(6);
+  }
+})();
+</script>
+
+<!-- SANO Bilingual Toggle (EN <-> ES) — inlined, self-contained -->
+<script>
+(function () {
+  "use strict";
+  var KEY = "sano-lang";
+  var LANGS = ["en", "es"];
+
+  function detect() {
+    try {
+      var saved = localStorage.getItem(KEY);
+      if (saved === "en" || saved === "es") return saved;
+    } catch (e) {}
+    var nav = (navigator.language || navigator.userLanguage || "en").toLowerCase();
+    return nav.indexOf("es") === 0 ? "es" : "en";
+  }
+
+  function cache(el) {
+    // Store the original English the first time we touch each element.
+    if (el.hasAttribute("data-es") && el.dataset.en == null) el.dataset.en = el.textContent;
+    if (el.hasAttribute("data-es-html") && el.dataset.enHtml == null) el.dataset.enHtml = el.innerHTML;
+    if (el.hasAttribute("data-es-placeholder") && el.dataset.enPlaceholder == null) el.dataset.enPlaceholder = el.getAttribute("placeholder") || "";
+    if (el.hasAttribute("data-es-content") && el.dataset.enContent == null) el.dataset.enContent = el.getAttribute("content") || "";
+    if (el.hasAttribute("data-es-alt") && el.dataset.enAlt == null) el.dataset.enAlt = el.getAttribute("alt") || "";
+    if (el.hasAttribute("data-es-aria") && el.dataset.enAria == null) el.dataset.enAria = el.getAttribute("aria-label") || "";
+    if (el.hasAttribute("data-es-value") && el.dataset.enValue == null) el.dataset.enValue = el.getAttribute("value") || "";
+  }
+
+  function apply(lang) {
+    var es = lang === "es";
+    var nodes = document.querySelectorAll("[data-es],[data-es-html],[data-es-placeholder],[data-es-content],[data-es-alt],[data-es-aria],[data-es-value]");
+    nodes.forEach(function (el) {
+      cache(el);
+      if (el.hasAttribute("data-es")) el.textContent = es ? el.getAttribute("data-es") : el.dataset.en;
+      if (el.hasAttribute("data-es-html")) el.innerHTML = es ? el.getAttribute("data-es-html") : el.dataset.enHtml;
+      if (el.hasAttribute("data-es-placeholder")) el.setAttribute("placeholder", es ? el.getAttribute("data-es-placeholder") : el.dataset.enPlaceholder);
+      if (el.hasAttribute("data-es-content")) el.setAttribute("content", es ? el.getAttribute("data-es-content") : el.dataset.enContent);
+      if (el.hasAttribute("data-es-alt")) el.setAttribute("alt", es ? el.getAttribute("data-es-alt") : el.dataset.enAlt);
+      if (el.hasAttribute("data-es-aria")) el.setAttribute("aria-label", es ? el.getAttribute("data-es-aria") : el.dataset.enAria);
+      if (el.hasAttribute("data-es-value")) el.setAttribute("value", es ? el.getAttribute("data-es-value") : el.dataset.enValue);
+    });
+    document.documentElement.lang = lang;
+    document.querySelectorAll(".sano-lang-seg").forEach(function (b) {
+      b.classList.toggle("is-active", b.dataset.lang === lang);
+      b.setAttribute("aria-pressed", b.dataset.lang === lang ? "true" : "false");
+    });
+  }
+
+  function setLang(lang) {
+    if (LANGS.indexOf(lang) === -1) return;
+    try { localStorage.setItem(KEY, lang); } catch (e) {}
+    apply(lang);
+  }
+  window.sanoSetLang = setLang;
+
+  function injectStyles() {
+    if (document.getElementById("sano-lang-style")) return;
+    var css =
+      ".sano-lang-toggle{display:inline-flex;align-items:center;border:1px solid var(--border-hover,rgba(0,0,0,.18));border-radius:999px;overflow:hidden;font-family:inherit;background:rgba(0,0,0,.04);vertical-align:middle}" +
+      ".sano-lang-toggle.is-fixed{position:fixed;top:16px;right:16px;z-index:9999;background:rgba(8,8,12,.85);backdrop-filter:blur(8px)}" +
+      ".sano-lang-seg{appearance:none;border:0;background:transparent;cursor:pointer;font-size:13px;font-weight:600;letter-spacing:.02em;padding:6px 13px;color:var(--text-muted,#888);transition:color .2s,background .2s;line-height:1}" +
+      ".sano-lang-seg:hover{color:var(--text-primary,#111)}" +
+      ".sano-lang-seg.is-active{background:var(--blue,#0070F3);color:#fff}";
+    var s = document.createElement("style");
+    s.id = "sano-lang-style";
+    s.textContent = css;
+    document.head.appendChild(s);
+  }
+
+  function buildButton() {
+    var mount = document.getElementById("sano-lang-toggle");
+    var fixed = false;
+    if (!mount) {
+      mount = document.createElement("div");
+      mount.id = "sano-lang-toggle";
+      document.body.appendChild(mount);
+      fixed = true;
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "sano-lang-toggle" + (fixed ? " is-fixed" : "");
+    wrap.setAttribute("role", "group");
+    wrap.setAttribute("aria-label", "Language / Idioma");
+    LANGS.forEach(function (l) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "sano-lang-seg";
+      b.dataset.lang = l;
+      b.textContent = l.toUpperCase();
+      b.addEventListener("click", function () { setLang(l); });
+      wrap.appendChild(b);
+    });
+    mount.appendChild(wrap);
+  }
+
+  function init() {
+    injectStyles();
+    buildButton();
+    apply(detect());
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
+
+</body>
+</html>
+
+<!-- make-it-live 1782147688 -->
