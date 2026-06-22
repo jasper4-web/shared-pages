@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-es="Premier Event Transport | Transporte de lujo con chofer · Área de Houston">Premier Event Transport | Luxury Chauffeured Transport · Houston area</title>
+  <meta name="description" content="Premier Event Transport — luxury chauffeured vehicles for weddings, corporate events, and airport transfers across the Houston area. Punctual, polished, stress-free." data-es-content="Premier Event Transport — vehículos de lujo con chofer para bodas, eventos corporativos y traslados al aeropuerto en el área de Houston. Puntuales, elegantes y sin estrés.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --navy:#2C3E50;
+      --navy-deep:#1A252F;
+      --navy-soft:#34495E;
+      --gold:#D4AF37;
+      --gold-light:#E5C766;
+      --cream:#F8F9FA;
+      --ink:#1A1A1A;
+      --muted:#6B7280;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--ink);background:var(--cream);-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6}
+    h1,h2,h3,.serif{font-family:'Playfair Display',Georgia,serif}
+    img{max-width:100%;display:block}
+    .wrap{max-width:1140px;margin:0 auto;padding:0 1.5rem}
+    .eyebrow{display:inline-block;color:var(--gold);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.22em;margin-bottom:.7rem}
+    .sec-title{font-size:clamp(1.9rem,3.5vw,2.7rem);font-weight:700;color:var(--navy);letter-spacing:-.01em;line-height:1.1}
+    .sec-sub{color:var(--muted);font-size:1rem;max-width:560px;margin:.9rem auto 0;line-height:1.7}
+    .center{text-align:center}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.5rem;transition:all .35s ease}
+    nav.scrolled{background:rgba(26,37,47,.97);backdrop-filter:blur(12px);box-shadow:0 4px 24px rgba(0,0,0,.18);padding:.7rem 1.5rem}
+    .logo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:#fff;letter-spacing:.01em;text-shadow:0 2px 10px rgba(0,0,0,.4)}
+    .logo span{color:var(--gold)}
+    .nav-links{display:flex;align-items:center;gap:1.6rem}
+    .nav-links a{color:rgba(255,255,255,.88);text-decoration:none;font-size:.82rem;font-weight:600;letter-spacing:.02em;text-shadow:0 1px 6px rgba(0,0,0,.4);transition:color .25s;white-space:nowrap}
+    .nav-links a:hover{color:var(--gold-light)}
+    .nav-cta{background:var(--gold)!important;color:var(--navy-deep)!important;padding:.55rem 1.25rem;border-radius:8px;text-shadow:none!important;font-weight:700!important;transition:all .25s}
+    .nav-cta:hover{background:var(--gold-light)!important;transform:translateY(-1px);box-shadow:0 6px 18px rgba(212,175,55,.4)}
+
+    /* BUTTONS */
+    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.95rem 2rem;border-radius:10px;font-size:.9rem;font-weight:700;font-family:inherit;text-decoration:none;cursor:pointer;border:none;letter-spacing:.02em;transition:all .3s}
+    .btn-gold{background:var(--gold);color:var(--navy-deep);box-shadow:0 8px 28px rgba(212,175,55,.35)}
+    .btn-gold:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 12px 34px rgba(212,175,55,.45)}
+    .btn-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.55)}
+    .btn-outline:hover{background:rgba(255,255,255,.12);border-color:#fff}
+    .btn-navy{background:var(--navy);color:#fff;box-shadow:0 8px 24px rgba(44,62,80,.3)}
+    .btn-navy:hover{background:var(--navy-deep);transform:translateY(-2px)}
+
+    /* HERO */
+    .hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+    .hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1920&q=80&auto=format&fit=crop') center/cover no-repeat}
+    .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,37,47,.78) 0%,rgba(26,37,47,.66) 45%,rgba(26,37,47,.9) 100%)}
+    .hero-content{position:relative;z-index:2;padding:6rem 1.5rem 2rem;max-width:760px}
+    .hero-badge{display:inline-block;background:rgba(212,175,55,.14);color:var(--gold-light);border:1px solid rgba(212,175,55,.4);padding:.45rem 1.1rem;border-radius:999px;font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:1.4rem}
+    .hero h1{font-size:clamp(2.6rem,6vw,4.4rem);font-weight:700;color:#fff;line-height:1.04;letter-spacing:-.01em;margin-bottom:1.1rem}
+    .hero h1 span{color:var(--gold)}
+    .hero p{font-size:clamp(1rem,1.4vw,1.18rem);color:rgba(255,255,255,.86);line-height:1.7;max-width:560px;margin:0 auto 2rem;font-weight:400}
+    .hero-btns{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap}
+    .hero-trust{margin-top:2.5rem;display:flex;gap:1.6rem;justify-content:center;flex-wrap:wrap}
+    .trust-item{color:rgba(255,255,255,.82);font-size:.78rem;font-weight:600;display:flex;align-items:center;gap:.4rem;letter-spacing:.02em}
+    .trust-item .g{color:var(--gold)}
+
+    /* STATS */
+    .stats{background:var(--navy-deep);padding:2.4rem 1.5rem}
+    .stats-grid{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;text-align:center}
+    .stat-num{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3vw,2.3rem);font-weight:700;color:var(--gold)}
+    .stat-label{color:rgba(255,255,255,.7);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-top:.25rem}
+
+    /* SECTION shells */
+    section{scroll-margin-top:70px}
+    .fleet{padding:5.5rem 0;background:var(--cream)}
+    .services{padding:5.5rem 0;background:#fff}
+    .about{padding:5.5rem 0;background:var(--cream)}
+    .reviews{padding:5.5rem 0;background:#fff}
+    .contact{padding:5.5rem 0;background:var(--navy-deep)}
+
+    /* FLEET */
+    .fleet-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;margin-top:3rem}
+    .veh-card{background:#fff;border:1px solid #ECECEC;border-radius:16px;overflow:hidden;transition:all .3s;box-shadow:0 4px 18px rgba(0,0,0,.04)}
+    .veh-card:hover{transform:translateY(-5px);box-shadow:0 18px 44px rgba(44,62,80,.14);border-color:rgba(212,175,55,.4)}
+    .veh-img{height:170px;background-size:cover;background-position:center}
+    .veh-body{padding:1.3rem 1.4rem 1.6rem}
+    .veh-body h3{font-size:1.18rem;font-weight:700;color:var(--navy);margin-bottom:.15rem}
+    .veh-cap{display:inline-block;color:var(--gold);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem}
+    .veh-body p{font-size:.84rem;color:var(--muted);line-height:1.6}
+
+    /* SERVICES */
+    .svc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;margin-top:3rem}
+    .svc-card{background:var(--cream);border:1px solid #ECECEC;border-radius:16px;padding:2rem 1.6rem;text-align:left;transition:all .3s}
+    .svc-card:hover{background:var(--navy);transform:translateY(-4px);box-shadow:0 16px 40px rgba(44,62,80,.18)}
+    .svc-card:hover h3,.svc-card:hover p{color:#fff}
+    .svc-card:hover p{color:rgba(255,255,255,.78)}
+    .svc-ic{width:52px;height:52px;border-radius:12px;background:rgba(212,175,55,.15);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1rem}
+    .svc-card:hover .svc-ic{background:var(--gold);color:var(--navy-deep)}
+    .svc-card h3{font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:.4rem;transition:color .3s}
+    .svc-card p{font-size:.84rem;color:var(--muted);line-height:1.6;transition:color .3s}
+
+    /* ABOUT */
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center}
+    .about-img{border-radius:18px;overflow:hidden;box-shadow:0 20px 50px rgba(44,62,80,.18);aspect-ratio:4/3;background:url('https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=900&q=80&auto=format&fit=crop') center/cover no-repeat}
+    .about-text h2{margin-bottom:1.1rem}
+    .about-text p{color:#444;font-size:.96rem;line-height:1.8;margin-bottom:1rem}
+    .about-list{list-style:none;margin-top:1.4rem;display:grid;gap:.7rem}
+    .about-list li{display:flex;align-items:flex-start;gap:.6rem;font-size:.9rem;font-weight:500;color:var(--navy)}
+    .about-list .chk{color:var(--gold);font-weight:800;flex-shrink:0}
+
+    /* CTA BAND */
+    .cta-band{position:relative;padding:5rem 1.5rem;text-align:center;overflow:hidden}
+    .cta-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1600&q=80&auto=format&fit=crop') center/cover no-repeat}
+    .cta-ov{position:absolute;inset:0;background:linear-gradient(rgba(26,37,47,.86),rgba(26,37,47,.9))}
+    .cta-inner{position:relative;z-index:2;max-width:640px;margin:0 auto}
+    .cta-inner h2{color:#fff;font-size:clamp(1.8rem,3.5vw,2.6rem);margin-bottom:1rem}
+    .cta-inner p{color:rgba(255,255,255,.82);font-size:1rem;line-height:1.7;margin-bottom:1.8rem}
+
+    /* REVIEWS */
+    .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:3rem}
+    .rev-card{background:var(--cream);border:1px solid #ECECEC;border-radius:16px;padding:1.8rem;text-align:left;transition:all .3s}
+    .rev-card:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(44,62,80,.1)}
+    .rev-stars{color:var(--gold);font-size:1rem;letter-spacing:2px;margin-bottom:.8rem}
+    .rev-text{font-size:.92rem;color:#3a3a3a;line-height:1.7;font-style:italic;margin-bottom:1.1rem}
+    .rev-author{font-weight:700;color:var(--navy);font-size:.9rem}
+    .rev-role{color:var(--muted);font-size:.74rem;margin-top:.1rem}
+
+    /* CONTACT */
+    .contact .eyebrow{color:var(--gold)}
+    .contact .sec-title{color:#fff}
+    .contact .sec-sub{color:rgba(255,255,255,.66)}
+    .contact-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:2.8rem;margin-top:3rem;align-items:start}
+    .contact-info{color:#fff}
+    .ci-row{display:flex;align-items:flex-start;gap:.9rem;margin-bottom:1.5rem}
+    .ci-ic{width:44px;height:44px;border-radius:10px;background:rgba(212,175,55,.16);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+    .ci-row h4{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold-light);margin-bottom:.2rem;font-weight:700}
+    .ci-row a,.ci-row p{color:rgba(255,255,255,.9);font-size:.95rem;text-decoration:none;font-weight:500}
+    .ci-row a:hover{color:var(--gold)}
+    .form-card{background:#fff;border-radius:18px;padding:2.2rem;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:.9rem}
+    .form-group{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.9rem}
+    .form-group.full{margin-bottom:.9rem}
+    .form-group label{font-size:.68rem;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.05em}
+    .form-group input,.form-group textarea{padding:.8rem .95rem;border:1.5px solid #E2E5E9;border-radius:10px;font-size:.9rem;font-family:inherit;outline:none;background:#FAFBFC;transition:all .2s}
+    .form-group input:focus,.form-group textarea:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(212,175,55,.14)}
+    .form-group textarea{resize:vertical;min-height:90px}
+    .submit-btn{width:100%;margin-top:.4rem;padding:1rem;background:var(--navy);color:#fff;border:none;border-radius:11px;font-size:.95rem;font-weight:700;font-family:inherit;cursor:pointer;transition:all .3s}
+    .submit-btn:hover{background:var(--navy-deep);transform:translateY(-2px);box-shadow:0 10px 28px rgba(44,62,80,.35)}
+    .form-note{text-align:center;font-size:.68rem;color:#999;margin-top:.8rem}
+    .form-thanks{text-align:center;padding:2rem 1rem}
+    .form-thanks .ft-ic{font-size:2.6rem}
+    .form-thanks h3{color:var(--navy);font-size:1.4rem;margin:.6rem 0 .4rem}
+    .form-thanks p{color:var(--muted);font-size:.9rem}
+
+    /* FOOTER */
+    footer{background:#11181F;color:#fff;padding:3.5rem 1.5rem 2rem}
+    .foot-grid{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:2.5rem}
+    .foot-brand .logo{font-size:1.4rem;margin-bottom:.6rem}
+    .foot-brand p{color:#8A95A0;font-size:.85rem;line-height:1.7;max-width:320px}
+    .foot-col h4{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:1rem;font-weight:700}
+    .foot-col a,.foot-col p{display:block;color:#9AA5B1;font-size:.86rem;text-decoration:none;margin-bottom:.6rem;transition:color .2s}
+    .foot-col a:hover{color:var(--gold-light)}
+    .foot-bottom{max-width:1140px;margin:2.5rem auto 0;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.08);text-align:center;color:#5A6570;font-size:.72rem}
+
+    /* ===== CHAT WIDGET (kept from original) ===== */
+    #chat-widget{position:fixed;bottom:30px;right:30px;width:380px;height:600px;max-height:80vh;background:#fff;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);display:flex;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;z-index:1000;transition:transform .3s cubic-bezier(.175,.885,.32,1.275);transform-origin:bottom right}
+    #chat-widget.closed{transform:scale(0);opacity:0;pointer-events:none}
+    #chat-launcher{position:fixed;bottom:30px;right:30px;width:65px;height:65px;background:var(--navy);border-radius:50%;box-shadow:0 6px 16px rgba(0,0,0,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:999;color:#fff;transition:transform .2s ease}
+    #chat-launcher:hover{transform:scale(1.05)}
+    .chat-header{background:var(--navy);color:#fff;padding:20px;display:flex;align-items:center;justify-content:space-between}
+    .chat-header h3{margin:0;font-size:16px;font-weight:500;font-family:inherit}
+    .chat-close{cursor:pointer;font-size:24px;opacity:.8;line-height:1}
+    .chat-close:hover{opacity:1}
+    .chat-messages{flex:1;padding:20px;overflow-y:auto;background:#F8F9FA;display:flex;flex-direction:column;gap:15px}
+    .msg{max-width:90%;padding:14px 18px;border-radius:12px;font-size:14px;line-height:1.5}
+    .msg.bot{background:#fff;color:#333;align-self:flex-start;border:1px solid #E5E7EB;border-bottom-left-radius:4px;box-shadow:0 2px 4px rgba(0,0,0,.02)}
+    .msg.user{background:var(--navy);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;box-shadow:0 2px 4px rgba(44,62,80,.2)}
+    .msg ul{margin:10px 0;padding-left:20px}
+    .msg li{margin-bottom:6px}
+    .msg strong{color:var(--navy)}
+    .sms-button{display:block;background-color:var(--navy);color:#fff!important;text-align:center;padding:12px 16px;border-radius:8px;text-decoration:none;font-weight:bold;margin-top:15px;font-size:14px;box-shadow:0 4px 10px rgba(44,62,80,.2);transition:background .2s ease}
+    .sms-button:hover{background-color:#1A252F}
+    .sms-button svg{vertical-align:middle;margin-right:6px;margin-top:-2px}
+    .bot-question{margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;font-style:italic;color:#6B7280}
+    .chat-input{padding:15px;background:#fff;border-top:1px solid #eee;display:flex}
+    .chat-input input{flex:1;border:none;outline:none;font-size:15px}
+    .chat-input button{background:none;border:none;color:var(--gold);font-weight:bold;cursor:pointer;font-size:15px}
+    .quick-replies{display:flex;gap:8px;padding:0 20px 10px;background:#F8F9FA;overflow-x:auto;scrollbar-width:none}
+    .quick-replies::-webkit-scrollbar{display:none}
+    .quick-reply{background:#fff;border:1px solid var(--gold);color:var(--navy);padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;white-space:nowrap;transition:all .2s ease}
+    .quick-reply:hover{background:var(--gold);color:#fff}
+    .status-toast{background:#10B981;color:#fff;padding:10px;text-align:center;font-size:12px;font-weight:bold;display:none}
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width:900px){
+      .nav-links a:not(.nav-cta){display:none} /* compact nav (logo + toggle + CTA) once the bilingual links + toggle would crowd */
+      .fleet-grid,.svc-grid{grid-template-columns:repeat(2,1fr)}
+      .rev-grid{grid-template-columns:1fr}
+      .about-grid{grid-template-columns:1fr;gap:2rem}
+      .contact-grid{grid-template-columns:1fr;gap:2rem}
+      .foot-grid{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width:560px){
+      .nav-links a:not(.nav-cta){display:none}
+      nav{padding:.7rem 1rem;flex-wrap:wrap;row-gap:.4rem}   /* tighten + wrap so logo/toggle/CTA never clip on phones */
+      nav.scrolled{padding:.6rem 1rem}
+      .logo{font-size:1rem}
+      .nav-links{gap:.45rem}
+      .nav-cta{padding:.45rem .8rem!important;font-size:.74rem!important}
+      #sano-lang-toggle .sano-lang-seg{padding:5px 8px;font-size:11.5px}
+      .fleet-grid,.svc-grid{grid-template-columns:1fr}
+      .stats-grid{grid-template-columns:1fr 1fr;gap:1.4rem}
+      .form-row{grid-template-columns:1fr}
+      .foot-grid{grid-template-columns:1fr;gap:1.8rem}
+      .hero-trust{gap:1rem}
+      #chat-widget{bottom:0;right:0;width:100%;height:100%;max-height:100vh;border-radius:0}
+      #chat-launcher{bottom:20px;right:20px}
+    }
+
+    /* ===== SANO language toggle — matched to the client's navy/gold brand (not SANO's blue) ===== */
+    #sano-lang-toggle{display:inline-flex;align-items:center}
+    #sano-lang-toggle .sano-lang-toggle{border-color:rgba(255,255,255,.34);background:rgba(255,255,255,.08)}
+    #sano-lang-toggle .sano-lang-seg{color:rgba(255,255,255,.82)}
+    #sano-lang-toggle .sano-lang-seg:hover{color:#fff}
+    #sano-lang-toggle .sano-lang-seg.is-active{background:var(--gold);color:var(--navy-deep)}
+  </style>
+</head>
+<body>
+<div data-demo-badge style="position:fixed;top:12px;right:12px;z-index:2147483647;background:#E8943A;color:#0a0a0a;font:600 11px/1 -apple-system,system-ui,sans-serif;padding:6px 11px;border-radius:100px;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 2px 10px rgba(0,0,0,.45);pointer-events:none" data-es="Demo">Demo</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="logo" data-es-html="Premier <span>Event Transport</span>">Premier <span>Event Transport</span></div>
+  <div class="nav-links">
+    <a href="#fleet" data-es="Flota">Fleet</a>
+    <a href="#services" data-es="Servicios">Services</a>
+    <a href="#about" data-es="Nosotros">About</a>
+    <a href="#reviews" data-es="Reseñas">Reviews</a>
+    <div id="sano-lang-toggle"></div>
+    <a href="#contact" class="nav-cta" data-es="Pide cotización">Get a Quote</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge" data-es="★ Transporte de lujo con chofer · Área de Houston">★ Luxury Chauffeured Transport · Houston area</div>
+    <h1 data-es-html="Llega con <span>lujo sin estrés</span>">Arrive in <span>Effortless Luxury</span></h1>
+    <p data-es="Vehículos premium con chofer para bodas, eventos corporativos y traslados al aeropuerto en el área de Houston. Puntuales, impecables y sin estrés, de principio a fin.">Premium chauffeured vehicles for weddings, corporate events, and airport transfers across the Houston area. Punctual, polished, and completely stress-free — every mile of the way.</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn btn-gold" data-es="Aparta tu fecha">Reserve Your Date</a>
+      <a href="#fleet" class="btn btn-outline" data-es="Conoce la flota">View Our Fleet</a>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item" data-es-html="<span class=&quot;g&quot;>★</span> Servicio 5 estrellas"><span class="g">★</span> 5-Star Rated Service</div>
+      <div class="trust-item" data-es-html="<span class=&quot;g&quot;>✓</span> Con licencia y seguro"><span class="g">✓</span> Licensed &amp; Insured</div>
+      <div class="trust-item" data-es-html="<span class=&quot;g&quot;>✈</span> Seguimiento de vuelos incluido"><span class="g">✈</span> Flight Tracking Included</div>
+      <div class="trust-item" data-es-html="<span class=&quot;g&quot;>⏱</span> Siempre a tiempo"><span class="g">⏱</span> Always On Time</div>
+    </div>
+  </div>
+</header>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stats-grid">
+    <div><div class="stat-num">12+</div><div class="stat-label" data-es="Años de servicio">Years of Service</div></div>
+    <div><div class="stat-num">3,500+</div><div class="stat-label" data-es="Eventos atendidos">Events Driven</div></div>
+    <div><div class="stat-num">99.2%</div><div class="stat-label" data-es="Llegadas a tiempo">On-Time Arrivals</div></div>
+    <div><div class="stat-num">4.9★</div><div class="stat-label" data-es="Calificación promedio">Average Rating</div></div>
+  </div>
+</div>
+
+<!-- FLEET -->
+<section class="fleet" id="fleet">
+  <div class="wrap center">
+    <span class="eyebrow" data-es="Nuestra flota">Our Fleet</span>
+    <h2 class="sec-title" data-es="Vehículos para cada ocasión">Vehicles for Every Occasion</h2>
+    <p class="sec-sub" data-es="Una flota impecable y con seguro completo: cada vehículo se detalla antes de cada viaje y lo maneja un chofer profesional con antecedentes verificados.">A meticulously maintained, fully insured fleet — each vehicle detailed before every ride and driven by a professional, background-checked chauffeur.</p>
+    <div class="fleet-grid">
+      <div class="veh-card">
+        <div class="veh-img" style="background-image:url('https://images.unsplash.com/photo-1601362840469-51e4d8d58785?w=800&q=80&auto=format&fit=crop')"></div>
+        <div class="veh-body">
+          <h3 data-es="Sedán Ejecutivo">Executive Sedan</h3>
+          <span class="veh-cap" data-es="Hasta 3 personas">Up to 3 guests</span>
+          <p data-es="Un viaje elegante y discreto para parejas, ejecutivos y traslados al aeropuerto. Interior de piel, agua embotellada y una cabina silenciosa y cómoda.">A polished, discreet ride for couples, executives, and airport runs. Leather interior, bottled water, and a smooth, quiet cabin.</p>
+        </div>
+      </div>
+      <div class="veh-card">
+        <div class="veh-img" style="background-image:url('https://images.unsplash.com/photo-1563720223185-11003d516935?w=800&q=80&auto=format&fit=crop')"></div>
+        <div class="veh-body">
+          <h3 data-es="SUV de Lujo">Luxury SUV</h3>
+          <span class="veh-cap" data-es="Hasta 5 personas">Up to 5 guests</span>
+          <p data-es="Amplia e imponente — ideal para cortejos de boda, clientes VIP y grupos que quieren llegar con estilo y espacio de sobra.">Spacious and commanding — ideal for wedding parties, VIP clients, and groups who want room to arrive in style.</p>
+        </div>
+      </div>
+      <div class="veh-card">
+        <div class="veh-img" style="background-image:url('https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80&auto=format&fit=crop')"></div>
+        <div class="veh-body">
+          <h3 data-es="SUV Grande">Full-Size SUV</h3>
+          <span class="veh-cap" data-es="Hasta 7 personas">Up to 7 guests</span>
+          <p data-es="La favorita de los grupos. Amplio espacio para equipaje y tres filas de asientos para cortejos de boda y equipos de trabajo que viajan juntos.">The group favorite. Generous luggage space and three rows of seating for bridal parties and corporate teams traveling together.</p>
+        </div>
+      </div>
+      <div class="veh-card">
+        <div class="veh-img" style="background-image:url('https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80&auto=format&fit=crop')"></div>
+        <div class="veh-body">
+          <h3 data-es="Auto Negro Premier">Premier Black Car</h3>
+          <span class="veh-cap" data-es="VIP · Hasta 3 personas">VIP · Up to 3 guests</span>
+          <p data-es="Nuestro vehículo insignia para entradas grandiosas y celebraciones importantes. Resérvalo para el momento que más importa.">Our signature statement vehicle for grand entrances and milestone celebrations. Reserve it for the moment that matters most.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="wrap center">
+    <span class="eyebrow" data-es="Lo que hacemos">What We Do</span>
+    <h2 class="sec-title" data-es="Transporte resuelto de principio a fin">Transportation, Handled End to End</h2>
+    <p class="sec-sub" data-es="Desde la primera cotización hasta la última parada, nuestro equipo coordina cada detalle para que tú solo disfrutes el viaje.">From the first quote to the final drop-off, our coordination team manages every detail so you can simply enjoy the ride.</p>
+    <div class="svc-grid">
+      <div class="svc-card">
+        <div class="svc-ic">💍</div>
+        <h3 data-es="Bodas">Weddings</h3>
+        <p data-es="Transporte para el cortejo, auto de los novios y traslado de invitados — todo coordinado con tu horario para que nadie se quede esperando.">Bridal party shuttles, getaway cars, and guest transport — choreographed to your timeline so no one is ever left waiting.</p>
+      </div>
+      <div class="svc-card">
+        <div class="svc-ic">💼</div>
+        <h3 data-es="Corporativo">Corporate</h3>
+        <p data-es="Viajes ejecutivos, visitas de clientes y transporte para conferencias, con choferes profesionales y un servicio puntual y confiable.">Executive travel, client roadshows, and conference shuttles with professional chauffeurs and reliable, on-time service.</p>
+      </div>
+      <div class="svc-card">
+        <div class="svc-ic">✈️</div>
+        <h3 data-es="Traslados al aeropuerto">Airport Transfers</h3>
+        <p data-es="Servicio puerta a terminal a IAH, HOU y aeropuertos privados (FBO), con seguimiento de vuelos en vivo y tiempo de espera sin costo.">Door-to-terminal service to IAH, HOU, and private FBOs with live flight tracking and complimentary wait time.</p>
+      </div>
+      <div class="svc-card">
+        <div class="svc-ic">🥂</div>
+        <h3 data-es="Noches de fiesta">Nights Out</h3>
+        <p data-es="Cumpleaños, aniversarios, conciertos y celebraciones. Lleguen juntos, regresen juntos y olvídense de quién maneja de vuelta.">Birthdays, anniversaries, concerts, and celebrations. Arrive together, stay together, and never worry about the drive home.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="wrap">
+    <div class="about-grid">
+      <div class="about-img" role="img" aria-label="Professional chauffeur driving at dusk" data-es-aria="Chofer profesional manejando al atardecer"></div>
+      <div class="about-text">
+        <span class="eyebrow" data-es="Nuestra historia">Our Story</span>
+        <h2 class="sec-title" data-es="Puntualidad y elegancia en cada detalle">Built on Punctuality &amp; Polish</h2>
+        <p data-es="Premier Event Transport nació de una idea simple: llegar debería sentirse tan especial como el evento mismo. Por más de una década, hemos brindado un transporte de lujo tranquilo y confiable para los momentos más importantes del área de Houston.">Premier Event Transport began with a simple belief: getting there should feel as special as the event itself. For over a decade, we've delivered calm, dependable luxury transport for the Houston area's most important moments.</p>
+        <p data-es="Cada chofer está capacitado profesionalmente, tiene antecedentes verificados y cuida cada detalle — el agua fría, la puerta abierta, la ruta planeada para esquivar el tráfico que nunca vas a ver.">Every chauffeur is professionally trained, background-checked, and obsessed with the details — the chilled water, the open door, the route planned around the traffic you'll never see.</p>
+        <ul class="about-list">
+          <li data-es-html="<span class=&quot;chk&quot;>✓</span> Choferes profesionales con antecedentes verificados"><span class="chk">✓</span> Professional, background-checked chauffeurs</li>
+          <li data-es-html="<span class=&quot;chk&quot;>✓</span> Con licencia y seguro comercial completo"><span class="chk">✓</span> Fully licensed &amp; commercially insured</li>
+          <li data-es-html="<span class=&quot;chk&quot;>✓</span> Cotizaciones claras y todo incluido — sin sorpresas"><span class="chk">✓</span> Transparent, all-inclusive quotes — no surprises</li>
+          <li data-es-html="<span class=&quot;chk&quot;>✓</span> Despacho 24/7 y seguimiento de vuelos en vivo"><span class="chk">✓</span> 24/7 dispatch &amp; live flight tracking</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section class="cta-band">
+  <div class="cta-bg"></div>
+  <div class="cta-ov"></div>
+  <div class="cta-inner">
+    <h2 data-es="Tu día merece una llegada impecable">Your Day Deserves a Flawless Arrival</h2>
+    <p data-es="Cuéntanos sobre tu evento y armamos un plan de transporte a tu medida — vehículos, horarios y rutas — según tu número de invitados y tu presupuesto.">Tell us about your event and we'll build a custom transport plan — vehicles, timing, and routes — tailored to your guest count and budget.</p>
+    <a href="#contact" class="btn btn-gold" data-es="Pide tu cotización">Request Your Quote</a>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews" id="reviews">
+  <div class="wrap center">
+    <span class="eyebrow" data-es="Lo que dicen">Kind Words</span>
+    <h2 class="sec-title" data-es="Clientes felices en toda el área de Houston">Loved by Clients Across the Houston area</h2>
+    <p class="sec-sub" data-es="Algunas notas recientes de parejas, organizadores y empresas que hemos tenido el gusto de llevar.">A few recent notes from couples, planners, and companies we've had the privilege to drive.</p>
+    <div class="rev-grid">
+      <div class="rev-card">
+        <div class="rev-stars">★★★★★</div>
+        <p class="rev-text" data-es="&quot;Nuestro chofer llegó temprano, impecablemente vestido y súper tranquilo. Todo el grupo de la boda llegó relajado y a tiempo. La verdad, el proveedor más fácil que contratamos.&quot;">"Our driver was early, immaculately dressed, and so calm. The whole wedding party arrived relaxed and on time. Honestly the easiest vendor we booked."</p>
+        <div class="rev-author" data-es="Sarah M.">Sarah M.</div>
+        <div class="rev-role" data-es="Boda · Área de Houston">Wedding · Houston area</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-stars">★★★★★</div>
+        <p class="rev-text" data-es="&quot;Ahora los usamos para cada visita de cliente. Rastrean los vuelos, el auto siempre está esperando y la facturación es sencilla. Totalmente confiables.&quot;">"We use them for every client visit now. Flights get tracked, the car is always waiting, and the billing is simple. Completely reliable."</p>
+        <div class="rev-author" data-es="David R.">David R.</div>
+        <div class="rev-role" data-es="Gerente de viajes corporativos">Corporate Travel Manager</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-stars">★★★★★</div>
+        <p class="rev-text" data-es="&quot;Reservé una SUV para el aniversario de mis papás. La coordinadora pensó en detalles que ni se me habían ocurrido. De verdad, cinco estrellas de principio a fin.&quot;">"Booked an SUV for my parents' anniversary. The coordinator thought of details I hadn't even considered. Truly five-star from start to finish."</p>
+        <div class="rev-author" data-es="Jennifer L.">Jennifer L.</div>
+        <div class="rev-role" data-es="Celebración de aniversario">Anniversary Celebration</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="wrap center">
+    <span class="eyebrow" data-es="Contáctanos">Get in Touch</span>
+    <h2 class="sec-title" data-es="Pide tu cotización personalizada">Request Your Custom Quote</h2>
+    <p class="sec-sub" data-es="Cuéntanos algunos detalles y nuestro equipo te contactará con disponibilidad y una cotización a tu medida — normalmente en menos de una hora.">Share a few details and our coordination team will reach out with availability and a tailored quote — usually within the hour.</p>
+  </div>
+  <div class="wrap">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="ci-row">
+          <div class="ci-ic">📞</div>
+          <div><h4 data-es="Llama o escribe">Call or Text</h4><a href="tel:5550100000">(555) 010-0000</a></div>
+        </div>
+        <div class="ci-row">
+          <div class="ci-ic">✉️</div>
+          <div><h4 data-es="Correo">Email</h4><a href="mailto:hello@premiereventtransport.com" data-es-html="hello@premiereventtransport.com">hello@premiereventtransport.com</a></div>
+        </div>
+        <div class="ci-row">
+          <div class="ci-ic">📍</div>
+          <div><h4 data-es="Zona de servicio">Service Area</h4><p data-es="Área de Houston y zona metropolitana">Houston area &amp; surrounding metro</p></div>
+        </div>
+        <div class="ci-row">
+          <div class="ci-ic">🕑</div>
+          <div><h4 data-es="Horario de despacho">Dispatch Hours</h4><p data-es="24/7 — nos movemos cuando tú te mueves">24 / 7 — we move when you do</p></div>
+        </div>
+      </div>
+      <div class="form-card">
+        <form id="quoteForm" onsubmit="submitQuote(event)">
+          <div class="form-row">
+            <div class="form-group"><label for="f-name" data-es="Nombre completo">Full Name</label><input id="f-name" type="text" placeholder="Your name" data-es-placeholder="Tu nombre" required></div>
+            <div class="form-group"><label for="f-phone" data-es="Teléfono">Phone</label><input id="f-phone" type="tel" placeholder="(555) 010-0000" required></div>
+          </div>
+          <div class="form-group full"><label for="f-date" data-es="Fecha del evento">Event Date</label><input id="f-date" type="date"></div>
+          <div class="form-group full"><label for="f-msg" data-es="Cuéntanos sobre tu evento">Tell Us About Your Event</label><textarea id="f-msg" placeholder="Event type, guest count, pickup & drop-off, and timing..." data-es-placeholder="Tipo de evento, número de invitados, dónde recoger y dejar, y horarios..."></textarea></div>
+          <button class="submit-btn" type="submit" data-es="Pide mi cotización →">Request My Quote →</button>
+          <p class="form-note" data-es="Formulario de demostración — los envíos no se guardan. En un sitio real, esto llega directo al equipo de despacho.">Demo form — submissions aren't stored. On a live site this routes straight to dispatch.</p>
+        </form>
+        <div class="form-thanks" id="formThanks" hidden>
+          <div class="ft-ic">✅</div>
+          <h3 data-es="¡Gracias!">Thank you!</h3>
+          <p data-es="Recibimos tu solicitud. Nuestro equipo de coordinación te contactará muy pronto.">Your request has been received. Our coordination team will reach out shortly.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <div class="logo" data-es-html="Premier <span>Event Transport</span>">Premier <span>Event Transport</span></div>
+      <p data-es="Transporte de lujo con chofer para bodas, eventos corporativos y traslados al aeropuerto en el área de Houston. Puntuales, impecables y sin estrés.">Luxury chauffeured transport for weddings, corporate events, and airport transfers across the Houston area. Punctual, polished, and stress-free.</p>
+    </div>
+    <div class="foot-col">
+      <h4 data-es="Explora">Explore</h4>
+      <a href="#fleet" data-es="Nuestra flota">Our Fleet</a>
+      <a href="#services" data-es="Servicios">Services</a>
+      <a href="#about" data-es="Nosotros">About Us</a>
+      <a href="#reviews" data-es="Reseñas">Reviews</a>
+    </div>
+    <div class="foot-col">
+      <h4 data-es="Contacto">Contact</h4>
+      <a href="tel:5550100000">(555) 010-0000</a>
+      <a href="mailto:hello@premiereventtransport.com" data-es-html="hello@premiereventtransport.com">hello@premiereventtransport.com</a>
+      <p data-es="Área de Houston">Houston area</p>
+      <a href="#contact" data-es="Pide una cotización">Request a Quote</a>
+    </div>
+  </div>
+  <div class="foot-bottom" data-es="© 2026 Premier Event Transport · Sitio de demostración — ejemplo para portafolio. Sin datos reales de clientes.">© 2026 Premier Event Transport · Demo site — sample build for portfolio use. No real client data.</div>
+</footer>
+
+<!-- CHAT LAUNCHER + WIDGET (kept from original, anonymized) -->
+<div id="chat-launcher" onclick="toggleChat()">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+</div>
+
+<div id="chat-widget" class="closed">
+  <div class="chat-header">
+    <div>
+      <h3 data-es="Concierge Premier">Premier Concierge</h3>
+      <span style="font-size:11px;opacity:.8;" data-es="En línea • Responde al instante">Online • Replies instantly</span>
+    </div>
+    <div class="chat-close" onclick="toggleChat()">×</div>
+  </div>
+
+  <div class="status-toast" id="webhook-toast" data-es="✅ Número válido de 10 dígitos — ¡solicitud enviada!">✅ Valid 10-Digit Number - Request Sent!</div>
+
+  <div class="chat-messages" id="messages">
+    <div class="msg bot" data-es-html="¡Bienvenido a Premier Event Transport! 💍 Ya sea una boda, un evento corporativo o un traslado al aeropuerto, yo me encargo de la logística para que tú no tengas que hacerlo. <div class=&quot;bot-question&quot;>¿Qué tipo de evento estamos planeando hoy?</div>">Welcome to Premier Event Transport! 💍 Whether you're planning a wedding, a corporate event, or an airport transfer, I'm here to handle the logistics so you don't have to.
+      <div class="bot-question">What kind of event are we planning for today?</div>
+    </div>
+  </div>
+
+  <div class="quick-replies" id="quick-replies">
+    <div class="quick-reply" onclick="sendQuickReply('quote')" data-es="Pide una cotización">Get a Quote</div>
+    <div class="quick-reply" onclick="sendQuickReply('fleet')" data-es="Ver la flota">Fleet Details</div>
+    <div class="quick-reply" onclick="sendQuickReply('airport')" data-es="Traslados al aeropuerto">Airport Transfers</div>
+  </div>
+
+  <form class="chat-input" onsubmit="handleSend(event)">
+    <input type="text" id="userInput" placeholder="Type your message..." data-es-placeholder="Escribe tu mensaje..." autocomplete="off">
+    <button type="submit" data-es="Enviar">Send</button>
+  </form>
+</div>
+
+<script>
+/* ============================================================
+   SANO Bilingual Toggle — inlined drop-in (EN <-> ES), self-contained for GitHub Pages.
+   ============================================================ */
+(function () {
+  "use strict";
+  var KEY = "sano-lang";
+  var LANGS = ["en", "es"];
+
+  function detect() {
+    try {
+      var saved = localStorage.getItem(KEY);
+      if (saved === "en" || saved === "es") return saved;
+    } catch (e) {}
+    var nav = (navigator.language || navigator.userLanguage || "en").toLowerCase();
+    return nav.indexOf("es") === 0 ? "es" : "en";
+  }
+
+  function cache(el) {
+    if (el.hasAttribute("data-es") && el.dataset.en == null) el.dataset.en = el.textContent;
+    if (el.hasAttribute("data-es-html") && el.dataset.enHtml == null) el.dataset.enHtml = el.innerHTML;
+    if (el.hasAttribute("data-es-placeholder") && el.dataset.enPlaceholder == null) el.dataset.enPlaceholder = el.getAttribute("placeholder") || "";
+    if (el.hasAttribute("data-es-content") && el.dataset.enContent == null) el.dataset.enContent = el.getAttribute("content") || "";
+    if (el.hasAttribute("data-es-alt") && el.dataset.enAlt == null) el.dataset.enAlt = el.getAttribute("alt") || "";
+    if (el.hasAttribute("data-es-aria") && el.dataset.enAria == null) el.dataset.enAria = el.getAttribute("aria-label") || "";
+    if (el.hasAttribute("data-es-value") && el.dataset.enValue == null) el.dataset.enValue = el.getAttribute("value") || "";
+  }
+
+  function apply(lang) {
+    var es = lang === "es";
+    var nodes = document.querySelectorAll("[data-es],[data-es-html],[data-es-placeholder],[data-es-content],[data-es-alt],[data-es-aria],[data-es-value]");
+    nodes.forEach(function (el) {
+      cache(el);
+      if (el.hasAttribute("data-es")) el.textContent = es ? el.getAttribute("data-es") : el.dataset.en;
+      if (el.hasAttribute("data-es-html")) el.innerHTML = es ? el.getAttribute("data-es-html") : el.dataset.enHtml;
+      if (el.hasAttribute("data-es-placeholder")) el.setAttribute("placeholder", es ? el.getAttribute("data-es-placeholder") : el.dataset.enPlaceholder);
+      if (el.hasAttribute("data-es-content")) el.setAttribute("content", es ? el.getAttribute("data-es-content") : el.dataset.enContent);
+      if (el.hasAttribute("data-es-alt")) el.setAttribute("alt", es ? el.getAttribute("data-es-alt") : el.dataset.enAlt);
+      if (el.hasAttribute("data-es-aria")) el.setAttribute("aria-label", es ? el.getAttribute("data-es-aria") : el.dataset.enAria);
+      if (el.hasAttribute("data-es-value")) el.setAttribute("value", es ? el.getAttribute("data-es-value") : el.dataset.enValue);
+    });
+    document.documentElement.lang = lang;
+    document.querySelectorAll(".sano-lang-seg").forEach(function (b) {
+      b.classList.toggle("is-active", b.dataset.lang === lang);
+      b.setAttribute("aria-pressed", b.dataset.lang === lang ? "true" : "false");
+    });
+  }
+
+  function setLang(lang) {
+    if (LANGS.indexOf(lang) === -1) return;
+    try { localStorage.setItem(KEY, lang); } catch (e) {}
+    apply(lang);
+  }
+  window.sanoSetLang = setLang;
+
+  function injectStyles() {
+    if (document.getElementById("sano-lang-style")) return;
+    var css =
+      ".sano-lang-toggle{display:inline-flex;align-items:center;border:1px solid var(--border-hover,rgba(0,0,0,.18));border-radius:999px;overflow:hidden;font-family:inherit;background:rgba(0,0,0,.04);vertical-align:middle}" +
+      ".sano-lang-toggle.is-fixed{position:fixed;top:16px;right:16px;z-index:9999;background:rgba(8,8,12,.85);backdrop-filter:blur(8px)}" +
+      ".sano-lang-seg{appearance:none;border:0;background:transparent;cursor:pointer;font-size:13px;font-weight:600;letter-spacing:.02em;padding:6px 13px;color:var(--text-muted,#888);transition:color .2s,background .2s;line-height:1}" +
+      ".sano-lang-seg:hover{color:var(--text-primary,#111)}" +
+      ".sano-lang-seg.is-active{background:var(--blue,#0070F3);color:#fff}";
+    var s = document.createElement("style");
+    s.id = "sano-lang-style";
+    s.textContent = css;
+    document.head.appendChild(s);
+  }
+
+  function buildButton() {
+    var mount = document.getElementById("sano-lang-toggle");
+    var fixed = false;
+    if (!mount) {
+      mount = document.createElement("div");
+      mount.id = "sano-lang-toggle";
+      document.body.appendChild(mount);
+      fixed = true;
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "sano-lang-toggle" + (fixed ? " is-fixed" : "");
+    wrap.setAttribute("role", "group");
+    wrap.setAttribute("aria-label", "Language / Idioma");
+    LANGS.forEach(function (l) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "sano-lang-seg";
+      b.dataset.lang = l;
+      b.textContent = l.toUpperCase();
+      b.addEventListener("click", function () { setLang(l); });
+      wrap.appendChild(b);
+    });
+    mount.appendChild(wrap);
+  }
+
+  function init() {
+    injectStyles();
+    buildButton();
+    apply(detect());
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
+
+<script>
+  // Tiny i18n helper for the dynamic chat: pick ES when the page is in Spanish, else EN
+  function L(en, es){ return document.documentElement.lang === 'es' ? es : en; }
+
+  // Nav scroll state
+  const navEl = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    navEl.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // Contact form (demo — no backend)
+  function submitQuote(e){
+    e.preventDefault();
+    document.getElementById('quoteForm').hidden = true;
+    document.getElementById('formThanks').hidden = false;
+  }
+
+  // ===== Chat widget =====
+  const messagesDiv = document.getElementById('messages');
+  const inputField = document.getElementById('userInput');
+  const widget = document.getElementById('chat-widget');
+  const toast = document.getElementById('webhook-toast');
+
+  let flowState = 'general';
+  let leadData = { name: '', phone: '' };
+
+  // Open by default for demo
+  setTimeout(() => toggleChat(), 600);
+
+  function toggleChat(){ widget.classList.toggle('closed'); }
+
+  function addMessage(text, sender){
+    const msg = document.createElement('div');
+    msg.className = `msg ${sender}`;
+    msg.innerHTML = text;
+    messagesDiv.appendChild(msg);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
+  // Quick replies send a localized phrase so the visitor's own bubble matches the page language
+  const QR = {
+    quote:   { en: 'Get a Quote',                es: 'Pedir una cotización' },
+    fleet:   { en: 'What vehicles do you have?', es: '¿Qué vehículos tienen?' },
+    airport: { en: 'Do you go to IAH?',          es: '¿Van al aeropuerto (IAH)?' }
+  };
+  function sendQuickReply(key){
+    const opt = QR[key];
+    inputField.value = opt ? L(opt.en, opt.es) : key;
+    handleSend(new Event('submit'));
+  }
+
+  // SMS deep-link buttons (label + prefilled message localized)
+  function smsBtn(enBody, esBody, enLabel, esLabel){
+    const body = encodeURIComponent(L(enBody, esBody));
+    return `<a href="sms:5550100000?body=${body}" class="sms-button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+      ${L(enLabel, esLabel)}
+    </a>`;
+  }
+
+  function handleSend(e){
+    e.preventDefault();
+    const text = inputField.value.trim();
+    if (!text) return;
+    addMessage(text, 'user');
+    inputField.value = '';
+    setTimeout(() => processFlow(text), 800);
+  }
+
+  function processFlow(input){
+    const lowerInput = input.toLowerCase();
+    const hasNumber = /\b\d{2,4}\b/.test(lowerInput);
+    const has = (...ws) => ws.some(w => lowerInput.includes(w));
+
+    // Price / budget (kept ahead of the lead flow, as in the original)
+    if (has('budget','$','price','cost','how much','rent','precio','costo','cuánto','cuanto','presupuesto','tarifa') || hasNumber){
+      addMessage(L(
+        `Every event is unique, so we tailor pricing to your exact route, hours, and group size. The fastest way to get an accurate number is to send a quick note to our coordination team.<br><br>${smsBtn('Hi Premier Team! I am chatting with your AI and want to get a pricing quote for an upcoming event.','¡Hola equipo Premier! Estoy chateando con su asistente y quiero una cotización para un evento próximo.','Text Us for a Quick Quote','Escríbenos para una cotización rápida')}<div class="bot-question">In the meantime, want me to tell you about our fleet?</div>`,
+        `Cada evento es único, así que ajustamos el precio según tu ruta, las horas y el tamaño del grupo. La forma más rápida de tener un número exacto es mandarle un mensajito a nuestro equipo de coordinación.<br><br>${smsBtn('Hi Premier Team! I am chatting with your AI and want to get a pricing quote for an upcoming event.','¡Hola equipo Premier! Estoy chateando con su asistente y quiero una cotización para un evento próximo.','Text Us for a Quick Quote','Escríbenos para una cotización rápida')}<div class="bot-question">Mientras tanto, ¿te cuento sobre nuestra flota?</div>`
+      ), 'bot');
+      return;
+    }
+
+    if (has('competitor','better than','competencia','mejor que')){
+      addMessage(L(
+        `We focus entirely on delivering a flawless, 5-star experience for our own clients. I'd be glad to connect you with our coordination team to see if we're the perfect fit for your event!<br><div class="bot-question">Would you like me to send the link to request a quote?</div>`,
+        `Nos enfocamos por completo en dar una experiencia impecable de 5 estrellas a nuestros clientes. ¡Con gusto te conecto con nuestro equipo de coordinación para ver si somos lo ideal para tu evento!<br><div class="bot-question">¿Quieres que te mande el enlace para pedir una cotización?</div>`
+      ), 'bot');
+      return;
+    }
+
+    if (flowState === 'awaiting_phone'){
+      const digits = input.replace(/\D/g,'');
+      if (digits.length >= 10 && digits.length <= 11){
+        leadData.phone = digits;
+        flowState = 'complete';
+        fireWebhook();
+        addMessage(L(
+          `Got it! 🚀<br><br>I've sent your details straight to our event coordinator — they'll text you shortly to lock in the details.<br><div class="bot-question">Are there specific venues you're coordinating travel between?</div>`,
+          `¡Listo! 🚀<br><br>Le mandé tus datos directo a nuestro coordinador de eventos — te escribirá muy pronto para afinar los detalles.<br><div class="bot-question">¿Hay lugares específicos entre los que necesitas transporte?</div>`
+        ), 'bot');
+      } else {
+        addMessage(L(
+          `Hmm, that doesn't look like a valid number. Could you share a 10-digit phone number so our coordinator can text you?`,
+          `Mmm, ese número no se ve válido. ¿Me compartes un número de 10 dígitos para que nuestro coordinador te escriba?`
+        ), 'bot');
+      }
+      return;
+    }
+
+    if (flowState === 'awaiting_name'){
+      leadData.name = input;
+      flowState = 'awaiting_phone';
+      addMessage(L(
+        `Great to meet you, ${leadData.name}! What's the best cell number to reach you? Our team will send a quick text to gather the details for your quote.`,
+        `¡Mucho gusto, ${leadData.name}! ¿Cuál es el mejor número de celular para contactarte? Nuestro equipo te mandará un mensajito para juntar los detalles de tu cotización.`
+      ), 'bot');
+      return;
+    }
+
+    if (has('quote','book','cotiza','cotización','reservar','reserva','agendar','apartar')){
+      flowState = 'awaiting_name';
+      addMessage(L(
+        `I'd love to start a quote for you! 💍<br><br>Because pricing depends on your exact route, hours, and group size, our coordination team handles quotes personally so you get the best possible rate.<br><div class="bot-question">What's your first and last name so I can start a file?</div>`,
+        `¡Me encantaría empezar tu cotización! 💍<br><br>Como el precio depende de tu ruta, las horas y el tamaño del grupo, nuestro equipo arma las cotizaciones de forma personal para darte el mejor precio posible.<br><div class="bot-question">¿Cuál es tu nombre y apellido para abrir tu expediente?</div>`
+      ), 'bot');
+      return;
+    }
+
+    if (has('car','fleet','van','vehicle','suv','flota','vehículo','vehiculo','auto','carro','camioneta','sedan','sedán')){
+      addMessage(L(
+        `Our fleet ranges from executive sedans and premium black cars to luxury and full-size SUVs for groups — all professionally chauffeured, fully insured, and detailed before every ride.<br><div class="bot-question">Roughly how many passengers are you looking to accommodate?</div>`,
+        `Nuestra flota va desde sedanes ejecutivos y autos negros premium hasta SUVs de lujo y grandes para grupos — todos con chofer profesional, seguro completo y detallados antes de cada viaje.<br><div class="bot-question">¿Más o menos para cuántos pasajeros necesitas?</div>`
+      ), 'bot');
+      return;
+    }
+
+    if (has('airport','iah','hou','aeropuerto','vuelo')){
+      addMessage(L(
+        `Absolutely! We handle airport transfers across the Houston area, including IAH, HOU, and private FBOs. We track flights automatically so you never stress about delays, and our vehicles have generous luggage capacity.<br><div class="bot-question">Are you looking for a standard drop-off, or a pick-up with our inside "Meet & Greet" service?</div>`,
+        `¡Claro que sí! Hacemos traslados al aeropuerto en toda el área de Houston, incluyendo IAH, HOU y aeropuertos privados (FBO). Rastreamos los vuelos automáticamente para que no te estreses por retrasos, y nuestros vehículos tienen amplio espacio para equipaje.<br><div class="bot-question">¿Buscas una entrega estándar, o que te recibamos dentro de la terminal con nuestro servicio de bienvenida (Meet &amp; Greet)?</div>`
+      ), 'bot');
+      return;
+    }
+
+    addMessage(L(
+      `Great question! To make sure you get a 100% accurate answer, the quickest route is a quick text to our coordination team — they usually reply in minutes.<br><br>${smsBtn('Hi Premier Team! I am chatting with your AI and had a question.','¡Hola equipo Premier! Estoy chateando con su asistente y tengo una pregunta.','Text Our Team','Escríbele a nuestro equipo')}<div class="bot-question">Or I can tell you about our fleet options right now!</div>`,
+      `¡Buena pregunta! Para darte una respuesta 100% exacta, lo más rápido es un mensajito a nuestro equipo de coordinación — normalmente responden en minutos.<br><br>${smsBtn('Hi Premier Team! I am chatting with your AI and had a question.','¡Hola equipo Premier! Estoy chateando con su asistente y tengo una pregunta.','Text Our Team','Escríbele a nuestro equipo')}<div class="bot-question">¡O si quieres te cuento ahora mismo sobre las opciones de nuestra flota!</div>`
+    ), 'bot');
+  }
+
+  function fireWebhook(){
+    console.log("Demo lead captured:", leadData);
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 4000);
+  }
+</script>
+</body>
+</html>
+
+<!-- make-it-live 1782147728 -->
