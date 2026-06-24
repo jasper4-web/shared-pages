@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A private preview for Jacob's Trusted Transports — by SANO Systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#060608; --bg2:#0c0c11; --panel:#14141b; --panel2:#1b1b24;
+    --blue:#0070F3; --blue2:#338EF7; --cyan:#00D4FF;
+    --amber:#E8943A; --amber-soft:rgba(232,148,58,.14);
+    --grad:linear-gradient(135deg,#0070F3,#00D4FF);
+    --ink:#F2EBE0; --mut:#a8b0c0; --dim:#6b7280; --line:rgba(255,255,255,.10);
+    --good:#22c55e;
+    --font:'Space Grotesk',sans-serif;
+    --text-primary:#F2EBE0; --text-secondary:#c7cdda; --text-muted:#9aa3b2; --border:rgba(255,255,255,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:780px;margin:0 auto;position:relative}
+  h1,h2,h3{font-family:var(--font);letter-spacing:-.02em;line-height:1.06}
+  .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  section{padding:54px 24px}
+  .eyebrow{font-family:var(--font);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);font-weight:600}
+  .amber-tag{display:inline-flex;align-items:center;gap:7px;font-family:var(--font);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--amber);background:var(--amber-soft);border:1px solid rgba(232,148,58,.4);border-radius:999px;padding:5px 13px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font);font-weight:600;
+    border:none;border-radius:12px;padding:15px 22px;font-size:15px;cursor:pointer;text-decoration:none;transition:transform .15s,box-shadow .15s,background .15s}
+  .btn:active{transform:scale(.97)}
+  .btn-pri{background:var(--grad);color:#05121f;box-shadow:0 10px 26px -8px rgba(0,112,243,.6)}
+  .btn-ghost{background:rgba(255,255,255,.04);color:var(--ink);border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+
+  .sano-bar{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:space-between;
+    padding:11px 18px;background:rgba(6,6,8,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .sano-bar .mk{font-family:var(--font);font-weight:700;letter-spacing:.14em;font-size:15px;display:flex;align-items:center;gap:9px}
+  .sano-bar .beta{font-size:9.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);border:1px solid rgba(232,148,58,.45);border-radius:6px;padding:2px 7px}
+  .sano-bar .by{font-size:10.5px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase}
+
+  /* grand stage */
+  .stage{position:relative;overflow:hidden;padding:46px 24px 52px;background:radial-gradient(130% 95% at 50% -8%, #0a1a33 0%, #07080d 55%, var(--bg) 100%)}
+  .stage-glow{position:absolute;inset:-25% -12% auto -12%;height:520px;pointer-events:none;z-index:0;
+    background:radial-gradient(48% 60% at 28% 28%, rgba(0,112,243,.32), transparent 70%),radial-gradient(46% 55% at 76% 18%, rgba(0,212,255,.22), transparent 72%)}
+  .stage:before{content:"";position:absolute;inset:0;z-index:0;opacity:.4;background-image:repeating-linear-gradient(115deg,rgba(0,212,255,.05) 0 2px,transparent 2px 26px)}
+  .stage-inner{position:relative;z-index:2;max-width:710px;margin:0 auto;text-align:center}
+  .hero-copy h1{font-size:clamp(32px,6.8vw,52px);margin-bottom:14px}
+  .hero-copy .sub{color:var(--mut);max-width:450px;margin:0 auto 14px;font-size:16px}
+  .trustline{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;font-family:var(--font);font-weight:600;font-size:12.5px;color:var(--ink);margin-top:4px}
+  .trustline b{color:var(--cyan)}
+  .stage-kicker{margin:32px 0 22px;font-family:var(--font);font-weight:600;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan)}
+  .stage-kicker span{display:inline-flex;align-items:center;gap:12px}
+  .stage-kicker span:before,.stage-kicker span:after{content:"";width:28px;height:1px;background:var(--line)}
+  .phones-stage{perspective:1600px;display:grid;grid-template-columns:1fr 1fr;gap:30px;justify-items:center;align-items:start}
+  .phones-stage .demo{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .phones-stage .d-b{margin-top:28px}
+  .phone{position:relative;width:300px;max-width:86vw;height:540px;border-radius:34px;padding:8px;background:linear-gradient(160deg,#10131c,#06080e);box-shadow:0 30px 60px -24px rgba(0,0,0,.85),0 0 0 1px rgba(0,212,255,.12);overflow:hidden;transition:transform .55s cubic-bezier(.2,.8,.2,1),box-shadow .55s}
+  .phone .notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:88px;height:22px;border-radius:14px;background:#05080f;z-index:6}
+  .frame-clip{position:relative;width:100%;height:100%;border-radius:27px;overflow:hidden;background:#0b0e16}
+  .frame-clip iframe{position:absolute;top:0;left:0;width:390px;height:702px;border:0;transform:scale(.7179);transform-origin:top left}
+  .d-a .phone{transform:rotateY(6deg) rotateX(3deg)}
+  .d-b .phone{transform:rotateY(-6deg) rotateX(3deg)}
+  .phones-stage .demo:hover .phone{transform:rotateY(0) rotateX(0) translateY(-10px);box-shadow:0 42px 84px -28px rgba(0,0,0,.85),0 0 0 1px var(--cyan)}
+  .demo-cap{text-align:center}
+  .demo-cap b{font-family:var(--font);font-weight:600;font-size:16px;display:block}
+  .demo-cap span{display:block;font-size:12.5px;color:var(--mut);margin:3px 0 12px}
+  .opener{width:300px;max-width:86vw}
+  .stage-foot{position:relative;z-index:2;text-align:center;color:var(--dim);font-size:13px;margin:32px auto 0}
+
+  .sec-head{text-align:center;max-width:560px;margin:0 auto 26px}
+  .sec-head h2{font-size:clamp(26px,5.4vw,36px);margin:8px 0 12px}
+  .sec-head p{color:var(--mut);font-size:15.5px}
+
+  /* offer */
+  .offer{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .pricecard{max-width:560px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+  .pricecard .ptop{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:22px 24px;background:var(--panel2);border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .pricecard h3{font-size:20px}
+  .pricecard .psub{font-size:12.5px;color:var(--mut);margin-top:3px}
+  .pricecard .pbig{font-family:var(--font);font-weight:700;font-size:34px;text-align:right}
+  .pricecard .pbig span{font-size:13px;color:var(--mut);font-weight:500;display:block;letter-spacing:.02em}
+  .includes{list-style:none;padding:18px 24px 8px}
+  .includes li{display:flex;gap:11px;align-items:flex-start;padding:9px 0;font-size:14.5px;color:var(--text-secondary)}
+  .includes .ck{flex:none;width:20px;height:20px;border-radius:50%;background:rgba(0,112,243,.18);color:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:2px}
+  .includes b{color:var(--ink);font-weight:600}
+  .pricecard .pfoot{padding:14px 24px 22px;font-size:12.5px;color:var(--dim);text-align:center}
+  .anti{text-align:center;color:var(--mut);font-size:14.5px;max-width:500px;margin:22px auto 0}
+  .anti b{color:var(--ink)}
+
+  /* chatbot included */
+  .chatband{text-align:center}
+  .chatband .inner{max-width:560px;margin:0 auto}
+  .chatband .lead{color:var(--mut);font-size:16px;margin-top:12px}
+  .chatmini{max-width:330px;margin:24px auto 0;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:left}
+  .chatmini .ch-head{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+  .chatmini .ch-av{width:30px;height:30px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#05121f;font-weight:700;font-family:var(--font);font-size:12px}
+  .chatmini .ch-head b{font-size:13px;font-family:var(--font)}
+  .chatmini .ch-head span{font-size:10.5px;color:var(--good);display:flex;align-items:center;gap:5px}
+  .chatmini .ch-head span:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--good)}
+  .bub{max-width:84%;padding:9px 12px;border-radius:13px;font-size:13px;margin-bottom:7px;line-height:1.4}
+  .bub.them{background:rgba(255,255,255,.08);border-bottom-left-radius:4px}
+  .bub.me{background:var(--blue);margin-left:auto;border-bottom-right-radius:4px;color:#fff}
+  .chatmini .tagline{font-size:10.5px;color:var(--dim);text-align:center;margin-top:6px}
+
+  /* ===== AED — Admin in-place editor (lifted from SANO beta page) ===== */
+  .aed-section{padding:54px 24px}
+  .aed-inner{max-width:720px;margin:0 auto}
+  .aed-head{text-align:center;max-width:60ch;margin:0 auto 28px}
+  .aed-eyebrow{font-size:12.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin:14px 0 12px}
+  .aed-title{font-family:var(--font);font-size:clamp(24px,4.6vw,34px);font-weight:700;letter-spacing:-.025em;line-height:1.1;margin:0 0 14px}
+  .aed-sub{font-size:15.5px;line-height:1.55;color:var(--text-secondary);margin:0}
+  .aed-frame{border:1px solid rgba(255,255,255,.12);border-radius:16px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+  .aed-chrome{display:flex;align-items:center;gap:9px;padding:11px 15px;background:#141418;border-bottom:1px solid rgba(255,255,255,.08)}
+  .aed-dot{width:11px;height:11px;border-radius:50%}
+  .aed-url{flex:1;text-align:center;font-size:13px;color:var(--text-muted)}
+  .aed-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--amber);border:1px solid rgba(232,148,58,.45);border-radius:999px;padding:4px 11px}
+  .aed-pill svg{width:13px;height:13px;stroke:var(--amber);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .aed-publish{font-size:13px;font-weight:600;color:#fff;background:#16a34a;border:none;border-radius:8px;padding:7px 15px;cursor:pointer;font-family:var(--font);transition:filter .2s}
+  .aed-publish:hover{filter:brightness(1.08)}
+  .aed-canvas{background:#0c1422}
+  .aed-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06)}
+  .aed-brand{font-weight:600;font-size:16px;color:#eaf2ff;font-family:var(--font)}
+  .aed-brand span{color:var(--cyan)}
+  .aed-menu{font-size:13px;color:#9fb1c8}
+  .aed-hero{position:relative;padding:46px 22px 52px;text-align:center;background-image:linear-gradient(rgba(8,14,26,.55),rgba(8,14,26,.78)),url('hero-truck.jpg');background-size:cover;background-position:center}
+  .aed-photo-btn{position:absolute;top:14px;right:16px;display:inline-flex;align-items:center;gap:7px;background:rgba(0,0,0,.55);color:#fff;font-size:12.5px;font-weight:500;padding:7px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.3);cursor:pointer}
+  .aed-photo-btn svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .aed-photo-tag{position:absolute;top:16px;left:16px;font-size:11px;color:rgba(255,255,255,.65)}
+  .aed-edit{position:relative;display:inline-block;border:1.5px dashed var(--amber);border-radius:9px;padding:8px 16px;margin:8px 0 12px}
+  .aed-edit:focus-within{background:rgba(232,148,58,.08)}
+  .aed-h1{font-size:clamp(24px,4vw,32px);font-weight:700;color:#fff;outline:none;line-height:1.1;font-family:var(--font)}
+  .aed-pencil{position:absolute;top:-13px;left:-13px;width:28px;height:28px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+  .aed-pencil svg{width:15px;height:15px;stroke:#1a1a1a;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .aed-tip{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:11.5px;font-weight:500;background:#1a1a1a;color:#fff;padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.12)}
+  .aed-sub2{margin:18px 0 0;font-size:14px;color:#c7d6e6}
+  .aed-svcs{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;padding:18px 22px 24px}
+  .aed-svc{position:relative;background:#13202f;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px}
+  .aed-svc-edit{border:1.5px dashed var(--amber)}
+  .aed-svc-name{font-size:13px;color:#dce7f2;margin-bottom:7px}
+  .aed-price{font-size:18px;font-weight:700;color:var(--cyan)}
+  .aed-price-edit{font-size:18px;font-weight:700;color:#fff}
+  .aed-price-edit .aed-num{outline:none;border-bottom:2px solid var(--cyan)}
+  .aed-svc .aed-pencil{top:-11px;right:-11px;left:auto;width:24px;height:24px}
+  .aed-svc .aed-pencil svg{width:13px;height:13px}
+  .aed-caps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+  .aed-cap{display:flex;gap:11px;align-items:flex-start}
+  .aed-cap-ico{flex-shrink:0;width:34px;height:34px;border-radius:9px;background:var(--amber-soft);display:flex;align-items:center;justify-content:center}
+  .aed-cap-ico svg{width:18px;height:18px;stroke:var(--amber);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .aed-cap b{display:block;font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:2px}
+  .aed-cap span{font-size:12.5px;color:var(--text-muted)}
+  .aed-sell{max-width:560px;margin:26px auto 0;text-align:center;color:var(--mut);font-size:14.5px}
+  .aed-sell b{color:var(--ink)}
+  .aed-toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:8px;background:#16a34a;color:#fff;font-size:14px;font-weight:600;padding:11px 18px;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.4);transition:opacity .3s,transform .3s;z-index:80}
+  .aed-toast.aed-show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .aed-toast svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+  /* roadmap */
+  .road{background:radial-gradient(120% 90% at 50% 0%, #0a1a33 0%, var(--bg) 65%);text-align:center;border-top:1px solid var(--line)}
+  .road h2{font-size:clamp(24px,5vw,32px);margin-bottom:14px}
+  .road p.lead{color:var(--mut);font-size:16px;max-width:560px;margin:0 auto 24px}
+  .road-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:600px;margin:0 auto}
+  .road-item{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px 10px}
+  .road-item .ic{font-size:20px;margin-bottom:8px}
+  .road-item b{font-family:var(--font);font-size:13px;display:block}
+  .road-item span{font-size:10.5px;color:var(--dim)}
+  .road .soon{margin-top:18px;font-size:13px;color:var(--amber)}
+  .road-item .ic{display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+  .road-item .ic svg{width:24px;height:24px;stroke:var(--cyan);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  /* direction note */
+  .dirnote{padding:40px 24px}
+  .dirnote-card{max-width:600px;margin:0 auto;text-align:center;background:var(--panel);border:1px solid rgba(232,148,58,.3);border-radius:18px;padding:30px 26px}
+  .dirnote-card h2{font-size:clamp(22px,4.6vw,30px);margin:14px 0 12px}
+  .dirnote-card p{color:var(--mut);font-size:15.5px;max-width:520px;margin:0 auto}
+  .dirnote-card p b{color:var(--ink)}
+
+  /* offer bot */
+  .bot-launch{position:fixed;right:18px;bottom:74px;z-index:75;display:inline-flex;align-items:center;gap:9px;
+    background:var(--grad);color:#05121f;font-family:var(--font);font-weight:600;font-size:13.5px;
+    border:none;border-radius:999px;padding:11px 16px;cursor:pointer;box-shadow:0 12px 30px -8px rgba(0,112,243,.6)}
+  .bot-launch svg{width:17px;height:17px;stroke:#05121f;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .bot-panel{position:fixed;right:18px;bottom:128px;z-index:76;width:340px;max-width:calc(100vw - 36px);
+    background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    box-shadow:0 30px 70px -20px rgba(0,0,0,.8);display:none;flex-direction:column}
+  .bot-panel.open{display:flex}
+  .bot-head{display:flex;align-items:center;gap:10px;padding:13px 15px;background:var(--panel2);border-bottom:1px solid var(--line)}
+  .bot-head .av{width:30px;height:30px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#05121f;font-weight:700;font-family:var(--font);font-size:12px}
+  .bot-head b{font-family:var(--font);font-size:13.5px}
+  .bot-head .st{font-size:10.5px;color:var(--good);display:flex;align-items:center;gap:5px}
+  .bot-head .st:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--good)}
+  .bot-head .x{margin-left:auto;background:none;border:none;color:var(--mut);font-size:20px;cursor:pointer;line-height:1}
+  .bot-body{padding:14px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:9px}
+  .bot-msg{max-width:88%;padding:9px 12px;border-radius:13px;font-size:13px;line-height:1.45}
+  .bot-msg.bot{background:rgba(255,255,255,.07);border-bottom-left-radius:4px;align-self:flex-start}
+  .bot-msg.me{background:var(--blue);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+  .bot-msg b{color:inherit;font-weight:600}
+  .bot-chips{display:flex;flex-wrap:wrap;gap:7px;padding:0 14px 12px}
+  .bot-chip{font-family:var(--font);font-size:11.5px;color:var(--cyan);background:rgba(0,112,243,.12);border:1px solid var(--line);border-radius:999px;padding:6px 11px;cursor:pointer}
+  .bot-chip:hover{border-color:var(--cyan)}
+  .bot-input{display:flex;gap:8px;padding:11px 13px;border-top:1px solid var(--line)}
+  .bot-input input{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--ink);font-family:'Inter';font-size:13.5px;outline:none}
+  .bot-input input:focus{border-color:var(--cyan)}
+  .bot-input button{background:var(--grad);color:#05121f;border:none;border-radius:10px;padding:0 14px;font-family:var(--font);font-weight:600;font-size:13px;cursor:pointer}
+  @media (max-width:680px){.bot-launch{bottom:70px}.bot-panel{bottom:122px}}
+
+  /* cta */
+  .cta{text-align:center}
+  .cta h2{font-size:clamp(26px,5.4vw,36px);margin-bottom:14px}
+  .cta .big{font-size:17px;color:var(--mut);max-width:520px;margin:0 auto 8px}
+  .cta .big b{color:var(--cyan)}
+  .scarcity{display:inline-block;margin:6px auto 0;font-family:var(--font);font-size:12.5px;font-weight:600;color:var(--amber);background:var(--amber-soft);border:1px solid rgba(232,148,58,.4);border-radius:999px;padding:7px 15px}
+  .cta .reassure{font-size:13px;color:var(--dim);margin:16px 0 24px}
+  .cta-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+  .faq{max-width:580px;margin:36px auto 0;text-align:left}
+  .faq h3{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);text-align:center;margin-bottom:16px;font-family:var(--font)}
+  .qa{border-top:1px solid var(--line);padding:14px 4px}
+  .qa .q{font-family:var(--font);font-weight:600;font-size:14.5px;margin-bottom:4px}
+  .qa .a{color:var(--mut);font-size:13.5px}
+  .qa .ph{color:var(--amber)}
+
+  footer{text-align:center;padding:30px 24px 120px;color:var(--dim);font-size:12px;border-top:1px solid var(--line)}
+  footer .mk{font-family:var(--font);font-weight:700;letter-spacing:.14em;color:var(--ink);font-size:14px;margin-bottom:6px}
+
+  .sticky{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:780px;z-index:70;display:flex;gap:10px;align-items:center;justify-content:center;padding:11px 16px;background:rgba(6,6,8,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+  .sticky .lab{font-family:var(--font);font-weight:600;font-size:13px;color:var(--mut);margin-right:auto}
+  .sticky .btn{padding:11px 18px;font-size:14px}
+
+  @media (max-width:680px){
+    .phones-stage{grid-template-columns:1fr;gap:34px}
+    .phones-stage .d-b{margin-top:0}
+    .d-a .phone,.d-b .phone{transform:none}
+    .road-grid{grid-template-columns:1fr 1fr}
+    .aed-svcs{grid-template-columns:1fr}
+    .aed-caps{grid-template-columns:1fr;gap:12px}
+    .aed-menu{display:none}
+    .sticky .lab{display:none}
+    .sticky{justify-content:stretch}
+    .sticky .btn{flex:1}
+  }
+  .riseIn{opacity:1}
+  .reveal{opacity:1;transform:none}
+  @media (prefers-reduced-motion:no-preference){
+    .riseIn{opacity:0;animation:riseIn .85s cubic-bezier(.2,.8,.2,1) forwards}
+    .riseIn.r2{animation-delay:.12s}.riseIn.r3{animation-delay:.24s}.riseIn.r4{animation-delay:.36s}
+    .stage-glow{animation:glowDrift 16s ease-in-out infinite alternate}
+    .js .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+    .js .reveal.in{opacity:1;transform:none}
+  }
+  @keyframes riseIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+  @keyframes glowDrift{from{transform:translate(-3%,0) scale(1)}to{transform:translate(4%,3%) scale(1.08)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="sano-bar">
+    <div class="mk"><span class="grad">SANO</span> <span class="beta">Beta</span></div>
+    <div class="by">Private preview · built for you</div>
+  </div>
+
+  <!-- STAGE -->
+  <section class="stage">
+    <div class="stage-glow" aria-hidden="true"></div>
+    <div class="stage-inner">
+      <div class="hero-copy riseIn">
+        <h1>Jacob — we built your moving company a website.<br><span class="grad">Two, actually.</span></h1>
+        <p class="sub">No cost to look. Two finished sites, ready to go live in days. Take a look — then pick the one that feels like you.</p>
+        <div class="trustline"><span><b>4.7★</b> Google</span><span><b>44</b> reviews</span><span>San Angelo since <b>2019</b></span></div>
+      </div>
+      <div class="stage-kicker riseIn r2"><span>Two directions — one of them is yours</span></div>
+      <div class="phones-stage">
+        <div class="demo d-a riseIn r3">
+          <div class="phone"><div class="notch"></div>
+            <div class="frame-clip"><iframe loading="lazy" title="Bold demo" src="jacobs-momentum.html"></iframe></div>
+          </div>
+          <div class="demo-cap"><b>Bold &amp; Modern</b><span>Loud, confident, impossible to scroll past.</span>
+            <a class="btn btn-ghost opener" href="jacobs-momentum.html" target="_blank" rel="noopener">Open the full site ↗</a></div>
+        </div>
+        <div class="demo d-b riseIn r4">
+          <div class="phone"><div class="notch"></div>
+            <div class="frame-clip"><iframe loading="lazy" title="Premium demo" src="jacobs-whiteglove.html"></iframe></div>
+          </div>
+          <div class="demo-cap"><b>Calm &amp; Premium</b><span>Quiet, high-end — "these folks are real pros."</span>
+            <a class="btn btn-ghost opener" href="jacobs-whiteglove.html" target="_blank" rel="noopener">Open the full site ↗</a></div>
+        </div>
+      </div>
+      <p class="stage-foot">Scroll each one like your customers would. Both can be live in days.</p>
+    </div>
+  </section>
+
+  <!-- DIRECTION NOTE -->
+  <section class="dirnote">
+    <div class="dirnote-card reveal">
+      <span class="amber-tag">Just a starting point</span>
+      <h2>This is a direction — not the finished site.</h2>
+      <p>Pick the feel you like best. The moment you say yes, we send you a quick <b>50-question questionnaire</b> — and your answers shape everything: your words, your colors, your photos, your layout. Your real site can look <b>very</b> different from what's here, because it's built around <em>you</em>. Right now, you're just choosing a vibe.</p>
+    </div>
+  </section>
+
+  <!-- OFFER -->
+  <section class="offer">
+    <div class="sec-head reveal">
+      <div class="eyebrow">The whole package</div>
+      <h2>Everything, in one flat fee.</h2>
+      <p>No monthly bills. No surprise charges. One price, and you're online.</p>
+    </div>
+    <div class="pricecard reveal">
+      <div class="ptop">
+        <div><h3>Your Website Package</h3><div class="psub">Custom site + AI chatbot, built &amp; launched for you</div></div>
+        <div class="pbig">$350<span>one-time · no monthly</span></div>
+      </div>
+      <ul class="includes">
+        <li><span class="ck">✓</span><div><b>A custom website</b> — up to 4 pages, designed for you (not a template), fast and mobile-first.</div></li>
+        <li><span class="ck">✓</span><div><b>SANO AI chatbot</b> — trained on your business, answers customer questions 24/7 and captures every lead to your inbox.</div></li>
+        <li><span class="ck">✓</span><div><b>Found on Google</b> — on-page SEO so San Angelo can actually find you.</div></li>
+        <li><span class="ck">✓</span><div><b>Domain &amp; hosting</b> — covered for your first year.</div></li>
+        <li><span class="ck">✓</span><div><b>90 days of support</b> &amp; <b>live in 1–3 days</b> after a short questionnaire.</div></li>
+      </ul>
+      <div class="pfoot">Need more than 4 pages? Just $75 each. Paid once, up front — no contracts.</div>
+    </div>
+    <p class="anti reveal">Most agencies charge <b>$1,000–$3,000</b> for a website alone — and take months. Yours is <b>$350</b>, live in days.</p>
+  </section>
+
+  <!-- AI CHATBOT (included) -->
+  <section class="chatband">
+    <div class="inner reveal">
+      <div class="eyebrow">Included — your first bit of AI</div>
+      <h2 style="margin-top:8px">A salesperson that never sleeps.</h2>
+      <p class="lead">Every site comes with <b style="color:var(--ink)">SANO AI</b> — a chatbot trained on your business that answers customers around the clock and grabs their info while you're on a job. It's built in, at no extra cost.</p>
+    </div>
+    <div class="chatmini reveal">
+      <div class="ch-head"><div class="ch-av">AI</div><div><b>SANO AI</b></div><span style="margin-left:auto">Online</span></div>
+      <div class="bub them">Hi! Ask me anything about Jacob's Trusted Transports — even after hours.</div>
+      <div class="bub me">Do you do weekend moves?</div>
+      <div class="bub them">Yes — Saturdays book up fast in San Angelo. Want me to grab your number so Jacob can lock in a time?</div>
+      <div class="tagline">Answers customers &amp; captures leads 24/7 — included in your $350.</div>
+    </div>
+  </section>
+
+  <!-- ADMIN ADD-ON (lifted live editor) -->
+  <section class="aed-section">
+    <div class="aed-inner">
+      <div class="aed-head reveal">
+        <span class="amber-tag">Optional add-on · +$350</span>
+        <p class="aed-eyebrow">Run it yourself</p>
+        <h2 class="aed-title">Edit your whole site by clicking on it.</h2>
+        <p class="aed-sub">Want to change a price or swap a photo the second you think of it? Add your own dashboard. No code, no waiting on us. Go ahead — <b style="color:var(--ink)">click the headline below and type</b>, then hit Publish.</p>
+      </div>
+
+      <div class="aed-frame reveal">
+        <div class="aed-chrome">
+          <span class="aed-dot" style="background:#ff5f57"></span><span class="aed-dot" style="background:#febc2e"></span><span class="aed-dot" style="background:#28c840"></span>
+          <span class="aed-url">jacobstrustedtransports.com</span>
+          <span class="aed-pill"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Editing</span>
+          <button class="aed-publish" id="aedPublish">Publish</button>
+        </div>
+        <div class="aed-canvas">
+          <div class="aed-nav">
+            <span class="aed-brand">Jacob's <span>Trusted Transports</span></span>
+            <span class="aed-menu">Services · Reviews · Contact</span>
+          </div>
+          <div class="aed-hero">
+            <span class="aed-photo-tag">hero photo</span>
+            <button class="aed-photo-btn"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Replace photo</button>
+            <span class="aed-edit">
+              <span class="aed-pencil"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+              <span class="aed-h1" id="aedHeadline" contenteditable="true" spellcheck="false">San Angelo's Trusted Movers</span>
+              <span class="aed-tip">Click to edit</span>
+            </span>
+            <p class="aed-sub2">Local, long-distance &amp; labor-only moves across West Texas.</p>
+          </div>
+          <div class="aed-svcs">
+            <div class="aed-svc"><div class="aed-svc-name">Labor only / hr</div><div class="aed-price">$80</div></div>
+            <div class="aed-svc aed-svc-edit">
+              <span class="aed-pencil"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+              <div class="aed-svc-name">2 movers + truck / hr</div>
+              <div class="aed-price-edit">$<span class="aed-num" contenteditable="true" spellcheck="false">120</span></div>
+            </div>
+            <div class="aed-svc"><div class="aed-svc-name">Junk haul-off</div><div class="aed-price">$140</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="aed-caps reveal">
+        <div class="aed-cap"><span class="aed-cap-ico"><svg viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg></span><div><b>Click any text to edit</b><span>Headlines, buttons, anything.</span></div></div>
+        <div class="aed-cap"><span class="aed-cap-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></span><div><b>Swap any photo</b><span>Right from your phone.</span></div></div>
+        <div class="aed-cap"><span class="aed-cap-ico"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span><div><b>Manage your leads</b><span>Every lead in one place.</span></div></div>
+      </div>
+
+      <p class="aed-sell reveal"><b>Totally optional.</b> Skip it and our team makes your changes for you (hourly, after your 90 days). Add it for a one-time <b>+$350</b> and you never wait on anyone again — change a price, a photo, a phone number the moment you think of it.</p>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section class="road reveal">
+    <div class="eyebrow">The foundation</div>
+    <h2 style="margin-top:8px">And honestly — this is just the start.</h2>
+    <p class="lead">Your website and AI assistant are step one. As a beta client, you're first in line for everything we're building next — the kind of tools the big national movers pay a fortune for.</p>
+    <div class="road-grid">
+      <div class="road-item"><div class="ic"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><b>CRM</b><span>Your customers, organized</span></div>
+      <div class="road-item"><div class="ic"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><b>Missed-call text-back</b><span>Never lose a caller</span></div>
+      <div class="road-item"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><b>Online booking</b><span>Book moves 24/7</span></div>
+      <div class="road-item"><div class="ic"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><b>Review tools</b><span>More 5-stars, automatically</span></div>
+    </div>
+    <p class="soon">Coming soon — beta clients first. We grow it around your business.</p>
+  </section>
+
+  <!-- CTA + FAQ -->
+  <section class="cta">
+    <div class="reveal">
+      <div class="eyebrow">Your move</div>
+      <h2 style="margin-top:8px">Like what you see, Jacob?</h2>
+      <p class="big">Have a look around — then just <b>shoot me a text</b> and tell me which direction speaks to you. We'll take it from there.</p>
+      <div class="scarcity">Beta price locks in — it goes up at public launch</div>
+      <p class="reassure">No commitment to look. No cost to see it live.</p>
+      <div class="cta-row">
+        <a class="btn btn-pri" href="sms:+18323962496">Text the SANO team ↗</a>
+      </div>
+      <p class="reassure" style="margin-top:12px">SANO team · <a href="sms:+18323962496" style="color:var(--cyan);text-decoration:none">(832) 396-2496</a></p>
+    </div>
+    <div class="faq reveal">
+      <h3>Quick answers</h3>
+      <div class="qa"><div class="q">What's it cost?</div><div class="a">$350 flat, one-time — no monthly. That covers the website (up to 4 pages), your SANO AI chatbot, SEO, and domain + hosting for year one. Want to edit it yourself? The optional admin dashboard is a one-time +$350.</div></div>
+      <div class="qa"><div class="q">Is this exactly what my site will look like?</div><div class="a">No — these two are starting directions. After you say yes, a 50-question questionnaire shapes your pick into something tailored to you (words, colors, photos, layout). The finished site can look very different — it's built around your business.</div></div>
+      <div class="qa"><div class="q">How fast can it be live?</div><div class="a">1–3 days, after you fill out the questionnaire and we drop in your real photos.</div></div>
+      <div class="qa"><div class="q">Do I own it?</div><div class="a">Yes. Domain &amp; hosting are covered the first year; after that you just renew them.</div></div>
+      <div class="qa"><div class="q">What if I want changes later?</div><div class="a">With the admin dashboard you edit it yourself in seconds, anytime. Without it, our team handles updates for you at an hourly rate after the first 90 days.</div></div>
+      <div class="qa"><div class="q">Is the AI included?</div><div class="a">Yes — the SANO AI chatbot is part of the $350. CRM, booking, and automations are coming next, and beta clients get them first.</div></div>
+      <div class="qa"><div class="q">Why now?</div><div class="a">It's a beta — limited spots, and your price locks in permanently before it goes up at public launch.</div></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="mk"><span class="grad">SANO</span> Systems</div>
+    A private website preview built for Jacob's Trusted Transports LLC · San Angelo, TX<br>
+    Sample reviews &amp; some details are placeholders — everything is yours to edit.
+  </footer>
+
+  <div class="sticky">
+    <span class="lab">Like one? Just text the SANO team.</span>
+    <a class="btn btn-pri" href="sms:+18323962496">Text (832) 396-2496</a>
+  </div>
+
+</div>
+
+<div class="aed-toast" id="aedToast"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Saved ✓</div>
+
+<button class="bot-launch" id="botLaunch" aria-label="Ask about the offer">
+  <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Ask about the offer
+</button>
+<div class="bot-panel" id="botPanel" role="dialog" aria-label="SANO offer assistant">
+  <div class="bot-head">
+    <div class="av">AI</div><b>SANO AI</b><span class="st">about the beta</span>
+    <button class="x" id="botClose" aria-label="Close">×</button>
+  </div>
+  <div class="bot-body" id="botBody">
+    <div class="bot-msg bot">Hey! I can answer quick questions about the SANO offer — price, what's included, timing. What do you want to know?</div>
+  </div>
+  <div class="bot-chips" id="botChips">
+    <button class="bot-chip">What's the price?</button>
+    <button class="bot-chip">What's included?</button>
+    <button class="bot-chip">What's the admin add-on?</button>
+    <button class="bot-chip">How long does it take?</button>
+  </div>
+  <div class="bot-input">
+    <input id="botInput" type="text" placeholder="Ask a question…" autocomplete="off">
+    <button id="botSend">Send</button>
+  </div>
+</div>
+
+<script>
+  document.documentElement.classList.add('js');
+  var rv=document.querySelectorAll('.reveal');
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08,rootMargin:'0px 0px -6% 0px'});
+  rv.forEach(function(el){io.observe(el);});
+  setTimeout(function(){rv.forEach(function(el){el.classList.add('in');});},2000);
+  window.addEventListener('load',function(){setTimeout(function(){rv.forEach(function(el){el.classList.add('in');});},1000);});
+
+  (function(){
+    var pub=document.getElementById('aedPublish'), toast=document.getElementById('aedToast');
+    if(pub&&toast){pub.addEventListener('click',function(){toast.classList.add('aed-show');setTimeout(function(){toast.classList.remove('aed-show');},1700);});}
+    var h=document.getElementById('aedHeadline');
+    if(h){h.addEventListener('focus',function(){try{var r=document.createRange();r.selectNodeContents(h);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}});}
+  })();
+
+  (function(){
+    var launch=document.getElementById('botLaunch'),panel=document.getElementById('botPanel'),
+        close=document.getElementById('botClose'),body=document.getElementById('botBody'),
+        input=document.getElementById('botInput'),send=document.getElementById('botSend'),
+        chips=document.getElementById('botChips');
+    if(!launch) return;
+    launch.addEventListener('click',function(){panel.classList.add('open');launch.style.display='none';input.focus();});
+    close.addEventListener('click',function(){panel.classList.remove('open');launch.style.display='inline-flex';});
+    function add(html,who){var d=document.createElement('div');d.className='bot-msg '+(who||'bot');d.innerHTML=html;body.appendChild(d);body.scrollTop=body.scrollHeight;}
+    function answer(q){
+      q=q.toLowerCase();
+      if(/price|cost|how much|fee|\bpay\b|\$/.test(q)) return "It's a <b>$350 flat, one-time</b> fee — no monthly. That covers your custom website (up to 4 pages), the SANO AI chatbot, SEO, and domain + hosting for year one. Want to edit it yourself? The optional admin dashboard is a one-time <b>+$350</b>.";
+      if(/include|come with|\bget\b|offer|package/.test(q)) return "Your $350 includes: a <b>custom website</b> (up to 4 pages), the <b>SANO AI chatbot</b> that answers customers 24/7 and captures leads, <b>on-page SEO</b>, <b>domain &amp; hosting for year one</b>, 90 days of support — and it's <b>live in 1–3 days</b>.";
+      if(/admin|dashboard|edit|self|manage|command/.test(q)) return "The <b>admin dashboard</b> is an optional <b>+$350</b> add-on. Log in and edit your own site — text, photos, prices, pages — anytime, no code, plus all your leads in one place. Skip it and the SANO team makes changes for you.";
+      if(/how long|fast|\btime\b|when|days|live|launch/.test(q)) return "Your site is <b>live in 1–3 days</b> after you fill out a short questionnaire and we add your real photos.";
+      if(/questionnaire|custom|different|tailor|\b50\b/.test(q)) return "What you see here is a starting direction. After you say yes, a <b>50-question questionnaire</b> shapes your pick into something tailored to you — the finished site can look very different, because it's built around your business.";
+      if(/\bai\b|chatbot|\bbot\b|chat/.test(q)) return "Every site comes with <b>SANO AI</b> — a chatbot trained on your business that answers questions around the clock and captures leads to your inbox. Included in the $350.";
+      if(/own|domain|hosting|keep/.test(q)) return "Yes, it's <b>yours</b>. Domain &amp; hosting are covered the first year; after that you just renew them.";
+      if(/monthly|contract|recurring|subscription/.test(q)) return "<b>No monthly, no contract.</b> $350 one-time, paid up front. The only ongoing cost is renewing your domain &amp; hosting after year one.";
+      if(/coming|future|next|\bmore\b|crm|booking/.test(q)) return "Beyond the website + AI: <b>CRM, missed-call text-back, online booking, and review tools</b> are coming — and beta clients get them first.";
+      if(/beta|why now|spot|limited/.test(q)) return "SANO is in <b>beta</b> — limited spots, and your price <b>locks in permanently</b> before it goes up at public launch.";
+      return "Good question — the SANO team can give you the full answer. Just text <b>(832) 396-2496</b>. Quick version: it's a $350 one-time website + AI chatbot, live in 1–3 days, no monthly.";
+    }
+    function ask(q){if(!q||!q.trim())return;add(q,'me');var a=answer(q);setTimeout(function(){add(a,'bot');},320);}
+    send.addEventListener('click',function(){ask(input.value);input.value='';});
+    input.addEventListener('keydown',function(e){if(e.key==='Enter'){ask(input.value);input.value='';}});
+    chips.addEventListener('click',function(e){if(e.target.classList.contains('bot-chip')){ask(e.target.textContent);}});
+  })();
+</script>
+</body>
+</html>
+
+<!-- make-it-live 1782339629 -->
