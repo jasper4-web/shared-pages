@@ -1,0 +1,989 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Los Angeles Edible — The 7-Day Manufacturer Sprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0C1712; --bg2:#0F1D16; --surf:#152A20; --surf2:#1B3427; --line:rgba(255,255,255,.09);
+  --line2:rgba(255,255,255,.16);
+  --txt:#EAF3ED; --mut:#A6BCAF; --mut2:#93AB9E;
+  --green:#4FB783; --green2:#3F9D6E; --gold:#E8B84B; --coral:#E97A66;
+  --go:#43C86F; --caution:#E8B84B; --stop:#EA6E5F;
+  --shadow:0 18px 40px -20px rgba(0,0,0,.7);
+  --maxw:1080px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(79,183,131,.14), transparent 60%),
+    radial-gradient(900px 500px at 0% 10%, rgba(232,184,75,.08), transparent 55%),
+    var(--bg);
+  color:var(--txt);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 22px}
+h1,h2,h3,h4{font-family:'Fraunces',Georgia,serif; font-weight:600; line-height:1.15; margin:0}
+p{margin:0 0 14px}
+a{color:var(--green)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+/* NAV */
+.nav{position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+  background:rgba(12,23,18,.78); border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex; align-items:center; gap:16px; height:60px}
+.brand{font-family:'Fraunces',serif; font-weight:700; font-size:17px; letter-spacing:.2px; white-space:nowrap}
+.brand .dot{color:var(--gold)}
+.navlinks{display:flex; gap:6px; margin-left:auto; flex-wrap:wrap}
+.navlinks a{font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:var(--mut);
+  text-decoration:none; padding:7px 12px; border-radius:999px; border:1px solid transparent; transition:.15s}
+.navlinks a:hover{color:var(--txt); background:var(--surf); border-color:var(--line)}
+
+/* HERO */
+.hero{padding:64px 0 40px; position:relative}
+.eyebrow{display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:700; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--gold); margin-bottom:18px}
+.eyebrow::before{content:""; width:26px; height:2px; background:var(--gold); display:inline-block; border-radius:2px}
+.hero h1{font-size:clamp(34px,6vw,60px); font-weight:700; letter-spacing:-.02em; margin-bottom:18px}
+.hero h1 .accent{color:var(--green)}
+.lede{font-size:clamp(16px,2.2vw,20px); color:var(--mut); max-width:660px; margin-bottom:26px}
+.chips{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:8px}
+.chip{display:inline-flex; align-items:center; gap:9px; font-size:13px; font-weight:600; color:var(--txt);
+  background:var(--surf); border:1px solid var(--line); padding:8px 14px; border-radius:999px}
+.chip::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--gold); flex:none}
+.mission{margin-top:26px; padding:18px 20px; border-left:3px solid var(--gold);
+  background:linear-gradient(90deg, rgba(232,184,75,.09), transparent); border-radius:0 12px 12px 0;
+  font-size:16.5px; color:var(--txt)}
+.mission b{color:var(--gold)}
+
+/* SECTION */
+section{padding:46px 0; border-top:1px solid var(--line)}
+.sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:8px; flex-wrap:wrap}
+.sec-kicker{font-size:12.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--green)}
+.phase-tag{font-family:'Inter',sans-serif; font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--bg); background:var(--gold); padding:4px 11px; border-radius:999px}
+h2{font-size:clamp(24px,4vw,34px); letter-spacing:-.01em; margin-bottom:12px}
+.sec-sub{color:var(--mut); max-width:720px; margin-bottom:26px; font-size:16px}
+
+/* TARGET TABLE / CARDS */
+.legend{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:20px}
+.legend span{display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--mut); font-weight:600}
+.led{width:11px; height:11px; border-radius:50%; display:inline-block; box-shadow:0 0 0 3px rgba(255,255,255,.05)}
+.led.go{background:var(--go)} .led.caution{background:var(--caution)} .led.stop{background:var(--stop)}
+
+.targets{display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:14px}
+.tcard{background:var(--surf); border:1px solid var(--line); border-radius:16px; padding:18px 18px 16px;
+  position:relative; overflow:hidden; box-shadow:var(--shadow)}
+.tcard::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px}
+.tcard.go::before{background:var(--go)} .tcard.caution::before{background:var(--caution)} .tcard.stop::before{background:var(--stop)}
+.tcard .rank{font-size:11.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--mut2)}
+.tcard h3{font-family:'Inter',sans-serif; font-size:18px; font-weight:800; margin:3px 0 2px; letter-spacing:-.01em}
+.tcard .loc{font-size:13px; color:var(--mut); margin-bottom:12px}
+.verdict{display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700; padding:5px 10px;
+  border-radius:8px; margin-bottom:10px}
+.verdict.go{background:rgba(67,200,111,.14); color:#7ee0a2}
+.verdict.caution{background:rgba(232,184,75,.14); color:#f0cf82}
+.verdict.stop{background:rgba(234,110,95,.15); color:#f3a396}
+.tcard p{font-size:14px; color:var(--mut); margin:0 0 12px}
+.tcard .move{font-size:13.5px; color:var(--txt); border-top:1px dashed var(--line2); padding-top:11px}
+.tcard .move b{color:var(--green)}
+
+/* TIMELINE */
+.timeline{display:grid; grid-template-columns:repeat(7,1fr); gap:10px}
+.tl{background:var(--surf); border:1px solid var(--line); border-radius:14px; padding:14px 12px; text-align:center;
+  position:relative; transition:.15s}
+.tl:hover{border-color:var(--green2); transform:translateY(-2px)}
+.tl .d{font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--gold)}
+.tl .num{font-family:'Fraunces',serif; font-size:30px; font-weight:700; line-height:1; margin:6px 0 8px}
+.tl .th{font-size:12.5px; font-weight:700; color:var(--txt); line-height:1.25}
+.tl .wn{font-size:11.5px; color:var(--mut2); margin-top:7px; line-height:1.3}
+.tl.plan{border-top:3px solid var(--gold)} .tl.impl{border-top:3px solid var(--green)}
+
+/* EDGE MOVES */
+.edge{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px}
+.emove{background:linear-gradient(160deg, var(--surf2), var(--surf)); border:1px solid var(--line);
+  border-radius:16px; padding:20px; box-shadow:var(--shadow)}
+.emove .en{width:38px; height:38px; border-radius:11px; display:grid; place-items:center;
+  background:rgba(232,184,75,.16); color:var(--gold); font-family:'Fraunces',serif; font-weight:700; font-size:19px; margin-bottom:12px}
+.emove h4{font-family:'Inter',sans-serif; font-size:15.5px; font-weight:800; margin-bottom:6px}
+.emove p{font-size:13.5px; color:var(--mut); margin:0}
+
+/* PHASE BAND */
+.phaseband{border-top:1px solid var(--line); background:
+  linear-gradient(180deg, rgba(232,184,75,.05), transparent 70%);}
+.phaseband.impl{background:linear-gradient(180deg, rgba(79,183,131,.06), transparent 70%)}
+.phaseband .wrap{padding:44px 22px 10px}
+.phaseband .ptag{display:inline-flex; align-items:center; gap:9px; font-family:'Inter',sans-serif;
+  font-size:12px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:12px}
+.phaseband.impl .ptag{color:var(--green)}
+.phaseband .ptag .pn{width:24px; height:24px; border-radius:50%; display:grid; place-items:center;
+  background:var(--gold); color:var(--bg); font-size:13px}
+.phaseband.impl .ptag .pn{background:var(--green)}
+.phaseband h2{font-size:clamp(26px,4.4vw,38px)}
+.phaseband p{color:var(--mut); max-width:740px; margin-top:12px; font-size:16px}
+
+/* SUBSECTION */
+.subhead{display:flex; align-items:center; gap:11px; margin:30px 0 16px}
+.subhead .ico{width:30px; height:30px; border-radius:9px; background:var(--surf2); border:1px solid var(--line);
+  display:grid; place-items:center; color:var(--gold); flex:none}
+.subhead .ico svg{width:16px; height:16px}
+.subhead h3{font-family:'Inter',sans-serif; font-size:19px; font-weight:800; letter-spacing:-.01em}
+
+/* TOOLKIT CARDS */
+.toolkit{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px}
+.tool{background:var(--surf); border:1px solid var(--line); border-radius:16px; padding:20px; box-shadow:var(--shadow)}
+.tool.wide{grid-column:1/-1}
+.tool h4{font-family:'Inter',sans-serif; font-size:16px; font-weight:800; margin-bottom:10px; display:flex; align-items:center; gap:9px}
+.tool h4 .pill{font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--bg);
+  background:var(--green); padding:3px 8px; border-radius:6px}
+.tool p{font-size:14px; color:var(--mut); margin:0 0 12px}
+.tool p:last-child{margin-bottom:0}
+.tool b{color:var(--txt)}
+
+/* STEPS */
+ol.steps{list-style:none; counter-reset:s; margin:0; padding:0}
+ol.steps li{counter-increment:s; position:relative; padding:0 0 14px 40px; font-size:14px; color:var(--mut)}
+ol.steps li:last-child{padding-bottom:0}
+ol.steps li::before{content:counter(s); position:absolute; left:0; top:-2px; width:26px; height:26px;
+  border-radius:8px; background:rgba(79,183,131,.15); color:var(--green); font-family:'Fraunces',serif;
+  font-weight:700; font-size:14px; display:grid; place-items:center}
+ol.steps li b{color:var(--txt)}
+
+/* SHOPPING TAGS */
+.tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:4px}
+.tags span{font-size:12.5px; font-weight:600; color:var(--txt); background:var(--surf2);
+  border:1px solid var(--line); padding:6px 11px; border-radius:8px}
+
+/* CHECKLIST */
+ul.check{list-style:none; margin:0; padding:0; display:grid; gap:10px}
+ul.check li{position:relative; padding-left:32px; font-size:14px; color:var(--txt)}
+ul.check li::before{content:""; position:absolute; left:0; top:1px; width:19px; height:19px; border-radius:6px;
+  border:1.5px solid var(--green2); background:rgba(79,183,131,.08)}
+ul.check li::after{content:""; position:absolute; left:6px; top:4px; width:6px; height:10px;
+  border:solid var(--green); border-width:0 2px 2px 0; transform:rotate(45deg); opacity:.55}
+ul.check li span{color:var(--mut)}
+
+/* STAT CARDS */
+.stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-top:4px}
+.stat{background:var(--surf2); border:1px solid var(--line); border-radius:13px; padding:15px}
+.stat .n{font-family:'Fraunces',serif; font-weight:700; font-size:23px; color:var(--gold); line-height:1.1}
+.stat .l{font-size:12.5px; color:var(--mut); margin-top:5px; line-height:1.35}
+
+/* WARN BOX */
+.warn{border-left:3px solid var(--coral); background:linear-gradient(90deg, rgba(233,122,102,.09), transparent);
+  border-radius:0 12px 12px 0; padding:14px 16px; margin-top:12px; font-size:13.5px; color:var(--txt)}
+.warn b{color:var(--coral)}
+
+/* SCRIPT ACCORDION */
+.scripts{display:grid; gap:10px}
+details.script{background:var(--surf); border:1px solid var(--line); border-radius:13px; overflow:hidden}
+details.script[open]{border-color:var(--green2)}
+details.script summary{list-style:none; cursor:pointer; padding:15px 18px; display:flex; align-items:center; gap:12px;
+  font-family:'Inter',sans-serif; font-weight:700; font-size:15px}
+details.script summary::-webkit-details-marker{display:none}
+details.script summary .tag{font-size:11px; font-weight:800; letter-spacing:.05em; text-transform:uppercase;
+  padding:3px 9px; border-radius:6px; margin-left:auto; flex:none}
+details.script summary .tag.form{background:rgba(232,184,75,.16); color:var(--gold)}
+details.script summary .tag.call{background:rgba(79,183,131,.16); color:var(--green)}
+details.script summary .caret{color:var(--mut2); transition:.2s; flex:none}
+details.script[open] summary .caret{transform:rotate(90deg)}
+details.script .body{padding:0 18px 18px; border-top:1px solid var(--line)}
+.quote{background:var(--bg2); border:1px solid var(--line); border-left:3px solid var(--green2);
+  border-radius:0 10px 10px 0; padding:13px 15px; margin:13px 0; font-size:13.5px; color:var(--txt); line-height:1.55}
+.quote em{color:var(--gold); font-style:normal; font-weight:600}
+.body .lbl{font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--mut2); margin-top:12px}
+
+/* THREE QUESTIONS */
+.qbox{background:linear-gradient(160deg, var(--surf2), var(--surf)); border:1px solid var(--line2);
+  border-radius:16px; padding:22px; box-shadow:var(--shadow)}
+.qbox h4{font-family:'Inter',sans-serif; font-size:15px; font-weight:800; margin-bottom:14px; color:var(--gold)}
+.qbox ol{margin:0; padding-left:0; list-style:none; counter-reset:q; display:grid; gap:12px}
+.qbox li{counter-increment:q; position:relative; padding-left:44px; font-size:14.5px; color:var(--txt)}
+.qbox li::before{content:"Q" counter(q); position:absolute; left:0; top:0; font-family:'Fraunces',serif;
+  font-weight:700; color:var(--green); font-size:16px; background:rgba(79,183,131,.12);
+  width:32px; height:28px; border-radius:8px; display:grid; place-items:center}
+.qbox li b{color:var(--gold)}
+
+/* PITCH PREVIEW */
+.pitchcard{background:#0F1D16; border:1px solid var(--line2); border-radius:16px; padding:24px; box-shadow:var(--shadow)}
+.pitchcard .doc{font-family:'Inter',sans-serif}
+.pitchcard .logo{font-size:12px; color:var(--mut2); border:1px dashed var(--line2); border-radius:8px;
+  padding:8px 12px; display:inline-block; margin-bottom:14px}
+.pitchcard h4{font-family:'Fraunces',serif; font-size:20px; margin-bottom:4px}
+.pitchcard .meta{font-size:12.5px; color:var(--mut); margin-bottom:16px}
+.pitchgrid{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+.pitchgrid h5{font-family:'Inter',sans-serif; font-size:12.5px; font-weight:800; text-transform:uppercase;
+  letter-spacing:.06em; color:#F1CE72; margin:0 0 8px}
+.pitchgrid p, .pitchgrid li{font-size:13px; color:var(--mut)}
+.pitchgrid ul{margin:0; padding-left:18px}
+@media(max-width:640px){ .pitchgrid{grid-template-columns:1fr} }
+
+/* DAY CARDS */
+.days{display:grid; gap:16px}
+.day{background:var(--surf); border:1px solid var(--line); border-radius:18px; overflow:hidden;
+  box-shadow:var(--shadow); position:relative}
+.day::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px}
+.day.plan::before{background:var(--gold)} .day.do::before{background:var(--green)}
+.dhead{display:flex; gap:18px; align-items:flex-start; padding:22px 24px 8px}
+.daynum{flex:none; width:66px; text-align:center}
+.daynum .k{font-size:10.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--mut2)}
+.daynum .n{font-family:'Fraunces',serif; font-weight:700; font-size:46px; line-height:.95; margin-top:2px}
+.day.plan .daynum .n{color:var(--gold)} .day.do .daynum .n{color:var(--green)}
+.dmeta{flex:1; min-width:0}
+.dchip{display:inline-block; font-family:'Inter',sans-serif; font-size:10.5px; font-weight:800; letter-spacing:.1em;
+  text-transform:uppercase; padding:3px 9px; border-radius:6px; margin-bottom:7px}
+.day.plan .dchip{background:rgba(232,184,75,.16); color:var(--gold)}
+.day.do .dchip{background:rgba(79,183,131,.16); color:var(--green)}
+.dmeta h3{font-family:'Inter',sans-serif; font-size:21px; font-weight:800; letter-spacing:-.01em; margin-bottom:6px}
+.dgoal{font-size:14px; color:var(--mut)}
+.dgoal b{color:var(--txt)}
+.dbody{padding:8px 24px 0}
+.block{display:grid; grid-template-columns:140px 1fr; gap:16px; padding:15px 0; border-top:1px solid var(--line)}
+.btime{font-size:12.5px; font-weight:800; color:var(--txt)}
+.btime .sub{display:block; font-weight:600; color:var(--mut2); font-size:11.5px; margin-top:2px; letter-spacing:.02em}
+.bact{margin:0}
+.bact ul{list-style:none; margin:0; padding:0; display:grid; gap:8px}
+.bact li{position:relative; padding-left:20px; font-size:14px; color:var(--mut)}
+.bact li::before{content:""; position:absolute; left:2px; top:8px; width:6px; height:6px; border-radius:50%;
+  background:var(--green2)}
+.day.plan .bact li::before{background:var(--gold)}
+.bact li b{color:var(--txt)}
+.bact .mono{color:var(--txt)}
+.win{display:flex; align-items:center; gap:11px; margin:16px 24px 20px; padding:12px 15px;
+  background:rgba(79,183,131,.09); border:1px solid rgba(79,183,131,.22); border-radius:12px;
+  font-size:13.5px; color:var(--txt)}
+.day.plan .win{background:rgba(232,184,75,.08); border-color:rgba(232,184,75,.22)}
+.win .wc{flex:none; width:22px; height:22px; border-radius:50%; background:var(--green); display:grid; place-items:center}
+.day.plan .win .wc{background:var(--gold)}
+.win .wc svg{width:13px; height:13px; color:var(--bg)}
+.win b{color:var(--green)} .day.plan .win b{color:var(--gold)}
+
+/* INLINE DCC BOX */
+.dccbox{background:var(--bg2); border:1px dashed var(--line2); border-radius:12px; padding:15px 17px; margin-top:6px}
+.dccbox .h{font-size:12.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--green); margin-bottom:10px}
+.dccbox ol{margin:0; padding-left:18px; display:grid; gap:6px}
+.dccbox li{font-size:13.5px; color:var(--mut)}
+.dccbox li b{color:var(--txt)}
+.dccbox li::before{display:none}
+
+@media(max-width:640px){
+  .block{grid-template-columns:1fr; gap:6px}
+  .btime{color:var(--gold)}
+  .day.do .btime{color:var(--green)}
+  .dhead{gap:12px; padding:18px 16px 6px}
+  .dbody{padding:8px 16px 0}
+  .daynum{width:52px}
+  .daynum .n{font-size:36px}
+}
+
+/* SCORECARD TABLE */
+.scorewrap{overflow-x:auto; border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow)}
+table.score{width:100%; border-collapse:collapse; min-width:560px; background:var(--surf)}
+table.score th, table.score td{text-align:left; padding:13px 16px; border-bottom:1px solid var(--line); font-size:13.5px}
+table.score th:nth-child(1), table.score td:nth-child(1){width:24%}
+table.score th:nth-child(2), table.score td:nth-child(2){width:38%}
+table.score th:nth-child(3), table.score td:nth-child(3){width:38%}
+table.score thead th{font-family:'Inter',sans-serif; font-size:12px; font-weight:800; letter-spacing:.05em;
+  text-transform:uppercase; color:var(--gold); background:var(--surf2)}
+table.score tbody td:first-child{font-weight:700; color:var(--txt)}
+table.score td{color:var(--mut)}
+table.score tr:last-child td{border-bottom:none}
+table.score td .s5{color:var(--green); font-weight:600}
+@media(max-width:640px){
+  .scorewrap{overflow:visible}
+  table.score{min-width:0; display:block}
+  table.score thead{display:none}
+  table.score tbody, table.score tr, table.score td{display:block; width:100% !important}
+  table.score tr{border-bottom:1px solid var(--line2); padding:6px 0 12px}
+  table.score tbody tr:last-child{border-bottom:none}
+  table.score td{border:none; padding:3px 16px}
+  table.score td:nth-child(1){font-size:15.5px; padding-top:12px}
+  table.score td:nth-child(2)::before{content:"Why it matters — "; color:var(--mut2); font-weight:700}
+  table.score td:nth-child(3)::before{content:"A 5 looks like — "; color:var(--green); font-weight:700}
+}
+
+/* GATE CALLOUT */
+.gate{background:linear-gradient(135deg, rgba(79,183,131,.16), rgba(67,200,111,.06));
+  border:1px solid rgba(79,183,131,.35); border-radius:20px; padding:28px 30px; box-shadow:var(--shadow);
+  position:relative; overflow:hidden}
+.gate .glab{display:inline-flex; align-items:center; gap:9px; font-size:12px; font-weight:800; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--go); margin-bottom:12px}
+.gate .glab .led{box-shadow:0 0 0 4px rgba(67,200,111,.15)}
+.gate h3{font-family:'Fraunces',serif; font-size:clamp(22px,3.4vw,30px); font-weight:600; margin-bottom:10px; line-height:1.2}
+.gate h3 .hl{color:var(--green)}
+.gate p{color:var(--mut); font-size:15px; margin:0; max-width:720px}
+.gate p b{color:var(--txt)}
+
+/* GRAD */
+.grad{display:grid; grid-template-columns:auto 1fr; gap:18px; align-items:center; margin-top:16px;
+  background:var(--surf); border:1px solid var(--line); border-radius:16px; padding:20px 22px}
+.grad .badge{width:52px; height:52px; border-radius:14px; background:rgba(232,184,75,.16); color:var(--gold);
+  display:grid; place-items:center; flex:none}
+.grad .badge svg{width:26px; height:26px}
+.grad h4{font-family:'Inter',sans-serif; font-size:16px; font-weight:800; margin-bottom:4px}
+.grad p{font-size:14px; color:var(--mut); margin:0}
+@media(max-width:640px){ .grad{grid-template-columns:1fr} }
+
+/* FOOTER */
+footer{padding:40px 0 60px; border-top:1px solid var(--line); color:var(--mut2); font-size:13px}
+footer .wrap{display:flex; flex-direction:column; gap:6px}
+
+/* RESPONSIVE */
+@media(max-width:820px){
+  .timeline{grid-template-columns:repeat(2,1fr)}
+  .navlinks{display:none}
+  .hero{padding:44px 0 30px}
+}
+@media(max-width:480px){ .timeline{grid-template-columns:1fr} }
+@media(max-width:640px){ .gs-split{grid-template-columns:1fr !important} }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav"><div class="wrap">
+  <div class="brand">Los Angeles Edible <span class="dot">•</span> Sprint</div>
+  <div class="navlinks">
+    <a href="#overview">Overview</a>
+    <a href="#planning">Planning</a>
+    <a href="#implementation">The 7 Days</a>
+    <a href="#decide">Score &amp; Decide</a>
+  </div>
+</div></nav>
+
+<!-- HERO -->
+<header class="hero" id="overview"><div class="wrap">
+  <div class="eyebrow">Manufacturer Sourcing · July 2026</div>
+  <h1>The 7-Day <span class="accent">Manufacturer</span> Sprint</h1>
+  <p class="lede">A do-it-now week to land one or two real manufacturer conversations, tour a kitchen, and get the highest return on your very first steps — built for half-days and the LA + Orange County cluster.</p>
+  <div class="chips">
+    <span class="chip">Half-days · 3–4 focused hrs/day</span>
+    <span class="chip">LA County + Orange County</span>
+    <span class="chip">$10K test budget, liquid</span>
+    <span class="chip">Recipe spec in hand</span>
+    <span class="chip">Entity + brand basics done</span>
+  </div>
+  <div class="mission">Your edge isn't cash — with $10K you can't out-spend anyone. It's showing up <b>print-ready, not idea-ready</b>: a locked spec, a legal look-alike sample, and a whisper of demand. This plan puts all three in your hands before you knock on a single door.</div>
+</div></header>
+
+<!-- WHAT CHANGED -->
+<section id="targets-reshuffle"><div class="wrap">
+  <div class="sec-head"><span class="sec-kicker">Read this first</span></div>
+  <h2>What changed after we verified every name</h2>
+  <p class="sec-sub">Your original six-name list got reshuffled hard against the state license database (search.cannabis.ca.gov, checked July 6, 2026). This is the difference between a productive week and three wasted tours.</p>
+  <div class="legend">
+    <span><i class="led go"></i> Confirmed &amp; ready</span>
+    <span><i class="led caution"></i> Verify before you invest</span>
+    <span><i class="led stop"></i> Do not build the week around it</span>
+  </div>
+  <div class="targets">
+
+    <div class="tcard go">
+      <div class="rank">Priority 1 · Lead target</div>
+      <h3>My Green Network</h3>
+      <div class="loc">Santa Ana · co-manufacturing + in-house distribution</div>
+      <div class="verdict go">● Confirmed alive</div>
+      <p>Only target with a confirmed-live gummy line (Baker Perkins depositor verified), co-man intake, and distribution. Licenses active. <b>No phone</b> — reached by web form + Instagram DM.</p>
+      <div class="move"><b>Move:</b> Submit the co-man form + DM @officialgreennetwork on Day 1. Push for the tour.</div>
+    </div>
+
+    <div class="tcard caution">
+      <div class="rank">Priority 2 · Low-MOQ wildcard</div>
+      <h3>Cali Co-Pack</h3>
+      <div class="loc">California (city hidden)</div>
+      <div class="verdict caution">● Site current, entity unproven</div>
+      <p>Openly advertises low-minimum custom-recipe runs (posts Jan 2026). But publishes <b>no phone, email, address, or license number.</b> Form-only.</p>
+      <div class="move"><b>Move:</b> Submit form Day 1. First thing to extract: legal entity name + DCC license #.</div>
+    </div>
+
+    <div class="tcard caution">
+      <div class="rank">Priority 3 · Verify first</div>
+      <h3>Inanna Manufacturing</h3>
+      <div class="loc">Bellflower · best recipe-to-spec fit</div>
+      <div class="verdict caution">● No proof of life since 2021</div>
+      <p>Site is a dead shell; every "2025" article is recycled 2021 content. Not confirmed closed — but a phone call is the only way to know.</p>
+      <div class="move"><b>Move:</b> One verification call Day 1 (323-362-6350). If a human answers &amp; they're running, it jumps to #1.</div>
+    </div>
+
+    <div class="tcard stop">
+      <div class="rank">Reclassified</div>
+      <h3>Se7enLeaf</h3>
+      <div class="loc">Costa Mesa</div>
+      <div class="verdict stop">● Can't legally manufacture</div>
+      <p>Both manufacturing licenses are dead (Type 6 expired Apr 2025, Type 7 surrendered). Only the <b>distribution</b> license is active.</p>
+      <div class="move"><b>Move:</b> Not a maker. Keep as a <b>distributor</b> lead for week 2. One diagnostic call.</div>
+    </div>
+
+    <div class="tcard caution">
+      <div class="rank">Wildcard · cold ask</div>
+      <h3>WHOA Infused</h3>
+      <div class="loc">Long Beach · craft confectioner</div>
+      <div class="verdict caution">● No co-man advertised</div>
+      <p>Alive, second-generation confectioner making craft gummies in-house — but their site says they only work with wholesale dispensaries.</p>
+      <div class="move"><b>Move:</b> Cold ask only, framed as a paid custom batch. Lower priority.</div>
+    </div>
+
+    <div class="tcard caution">
+      <div class="rank">Wildcard · cold ask</div>
+      <h3>Dr. Norm's</h3>
+      <div class="loc">Los Angeles · own manufacturing</div>
+      <div class="verdict caution">● Weaker gummy fit</div>
+      <p>Alive, does collabs, has a real wholesale line (818-422-9077). But 500+ stores and bakery/hash-focused — not a gummy depositor.</p>
+      <div class="move"><b>Move:</b> Cold ask via wholesale line. Backup conversation, not an anchor.</div>
+    </div>
+
+  </div>
+</div></section>
+
+<!-- TIMELINE -->
+<section id="glance"><div class="wrap">
+  <div class="sec-head"><span class="sec-kicker">The week at a glance</span></div>
+  <h2>Two phases, seven days</h2>
+  <p class="sec-sub">Days 1–2 set up your edge (planning). Days 3–7 are the pavement (implementation). Half-days mean 2–3 actions done well — not ten half-finished. Tours cluster on Days 5–6; if a kitchen can only do another day, their calendar wins.</p>
+  <div class="timeline">
+    <div class="tl plan"><div class="d">Plan</div><div class="num">1</div><div class="th">Outreach blitz</div><div class="wn">Every target contacted</div></div>
+    <div class="tl plan"><div class="d">Plan</div><div class="num">2</div><div class="th">Build your edge</div><div class="wn">Gold-standard batch</div></div>
+    <div class="tl impl"><div class="d">Do</div><div class="num">3</div><div class="th">Reverse-lookup walk</div><div class="wn">Tiny brands bagged</div></div>
+    <div class="tl impl"><div class="d">Do</div><div class="num">4</div><div class="th">Hunt hidden kitchens</div><div class="wn">Fresh leads pitched</div></div>
+    <div class="tl impl"><div class="d">Do</div><div class="num">5</div><div class="th">OC loop / 1st tour</div><div class="wn">MyGN in Santa Ana</div></div>
+    <div class="tl impl"><div class="d">Do</div><div class="num">6</div><div class="th">LA loop / 2nd talk</div><div class="wn">Real numbers in hand</div></div>
+    <div class="tl impl"><div class="d">Do</div><div class="num">7</div><div class="th">Score &amp; commit</div><div class="wn">Lead + backup picked</div></div>
+  </div>
+</div></section>
+
+<!-- EDGE MOVES -->
+<section id="edge-moves"><div class="wrap">
+  <div class="sec-head"><span class="sec-kicker">Your unfair advantage</span></div>
+  <h2>Four moves that put you ahead of 90% of first-timers</h2>
+  <p class="sec-sub">Boutique kitchens exist to scale sellers, not incubate ideas. You can't be a proven seller yet — so you manufacture the signals of one. All four are inside your budget and this week's timeline.</p>
+  <div class="edge">
+    <div class="emove"><div class="en">1</div><h4>The non-infused "gold standard"</h4><p>Make a THC-free version of your gummy at home — legal, it's just candy — and hand-deliver fresh pieces at the tour. It's literally the professional R&amp;D standard.</p></div>
+    <div class="emove"><div class="en">2</div><h4>Benchmark competitor gummies</h4><p>Bring 2–3 you admire: "texture like this, clarity like that, sourness like this." It speaks the kitchen's language in one sentence.</p></div>
+    <div class="emove"><div class="en">3</div><h4>A locked one-page spec</h4><p>Not "my dream gummy" — a finished, compliant target with dose, texture, and packaging plan. You slot into their queue instead of their R&amp;D backlog.</p></div>
+    <div class="emove"><div class="en">4</div><h4>A whisper of demand</h4><p>Even one budtender's "I'd stock this" outweighs your whole pitch — it cancels the kitchen's #1 fear: making a batch nobody buys.</p></div>
+  </div>
+</div></section>
+
+<!-- ============ PLANNING PHASE ============ -->
+<div class="phaseband" id="planning"><div class="wrap">
+  <div class="ptag"><span class="pn">A</span> Planning Phase · Days 1–2</div>
+  <h2>Build your edge before you knock</h2>
+  <p>Everything in this phase gets done at your desk or kitchen table. By the end you'll have the sample, the spec, the scripts, and the mindset that make a kitchen treat you as a queue-ready client — not an R&amp;D project. Do this first and every conversation later gets easier.</p>
+</div></div>
+
+<!-- EDGE TOOLKIT -->
+<section id="toolkit" style="padding-top:26px"><div class="wrap">
+  <div class="subhead">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3l7 7-9 9H5v-7l9-9z"/></svg></span>
+    <h3>The Edge Toolkit</h3>
+  </div>
+
+  <div class="toolkit">
+
+    <!-- Gold standard -->
+    <div class="tool wide">
+      <h4>The non-infused "gold standard" sample <span class="pill">Your #1 move</span></h4>
+      <p>You have no product to show — so make the professional standard: a THC-free version of your gummy that shows a kitchen your exact target flavor, texture, color, and bite. It's <b>legal</b> (candy with no cannabis is outside the state's cannabis rules) and it's literally what food R&amp;D teams call the "gold standard." Label each bag <b>"Non-infused R&amp;D sample — not for sale — [date]."</b></p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:6px" class="gs-split">
+        <div>
+          <div class="body"><div class="lbl">Make it (Day 2)</div></div>
+          <ol class="steps">
+            <li>Follow <b>your recipe spec exactly — minus the cannabis.</b> The point is to reproduce your target, not invent something new.</li>
+            <li>Cook, deposit into molds, set/cure per your recipe. Make ~30 pieces (2–3 tours' worth).</li>
+            <li>Make them <b>close to your tour dates</b> — gummies bloom and soften.</li>
+            <li>Bag 6–12 per tour, labeled as above.</li>
+          </ol>
+        </div>
+        <div>
+          <div class="body"><div class="lbl">Shopping list (order Day 1)</div></div>
+          <div class="tags">
+            <span>Silicone gummy molds</span><span>Unflavored gelatin</span><span>Fruit pectin</span>
+            <span>Citric acid</span><span>LorAnn flavor oils ×2–3</span><span>Corn syrup / sorbitol</span>
+            <span>Candy thermometer</span><span>Droppers</span>
+          </div>
+          <div class="warn" style="margin-top:14px"><b>Set expectations out loud at the tour:</b> "I know this won't scale 1:1 — it's my gold standard for your team to hit." That one line signals you actually understand manufacturing.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Print-ready checklist -->
+    <div class="tool">
+      <h4>The "print-ready" checklist</h4>
+      <p>Tick these before your first tour. Each one separates you from the tire-kickers kitchens turn away.</p>
+      <ul class="check">
+        <li>Locked one-page spec sheet</li>
+        <li>Gold-standard sample + <span>2–3 benchmark gummies</span></li>
+        <li>A whisper of demand — <span>one buyer's "I'd stock this"</span></li>
+        <li>Funding posture — ready to pay R&amp;D fee + deposit</li>
+        <li>Compliance fluency — dose caps, packaging, testing</li>
+        <li>Clean legal structure — <span>flat fee / fixed royalty</span></li>
+        <li>Packaging plan — child-resistant, opaque, digital-print</li>
+        <li>Bonus: print-ready compliant artwork</li>
+      </ul>
+    </div>
+
+    <!-- IP protection -->
+    <div class="tool">
+      <h4>Protect your ace: the recipe</h4>
+      <p><b>The one rule: never hand over the complete formula.</b> Three cheap, high-leverage moves:</p>
+      <ol class="steps">
+        <li><b>NDA before you disclose anything.</b> Sample + targets can go first; the exact formula only after signing.</li>
+        <li><b>Trade-secret framing, not patent.</b> Automatic protection if you take "reasonable measures" — and document them.</li>
+        <li><b>Staged disclosure.</b> Hand over a pre-mixed proprietary flavor blend, or split components across suppliers, so no single party can reproduce it.</li>
+      </ol>
+      <div class="warn"><b>Demand "private-label," not "white-label" terms</b> — in a true white-label the <em>manufacturer</em> owns the formula and can resell it. You brought your own recipe: brand-owns-IP.</div>
+    </div>
+
+    <!-- Numbers -->
+    <div class="tool wide">
+      <h4>Realistic 2026 California numbers</h4>
+      <p>Triangulated July 2026 — confirm each with written quotes. Your $10K covers <b>formulation/R&amp;D at a low-MOQ shop and possibly a very small pilot — not</b> a full commercial run with packaging, testing, distribution, and tax. In the first meeting, price a <b>paid pilot</b>, not a launch.</p>
+      <div class="stats">
+        <div class="stat"><div class="n">$5K–$50K</div><div class="l">R&amp;D / formulation fee (simple tweak = low end; often creditable)</div></div>
+        <div class="stat"><div class="n">10K–20K</div><div class="l">units — where custom Mylar packaging minimums kick in</div></div>
+        <div class="stat"><div class="n">~$0.13</div><div class="l">per 25mg gummy, all-in (operator-reported, ex-testing)</div></div>
+        <div class="stat"><div class="n">~$915</div><div class="l">per edibles batch for lab/compliance testing (post-2024 rules)</div></div>
+        <div class="stat"><div class="n">15%</div><div class="l">state excise tax (rolled back from 19%, locked to June 2028)</div></div>
+      </div>
+    </div>
+
+    <!-- Compliance -->
+    <div class="tool wide">
+      <h4>2026 compliance cheat-sheet</h4>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px" class="gs-split">
+        <div>
+          <div class="body"><div class="lbl">Memorize the essentials</div></div>
+          <ul class="check" style="margin-top:10px">
+            <li><b>10mg</b> THC/serving · <b>100mg</b>/package (adult-use)</li>
+            <li>Child-resistant, <span>opaque, tamper-evident</span> packaging</li>
+            <li>Universal cannabis symbol + "cannabis-infused"</li>
+            <li>Every batch third-party lab tested before sale</li>
+            <li>Must move through a licensed distributor</li>
+            <li>Metrc track-and-trace, still the system in 2026</li>
+          </ul>
+        </div>
+        <div>
+          <div class="body"><div class="lbl">The two that quietly kill deals</div></div>
+          <div class="warn" style="margin-top:10px"><b>FIH trap:</b> take a <em>share of profits</em> and you likely become a "Financial Interest Holder" the state must be told about — non-disclosure can cost your partner their license. A <b>flat fee or fixed royalty</b> usually avoids it.</div>
+          <div class="warn"><b>§5032 scrutiny:</b> licensees can't produce "pursuant to a contract with a non-licensee." Clean paths: be a disclosed owner/FIH, get your own license, or sell the IP outright. <b>Never sign without cannabis counsel.</b></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div></section>
+
+<!-- SCRIPTS LIBRARY -->
+<section id="scripts" style="padding-top:20px"><div class="wrap">
+  <div class="subhead">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H7l-3 3V4z"/></svg></span>
+    <h3>Scripts &amp; Outreach Library</h3>
+  </div>
+  <p class="sec-sub">Word-for-word, ready to send. Tap any target to open its script. Fill the [brackets]. Never send the full recipe — sample + targets + spec go first, formula only after an NDA.</p>
+
+  <div class="qbox" style="margin-bottom:20px">
+    <h4>The three questions for every kitchen — memorize these</h4>
+    <ol>
+      <li>Will you run <b>our recipe as-is</b> — we license the IP to you? What's the recipe-onboarding / R&amp;D fee?</li>
+      <li>What's the <b>smallest batch</b> you'll press, and the all-in cost including compliance testing and packaging?</li>
+      <li>Do you have <b>in-house distribution</b>, or who do you route through — and what's their cut?</li>
+    </ol>
+  </div>
+
+  <div class="scripts">
+
+    <details class="script" open>
+      <summary><span class="caret">▸</span> My Green Network — your lead <span class="tag form">Form + IG DM</span></summary>
+      <div class="body">
+        <div class="lbl">Co-manufacturing form — mygreennetwork.com/contact/</div>
+        <div class="quote">Hi MyGN team — I'm [Name], founder of Los Angeles Edible. I have a finished, proprietary gummy recipe and I'm looking for a market-test co-manufacturing run: you produce my recipe on your line under your license, my brand on the pack, using your in-house distribution.<br><br>I'm funded and ready to move on a small first run. Three quick questions: <em>(1)</em> Do you broker runs where a member kitchen produces a client's own recipe? <em>(2)</em> Smallest test-run volume and rough all-in cost? <em>(3)</em> Can I tour the gummy line this week or next? — [Name], [phone], [email]</div>
+        <div class="lbl">Instagram DM — @officialgreennetwork</div>
+        <div class="quote">Hey! Just submitted your co-manufacturing form (Los Angeles Edible). Short version: finished gummy recipe, funded, ready for a small market-test run on your line with your distro. Hoping to tour the gummy line this week — who's the right person to talk to?</div>
+      </div>
+    </details>
+
+    <details class="script">
+      <summary><span class="caret">▸</span> Cali Co-Pack — low-MOQ wildcard <span class="tag form">Web form</span></summary>
+      <div class="body">
+        <div class="quote">Hi — I'm [Name] with Los Angeles Edible, launching a cannabis gummy brand with a finished, proprietary recipe. Your low-minimum custom runs look like a strong fit. Before we set a call, three things I need: <em>(1)</em> your legal entity name and DCC license number (I verify all partners at search.cannabis.ca.gov); <em>(2)</em> will you run my recipe as-is under a white-label / IP-license — not just your base formula with my flavors? <em>(3)</em> your smallest batch size and all-in cost with testing + packaging. I'm funded and ready to move. Best number to reach you? — [Name], [phone]</div>
+        <div class="warn"><b>Red flag:</b> if they dodge the license-number question on the first exchange, slow down — you can't do business with an unverifiable licensee.</div>
+      </div>
+    </details>
+
+    <details class="script">
+      <summary><span class="caret">▸</span> Inanna — verification call <span class="tag call">Phone</span></summary>
+      <div class="body">
+        <p style="font-size:13.5px;color:var(--mut)">Call <b class="mono" style="color:var(--txt)">323-362-6350</b> (unverified — if dead, use the inannamfg.com form). One goal: are they alive and taking small clients?</p>
+        <div class="lbl">If a human answers</div>
+        <div class="quote">"Hi — I'm [Name], starting a small cannabis gummy brand, and I understand Inanna runs clients' own recipes. Before I get ahead of myself: <em>are you currently operating and taking on new small-brand clients?</em>" &nbsp;→ If yes: "I've got a finished recipe and a test-run budget ready. Could I book a tour this week? And what's your recipe-onboarding process and smallest batch?"</div>
+        <div class="lbl">Voicemail (leave one only)</div>
+        <div class="quote">"Hi, this is [Name] with Los Angeles Edible, [phone]. I'm launching a small gummy brand and want to know if you're taking new small-recipe clients. If so, I'm funded and ready to tour. Please call me back at [phone] — thank you."</div>
+      </div>
+    </details>
+
+    <details class="script">
+      <summary><span class="caret">▸</span> Reverse-lookup cold pitch — hidden kitchens <span class="tag form">Email / DM</span></summary>
+      <div class="body">
+        <p style="font-size:13.5px;color:var(--mut)">For kitchens you traced from a dispensary-shelf brand. Your strongest cold outreach — you have proof they do exactly what you need.</p>
+        <div class="quote"><b>Subject:</b> Small custom gummy run — funded, recipe ready<br><br>Hi [Kitchen] — I'm [Name], founder of Los Angeles Edible. I found [Brand X] and [Brand Y] on the shelf at [Dispensary] and traced the manufacturing back to you — which tells me you do exactly the small, high-quality custom runs I'm after. I've got a finished, proprietary recipe and I'm funded for a test run. <em>(1)</em> Will you run a client's own recipe? <em>(2)</em> Smallest batch + all-in cost? <em>(3)</em> Could I tour this week? Happy to send a spec and drop off a non-infused sample. — [Name], [phone]</div>
+      </div>
+    </details>
+
+    <details class="script">
+      <summary><span class="caret">▸</span> Wildcards — WHOA Infused &amp; Dr. Norm's <span class="tag call">Cold ask</span></summary>
+      <div class="body">
+        <div class="lbl">WHOA Infused — info@whoainfused.com</div>
+        <div class="quote">Hi WHOA team — I'm [Name] with Los Angeles Edible. I know you make your own craft gummies rather than co-pack, so this is a direct ask: I have a finished recipe and a paid test-run budget, and I'd love to explore a custom small batch or collaboration with a real confectioner. Worth a conversation? Happy to send a spec and a non-infused sample. — [phone]</div>
+        <div class="lbl">Dr. Norm's — wholesale line 818-422-9077</div>
+        <div class="quote">"Hi, I'm [Name] with Los Angeles Edible. I know you run your own manufacturing and do the occasional collab — I've got a finished gummy recipe and a funded test run, and wanted to see if you ever take on a paid custom batch for another brand."</div>
+      </div>
+    </details>
+
+    <details class="script">
+      <summary><span class="caret">▸</span> Objection handling — works for any kitchen <span class="tag call">Reference</span></summary>
+      <div class="body">
+        <div class="quote"><em>"Our minimums are way above what you need."</em> → "Understood — know anyone who does smaller custom runs? I'd rather be pointed right than waste your time." <span style="color:var(--mut2)">(Referrals are gold.)</span></div>
+        <div class="quote"><em>"Send us your recipe."</em> → "Happy to share a full spec and a sample of the target now. The exact formula once we've got a quick NDA in place — I'm sure you get that."</div>
+        <div class="quote"><em>"What's your volume / do you have orders?"</em> → "Starting with a test run to prove reorders, then scaling. I'm already talking to buyers at [Dispensary] about placement."</div>
+        <div class="quote"><em>"We only do profit-share / equity."</em> → "I'm structured for a flat fee or fixed royalty — cleaner for both of us on the license side. Can we work that way?"</div>
+      </div>
+    </details>
+
+  </div>
+</div></section>
+
+<!-- PITCH TEMPLATE -->
+<section id="pitch" style="padding-top:20px"><div class="wrap">
+  <div class="subhead">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5"/></svg></span>
+    <h3>Your One-Page Pitch Sheet</h3>
+  </div>
+  <p class="sec-sub">The leave-behind that makes you look real in 30 seconds. Fill the brackets, export to PDF, print a few. Here's the shape of it:</p>
+  <div class="pitchcard"><div class="doc">
+    <span class="logo">[ LOGO ]</span>
+    <h4>Los Angeles Edible — Custom Gummy Production Brief</h4>
+    <div class="meta">[Name] · [phone] · [email] &nbsp;|&nbsp; Legal entity: [LLC], California · Funded &amp; ready for a test run</div>
+    <div class="pitchgrid">
+      <div>
+        <h5>What I'm looking for</h5>
+        <p>A white-label / IP-license partner: I license my finished recipe to you; you produce under your license; my brand on the pack. Flat fee or fixed royalty, papered by a cannabis attorney.</p>
+        <h5 style="margin-top:14px">The product</h5>
+        <ul>
+          <li>[Pectin/gelatin] gummy, [shape], [size]</li>
+          <li>Flavor: [tart cherry, real-fruit forward]</li>
+          <li>Texture target: [soft chew, clean bite]</li>
+          <li>Dose: 10mg/serving · 100mg/pack</li>
+          <li>Differentiator: [your one-line edge]</li>
+        </ul>
+      </div>
+      <div>
+        <h5>What I bring</h5>
+        <ul>
+          <li>Finished, locked recipe spec</li>
+          <li>Non-infused gold-standard sample + benchmarks</li>
+          <li>Funded for the test run + R&amp;D fee</li>
+          <li>Formed CA entity + brand basics</li>
+          <li>Compliance-fluent</li>
+        </ul>
+        <h5 style="margin-top:14px">The plan</h5>
+        <p>Small proof run → reorders from 5+ dispensaries in 60 days → scale (then my own Type S license). A partner for the long run, not a one-off.</p>
+      </div>
+    </div>
+  </div></div>
+</div></section>
+
+<!-- ============ IMPLEMENTATION PHASE ============ -->
+<div class="phaseband impl" id="implementation"><div class="wrap">
+  <div class="ptag"><span class="pn">B</span> Implementation Phase · The 7 Days</div>
+  <h2>Your day-by-day sprint schedule</h2>
+  <p>Each day is a half-day: 2–3 actions done well, not ten half-finished. Days 1–2 are prep; Days 3–7 are the pavement. Tours cluster on Days 5–6 — but if a kitchen can only do another day, flex to them. Their calendar always wins.</p>
+</div></div>
+
+<section id="days" style="padding-top:26px"><div class="wrap"><div class="days">
+
+  <!-- DAY 1 -->
+  <div class="day plan">
+    <div class="dhead">
+      <div class="daynum"><div class="k">Day</div><div class="n">1</div></div>
+      <div class="dmeta">
+        <span class="dchip">Planning · Outreach blitz</span>
+        <h3>Get every iron in the fire</h3>
+        <div class="dgoal"><b>Goal:</b> contact every live target before lunch tomorrow, so replies land while you build the rest of the week.</div>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="block">
+        <div class="btime">First hour<span class="sub">Your lead target</span></div>
+        <div class="bact"><ul>
+          <li><b>My Green Network:</b> submit the "Cannabis Co-Manufacturing" form at <span class="mono">mygreennetwork.com/contact/</span></li>
+          <li>Then <b>DM @officialgreennetwork</b> on Instagram — a human answers faster than a form.</li>
+        </ul></div>
+      </div>
+      <div class="block">
+        <div class="btime">Next<span class="sub">Wildcard + verify</span></div>
+        <div class="bact"><ul>
+          <li><b>Cali Co-Pack:</b> submit the form — lead with your three asks (entity name, DCC license #, smallest batch).</li>
+          <li><b>Inanna verification call:</b> <span class="mono">323-362-6350</span>. One question: are you operating &amp; taking small clients? Book a tour if yes; one voicemail if not.</li>
+        </ul></div>
+      </div>
+      <div class="block">
+        <div class="btime">Before you log off<span class="sub">15 minutes</span></div>
+        <div class="bact"><ul>
+          <li><b>Order sample supplies</b> (molds, gelatin/pectin, citric acid, LorAnn flavors) with rush shipping.</li>
+          <li><b>Open your tracker</b> and log all four contacts. <span style="color:var(--mut2)">Optional: one diagnostic call to Se7enLeaf (877-464-6652).</span></li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="win"><span class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span><div><b>End-of-day win:</b> every target contacted, supplies en route.</div></div>
+  </div>
+
+  <!-- DAY 2 -->
+  <div class="day plan">
+    <div class="dhead">
+      <div class="daynum"><div class="k">Day</div><div class="n">2</div></div>
+      <div class="dmeta">
+        <span class="dchip">Planning · Build your edge</span>
+        <h3>Make the gold-standard batch</h3>
+        <div class="dgoal"><b>Goal:</b> the thing almost no first-timer brings — a legal look-alike of your gummy, plus a print-ready pitch.</div>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="block">
+        <div class="btime">Main block<span class="sub">Kitchen table</span></div>
+        <div class="bact"><ul>
+          <li><b>Make the non-infused gold-standard batch</b> — your recipe minus the cannabis, ~30 pieces. Label "Non-infused R&amp;D sample — not for sale — [date]."</li>
+          <li><b>Buy 2–3 benchmark competitor gummies</b> whose texture/clarity/flavor you want to match or beat.</li>
+        </ul></div>
+      </div>
+      <div class="block">
+        <div class="btime">Then<span class="sub">Desk</span></div>
+        <div class="bact"><ul>
+          <li><b>Finalize your one-page pitch sheet</b> — fill the brackets, export to PDF, print a few copies.</li>
+          <li><b>Work your replies:</b> anyone who answered Day 1 gets a same-day, specific response. Book tours into Days 5–6.</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="win"><span class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span><div><b>End-of-day win:</b> samples curing, pitch sheet print-ready.</div></div>
+  </div>
+
+  <!-- DAY 3 -->
+  <div class="day do">
+    <div class="dhead">
+      <div class="daynum"><div class="k">Day</div><div class="n">3</div></div>
+      <div class="dmeta">
+        <span class="dchip">Implementation · Reverse-lookup walk</span>
+        <h3>The tactic worth more than any list</h3>
+        <div class="dgoal"><b>Goal:</b> find the small kitchens that never advertise — mostly on your feet.</div>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="block">
+        <div class="btime">On the ground<span class="sub">2 shops</span></div>
+        <div class="bact"><ul>
+          <li><b>Walk Green Qween (DTLA)</b> — LA's highest-density "tiny brand" shelf — then <b>Sweet Flower</b> nearby.</li>
+          <li><b>Buy 4–6 gummies from the smallest local brands</b> you've never heard of. Obscure = made in a small kitchen that does small runs.</li>
+        </ul></div>
+      </div>
+      <div class="block">
+        <div class="btime">While you're there<span class="sub">Talk to people</span></div>
+        <div class="bact"><ul>
+          <li>Ask the budtender: <b>"Which little local gummy brands actually sell?"</b> and <b>"Who does your purchasing?"</b></li>
+          <li>Every "this one sells" is a demand signal. Log names of buyers in your tracker.</li>
+        </ul></div>
+      </div>
+      <div class="block">
+        <div class="btime">Evening<span class="sub">20 min</span></div>
+        <div class="bact"><ul>
+          <li><b>Read each label</b> for the manufacturer's legal name / "Manufactured by" / CDPH number. You'll look these up tomorrow.</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="win"><span class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span><div><b>End-of-day win:</b> 4–6 brands bagged, buyer names logged.</div></div>
+  </div>
+
+  <!-- DAY 4 -->
+  <div class="day do">
+    <div class="dhead">
+      <div class="daynum"><div class="k">Day</div><div class="n">4</div></div>
+      <div class="dmeta">
+        <span class="dchip">Implementation · Hunt hidden kitchens</span>
+        <h3>Trace the shelf back to the source</h3>
+        <div class="dgoal"><b>Goal:</b> turn yesterday's bags into 3–5 fresh, warm kitchen leads.</div>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="block">
+        <div class="btime">First<span class="sub">Detective work</span></div>
+        <div class="bact">
+          <div class="dccbox">
+            <div class="h">DCC license lookup — search.cannabis.ca.gov</div>
+            <ol>
+              <li>Find the <b>manufacturer's legal name / CDPH number</b> on each package.</li>
+              <li>Paste the license number (fastest) or the name into the search box.</li>
+              <li>Filter <b>License Type = Manufacturer</b>; add city if the name is common.</li>
+              <li>Confirm <b>status = Active</b> and note the premises <b>city</b>.</li>
+              <li>If <b>2–3 tiny brands trace to one kitchen</b> — that kitchen does small runs. Hot lead.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="btime">Then<span class="sub">Warm cold-outreach</span></div>
+        <div class="bact"><ul>
+          <li><b>Cold-pitch those kitchens</b> using the reverse-lookup script — you have proof they do exactly what you need.</li>
+          <li><b>Chase the quiet ones:</b> Cali Co-Pack no reply? Re-submit. MyGN quiet? Second DM.</li>
+          <li><span style="color:var(--mut2)">If you have energy: fire the WHOA Infused &amp; Dr. Norm's cold asks.</span></li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="win"><span class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span><div><b>End-of-day win:</b> 3–5 fresh kitchen leads contacted.</div></div>
+  </div>
+
+  <!-- DAY 5 -->
+  <div class="day do">
+    <div class="dhead">
+      <div class="daynum"><div class="k">Day</div><div class="n">5</div></div>
+      <div class="dmeta">
+        <span class="dchip">Implementation · OC loop / first tour</span>
+        <h3>Orange County, batched into one trip</h3>
+        <div class="dgoal"><b>Goal:</b> first tour done — or firmly scheduled — with real numbers in hand.</div>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="block">
+        <div class="btime">Primary<span class="sub">If booked</span></div>
+        <div class="bact"><ul>
+          <li><b>Tour My Green Network</b> — <span class="mono">3200 S Susan St, Santa Ana</span>. Bring: gold-standard samples, benchmark gummies, printed pitch sheet.</li>
+          <li>Ask to see the <b>Baker Perkins gummy line</b>. Ask the three questions. Log every number before you leave the parking lot.</li>
+        </ul></div>
+      </div>
+      <div class="block">
+        <div class="btime">Same trip<span class="sub">Bonus shelf</span></div>
+        <div class="bact"><ul>
+          <li><b>Walk From The Earth</b> (3023 S Orange Ave, Santa Ana) — a second reverse-lookup shelf + more buyer intel.</li>
+          <li><b>If MyGN hasn't booked:</b> don't force a wasted drive. Hammer follow-ups and lock a tour for Day 6/7 instead.</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="win"><span class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span><div><b>End-of-day win:</b> first tour done or scheduled; first real quote.</div></div>
+  </div>
+
+  <!-- DAY 6 -->
+  <div class="day do">
+    <div class="dhead">
+      <div class="daynum"><div class="k">Day</div><div class="n">6</div></div>
+      <div class="dmeta">
+        <span class="dchip">Implementation · LA loop / second talk</span>
+        <h3>Get a second set of real numbers</h3>
+        <div class="dgoal"><b>Goal:</b> two kitchens have now given you actual quotes to compare.</div>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="block">
+        <div class="btime">If Inanna is alive<span class="sub">Bellflower</span></div>
+        <div class="bact"><ul>
+          <li><b>Tour Inanna</b> — the strongest recipe-to-spec fit if real. Same kit: samples, benchmarks, pitch sheet, three questions.</li>
+        </ul></div>
+      </div>
+      <div class="block">
+        <div class="btime">If Inanna is a ghost<span class="sub">Plan B</span></div>
+        <div class="bact"><ul>
+          <li>Replace with your <b>best reverse-lookup kitchen</b> from Day 4, or a <b>Dr. Norm's</b> wholesale conversation (818-422-9077).</li>
+          <li><b>Two real conversations beat one perfect one</b> — you want quotes to compare.</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="win"><span class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span><div><b>End-of-day win:</b> at least two kitchens have given you real numbers.</div></div>
+  </div>
+
+  <!-- DAY 7 -->
+  <div class="day do">
+    <div class="dhead">
+      <div class="daynum"><div class="k">Day</div><div class="n">7</div></div>
+      <div class="dmeta">
+        <span class="dchip">Implementation · Score &amp; commit</span>
+        <h3>Where the pavement pays off</h3>
+        <div class="dgoal"><b>Goal:</b> a ranked decision and a three-line week-2 plan. Half a day at the desk.</div>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="block">
+        <div class="btime">Score<span class="sub">Use the tracker</span></div>
+        <div class="bact"><ul>
+          <li><b>Fill in the scorecard</b> for each kitchen that gave numbers. The grid ranks them for you (see below).</li>
+          <li><b>Pick a lead + a backup</b> — not a signature, a decision about who you go deeper with, and your fallback leverage.</li>
+        </ul></div>
+      </div>
+      <div class="block">
+        <div class="btime">Set up week 2<span class="sub">Three moves</span></div>
+        <div class="bact"><ul>
+          <li><b>Line up a cannabis attorney</b> for the IP-license ($1.5–2.5K) — the one place to spend before signing.</li>
+          <li>Week-2 plan in three lines: written quotes from lead + backup · attorney reviews the structure · get a Nabis distribution quote.</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="win"><span class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span><div><b>End-of-day win:</b> lead + backup picked, attorney lined up, week 2 mapped.</div></div>
+  </div>
+
+</div></div></section>
+
+<!-- ============ SCORE & DECIDE ============ -->
+<div class="phaseband impl" id="decide"><div class="wrap">
+  <div class="ptag"><span class="pn">✓</span> Score &amp; Decide · End of week</div>
+  <h2>Turn conversations into a decision</h2>
+  <p>You'll finish the week with quotes from two or three kitchens. Don't go on gut alone — score them the same way, side by side, so the winner is obvious and your number-two becomes your negotiating leverage.</p>
+</div></div>
+
+<section id="scorecard" style="padding-top:26px"><div class="wrap">
+  <div class="subhead">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+    <h3>The scorecard — six questions, score each 1–5</h3>
+  </div>
+  <p class="sec-sub">Fill this for every kitchen that gave you real numbers (it's the ready-made tab in your tracker spreadsheet). Highest total out of 30 is your lead; second is your backup.</p>
+  <div class="scorewrap">
+    <table class="score">
+      <thead><tr><th>What you're scoring</th><th>Why it matters</th><th>What a 5 looks like</th></tr></thead>
+      <tbody>
+        <tr><td>Runs your recipe as-is</td><td>The whole point — an IP-license, not their base with your flavors.</td><td class="s5">Yes, clean IP-license, brand-owns-IP</td></tr>
+        <tr><td>Min batch fits $10K</td><td>A small pilot you can actually afford, not a mass-scale MOQ.</td><td class="s5">Small pilot priced inside budget</td></tr>
+        <tr><td>Price / value</td><td>All-in cost incl. testing + packaging vs. what you get.</td><td class="s5">Transparent, competitive, fee creditable</td></tr>
+        <tr><td>Has distribution</td><td>Nothing sells without a licensed distributor in the chain.</td><td class="s5">In-house distro + retail placement</td></tr>
+        <tr><td>License verified</td><td>Active DCC license you confirmed yourself.</td><td class="s5">Active, matches entity, you checked it</td></tr>
+        <tr><td>Gut feel</td><td>Responsiveness, respect, do they want to build with you.</td><td class="s5">Fast, straight, treats you as a partner</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grad">
+    <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 3 3 6 3s6-2 6-3v-5"/></svg></div>
+    <div>
+      <h4>The graduation move — one roof for Phase 1 &amp; 2</h4>
+      <p>When you scale, take the Type S shared-kitchen license (~$50K) at My Green Network — the facility that already ran your test. Your proof run and your own licensed production end up in the same building, with the relationship already built.</p>
+    </div>
+  </div>
+</div></section>
+
+<section id="gate" style="padding-top:8px"><div class="wrap">
+  <div class="gate">
+    <div class="glab"><i class="led go"></i> The green light</div>
+    <h3>Don't spend the big money until you see <span class="hl">reorders</span></h3>
+    <p><b>Reorders — not first orders — from 5+ dispensaries within 60 days of hitting shelves.</b> First orders just mean a buyer took a chance. Reorders mean it actually sells. That's the single signal that turns your $10K test into a green light to scale — and the moment the Type S license makes sense.</p>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div>This is research and organization, not legal advice. Verify every license at search.cannabis.ca.gov before signing anything, and use a cannabis attorney for the licensing agreement.</div>
+  <div>Los Angeles Edible · 7-Day Manufacturer Sprint · Built July 2026.</div>
+</div></footer>
+
+</body>
+</html>
+
+<!-- make-it-live 1783365589 -->
