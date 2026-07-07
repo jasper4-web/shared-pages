@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Los Angeles Edible — Partnership Routes Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0e1712; --bg2:#0b120e; --card:#16241b; --card2:#1b2d21;
+    --line:#243a2c; --gold:#cba14e; --gold-soft:#e0c07d; --green:#5bb673;
+    --green-deep:#3f8a54; --text:#eae8df; --muted:#9aa89c; --muted2:#7b8a7e;
+    --red:#d4726a; --amber:#d9a441; --blue:#6fa8c0;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:radial-gradient(1200px 600px at 80% -10%, #16281c 0%, var(--bg) 55%) fixed, var(--bg);
+    color:var(--text);font-family:'Inter',system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:var(--gold-soft);text-decoration:none}
+  a:hover{text-decoration:underline}
+  h1,h2,h3,h4{font-family:'Fraunces',Georgia,serif;font-weight:600;line-height:1.15;letter-spacing:-.01em}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:50;background:rgba(11,18,14,.82);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  nav a{font-family:'Inter';font-size:12.5px;font-weight:600;color:var(--muted);padding:6px 11px;border-radius:20px;
+    border:1px solid transparent;letter-spacing:.02em;text-transform:uppercase;transition:.15s}
+  nav a:hover{color:var(--text);text-decoration:none;background:var(--card)}
+  nav a.active{color:var(--bg);background:var(--gold);border-color:var(--gold)}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  section{padding:56px 0 8px;scroll-margin-top:64px}
+  .eyebrow{font-family:'Inter';font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+  .sec-title{font-size:clamp(26px,4vw,38px);margin-bottom:6px}
+  .sec-sub{color:var(--muted);font-size:16px;max-width:70ch;margin-bottom:26px}
+
+  /* HERO */
+  header.hero{padding:64px 0 30px;text-align:center;border-bottom:1px solid var(--line)}
+  header.hero .kicker{font-family:'Inter';font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+  header.hero h1{font-size:clamp(34px,6vw,60px);font-weight:700;margin-bottom:14px}
+  header.hero h1 em{color:var(--gold);font-style:italic}
+  header.hero p{color:var(--muted);font-size:17px;max-width:60ch;margin:0 auto}
+  .updated{margin-top:18px;font-size:12.5px;color:var(--muted2);letter-spacing:.04em}
+
+  /* KEY CALLOUT */
+  .keybox{background:linear-gradient(135deg,#1c2e21,#182619);border:1px solid var(--gold);border-radius:16px;
+    padding:26px 28px;margin:30px 0 8px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .keybox::before{content:"🔑";position:absolute;right:20px;top:14px;font-size:44px;opacity:.16}
+  .keybox h3{color:var(--gold-soft);font-size:22px;margin-bottom:8px}
+  .keybox p{color:var(--text);font-size:15.5px;max-width:80ch}
+  .keybox p+p{margin-top:10px;color:var(--muted)}
+
+  /* GRID + CARDS */
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:820px){.g2,.g3{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 20px 18px;transition:.18s;position:relative}
+  .card:hover{border-color:var(--green-deep);transform:translateY(-2px)}
+  .card h3{font-size:19px;margin-bottom:4px;padding-right:8px}
+  .card .role{font-size:12px;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+  .card p{font-size:14.5px;color:var(--muted);margin-bottom:10px}
+  .card p strong{color:var(--text);font-weight:600}
+  .card .lbl{color:var(--green);font-weight:700;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
+
+  /* numbered avenue cards */
+  .num{position:absolute;top:-12px;left:-12px;width:38px;height:38px;border-radius:10px;background:var(--gold);
+    color:var(--bg);font-family:'Fraunces';font-weight:700;font-size:19px;display:grid;place-items:center;box-shadow:var(--shadow)}
+  .avenue{padding-top:22px}
+  .avenue .meta{display:flex;flex-direction:column;gap:9px;margin-top:12px;border-top:1px dashed var(--line);padding-top:12px}
+  .avenue .meta div{font-size:13.5px;color:var(--muted);display:flex;gap:8px}
+  .avenue .meta .k{color:var(--green);font-weight:700;min-width:78px;flex-shrink:0}
+
+  /* badges */
+  .badge{display:inline-block;font-family:'Inter';font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    padding:3px 9px;border-radius:20px;vertical-align:middle}
+  .b-live{background:rgba(91,182,115,.16);color:var(--green);border:1px solid var(--green-deep)}
+  .b-flag{background:rgba(217,164,65,.14);color:var(--amber);border:1px solid #8a6b28}
+  .b-dead{background:rgba(212,114,106,.14);color:var(--red);border:1px solid #8a3f39}
+  .b-best{background:var(--gold);color:var(--bg);border:1px solid var(--gold)}
+  .b-strong{background:rgba(91,182,115,.16);color:var(--green);border:1px solid var(--green-deep)}
+  .b-sit{background:rgba(111,168,192,.12);color:var(--blue);border:1px solid #3d6373}
+  .fit{position:absolute;top:16px;right:16px}
+
+  /* target list rows */
+  .trow{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+  .trow .left{flex:1;min-width:220px}
+  .contact{font-size:13.5px;color:var(--gold-soft);word-break:break-word}
+  .note{font-size:13px;color:var(--muted);margin-top:6px}
+
+  /* outreach */
+  .msg{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:20px;position:relative;margin-bottom:16px}
+  .msg pre{white-space:pre-wrap;font-family:'Inter';font-size:14px;color:var(--text);line-height:1.65}
+  .copybtn{position:absolute;top:14px;right:14px;background:var(--gold);color:var(--bg);border:none;border-radius:8px;
+    padding:7px 13px;font-family:'Inter';font-weight:700;font-size:12px;cursor:pointer;letter-spacing:.03em}
+  .copybtn:active{transform:scale(.96)}
+  .copybtn.done{background:var(--green)}
+
+  /* misc */
+  ul.clean{list-style:none;display:grid;gap:9px}
+  ul.clean li{padding-left:22px;position:relative;font-size:14.5px;color:var(--muted)}
+  ul.clean li::before{content:"▸";position:absolute;left:0;color:var(--gold);font-weight:700}
+  ul.clean li strong{color:var(--text)}
+  .callout{background:var(--card2);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0;font-size:14px;color:var(--muted)}
+  .callout strong{color:var(--gold-soft)}
+  .warn{border-left-color:var(--red)}
+  .warn strong{color:var(--red)}
+  .steps{counter-reset:s;display:grid;gap:12px}
+  .steps li{list-style:none;position:relative;padding:14px 16px 14px 54px;background:var(--card);border:1px solid var(--line);border-radius:12px;font-size:14.5px;color:var(--muted)}
+  .steps li strong{color:var(--text)}
+  .steps li::before{counter-increment:s;content:counter(s);position:absolute;left:14px;top:13px;width:28px;height:28px;border-radius:8px;
+    background:var(--green-deep);color:#fff;font-family:'Fraunces';font-weight:700;display:grid;place-items:center;font-size:15px}
+  footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 0 50px;text-align:center;color:var(--muted2);font-size:13px}
+  .divider{height:1px;background:var(--line);margin:8px 0 0}
+  .tablewrap{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+  th{color:var(--gold);font-family:'Inter';font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+  td{color:var(--muted)}td strong{color:var(--text)}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="#unlock">Legal Unlock</a>
+  <a href="#frontdoor">Front Door</a>
+  <a href="#offroad">Off-Road Avenues</a>
+  <a href="#find">Find Them</a>
+  <a href="#outreach">Outreach</a>
+  <a href="#numbers">Numbers</a>
+  <a href="#next">Next Steps</a>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Los Angeles Edible · Manufacturer Strategy</div>
+    <h1>The <em>Off-Road</em> Map</h1>
+    <p>Every route to getting your gummy made — the front door, and all the back roads where a small brand actually holds the leverage.</p>
+    <div class="updated">Compiled July 7, 2026 · Research, not legal advice · Verify every license at search.cannabis.ca.gov</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ============ LEGAL UNLOCK ============ -->
+<section id="unlock">
+  <div class="eyebrow">Start Here</div>
+  <h2 class="sec-title">The Legal Unlock &amp; Guardrails</h2>
+  <p class="sec-sub">One cheap move turns you from "risky non-licensee" into a legitimate partner every operator can say yes to. Get this right and every avenue below opens up.</p>
+
+  <div class="keybox">
+    <h3>The master key: a Cannabis Event Organizer license</h3>
+    <p>The rule that makes small deals messy is <strong>§5032</strong> — a licensee technically can't manufacture "pursuant to a contract with a non-licensee." The workaround is to <strong>become a licensed person yourself.</strong> A Cannabis Event Organizer license needs <strong>no premises, no kitchen, and costs only a few hundred dollars</strong> — but it makes you "licensed" in the state's eyes, which cleans up nearly every creative deal on this page.</p>
+    <p>It's the difference between asking a nervous operator to bend a rule for you, and walking in as a peer they can legally partner with. You said yes to this — it's step one.</p>
+  </div>
+
+  <div class="grid g3" style="margin-top:22px">
+    <div class="card">
+      <h3>The FIH trap</h3>
+      <p class="lbl">Financial Interest Holder</p>
+      <p>If your deal gives you a <strong>share of profits</strong>, you become an "FIH" who must be <strong>disclosed to the state</strong> on your partner's license. Non-disclosure can cost them their license.</p>
+      <p><strong>The fix:</strong> a flat per-unit fee or fixed royalty usually avoids FIH status. Profit/revenue-share almost always triggers it.</p>
+    </div>
+    <div class="card">
+      <h3>Own your recipe</h3>
+      <p class="lbl">Private-label, never white-label</p>
+      <p>In a true white-label, the <strong>manufacturer</strong> owns the formula and can resell it. Private-label means <strong>you own it exclusively.</strong></p>
+      <p><strong>The fix:</strong> NDA before you disclose the formula, trade-secret framing, and a brand-owns-IP clause. Never hand over the complete recipe — split it or pre-mix a proprietary blend.</p>
+    </div>
+    <div class="card">
+      <h3>Verify before you wire</h3>
+      <p class="lbl">Good standing only</p>
+      <p>"In trouble" cuts both ways. A distressed operator is a great deal <strong>until you inherit their problems.</strong></p>
+      <p><strong>The fix:</strong> confirm the license is <strong>active and in good standing</strong> at search.cannabis.ca.gov, and budget $1.5–2.5K for a cannabis attorney to paper the agreement. It's the one place worth spending before you sign.</p>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:18px"><strong>The three clean pathways</strong> to have a licensee legally make your brand: (1) be <strong>disclosed as an owner/FIH</strong> of the licensee, (2) hold <strong>your own license</strong> (the Event Organizer license counts), or (3) <strong>sell/assign the IP</strong> to the licensee. Every avenue below routes through one of these three.</div>
+</section>
+
+<!-- ============ FRONT DOOR ============ -->
+<section id="frontdoor">
+  <div class="eyebrow">Route 1</div>
+  <h2 class="sec-title">The Front Door <span class="badge b-strong" style="vertical-align:middle">Verified live</span></h2>
+  <p class="sec-sub">The advertised co-packers — the obvious path. Least leverage for you, but real and reachable. I clicked into each contact page myself; status and exact links below.</p>
+
+  <div class="grid g2">
+    <div class="card"><div class="trow"><div class="left">
+      <h3>My Green Network <span class="badge b-best">#1 lead</span></h3>
+      <div class="role">Co-manufacturer + distribution · Santa Ana</div>
+      <div class="contact"><a href="https://www.mygreennetwork.com/contact/">mygreennetwork.com/contact</a></div>
+      <div class="note">Set Subject to "Vendor Partnership," name "Cannabis Co-Manufacturing." Real Baker Perkins gummy line + in-house distro. Lic. CDPH 10004741 / C11-0001478-LIC.</div>
+    </div></div></div>
+
+    <div class="card"><div class="trow"><div class="left">
+      <h3>Cali Co-Pack <span class="badge b-strong">low MOQ</span></h3>
+      <div class="role">Co-packing (their whole business) · CA</div>
+      <div class="contact"><a href="https://www.calicopack.com/contact">calicopack.com/contact</a></div>
+      <div class="note">Check "Gummies" on the form. Advertises low minimums for new brands. Get their DCC license # on the first call.</div>
+    </div></div></div>
+
+    <div class="card"><div class="trow"><div class="left">
+      <h3>Se7enLeaf</h3>
+      <div class="role">White-label + custom formulation + distro · Costa Mesa</div>
+      <div class="contact"><a href="https://www.se7enleaf.com/contact.html">se7enleaf.com/contact.html</a> · 877-464-6652</div>
+      <div class="note">Pick "White Labeling → introducing a new brand." Leans vape/tincture — confirm gummy small runs. Lic. CDPH-10002469.</div>
+    </div></div></div>
+
+    <div class="card"><div class="trow"><div class="left">
+      <h3>Dr. Norm's</h3>
+      <div class="role">Own manufacturing · Los Angeles</div>
+      <div class="contact">info@doctornorms.com · Wholesale (818) 422-9077</div>
+      <div class="note">No web form — email/phone is the door. Alive, 500+ stores, but bakery/hash-focused, so it's a cold ask for a gummy co-pack.</div>
+    </div></div></div>
+
+    <div class="card"><div class="trow"><div class="left">
+      <h3>WHOA Infused</h3>
+      <div class="role">Craft edibles maker · Long Beach</div>
+      <div class="contact"><a href="https://www.whoainfused.com/contact">whoainfused.com/contact</a></div>
+      <div class="note">That page is a dispensary vendor form, not a co-pack intake — cold ask. Lead with "paid custom run." Lic. DCC-10004892.</div>
+    </div></div></div>
+
+    <div class="card"><div class="trow"><div class="left">
+      <h3>Inanna Manufacturing <span class="badge b-flag">verify</span></h3>
+      <div class="role">Best recipe-fit on paper · Bellflower</div>
+      <div class="contact"><a href="https://inannamfg.com/">inannamfg.com</a> loads <strong>blank</strong> · IG @inannawl</div>
+      <div class="note">Explicitly runs clients' own recipes — but the site shows no content, matching "no proof of life." Confirm operating before anything.</div>
+    </div></div></div>
+
+    <div class="card"><div class="trow"><div class="left">
+      <h3>California Cannabis White Label <span class="badge b-flag">wrong fit?</span></h3>
+      <div class="role">White-label + co-packing · SoCal</div>
+      <div class="contact"><a href="https://www.calicannabiswhitelabel.com/contact-us">calicannabiswhitelabel.com/contact-us</a> · info@ccwl.com</div>
+      <div class="note">Licensed (DCC-10004670) but specialties are prerolls / flower / THCA — no gummies listed. One call only, to ask if they'll do edibles.</div>
+    </div></div></div>
+
+    <div class="card"><div class="trow"><div class="left">
+      <h3>Kaneh Co <span class="badge b-dead">dead</span></h3>
+      <div class="role">Was a San Diego edibles kitchen</div>
+      <div class="contact">kanehedibles.com → redirects to spam</div>
+      <div class="note">The domain no longer belongs to them; it now points to a foreign gambling site. Skip entirely — don't send anything there.</div>
+    </div></div></div>
+  </div>
+</section>
+
+<!-- ============ OFF-ROAD ============ -->
+<section id="offroad">
+  <div class="eyebrow">Route 2 · The real strategy</div>
+  <h2 class="sec-title">Off-Road Avenues</h2>
+  <p class="sec-sub">Underused licensed capacity — people already paying rent, security, insurance and state fees on a kitchen that isn't running full. To them your money isn't a purchase order, it's <strong style="color:var(--text)">overhead relief.</strong> That flips you from "small brand asking a favor" to "the person solving their cash problem."</p>
+
+  <div class="grid g2">
+
+    <div class="card avenue"><span class="num">1</span><span class="fit badge b-best">Best fit</span>
+      <h3>The idle-license revival</h3>
+      <p>California is full of operators holding an <strong>active manufacturing license but barely running</strong> — they scaled for a boom that didn't come and now bleed fixed costs on a quiet line. Your batch costs them almost nothing at the margin; your check lands straight on overhead.</p>
+      <div class="meta">
+        <div><span class="k">Win-win</span> Near-zero marginal cost to them, boutique small run + friend pricing for you.</div>
+        <div><span class="k">Find them</span> DCC list of active Type 6/7/N manufacturers near LA, cross-referenced against brands gone dark on Weedmaps/Leafly. Active license + dark brand = room.</div>
+        <div><span class="k">Watch-out</span> Confirm good standing; some are quiet because they're in trouble.</div>
+      </div>
+    </div>
+
+    <div class="card avenue"><span class="num">2</span><span class="fit badge b-best">Best fit</span>
+      <h3>Marketing-for-production swap</h3>
+      <p>This is the one nobody else can run: <strong>you already have a campaign machine</strong> — creator seeding, content, product photography, the whole apparatus. Trade that horsepower to a struggling licensed maker in exchange for production capacity or steep pricing. They get the marketing they can't afford; you get the kitchen you need.</p>
+      <div class="meta">
+        <div><span class="k">Win-win</span> You spend built capacity, not cash; they get sales lift that fixes the real problem — slow movement.</div>
+        <div><span class="k">Find them</span> Small licensed brands with a good product but dead socials and no content. Pitch a co-marketed drop.</div>
+        <div><span class="k">Watch-out</span> Keep IP separate — this is a services trade, not giving away your recipe.</div>
+      </div>
+    </div>
+
+    <div class="card avenue"><span class="num">3</span><span class="fit badge b-strong">Strong</span>
+      <h3>Anchor-tenant recurring deal</h3>
+      <p>Instead of buying MyGN's $50K package, go to a member kitchen (or any small licensed maker) and offer to be their <strong>committed monthly-volume anchor</strong> — guaranteed recurring dollars they can bank against rent.</p>
+      <div class="meta">
+        <div><span class="k">Win-win</span> Recurring beats a one-off to a squeezed operator; you get small runs at anchor pricing.</div>
+        <div><span class="k">Find them</span> Shared-use / Type S facilities and their member rosters; smaller Type 6 shops with visible slack.</div>
+      </div>
+    </div>
+
+    <div class="card avenue"><span class="num">4</span><span class="fit badge b-strong">Strong</span>
+      <h3>Toll manufacturing — you own the tooling</h3>
+      <p>Buy your own custom silicone molds and even pre-buy your distillate, then pay a licensee purely for <strong>machine time + labor.</strong> Flips the risk off them — no materials, no R&D fronting.</p>
+      <div class="meta">
+        <div><span class="k">Win-win</span> Lowest-commitment "yes" you can ask; they just sell idle line-hours to cover fixed costs.</div>
+        <div><span class="k">Find them</span> Future4200 toll-processing threads; any operator with a depositor and gaps in their schedule.</div>
+      </div>
+    </div>
+
+    <div class="card avenue"><span class="num">5</span><span class="fit badge b-strong">Strong</span>
+      <h3>Equity-incubator partner</h3>
+      <p>LA &amp; LA County social-equity programs are full of operators <strong>granted a license and kitchen but with no capital</strong> — the exact inverse of you. You fund, they produce; their overhead gets covered and they keep the license active (which the program requires).</p>
+      <div class="meta">
+        <div><span class="k">Win-win</span> Mission-aligned, genuine goodwill, possible access to equity-program perks &amp; buyer favor.</div>
+        <div><span class="k">Find them</span> cannabis.lacity.gov Social Equity Program; LA County Cannabis Social Equity Academy cohorts (through Dec 2026).</div>
+      </div>
+    </div>
+
+    <div class="card avenue"><span class="num">6</span><span class="fit badge b-strong">Strong</span>
+      <h3>The cross-category kitchen</h3>
+      <p>A licensed cannabis <strong>beverage or chocolate maker</strong> already owns cookers, depositors and a compliant kitchen that sits idle between their own runs. Gummies aren't their brand, so they don't advertise co-packing — but fill-in work that covers fixed costs is exactly what they want, and nobody else is asking.</p>
+      <div class="meta">
+        <div><span class="k">Win-win</span> Their equipment already fits; you're not competing for the slot.</div>
+        <div><span class="k">Find them</span> DCC manufacturer list filtered by product type ≠ gummies, near LA.</div>
+      </div>
+    </div>
+
+    <div class="card avenue"><span class="num">7</span><span class="fit badge b-strong">Strong</span>
+      <h3>Vertically-integrated dispensary</h3>
+      <p>Some retailers hold a <strong>manufacturing license and a back-of-house kitchen</strong> but pour all their energy into the storefront. Fill that dormant license — and the bonus is huge: your product lands on <strong>their own shelf</strong> the day it's made.</p>
+      <div class="meta">
+        <div><span class="k">Win-win</span> Solves production AND first-buyer/distribution in one move.</div>
+        <div><span class="k">Find them</span> Cross-reference retail licenses that also hold a Type 6/N at the same or linked entity.</div>
+      </div>
+    </div>
+
+    <div class="card avenue"><span class="num">8</span><span class="fit badge b-strong">Strong</span>
+      <h3>Reverse-partner a dying micro-brand</h3>
+      <p>Somewhere is a tiny brand that holds (or is disclosed on) a license, has a kitchen, and is <strong>running out of runway.</strong> Inject cash to keep them alive in exchange for producing your line under their umbrella; get yourself disclosed as an FIH to keep it clean.</p>
+      <div class="meta">
+        <div><span class="k">Win-win</span> You buy instant legal infrastructure; they get oxygen.</div>
+        <div><span class="k">Find them</span> Brands on Weedmaps with old "last updated" dates, thin shelf presence, founder burnout signals.</div>
+      </div>
+    </div>
+
+    <div class="card avenue"><span class="num">9</span><span class="fit badge b-sit">Situational</span>
+      <h3>Minority ownership stake</h3>
+      <p>Rather than only an arm's-length deal, take a <strong>small equity stake</strong> in a struggling licensee and become a disclosed owner. Your capital stabilizes them; your ownership makes producing your brand fully compliant (pathway #1).</p>
+      <div class="meta">
+        <div><span class="k">Win-win</span> Cleanest legal footing of all; aligns both sides long-term.</div>
+        <div><span class="k">Watch-out</span> Real diligence required — you're buying into their liabilities too. Attorney essential.</div>
+      </div>
+    </div>
+
+    <div class="card avenue"><span class="num">10</span><span class="fit badge b-sit">Situational</span>
+      <h3>Prepay cash-injection</h3>
+      <p>For any operator here, the most persuasive offer isn't a normal order — it's <strong>timing.</strong> Prepay a block of production up front so they get a lump sum now for this month's overhead, in exchange for locked low per-unit pricing across the block.</p>
+      <div class="meta">
+        <div><span class="k">Win-win</span> You lend against your own future runs; they get the one thing a squeezed kitchen can't get — cash today.</div>
+      </div>
+    </div>
+
+    <div class="card avenue"><span class="num">11</span><span class="fit badge b-sit">Situational</span>
+      <h3>Cultivator moving into manufacturing</h3>
+      <p>Cultivators and vertical operators who <strong>added a manufacturing license but have no brand</strong> to justify it. They need product flowing through that license; you are that product.</p>
+      <div class="meta">
+        <div><span class="k">Win-win</span> They validate a license investment; you may get discounted inputs from their flower.</div>
+        <div><span class="k">Find them</span> Entities holding both cultivation and Type 6/7 licenses on the DCC list.</div>
+      </div>
+    </div>
+
+    <div class="card avenue"><span class="num">12</span><span class="fit badge b-sit">Situational</span>
+      <h3>Out-of-LA, low-overhead makers</h3>
+      <p>Licensed kitchens in <strong>Adelanto, Desert Hot Springs, Lynwood, Coachella</strong> carry far lower rent than LA and are hungrier for volume. A short drive buys you cheaper, more available capacity.</p>
+      <div class="meta">
+        <div><span class="k">Win-win</span> Their lower fixed costs = better pricing on your small run.</div>
+        <div><span class="k">Watch-out</span> Factor drive time for tours and hand-delivered gold-standard samples.</div>
+      </div>
+    </div>
+
+    <div class="card avenue"><span class="num">13</span><span class="fit badge b-sit">Situational</span>
+      <h3>Co-branded limited drop</h3>
+      <p>Partner with an <strong>established brand</strong> on a limited-edition collab: they produce under their license, you co-market with your creator machine. You borrow their infrastructure and credibility for one run to prove the concept.</p>
+      <div class="meta">
+        <div><span class="k">Win-win</span> They get fresh buzz + your content; you get a proven line making your product.</div>
+      </div>
+    </div>
+
+    <div class="card avenue"><span class="num">14</span><span class="fit badge b-sit">Situational</span>
+      <h3>Distressed-asset / receivership watch</h3>
+      <p>Cannabis is in a shakeout; operators fall into default constantly. A facility in trouble will take a <strong>paying shift</strong> to show cash flow to creditors — premium capacity at distressed pricing.</p>
+      <div class="meta">
+        <div><span class="k">Win-win</span> Best pricing available, if you move carefully.</div>
+        <div><span class="k">Find them</span> Cannabis business brokers, receivership notices, "for lease" cannabis-facility listings.</div>
+        <div><span class="k">Watch-out</span> Highest risk on the board — verify standing, pay per-run, never prepay big.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ FIND THEM ============ -->
+<section id="find">
+  <div class="eyebrow">The How</div>
+  <h2 class="sec-title">How to Actually Find Them</h2>
+  <p class="sec-sub">The kitchens with room don't have a "co-packing" web page. Here's how you surface them.</p>
+
+  <div class="grid g3">
+    <div class="card">
+      <h3>DCC license mining</h3>
+      <p class="lbl">search.cannabis.ca.gov</p>
+      <p>Pull the list of <strong>active manufacturer licenses</strong> (Type 6, 7, N, S) near LA. Every entry gives you the legal entity, license type, status and city. This is your raw target universe — filter it for idle lines, cross-category makers, and dual license-holders.</p>
+    </div>
+    <div class="card">
+      <h3>Reverse-lookup from the shelf</h3>
+      <p class="lbl">Walk indie dispensaries</p>
+      <p>Buy 4–6 gummies from the <strong>smallest local brands</strong> at Green Qween, Sweet Flower, From The Earth. Read the manufacturer's legal name off the info panel, run it through the DCC search. Two or three tiny brands tracing to one kitchen = a small-run co-packer. Ask the budtender who makes the local stuff — they know.</p>
+    </div>
+    <div class="card">
+      <h3>Back-channels</h3>
+      <p class="lbl">Where capacity hides</p>
+      <p>The quiet operators hang out in <strong>Future4200 toll-processing threads</strong> and regional operator Discords/Slacks. Post what you need — "finished gummy recipe, funded, small paid run near LA" — and let kitchens with gaps come to you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OUTREACH ============ -->
+<section id="outreach">
+  <div class="eyebrow">Copy &amp; Send</div>
+  <h2 class="sec-title">The Outreach Message</h2>
+  <p class="sec-sub">Written to make you sound funded, decisive, and low-risk — the three things any kitchen wants before giving a small brand a slot.</p>
+
+  <div class="msg">
+    <button class="copybtn" onclick="copyMsg(this,'full')">Copy</button>
+    <pre id="full">Subject: Small-batch custom gummy run — looking for a licensed partner
+
+Hi [Name / Team],
+
+I run a small California edibles brand getting ready to launch, and I'm looking for a licensed manufacturer to produce a mid-size test batch of my gummies for an upcoming marketing campaign. I have a finished, dialed-in recipe and I'm ready to license the IP to you and move quickly.
+
+I'd love to start with a paid pilot run and, if it goes as well as I expect, grow into ongoing production from there. Before we get into numbers, I'd really like to come see your facility in person — could we schedule a visit in the next week or two?
+
+A few quick things on my end:
+- Finished recipe, ready to hand off — no R&D guesswork
+- Funded and ready to place a real order, not just gathering quotes
+- Flexible on timing to fit your production queue
+
+What day works for a tour, and who's the best person to coordinate with? Looking forward to meeting you.
+
+[Your name]
+[Brand name] · [phone] · [email]</pre>
+  </div>
+
+  <div class="msg">
+    <button class="copybtn" onclick="copyMsg(this,'short')">Copy</button>
+    <div class="lbl" style="margin-bottom:8px">Short version — for tight web forms (Cali Co-Pack, MyGN, Se7enLeaf)</div>
+    <pre id="short">Small CA edibles brand launching soon. I have a finished gummy recipe and want to license it to you for a paid mid-size test run for a marketing campaign, then scale if it goes well. Funded and ready to move. Could we schedule a facility visit in the next week or two? — [name], [phone]</pre>
+  </div>
+
+  <div class="callout"><strong>Two mentor notes:</strong> On the MyGN form pick subject "Vendor Partnership"; on Se7enLeaf choose "White Labeling → introducing a new brand." And don't name your exact budget in the first message — "mid-size test run" + "funded" is the right bait. Let them quote first so you keep your leverage.</div>
+</section>
+
+<!-- ============ NUMBERS ============ -->
+<section id="numbers">
+  <div class="eyebrow">Reality Check</div>
+  <h2 class="sec-title">Numbers &amp; Compliance</h2>
+  <p class="sec-sub">What the money actually looks like, and the rules that can quietly kill a deal.</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>The $10K test budget</h3>
+      <ul class="clean" style="margin-top:10px">
+        <li><strong>Recipe onboarding / pilot:</strong> $2,000–4,000</li>
+        <li><strong>Production 1,500–3,000 units:</strong> $3,000–5,000</li>
+        <li><strong>Testing (if not included):</strong> ~$600–915/batch</li>
+        <li><strong>Child-resistant packaging:</strong> $1,000–1,500</li>
+        <li><strong>Attorney for the IP agreement:</strong> $1,500</li>
+        <li><strong>Hold back for demos/samples:</strong> $500–1,000</li>
+      </ul>
+      <div class="callout" style="margin-top:14px">$10K covers <strong>R&amp;D + a small pilot</strong> at a low-MOQ shop — not a full commercial run. Price a paid pilot in the first meeting, not a launch.</div>
+    </div>
+    <div class="card">
+      <h3>Unit economics that must work</h3>
+      <div class="tablewrap"><table>
+        <tr><th>Lever</th><th>Target</th></tr>
+        <tr><td>Shelf price</td><td><strong>$15–18</strong> / 100mg pack</td></tr>
+        <tr><td>Wholesale</td><td>$6–9 (buyers ~2x their money)</td></tr>
+        <tr><td>Distributor cut</td><td>15–30%</td></tr>
+        <tr><td>Your all-in cost</td><td><strong>$2.50–3.50</strong> / pack</td></tr>
+        <tr><td>Excise tax</td><td>15% (locked to Jun 2028)</td></tr>
+        <tr><td>Per-gummy make</td><td>~$0.13 / 25mg (operator-reported)</td></tr>
+      </table></div>
+      <p style="margin-top:12px">Take the <strong>$2.50–3.50 all-in target</strong> into every negotiation.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>2026 compliance cheat-sheet</h3>
+    <ul class="clean" style="margin-top:10px">
+      <li><strong>Dose:</strong> 10mg THC/serving, 100mg THC/package (adult-use)</li>
+      <li><strong>Packaging:</strong> child-resistant, resealable, opaque, tamper-evident; universal cannabis symbol; "cannabis-infused" bold above the name; batch #, dates, licensee name + license #, ingredients, allergens, warning</li>
+      <li><strong>Testing:</strong> mandatory third-party batch test before sale; the distributor holding the batch arranges it</li>
+      <li><strong>Distributor required:</strong> nothing sells without moving through a licensed distributor (they also handle excise tax + Metrc track-and-trace)</li>
+      <li><strong>Tailwind:</strong> AB 8 (Jan 1, 2026) closed the intoxicating-hemp loophole — a lot of your cheap gray-market competition just got forced out</li>
+    </ul>
+    <div class="callout warn" style="margin-top:14px"><strong>Do not sign a profit-share or IP-license deal without cannabis counsel.</strong> The §5032 / white-label structure is exactly what the state is scrutinizing. Budget $1.5–2.5K — the one place worth spending before you sign.</div>
+  </div>
+</section>
+
+<!-- ============ NEXT ============ -->
+<section id="next">
+  <div class="eyebrow">From Strategy to Names</div>
+  <h2 class="sec-title">Next Steps</h2>
+  <p class="sec-sub">You said yes to the Event Organizer license — that opens Avenues 1, 4, 6, 8 and 10 wide. Here's the order of play.</p>
+
+  <ol class="steps">
+    <li><strong>Lock the legal unlock.</strong> Start the Cannabis Event Organizer license application and line up a cannabis attorney for the eventual agreement.</li>
+    <li><strong>Build the target list.</strong> Pull active LA-area manufacturer licenses from the DCC and flag the idle lines, equity operators, cross-category kitchens and vertically-integrated dispensaries — turning this map into names and numbers.</li>
+    <li><strong>Prep the gold-standard sample</strong> (non-infused) + one-page spec sheet before any tour. This is your single biggest credibility lever.</li>
+    <li><strong>Fire the front-door outreach</strong> in parallel — the 5 live targets above — so you always have a fallback kitchen and negotiating leverage.</li>
+    <li><strong>Walk 10–15 indie dispensaries</strong> to collect the reverse-lookup targets and a "whisper of demand" that cancels every kitchen's #1 fear.</li>
+  </ol>
+
+  <div class="callout" style="margin-top:20px"><strong>Want me to build the DCC target list next?</strong> I can pull the active LA-area licenses and tag which avenue each one fits — idle, equity, cross-category, dual-license — so you walk into calls with a ranked call sheet instead of a strategy doc.</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    Los Angeles Edible · The Off-Road Map · Compiled July 7, 2026<br>
+    Research, not legal advice. Verify every license at search.cannabis.ca.gov and use a cannabis attorney before signing.
+  </div>
+</footer>
+
+<script>
+  // active nav highlight
+  const secs=[...document.querySelectorAll('section')];
+  const links=[...document.querySelectorAll('#nav a')];
+  const byId=id=>links.find(l=>l.getAttribute('href')==='#'+id);
+  const obs=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));
+      const a=byId(e.target.id);if(a)a.classList.add('active');}});
+  },{rootMargin:'-45% 0px -50% 0px'});
+  secs.forEach(s=>obs.observe(s));
+
+  // copy buttons
+  function copyMsg(btn,id){
+    const t=document.getElementById(id).innerText;
+    navigator.clipboard.writeText(t).then(()=>{
+      const o=btn.textContent;btn.textContent='Copied ✓';btn.classList.add('done');
+      setTimeout(()=>{btn.textContent=o;btn.classList.remove('done');},1600);
+    });
+  }
+</script>
+</body>
+</html>
+
+<!-- make-it-live 1783446393 -->
