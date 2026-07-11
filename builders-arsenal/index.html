@@ -1,0 +1,582 @@
+<title>The Builder's Arsenal — Top 20 Premade-Resource Sites for AI Building</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ground: #0a0c11;
+    --panel: #11141c;
+    --panel-2: #151926;
+    --line: #232838;
+    --line-soft: #1a1e2b;
+    --ink: #e9ecf4;
+    --muted: #8e96aa;
+    --dim: #5c6478;
+    --accent: #8a93ff;
+    --accent-soft: rgba(138, 147, 255, 0.12);
+    --free: #5fd39a;
+    --freemium: #e8c268;
+    --paid: #ef8a9b;
+    --display: "Futura", "Avenir Next", "Avenir", "Helvetica Neue", sans-serif;
+    --body: "Avenir Next", "Avenir", "Helvetica Neue", -apple-system, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Menlo", monospace;
+  }
+  html { background: var(--ground); }
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    line-height: 1.55;
+    margin: 0;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- hero ---------- */
+  header { border-bottom: 1px solid var(--line); position: relative; overflow: hidden; }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(var(--line-soft) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 90% 100% at 50% 0%, black 30%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 100% at 50% 0%, black 30%, transparent 78%);
+    pointer-events: none;
+  }
+  .hero-inner { position: relative; padding: 72px 0 44px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent); margin: 0 0 18px;
+  }
+  h1 {
+    font-family: var(--display); font-weight: 600; text-wrap: balance;
+    font-size: clamp(34px, 5.4vw, 56px); line-height: 1.05;
+    letter-spacing: -0.015em; margin: 0 0 16px;
+  }
+  .lede { color: var(--muted); font-size: 17px; max-width: 62ch; margin: 0 0 36px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  .funnel { display: flex; align-items: stretch; gap: 0; border: 1px solid var(--line); background: var(--panel); }
+  .funnel-step { flex: 1; padding: 16px 18px 14px; min-width: 0; }
+  .funnel-step + .funnel-step { border-left: 1px solid var(--line); }
+  .funnel-n {
+    font-family: var(--mono); font-variant-numeric: tabular-nums;
+    font-size: clamp(20px, 3vw, 30px); font-weight: 600; color: var(--ink);
+  }
+  .funnel-step:last-child .funnel-n { color: var(--accent); }
+  .funnel-l { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin-top: 4px; }
+  @media (max-width: 720px) {
+    .funnel { flex-wrap: wrap; }
+    .funnel-step { flex: 1 1 45%; border-top: 1px solid var(--line); }
+    .funnel-step:nth-child(-n+2) { border-top: 0; }
+    .funnel-step:nth-child(odd) { border-left: 0; }
+  }
+
+  /* ---------- filter rail ---------- */
+  nav.rail {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in srgb, var(--ground) 88%, transparent);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .rail-inner { display: flex; gap: 8px; overflow-x: auto; padding: 12px 24px; max-width: 980px; margin: 0 auto; box-sizing: border-box; scrollbar-width: none; }
+  .rail-inner::-webkit-scrollbar { display: none; }
+  .chip {
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em;
+    color: var(--muted); background: transparent; border: 1px solid var(--line);
+    padding: 7px 13px; cursor: pointer; white-space: nowrap; border-radius: 2px;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .chip:hover { color: var(--ink); border-color: var(--dim); }
+  .chip[aria-pressed="true"] { color: var(--ground); background: var(--accent); border-color: var(--accent); font-weight: 600; }
+  .chip:focus-visible, .visit:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- entries ---------- */
+  main { padding: 44px 0 24px; }
+  .entry {
+    display: grid; grid-template-columns: 88px 1fr; gap: 0 26px;
+    border: 1px solid var(--line); background: var(--panel);
+    padding: 26px 28px 24px; margin-bottom: 18px; border-radius: 2px;
+  }
+  .entry.hidden { display: none; }
+  .rank {
+    font-family: var(--mono); font-variant-numeric: tabular-nums;
+    font-size: 40px; font-weight: 600; color: var(--dim); line-height: 1;
+    padding-top: 4px;
+  }
+  .entry:nth-of-type(-n+3) .rank { color: var(--accent); }
+  .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px; margin-bottom: 2px; }
+  .head h2 { font-family: var(--display); font-weight: 600; font-size: 24px; letter-spacing: -0.01em; margin: 0; }
+  .head h2 a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line); }
+  .head h2 a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  .cat { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 4px 9px; border-radius: 2px; }
+  .cost { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 9px; border-radius: 2px; border: 1px solid; }
+  .cost.free { color: var(--free); border-color: color-mix(in srgb, var(--free) 40%, transparent); }
+  .cost.freemium { color: var(--freemium); border-color: color-mix(in srgb, var(--freemium) 40%, transparent); }
+  .cost.paid { color: var(--paid); border-color: color-mix(in srgb, var(--paid) 40%, transparent); }
+  .tagline { color: var(--muted); font-size: 15.5px; font-style: italic; margin: 4px 0 14px; }
+  .lines { list-style: none; margin: 0 0 14px; padding: 0; max-width: 72ch; }
+  .lines li { position: relative; padding-left: 18px; margin-bottom: 7px; font-size: 14.5px; color: var(--ink); }
+  .lines li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 8px; height: 1px; background: var(--accent); }
+  .why {
+    border-left: 2px solid var(--accent); background: var(--panel-2);
+    padding: 12px 16px; margin: 0 0 16px; max-width: 72ch;
+    font-size: 13.5px; color: var(--muted); border-radius: 0 2px 2px 0;
+  }
+  .why b { color: var(--ink); font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+  .foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .visit {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
+    color: var(--ground); background: var(--accent); text-decoration: none;
+    padding: 9px 16px; border-radius: 2px; font-weight: 600;
+  }
+  .visit:hover { background: #a3aaff; }
+  .url { font-family: var(--mono); font-size: 12px; color: var(--dim); word-break: break-all; }
+  @media (max-width: 640px) {
+    .entry { grid-template-columns: 1fr; padding: 20px; }
+    .rank { font-size: 26px; padding: 0 0 8px; }
+  }
+
+  /* ---------- honorable mentions ---------- */
+  .hm-head { margin: 56px 0 20px; }
+  .hm-head h2 { font-family: var(--display); font-weight: 600; font-size: 26px; margin: 0 0 6px; }
+  .hm-head p { color: var(--muted); margin: 0; font-size: 15px; }
+  .hm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  .hm {
+    border: 1px solid var(--line); background: var(--panel); padding: 16px 18px;
+    border-radius: 2px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .hm a { font-family: var(--display); font-weight: 600; font-size: 16px; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line); align-self: flex-start; }
+  .hm a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  .hm p { margin: 0; font-size: 13px; color: var(--muted); }
+
+  footer { border-top: 1px solid var(--line); margin-top: 64px; padding: 28px 0 44px; }
+  footer p { font-family: var(--mono); font-size: 12px; color: var(--dim); margin: 0 0 6px; max-width: 80ch; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header>
+  <div class="hero-grid"></div>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">455 sites scouted · 72 hand-vetted · 20 winners &nbsp;//&nbsp; July 2026</p>
+    <h1>The Builder's Arsenal</h1>
+    <p class="lede">The <strong>top 20 premade-resource sites</strong> for building with AI — component libraries, backgrounds, boilerplates, MCP directories, and design tools in the spirit of <strong>React&nbsp;Bits</strong>. Every pick was opened, inspected, and ranked against the rest of its category before it earned a slot.</p>
+    <div class="funnel" role="group" aria-label="Vetting funnel">
+      <div class="funnel-step"><div class="funnel-n">455</div><div class="funnel-l">Candidates found</div></div>
+      <div class="funnel-step"><div class="funnel-n">416</div><div class="funnel-l">Unique sites</div></div>
+      <div class="funnel-step"><div class="funnel-n">72</div><div class="funnel-l">Pages hand-vetted</div></div>
+      <div class="funnel-step"><div class="funnel-n">20</div><div class="funnel-l">Made the cut</div></div>
+    </div>
+  </div>
+</header>
+
+<nav class="rail" aria-label="Filter by category">
+  <div class="rail-inner">
+    <button class="chip" data-group="all" aria-pressed="true">All 20</button>
+    <button class="chip" data-group="ui" aria-pressed="false">Components &amp; UI</button>
+    <button class="chip" data-group="motion" aria-pressed="false">Motion, 3D &amp; Backgrounds</button>
+    <button class="chip" data-group="starters" aria-pressed="false">Starters &amp; Templates</button>
+    <button class="chip" data-group="ai" aria-pressed="false">AI, MCP &amp; Agents</button>
+    <button class="chip" data-group="assets" aria-pressed="false">Icons &amp; Illustrations</button>
+    <button class="chip" data-group="design" aria-pressed="false">Design Tools</button>
+    <button class="chip" data-group="inspo" aria-pressed="false">Inspiration</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <article class="entry" data-group="ui">
+    <div class="rank">01</div>
+    <div>
+      <div class="head"><h2><a href="https://reactbits.dev/">React Bits</a></h2><span class="cat">Animated UI</span><span class="cost free">Free · MIT + Commons Clause</span></div>
+      <p class="tagline">The gold standard for copy-paste animated React components.</p>
+      <ul class="lines">
+        <li>130+ free animated React components: text effects like BlurText and scramble reveals, animated backgrounds, and interactive UI flourishes.</li>
+        <li>Every component ships in four variants — JavaScript or TypeScript, plain CSS or Tailwind — so it drops into almost any React stack.</li>
+        <li>Installs via the shadcn CLI or plain copy-paste, which makes it trivially consumable by Claude Code.</li>
+        <li>Paste a component, wire the props, and you have premium motion design without writing GSAP or Framer code by hand.</li>
+        <li>Also bundles three free companion generators: Background Studio, Shape Magic, and Texture Lab.</li>
+        <li>43.2k GitHub stars and 1,421 commits — one of the fastest-growing UI projects of 2025 and still actively maintained.</li>
+        <li>Free for personal, client, and commercial work; you just can't resell the library itself.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>It's the benchmark this whole directory is calibrated against — and it holds up under inspection, growing from 110+ to 130+ components since first flagged.</div>
+      <div class="foot"><a class="visit" href="https://reactbits.dev/">Visit site →</a><span class="url">reactbits.dev</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="ui">
+    <div class="rank">02</div>
+    <div>
+      <div class="head"><h2><a href="https://ui.shadcn.com/">shadcn/ui</a></h2><span class="cat">Component foundation</span><span class="cost free">Free · MIT</span></div>
+      <p class="tagline">The de facto substrate every AI coding tool builds on.</p>
+      <ul class="lines">
+        <li>The canonical copy-paste component system for React and Tailwind — plus a new 2026 chat suite (MessageScroller, Message, Bubble, Attachment).</li>
+        <li>Components are added via CLI as code you own in your repo, which is exactly why AI agents handle it so well — the model can read and edit every line.</li>
+        <li>Ships official Blocks (dashboards, auth, charts), a Directory of community registries, and shadcn/typeset for styled markdown.</li>
+        <li>As of 2026 any public GitHub repo can become an installable registry, and many AI tools ship shadcn registry support natively.</li>
+        <li>Changelog shows dated entries every month through July 2026, including the migration from Radix to Base UI and CLI v4.</li>
+        <li>Almost every other entry on this list (tweakcn, Magic UI, Aceternity blocks) plugs into it.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>Not an alternative but the baseline: the gravitational center of AI-assisted frontend work, with the best maintenance cadence in the category.</div>
+      <div class="foot"><a class="visit" href="https://ui.shadcn.com/">Visit site →</a><span class="url">ui.shadcn.com</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="ui">
+    <div class="rank">03</div>
+    <div>
+      <div class="head"><h2><a href="https://ui.aceternity.com/">Aceternity UI</a></h2><span class="cat">Animated UI</span><span class="cost freemium">Freemium</span></div>
+      <p class="tagline">The "wow" layer that makes AI-built landing pages look expensive.</p>
+      <ul class="lines">
+        <li>200+ production-ready Tailwind CSS + Framer Motion components famous for bold visual effects.</li>
+        <li>Standouts: 3D Card Effect, Aurora Background, Background Beams, Lamp Effect, Hero Parallax, Bento Grid, Floating Dock, Globe, Sparkles, Tracing Beam.</li>
+        <li>Every component is copy-paste React/Tailwind code, and blocks are shadcn-compatible.</li>
+        <li>In an AI workflow you paste the component into context and ask Claude for a recolored or restructured variant — it works on the first pass.</li>
+        <li>The core library is free including commercial use; a one-time All-Access Pass unlocks premium blocks and full page templates.</li>
+        <li>Recent changelog announced 80+ new blocks; around 28k GitHub stars.</li>
+        <li>The closest sibling to React Bits in spirit and quality.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>The most-cited animated-UI kit alongside React Bits, with the exact dark, premium, techy aesthetic you want — and a genuinely large free tier.</div>
+      <div class="foot"><a class="visit" href="https://ui.aceternity.com/">Visit site →</a><span class="url">ui.aceternity.com</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="ui">
+    <div class="rank">04</div>
+    <div>
+      <div class="head"><h2><a href="https://magicui.design/">Magic UI</a></h2><span class="cat">Animated UI</span><span class="cost freemium">Freemium · core MIT</span></div>
+      <p class="tagline">150+ open-source animated components built as shadcn's perfect companion.</p>
+      <ul class="lines">
+        <li>150+ free, open-source animated React components built with TypeScript, Tailwind CSS, and Motion.</li>
+        <li>Signature pieces: Animated Beam, Marquee, Retro Grid, Orbiting Circles, Shimmer Button, and the newly launched Glyph Matrix.</li>
+        <li>Installs via the shadcn registry pattern: point Claude Code at the registry, run npx shadcn add, and the source lives in your repo to restyle freely.</li>
+        <li>Production showcase includes YC-backed startups like Langfuse, Infisical, Million, and Anara — it survives real deployments.</li>
+        <li>Core library is MIT-licensed, 21.5k GitHub stars, active Discord.</li>
+        <li>Pro is optional: 50+ full landing-page blocks for teams that want whole sections prebuilt.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>The cleanest AI-agent install path (shadcn registry) of all the animated-UI contenders, plus proven production adoption — edging out paid-heavy rivals like 21st.dev.</div>
+      <div class="foot"><a class="visit" href="https://magicui.design/">Visit site →</a><span class="url">magicui.design</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="design">
+    <div class="rank">05</div>
+    <div>
+      <div class="head"><h2><a href="https://tweakcn.com/">tweakcn</a></h2><span class="cat">shadcn theming</span><span class="cost free">Free · Apache-2.0</span></div>
+      <p class="tagline">The 5-minute fix for "every shadcn app looks the same."</p>
+      <ul class="lines">
+        <li>An open-source visual theme editor for shadcn/ui: pick or tweak a preset while every component re-renders live in the preview.</li>
+        <li>Export the result as Tailwind v4/OKLCH-ready CSS variables, or install into a project with a single shadcn registry command.</li>
+        <li>A pure design-token swap — no component rewrites — so it slots in as a one-command finishing pass after Claude Code scaffolds your app.</li>
+        <li>Verified on GitHub: 10.2k stars, 649 forks, 763 commits, built explicitly for Tailwind CSS v4.</li>
+        <li>It has become the standard answer to shadcn theming, with nothing comparable at its polish level.</li>
+        <li>Perfect for shipping many client apps that each need to look distinct without hand-rolling a design system.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>Solves the single most common complaint about AI-generated frontends in five minutes, fully free, with no real competitor at its quality level.</div>
+      <div class="foot"><a class="visit" href="https://tweakcn.com/">Visit site →</a><span class="url">tweakcn.com</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="motion">
+    <div class="rank">06</div>
+    <div>
+      <div class="head"><h2><a href="https://gsap.com/">GSAP</a></h2><span class="cat">Animation engine</span><span class="cost free">100% free</span></div>
+      <p class="tagline">Agency-grade motion, now free including every formerly-paid plugin.</p>
+      <ul class="lines">
+        <li>The industry-standard JavaScript animation engine used by award-site builders when CSS transitions run out of road.</li>
+        <li>After Webflow acquired it, the entire library went free — including plugins that used to cost hundreds per year.</li>
+        <li>That means ScrollTrigger and ScrollSmoother for scroll storytelling, MorphSVG and DrawSVG for shape morphing, SplitText and ScrambleText for typography, Flip for layout transitions, Draggable/Inertia for physics-feel interactions.</li>
+        <li>Every LLM has deep GSAP training data, so "add a ScrollTrigger pinned section with a SplitText reveal" produces working code on the first prompt.</li>
+        <li>The plugins are premade capabilities you invoke rather than build.</li>
+        <li>Backed by Webflow, with current docs and a 2026 site.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>The most consequential "formerly paid, now free" asset in the animation category, and the highest-hit-rate animation prompt target for AI agents.</div>
+      <div class="foot"><a class="visit" href="https://gsap.com/">Visit site →</a><span class="url">gsap.com</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="inspo">
+    <div class="rank">07</div>
+    <div>
+      <div class="head"><h2><a href="https://mobbin.com/">Mobbin</a></h2><span class="cat">UI/UX inspiration</span><span class="cost freemium">Freemium · Pro $10/mo</span></div>
+      <p class="tagline">621,500+ real production screens to hand your AI as visual specs.</p>
+      <ul class="lines">
+        <li>The industry-standard library of real production UI: 1,428 apps, 621,500+ screens, and 323,900 recorded user flows, updated weekly since 2018.</li>
+        <li>Search finds every real-world Checkout, Onboarding, Paywall, Bottom Sheet, or Empty State pattern in seconds.</li>
+        <li>Flow videos capture micro-interactions, and a Figma plugin copies screens straight into your file.</li>
+        <li>For AI building it's the reference layer: grab three real examples of the pattern you need and hand them to Claude as visual specs — far better than prompting from imagination.</li>
+        <li>The footer now lists an MCP integration, pointing at direct agent access.</li>
+        <li>Testimonials from designers at Figma, Plaid, and Visa; serious use means Pro at $10/mo.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>The category-defining screenshot-and-flow library — nothing else grounds AI-generated UI in what shipping apps actually do.</div>
+      <div class="foot"><a class="visit" href="https://mobbin.com/">Visit site →</a><span class="url">mobbin.com</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="motion">
+    <div class="rank">08</div>
+    <div>
+      <div class="head"><h2><a href="https://particles.js.org/">tsParticles</a></h2><span class="cat">Backgrounds &amp; particles</span><span class="cost free">Free · MIT</span></div>
+      <p class="tagline">Particle, confetti, and firework backgrounds in one config object.</p>
+      <ul class="lines">
+        <li>The actively maintained successor to the abandoned particles.js: a full engine for interactive backgrounds, confetti, fireworks, and ribbons.</li>
+        <li>One-call packages like @tsparticles/confetti and @tsparticles/fireworks fire an effect with a single function.</li>
+        <li>Official first-party wrappers cover React, Vue, Angular, Svelte, Solid, and Web Components — whatever stack your agent scaffolds.</li>
+        <li>Effects are driven by plain JSON config, so you can ask Claude to "generate a snow preset with 120 particles and parallax hover" and paste it straight in.</li>
+        <li>Tiered bundles (basic, slim, full) mean you only ship what you use.</li>
+        <li>Exceptional maintenance: 17k+ commits, automated dependency updates, wrappers already covering Nuxt 4 and Qwik.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>The canonical, safe choice for particle effects — JSON-config output is the most AI-consumable format in the backgrounds category, beating frozen alternatives like Vanta.js on maintenance.</div>
+      <div class="foot"><a class="visit" href="https://particles.js.org/">Visit site →</a><span class="url">particles.js.org</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="ui">
+    <div class="rank">09</div>
+    <div>
+      <div class="head"><h2><a href="https://daisyui.com/">daisyUI</a></h2><span class="cat">Tailwind components</span><span class="cost free">Free · MIT</span></div>
+      <p class="tagline">Semantic class names that make LLMs generate cleaner UI with fewer tokens.</p>
+      <ul class="lines">
+        <li>A Tailwind plugin that gives you semantic classes — btn, card, toggle, modal, drawer — instead of 20-utility strings, covering 68 components with zero JavaScript.</li>
+        <li>Signature feature is theming: 33 built-in themes (synthwave, dracula, nord, cupcake) switchable with one data attribute, plus an in-browser theme generator.</li>
+        <li>Arguably the best UI library for AI-assisted coding: short semantic names mean models generate less markup with fewer styling mistakes.</li>
+        <li>Swapping the entire look is a one-line theme change rather than a restyle pass.</li>
+        <li>Works with React, Vue, Svelte, Next.js, Rails, Laravel and more, since it's just CSS classes.</li>
+        <li>41k GitHub stars, v5.6 current, public changelog and upgrade guides back to v1. Install via npm, add one line to your CSS, done.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>No other library reduces AI token usage and styling errors as directly — and the dark themes (synthwave, dracula) match your aesthetic out of the box.</div>
+      <div class="foot"><a class="visit" href="https://daisyui.com/">Visit site →</a><span class="url">daisyui.com</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="motion inspo">
+    <div class="rank">10</div>
+    <div>
+      <div class="head"><h2><a href="https://tympanus.net/codrops/">Codrops</a></h2><span class="cat">Effect demos</span><span class="cost free">Free · open-source demos</span></div>
+      <p class="tagline">The deepest archive of premade scroll, hover, and WebGL effect code on the web.</p>
+      <ul class="lines">
+        <li>The web's premier source of experimental UI and WebGL demos since 2009 — publishing harder than ever, with five new pieces the week of review.</li>
+        <li>Recent drops include "Interactive Wave Propagation Cube Grid with Three.js" and "Scroll-Driven 3D Gallery Using Blender Camera Path".</li>
+        <li>Nearly every tutorial ships a polished live demo plus a full open-source GitHub repo you can clone today.</li>
+        <li>The AI workflow is direct: point Claude Code at a Codrops demo repo and ask it to adapt the effect to your site.</li>
+        <li>These are the effects Awwwards sites are built from — agency-grade production quality.</li>
+        <li>The Webzibition gallery (2,000+ curated sites) doubles as an inspiration index. No paywall, just optional Patreon support.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>Unlike inspiration galleries that only show screenshots, Codrops pairs every cutting-edge effect with cloneable source code — ideas and implementation in one place.</div>
+      <div class="foot"><a class="visit" href="https://tympanus.net/codrops/">Visit site →</a><span class="url">tympanus.net/codrops</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="assets">
+    <div class="rank">11</div>
+    <div>
+      <div class="head"><h2><a href="https://lucide.dev/">Lucide</a></h2><span class="cat">Icons</span><span class="cost free">Free · ISC</span></div>
+      <p class="tagline">The icon set every coding model already knows by heart.</p>
+      <ul class="lines">
+        <li>1,747 consistent 24px outline icons drawn to a strict design ruleset, shipped as first-party packages for React, Vue, Svelte, Solid, Angular, Astro, React Native, and vanilla JS.</li>
+        <li>It's the bundled icon set for shadcn/ui, so "import { ChevronDown, Settings } from lucide-react" is muscle memory for every coding model.</li>
+        <li>AI agents pick correct, existing icon names with a very high hit rate and zero setup.</li>
+        <li>Icons are prop-customizable (color, size, strokeWidth) rather than baked in, which suits generated code.</li>
+        <li>Actively maintained: regular releases, changelog on GitHub, live Discord, 2026 copyright.</li>
+        <li>Completely free with no premium tier at all.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>Ubiquity is the killer feature: as shadcn's default it has the lowest AI-hallucination rate of any icon library — Heroicons and Phosphor are complements, not rivals.</div>
+      <div class="foot"><a class="visit" href="https://lucide.dev/">Visit site →</a><span class="url">lucide.dev</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="starters">
+    <div class="rank">12</div>
+    <div>
+      <div class="head"><h2><a href="https://vercel.com/templates">Vercel Templates</a></h2><span class="cat">Boilerplates</span><span class="cost free">Free · mostly MIT repos</span></div>
+      <p class="tagline">Deploy-ready starter repos so your agent never starts from a blank folder.</p>
+      <ul class="lines">
+        <li>Vercel's official gallery of deploy-ready starters, filterable by use case, framework, database, CMS, and auth provider.</li>
+        <li>Standouts: Next.js Commerce (full storefront), the Platforms Starter Kit (multi-tenant SaaS), the AI Chatbot template, and the Blog Starter Kit.</li>
+        <li>New 2026 agent templates like eve Personal Agent and the Hume AI Empathic Voice Interface Starter show it's actively curated.</li>
+        <li>Every template is a real open-source repo with a one-click Deploy button that clones to your GitHub and goes live in minutes.</li>
+        <li>Then you point Claude Code at a working codebase — auth, DB, and deployment already handled — instead of an empty directory.</li>
+        <li>The AI-app templates encode Vercel's current best practices for streaming and agent UIs.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>The strongest free boilerplate source going: breadth across 20+ use cases, one-click deploys, fresh 2026 AI-agent templates — the trade-off is a gentle steer toward the Vercel ecosystem.</div>
+      <div class="foot"><a class="visit" href="https://vercel.com/templates">Visit site →</a><span class="url">vercel.com/templates</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="assets">
+    <div class="rank">13</div>
+    <div>
+      <div class="head"><h2><a href="https://undraw.co">unDraw</a></h2><span class="cat">Illustrations</span><span class="cost free">Free · no attribution</span></div>
+      <p class="tagline">Brand-colored SVG illustrations with zero licensing friction.</p>
+      <ul class="lines">
+        <li>The original open-source SVG illustration library: a large, growing set of clean flat illustrations in one recognizable, consistent style.</li>
+        <li>The killer feature is the on-the-fly color picker: set your brand hex once and every illustration re-renders in that color before download.</li>
+        <li>A whole product's empty states, onboarding screens, and 404 pages match without touching a design tool.</li>
+        <li>SVGs are tiny and paste inline into JSX/HTML — tell your agent "use unDraw inline SVGs recolored to our brand color" and drop real assets in seconds.</li>
+        <li>The license is as generous as it gets: free, commercial-OK, no attribution; the only rule is don't clone the platform itself.</li>
+        <li>Footer copyright reads 2026 and the project has been steadily maintained for years.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>The illustration-category analogue of React Bits — instantly usable, high production quality, and it beats attribution-bound alternatives like Storyset on license cleanliness.</div>
+      <div class="foot"><a class="visit" href="https://undraw.co">Visit site →</a><span class="url">undraw.co</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="ai">
+    <div class="rank">14</div>
+    <div>
+      <div class="head"><h2><a href="https://github.com/anthropics/claude-plugins-official">Anthropic Official Plugin Directory</a></h2><span class="cat">Claude Code plugins</span><span class="cost free">Free · Apache-2.0</span></div>
+      <p class="tagline">The official app store for Claude Code — installs in one command.</p>
+      <ul class="lines">
+        <li>Anthropic's own curated plugin marketplace for Claude Code, with installation as one command: /plugin install {name}@claude-plugins-official.</li>
+        <li>You can also browse interactively via /plugin → Discover inside the CLI itself.</li>
+        <li>The repo splits into first-party plugins (Anthropic-maintained) and external partner plugins that pass a submission form and security review.</li>
+        <li>Each plugin bundles slash commands, agent definitions, skills, and optional MCP config, so one install can add an entire workflow.</li>
+        <li>Apache-2.0 licensed, 32k stars, 2,073+ commits, with an active approval pipeline.</li>
+        <li>This is first-party infrastructure, not a fan list — the most "instantly usable" entry in the rules/prompts category.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>For a Claude Code user this is the highest-trust, lowest-friction capability source that exists: vetted by Anthropic and installed in literally one command.</div>
+      <div class="foot"><a class="visit" href="https://github.com/anthropics/claude-plugins-official">Visit repo →</a><span class="url">github.com/anthropics/claude-plugins-official</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="ai">
+    <div class="rank">15</div>
+    <div>
+      <div class="head"><h2><a href="https://github.com/punkpeye/awesome-mcp-servers">awesome-mcp-servers</a></h2><span class="cat">MCP directory</span><span class="cost free">Free · MIT</span></div>
+      <p class="tagline">The community-consensus front door to the MCP ecosystem.</p>
+      <ul class="lines">
+        <li>The single most-starred index of Model Context Protocol servers on GitHub: 90.6k stars, 12.8k forks.</li>
+        <li>A categorized awesome-list: browse databases, browsers, filesystems, search, or dev tools, pick a server, and drop its config into Claude Code in minutes.</li>
+        <li>Curation is community-enforced with formal CONTRIBUTING guidelines and thousands of merged PRs.</li>
+        <li>Translated editions in Japanese, Korean, Portuguese, Chinese, Persian, and Thai — a genuinely living project, not an SEO listicle.</li>
+        <li>When your agent needs a new superpower (a Postgres connection, a browser, Slack), someone here has almost certainly built it.</li>
+        <li>Weakness: a flat README with no popularity metrics — pair it with PulseMCP (#16) for vetting.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>The canonical, community-vetted starting list for MCP — 8,551 commits of active curation give it authority no polished storefront can match.</div>
+      <div class="foot"><a class="visit" href="https://github.com/punkpeye/awesome-mcp-servers">Visit repo →</a><span class="url">github.com/punkpeye/awesome-mcp-servers</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="ai">
+    <div class="rank">16</div>
+    <div>
+      <div class="head"><h2><a href="https://www.pulsemcp.com/servers">PulseMCP</a></h2><span class="cat">MCP directory</span><span class="cost free">Free to browse</span></div>
+      <p class="tagline">Trust tiers and real usage numbers for picking MCP servers with evidence.</p>
+      <ul class="lines">
+        <li>A polished web directory of 21,642 MCP servers, updated daily.</li>
+        <li>Every listing is classified into one of three trust tiers: Anthropic Reference, Official Provider, or Community.</li>
+        <li>Listings carry popularity analytics — Playwright MCP at 5.5m weekly visitors, Chrome DevTools at 2.6m — plus release dates and 30-day trend sorting.</li>
+        <li>It solves the problem the GitHub lists can't: which of five competing servers for the same service you should actually trust.</li>
+        <li>Coverage runs from the majors (Figma, Notion, GitHub, Slack, PostgreSQL) down to niche tools like an SEC-filings toolkit.</li>
+        <li>The team also co-maintains the official MCP registry, which gives its data unusual authority. Vetting a server becomes a two-minute decision.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>The vetting layer the awesome-lists lack: official/community trust flags plus transparent usage analytics, with a friendlier browse experience than Glama for a non-technical user.</div>
+      <div class="foot"><a class="visit" href="https://www.pulsemcp.com/servers">Visit site →</a><span class="url">pulsemcp.com/servers</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="starters ai">
+    <div class="rank">17</div>
+    <div>
+      <div class="head"><h2><a href="https://github.com/Shubhamsaboo/awesome-llm-apps">Awesome LLM Apps</a></h2><span class="cat">AI app templates</span><span class="cost free">Free · Apache-2.0</span></div>
+      <p class="tagline">100+ complete, runnable AI agent apps — clone one instead of starting blank.</p>
+      <ul class="lines">
+        <li>118k stars' worth of actual runnable code, not links: 100+ complete AI agent and RAG applications with full source.</li>
+        <li>15 categories cover Starter Agents, Multi-agent Teams, Voice AI, MCP Agents, Generative UI, Memory Systems, and RAG patterns.</li>
+        <li>Concrete examples: an AI Travel Agent, an Insurance Claim Live Agent Team, a Fraud Investigation Agent, a Hacker News Briefing Agent.</li>
+        <li>Each project runs in three commands: clone, install, run.</li>
+        <li>Point Claude Code at the nearest template and adapt it — skipping the blank-page phase for agent architecture and tool wiring.</li>
+        <li>Apache-2.0 means you can ship derivatives commercially without friction; activity continues into 2026 with frontier categories like Agent Skills and MCP Agents.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>The closest thing in the AI-templates space to the React Bits standard: hand-built working code rather than aggregated links, at massive scale, with a friction-free license.</div>
+      <div class="foot"><a class="visit" href="https://github.com/Shubhamsaboo/awesome-llm-apps">Visit repo →</a><span class="url">github.com/Shubhamsaboo/awesome-llm-apps</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="starters">
+    <div class="rank">18</div>
+    <div>
+      <div class="head"><h2><a href="https://opensaas.sh/">Open SaaS</a></h2><span class="cat">SaaS boilerplate</span><span class="cost free">100% free · MIT</span></div>
+      <p class="tagline">A genuinely free, everything-included SaaS starter — auth, payments, admin.</p>
+      <ul class="lines">
+        <li>A free (MIT) full-stack SaaS boilerplate on the Wasp framework with React, Node.js, and Prisma — the rare "everything included" starter with no upsell.</li>
+        <li>Out of the box: multi-method auth you own, pre-built checkout and webhooks for Stripe, Polar.sh, and Lemon Squeezy, and an admin dashboard wired to analytics.</li>
+        <li>Also included: S3 uploads, email sending, cron jobs, an OpenAI demo app, an Astro blog, and Playwright e2e tests with CI.</li>
+        <li>Notably "AI-ready": the repo ships custom rules for AI coding assistants, so Claude Code can navigate Wasp conventions instead of fighting them.</li>
+        <li>14.9k stars, latest release June 2026, active Discord; real companies (Kivo, Searchcraft, Scribeist) run on it.</li>
+        <li>The trade-off is the Wasp DSL, which is less mainstream than plain Next.js.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>It delivers the full $199–299 commercial-boilerplate feature set (ShipFast territory) for free under MIT, with fresher maintenance than the official Next.js SaaS starter.</div>
+      <div class="foot"><a class="visit" href="https://opensaas.sh/">Visit site →</a><span class="url">opensaas.sh</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="motion">
+    <div class="rank">19</div>
+    <div>
+      <div class="head"><h2><a href="https://github.com/pmndrs/drei">drei</a></h2><span class="cat">3D components</span><span class="cost free">Free · MIT</span></div>
+      <p class="tagline">Ready-made 3D building blocks — premium WebGL scenes in dozens of lines.</p>
+      <ul class="lines">
+        <li>The "batteries" for react-three-fiber: a huge grab-bag of ready-made 3D abstractions you compose as JSX.</li>
+        <li>Standouts: Environment (one-line HDRI lighting), ScrollControls (scroll-driven 3D scenes), MeshTransmissionMaterial (the glassy refraction look on premium sites), ContactShadows, Text3D, AsciiRenderer.</li>
+        <li>Models know drei's API deeply, so "add a scroll-driven 3D product viewer with soft shadows" becomes a few dozen lines instead of hundreds of lines of raw Three.js.</li>
+        <li>Performance helpers like Instances, Bvh, and PerformanceMonitor are built in.</li>
+        <li>Maintenance is exemplary: 897 releases, stewarded by the pmndrs collective.</li>
+        <li>Free and MIT with zero commercial restrictions.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>The premade-component layer of the entire React 3D ecosystem — for an AI agent it turns WebGL from a specialist skill into composable parts.</div>
+      <div class="foot"><a class="visit" href="https://github.com/pmndrs/drei">Visit repo →</a><span class="url">github.com/pmndrs/drei</span></div>
+    </div>
+  </article>
+
+  <article class="entry" data-group="design assets">
+    <div class="rank">20</div>
+    <div>
+      <div class="head"><h2><a href="https://www.fffuel.co/">fffuel</a></h2><span class="cat">Design micro-tools</span><span class="cost free">Free · commercial OK</span></div>
+      <p class="tagline">70+ free SVG generators for the textures AI-built sites always lack.</p>
+      <ul class="lines">
+        <li>A beloved collection of 70+ free single-purpose SVG and color generators by designer Sébastien Noël.</li>
+        <li>Each has a memorable triple-letter name: ssshape (organic blobs), ffflux (fluid gradient backgrounds), nnnoise (grainy textures), sssurf (layered waves), mmmotif (isometric patterns).</li>
+        <li>Every tool is a live visual editor that exports a real SVG file or data-URI you paste directly into CSS or HTML.</li>
+        <li>AI-generated sites are chronically flat without texture — generate the asset here, hand the SVG to Claude to inline, done.</li>
+        <li>Utilities like rrrasterize (SVG-to-PNG) and pppalette round out the color workflow.</li>
+        <li>License is unambiguous: free for personal and commercial projects, no attribution required. One consistent design voice throughout — curation, not a listicle.</li>
+      </ul>
+      <div class="why"><b>Why it won</b>The best free background/texture generator suite in the micro-tools category — clearer licensing than Haikei, and its dark gradient/noise output fits the premium-techy aesthetic perfectly.</div>
+      <div class="foot"><a class="visit" href="https://www.fffuel.co/">Visit site →</a><span class="url">fffuel.co</span></div>
+    </div>
+  </article>
+
+  <section class="hm-head" id="mentions">
+    <h2>Honorable mentions</h2>
+    <p>Twelve more that survived vetting but lost their slot to a stronger neighbor — all worth a bookmark.</p>
+  </section>
+  <div class="hm-grid">
+    <div class="hm"><a href="https://motion.dev/">Motion (motion.dev)</a><p>Successor to Framer Motion and the engine under most animated kits; free MIT core — but its output already reaches you through React Bits, Magic UI, and Aceternity.</p></div>
+    <div class="hm"><a href="https://github.com/vercel/ai-chatbot">Vercel AI Chatbot</a><p>The canonical Apache-2.0 reference app for AI chat (streaming, tool calls, multi-provider) — pushed July 2026.</p></div>
+    <div class="hm"><a href="https://github.com/ixartz/SaaS-Boilerplate">ixartz SaaS Boilerplate</a><p>The most-starred MIT Next.js 16 SaaS skeleton (auth, teams, roles, i18n) — the plain-Next.js alternative to Open SaaS.</p></div>
+    <div class="hm"><a href="https://github.com/PatrickJS/awesome-cursorrules">awesome-cursorrules</a><p>200+ public-domain (CC0) framework-specific AI-editor rule files that port cleanly into CLAUDE.md.</p></div>
+    <div class="hm"><a href="https://glama.ai/mcp/servers">Glama MCP Servers</a><p>The largest MCP index (53,917 servers) with automated A–F quality grades and daily refresh — the power-user complement to PulseMCP.</p></div>
+    <div class="hm"><a href="https://hyperui.dev/">HyperUI</a><p>12.2k-star MIT collection of copy-paste Tailwind v4 HTML blocks (marketing, ecommerce, app UI) with zero dependencies.</p></div>
+    <div class="hm"><a href="https://21st.dev/">21st.dev</a><p>A huge community registry of shadcn-style components built for AI agents — excellent breadth, but real use effectively costs $8/mo and quality varies.</p></div>
+    <div class="hm"><a href="https://www.realtimecolors.com/">Realtime Colors</a><p>Preview a full palette and font pairing on a live site mockup, then export Tailwind/CSS/shadcn tokens straight into your CLAUDE.md — 100% free.</p></div>
+    <div class="hm"><a href="https://haikei.app">Haikei</a><p>Free no-signup generator for layered waves, blob scenes, and blurry gradients as instant SVG — great output, but commercial license terms are unstated.</p></div>
+    <div class="hm"><a href="https://easings.net/">easings.net</a><p>The canonical easing cheat sheet: pick a curve visually, paste the exact cubic-bezier into your prompt, and animations stop feeling generic.</p></div>
+    <div class="hm"><a href="https://uiverse.io/">Uiverse</a><p>3,000+ MIT-licensed community HTML/CSS micro-elements (glowing buttons, creative loaders) — a taste injection against same-looking AI output.</p></div>
+    <div class="hm"><a href="https://heroicons.com/">Heroicons</a><p>316 impeccably drawn MIT icons from the Tailwind team in four matched variants — the solid-fill complement to Lucide.</p></div>
+  </div>
+
+  <footer>
+    <p>METHOD — 14 category-specific search agents harvested 455 candidates (416 unique). The 72 strongest were opened and inspected by hand for real usable output, production quality, licensing, and 2025–26 maintenance. 28 rated top-tier, 40 good, 4 rejected. A final judge pass ranked the 20 winners for category diversity (max 3 per category), free-over-paid, and AI-agent consumability.</p>
+    <p>Compiled July 2026 · Benchmark: reactbits.dev</p>
+  </footer>
+</main>
+
+<script>
+  const chips = document.querySelectorAll('.chip');
+  const entries = document.querySelectorAll('.entry');
+  chips.forEach(chip => chip.addEventListener('click', () => {
+    chips.forEach(c => c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'));
+    const g = chip.dataset.group;
+    entries.forEach(e => {
+      e.classList.toggle('hidden', g !== 'all' && !e.dataset.group.split(' ').includes(g));
+    });
+  }));
+</script>
