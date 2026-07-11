@@ -1,0 +1,401 @@
+<title>The Build Rolodex — What to Build With, Steal From & Get Inspired By</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ground:#0a0c11; --panel:#11141c; --panel-2:#151926; --line:#232838; --line-soft:#1a1e2b;
+    --ink:#e9ecf4; --muted:#8e96aa; --dim:#5c6478; --accent:#8a93ff; --accent-soft:rgba(138,147,255,.12);
+    --drop:#5fd39a; --copy:#5cc7f0; --look:#e8c268; --steal:#ef8a9b; --asset:#b79cff; --browse:#94a3b8;
+    --free:#5fd39a; --freemium:#e8c268;
+    --display:"Futura","Avenir Next","Avenir","Helvetica Neue",sans-serif;
+    --body:"Avenir Next","Avenir","Helvetica Neue",-apple-system,sans-serif;
+    --mono:ui-monospace,"SF Mono","Menlo",monospace;
+  }
+  *{box-sizing:border-box}
+  html{background:var(--ground);scroll-behavior:smooth}
+  body{background:var(--ground);color:var(--ink);font-family:var(--body);line-height:1.55;margin:0}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  /* hero */
+  header{border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+  .hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 90% 100% at 50% 0%,#000 30%,transparent 78%);-webkit-mask-image:radial-gradient(ellipse 90% 100% at 50% 0%,#000 30%,transparent 78%);pointer-events:none}
+  .hero-inner{position:relative;padding:64px 0 34px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:0 0 16px}
+  h1{font-family:var(--display);font-weight:600;text-wrap:balance;font-size:clamp(32px,5.2vw,54px);line-height:1.05;letter-spacing:-.015em;margin:0 0 14px}
+  .lede{color:var(--muted);font-size:17px;max-width:64ch;margin:0 0 30px}
+  .lede strong{color:var(--ink);font-weight:600}
+  .stats{display:flex;gap:0;border:1px solid var(--line);background:var(--panel);flex-wrap:wrap}
+  .stat{flex:1;min-width:120px;padding:14px 18px}
+  .stat+.stat{border-left:1px solid var(--line)}
+  .stat .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:clamp(18px,2.6vw,26px);font-weight:600}
+  .stat:last-child .n{color:var(--accent)}
+  .stat .l{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:3px}
+
+  /* the-move note */
+  .move{border:1px solid var(--line);border-left:3px solid var(--accent);background:var(--panel-2);padding:18px 22px;margin:26px 0 22px;border-radius:0 3px 3px 0}
+  .move h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+  .move p{margin:0 0 8px;font-size:14.5px;color:#cdd4e0;max-width:82ch}
+  .move p:last-child{margin-bottom:0}
+  .move b{color:var(--ink)}
+  .move .steps{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 12px;font-family:var(--mono);font-size:12px}
+  .move .steps span{background:var(--panel);border:1px solid var(--line);padding:6px 11px;border-radius:3px;color:var(--muted)}
+  .move .steps b{color:var(--accent)}
+
+  /* legend */
+  .legend{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 4px}
+  .lg{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}
+  .dot{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+  /* sticky controls */
+  nav.rail{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--ground) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .rail-inner{max-width:1120px;margin:0 auto;padding:12px 24px;display:flex;flex-direction:column;gap:10px}
+  .search input{width:100%;padding:12px 16px;border-radius:4px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-family:var(--body);font-size:15px}
+  .search input::placeholder{color:var(--dim)}
+  .search input:focus{outline:none;border-color:var(--accent)}
+  .chips{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;color:var(--muted);background:transparent;border:1px solid var(--line);padding:7px 12px;cursor:pointer;white-space:nowrap;border-radius:3px;transition:.15s}
+  .chip:hover{color:var(--ink);border-color:var(--dim)}
+  .chip[aria-pressed="true"]{color:var(--ground);background:var(--accent);border-color:var(--accent);font-weight:600}
+  .chip:focus-visible,.card:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  main{padding:34px 0 20px}
+  .sec{margin-bottom:40px}
+  .sec.hide{display:none}
+  .sec-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:16px}
+  .sec-h .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
+  .sec-h h2{font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:-.01em;margin:0}
+  .sec-h .sub{font-size:13px;color:var(--muted)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(288px,1fr));gap:13px}
+  .card{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:15px 17px;transition:.15s}
+  .card:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 45%,var(--line));box-shadow:0 12px 30px rgba(0,0,0,.28)}
+  .card.hide{display:none}
+  .card .top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:3px}
+  .card .nm{font-family:var(--display);font-size:16px;font-weight:600;letter-spacing:-.01em}
+  .card .url{font-family:var(--mono);font-size:11.5px;color:var(--accent);word-break:break-all;margin-bottom:7px;opacity:.85}
+  .card .note{font-size:13.5px;color:var(--muted)}
+  .card .note b{color:var(--ink);font-weight:600}
+  .star{color:var(--look)}
+
+  .pill{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:3px;white-space:nowrap}
+  .p-drop{background:rgba(95,211,154,.14);color:var(--drop)}
+  .p-copy{background:rgba(92,199,240,.14);color:var(--copy)}
+  .p-look{background:rgba(232,194,104,.15);color:var(--look)}
+  .p-steal{background:rgba(239,138,155,.15);color:var(--steal)}
+  .p-asset{background:rgba(183,156,255,.16);color:var(--asset)}
+  .p-browse{background:rgba(148,163,184,.16);color:var(--browse)}
+  .p-tool{background:var(--accent-soft);color:var(--accent)}
+
+  /* top 20 cards */
+  .rankcard{position:relative}
+  .rankcard .rk{position:absolute;top:13px;right:15px;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:20px;font-weight:600;color:var(--dim)}
+  .rankcard:nth-child(-n+3) .rk{color:var(--accent)}
+  .rankcard .nm{padding-right:26px}
+  .cost{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--free);margin-top:8px}
+  .cost.fm{color:var(--freemium)}
+
+  /* steal cards (wider) */
+  .steal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:13px}
+  .scard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px 18px}
+  .scard.hide{display:none}
+  .scard .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .scard .nm{font-family:var(--display);font-size:17px;font-weight:600}
+  .scard .url{font-family:var(--mono);font-size:11.5px;color:var(--accent);opacity:.85;margin:2px 0 10px}
+  .scard .wow,.scard .bld{font-size:13.5px;margin-top:7px;padding-left:52px;position:relative;color:var(--muted)}
+  .scard .wow b,.scard .bld b{position:absolute;left:0;top:0;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase}
+  .scard .wow b{color:var(--steal)}
+  .scard .bld{color:#cdd4e0}
+  .scard .bld b{color:var(--accent)}
+
+  /* toolkit */
+  .tool{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:15px 17px}
+  .tool.hide{display:none}
+  .tool .top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+  .tool .nm{font-family:var(--display);font-size:15.5px;font-weight:600}
+  .tool .diff{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:3px}
+  .d-easy{background:rgba(95,211,154,.14);color:var(--drop)}
+  .d-med{background:rgba(232,194,104,.15);color:var(--look)}
+  .tool .note{font-size:13.5px;color:var(--muted);margin-bottom:9px}
+  .tool .with{font-family:var(--mono);font-size:12px;color:var(--accent)}
+
+  .empty{display:none;text-align:center;color:var(--muted);padding:50px 0;font-size:15px}
+  footer{border-top:1px solid var(--line);margin-top:48px;padding:28px 0 46px}
+  footer p{font-family:var(--mono);font-size:12px;color:var(--dim);margin:0 0 8px;max-width:88ch}
+  footer b{color:var(--muted)}
+  @media (max-width:560px){.stat{min-width:45%}.hero-inner{padding:44px 0 28px}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
+</style>
+
+<header>
+  <div class="hero-grid"></div>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">SANO Build Kit &nbsp;//&nbsp; verified July 2026 &nbsp;//&nbsp; one deck, not three</p>
+    <h1>The Build Rolodex</h1>
+    <p class="lede">Everything worth reaching for on a build — in one place. The <strong>tools to build with</strong>, the <strong>assets to drop in</strong>, and the <strong>best sites on the internet to steal ideas from</strong>. Stop starting from a blank page; stop re-researching. Search it, or filter by what you need.</p>
+    <div class="stats">
+      <div class="stat"><div class="n">100+</div><div class="l">Resources</div></div>
+      <div class="stat"><div class="n">20</div><div class="l">Vetted &amp; ranked</div></div>
+      <div class="stat"><div class="n">9</div><div class="l">Sites to steal from</div></div>
+      <div class="stat"><div class="n">7</div><div class="l">Buildable moves</div></div>
+    </div>
+
+    <div class="move">
+      <h3>The one move this deck is for</h3>
+      <div class="steps"><span><b>1</b> See what the best are doing</span><span><b>2</b> Take the pattern</span><span><b>3</b> Bring it back into the build</span></div>
+      <p>Most of this list isn't about buying anything. Even the paid sites earn their spot because you can <b>open them, see how the best people solved it, and reproduce that in the code</b>. Ask me: "make me a pricing section like the top SaaS do it" — I'll go look and build it, instead of guessing from memory. That's what <b>/rolodex</b> does.</p>
+      <p style="margin-top:12px"><b>Reading the tags:</b> <b>Drop-in</b> works in a plain HTML page right now (one script/CDN). <b>Copy</b> means grab the CSS/SVG. <b>Look-book</b> sites are React — use them to see what's possible, then rebuild the effect with a Drop-in library. <b>Steal</b> is inspiration to reproduce. <b>Assets</b> are images/icons/fonts. <b>Browse</b> is a gallery to hunt in.</p>
+      <div class="legend" style="margin-top:12px">
+        <span class="lg"><span class="dot" style="background:var(--drop)"></span>Drop-in — works now</span>
+        <span class="lg"><span class="dot" style="background:var(--copy)"></span>Copy — grab CSS/SVG</span>
+        <span class="lg"><span class="dot" style="background:var(--look)"></span>Look-book — copy the idea</span>
+        <span class="lg"><span class="dot" style="background:var(--steal)"></span>Steal — reproduce it</span>
+        <span class="lg"><span class="dot" style="background:var(--asset)"></span>Assets</span>
+        <span class="lg"><span class="dot" style="background:var(--browse)"></span>Browse</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="rail">
+  <div class="rail-inner">
+    <div class="search"><input id="q" type="search" placeholder="Search everything — e.g. gradient, icons, hero background, scroll, pricing…" aria-label="Search resources"></div>
+    <div class="chips" role="group" aria-label="Filter by group">
+      <button class="chip" data-g="all" aria-pressed="true">All</button>
+      <button class="chip" data-g="top20" aria-pressed="false">★ Vetted Top 20</button>
+      <button class="chip" data-g="components" aria-pressed="false">Components &amp; Effects</button>
+      <button class="chip" data-g="backgrounds" aria-pressed="false">Backgrounds &amp; Gradients</button>
+      <button class="chip" data-g="iconsfonts" aria-pressed="false">Icons &amp; Fonts</button>
+      <button class="chip" data-g="photosart" aria-pressed="false">Photos &amp; Art</button>
+      <button class="chip" data-g="steal" aria-pressed="false">Steal-the-Best</button>
+      <button class="chip" data-g="helpers" aria-pressed="false">Helpers</button>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap" id="main"></main>
+<p class="empty wrap" id="empty">No matches — try another word.</p>
+
+<footer class="wrap">
+  <p><b>HOW THIS WAS BUILT</b> — merged from three decks (the vetted Top-20 Arsenal from a 455-site research sweep, the broad Website Rolodex, and the Interactive Inspiration gallery) into one canonical page. Every entry is written as a <b>play</b>: what to grab and when, not just what the site is.</p>
+  <p><b>HOW TO USE IT LIVE</b> — run <b>/rolodex &lt;what you want&gt;</b> in Claude Code (e.g. "/rolodex a hero background like Vanta" or "/rolodex a pricing section like the best SaaS"). Claude reads this deck, goes to the right sites, takes the pattern, and builds it into your project.</p>
+  <p>SANO Build Kit · The Build Rolodex · verified July 2026 · click any card to open in a new tab</p>
+</footer>
+
+<script>
+const DATA = {
+  top20: {title:"The Vetted Top 20", sub:"ranked from a 455-site sweep — the tools worth reaching for first", group:"top20", type:"rank", items:[
+    {rk:1,nm:"React Bits",url:"reactbits.dev",tag:"look",cost:"Free · MIT",note:"<b>Grab</b> BlurText, animated backgrounds, split-text reveals — copy-paste or shadcn add. The benchmark."},
+    {rk:2,nm:"shadcn/ui",url:"ui.shadcn.com",tag:"drop",cost:"Free · MIT",note:"<b>Your base layer.</b> npx shadcn add any primitive as code you own — what every AI tool builds on."},
+    {rk:3,nm:"Aceternity UI",url:"ui.aceternity.com",tag:"look",cost:"Freemium",note:"<b>Grab</b> Aurora Background, Lamp Effect, Bento Grid, 3D Card for instant expensive-looking heroes."},
+    {rk:4,nm:"Magic UI",url:"magicui.design",tag:"look",cost:"Freemium · core MIT",note:"<b>Grab</b> Animated Beam, Marquee, Retro Grid, Shimmer Button via the shadcn registry."},
+    {rk:5,nm:"tweakcn",url:"tweakcn.com",tag:"copy",cost:"Free · Apache-2.0",note:"<b>After scaffolding,</b> drop in a distinct theme in one command so the app doesn't look default."},
+    {rk:6,nm:"GSAP",url:"gsap.com",tag:"drop",cost:"100% free",note:"<b>Reach for</b> ScrollTrigger + SplitText for scroll-story and kinetic headlines. Now free, all plugins."},
+    {rk:7,nm:"Mobbin",url:"mobbin.com",tag:"steal",cost:"Freemium · $10/mo",note:"<b>Before building a flow,</b> pull 3 real examples (checkout, onboarding, paywall) as visual specs."},
+    {rk:8,nm:"tsParticles",url:"particles.js.org",tag:"drop",cost:"Free · MIT",note:"<b>Ask for</b> a JSON preset (snow, network, confetti) and paste it into any stack."},
+    {rk:9,nm:"daisyUI",url:"daisyui.com",tag:"drop",cost:"Free · MIT",note:"<b>Use</b> semantic classes + a dark theme (synthwave/dracula) for fast, clean, low-token UI."},
+    {rk:10,nm:"Codrops",url:"tympanus.net/codrops",tag:"copy",cost:"Free demos",note:"<b>Clone</b> the demo repo for the exact scroll/WebGL effect and adapt it to the site."},
+    {rk:11,nm:"Lucide",url:"lucide.dev",tag:"asset",cost:"Free · ISC",note:"<b>Default icon set.</b> Import by name, zero setup, never hallucinated (it's shadcn's default)."},
+    {rk:12,nm:"Vercel Templates",url:"vercel.com/templates",tag:"drop",cost:"Free repos",note:"<b>Start</b> from a working repo (Commerce, AI Chatbot, Platforms) instead of a blank folder."},
+    {rk:13,nm:"unDraw",url:"undraw.co",tag:"asset",cost:"Free · no attribution",note:"<b>Recolor</b> illustrations to your brand hex, paste inline SVG for empty states / 404s."},
+    {rk:14,nm:"Anthropic Plugins",url:"github.com/anthropics/claude-plugins-official",tag:"drop",cost:"Free · Apache-2.0",note:"<b>/plugin install</b> to add whole Claude Code workflows in one command. First-party."},
+    {rk:15,nm:"awesome-mcp-servers",url:"github.com/punkpeye/awesome-mcp-servers",tag:"browse",cost:"Free · MIT",note:"<b>Browse</b> to find an MCP server for any new agent superpower (Postgres, browser, Slack)."},
+    {rk:16,nm:"PulseMCP",url:"pulsemcp.com/servers",tag:"browse",cost:"Free to browse",note:"<b>Pick</b> the trustworthy MCP server via trust tiers + real usage numbers."},
+    {rk:17,nm:"Awesome LLM Apps",url:"github.com/Shubhamsaboo/awesome-llm-apps",tag:"drop",cost:"Free · Apache-2.0",note:"<b>Clone</b> a runnable agent/RAG app closest to your idea, then adapt. 100+ full apps."},
+    {rk:18,nm:"Open SaaS",url:"opensaas.sh",tag:"drop",cost:"Free · MIT",note:"<b>Free full SaaS starter:</b> auth, Stripe, admin — and it ships AI-assistant rules."},
+    {rk:19,nm:"drei",url:"github.com/pmndrs/drei",tag:"drop",cost:"Free · MIT",note:"<b>Compose</b> 3D fast: Environment, ScrollControls, MeshTransmissionMaterial (glassy look)."},
+    {rk:20,nm:"fffuel",url:"fffuel.co",tag:"copy",cost:"Free · commercial OK",note:"<b>Generate</b> grain / gradient / blob SVGs (nnnoise, ffflux) to kill the flat AI-site look."},
+  ]},
+
+  components: {title:"Components & Effects", sub:"the workhorses — drop-in libraries + React look-books", group:"components", type:"card", items:[
+    {nm:"Vanta.js",url:"vantajs.com",tag:"drop",note:"<b>Best no-code hero:</b> one script → glowing WebGL background (fog / waves / net)."},
+    {nm:"AOS",url:"michalsnik.github.io/aos",tag:"drop",note:"Fade / slide sections in on scroll with a single HTML attribute."},
+    {nm:"Animate.css",url:"animate.style",tag:"drop",note:"Ready-made CSS animation classes; one CDN line."},
+    {nm:"Lenis",url:"lenis.darkroom.engineering",tag:"drop",note:"<b>Buttery momentum scroll,</b> one init — the fastest 'premium' upgrade there is."},
+    {nm:"Swiper",url:"swiperjs.com",tag:"drop",note:"Touch sliders / carousels, the reliable default."},
+    {nm:"Splide",url:"splidejs.com",tag:"drop",note:"Lighter carousel alternative to Swiper."},
+    {nm:"Typed.js",url:"mattboldt.com/typed.js",tag:"drop",note:"Typewriter text effect in a few lines."},
+    {nm:"Rellax",url:"dixonandmoe.com/rellax",tag:"drop",note:"Lightweight parallax scrolling."},
+    {nm:"Granim.js",url:"sarcadass.github.io/granim.js",tag:"drop",note:"Smooth animated gradient backgrounds."},
+    {nm:"LottieFiles",url:"lottiefiles.com",tag:"drop",note:"Lightweight animated graphics via a web component."},
+    {nm:"Three.js",url:"threejs.org",tag:"drop",note:"Full 3D / WebGL (advanced) — powers Vanta and drei."},
+    {nm:"Hover.dev",url:"hover.dev",tag:"look",note:"Animated UI blocks (paid unlock) — open it to copy the idea."},
+    {nm:"Cult UI",url:"cult-ui.com",tag:"look",note:"Textured cards, shaders, dynamic island. Free."},
+    {nm:"21st.dev",url:"21st.dev",tag:"look",note:"Community marketplace of shadcn-style blocks, built for AI agents."},
+  ]},
+
+  backgrounds: {title:"Backgrounds, Patterns & Gradients", sub:"copy the CSS / SVG, zero build", group:"backgrounds", type:"card", items:[
+    {nm:"Haikei",url:"haikei.app",tag:"copy",star:1,note:"<b>Export</b> SVG blobs, waves, meshes, low-poly scenes. The go-to."},
+    {nm:"SVGBackgrounds",url:"svgbackgrounds.com",tag:"copy",note:"Customizable SVG / CSS backgrounds."},
+    {nm:"Hero Patterns",url:"heropatterns.com",tag:"copy",note:"Repeatable SVG patterns as ready CSS."},
+    {nm:"Magic Pattern",url:"magicpattern.design/tools",tag:"copy",note:"Pattern, mesh & gradient generators."},
+    {nm:"uiGradients",url:"uigradients.com",tag:"copy",note:"Two-color gradient CSS, copy instantly."},
+    {nm:"Mesh Gradient",url:"meshgradient.com",tag:"copy",note:"Trendy multi-color mesh gradients."},
+    {nm:"CSS Gradient",url:"cssgradient.io",tag:"copy",note:"Visual gradient maker."},
+    {nm:"Cool Backgrounds",url:"coolbackgrounds.io",tag:"copy",note:"Export hero background images (PNG / SVG)."},
+    {nm:"Animista",url:"animista.net",tag:"copy",note:"Pick a CSS animation, copy the keyframes."},
+    {nm:"Smooth Shadows",url:"shadows.brumm.af",tag:"copy",note:"Layered, realistic box-shadow CSS."},
+    {nm:"Glassmorphism",url:"hype4.academy/tools/glassmorphism-generator",tag:"copy",note:"Frosted-glass card CSS."},
+  ]},
+
+  iconsfonts: {title:"Icons & Fonts", sub:"huge free sets + typography that signals premium", group:"iconsfonts", type:"card", items:[
+    {nm:"Heroicons",url:"heroicons.com",tag:"asset",note:"By the Tailwind team, MIT — the solid-fill complement to Lucide."},
+    {nm:"Tabler Icons",url:"tabler.io/icons",tag:"asset",note:"5,800+ free SVG icons, MIT."},
+    {nm:"Phosphor",url:"phosphoricons.com",tag:"asset",note:"Flexible icon family, multiple weights."},
+    {nm:"Iconify",url:"iconify.design",tag:"asset",note:"200k+ icons from every set through one component."},
+    {nm:"Simple Icons",url:"simpleicons.org",tag:"asset",note:"Brand / company logos as SVG."},
+    {nm:"Font Awesome",url:"fontawesome.com",tag:"asset",note:"Classic icon set, free tier + CDN."},
+    {nm:"Google Fonts",url:"fonts.google.com",tag:"asset",star:1,note:"Huge free library, one CDN link."},
+    {nm:"Fontshare",url:"fontshare.com",tag:"asset",star:1,note:"Free premium-quality fonts, commercial OK — where 'expensive' type comes from."},
+    {nm:"Fontsource",url:"fontsource.org",tag:"asset",note:"Self-host open-source fonts via npm / CDN."},
+    {nm:"Bunny Fonts",url:"fonts.bunny.net",tag:"asset",note:"Privacy-friendly Google Fonts drop-in."},
+  ]},
+
+  photosart: {title:"Photos, Video & Illustrations", sub:"the real backgrounds and character, no designer needed", group:"photosart", type:"card", items:[
+    {nm:"Unsplash",url:"unsplash.com",tag:"asset",star:1,note:"High-quality free photos."},
+    {nm:"Pexels",url:"pexels.com",tag:"asset",star:1,note:"Free photos AND video."},
+    {nm:"Pixabay",url:"pixabay.com",tag:"asset",note:"Photos, video, vectors."},
+    {nm:"Burst",url:"burst.shopify.com",tag:"asset",note:"Business / product photos by Shopify."},
+    {nm:"Kaboompics",url:"kaboompics.com",tag:"asset",note:"High-res lifestyle / interior photos."},
+    {nm:"Coverr",url:"coverr.co",tag:"asset",note:"Web-ready background video."},
+    {nm:"Mixkit",url:"mixkit.co",tag:"asset",note:"Free video, music & sound effects."},
+    {nm:"Storyset",url:"storyset.com",tag:"asset",note:"Animated, customizable SVG scenes (with credit)."},
+    {nm:"Humaaans",url:"humaaans.com",tag:"asset",note:"Mix-and-match illustrated people."},
+    {nm:"Open Doodles",url:"opendoodles.com",tag:"asset",note:"Sketchy free illustrations, CC0."},
+    {nm:"DrawKit",url:"drawkit.com",tag:"asset",note:"Illustrations & icons, free + paid."},
+    {nm:"Spline",url:"spline.design",tag:"asset",note:"Make & embed an interactive 3D scene, free tier — a 3D hero with no code."},
+    {nm:"3dicons",url:"3dicons.co",tag:"asset",note:"1,400+ free 3D icons, CC0."},
+    {nm:"Rive",url:"rive.app",tag:"asset",note:"Interactive animated graphics that react to hover / click."},
+  ]},
+
+  steal: {title:"Steal-the-Best — The Wow Gallery", sub:"the 'how did they do that' hall of fame — admire it, then take the one idea", group:"steal", type:"steal", items:[
+    {nm:"Bruno Simon",url:"bruno-simon.com",wow:"You drive a toy car through a 3D world to explore his work — real physics. Navigation IS a game.",bld:"Don't clone the game — steal ONE playful interaction: a hero object the visitor can drag or toss (Three.js)."},
+    {nm:"Active Theory",url:"activetheory.net",wow:"Dark, cinematic, brand-scale WebGL; project thumbnails morph into full-screen worlds as you click.",bld:"Take the click-to-expand morph on a smaller scale for a portfolio / case-study grid."},
+    {nm:"Lusion",url:"lusion.co",wow:"Silky WebGL agency showcases — the material feel every designer screenshots.",bld:"Borrow the mood: soft studio lighting + slow parallax on a single 3D object."},
+    {nm:"Resn",url:"resn.co.nz",wow:"Multiple Awwwards Site-of-the-Year winner. Motion concept comes before layout — the whole site is choreographed.",bld:"The lesson, not the tech: decide the ONE signature motion first, then design the page around it."},
+    {nm:"Immersive Garden",url:"immersive-g.com",wow:"WebGL scenes react to your mouse, deep parallax layers, editorial type colliding with 3D.",bld:"Layered parallax depth on scroll / mouse is very doable with Rellax or a few lines of GSAP."},
+    {nm:"Obys Agency",url:"obys.agency",wow:"Bold editorial typography with micro-interactions on nearly every element.",bld:"Copy the oversized type scale + hover-reveal links — huge impact, low cost."},
+    {nm:"Cuberto",url:"cuberto.com",wow:"Custom cursors and fluid page transitions that make it feel like an app, not a site.",bld:"A custom cursor + one smooth page transition already reads as 'crafted'."},
+    {nm:"Locomotive",url:"locomotive.ca",wow:"Smooth-scroll pioneers — parallax + horizontal sections so fluid the page feels like it's gliding.",bld:"That buttery momentum scroll is Lenis — literally one script tag on any site."},
+    {nm:"Apple Product Pages",url:"apple.com/airpods-pro",wow:"The gold standard of scroll-storytelling that still sells: the product pins and animates, copy timed to each beat.",bld:"Pin a hero and scrub an animation to scroll with GSAP ScrollTrigger."},
+  ]},
+
+  moves: {title:"Buildable Moves", sub:"the interactive techniques we can actually ship on a client site — used one or two at a time", group:"steal", type:"tool", items:[
+    {nm:"Buttery smooth scroll",diff:"Easy",note:"Momentum scrolling instead of choppy jumps — instantly reads as high-end.",with:"Lenis · one script tag",url:"lenis.darkroom.engineering"},
+    {nm:"Scroll reveals · pin · scrub",diff:"Medium",note:"Reveal, pin and scrub sections as the visitor scrolls — the storytelling backbone.",with:"GSAP ScrollTrigger · free",url:"gsap.com/scroll-trigger"},
+    {nm:"Kinetic split-text headline",diff:"Medium",note:"Headline animates in letter- or word-by-word for a designed first impression.",with:"GSAP SplitText · now free",url:"gsap.com/docs/v3/Plugins/SplitText"},
+    {nm:"3D hero — no code",diff:"Medium",note:"An interactive 3D object as the hero, exported and embedded.",with:"Spline · free tier",url:"spline.design"},
+    {nm:"WebGL hero background",diff:"Easy",note:"A glowing animated background behind the hero, one script.",with:"Vanta.js / tsParticles",url:"vantajs.com"},
+    {nm:"Animated illustrations & UI",diff:"Easy",note:"Lightweight characters, icons and buttons that loop and react to hover/click.",with:"Rive / LottieFiles",url:"rive.app"},
+    {nm:"Hover-reveal · tilt · marquee",diff:"Easy",note:"Image-reveal links, 3D tilt cards, infinite logo marquees — small flourishes that signal craft.",with:"Codrops tutorials · copy & adapt",url:"tympanus.net/codrops"},
+  ]},
+
+  hunt: {title:"Where to Keep Hunting", sub:"the bar moves monthly — check these when starting any premium build", group:"steal", type:"card", items:[
+    {nm:"Godly",url:"godly.website",tag:"browse",star:1,note:"Tightly curated, genuinely premium web design."},
+    {nm:"Land-book",url:"land-book.com",tag:"browse",star:1,note:"Massive landing-page gallery."},
+    {nm:"Awwwards",url:"awwwards.com",tag:"browse",note:"Award-winning sites — the high bar. Filter by Interaction Design."},
+    {nm:"The FWA",url:"thefwa.com",tag:"browse",note:"Cutting-edge / experimental — the wildest stuff lands here first."},
+    {nm:"Lapa Ninja",url:"lapa.ninja",tag:"browse",note:"Landing-page inspiration sorted by category."},
+    {nm:"One Page Love",url:"onepagelove.com",tag:"browse",note:"Single-page site gallery."},
+    {nm:"SaaS Landing Page",url:"saaslandingpage.com",tag:"browse",note:"Best SaaS page examples, section by section."},
+    {nm:"Httpster",url:"httpster.net",tag:"browse",note:"Fresh, bold real-world sites — more creative, less corporate."},
+    {nm:"Minimal Gallery",url:"minimal.gallery",tag:"browse",note:"For when 'interactive' should still feel calm and elegant."},
+    {nm:"Dribbble",url:"dribbble.com",tag:"browse",note:"Designer shots for quick visual ideas."},
+  ]},
+
+  helpers: {title:"Helpers", sub:"palettes, optimize, cutouts — the last-mile utilities", group:"helpers", type:"card", items:[
+    {nm:"Realtime Colors",url:"realtimecolors.com",tag:"copy",star:1,note:"<b>Test a palette live</b> on a real layout, then export Tailwind / CSS / shadcn tokens."},
+    {nm:"Coolors",url:"coolors.co",tag:"copy",note:"Generate & lock color palettes fast."},
+    {nm:"TinyPNG",url:"tinypng.com",tag:"asset",note:"Shrink images so the page loads fast."},
+    {nm:"Squoosh",url:"squoosh.app",tag:"asset",note:"In-browser image compressor with live preview."},
+    {nm:"SVGOMG",url:"svgomg.net",tag:"asset",note:"Clean up & shrink SVG files."},
+    {nm:"Remove.bg",url:"remove.bg",tag:"asset",note:"Auto cut out image backgrounds."},
+    {nm:"Photopea",url:"photopea.com",tag:"asset",note:"Free full Photoshop in the browser."},
+  ]},
+};
+
+const TAGLABEL = {drop:"Drop-in",copy:"Copy",look:"Look-book",steal:"Steal",asset:"Assets",browse:"Browse",tool:"Move"};
+const ORDER = ["top20","components","backgrounds","iconsfonts","photosart","steal","moves","hunt","helpers"];
+const main = document.getElementById('main');
+let n = 0;
+
+function href(u){ return "https://" + u.replace(/^https?:\/\//,''); }
+function esc(s){ return s; }
+
+ORDER.forEach(key => {
+  const sec = DATA[key];
+  n++;
+  const el = document.createElement('section');
+  el.className = 'sec';
+  el.dataset.group = sec.group;
+  const num = String(n).padStart(2,'0');
+  let inner = `<div class="sec-h"><span class="num">${num}</span><h2>${sec.title}</h2><span class="sub">${sec.sub}</span></div>`;
+
+  if (sec.type === 'steal') {
+    inner += '<div class="steal-grid">';
+    sec.items.forEach(it => {
+      inner += `<a class="scard" href="${href(it.url)}" target="_blank" rel="noopener">
+        <div class="top"><span class="nm">${it.nm}</span><span class="pill p-steal">Steal it</span></div>
+        <div class="url">${it.url} ↗</div>
+        <div class="wow"><b>Wow</b>${it.wow}</div>
+        <div class="bld"><b>Build it</b>${it.bld}</div></a>`;
+    });
+    inner += '</div>';
+  } else if (sec.type === 'tool') {
+    inner += '<div class="grid">';
+    sec.items.forEach(it => {
+      const dc = it.diff === 'Easy' ? 'd-easy' : 'd-med';
+      inner += `<a class="tool" href="${href(it.url)}" target="_blank" rel="noopener">
+        <div class="top"><span class="nm">${it.nm}</span><span class="diff ${dc}">${it.diff}</span></div>
+        <div class="note">${it.note}</div>
+        <div class="with">→ ${it.with}</div></a>`;
+    });
+    inner += '</div>';
+  } else {
+    inner += '<div class="grid">';
+    sec.items.forEach(it => {
+      const rank = sec.type === 'rank';
+      const star = it.star ? ' <span class="star">★</span>' : '';
+      inner += `<a class="card${rank?' rankcard':''}" href="${href(it.url)}" target="_blank" rel="noopener">
+        ${rank?`<span class="rk">${String(it.rk).padStart(2,'0')}</span>`:''}
+        <div class="top"><span class="nm">${it.nm}${star}</span><span class="pill p-${it.tag}">${TAGLABEL[it.tag]}</span></div>
+        <div class="url">${it.url}</div>
+        <div class="note">${it.note}</div>
+        ${it.cost?`<div class="cost${/free/i.test(it.cost)&&!/freemium/i.test(it.cost)?'':' fm'}">${it.cost}</div>`:''}</a>`;
+    });
+    inner += '</div>';
+  }
+  el.innerHTML = inner;
+  main.appendChild(el);
+});
+
+// filter + search
+const chips = document.querySelectorAll('.chip');
+const empty = document.getElementById('empty');
+let activeGroup = 'all';
+
+function apply(){
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  let anyGlobal = false;
+  document.querySelectorAll('.sec').forEach(sec => {
+    const groupOK = activeGroup === 'all' || sec.dataset.group === activeGroup;
+    let anyInSec = false;
+    sec.querySelectorAll('.card, .scard, .tool').forEach(c => {
+      const match = groupOK && (!q || c.innerText.toLowerCase().includes(q));
+      c.classList.toggle('hide', !match);
+      if (match) anyInSec = true;
+    });
+    sec.classList.toggle('hide', !anyInSec);
+    if (anyInSec) anyGlobal = true;
+  });
+  empty.style.display = anyGlobal ? 'none' : 'block';
+}
+
+chips.forEach(chip => chip.addEventListener('click', () => {
+  chips.forEach(c => c.setAttribute('aria-pressed', c === chip ? 'true':'false'));
+  activeGroup = chip.dataset.g;
+  apply();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}));
+document.getElementById('q').addEventListener('input', apply);
+</script>
