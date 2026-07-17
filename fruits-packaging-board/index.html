@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRUITS — Packaging Decision Board</title>
+<style>
+  :root{
+    --cream:#FAF5EB; --card:#FFFDF7; --stage:#F4ECDC; --ink:#2B2013; --ink2:#6B5B45; --ink3:#98866B;
+    --line:#E4D9C3; --line2:#EFE7D6;
+    --bar:#9A551A; --green:#2E8049; --terra:#B23A1E;
+    --terraSoft:#F7E3DC; --greenSoft:#E2EFE5; --brownSoft:#F0E4D2;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 22px 90px}
+
+  /* ---------- masthead ---------- */
+  header{padding:48px 0 34px;border-bottom:2px solid var(--ink);display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:center}
+  @media(max-width:860px){header{grid-template-columns:1fr}}
+  .kicker{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink2);margin-bottom:14px}
+  h1{font-family:var(--serif);font-weight:400;font-size:clamp(30px,4.4vw,44px);line-height:1.08;letter-spacing:-.01em}
+  h1 em{font-style:italic;color:var(--terra)}
+  .stand{margin-top:14px;color:var(--ink2);font-size:15.5px;max-width:560px}
+  .stand strong{color:var(--ink)}
+  .hero-fig{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);box-shadow:0 18px 40px -20px rgba(43,32,19,.35)}
+  .hero-fig img{display:block;width:100%;height:auto}
+  .hero-fig figcaption{padding:10px 16px;font-size:11.5px;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase}
+
+  section{margin-top:60px}
+  h2{font-family:var(--serif);font-weight:400;font-size:27px;margin-bottom:6px}
+  .secno{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--terra);margin-bottom:8px}
+  .sub{color:var(--ink2);max-width:760px;margin-bottom:22px}
+
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:30px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+  .tile .n{font-family:var(--serif);font-size:30px;line-height:1.1;margin:2px 0 4px}
+  .tile .l{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3)}
+  .tile .d{font-size:12.5px;color:var(--ink2)}
+  .tile.bad .n{color:var(--terra)} .tile.good .n{color:var(--green)}
+
+  .chip{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+        padding:3px 9px;border-radius:99px;vertical-align:2px}
+  .chip.current{background:var(--terraSoft);color:var(--terra)}
+  .chip.rec{background:var(--greenSoft);color:var(--green)}
+  .chip.fall{background:var(--brownSoft);color:var(--bar)}
+  .chip.flag{background:var(--brownSoft);color:var(--ink2)}
+  .chip.photo{background:var(--ink);color:var(--cream)}
+
+  /* ---------- THE SHELF ---------- */
+  .shelf-panel{background:linear-gradient(180deg,var(--card) 0%,var(--stage) 100%);border:1px solid var(--line);border-radius:16px;padding:34px 10px 0;overflow:hidden}
+  .shelf-scroll{overflow-x:auto;padding:0 18px}
+  .shelf{display:flex;align-items:flex-end;gap:8px;min-width:900px;padding:12px 6px 0;position:relative}
+  .sh-item{flex:1;min-width:104px;text-align:center;cursor:pointer;padding:6px 2px 18px;border-radius:10px 10px 0 0;transition:background .15s}
+  .sh-item:hover{background:rgba(255,253,247,.85)}
+  .sh-item svg{display:block;margin:0 auto;filter:drop-shadow(0 10px 8px rgba(43,32,19,.18))}
+  .sh-item .sn{font-size:11.5px;font-weight:600;margin-top:10px;line-height:1.25}
+  .sh-item .sc{font-family:var(--serif);font-size:16px;margin-top:2px}
+  .sh-item .sm{font-size:10.5px;font-weight:700;letter-spacing:.04em;margin-top:1px}
+  .sh-item .sm.neg{color:var(--terra)} .sh-item .sm.pos{color:var(--green)}
+  .shelf-edge{height:14px;background:var(--ink);border-radius:0 0 14px 14px;box-shadow:inset 0 3px 0 rgba(255,255,255,.08)}
+  .shelf-legend{display:flex;justify-content:space-between;padding:10px 20px 0;font-size:11.5px;color:var(--ink3)}
+
+  /* ---------- option cards ---------- */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+  .card.hot{border:2px solid var(--terra)} .card.win{border:2px solid var(--green)}
+  .stage{background:radial-gradient(120% 90% at 50% 8%,#FBF7EE 0%,var(--stage) 78%);height:232px;display:flex;align-items:flex-end;justify-content:center;position:relative;border-bottom:1px solid var(--line2)}
+  .stage svg{filter:drop-shadow(0 14px 10px rgba(43,32,19,.20));margin-bottom:14px}
+  .stage.photo{padding:0;align-items:stretch}
+  .stage.photo img{width:100%;height:100%;object-fit:cover;object-position:center 62%}
+  .stage .corner{position:absolute;top:12px;left:12px}
+  .stage .pricechip{position:absolute;top:12px;right:12px;background:var(--ink);color:var(--cream);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700}
+  .cbody{padding:18px 20px 20px;display:flex;flex-direction:column;flex:1}
+  .card h4{font-family:var(--serif);font-weight:400;font-size:19px;margin:2px 0 4px}
+  .card .desc{font-size:13px;color:var(--ink2);margin-bottom:12px}
+  .cost-line{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:10px}
+  .cost-cell{flex:1;text-align:center;padding:6px 2px;border-right:1px solid var(--line2)}
+  .cost-cell:last-child{border-right:none}
+  .cost-cell .q{font-size:9.5px;letter-spacing:.05em;color:var(--ink3);text-transform:uppercase}
+  .cost-cell .c{font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
+  .mrow{display:flex;gap:10px;align-items:center;background:var(--cream);border:1px solid var(--line2);border-radius:8px;padding:8px 12px;margin-bottom:12px}
+  .mrow .ml{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);flex:1}
+  .mrow .mv{font-family:var(--serif);font-size:20px}
+  .mrow .mv.neg{color:var(--terra)} .mrow .mv.pos{color:var(--green)}
+  .meters{margin:0 0 12px}
+  .meter{display:grid;grid-template-columns:104px 1fr 26px;gap:8px;align-items:center;font-size:11px;color:var(--ink2);padding:1.5px 0}
+  .mtrack{height:5px;background:var(--line2);border-radius:3px;position:relative}
+  .mfill{position:absolute;left:0;top:0;bottom:0;background:var(--bar);border-radius:3px}
+  .meter .ms{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
+  .card .fine{font-size:12.5px;color:var(--ink2);border-top:1px dashed var(--line);padding-top:10px;margin-top:auto}
+  .card .fine b{color:var(--ink)}
+  .lnk-cap{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin:2px 0 6px}
+  .linkrow{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+  .lnk{font-size:11px;font-weight:600;color:var(--bar);text-decoration:none;border:1px solid var(--line);border-radius:99px;padding:4px 11px;background:var(--cream);transition:all .12s}
+  .lnk:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+  .b-item .lnk{display:inline-block;margin-top:8px}
+
+  /* ---------- benchmarks ---------- */
+  .bench{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+  .b-item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 14px 16px;text-align:center}
+  .b-item svg{filter:drop-shadow(0 8px 6px rgba(43,32,19,.16));margin-bottom:10px}
+  .b-item .bt{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--terra);font-weight:700}
+  .b-item .bn{font-family:var(--serif);font-size:17px;margin:2px 0}
+  .b-item .bd{font-size:12px;color:var(--ink2)}
+  .insight{margin-top:16px;background:var(--terraSoft);border-radius:10px;padding:16px 20px;font-size:14.5px;color:#7C2A16}
+  .insight b{color:var(--terra)}
+
+  /* ---------- charts ---------- */
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px 26px 18px;margin-top:8px}
+  .panel-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:4px}
+  .panel h3{font-family:var(--serif);font-weight:400;font-size:19px}
+  .assume{font-size:12px;color:var(--ink3);margin-bottom:16px}
+  .toggle{display:inline-flex;background:var(--cream);border:1px solid var(--line);border-radius:99px;padding:3px}
+  .toggle button{border:none;background:transparent;font:inherit;font-size:12.5px;font-weight:600;color:var(--ink2);padding:5px 14px;border-radius:99px;cursor:pointer}
+  .toggle button.on{background:var(--ink);color:var(--cream)}
+  .row{display:grid;grid-template-columns:minmax(140px,220px) 1fr 60px;gap:12px;align-items:center;padding:6px 0}
+  .row .name{font-size:12.5px;line-height:1.25}
+  .row .name small{display:block;color:var(--ink3);font-size:10.5px}
+  .track{position:relative;height:18px;background:var(--line2);border-radius:0 4px 4px 0}
+  .fill{position:absolute;left:0;top:0;bottom:0;border-radius:0 4px 4px 0;background:var(--bar);transition:width .45s cubic-bezier(.2,.7,.2,1);min-width:2px}
+  .fill.green{background:var(--green)} .fill.terra{background:var(--terra)}
+  .row .val{font-variant-numeric:tabular-nums;font-weight:700;font-size:13px;text-align:right}
+  .row:hover .track{outline:2px solid var(--ink);outline-offset:1px}
+  .chart-note{margin-top:12px;font-size:12.5px;color:var(--ink2);border-top:1px solid var(--line2);padding-top:11px}
+  #tip{position:fixed;z-index:50;pointer-events:none;background:var(--ink);color:var(--cream);border-radius:8px;padding:10px 13px;font-size:12px;line-height:1.6;max-width:280px;opacity:0;transition:opacity .12s;box-shadow:0 6px 18px rgba(43,32,19,.3)}
+  #tip b{color:#F2C9A8}
+  @media(max-width:560px){.row{grid-template-columns:1fr;gap:4px}.row .val{text-align:left}}
+
+  .callout{background:var(--ink);color:var(--cream);border-radius:14px;padding:32px 36px;display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center}
+  .callout .big{font-family:var(--serif);font-size:clamp(36px,5.5vw,54px);color:#F2C9A8;line-height:1}
+  .callout p{font-size:14.5px;max-width:640px;color:#E9DFCB}
+  .callout p b{color:#fff}
+  @media(max-width:640px){.callout{grid-template-columns:1fr;gap:12px}}
+
+  .tscroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+  table{border-collapse:collapse;width:100%;min-width:640px;font-size:13px}
+  th{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:11px 13px;border-bottom:2px solid var(--line);white-space:nowrap}
+  td{padding:10px 13px;border-bottom:1px solid var(--line2);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  tr.hl td{background:var(--terraSoft)} tr.rec td{background:var(--greenSoft)}
+
+  .plays{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+  .play{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+  .play .pn{font-family:var(--serif);font-size:23px;color:var(--terra);line-height:1;margin-bottom:8px}
+  .play b{display:block;margin-bottom:4px}
+  .play p{font-size:12.5px;color:var(--ink2)}
+
+  .strats{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+  .strat{border-radius:14px;border:1px solid var(--line);background:var(--card);overflow:hidden}
+  .strat.rec{border:2px solid var(--green)}
+  .strat .s-stage{background:radial-gradient(120% 90% at 50% 8%,#FBF7EE 0%,var(--stage) 80%);padding:22px 0 6px;display:flex;justify-content:center;gap:22px;align-items:flex-end;border-bottom:1px solid var(--line2)}
+  .strat .s-stage svg{filter:drop-shadow(0 10px 8px rgba(43,32,19,.18))}
+  .strat .s-body{padding:20px 26px 24px}
+  .strat h3{font-family:var(--serif);font-weight:400;font-size:20px;margin:8px 0 8px}
+  .strat .price{font-family:var(--serif);font-size:16px}
+  .strat ul{list-style:none;margin-top:10px}
+  .strat li{padding:6px 0 6px 20px;position:relative;font-size:13px;color:var(--ink2);border-bottom:1px dashed var(--line2)}
+  .strat li:last-child{border-bottom:none}
+  .strat li::before{content:"—";position:absolute;left:0;color:var(--terra)}
+  .banner{margin-top:18px;background:var(--greenSoft);border:1px solid #BFDCC6;border-radius:10px;padding:18px 22px;font-size:14.5px;color:#1E5731}
+  .banner b{color:var(--green)}
+
+  .next{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 26px}
+  .next ol{margin-left:20px}
+  .next li{padding:5px 0;font-size:14px;color:var(--ink2)}
+  .next li b{color:var(--ink)}
+  footer{margin-top:64px;border-top:1px solid var(--line);padding-top:18px;font-size:11.5px;color:var(--ink3);line-height:1.7}
+</style>
+</head>
+<body>
+<div id="tip"></div>
+
+<!-- ======== SVG library: the FRUITS mark + the 8 package mockups ======== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <!-- the FRUITS mark: arc · bonsai tree · wordmark (stylized stand-in for the locked hand-lettered master) -->
+  <g id="mark">
+    <path d="M8,26 A34 34 0 0 1 72,26" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+    <ellipse cx="30" cy="22" rx="10" ry="6.5" fill="currentColor"/>
+    <ellipse cx="47" cy="17" rx="12" ry="7" fill="currentColor"/>
+    <ellipse cx="55" cy="27" rx="8.5" ry="5.5" fill="currentColor"/>
+    <path d="M40,52 C40,44 38,38 33,33 M40,52 C40,45 44,39 50,33 M40,52 C40,47 40,42 40,37" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    <path d="M28,53 Q40,58 52,53" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+    <text x="40" y="72" text-anchor="middle" font-family="Georgia,serif" font-size="13.5" letter-spacing="4.5" fill="currentColor">FRUITS</text>
+  </g>
+  <linearGradient id="gGlass" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#170F08"/><stop offset=".18" stop-color="#3A2C1C"/><stop offset=".38" stop-color="#1E1810"/><stop offset=".8" stop-color="#241B10"/><stop offset="1" stop-color="#120C06"/>
+  </linearGradient>
+  <linearGradient id="gHemp" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#5E4526"/><stop offset=".2" stop-color="#7D5F3A"/><stop offset=".55" stop-color="#6B4F2E"/><stop offset="1" stop-color="#4E3A20"/>
+  </linearGradient>
+  <linearGradient id="gTin" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#8F887B"/><stop offset=".22" stop-color="#D9D3C6"/><stop offset=".5" stop-color="#B0A99B"/><stop offset=".82" stop-color="#CFC9BC"/><stop offset="1" stop-color="#847D70"/>
+  </linearGradient>
+  <linearGradient id="gPET" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#DDD3C0"/><stop offset=".25" stop-color="#F5EEDF"/><stop offset=".6" stop-color="#E7DECB"/><stop offset="1" stop-color="#CFC4AE"/>
+  </linearGradient>
+  <linearGradient id="gPouchK" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#191209"/><stop offset=".28" stop-color="#3B2E1D"/><stop offset=".55" stop-color="#221A0F"/><stop offset="1" stop-color="#151008"/>
+  </linearGradient>
+  <linearGradient id="gPouchC" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#E3D8C2"/><stop offset=".3" stop-color="#F8F2E3"/><stop offset=".65" stop-color="#EFE7D4"/><stop offset="1" stop-color="#D8CCB2"/>
+  </linearGradient>
+  <linearGradient id="gBoard" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#F2EADA"/><stop offset="1" stop-color="#EBE1CC"/>
+  </linearGradient>
+  <linearGradient id="gLid" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#3B2C1A"/><stop offset="1" stop-color="#241A0E"/>
+  </linearGradient>
+
+  <!-- A · Sana hemp container + deboss band -->
+  <g id="pkgA">
+    <rect x="20" y="52" width="160" height="26" rx="12" fill="url(#gHemp)"/>
+    <rect x="20" y="74" width="160" height="76" rx="14" fill="url(#gHemp)"/>
+    <rect x="24" y="70" width="152" height="5" rx="2.5" fill="#3E2D17" opacity=".55"/>
+    <rect x="30" y="56" width="140" height="6" rx="3" fill="#FFF" opacity=".10"/>
+    <rect x="14" y="84" width="172" height="52" rx="6" fill="#F4EBD8"/>
+    <rect x="14" y="84" width="172" height="52" rx="6" fill="none" stroke="#D9CCAF" stroke-width="1"/>
+    <g transform="translate(71,84) scale(.62)"><use href="#mark" color="#8F7D5C" opacity=".45"/><use href="#mark" color="#C4B291" transform="translate(-1,-1)"/></g>
+    <g opacity=".5"><rect x="22" y="90" width="1.5" height="40" fill="#E2D6BC"/><rect x="176" y="90" width="1.5" height="40" fill="#E2D6BC"/></g>
+  </g>
+
+  <!-- B · black glass jar + cream embossed label -->
+  <g id="pkgB">
+    <rect x="52" y="30" width="96" height="30" rx="9" fill="url(#gLid)"/>
+    <rect x="52" y="52" width="96" height="8" fill="#180F07"/>
+    <path d="M46,60 h108 v84 q0,14 -14,14 h-80 q-14,0 -14,-14 z" fill="url(#gGlass)"/>
+    <rect x="60" y="66" width="8" height="80" rx="4" fill="#FFF" opacity=".14"/>
+    <rect x="46" y="78" width="108" height="58" fill="#F5EDDB"/>
+    <rect x="46" y="78" width="108" height="58" fill="none" stroke="#DACDB0" stroke-width="1"/>
+    <g transform="translate(63.8,71.4) scale(.78)"><use href="#mark" color="#7A6A4E"/></g>
+  </g>
+
+  <!-- C · plastic CR jar + label -->
+  <g id="pkgC">
+    <rect x="54" y="34" width="92" height="26" rx="8" fill="#EFE6D2"/>
+    <rect x="54" y="34" width="92" height="26" rx="8" fill="none" stroke="#CBBFa4" stroke-width="1"/>
+    <g stroke="#D6CAB0" stroke-width="2"><line x1="62" y1="38" x2="62" y2="56"/><line x1="72" y1="38" x2="72" y2="56"/><line x1="82" y1="38" x2="82" y2="56"/><line x1="92" y1="38" x2="92" y2="56"/><line x1="102" y1="38" x2="102" y2="56"/><line x1="112" y1="38" x2="112" y2="56"/><line x1="122" y1="38" x2="122" y2="56"/><line x1="132" y1="38" x2="132" y2="56"/></g>
+    <path d="M50,60 h100 v86 q0,12 -12,12 h-76 q-12,0 -12,-12 z" fill="url(#gPET)"/>
+    <rect x="50" y="80" width="100" height="54" fill="#FBF5E6"/>
+    <rect x="50" y="80" width="100" height="54" fill="none" stroke="#DDD1B5" stroke-width="1"/>
+    <g transform="translate(66.5,75.1) scale(.72)"><use href="#mark" color="#8A5A2B"/></g>
+    <rect x="50" y="128" width="100" height="3" fill="#B23A1E"/>
+  </g>
+
+  <!-- D1 · stock black CR pouch + small label -->
+  <g id="pkgD1">
+    <path d="M55,26 L145,26 L152,150 Q152,160 140,160 L60,160 Q48,160 48,150 Z" fill="url(#gPouchK)"/>
+    <rect x="55" y="34" width="90" height="7" fill="#000" opacity=".5"/>
+    <rect x="55" y="41" width="90" height="2.5" fill="#FFF" opacity=".15"/>
+    <path d="M60,152 Q100,166 140,152 L140,160 L60,160 Z" fill="#000" opacity=".35"/>
+    <rect x="58" y="62" width="84" height="76" fill="#F4EBD8"/>
+    <g transform="translate(62.8,59.2) scale(.8)"><use href="#mark" color="#6B5B45"/></g>
+  </g>
+
+  <!-- D2 · custom printed cream pouch -->
+  <g id="pkgD2">
+    <path d="M55,26 L145,26 L152,150 Q152,160 140,160 L60,160 Q48,160 48,150 Z" fill="url(#gPouchC)"/>
+    <rect x="55" y="34" width="90" height="7" fill="#C9BC9E" opacity=".55"/>
+    <rect x="55" y="41" width="90" height="2.5" fill="#FFF" opacity=".5"/>
+    <use href="#mark" x="60" y="62" color="#8A5A2B"/>
+    <text x="100" y="146" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="9.5" fill="#B23A1E">it's just fruit.</text>
+    <path d="M60,152 Q100,166 140,152 L140,160 L60,160 Z" fill="#B8A987" opacity=".35"/>
+  </g>
+
+  <!-- E · printed carton + CR inner -->
+  <g id="pkgE">
+    <path d="M132,34 L164,48 L164,150 L132,164 Z" fill="#DED2B8"/>
+    <path d="M132,34 L164,48 L132,62 L100,48 Z" fill="#E9DFC8" opacity="0"/>
+    <rect x="36" y="34" width="96" height="130" fill="url(#gBoard)"/>
+    <rect x="36" y="34" width="96" height="130" fill="none" stroke="#DACDB0" stroke-width="1"/>
+    <use href="#mark" x="44" y="52" color="#B3A182"/>
+    <use href="#mark" x="44" y="52" color="#8A7A5C" transform="translate(-.6,-.6)" opacity=".35"/>
+    <rect x="48" y="138" width="72" height="1.5" fill="#C9BC9E"/>
+    <text x="84" y="152" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="8.5" fill="#B23A1E">it's just fruit.</text>
+    <path d="M36,34 L132,34 L132,40 L36,40 Z" fill="#FFF" opacity=".35"/>
+  </g>
+
+  <!-- F · CR tin -->
+  <g id="pkgF">
+    <rect x="30" y="70" width="140" height="92" rx="16" fill="url(#gTin)"/>
+    <rect x="30" y="70" width="140" height="16" rx="8" fill="#FFF" opacity=".28"/>
+    <rect x="38" y="78" width="124" height="76" rx="11" fill="none" stroke="#847D70" stroke-width="1.5" opacity=".6"/>
+    <rect x="52" y="84" width="96" height="64" rx="6" fill="#F4EBD8"/>
+    <g transform="translate(65.6,79.9) scale(.74)"><use href="#mark" color="#7A6A4E"/></g>
+    <circle cx="100" cy="66" r="5" fill="#847D70"/><rect x="86" y="62" width="28" height="8" rx="4" fill="#9E968A"/>
+  </g>
+
+  <!-- G · jar + full textured wrap w/ embossed mark -->
+  <g id="pkgG">
+    <rect x="52" y="30" width="96" height="30" rx="9" fill="url(#gLid)"/>
+    <rect x="52" y="52" width="96" height="8" fill="#180F07"/>
+    <path d="M46,60 h108 v84 q0,14 -14,14 h-80 q-14,0 -14,-14 z" fill="url(#gGlass)"/>
+    <rect x="46" y="64" width="108" height="90" rx="4" fill="#F4EBD8"/>
+    <g opacity=".45" stroke="#E6DABE" stroke-width="1">
+      <line x1="46" y1="72" x2="154" y2="72"/><line x1="46" y1="80" x2="154" y2="80"/><line x1="46" y1="88" x2="154" y2="88"/>
+      <line x1="46" y1="130" x2="154" y2="130"/><line x1="46" y1="138" x2="154" y2="138"/><line x1="46" y1="146" x2="154" y2="146"/>
+    </g>
+    <g transform="translate(60.5,74.65) scale(.85)"><use href="#mark" color="#8F7D5C" opacity=".45"/><use href="#mark" color="#CBBB98" transform="translate(-.8,-.8)"/></g>
+  </g>
+
+  <!-- benchmark shapes -->
+  <g id="bWyld">
+    <path d="M30,30 L100,22 L112,96 L42,104 Z" fill="#E8E2D2"/>
+    <path d="M30,30 L100,22 L112,96 L42,104 Z" fill="none" stroke="#C9C2AE" stroke-width="1.5"/>
+    <circle cx="71" cy="62" r="24" fill="#B23A1E" opacity=".85"/>
+    <circle cx="63" cy="54" r="7" fill="#FFF" opacity=".35"/>
+    <text x="71" y="98" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#6B5B45" transform="rotate(-6 71 98)">carton + CR tub</text>
+  </g>
+  <g id="bKiva">
+    <rect x="24" y="42" width="104" height="62" rx="12" fill="#6E3B24"/>
+    <rect x="24" y="42" width="104" height="13" rx="7" fill="#FFF" opacity=".22"/>
+    <rect x="34" y="54" width="84" height="40" rx="7" fill="none" stroke="#E8D9C4" stroke-width="1.5" opacity=".8"/>
+    <text x="76" y="80" text-anchor="middle" font-family="Georgia,serif" font-size="13" letter-spacing="2" fill="#F2E6D2">TIN</text>
+  </g>
+  <g id="bKanha">
+    <path d="M40,20 L108,20 L114,102 Q114,110 105,110 L43,110 Q34,110 34,102 Z" fill="#8A5A8F"/>
+    <path d="M40,20 L108,20 L114,102 Q114,110 105,110 L43,110 Q34,110 34,102 Z" fill="url(#gPouchK)" opacity=".25"/>
+    <rect x="40" y="27" width="68" height="5" fill="#000" opacity=".4"/>
+    <circle cx="74" cy="66" r="20" fill="#F2C9A8" opacity=".9"/>
+    <text x="74" y="70" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#5A3560">gloss</text>
+  </g>
+  <g id="bRose">
+    <rect x="30" y="38" width="92" height="64" rx="6" fill="#FBF8F1"/>
+    <rect x="30" y="38" width="92" height="64" rx="6" fill="none" stroke="#D9D2C2" stroke-width="1.5"/>
+    <rect x="30" y="62" width="92" height="2" fill="#D9D2C2"/>
+    <text x="76" y="55" text-anchor="middle" font-family="Georgia,serif" font-size="10" letter-spacing="3" fill="#2B2013">ROSE</text>
+    <text x="76" y="86" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="8.5" fill="#98866B">rigid box · $36–40</text>
+  </g>
+</defs>
+</svg>
+
+<div class="wrap">
+
+<header>
+  <div>
+    <div class="kicker">Fruits · Packaging Format Decision · 2026-07-16</div>
+    <h1>The pack we love vs. <em>the price we promised.</em></h1>
+    <p class="stand">Eight packaging routes, <strong>each mocked up in the FRUITS look</strong> so you can see the shelf before spending a dollar — priced with real July-2026 supplier numbers. One decision comes out of this board. Deep detail &amp; sources: <strong>PACKAGING-COST-ANALYSIS.md</strong>.</p>
+  </div>
+  <figure class="hero-fig">
+    <img src="hero.jpg" alt="The locked FRUITS pack — Sana hemp container with debossed cream band (real render)">
+    <figcaption>The locked concept — real render (pre-compliance pass)</figcaption>
+  </figure>
+</header>
+
+<div class="tiles">
+  <div class="tile bad"><div class="l">Current concept · margin/pack</div><div class="n">$0.10</div><div class="d">at $17 shelf, pilot volume (audited)</div></div>
+  <div class="tile good"><div class="l">Every alternative</div><div class="n">$2.20–3.05</div><div class="d">same shelf price, same volume</div></div>
+  <div class="tile bad"><div class="l">Cost of keeping it @2k/mo</div><div class="n">≈ $46K/yr</div><div class="d">forgone profit vs the carton route</div></div>
+  <div class="tile"><div class="l">Where the current pack works</div><div class="n">$25+ shelf</div><div class="d">luxury pricing → ~$2.75/pack</div></div>
+</div>
+
+<!-- ============ THE SHELF ============ -->
+<section>
+  <div class="secno">01 · Start here</div>
+  <h2>All eight, on one shelf</h2>
+  <p class="sub">Every format wearing the FRUITS identity, standing at roughly true relative size. Price = packaging cost per unit at 1,000 units · margin = what's left per pack at a $17 shelf price. <b>Tap any package to jump to its card.</b></p>
+  <div class="shelf-panel">
+    <div class="shelf-scroll"><div class="shelf" id="shelf"></div></div>
+    <div class="shelf-edge"></div>
+    <div class="shelf-legend"><span>◂ most expensive to pack</span><span>packaging cost @1,000 units · margin per pack</span></div>
+  </div>
+</section>
+
+<!-- ============ OPTION CARDS ============ -->
+<section>
+  <div class="secno">02 · The eight routes, up close</div>
+  <h2>Option cards</h2>
+  <p class="sub">Mockups are directional illustrations in the brand language (the real locked art transfers to whichever structure wins). Option A shows the actual renders. Scores are 1–10 against the FRUITS identity.</p>
+  <div class="cards" id="cards"></div>
+</section>
+
+<!-- ============ BENCHMARKS ============ -->
+<section>
+  <div class="secno">03 · What winning brands ship (July 2026)</div>
+  <h2>The competition's packaging, by tier</h2>
+  <div class="bench">
+    <div class="b-item"><svg width="150" height="120" viewBox="0 0 152 120"><use href="#bRose"/></svg>
+      <div class="bt">Luxury · $25+</div><div class="bn">Rose Delights</div><div class="bd">Rigid paper box, "packed like AirPods." $40 flat per box (audited) — on the 2mg lines that's 40mg total THC. Price fully decoupled from milligrams.</div>
+      <a class="lnk" href="https://roselosangeles.com/collections/delights" target="_blank" rel="noopener">See their packs ↗</a></div>
+    <div class="b-item"><svg width="150" height="120" viewBox="0 0 152 120"><use href="#bKiva"/></svg>
+      <div class="bt">Premium · $18–25</div><div class="bn">Kiva Terra / Camino</div><div class="bd">Push-turn CR tin — live LA shelf $19.67 (audited). But Kiva's newest premium line (Lost Farm, $22–23) chose a <i>pouch</i>.</div>
+      <a class="lnk" href="https://www.kivaconfections.com/news/adventure-begins-here-introducing-camino-in-a-tin" target="_blank" rel="noopener">See the tin ↗</a></div>
+    <div class="b-item"><svg width="150" height="120" viewBox="0 0 152 120"><use href="#bWyld"/></svg>
+      <div class="bt">Mid · $12–18</div><div class="bn">Wyld — #1 US gummy</div><div class="bd">Printed carton + CR locking tub, $15–17. Deliberately over-packages its tier as a moat.</div>
+      <a class="lnk" href="https://morethanbuds.net/2025/09/25/wyld-cannabis-infused-indica-sour-cherry-gummies-review/" target="_blank" rel="noopener">See pack photos ↗</a></div>
+    <div class="b-item"><svg width="150" height="120" viewBox="0 0 152 120"><use href="#bKanha"/></svg>
+      <div class="bt">Mid–Premium · $13–26</div><div class="bn">Kanha · STIIIZY · P&amp;B</div><div class="bd">Printed CR pouch. The default format of every tier up to $25.</div>
+      <a class="lnk" href="https://kanhatreats.com/" target="_blank" rel="noopener">See their pouches ↗</a></div>
+  </div>
+  <div class="insight"><b>The tension in one line:</b> FRUITS' current concept is a Rose-tier object aimed at a Wyld-tier price. Nobody at $16–18 carries a $3–4 pack.</div>
+</section>
+
+<!-- ============ COST CHART ============ -->
+<section>
+  <div class="secno">04 · The numbers</div>
+  <h2>Packaging cost per finished unit</h2>
+  <div class="panel">
+    <div class="panel-top">
+      <h3>Cost per unit — by order volume</h3>
+      <div class="toggle" id="volToggle">
+        <button data-v="0">500</button><button data-v="1" class="on">1,000</button><button data-v="2">5,000</button><button data-v="3">10,000</button>
+      </div>
+    </div>
+    <div class="assume">All-in: container + branding + tamper + liner + insert + labor. Posted supplier pricing 2026-07-16; letterpress &amp; carton = estimates. Hover for each option's full ladder.</div>
+    <div id="costChart"></div>
+    <div class="chart-note">The current concept <b>never gets below ≈ $2.50 at any volume</b> — its floor is the container alone ($1.76–2.00). Every alternative starts cheaper at 500 units than the current concept ever becomes. Every bar is the sum of an explicit bill of materials (container + branding + tamper + liner/insert where required + labor) — BOMs itemized in the .md.</div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-top">
+      <h3>Margin per pack after ALL costs — $17 shelf</h3>
+      <div class="toggle" id="scaleToggle">
+        <button data-s="0" class="on">Pilot · 1,000</button><button data-s="1">Scale · 10,000</button>
+      </div>
+    </div>
+    <div class="assume">$17 shelf → $7.00 wholesale → −20% distributor = <b>$5.60 net</b>. Non-packaging COGS $1.90 pilot · $1.35 scale.</div>
+    <div id="marginChart"></div>
+    <div class="chart-note">Break-even shelf price (audited): current concept needs <b>≈ $16.70 just to break even</b> (~$24–26 healthy). Carton / jar routes: profitable from ≈ $10–11. Pouches: from ≈ $8.</div>
+  </div>
+</section>
+
+<section>
+  <div class="callout">
+    <div class="big">$46,000<span style="font-size:.45em">/yr</span></div>
+    <p><b>The annual cost of the current packaging at a modest 2,000 units/month</b> — the audited profit gap vs. the carton route at a $17 shelf ($1.90/pack × 24,000 packs). Nearly the entire ~$50K Type&nbsp;S license, paid every year, silently.</p>
+  </div>
+</section>
+
+<section>
+  <div class="secno">05 · Side-by-side</div>
+  <h2>The whole picture in one table</h2>
+  <div class="tscroll">
+    <table id="bigTable">
+      <thead><tr>
+        <th>Option</th><th class="num">@500</th><th class="num">@1,000</th><th class="num">@5,000</th><th class="num">@10,000</th>
+        <th class="num">Margin @1k</th><th class="num">Margin @10k</th><th class="num">GM% @10k</th><th class="num">Profit/yr @2k/mo</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="secno">06 · Premium look without premium cost</div>
+  <h2>Six plays that keep the FRUITS feel</h2>
+  <div class="plays">
+    <div class="play"><div class="pn">1</div><b>Move the deboss to the LABEL</b><p>Blind emboss of the exact locked logo on cream textured estate stock: +$0.10–0.30/label + one $200–1,000 plate — vs. $3+ of container-and-band. The 0.4&nbsp;mm die-safety work transfers directly.</p></div>
+    <div class="play"><div class="pn">2</div><b>Wyld's move, FRUITS' skin</b><p>Soft-touch cream carton, blind deboss or foil on board, certified CR inner. Print "F*CK CORPORATE CANNABIS" <i>inside</i> the carton — a discovery moment, off the compliance surface.</p></div>
+    <div class="play"><div class="pn">3</div><b>Printed sleeve over a stock container</b><p>Paperboard belly bands from ~$0.40 @1k, dropping fast at 3k+. One plain container + many sleeve SKUs = flavor variety, zero obsolescence.</p></div>
+    <div class="play"><div class="pn">4</div><b>Digital foil / spot UV under 5k units</b><p>No die, setup ~72% cheaper than hot-stamp below 1k. Foil-decorated packs rate &gt;80% stronger on perceived quality.</p></div>
+    <div class="play"><div class="pn">5</div><b>Soft-touch lamination</b><p>"The most luxurious finish in cannabis packaging" at a near-zero delta — under $0.02–0.15/unit. Touch drives purchase intent more than any visual finish.</p></div>
+    <div class="play"><div class="pn">6</div><b>Keep Sana as the LIMITED flagship</b><p>One case = 500 units = $1,000. Numbered "First 500" at $25+, budtender gifts, influencer seeding — where its story is loudest and its cost is marketing, not COGS.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="secno">07 · The owner decision</div>
+  <h2>Pick one strategy — don't average them</h2>
+  <div class="strats">
+    <div class="strat">
+      <div class="s-stage"><svg width="170" height="150" viewBox="10 20 190 150"><use href="#pkgA"/></svg></div>
+      <div class="s-body">
+        <span class="chip current">Strategy 1</span>
+        <h3>Luxury niche — keep the pack, raise the price</h3>
+        <div class="price">$25–28 shelf · Sana + band, exactly as designed</div>
+        <ul>
+          <li>Margin becomes ~$2.75/pack at pilot — healthy, honest</li>
+          <li>500-unit runs, direct-to-indie-dispensary, Rose-Delights lane</li>
+          <li>Low volume <i>by design</i>; the packaging justifies the price</li>
+          <li>Trade-off: abandons the "competitive price" business goal</li>
+        </ul>
+      </div>
+    </div>
+    <div class="strat rec">
+      <div class="s-stage">
+        <svg width="150" height="140" viewBox="18 28 170 142"><use href="#pkgE"/></svg>
+        <svg width="96" height="96" viewBox="10 40 190 130" style="opacity:.85"><use href="#pkgA"/></svg>
+      </div>
+      <div class="s-body">
+        <span class="chip rec">Strategy 2 · Recommended</span>
+        <h3>Competitive price — new structure, same soul</h3>
+        <div class="price">$16–18 shelf · carton + CR inner (primary) · embossed-label jar (fallback) · Sana becomes the limited flagship</div>
+        <ul>
+          <li>$0.60–1.35/unit packaging → 62–70% gross margins at scale</li>
+          <li>Format proven at #1 in this exact tier (Wyld)</li>
+          <li>Cream / deboss / quiet-luxury language survives on board &amp; label</li>
+          <li>No CR testing — certified inner carries it</li>
+          <li>Vector master, copy sheet, compliance work transfer unchanged</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="banner"><b>Recommendation:</b> Strategy 2 — Option E (soft-touch cream carton + certified CR inner) as the volume SKU, Option G as fallback, Sana + band preserved as the numbered limited flagship. Nothing already built is wasted.</div>
+</section>
+
+<section>
+  <div class="secno">08 · Cheap verification before committing</div>
+  <h2>~$100 and two emails settle it</h2>
+  <div class="next"><ol>
+    <li><b>Sample kit (&lt;$100):</b> one Wyld carton, one Kiva tin, one BrandMyDispo custom pouch, one Calyx jar — a physical line-up next to the Sana render.</li>
+    <li><b>Two real quotes</b> on the chosen format: carton @1k/5k + certified CR inner (Dymapak / BrandMyDispo), and a label converter with blind emboss for Option G.</li>
+    <li><b>Ask the co-packer</b> which format their line fills cheapest — pouches fill inline; jars &amp; cartons need more hands.</li>
+    <li><b>D23 still proceeds either way:</b> order the Sana case ($1,000) — the flagship needs it and the die order still waits on the physical measurement.</li>
+  </ol></div>
+</section>
+
+<footer>
+  <b>PRICE AUDIT 2026-07-16:</b> all 37 supplier claims re-verified against live pages — 33 confirmed exact (BrandMyDispo's full 14-tier custom ladders matched to the dollar), 2 corrected here (Kiva Camino live LA shelf $19.67, not $15–18; Owosso's $25–45 die minimums are COPPER — magnesium starts $16.25–35.55 on the 2016 list, current prices by phone), 2 unverifiable (Wizard/UPrinting JS quoters — their numbers came from driving the quoters live earlier the same day). One open ambiguity flagged on card A (Sana per-unit definition). Composite costs rebuilt as explicit BOMs — every bar on this board is a checkable sum, itemized in the .md. Dragon Chewer prices are current SALE prices (regular ~15% higher).<br><br>
+  <b>Mockup honesty:</b> option illustrations are directional brand-language mockups, not print art; Option A imagery = the real locked renders. <b>Sources (key):</b> sanapackaging.com · calyxcontainers.com · mjwholesale.com · dragonchewer.com · 420stock.com · brandmydispo.com · brigadepackaging.com (Dymapak) · bagking.com · grovebags.com · stinksack.com · epacflexibles.com · clearbags.com · cubitpackaging.com · packagingprice.com · dymapak.com · marijuanapackaging.com · owosso.com · boxcarpress.com · letterpresscommons.org · wizardlabels.com · thecarycompany.com · cannabis.ca.gov · ecfr.gov 16 CFR 1700.20 · kivaconfections.com · packagingdive.com · weedmaps.com · roselosangeles.com. Solid = posted price · Estimate = triangulated. Full detail &amp; per-number flags: <b>PACKAGING-COST-ANALYSIS.md</b>. 2026-07-16.
+</footer>
+</div>
+
+<script>
+const VOLS=['500','1,000','5,000','10,000'];
+const NET=5.60, COGS=[1.90,1.35];
+const OPTS=[
+ {id:'A',tag:'current',pkg:'pkgA',w:200,h:170,vb:'0 10 200 170',name:'A · Sana hemp jar + letterpress band',short:'The current concept',
+  cost:[4.00,3.60,2.65,2.50],flag:'container SOLID · band EST',photo:'pack-real.jpg',
+  desc:'Brown hemp CR container ($2.00→$1.76) + blind-debossed cotton band, hand-applied. The concept IS the brand.',
+  scores:{'Brand fit':10,'Perceived quality':10,'Sustainability':9,'Durability':7,'Ops ease':3,'Customer value':9},
+  fine:'<b>Watch-out:</b> never gets below ≈$2.50/unit; hand assembly; slowest ops of all 8. Only rational at a $25+ shelf. ⚠ <b>Audit flag:</b> Sana sells by "unit" ($1.00 · 1,000/case) — our docs assume base+lid = 2 units → $2.00/container, but the page never says so. If a unit is a full container, take $1.00 off every A price (verdict still doesn\'t flip). One call settles it: (303) 729-0644.'},
+ {id:'B',tag:null,pkg:'pkgB',w:170,h:160,vb:'22 26 156 158',name:'B · Black glass jar + embossed label',short:'Glass, premium label',
+  cost:[1.75,1.40,1.00,0.80],flag:'SOLID + EST',
+  desc:'Opaque black glass jar w/ certified CR cap (clear glass posts $0.40–0.97; black runs ~$0.95–1.25) + cream estate label with blind emboss.',
+  scores:{'Brand fit':7.5,'Perceived quality':8,'Sustainability':6,'Durability':6,'Ops ease':7,'Customer value':8},
+  fine:'<b>Watch-out:</b> weight &amp; breakage raise freight; must be opaque glass — clear fails CA rules.'},
+ {id:'C',tag:null,pkg:'pkgC',w:170,h:160,vb:'22 30 156 152',name:'C · CR plastic jar + premium label',short:'Plastic jar',
+  cost:[1.25,1.00,0.75,0.65],flag:'SOLID',
+  desc:'Calyx 45D (US-made, certified, $0.58) or Loud Lock PET ($0.43 @1k), opaque colorway, premium embossed label.',
+  scores:{'Brand fit':5.5,'Perceived quality':6,'Sustainability':4,'Durability':9,'Ops ease':8,'Customer value':6},
+  fine:'<b>Watch-out:</b> plastic contradicts the sustainability story unless the Calyx US-made angle carries it.'},
+ {id:'D1',tag:null,pkg:'pkgD1',w:160,h:160,vb:'30 20 140 148',name:'D1 · Stock CR pouch + applied label',short:'Cheapest compliant route',
+  cost:[0.85,0.65,0.50,0.45],flag:'SOLID',
+  desc:'Certified stock CR mylar in the right 5×8" size class ($0.38–0.42 @1k posted; the $0.25 4×6" runs tight for 10 chews) + textured label carrying the warning.',
+  scores:{'Brand fit':4.5,'Perceived quality':5,'Sustainability':4,'Durability':9,'Ops ease':9,'Customer value':5},
+  fine:'<b>Watch-out:</b> reads value-tier on the shelf; hardest fit to a quiet-luxury identity.'},
+ {id:'D2',tag:null,pkg:'pkgD2',w:160,h:160,vb:'30 20 140 148',name:'D2 · Custom printed CR pouch',short:'The Kanha model',
+  cost:[1.28,0.86,0.43,0.31],flag:'SOLID ladder — verified exact 2026-07-16',
+  desc:'Fully printed certified CR pouch, $0 plates, 10–15 day lead. Matte / soft-touch films available.',
+  scores:{'Brand fit':6,'Perceived quality':6.5,'Sustainability':5,'Durability':9,'Ops ease':9,'Customer value':6},
+  fine:'<b>Watch-out:</b> at 10k it is the cheapest of everything ($0.31–0.35) — the only format that can fight value-tier pricing.'},
+ {id:'E',tag:'rec',pkg:'pkgE',w:170,h:160,vb:'24 26 150 146',name:'E · Printed carton + certified CR inner',short:'The Wyld architecture — RECOMMENDED',
+  cost:[1.85,1.35,0.75,0.60],flag:'EST carton + SOLID inner',
+  desc:'Soft-touch cream folding carton — the biggest canvas for the FRUITS illustration system — + certified CR pouch/tub inside. Carton needs NO CR cert.',
+  scores:{'Brand fit':8,'Perceived quality':8.5,'Sustainability':7,'Durability':8,'Ops ease':7,'Customer value':8.5},
+  fine:'<b>Why it wins:</b> proven at #1 in the exact target tier; emboss/foil cheapest per impression on board; unboxing moment built in.'},
+ {id:'F',tag:null,pkg:'pkgF',w:180,h:130,vb:'20 52 160 120',name:'F · CR tin + label',short:'The Kiva model',
+  cost:[1.65,1.50,0.75,0.60],flag:'SOLID stock · EST custom',
+  desc:'Stock CR hinged tins $1.13–1.75 small-qty; custom push-turn import at 5k+ ≈ $0.28–0.65 + ~30-day lead + freight.',
+  scores:{'Brand fit':7.5,'Perceived quality':8,'Sustainability':6,'Durability':9,'Ops ease':6,'Customer value':8},
+  fine:'<b>Watch-out:</b> custom = 5k MOQ, overseas lead, freight; strong equity but it reads "Kiva."'},
+ {id:'G',tag:'fall',pkg:'pkgG',w:170,h:160,vb:'22 26 156 158',name:'G · Jar + blind-EMBOSSED textured wrap',short:'"Stealth-for-less" — FALLBACK',
+  cost:[1.45,1.25,0.95,0.85],flag:'SOLID base + EST emboss wrap',
+  desc:'Black glass / Calyx / Sana OCEAN jar + CR lid ($0.59–0.72, reclaimed-ocean story) in a full cream linen-texture wrap label carrying the locked FRUITS deboss — as an emboss.',
+  scores:{'Brand fit':8.5,'Perceived quality':8.5,'Sustainability':7,'Durability':8,'Ops ease':7.5,'Customer value':8.5},
+  fine:'<b>Why it matters:</b> the deboss ritual survives; the $2.00 container and $1.00 band do not. One $200–1,000 plate; art transfers as-is.'}
+];
+const LINKS={
+ A:[{t:'Sana hemp container — $1.00/pc',u:'https://sanapackaging.com/products/sana-hemp-container'},
+    {t:'Owosso deboss dies',u:'https://www.owosso.com/'},
+    {t:'Boxcar letterpress plates',u:'https://www.boxcarpress.com/plate-choices-pricing/'}],
+ B:[{t:'Dragon Chewer 3oz CR glass — $0.46',u:'https://dragonchewer.com/products/3-ounce-clear-glass-jar-child-resistant-black-smooth-cap-150-qty'},
+    {t:'420Stock 3oz CR — $0.40',u:'https://420stock.com/product/3oz-child-resistant-glass-jars/'},
+    {t:'Cary certified CR caps — $0.36',u:'https://www.thecarycompany.com/configure-53-400-child-resistant-caps'},
+    {t:'Wizard estate-stock labels',u:'https://www.wizardlabels.com/product/custom-labels/'}],
+ C:[{t:'Calyx 45D — $0.58, US-made',u:'https://calyxcontainers.com/products/45d-drams'},
+    {t:'Loud Lock 4oz CR — $0.43 @1k',u:'https://mjwholesale.com/products/4oz-loud-lock-glass-jar-with-child-resistant-top-clear-jar-with-black-or-white-lid-100-9-000-count'},
+    {t:'Chubby Gorilla spiral CR',u:'https://mjwholesale.com/products/chubby-gorilla-4oz-spiral-cr-plastic-containers-various-colors-400-count'}],
+ D1:[{t:'BrandMyDispo stock CR — $0.25 @1k',u:'https://www.brandmydispo.com/products/child-proof-bags-7g'},
+    {t:'Bag King CR mylar — $0.38',u:'https://www.bagking.com/products/bag-king-child-resistant-smell-proof-mylar-bag-1-4-oz'},
+    {t:'Grove TerpLoc CR — $0.42',u:'https://grovebags.com/products/terploc-child-resistant-pouch-case'},
+    {t:'MJP Pinch N Slide range',u:'https://marijuanapackaging.com/collections/child-resistant-certified-child-proof-mylar-bags'}],
+ D2:[{t:'BrandMyDispo custom 5×8 CR — full price ladder',u:'https://www.brandmydispo.com/products/child-resistant-pouches'},
+    {t:'ePac certified CR pouches',u:'https://epacflexibles.com/products/child-resistant/'},
+    {t:'ClearBags compostable CR',u:'https://www.clearbags.com/matte-black-eco-compostable-child-resistant-stand-up-pouches-5-1-8-x-2-1-2-x-8-1-8-100-pack-crpe3mb.html'}],
+ E:[{t:'Cubit custom cartons — MOQ 500',u:'https://www.cubitpackaging.com/categories/folding-cartons'},
+    {t:'Dymapak SlideSafe CR box',u:'https://dymapak.com/child-resistant-boxes/'},
+    {t:'Dymapak Secure Sack (CR inner)',u:'https://dymapak.com/child-resistant-bags/'},
+    {t:'Wyld pack photos (the architecture, live)',u:'https://morethanbuds.net/2025/09/25/wyld-cannabis-infused-indica-sour-cherry-gummies-review/'}],
+ F:[{t:'MJP stock CR tins — $1.13',u:'https://marijuanapackaging.com/collections/wholesale-cannabis-tin-containers-for-pre-rolls-edibles'},
+    {t:'Dymapak CR tins',u:'https://dymapak.com/child-resistant-tins/'},
+    {t:'Happy Head custom tins — from $0.28',u:'https://happyheadmarketing.com/child-resistant-packaging/'}],
+ G:[{t:'Sana Ocean jar 4oz — $0.40',u:'https://sanapackaging.com/products/sana-ocean-jar-4oz-new'},
+    {t:'Sana certified CR lid — $0.32',u:'https://sanapackaging.com/products/53-400-black-sana-ocean-screw-cap'},
+    {t:'Wizard estate/felt labels — $0.22 @1k',u:'https://www.wizardlabels.com/product/custom-labels/'},
+    {t:'UPrinting true-foil labels',u:'https://www.uprinting.com/foil-labels.html'}]
+};
+const fmt$=v=>'$'+v.toFixed(2);
+const margin=(o,s)=>NET-COGS[s]-o.cost[s?3:1];
+const tip=document.getElementById('tip');
+function showTip(html,x,y){tip.innerHTML=html;tip.style.opacity=1;const w=tip.offsetWidth,h=tip.offsetHeight;
+  tip.style.left=Math.min(x+14,innerWidth-w-10)+'px';tip.style.top=(y-h-12<8?y+16:y-h-12)+'px';}
+function hideTip(){tip.style.opacity=0}
+const chipOf=o=>o.tag==='current'?'<span class="chip current">Current</span>':o.tag==='rec'?'<span class="chip rec">Recommended</span>':o.tag==='fall'?'<span class="chip fall">Fallback</span>':'';
+
+/* ---- shelf ---- */
+document.getElementById('shelf').innerHTML=OPTS.map(o=>{
+  const m=margin(o,0);
+  return `<div class="sh-item" onclick="document.getElementById('card-${o.id}').scrollIntoView({behavior:'smooth',block:'center'})">
+    <svg width="${Math.round(o.w*.62)}" height="${Math.round(o.h*.62)}" viewBox="${o.vb}"><use href="#${o.pkg}"/></svg>
+    <div class="sn">${o.name.split(' · ')[1]} ${chipOf(o)}</div>
+    <div class="sc">${fmt$(o.cost[1])}</div>
+    <div class="sm ${m<0.5?'neg':'pos'}">${m<0.5?'⚠ ':''}${fmt$(m)} margin</div>
+  </div>`}).join('');
+
+/* ---- cards ---- */
+document.getElementById('cards').innerHTML=OPTS.map(o=>{
+  const cls=o.tag==='current'?'card hot':o.tag==='rec'?'card win':'card';
+  const chip=o.tag==='current'?'<span class="chip current">Current concept</span>':o.tag==='rec'?'<span class="chip rec">Recommended</span>':o.tag==='fall'?'<span class="chip fall">Fallback</span>':'<span class="chip flag">Alternative</span>';
+  const m=margin(o,0);
+  const stage=o.photo
+    ?`<div class="stage photo"><img src="${o.photo}" alt="${o.name}" loading="lazy"><span class="corner"><span class="chip photo">Real render</span></span><span class="pricechip">${fmt$(o.cost[1])} @1k</span></div>`
+    :`<div class="stage"><svg width="${o.w}" height="${o.h}" viewBox="${o.vb}"><use href="#${o.pkg}"/></svg><span class="corner">${chip}</span><span class="pricechip">${fmt$(o.cost[1])} @1k</span></div>`;
+  return `<div class="${cls}" id="card-${o.id}">${stage}<div class="cbody">
+    ${o.photo?chip:''}
+    <h4>${o.name}</h4><div class="desc">${o.desc}</div>
+    <div class="cost-line">${o.cost.map((c,i)=>`<div class="cost-cell"><div class="q">@${VOLS[i]}</div><div class="c">${fmt$(c)}</div></div>`).join('')}</div>
+    <div class="mrow"><span class="ml">Margin per pack · $17 shelf · pilot</span><span class="mv ${m<0.5?'neg':'pos'}">${fmt$(m)}</span></div>
+    <div class="meters">${Object.entries(o.scores).map(([k,v])=>`<div class="meter"><span>${k}</span><div class="mtrack"><div class="mfill" style="width:${v*10}%"></div></div><span class="ms">${v}</span></div>`).join('')}</div>
+    <div class="lnk-cap">See the real thing — supplier pages</div>
+    <div class="linkrow">${(LINKS[o.id]||[]).map(l=>`<a class="lnk" href="${l.u}" target="_blank" rel="noopener">${l.t} ↗</a>`).join('')}</div>
+    <div class="fine">${o.fine}</div></div></div>`;
+}).join('');
+
+/* ---- cost chart ---- */
+let vol=1; const MAXC=4.2;
+const costTip=o=>`<b>${o.name}</b><br>@500: ${fmt$(o.cost[0])} · @1k: ${fmt$(o.cost[1])}<br>@5k: ${fmt$(o.cost[2])} · @10k: ${fmt$(o.cost[3])}<br><span style="opacity:.8">${o.flag}</span>`;
+function renderCost(){
+  const el=document.getElementById('costChart');
+  el.innerHTML=OPTS.map((o,i)=>`<div class="row" data-i="${i}">
+      <div class="name">${o.name.split(' · ')[1]} ${chipOf(o)}<small>${o.short}</small></div>
+      <div class="track"><div class="fill" style="width:${o.cost[vol]/MAXC*100}%"></div></div>
+      <div class="val">${fmt$(o.cost[vol])}</div></div>`).join('');
+  el.querySelectorAll('.row').forEach(r=>{const o=OPTS[+r.dataset.i];
+    r.addEventListener('mousemove',e=>showTip(costTip(o),e.clientX,e.clientY));
+    r.addEventListener('mouseleave',hideTip);});
+}
+document.getElementById('volToggle').addEventListener('click',e=>{if(!e.target.dataset.v)return;
+  vol=+e.target.dataset.v;document.querySelectorAll('#volToggle button').forEach(b=>b.classList.toggle('on',b===e.target));renderCost();});
+
+/* ---- margin chart ---- */
+let sc=0; const MAXM=4.3;
+const marginTip=(o,s)=>{const m=margin(o,s);
+  return `<b>${o.name}</b><br>$5.60 net − ${fmt$(COGS[s])} COGS − ${fmt$(o.cost[s?3:1])} packaging<br>= <b>${fmt$(m)}</b> per pack (${Math.round(m/NET*100)}% of net)`};
+function renderMargin(){
+  const el=document.getElementById('marginChart');
+  el.innerHTML=OPTS.map((o,i)=>{const m=margin(o,sc);
+    return `<div class="row" data-i="${i}">
+      <div class="name">${o.name.split(' · ')[1]} ${chipOf(o)}<small>packaging ${fmt$(o.cost[sc?3:1])}</small></div>
+      <div class="track"><div class="fill ${m<0.5?'terra':'green'}" style="width:${Math.max(m,0)/MAXM*100}%"></div></div>
+      <div class="val">${fmt$(m)}</div></div>`}).join('');
+  el.querySelectorAll('.row').forEach(r=>{const o=OPTS[+r.dataset.i];
+    r.addEventListener('mousemove',e=>showTip(marginTip(o,sc),e.clientX,e.clientY));
+    r.addEventListener('mouseleave',hideTip);});
+}
+document.getElementById('scaleToggle').addEventListener('click',e=>{if(!e.target.dataset.s)return;
+  sc=+e.target.dataset.s;document.querySelectorAll('#scaleToggle button').forEach(b=>b.classList.toggle('on',b===e.target));renderMargin();});
+
+/* ---- table ---- */
+document.querySelector('#bigTable tbody').innerHTML=OPTS.map(o=>{
+  const m1=margin(o,0),m10=margin(o,1),gm=Math.round(m10/NET*100),yr=Math.round(m10*24000/100)*100;
+  const cls=o.tag==='current'?'hl':o.tag==='rec'?'rec':'';
+  return `<tr class="${cls}"><td>${o.name} ${chipOf(o)}</td>
+    ${o.cost.map(c=>`<td class="num">${fmt$(c)}</td>`).join('')}
+    <td class="num"><b>${fmt$(m1)}</b></td><td class="num">${fmt$(m10)}</td>
+    <td class="num">${gm}%</td><td class="num">$${yr.toLocaleString()}</td></tr>`;
+}).join('');
+
+renderCost();renderMargin();
+</script>
+</body>
+</html>
