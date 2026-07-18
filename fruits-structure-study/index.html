@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRUITS — Seven Structures: The Shape Study</title>
+<style>
+  :root{
+    --cream:#FAF5EB; --card:#FFFDF7; --stage:#F4ECDC; --ink:#2B2013; --ink2:#6B5B45; --ink3:#98866B;
+    --line:#E4D9C3; --line2:#EFE7D6;
+    --bar:#9A551A; --green:#2E8049; --terra:#B23A1E;
+    --terraSoft:#F7E3DC; --greenSoft:#E2EFE5; --brownSoft:#F0E4D2;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 22px 90px}
+  header{padding:52px 0 34px;border-bottom:2px solid var(--ink)}
+  .kicker{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink2);margin-bottom:14px}
+  h1{font-family:var(--serif);font-weight:400;font-size:clamp(30px,4.6vw,46px);line-height:1.08}
+  h1 em{font-style:italic;color:var(--terra)}
+  .stand{margin-top:14px;color:var(--ink2);font-size:15.5px;max-width:790px}
+  .stand strong{color:var(--ink)}
+  section{margin-top:58px}
+  h2{font-family:var(--serif);font-weight:400;font-size:26px;margin-bottom:6px}
+  .secno{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--terra);margin-bottom:8px}
+  .sub{color:var(--ink2);max-width:790px;margin-bottom:22px}
+  .chip{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:99px;vertical-align:2px}
+  .chip.base{background:var(--brownSoft);color:var(--bar)}
+  .chip.soul{background:var(--greenSoft);color:var(--green)}
+  .chip.wild{background:#EFE3F2;color:#6E4B8E}
+  .chip.watch{background:var(--terraSoft);color:var(--terra)}
+
+  /* silhouettes */
+  .sil-panel{background:var(--ink);border-radius:16px;padding:34px 26px 0;overflow:hidden}
+  .sil-row{display:flex;align-items:flex-end;justify-content:space-around;gap:8px;min-width:760px}
+  .sil-scroll{overflow-x:auto}
+  .sil{text-align:center;color:#B7A88C;font-size:11px;padding-bottom:16px;cursor:pointer}
+  .sil:hover{color:#F2C9A8}
+  .sil svg{display:block;margin:0 auto 8px}
+  .sil path,.sil rect,.sil circle,.sil ellipse{fill:#F4EDDD}
+  .sil-edge{height:12px;background:#000;opacity:.35;margin:0 -26px;border-radius:0 0 14px 14px}
+  .sil-cap{display:flex;justify-content:space-between;padding:10px 4px 0;font-size:11.5px;color:var(--ink3)}
+
+  /* research strip */
+  .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+  .fact{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--bar);border-radius:8px;padding:14px 16px;font-size:12.5px;color:var(--ink2)}
+  .fact b{display:block;color:var(--ink);font-size:13px;margin-bottom:3px}
+  .fact .cite{display:block;margin-top:6px;font-size:10.5px;color:var(--ink3)}
+
+  .pruned{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+  .prune{background:var(--card);border:1px dashed var(--line);border-radius:9px;padding:13px 15px;font-size:12.5px;color:var(--ink2)}
+  .prune b{display:block;color:var(--ink);text-decoration:line-through;text-decoration-color:var(--terra);margin-bottom:3px}
+
+  /* concept blocks */
+  .concept{margin-top:54px;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+  .c-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;padding:24px 30px 0}
+  .c-num{font-family:var(--serif);font-size:15px;color:var(--terra);letter-spacing:.1em}
+  .c-head h3{font-family:var(--serif);font-weight:400;font-size:26px}
+  .c-dir{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+  .c-grid{display:grid;grid-template-columns:minmax(300px,420px) 1fr}
+  .concept.flip .c-grid{grid-template-columns:1fr minmax(300px,420px)}
+  .concept.flip .c-stage{order:2}
+  @media(max-width:880px){.c-grid,.concept.flip .c-grid{grid-template-columns:1fr}.concept.flip .c-stage{order:0}}
+  .c-stage{background:radial-gradient(130% 95% at 50% 6%,#FBF7EE,var(--stage) 82%);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:30px 16px 18px;border-right:1px solid var(--line2)}
+  .concept.flip .c-stage{border-right:none;border-left:1px solid var(--line2)}
+  @media(max-width:880px){.c-stage,.concept.flip .c-stage{border:none;border-bottom:1px solid var(--line2)}}
+  .c-stage svg{filter:drop-shadow(0 16px 13px rgba(43,32,19,.2));max-width:100%;height:auto}
+  .ph{background:#FFF;border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;align-items:center;justify-content:center;width:100%;max-width:360px;min-height:240px}
+  .ph img{max-width:100%;max-height:270px;object-fit:contain;display:block}
+  .ph.hero{padding:0;overflow:hidden;min-height:0}
+  .ph.hero img{max-height:none;width:100%;height:auto}
+  .ph-cap{margin-top:8px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);text-align:center;max-width:360px}
+  .ph-cap b{color:var(--ink2)}
+  .thumbrow{display:flex;gap:8px;margin-top:10px;justify-content:center}
+  .thumbrow .ph{min-height:0;padding:6px;max-width:170px}
+  .thumbrow .ph img{max-height:105px}
+  .lnkrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;justify-content:center;max-width:360px}
+  .lnk{font-size:10.5px;font-weight:600;color:var(--bar);text-decoration:none;border:1px solid var(--line);border-radius:99px;padding:3px 10px;background:var(--card);transition:all .12s}
+  .lnk:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+  .mech{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;display:flex;align-items:center;gap:12px}
+  .mech svg{filter:none}
+  .mech .ml{font-size:11px;color:var(--ink2);max-width:170px;line-height:1.35}
+  .mech .ml b{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--terra)}
+  .c-body{padding:22px 30px 26px}
+  .c-quote{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--ink);border-left:3px solid var(--terra);padding-left:14px;margin-bottom:13px}
+  .c-row{margin-bottom:10px;font-size:13.5px;color:var(--ink2)}
+  .c-row b{color:var(--ink)}
+  .c-row .lbl{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--terra);margin-bottom:2px;font-weight:700}
+  .stats{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:12px 0;max-width:560px}
+  .stats div{flex:1;min-width:100px;text-align:center;padding:8px 6px;border-right:1px solid var(--line2)}
+  .stats div:last-child{border-right:none}
+  .stats .q{font-size:9.5px;letter-spacing:.05em;color:var(--ink3);text-transform:uppercase}
+  .stats .v{font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
+  .pc{display:grid;grid-template-columns:1fr 1fr;gap:7px 18px;margin:8px 0 4px;font-size:12.5px}
+  @media(max-width:560px){.pc{grid-template-columns:1fr}}
+  .pc div{padding-left:16px;position:relative;color:var(--ink2)}
+  .pc .p::before{content:"+";position:absolute;left:0;color:var(--green);font-weight:700}
+  .pc .m::before{content:"−";position:absolute;left:0;color:var(--terra);font-weight:700}
+  .riskline{margin-top:9px;font-size:12.5px;color:var(--ink2);border-top:1px dashed var(--line2);padding-top:9px}
+  .riskline b{color:var(--terra)}
+
+  .tscroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+  table{border-collapse:collapse;width:100%;min-width:860px;font-size:12.5px}
+  th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);white-space:nowrap}
+  td{padding:10px 12px;border-bottom:1px solid var(--line2);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr.hl td{background:var(--greenSoft)}
+
+  .verdict{background:var(--ink);color:var(--cream);border-radius:16px;padding:32px 36px}
+  .verdict h3{font-family:var(--serif);font-size:23px;color:#F2C9A8;margin-bottom:12px}
+  .verdict p{font-size:14.5px;color:#E9DFCB;max-width:880px;margin-bottom:10px}
+  .verdict b{color:#fff}
+  footer{margin-top:64px;border-top:1px solid var(--line);padding-top:18px;font-size:11.5px;color:var(--ink3);line-height:1.7}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="treeonly">
+    <ellipse cx="30" cy="22" rx="10" ry="6.5" fill="currentColor"/><ellipse cx="47" cy="17" rx="12" ry="7" fill="currentColor"/><ellipse cx="55" cy="27" rx="8.5" ry="5.5" fill="currentColor"/>
+    <path d="M40,52 C40,44 38,38 33,33 M40,52 C40,45 44,39 50,33 M40,52 C40,47 40,42 40,37" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    <path d="M28,53 Q40,58 52,53" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+  </g>
+  <marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#B23A1E"/></marker>
+  <linearGradient id="gSide" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".13"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient>
+  <linearGradient id="gSteel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8F887B"/><stop offset=".24" stop-color="#DCD6C9"/><stop offset=".5" stop-color="#B2AB9D"/><stop offset=".8" stop-color="#D2CCBF"/><stop offset="1" stop-color="#867F72"/></linearGradient>
+  <linearGradient id="gKraftV" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B08A58"/><stop offset=".3" stop-color="#CDAB7C"/><stop offset=".7" stop-color="#C09C6A"/><stop offset="1" stop-color="#A17D4C"/></linearGradient>
+</defs></svg>
+
+<div class="wrap">
+<header>
+  <div class="kicker">Fruits · Structural Study · Seven Shapes, Zero Graphics · 2026-07-18</div>
+  <h1>Pick the body <em>before the clothes.</em></h1>
+  <p class="stand">Seven manufacturable physical forms for a 10-gummy, 45g product — every one certified-CR-capable, priced at our volumes, and grounded in fresh research on what the 2025–26 market actually builds. <strong>Each structure leads with a photoreal blank render in the FRUITS family style</strong> — cream, kraft, or steel, no printing, so the body, the proportions, and the opening ritual are the whole conversation — followed by photographs of the real buyable products behind it (vendor branding disclosed). Graphics come after the body is chosen.</p>
+</header>
+
+<!-- SILHOUETTES -->
+<section>
+  <div class="secno">The 20-foot test</div>
+  <h2>Could you find it across the room?</h2>
+  <p class="sub">Every form at true relative scale, lights off. Silhouette is the strongest recognition asset a brand owns — you can spot a Wyld box or a Kiva tin with the graphics blurred out. This is what each candidate contributes before a single word is printed.</p>
+  <div class="sil-panel"><div class="sil-scroll"><div class="sil-row">
+    <div class="sil" data-t="S1" title="Jump to The Tuck Carton"><svg width="62" height="110" viewBox="0 0 62 110"><rect x="8" y="10" width="46" height="96" rx="2"/></svg>S1 · Tuck carton</div>
+    <div class="sil" data-t="S2" title="Jump to The Cube &amp; Tub"><svg width="78" height="110" viewBox="0 0 78 110"><rect x="4" y="32" width="70" height="74" rx="3"/></svg>S2 · Cube + tub</div>
+    <div class="sil" data-t="S3" title="Jump to The Matchbox"><svg width="84" height="110" viewBox="0 0 84 110"><rect x="4" y="48" width="76" height="58" rx="3"/><rect x="58" y="56" width="30" height="42" rx="2" opacity=".55"/></svg>S3 · Matchbox drawer</div>
+    <div class="sil" data-t="S4" title="Jump to The Keepsake Tin"><svg width="80" height="110" viewBox="0 0 80 110"><ellipse cx="40" cy="88" rx="37" ry="18"/><rect x="3" y="74" width="74" height="14"/><ellipse cx="40" cy="74" rx="37" ry="18"/></svg>S4 · Round tin</div>
+    <div class="sil" data-t="S5" title="Jump to The Canister"><svg width="66" height="110" viewBox="0 0 66 110"><rect x="8" y="18" width="50" height="88" rx="6"/><ellipse cx="33" cy="18" rx="25" ry="7"/></svg>S5 · Canister</div>
+    <div class="sil" data-t="S6" title="Jump to The Dose Wallet"><svg width="66" height="110" viewBox="0 0 66 110"><rect x="6" y="42" width="54" height="64" rx="3"/><rect x="14" y="34" width="38" height="8" rx="2" opacity=".55"/></svg>S6 · Dose wallet</div>
+    <div class="sil" data-t="S7" title="Jump to The Pocket Case"><svg width="84" height="110" viewBox="0 0 84 110"><rect x="6" y="62" width="72" height="44" rx="8"/></svg>S7 · Pocket case</div>
+  </div></div><div class="sil-edge"></div></div>
+  <script>document.addEventListener('click',e=>{const s=e.target.closest('.sil');if(s&&s.dataset.t){const el=document.getElementById(s.dataset.t);el&&el.scrollIntoView({behavior:'smooth',block:'start'})}});</script>
+  <div class="sil-cap"><span>◂ current baseline</span><span>all forms hold 10 × 10mg gummies · ~45g</span></div>
+</section>
+
+<!-- RESEARCH GROUNDING -->
+<section>
+  <div class="secno">What the 2025–26 market says (fresh research, cited)</div>
+  <div class="facts">
+    <div class="fact"><b>All-paper child resistance is real now</b>Certified 16 CFR 1700.20 zero-plastic CR boxes exist from 5+ suppliers (Dymapak SlideSafe, Zenpack Zenlock — iF Design winner, SunGrown Oakland). Early-adopter territory: exactly where a premium brand differentiates.<span class="cite">Dymapak · thezenlock.com · sungrownpackaging.com · Trend Hunter</span></div>
+    <div class="fact"><b>Regulation is pushing paper</b>EPR laws and PFAS rules make hard-to-recycle formats cost real money from 2026; Vermont already bans plastic cannabis packaging outright. Monomaterial = Dieline's #1 structural theme for 2026.<span class="cite">Packaging Dive 2026 outlook · Dieline 2026 Trend Report · ccb.vermont.gov</span></div>
+    <div class="fact"><b>Tins are resurging</b>Specialty-tin market growing ~50% by 2036; premium CPG is re-embracing metal for reuse + keepsake value. Dymapak's zero-plastic Squeeze &amp; Turn tin comes in the exact 10-gummy size (76×30mm), cert downloadable.<span class="cite">openpr specialty-tins report · dymapak.com/child-resistant-tins</span></div>
+    <div class="fact"><b>The Wyld lesson, structurally</b>The #1 US gummy = an unforgettable structural gesture (custom "origami" carton) over a commodity CR tub. Structure carries the brand; the CR layer is invisible plumbing.<span class="cite">mg Magazine (Wyld VP) · teardown research</span></div>
+    <div class="fact"><b>The legal unlock nobody uses</b>§17412(a)(1): if each serving is individually CR-packaged, the outer package needs <i>no child resistance at all</i> — the pharma-blister exemption. It frees the outer to be any thin, elegant form.<span class="cite">4 CCR §17412(a)(1), verified verbatim</span></div>
+    <div class="fact"><b>Ritual mechanics are premium codes</b>Slide, squeeze-turn, snap, drawer — trend press treats the opening gesture itself as a luxury interaction. Watch-item: states are tightening CR standards (Ohio banned slide-lock <i>tubes</i>, 3/2026).<span class="cite">Trend Hunter "Modernized Ritual" · Cannabis Industry Journal 5/2026</span></div>
+  </div>
+</section>
+
+<!-- PRUNED -->
+<section>
+  <div class="secno">Structures examined and set aside — and why</div>
+  <div class="pruned">
+    <div class="prune"><b>Glass / plastic jars</b>Fully evaluated on the Decision Board (Options B/C/G). Strong economics, weak structural distinction — every dispensary shelf is full of jars. Not re-argued here.</div>
+    <div class="prune"><b>Refill / reuse systems</b>No CA-compliant path: CR + tamper-evidence at point of sale defeats refills for edibles today. Aspirational, not buildable.</div>
+    <div class="prune"><b>Paper bottles (Paboco-class)</b>Real technology, big-CPG pilot scale only; no CR version exists; not purchasable at 5–10k units.</div>
+    <div class="prune"><b>N2 steel can</b>Certified and striking, but requires can-seaming equipment at the co-packer — an operational commitment no pilot survives.</div>
+    <div class="prune"><b>Molded-fiber custom CR</b>No certified child-resistant fiber closure is in market yet (Blue Ocean Closures is close). Watchlist for v3.</div>
+  </div>
+</section>
+
+<!-- ============ S1 ============ -->
+<div class="concept" id="S1">
+  <div class="c-head"><span class="c-num">S1</span><h3>The Tuck Carton</h3><span class="c-dir">Vertical rectangle · carton + CR pouch</span><span class="chip base">Current baseline</span></div>
+  <div class="c-grid">
+    <div class="c-stage">
+      <div class="ph hero"><img src="hero-s1w.jpg" alt="Blank cream straight-tuck carton — the FRUITS S1 structure"></div>
+      <div class="ph-cap"><b>FRUITS structure render</b> — blank, pre-branding (Higgsfield)</div>
+      <div class="thumbrow"><div class="ph"><img src="s1-carton.png" alt="Packlane printed tuck cartons"></div><div class="ph"><img src="s1b-pouch.png" alt="Dymapak certified CR pouch"></div></div>
+      <div class="ph-cap">Buyable reality: Packlane cartons · Dymapak CR pouch (their branding)</div>
+      <div class="lnkrow"><a class="lnk" href="https://packlane.com/products/cardstock-product-boxes" target="_blank" rel="noopener">Packlane cartons — MOQ 25 ↗</a><a class="lnk" href="https://dymapak.com/shop/" target="_blank" rel="noopener">Dymapak Secure Sack — $0.20 ↗</a></div>
+      
+      <div class="mech">
+        <svg width="70" height="54" viewBox="0 0 70 54"><rect x="12" y="18" width="40" height="30" fill="#F4EDDD" stroke="#B8A67F"/><path d="M12,18 L20,6 L52,6 L60,18" fill="#EFE5CF" stroke="#B8A67F"/><path d="M36,2 Q40,-2 46,2" fill="none" stroke="#B23A1E" stroke-width="1.6" marker-end="url(#arr)"/></svg>
+        <div class="ml"><b>The action</b>Tuck flap opens; certified zipper pouch inside reseals for life.</div>
+      </div>
+    </div>
+    <div class="c-body">
+      <div class="c-quote">"The proven default — every printer's first quote, every co-packer's easiest day."</div>
+      <div class="c-row"><span class="lbl">Why this shape</span>3.75 × 2 × 4.75" vertical block: tallest front panel per board-inch (max shelf billboard), tightest case-pack density, and the only form testable at 25–500 units with zero tooling. Standard dieline = free.</div>
+      <div class="c-row"><span class="lbl">Why these materials</span>18pt SBS (or hemp folding board) + certified CR zipper pouch inside — the pouch carries every legal duty; the shell is pure design freedom.</div>
+      <div class="c-row"><span class="lbl">Experience &amp; positioning</span>Familiar, refined, quietly premium — but the opening ritual is ordinary. The structure says "considered," never "unforgettable."</div>
+      <div class="stats"><div><div class="q">@1k pilot</div><div class="v">$1.40</div></div><div><div class="q">@10k scale</div><div class="v">$0.70</div></div><div><div class="q">vs current</div><div class="v">baseline</div></div><div><div class="q">Complexity</div><div class="v">Lowest</div></div><div><div class="q">Tooling</div><div class="v">$0</div></div></div>
+      <div class="pc"><div class="p">Only structure with a true 500-unit pilot path (US digital, 2–3 wks)</div><div class="p">Cheapest at every volume; infinite supplier pool</div><div class="m">Zero silhouette distinction — a rectangle among rectangles</div><div class="m">Pouch-inside-box UX is two steps of "meh"</div></div>
+      <div class="riskline"><b>Risks:</b> none structural. Sustainability: recyclable shell; multilayer pouch is the un-recyclable part (~8g plastic/unit). Scales to any future SKU trivially.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ S2 ============ -->
+<div class="concept flip" id="S2">
+  <div class="c-head"><span class="c-num">S2</span><h3>The Cube &amp; Tub</h3><span class="c-dir">Near-cube carton · CR squeeze tub inside</span></div>
+  <div class="c-grid">
+    <div class="c-stage">
+      <div class="ph hero"><img src="hero-s2w.jpg" alt="Blank cream cube carton beside a white CR squeeze tub — the FRUITS S2 structure"></div>
+      <div class="ph-cap"><b>FRUITS structure render</b> — blank, pre-branding (Higgsfield)</div>
+      <div class="thumbrow"><div class="ph"><img src="s2-tub-clean.jpg" alt="CoolJarz certified CR tub"></div><div class="ph"><img src="s2b-wyld.jpg" alt="Wyld carton and tub in market"></div></div>
+      <div class="ph-cap">Buyable reality: CoolJarz CR tub ($0.15–0.17, certified) · Wyld's version in market (their die is a hex; ours starts as a cube)</div>
+      <div class="lnkrow"><a class="lnk" href="https://cooljarz.com/collections/child-resistant-containers" target="_blank" rel="noopener">CoolJarz CR tubs — $0.15 ↗</a><a class="lnk" href="https://morethanbuds.net/2025/09/25/wyld-cannabis-infused-indica-sour-cherry-gummies-review/" target="_blank" rel="noopener">Wyld pack photos ↗</a></div>
+      
+      <div class="mech">
+        <svg width="70" height="54" viewBox="0 0 70 54"><rect x="14" y="20" width="42" height="20" rx="4" fill="#F1EBDC" stroke="#B8A67F"/><ellipse cx="35" cy="20" rx="21" ry="7" fill="#F7F2E6" stroke="#B8A67F"/><path d="M8,30 L14,30" stroke="#B23A1E" stroke-width="1.6" marker-end="url(#arr)"/><path d="M62,30 L56,30" stroke="#B23A1E" stroke-width="1.6" marker-end="url(#arr)"/><path d="M35,12 L35,4" stroke="#B23A1E" stroke-width="1.6" marker-end="url(#arr)"/></svg>
+        <div class="ml"><b>The action</b>Squeeze both points, lift the lid — the Wyld gesture. Tub lives on after the box.</div>
+      </div>
+    </div>
+    <div class="c-body">
+      <div class="c-quote">"The architecture that built the #1 gummy brand in America — with a US-made tub at $0.15."</div>
+      <div class="c-row"><span class="lbl">Why this shape</span>A near-cube (~3.2 × 3.2 × 3.4") reads as an object, not a package — it blocks differently on the shelf and stacks like little monuments. The cube is forced by the round tub inside, and that constraint is a gift: it's the one proportion no gummy competitor at our tier uses except Wyld.</div>
+      <div class="c-row"><span class="lbl">Why these materials</span>Carton shell + CoolJarz 3.75–5oz CR tub (SoCal-made, 16 CFR-certified, $0.151–0.174, same-day stock). The tub is the nightstand keeper; the shell is the storyteller.</div>
+      <div class="c-row"><span class="lbl">Experience &amp; positioning</span>Two-stage ritual: open the box once, live with the tub daily. Reuse = the brand stays on the shelf at home. Later, the cube earns the custom-die "signature top" (E3) without changing anything inside.</div>
+      <div class="stats"><div><div class="q">@1k pilot</div><div class="v">$1.45</div></div><div><div class="q">@10k scale</div><div class="v">$0.75</div></div><div><div class="q">vs current</div><div class="v">+$0.05</div></div><div><div class="q">Complexity</div><div class="v">Low–Med</div></div><div><div class="q">Tooling</div><div class="v">$0 now</div></div></div>
+      <div class="pc"><div class="p">Proven at #1; certified US tub in stock today; pilot-friendly</div><div class="p">Daily-reuse object = the brand outlives the purchase</div><div class="m">Cube costs shelf density (fewer facings per foot) and ships more air</div><div class="m">Plastic tub cuts against the sustainability story (PP, recyclable but plastic)</div></div>
+      <div class="riskline"><b>Risks:</b> tub diameter forces the footprint — lock tub choice before the die line. "Reads Wyld" if the shell isn't distinctive. Scales well: minis = smaller tub, same cube language.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ S3 ============ -->
+<div class="concept" id="S3">
+  <div class="c-head"><span class="c-num">S3</span><h3>The Matchbox</h3><span class="c-dir">All-paper CR slide drawer</span><span class="chip soul">The brand-soul candidate</span></div>
+  <div class="c-grid">
+    <div class="c-stage">
+      <div class="ph hero"><img src="hero-s3w.jpg" alt="Blank cream matchbox slide-drawer box, drawer half open — the FRUITS S3 structure"></div>
+      <div class="ph-cap"><b>FRUITS structure render</b> — blank, pre-branding (Higgsfield)</div>
+      <div class="thumbrow"><div class="ph"><img src="s3-slidesafe.png" alt="Dymapak SlideSafe certified all-paper CR box"></div><div class="ph"><img src="s3b-slidesafe2.png" alt="SlideSafe second size"></div></div>
+      <div class="ph-cap">Buyable reality: Dymapak SlideSafe — certified 16 CFR 1700.20, 100% paper mechanism (their branding)</div>
+      <div class="lnkrow"><a class="lnk" href="https://dymapak.com/child-resistant-boxes/" target="_blank" rel="noopener">Dymapak SlideSafe ↗</a><a class="lnk" href="https://thezenlock.com/" target="_blank" rel="noopener">Zenpack Zenlock ↗</a><a class="lnk" href="https://www.sungrownpackaging.com/child-resistant-packaging" target="_blank" rel="noopener">SunGrown (Oakland) ↗</a></div>
+      
+      <div class="mech">
+        <svg width="70" height="54" viewBox="0 0 70 54"><rect x="8" y="20" width="40" height="22" fill="#F4EDDD" stroke="#B8A67F"/><rect x="30" y="24" width="34" height="14" fill="#EFE7D2" stroke="#B8A67F"/><path d="M12,31 L4,31" stroke="#B23A1E" stroke-width="1.6"/><path d="M12,26 L12,36" stroke="#B23A1E" stroke-width="1.6"/><path d="M48,31 L64,31" stroke="#B23A1E" stroke-width="1.6" marker-end="url(#arr)"/></svg>
+        <div class="ml"><b>The action</b>Pinch the hidden tabs, slide the drawer — certified child resistance in 100% paper.</div>
+      </div>
+    </div>
+    <div class="c-body">
+      <div class="c-quote">"Zero plastic, certified. The hemp jar's soul, finally at carton prices."</div>
+      <div class="c-row"><span class="lbl">Why this shape</span>A wide, low drawer (~4.3 × 2.6 × 1.6") — the matchbox gesture scaled to the hand. Horizontal proportions break the vertical-rectangle wall of every competitor carton, and the slide IS the brand ritual.</div>
+      <div class="c-row"><span class="lbl">Why these materials</span>This is the category the 2026 trend reports crown: certified 16 CFR 1700.20 all-paperboard CR (Dymapak SlideSafe, Zenpack Zenlock — iF Design winner, SunGrown in Oakland). The mechanism is paper. The whole pack curbside-recycles — except a thin barrier liner the gummies still need for freshness (honesty: ~2g of film survives).</div>
+      <div class="c-row"><span class="lbl">Experience &amp; positioning</span>The most FRUITS-true structure possible: honest material, quiet form, a tactile ritual, regulation-proof sustainability. It completes the story the Sana jar started, at a quarter of the cost.</div>
+      <div class="stats"><div><div class="q">@5k (quotes)</div><div class="v">$0.90–1.60</div></div><div><div class="q">@10k est</div><div class="v">$0.80–1.20</div></div><div><div class="q">vs current @10k</div><div class="v">+$0.10–0.50</div></div><div><div class="q">Complexity</div><div class="v">Medium</div></div><div><div class="q">MOQ</div><div class="v">5,000 (1k sample)</div></div></div>
+      <div class="pc"><div class="p">Only structure that makes sustainability a certified fact, not a vibe</div><div class="p">Drawer-slide ritual + horizontal silhouette = double distinction</div><div class="m">No true pilot path — 5k MOQ, ~30-day lead, quote-only pricing</div><div class="m">LeafLocker-class boxes ship part-assembled (hand labor); verify per vendor</div></div>
+      <div class="riskline"><b>Risks:</b> pricing unverified until 3 quotes land (Dymapak/Zenlock/SunGrown); regulatory watch — Ohio banned slide-lock <i>tubes</i> 3/2026, CA unaffected but re-verify at signing; gummies need the barrier liner regardless. Scales beautifully — minis, chocolate, future SKUs all fit the drawer language.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ S4 ============ -->
+<div class="concept flip" id="S4">
+  <div class="c-head"><span class="c-num">S4</span><h3>The Keepsake Tin</h3><span class="c-dir">Round steel · squeeze-and-turn CR</span></div>
+  <div class="c-grid">
+    <div class="c-stage">
+      <div class="ph hero"><img src="hero-s4w.jpg" alt="Brushed steel round tin with embossed lid ring — the FRUITS S4 structure"></div>
+      <div class="ph-cap"><b>FRUITS structure render</b> — blank, pre-branding (Higgsfield)</div>
+      <div class="thumbrow"><div class="ph"><img src="s4-tin.png" alt="Dymapak certified CR tin, open"></div></div>
+      <div class="ph-cap">Buyable reality: Dymapak CR tin — zero plastic, cert downloadable (their branding)</div>
+      <div class="lnkrow"><a class="lnk" href="https://dymapak.com/child-resistant-tins/" target="_blank" rel="noopener">Dymapak CR tins — MOQ 5k ↗</a><a class="lnk" href="https://marijuanapackaging.com/collections/wholesale-cannabis-tin-containers-for-pre-rolls-edibles" target="_blank" rel="noopener">Stock hinged tins — $1.13 ↗</a></div>
+      
+      <div class="mech">
+        <svg width="70" height="54" viewBox="0 0 70 54"><ellipse cx="35" cy="30" rx="24" ry="12" fill="#DCD6C9" stroke="#9B9486"/><path d="M6,30 L12,30" stroke="#B23A1E" stroke-width="1.6" marker-end="url(#arr)"/><path d="M64,30 L58,30" stroke="#B23A1E" stroke-width="1.6" marker-end="url(#arr)"/><path d="M46,14 A16 10 0 0 1 56,22" fill="none" stroke="#B23A1E" stroke-width="1.6" marker-end="url(#arr)"/></svg>
+        <div class="ml"><b>The action</b>Squeeze the sides, turn the lid — zero-plastic steel CR, certified, cert downloadable.</div>
+      </div>
+    </div>
+    <div class="c-body">
+      <div class="c-quote">"Cool to the touch, kept forever — the emboss becomes the deboss's metal twin."</div>
+      <div class="c-row"><span class="lbl">Why this shape</span>The 76 × 30mm round steel tin is literally the industry's 10-gummy dimension (Dymapak's stock size). Round + metal is a double silhouette break on a shelf of paper rectangles, and it disappears into a pocket.</div>
+      <div class="c-row"><span class="lbl">Why these materials</span>100% steel, zero plastic, infinitely recyclable — the only structure where sustainability and durability are the same property. The lid takes embossing: the locked FRUITS mark rendered in metal relief, the letterpress instinct translated.</div>
+      <div class="c-row"><span class="lbl">Experience &amp; positioning</span>Cold weight in the palm = instant perceived value (the haptics research again). Kept and refilled by users for years — a brand billboard that never gets thrown away. Reads more Kiva-adjacent than Wyld-adjacent; the emboss + restraint must carry the difference.</div>
+      <div class="stats"><div><div class="q">Bridge (stock+label)</div><div class="v">$1.05–1.20</div></div><div><div class="q">@5–10k custom</div><div class="v">$0.45–0.85</div></div><div><div class="q">vs current @10k</div><div class="v">−$0.05 to +$0.15</div></div><div><div class="q">Complexity</div><div class="v">Medium</div></div><div><div class="q">Lead custom</div><div class="v">6–12 wks</div></div></div>
+      <div class="pc"><div class="p">Zero-plastic, certified (Dymapak cert downloadable); keepsake reuse</div><div class="p">Stock bridge path exists today (~$1.00–1.16, ships in days)</div><div class="m">Custom decoration = 5k MOQ + long import leads (except Dymapak, 6 wks)</div><div class="m">Metal reads "mints/Kiva" — brand must fight the association</div></div>
+      <div class="riskline"><b>Risks:</b> embossing can void a CR cert if it changes lid geometry — re-verify cert on the decorated tin; popular rectangular hinged tins are only 11.4mm deep inside (too shallow for gummies) — the round 76×30 is the safe pick. Scales: same tin, new lid art per SKU.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ S5 ============ -->
+<div class="concept" id="S5">
+  <div class="c-head"><span class="c-num">S5</span><h3>The Canister</h3><span class="c-dir">Kraft paper cylinder · align-and-lift CR cap</span></div>
+  <div class="c-grid">
+    <div class="c-stage">
+      <div class="ph hero"><img src="hero-s5w.jpg" alt="Kraft paper canister with black align-and-lift CR cap — the FRUITS S5 structure"></div>
+      <div class="ph-cap"><b>FRUITS structure render</b> — blank, pre-branding (Higgsfield)</div>
+      <div class="thumbrow"><div class="ph"><img src="s5b-canister-open.jpg" alt="Paper Tube Co CR canister"></div><div class="ph"><img src="s5-canister.jpg" alt="The canister in hand — scale"></div></div>
+      <div class="ph-cap">Buyable reality: Paper Tube Co CR canister, 68mm ID, stocked at 100-unit MOQ · in-hand scale</div>
+      <div class="lnkrow"><a class="lnk" href="https://papertube.co/products/child-resistant-5oz-flower-tube-1pc-kraft" target="_blank" rel="noopener">Paper Tube Co — $1.76 @1k ↗</a><a class="lnk" href="https://cannasupplyhouse.com/products/side-button-paper-tube" target="_blank" rel="noopener">CannaSupplyHouse — $0.60 @10k ↗</a></div>
+      
+      <div class="mech">
+        <svg width="70" height="54" viewBox="0 0 70 54"><rect x="22" y="20" width="26" height="26" rx="4" fill="#C4A272" stroke="#9A7748"/><ellipse cx="35" cy="20" rx="15" ry="6" fill="#A98653" stroke="#8F7245"/><path d="M50,14 A18 9 0 0 1 42,8" fill="none" stroke="#B23A1E" stroke-width="1.6" marker-end="url(#arr)"/><path d="M35,10 L35,2" stroke="#B23A1E" stroke-width="1.6" marker-end="url(#arr)"/></svg>
+        <div class="ml"><b>The action</b>Twist the cap to the notch, lift — two-motion CR on a paper body.</div>
+      </div>
+    </div>
+    <div class="c-body">
+      <div class="c-quote">"The only round paper object on the shelf — and the letterpress band reborn as a full wrap."</div>
+      <div class="c-row"><span class="lbl">Why this shape</span>A 68mm-diameter kraft cylinder — the shortbread-tin / apothecary-canister archetype. Nothing else in a CA edibles case is cylindrical paper; the silhouette wins the 20-foot test outright. And structurally it resurrects the original band concept: a cylinder is 360° of wrap.</div>
+      <div class="c-row"><span class="lbl">Why these materials</span>FSC kraft paper body with PLA food-safe lining; align-and-lift CR cap (ABS — the honest asterisk: every certified "paper" canister on the market uses a plastic locking element). Stocked TODAY at 100-unit MOQ (Paper Tube Co, $2.39→$1.76); custom press-button 65mm versions run ~$0.60 at 10k (certified, quote).</div>
+      <div class="c-row"><span class="lbl">Experience &amp; positioning</span>Twist-lift is a tea-caddy gesture — domestic, warm, unhurried. Sits on a kitchen shelf without embarrassment. The most "pantry, not pharmacy" of the seven.</div>
+      <div class="stats"><div><div class="q">Pilot (stock)</div><div class="v">$1.90–2.55</div></div><div><div class="q">@10k custom</div><div class="v">$0.70–0.95</div></div><div><div class="q">vs current @10k</div><div class="v">≈ level</div></div><div><div class="q">Complexity</div><div class="v">Medium</div></div><div><div class="q">Pilot MOQ</div><div class="v">100 (stock)</div></div></div>
+      <div class="pc"><div class="p">Unmatched silhouette; real 100-unit pilot path in stock</div><div class="p">Wrap label = cheap iteration; the band heritage survives</div><div class="m">Stock unit is pricey at pilot ($1.76–2.39 before label)</div><div class="m">Cylinders case-pack with ~21% air penalty vs rectangles</div></div>
+      <div class="riskline"><b>Risks:</b> stock item's "CPSC compliant" wording needs the actual 16 CFR 1700.20 report in writing before filing; custom Chinese press-button tubes carry cert-verification burden. Scales: taller/shorter same-diameter family is elegant.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ S6 ============ -->
+<div class="concept flip" id="S6">
+  <div class="c-head"><span class="c-num">S6</span><h3>The Dose Wallet</h3><span class="c-dir">Per-serving CR blister · thin folio outer</span><span class="chip wild">The legal unlock</span></div>
+  <div class="c-grid">
+    <div class="c-stage">
+      <div class="ph hero"><img src="hero-s6w.jpg" alt="Cream folio open, revealing a ten-cavity blister card — the FRUITS S6 structure"></div>
+      <div class="ph-cap"><b>FRUITS structure render</b> — blank, pre-branding (Higgsfield)</div>
+      <div class="thumbrow"><div class="ph"><img src="s6-blister.png" alt="Dymapak CR blister cards"></div></div>
+      <div class="ph-cap">Buyable reality: Dymapak CR blister cards (vape/vial shown; gummies use the same peel-push format)</div>
+      <div class="lnkrow"><a class="lnk" href="https://dymapak.com/child-resistant-blisters/" target="_blank" rel="noopener">Dymapak CR blisters ↗</a><a class="lnk" href="https://www.assurpack.com/" target="_blank" rel="noopener">AssurPack (quote) ↗</a></div>
+      
+      <div class="mech">
+        <svg width="70" height="54" viewBox="0 0 70 54"><rect x="10" y="16" width="50" height="28" rx="4" fill="#FBF7EC" stroke="#B8A67F"/><circle cx="25" cy="30" r="7" fill="#E6DCC2" stroke="#B8A67F"/><circle cx="45" cy="30" r="7" fill="#E6DCC2" stroke="#B8A67F"/><path d="M25,30 L25,48" stroke="#B23A1E" stroke-width="1.6" marker-end="url(#arr)"/></svg>
+        <div class="ml"><b>The action</b>Peel the child-resistant backing, push one dose through. Each serving is its own CR package.</div>
+      </div>
+    </div>
+    <div class="c-body">
+      <div class="c-quote">"Dose it like medicine, carry it like a passport — and the outer box is legally free."</div>
+      <div class="c-row"><span class="lbl">Why this shape</span>§17412(a)(1), verified verbatim: individually CR-packaged servings exempt the outer entirely. That unlocks the thinnest possible form — a folio ~4.5 × 3 × 0.9" that slips into a jacket pocket. No competitor at our tier uses the exemption; the structure itself becomes the story.</div>
+      <div class="c-row"><span class="lbl">Why these materials</span>Pharma-grade CR blister card (peel-push, Locked4Kids/AssurPack class) + a paperboard folio with no CR mechanism at all. Ten sealed doses = precision, hygiene, freshness per gummy — the strongest possible expression of low-dose wellness positioning.</div>
+      <div class="c-row"><span class="lbl">Experience &amp; positioning</span>Take two doses, leave the wallet home. Portion discipline built into the object. Reads intentional and medical-adjacent — which is either the perfect wellness statement or a step too clinical; that tension is the bet.</div>
+      <div class="stats"><div><div class="q">@5–10k est</div><div class="v">$0.90–1.40</div></div><div><div class="q">Tooling</div><div class="v">$3–15k+ seal/dies</div></div><div><div class="q">vs current @10k</div><div class="v">+$0.20–0.70</div></div><div><div class="q">Complexity</div><div class="v">Highest</div></div><div><div class="q">Pilot path</div><div class="v">none real</div></div></div>
+      <div class="pc"><div class="p">Legally uncopyable-feeling structure; flattest, most portable form possible</div><div class="p">Per-dose freshness &amp; hygiene; the dosing story IS the wellness pitch</div><div class="m">Blister tooling + heat-seal capability most gummy co-packers don't have</div><div class="m">Gummies are sticky and heat-sensitive in cavities — real R&amp;D risk; plastic-heavy format</div></div>
+      <div class="riskline"><b>Risks:</b> co-packer capability is the gate — AssurPack-class quote required before this is real; per-unit cost premium is structural. Best future role: the travel/mini line extension, not the flagship.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ S7 ============ -->
+<div class="concept" id="S7">
+  <div class="c-head"><span class="c-num">S7</span><h3>The Pocket Case</h3><span class="c-dir">Flat snap case · printed sleeve</span></div>
+  <div class="c-grid">
+    <div class="c-stage">
+      <div class="ph hero"><img src="hero-s7w.jpg" alt="White snap case with a cream sleeve half removed — the FRUITS S7 structure"></div>
+      <div class="ph-cap"><b>FRUITS structure render</b> — blank, pre-branding (Higgsfield)</div>
+      <div class="thumbrow"><div class="ph"><img src="s7-case.jpg" alt="CRATIV snap case, open"></div></div>
+      <div class="ph-cap">Buyable reality: CRATIV snap case (squeeze sides, flip lid); the sleeve carries shelf branding</div>
+      <div class="lnkrow"><a class="lnk" href="https://biohazardinc.com/products/crativ-child-resistant-snap-box-edible-pre-roll-joint-case-white-plastic-312-count" target="_blank" rel="noopener">CRATIV via Biohazard — $0.83 ↗</a><a class="lnk" href="https://crativpackaging.com/" target="_blank" rel="noopener">CRATIV direct ↗</a></div>
+      
+      <div class="mech">
+        <svg width="70" height="54" viewBox="0 0 70 54"><rect x="12" y="22" width="46" height="18" rx="6" fill="#F1EBDC" stroke="#B8A67F"/><path d="M6,31 L12,31" stroke="#B23A1E" stroke-width="1.6" marker-end="url(#arr)"/><path d="M64,31 L58,31" stroke="#B23A1E" stroke-width="1.6" marker-end="url(#arr)"/><path d="M35,20 L35,10" stroke="#B23A1E" stroke-width="1.6" marker-end="url(#arr)"/></svg>
+        <div class="ml"><b>The action</b>Squeeze the sides, flip the lid — one-hand open, deck-of-cards flat.</div>
+      </div>
+    </div>
+    <div class="c-body">
+      <div class="c-quote">"The 1906 play: a case that lives in a pocket, sold in a sleeve that lives on a shelf."</div>
+      <div class="c-row"><span class="lbl">Why this shape</span>A flat PP snap case (Pollen Gear SnapTech $0.66 / CRATIV $0.83, both certified, both stocked) — the most portable, most discreet format in cannabis. The removable paper sleeve does the shelf work; the case does the life work.</div>
+      <div class="c-row"><span class="lbl">Why these materials</span>Certified molded PP (recyclable #5) + printed paperboard sleeve. Stock case in white or black; custom case colors need 25k+ units, so the sleeve carries all branding until real scale.</div>
+      <div class="c-row"><span class="lbl">Experience &amp; positioning</span>One-handed click-open — the fidget-pleasure mechanic. Built for the gym-bag/hiking/going-out use case; the least "kitchen shelf," most "everyday carry" of the seven. Strong second-format candidate even if it isn't the flagship.</div>
+      <div class="stats"><div><div class="q">@1k (case+sleeve)</div><div class="v">$1.10</div></div><div><div class="q">@10k</div><div class="v">$0.90</div></div><div><div class="q">vs current @10k</div><div class="v">+$0.20</div></div><div><div class="q">Complexity</div><div class="v">Low</div></div><div><div class="q">Pilot MOQ</div><div class="v">~300–500</div></div></div>
+      <div class="pc"><div class="p">True pilot path (stock case + short-run sleeve); one-hand UX no box can match</div><div class="p">Portability story differentiates against every jar and carton</div><div class="m">Most plastic-forward structure here — collides with the brand's material soul</div><div class="m">Case cost never really falls until 25k+ custom molding</div></div>
+      <div class="riskline"><b>Risks:</b> ~108ml internal volume is marginal for 45g of large gummies — physical fit test first; sleeve+case = two vendors, one assembly step. Scales sideways (minis, single-strain drops) better than up.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MATRIX -->
+<section>
+  <div class="secno">Side by side</div>
+  <h2>Seven bodies, one decision</h2>
+  <div class="tscroll"><table>
+    <thead><tr><th>Structure</th><th class="num">Pilot path</th><th class="num">@10k cost</th><th>CR carrier</th><th>Silhouette win</th><th>Sustainability</th><th>Ritual</th><th>Biggest constraint</th></tr></thead>
+    <tbody>
+      <tr><td><b>S1 Tuck carton</b> <span class="chip base">baseline</span></td><td class="num">✓ 500u · 3wk</td><td class="num">$0.70</td><td>zipper pouch</td><td>none</td><td>shell recyclable, pouch not</td><td>ordinary</td><td>invisible silhouette</td></tr>
+      <tr><td><b>S2 Cube &amp; tub</b></td><td class="num">✓ 500u</td><td class="num">$0.75</td><td>squeeze tub (US, $0.15)</td><td>strong (cube)</td><td>PP tub, reusable</td><td>squeeze-lift + reuse</td><td>ships air; tub fixes footprint</td></tr>
+      <tr class="hl"><td><b>S3 Matchbox drawer</b> <span class="chip soul">soul</span></td><td class="num">✗ 5k MOQ</td><td class="num">$0.80–1.20 est</td><td>the box itself (paper)</td><td>strong (horizontal)</td><td><b>best — zero plastic*</b></td><td>pinch + slide</td><td>quotes unverified; no pilot</td></tr>
+      <tr><td><b>S4 Keepsake tin</b></td><td class="num">△ stock bridge</td><td class="num">$0.45–0.85</td><td>squeeze-turn steel</td><td>strong (round metal)</td><td>steel, infinitely recyclable</td><td>squeeze + turn</td><td>reads Kiva; import leads</td></tr>
+      <tr><td><b>S5 Canister</b></td><td class="num">✓ 100u stock</td><td class="num">$0.70–0.95</td><td>align-lift cap (ABS)</td><td><b>best (only cylinder)</b></td><td>paper body, plastic cap</td><td>twist + lift</td><td>pricey pilot unit; pack density</td></tr>
+      <tr><td><b>S6 Dose wallet</b> <span class="chip wild">unlock</span></td><td class="num">✗ tooling first</td><td class="num">$0.90–1.40 est</td><td>per-serving blisters</td><td>strong (flattest)</td><td>weakest (blister plastic)</td><td>peel + push per dose</td><td>co-packer capability + tooling</td></tr>
+      <tr><td><b>S7 Pocket case</b></td><td class="num">✓ ~300u</td><td class="num">$0.90</td><td>snap case (PP)</td><td>moderate (flat)</td><td>plastic-forward</td><td>one-hand click</td><td>volume fit; plastic soul-clash</td></tr>
+    </tbody>
+  </table></div>
+  <p class="sub" style="margin-top:10px">*S3's zero-plastic claim carries one honest asterisk everywhere in the industry: gummies still need a thin barrier liner for freshness inside any paper structure.</p>
+</section>
+
+<!-- VERDICT -->
+<section>
+  <div class="verdict">
+    <h3>Answering the one question</h3>
+    <p><b>Strongest overall balance: S1 now, S3 as the destination, S4 as the counterweight.</b> The honest reading of the matrix: the tuck carton wins the next 90 days (only true pilot path, lowest cost, zero tooling) but never wins the shelf on shape alone. The matchbox drawer is the structure this brand was always pointing at — certified sustainability, a signature ritual, a silhouette break — and it becomes buyable exactly at the reorder-gate volume (5k). The tin is the disciplined alternative if the drawer quotes come back above ~$1.20: cheaper at scale, zero plastic, and a keepsake — its only sin is Kiva adjacency.</p>
+    <p><b>The sequencing that risks nothing:</b> ① pilot in S1 (500–1,000 units, this quarter — the structure is invisible in a pilot anyway; demand signal is what's being bought); ② in parallel, get the three S3 quotes (Dymapak SlideSafe · Zenpack Zenlock · SunGrown — all quote-only, all free to ask) plus Dymapak's tin quote, and order ~$60 of physical samples (SlideSafe sample, stock tin, Paper Tube Co canister, CoolJarz tub); ③ at the reorder gate, cut the flagship structure over to the winner — S3 if ≤ ~$1.10 landed, S4 if not — and keep S1 tooling as the value/second line. S6 stays on the bench as the future travel format; S2's tub and S7's case are line-extension formats, not flagships.</p>
+    <p><b>What would change this verdict:</b> an S3 quote under $0.90 (cut over immediately — the story is worth more than the delta), or a co-packer who already runs blister sealing (S6 jumps two places). One more honest note: these are vendor photographs, not objects in your hand — before the final call, the winning 2–3 structures should exist on your desk as physical samples (~$60 total). A photo can't tell you how the slide feels or whether the tin's squeeze is satisfying; the hand decides what the eye can't.</p>
+  </div>
+</section>
+
+<footer>
+  <b>Method &amp; sources:</b> Fresh research 2026-07-18 (four lanes: wide CR paper canisters · custom CR tins · per-serving blister feasibility · 2025–26 structural trends) layered on the audited banked research (Wyld/Kiva/1906 teardowns, CR-inner price verification, carton economics, verbatim DCC regs). Key facts: all-paper CR certified 16 CFR 1700.20 exists (Dymapak SlideSafe MOQ 5k · Zenpack Zenlock · SunGrown Oakland; pricing quote-only, est $0.50–1.50 @5–10k per industry roundups) · Dymapak Squeeze &amp; Turn steel tin = exact 76×30mm 10-gummy size, cert downloadable, MOQ 5k, 6 wks · Paper Tube Co CR 5oz kraft canister 68mm ID, stocked, $2.39@100→$1.76@1k · CoolJarz CR tubs $0.151–0.174 US-made certified · custom tins $0.28–0.85 @5–10k (Happy Head teasers unverified — demand certs) · §17412(a)(1) per-serving exemption verified verbatim · trend citations: Dieline 2026, Packaging Dive, Cannabis Industry Journal 5/2026, Trend Hunter. All @10k figures for S3/S6 are ESTIMATES pending quotes; everything else traces to posted prices. Costs shown are complete-structure (shell + CR carrier + tamper/liner + assembly). Companion pages: fruits-packaging-board · fruits-carton-deep-dive (live) · SEVEN-DIRECTIONS.html (graphics study, on hold until this decision). Not legal advice.
+</footer>
+</div>
+</body>
+</html>
