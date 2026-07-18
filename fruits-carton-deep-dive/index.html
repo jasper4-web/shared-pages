@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRUITS — Option E Deep Dive: The Custom Carton</title>
+<style>
+  :root{
+    --cream:#FAF5EB; --card:#FFFDF7; --stage:#F4ECDC; --ink:#2B2013; --ink2:#6B5B45; --ink3:#98866B;
+    --line:#E4D9C3; --line2:#EFE7D6;
+    --bar:#9A551A; --green:#2E8049; --terra:#B23A1E;
+    --terraSoft:#F7E3DC; --greenSoft:#E2EFE5; --brownSoft:#F0E4D2;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 22px 90px}
+  header{padding:50px 0 30px;border-bottom:2px solid var(--ink)}
+  .kicker{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink2);margin-bottom:14px}
+  h1{font-family:var(--serif);font-weight:400;font-size:clamp(30px,4.4vw,44px);line-height:1.08}
+  h1 em{font-style:italic;color:var(--terra)}
+  .stand{margin-top:14px;color:var(--ink2);font-size:15.5px;max-width:720px}
+  .stand strong{color:var(--ink)}
+  section{margin-top:58px}
+  h2{font-family:var(--serif);font-weight:400;font-size:26px;margin-bottom:6px}
+  h3{font-family:var(--serif);font-weight:400;font-size:19px}
+  .secno{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--terra);margin-bottom:8px}
+  .sub{color:var(--ink2);max-width:780px;margin-bottom:22px}
+  .chip{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:99px;vertical-align:2px}
+  .chip.rec{background:var(--greenSoft);color:var(--green)}
+  .chip.warn{background:var(--terraSoft);color:var(--terra)}
+  .chip.flag{background:var(--brownSoft);color:var(--ink2)}
+  .chip.solid{background:var(--greenSoft);color:var(--green)}
+  .chip.est{background:var(--brownSoft);color:var(--bar)}
+
+  /* answer banner */
+  .answer{background:var(--ink);color:var(--cream);border-radius:16px;padding:34px 38px;margin-top:34px}
+  .answer .a-label{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#C9A227;margin-bottom:10px}
+  .answer .a-big{font-family:var(--serif);font-size:clamp(22px,3vw,30px);line-height:1.25;color:#fff}
+  .answer .a-big em{color:#F2C9A8;font-style:italic}
+  .answer p{margin-top:12px;color:#E9DFCB;font-size:14.5px;max-width:820px}
+
+  /* legal cards */
+  .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+  .rule{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--green);border-radius:8px;padding:15px 17px;font-size:13px}
+  .rule b{display:block;margin-bottom:4px;font-size:13.5px}
+  .rule .cite{display:block;margin-top:8px;font-size:11px;color:var(--ink3)}
+  .rule.duty{border-left-color:var(--terra)}
+  .quotebox{background:var(--greenSoft);border:1px solid #BFDCC6;border-radius:10px;padding:18px 22px;margin:16px 0;font-size:14.5px;color:#1E5731}
+  .quotebox b{color:var(--green)}
+
+  /* anatomy */
+  .anatomy{background:linear-gradient(180deg,var(--card),var(--stage));border:1px solid var(--line);border-radius:16px;padding:30px 24px;display:grid;grid-template-columns:minmax(280px,420px) 1fr;gap:30px;align-items:center}
+  @media(max-width:800px){.anatomy{grid-template-columns:1fr}}
+  .anatomy svg{width:100%;height:auto;filter:drop-shadow(0 14px 12px rgba(43,32,19,.16))}
+  .a-legend{display:flex;flex-direction:column;gap:10px}
+  .a-item{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:13px}
+  .a-item b{font-size:13.5px}
+  .a-item .duty{color:var(--terra);font-weight:600}
+
+  /* parameter cards */
+  .params{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px}
+  .param{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+  .param .pn{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--terra);font-weight:700;margin-bottom:6px}
+  .param h3{margin-bottom:8px}
+  .param p{font-size:13px;color:var(--ink2);margin-bottom:10px}
+  .opt{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:10px;padding:7px 0;border-bottom:1px dashed var(--line2);font-size:12.5px;align-items:baseline}
+  .opt:last-child{border-bottom:none}
+  .opt .on{color:var(--ink)}
+  .opt .oc{color:var(--ink2);text-align:right;font-variant-numeric:tabular-nums}
+  .opt.pick{background:var(--greenSoft);margin:0 -10px;padding:7px 10px;border-radius:6px;border-bottom:none}
+  .param .verdict{margin-top:10px;border-top:1px solid var(--line2);padding-top:9px;font-size:12.5px;color:var(--ink2)}
+  .param .verdict b{color:var(--ink)}
+
+  /* structures strip */
+  .structs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+  .struct{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 10px;text-align:center}
+  .struct svg{filter:drop-shadow(0 6px 5px rgba(43,32,19,.14));margin-bottom:8px}
+  .struct .sn{font-size:12px;font-weight:600}
+  .struct .sd{font-size:11px;color:var(--ink3)}
+  .struct.pick{border:2px solid var(--green)}
+  .struct.theater{border:2px dashed var(--terra)}
+
+  /* tables */
+  .tscroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+  table{border-collapse:collapse;width:100%;min-width:760px;font-size:12.5px}
+  th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);white-space:nowrap}
+  td{padding:10px 12px;border-bottom:1px solid var(--line2);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr.hl td{background:var(--greenSoft)}
+  td b{font-size:12.5px}
+  td small{color:var(--ink3)}
+
+  /* recipes */
+  .recipes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+  .recipe{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+  .recipe.pick{border:2px solid var(--green)}
+  .r-stage{background:radial-gradient(120% 90% at 50% 10%,#FBF7EE,var(--stage));padding:20px 0 8px;display:flex;justify-content:center;border-bottom:1px solid var(--line2)}
+  .r-stage svg{filter:drop-shadow(0 10px 8px rgba(43,32,19,.18))}
+  .r-body{padding:18px 20px 20px;display:flex;flex-direction:column;flex:1}
+  .recipe h3{margin:6px 0 2px}
+  .recipe .rwhen{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+  .bom{font-size:12.5px;color:var(--ink2)}
+  .bom .bl{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--line2)}
+  .bom .bl:last-child{border-bottom:none}
+  .bom .bl.total{font-weight:700;color:var(--ink);border-top:1.5px solid var(--line);margin-top:2px}
+  .recipe .rmeta{margin-top:10px;font-size:12px;color:var(--ink2);border-top:1px solid var(--line2);padding-top:10px}
+  .recipe .rmeta b{color:var(--ink)}
+
+  /* spec sheet */
+  .spec{background:var(--ink);color:var(--cream);border-radius:16px;padding:34px 38px}
+  .spec h3{color:#F2C9A8;font-size:22px;margin-bottom:4px}
+  .spec .s-sub{color:#B7A88C;font-size:13px;margin-bottom:20px}
+  .spec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:4px 34px}
+  .s-row{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px solid rgba(250,245,235,.14);font-size:13px}
+  .s-row .sk{color:#B7A88C}
+  .s-row .sv{color:#FAF5EB;text-align:right}
+  .spec .s-risks{margin-top:20px;font-size:12.5px;color:#E9DFCB;border-top:1px solid rgba(250,245,235,.2);padding-top:14px}
+  .spec .s-risks b{color:#F2C9A8}
+
+  .next{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 26px}
+  .next ol{margin-left:20px}
+  .next li{padding:6px 0;font-size:14px;color:var(--ink2)}
+  .next li b{color:var(--ink)}
+  .lnk{font-size:11px;font-weight:600;color:var(--bar);text-decoration:none;border:1px solid var(--line);border-radius:99px;padding:3px 10px;background:var(--cream);white-space:nowrap}
+  .lnk:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+  footer{margin-top:64px;border-top:1px solid var(--line);padding-top:18px;font-size:11.5px;color:var(--ink3);line-height:1.7}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="mark">
+    <path d="M8,26 A34 34 0 0 1 72,26" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+    <ellipse cx="30" cy="22" rx="10" ry="6.5" fill="currentColor"/><ellipse cx="47" cy="17" rx="12" ry="7" fill="currentColor"/><ellipse cx="55" cy="27" rx="8.5" ry="5.5" fill="currentColor"/>
+    <path d="M40,52 C40,44 38,38 33,33 M40,52 C40,45 44,39 50,33 M40,52 C40,47 40,42 40,37" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    <path d="M28,53 Q40,58 52,53" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+    <text x="40" y="72" text-anchor="middle" font-family="Georgia,serif" font-size="13.5" letter-spacing="4.5" fill="currentColor">FRUITS</text>
+  </g>
+  <linearGradient id="gBoard" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F2EADA"/><stop offset="1" stop-color="#EBE1CC"/></linearGradient>
+</defs></svg>
+
+<div class="wrap">
+<header>
+  <div class="kicker">Fruits · Option E Deep Dive · Custom Carton + Certified CR Inner · 2026-07-17</div>
+  <h1>Yes, it's truly custom. <em>Here is everything you get to decide.</em></h1>
+  <p class="stand">Six research lanes deep on the recommended format: the regulations verbatim, every design parameter with its price, ten suppliers compared, a real Wyld teardown, and three ready-to-quote build recipes. Companion to the <strong>Packaging Decision Board</strong>; sources &amp; flags throughout (<span class="chip solid">SOLID</span> = posted/verified · <span class="chip est">EST</span> = triangulated).</p>
+
+  <div class="answer">
+    <div class="a-label">Your first question, answered</div>
+    <div class="a-big">The prices on the board were for <em>fully custom</em> cartons — your artwork, your exact size, your own dieline. Premade was never the assumption.</div>
+    <p>Proof: QinPrinting publishes a real price table for a made-to-your-measurements carton — straight tuck, 350gsm board, full color, delivered USA — at <b>$1.01 @500 · $0.51 @1,000 · $0.16 @5,000 · $0.12 @10,000</b> (a 3×1×4" example; yours runs slightly higher). Every serious supplier works from a free custom dieline in your dimensions. The only "premade" number anywhere on the board was the $0.148 blank stock box — the floor reference, not the plan. What custom really buys you is the SIX parameters below — structure, size, board, print method, finishes, and the CR inner — and each one has a price you now know.</p>
+  </div>
+</header>
+
+<!-- 01 LEGAL -->
+<section>
+  <div class="secno">01 · Why this architecture is legal (verbatim, verified against current DCC regs)</div>
+  <h2>The carton carries the brand. The inner carries the law.</h2>
+  <div class="quotebox"><b>The green light:</b> DCC's own compliance guidance says you may <b>"use any layer of packaging"</b> to meet the packaging requirements (child-resistant · tamper-evident · resealable · opaque), and §17402(c) explicitly contemplates <b>"a container placed inside of a box."</b> The regs put NO child-resistance duty on the box — which is exactly how Wyld and Kiva ship statewide. Your premium carton is legally free to be pure design.</div>
+  <div class="rules">
+    <div class="rule"><b>CR lives on the inner — for life</b>The inner must be certified child-resistant (16 CFR 1700.15(b)(1)) and stay CR through the product's life — multi-serving edibles get no "CR until opened" pass. A tear-notch one-time pouch fails; a locking zipper or squeeze-lock tub passes.<span class="cite">§17412(a)(1) · §17412(b)(1) — SOLID</span></div>
+    <div class="rule"><b>Resealable, because 10 servings</b>"If the cannabis good has more than one serving, the package shall be resealable."<span class="cite">§17411(a)(3) — SOLID</span></div>
+    <div class="rule"><b>Opaque — the carton does this job</b>"If the cannabis good is an edible product, the package shall be opaque." An opaque carton satisfies the retail unit; keep the inner opaque too (it's the layer that legally "contains" the product).<span class="cite">§17411(a)(5) + DCC any-layer guidance — SOLID</span></div>
+    <div class="rule"><b>Tamper-evident — either layer</b>Sealed so contents can't be accessed "without obvious destruction of the seal." A seal sticker over the carton flap or a film seal on the inner both qualify; the inner seal is the robust choice.<span class="cite">§17411(a)(2) — SOLID</span></div>
+    <div class="rule duty"><b>Duty: symbol on BOTH layers</b>Because the inner is separable from the box, the inner container must ALSO carry the universal symbol (≥0.5", printed black or white — a molded or debossed symbol doesn't count).<span class="cite">§17402(c) + §17410 — SOLID</span></div>
+    <div class="rule duty"><b>Duty: the front panel formula</b>"CANNABIS-INFUSED" in bold, immediately above the product identity, in LARGER type than the identity + the 12.7mm symbol + net weight (metric & US). Cannabinoid mg may live on the informational panel instead of the front.<span class="cite">§17404 · §17405 · §17407(a) — SOLID</span></div>
+    <div class="rule duty"><b>Duty: what can go on the insert</b>Everything in §17406(a) EXCEPT manufacturer name/contact, UID, and batch/lot may move to a package insert, fold-out, or booklet. QR codes never satisfy required text.<span class="cite">§17406(c) — SOLID</span></div>
+    <div class="rule duty"><b>Duty: no gummy pictures, no kid-appeal</b>The label may not show a picture of the edible product, use content attractive to under-21s, or name a CA city unless 100% produced there.<span class="cite">§17408(a) — SOLID</span></div>
+  </div>
+</section>
+
+<!-- 02 ANATOMY -->
+<section>
+  <div class="secno">02 · Anatomy of the pack</div>
+  <h2>Three pieces, each with one job</h2>
+  <div class="anatomy">
+    <svg viewBox="0 0 340 420">
+      <!-- carton (open top) -->
+      <g>
+        <path d="M60,120 L200,120 L200,300 L60,300 Z" fill="url(#gBoard)" stroke="#DACDB0"/>
+        <path d="M200,120 L246,100 L246,280 L200,300 Z" fill="#DED2B8" stroke="#D0C2A4"/>
+        <path d="M60,120 L106,100 L246,100 L200,120 Z" fill="#F6EFDF" stroke="#DACDB0"/>
+        <path d="M60,120 L38,92 L84,74 L106,100 Z" fill="#EFE5CF" stroke="#DACDB0"/>
+        <use href="#mark" x="90" y="160" color="#B3A182"/>
+        <use href="#mark" x="90" y="160" color="#8A7A5C" transform="translate(-.6,-.6)" opacity=".35"/>
+        <text x="130" y="286" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="9" fill="#B23A1E">it's just fruit.</text>
+        <text x="30" y="320" font-family="Georgia,serif" font-size="13" fill="#2B2013">1 · The carton</text>
+      </g>
+      <!-- CR pouch floating above-right -->
+      <g transform="translate(210,20)">
+        <path d="M20,10 L100,10 L106,120 Q106,128 96,128 L26,128 Q16,128 16,120 Z" fill="#F7F3EA" stroke="#D9CCAF"/>
+        <rect x="20" y="16" width="80" height="6" fill="#C9BC9E" opacity=".6"/>
+        <rect x="20" y="22" width="80" height="2" fill="#FFF" opacity=".6"/>
+        <path d="M36,58 l10,17 h-20 z M46,75 h-20 l10,-17" fill="none"/>
+        <path d="M36,54 l12,20 h-24 z" fill="none" stroke="#2B2013" stroke-width="2.4"/>
+        <text x="36" y="71" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="9" fill="#2B2013">CA</text>
+        <text x="72" y="66" font-family="Arial" font-size="8.5" fill="#6B5B45">UID · batch</text>
+        <text x="72" y="78" font-family="Arial" font-size="8.5" fill="#6B5B45">symbol ≥0.5"</text>
+        <text x="60" y="150" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#2B2013">2 · CR inner</text>
+      </g>
+      <!-- insert card -->
+      <g transform="translate(240,220)">
+        <rect x="0" y="0" width="76" height="104" rx="4" fill="#FBF7EC" stroke="#D9CCAF"/>
+        <g stroke="#C9BC9E" stroke-width="2"><line x1="10" y1="16" x2="66" y2="16"/><line x1="10" y1="28" x2="66" y2="28"/><line x1="10" y1="40" x2="56" y2="40"/><line x1="10" y1="58" x2="66" y2="58"/><line x1="10" y1="70" x2="66" y2="70"/><line x1="10" y1="82" x2="46" y2="82"/></g>
+        <text x="38" y="128" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#2B2013">3 · Insert</text>
+      </g>
+      <!-- tamper seal -->
+      <g transform="translate(30,352)">
+        <rect x="0" y="0" width="64" height="22" rx="11" fill="#B23A1E" opacity=".9"/>
+        <text x="32" y="15" text-anchor="middle" font-family="Arial" font-size="9" fill="#FAF5EB">SEALED</text>
+        <text x="80" y="15" font-family="Georgia,serif" font-size="12" fill="#2B2013">+ tamper seal on the flap</text>
+      </g>
+    </svg>
+    <div class="a-legend">
+      <div class="a-item"><b>1 · The carton — the brand's whole canvas.</b> No CR duty, so the structure, board, and finishes are pure design freedom. <span class="duty">Legal jobs:</span> opacity, the front-panel formula, informational panel, no gummy imagery.</div>
+      <div class="a-item"><b>2 · The certified CR inner — the legal workhorse.</b> A 16 CFR 1700-certified, lifetime-resealable pouch or tub. <span class="duty">Legal jobs:</span> child-resistance, resealability, its own printed universal symbol, UID/batch (applied at packout), tamper seal (best here).</div>
+      <div class="a-item"><b>3 · The insert — the overflow valve.</b> Government warning, nutrition, instructions, the brand story — everything §17406(c) allows off the panels. Frees the carton to stay quiet.</div>
+      <div class="a-item"><b>The strategic consequence:</b> because the law never touches the carton's structure, the die can be <b>pure theater</b> — exactly the trick behind Wyld's "origami" box. Your deboss, your interior message, your unboxing moment: all unregulated.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 PARAMETERS -->
+<section>
+  <div class="secno">03 · The six parameters you control</div>
+  <h2>What "custom" actually means — with prices</h2>
+  <p class="sub">Green rows = the recommended pick for FRUITS. Cost deltas are per unit unless noted.</p>
+
+  <div class="structs" style="margin-bottom:18px">
+    <div class="struct pick"><svg width="86" height="80" viewBox="0 0 100 92"><rect x="22" y="18" width="56" height="62" fill="url(#gBoard)" stroke="#D0C2A4"/><path d="M22,18 L34,4 L90,4 L78,18 Z" fill="#F6EFDF" stroke="#D0C2A4"/><rect x="34" y="34" width="32" height="30" fill="none" stroke="#C9BC9E"/></svg><div class="sn">Straight tuck end</div><div class="sd">the workhorse · base price</div></div>
+    <div class="struct"><svg width="86" height="80" viewBox="0 0 100 92"><rect x="22" y="18" width="56" height="62" fill="url(#gBoard)" stroke="#D0C2A4"/><path d="M78,18 L66,4 L10,4 L22,18 Z" fill="#EFE5CF" stroke="#D0C2A4"/></svg><div class="sn">Reverse tuck</div><div class="sd">≈ same price</div></div>
+    <div class="struct"><svg width="86" height="80" viewBox="0 0 100 92"><rect x="22" y="18" width="56" height="62" fill="url(#gBoard)" stroke="#D0C2A4"/><path d="M22,80 L36,90 L64,90 L78,80" fill="#E4D8BE" stroke="#D0C2A4"/></svg><div class="sn">Auto-lock bottom</div><div class="sd">+$0.01–0.02 · heavier loads</div></div>
+    <div class="struct"><svg width="86" height="80" viewBox="0 0 100 92"><rect x="14" y="26" width="52" height="52" fill="#E8DCC2" stroke="#D0C2A4"/><rect x="34" y="14" width="52" height="52" fill="url(#gBoard)" stroke="#D0C2A4"/></svg><div class="sn">Sleeve + tray</div><div class="sd">drawer feel · +cost, 2 pieces</div></div>
+    <div class="struct theater"><svg width="86" height="80" viewBox="0 0 100 92"><path d="M50,80 L24,66 L24,36 L50,22 L76,36 L76,66 Z" fill="url(#gBoard)" stroke="#D0C2A4"/><path d="M50,22 L38,8 L50,14 L62,8 Z" fill="#F6EFDF" stroke="#D0C2A4"/><path d="M36,28 Q50,18 64,28" fill="none" stroke="#C9BC9E"/></svg><div class="sn">Custom die (Wyld's "origami")</div><div class="sd">petal-top hex · custom die $ · v2 play</div></div>
+  </div>
+
+  <div class="params">
+    <div class="param"><div class="pn">Parameter 1 · Structure</div><h3>The fold</h3>
+      <p>Standard dielines are near-free choices; a fully custom die (Wyld's petal-top hexagon is a custom "origami" die, confirmed by their own VP) is a one-time tooling spend and a signature.</p>
+      <div class="opt pick"><span class="on">Straight tuck end (STE)</span><span class="oc">base · every supplier</span></div>
+      <div class="opt"><span class="on">Reverse tuck / seal end</span><span class="oc">±$0.00–0.01</span></div>
+      <div class="opt"><span class="on">Auto-lock bottom</span><span class="oc">+$0.01–0.02</span></div>
+      <div class="opt"><span class="on">Sleeve + tray drawer</span><span class="oc">2 pieces · +30–60%</span></div>
+      <div class="opt"><span class="on">Custom die (petal/hex)</span><span class="oc">die $300–800 one-time · EST</span></div>
+      <div class="verdict"><b>Pick:</b> STE for launch — cheapest, every printer's default, cleanest deboss surface. The custom-die "signature structure" is the earned v2 move (§06).</div>
+    </div>
+
+    <div class="param"><div class="pn">Parameter 2 · Size</div><h3>The dimensions</h3>
+      <p>Fully arbitrary — you set L×W×D and the printer cuts a free dieline to it. The REAL constraint is the inner: stock CR pouches come in fixed sizes.</p>
+      <div class="opt"><span class="on">Board's working size 3.5×1.75×4.25"</span><span class="oc">too narrow for stock pouches</span></div>
+      <div class="opt pick"><span class="on">3.75 × 2 × 4.75" — fits Dymapak gram bag (3.62" wide)</span><span class="oc">≈ same carton cost</span></div>
+      <div class="opt"><span class="on">Cube ~3×3×3" — required if a CR TUB inner</span><span class="oc">Wyld's shape</span></div>
+      <div class="verdict"><b>Pick:</b> size the carton around the chosen inner, never the reverse. Wyld's box ≈ 4–4.5" tall hex (EST — buy one pack and measure; $20 closes this).</div>
+    </div>
+
+    <div class="param"><div class="pn">Parameter 3 · Board</div><h3>The paper itself</h3>
+      <p>18pt is the deboss sweet spot (crisp impression, clean folds; 14–28pt is the emboss-safe band — mill guidance).</p>
+      <div class="opt pick"><span class="on">SBS C1S 18pt (print face + uncoated cream back)</span><span class="oc">base</span></div>
+      <div class="opt"><span class="on">Kraft / CCNB recycled</span><span class="oc">−10–20%</span></div>
+      <div class="opt"><span class="on">FSC-certified recycled SBS</span><span class="oc">small upcharge</span></div>
+      <div class="opt"><span class="on">Neenah HEMP folding board (vellum, 80% PCW, FSC)</span><span class="oc">premium · swatch first</span></div>
+      <div class="opt"><span class="on">Sana × HempPress (25% hemp/75% PCR)</span><span class="oc">quote-only · (303) 729-0644</span></div>
+      <div class="verdict"><b>Pick:</b> SBS 18pt for print fidelity — and get the Neenah hemp-vellum swatchbook, because "hemp paperboard box" is the same story the Sana jar told, at carton prices. Caution: high-recycled board risks surface-break on 0.4mm deboss hairlines (mill guidance) — test before committing.</div>
+    </div>
+
+    <div class="param"><div class="pn">Parameter 4 · Print method</div><h3>Digital vs offset, US vs overseas</h3>
+      <p>This is the biggest cost lever after quantity.</p>
+      <div class="opt pick"><span class="on">US digital (Packlane MOQ 25 · FoldedColor · Packola)</span><span class="oc">$0 plates · 2–3 wks · $1.20–1.90 @500</span></div>
+      <div class="opt"><span class="on">US offset (FoldedColor · CannaCarton)</span><span class="oc">best 2.5k+ · 2–3 wks</span></div>
+      <div class="opt"><span class="on">China offset (QinPrinting · MPS)</span><span class="oc">$0.16 @5k DDP · 7–9 wks sea</span></div>
+      <div class="opt"><span class="on">China offset, air freight</span><span class="oc">~5 wks · +freight</span></div>
+      <div class="verdict"><b>Pick:</b> US digital for the pilot (speed + $0 tooling + inside print is nearly free on digital duplex), China or US offset at 5k+ (the $0.16-vs-$0.45 spread pays for the lead time). QinPrinting's DDP prices already include the 55% import duty.</div>
+    </div>
+
+    <div class="param"><div class="pn">Parameter 5 · Finishes</div><h3>The FRUITS feel</h3>
+      <p>Locked industry sequence: print → laminate → 24h cure → foil → deboss → die-cut → glue. Deboss THROUGH soft-touch laminate is the proven "leather-feel" combo.</p>
+      <div class="opt pick"><span class="on">Soft-touch lamination</span><span class="oc">+$0.02–0.15</span></div>
+      <div class="opt pick"><span class="on">Blind deboss (brass single-level chisel die)</span><span class="oc">die $200–1,000 one-time + ~$0.03–0.08</span></div>
+      <div class="opt pick"><span class="on">Interior print (the hidden strap inside the lid)</span><span class="oc">+15–30% carton · ~free on digital duplex</span></div>
+      <div class="opt"><span class="on">Hot foil / digital foil</span><span class="oc">+$0.10–0.35 · digital foil no die &lt;5k</span></div>
+      <div class="opt"><span class="on">Spot UV</span><span class="oc">+$0.05–0.25 · no tooling</span></div>
+      <div class="verdict"><b>Honest flag:</b> the logo's 0.4mm hairlines sit AT the published deboss floor (1pt ≈ 0.35mm min; 1.75–2pt is the comfort zone). Feasible — expect slightly softened hairlines, and have the die engraver review the art before cutting. Deboss is more forgiving than emboss on cartons, which is why the spec says deboss.</div>
+    </div>
+
+    <div class="param"><div class="pn">Parameter 6 · The CR inner</div><h3>The legal workhorse</h3>
+      <p>Certified, lifetime-resealable, opaque, and it must wear its own printed symbol. Prices verified live.</p>
+      <div class="opt pick"><span class="on">Dymapak Secure Sack pouch (stock, direct)</span><span class="oc">$0.20–0.23 · SOLID</span></div>
+      <div class="opt"><span class="on">BrandMyDispo custom-size CR pouch</span><span class="oc">$0.43 @5k · exact fit</span></div>
+      <div class="opt"><span class="on">CoolJarz CR tub 40-dram (US-made, certified)</span><span class="oc">$0.174 · Wyld-feel · forces cube carton</span></div>
+      <div class="opt"><span class="on">Calyx 45D square tub</span><span class="oc">$0.58 · closest to Wyld's look</span></div>
+      <div class="opt"><span class="on">All-in-one CR carton (Cubit $1.50–3.50 · SlideSafe quote/MOQ 5k · Custom420 Slide-Lock)</span><span class="oc">loses on cost today</span></div>
+      <div class="verdict"><b>Pick:</b> Dymapak stock pouch for the pilot ($204/1,000-case covers the pilot twice); decide pouch-vs-tub after holding a Wyld pack. The all-in-one CR carton only wins if SlideSafe quotes under ~$0.50 @5k — worth the free quote, not worth waiting for.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 SUPPLIERS -->
+<section>
+  <div class="secno">04 · The supplier map</div>
+  <h2>Ten makers, honestly compared</h2>
+  <p class="sub">Every JS-quoter number needs a 2-minute live quote for your exact size — the table shows what each is FOR.</p>
+  <div class="tscroll"><table>
+    <thead><tr><th>Supplier</th><th>Custom?</th><th>MOQ</th><th class="num">Price signal</th><th>Made</th><th>Lead (proof→door)</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr class="hl"><td><b>FoldedColor</b> <small>foldedcolor.com</small></td><td>Custom dims, instant quoter</td><td class="num">125</td><td class="num">exact # in 2 min online</td><td>Corona, CA</td><td>~2–3 wks</td><td><b>Pilot + US offset · get quote #1</b></td></tr>
+      <tr class="hl"><td><b>CannaCarton</b> <small>cannacartonllc.com</small></td><td>Full custom + CR/tamper options</td><td class="num">quote</td><td class="num">quote-only</td><td>USA (SQF/GMP)</td><td>10–15 days</td><td><b>Cannabis-native US scale · quote #2</b></td></tr>
+      <tr><td><b>Packlane</b></td><td>Custom dims, 3D tool</td><td class="num">25</td><td class="num">$1.90 @250 posted</td><td>USA</td><td>~2–3 wks</td><td>Tiny-run pilot, soft-touch digital</td></tr>
+      <tr><td><b>PackMojo</b></td><td>Full custom, offset even @100</td><td class="num">100</td><td class="num">quote (samples $29–59)</td><td>China</td><td>~5–7 wks air</td><td>Full finish menu at low MOQ</td></tr>
+      <tr class="hl"><td><b>QinPrinting</b></td><td>Full custom, any size</td><td class="num">300</td><td class="num"><b>$0.51 @1k · $0.16 @5k · $0.12 @10k</b> (3×1×4" DDP, published)</td><td>China</td><td>~7–9 wks sea</td><td><b>Scale price floor · quote #3</b></td></tr>
+      <tr><td><b>Cubit Packaging</b></td><td>Custom, AI dieline</td><td class="num">100–500</td><td class="num">$0.28–1.00 @500 · $0.12–0.40 @5k+ (ranges)</td><td>broker, undisclosed</td><td>2–3 wks</td><td>Fast broker; CR line $1.50–3.50</td></tr>
+      <tr><td><b>MPS</b> <small>(Shenzhen factory)</small></td><td>Full custom, cannabis-only</td><td class="num">1,000</td><td class="num">quote (factory-direct)</td><td>China</td><td>~3–4 wks air</td><td>Factory-direct scale backup</td></tr>
+      <tr><td><b>Green Rush Packaging</b></td><td>Custom + Grip 'N Lock CR</td><td class="num">1k dom. / 5k full</td><td class="num">quote</td><td>dual US/overseas</td><td>2–4 wks</td><td>CA-local, free samples</td></tr>
+      <tr><td><b>The Custom Boxes</b></td><td>Custom</td><td class="num">100</td><td class="num">quote</td><td>claims US; BBB contradicts</td><td>10–12 days</td><td>⚠ price-shop only; not the CR layer</td></tr>
+      <tr><td><b>Packola</b></td><td>Custom dims (STE only)</td><td class="num">1</td><td class="num">~$2.82 @250</td><td>Van Nuys, CA</td><td>~2 wks</td><td>1-unit printed samples; no foil/emboss</td></tr>
+    </tbody>
+  </table></div>
+  <p class="sub" style="margin-top:12px">Disqualified for this spec: Fantastapack &amp; BoxUp (corrugated only, no SBS carton, no premium finishes). Special mention: <b>Sana × HempPress</b> hemp-paperboard cartons (quote-only) — the sustainability story continues at carton prices.</p>
+</section>
+
+<!-- 05 WYLD TEARDOWN -->
+<section>
+  <div class="secno">05 · The benchmark, torn down</div>
+  <h2>What Wyld actually built — and what to steal</h2>
+  <div class="rules">
+    <div class="rule"><b>The box is a custom-die "origami" carton</b>Their VP's own word. Hexagonal prism, top closes with interlocking petal flaps — "opens like a flower." It is NOT a catalog dieline, NOT child-resistant, pure theater.<span class="cite">mg Magazine interview + review consensus — SOLID</span></div>
+    <div class="rule"><b>CR is a proprietary squeeze-lock tub</b>White PP tub, two squeeze points, lift or slide lid. Supplier is deliberately not public. Closest commodity analogs: CoolJarz 40-dram $0.174, Calyx 45D $0.58 — both certified.<span class="cite">how-to guides + supplier checks — SOLID/EST</span></div>
+    <div class="rule"><b>Compliance data is inkjet-coded, not labeled</b>Wyld prints UID/batch/dates straight onto flat carton blanks with a Markoprint X1Jet — went from 8 workers × 8 hrs to 2 workers × 2 hrs. Steal this at scale; at pilot, your co-packer's side sticker does the job.<span class="cite">Case Printing Solutions case study — SOLID</span></div>
+    <div class="rule"><b>Print looks digital; board reads 18–24pt matte</b>An industry teardown reads their current cartons as digitally printed with a removable compliance label. No FSC claim found on the US carton — their sustainability story lives in compostable films (TIPA) instead.<span class="cite">KitPrint teardown — SOLID-ish / EST</span></div>
+  </div>
+  <div class="quotebox" style="background:var(--terraSoft);border-color:#E7C4B5;color:#7C2A16"><b style="color:var(--terra)">The lesson:</b> Wyld spends its packaging budget on ONE unforgettable structural moment (the flower-open) + a commodity CR inner, and prints compliance data instead of hand-labeling. FRUITS' version of that moment already exists: the blind-debossed cream face outside, and the hidden strap printed inside the lid. Same playbook, different soul. (Buy one Wyld pack — ~$17 — to measure the box and judge the tub before finalizing dimensions.)</div>
+</section>
+
+<!-- 06 RECIPES -->
+<section>
+  <div class="secno">06 · Three build recipes, ready to quote</div>
+  <h2>Pilot → scale → signature</h2>
+  <div class="recipes">
+    <div class="recipe pick">
+      <div class="r-stage"><svg width="120" height="120" viewBox="24 26 150 146"><g><path d="M132,34 L164,48 L164,150 L132,164 Z" fill="#DED2B8"/><rect x="36" y="34" width="96" height="130" fill="url(#gBoard)" stroke="#DACDB0"/><use href="#mark" x="44" y="52" color="#B3A182"/><text x="84" y="152" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="8.5" fill="#B23A1E">it's just fruit.</text></g></svg></div>
+      <div class="r-body"><span class="chip rec">E1 · Recommended now</span><h3>The Pilot</h3><div class="rwhen">500–1,000 units · US digital · ~3 weeks</div>
+        <div class="bom">
+          <div class="bl"><span>US digital carton, 18pt, soft-touch, interior print</span><span>$1.40 / $0.95</span></div>
+          <div class="bl"><span>Dymapak stock CR pouch (white, symbol-stickered)</span><span>$0.23 / $0.20</span></div>
+          <div class="bl"><span>Tamper seal + insert</span><span>$0.14 / $0.12</span></div>
+          <div class="bl"><span>Assembly at co-packer</span><span>$0.15 / $0.12</span></div>
+          <div class="bl total"><span>All-in @500 / @1,000</span><span>≈ $1.90 / $1.40</span></div>
+        </div>
+        <div class="rmeta"><b>Margin @1k, $17 shelf: ≈ $2.30.</b> No deboss yet (no die spend before the reorder gate) — the cream + soft-touch + interior strap carry the feel. $0 tooling, art can still change between runs.</div>
+      </div>
+    </div>
+    <div class="recipe">
+      <div class="r-stage"><svg width="120" height="120" viewBox="24 26 150 146"><g><path d="M132,34 L164,48 L164,150 L132,164 Z" fill="#DED2B8"/><rect x="36" y="34" width="96" height="130" fill="url(#gBoard)" stroke="#DACDB0"/><use href="#mark" x="44" y="52" color="#8A7A5C"/><use href="#mark" x="44" y="52" color="#B3A182" transform="translate(-1,-1)"/><rect x="36" y="34" width="96" height="130" fill="none" stroke="#C9A227" stroke-width="1.5" opacity=".5"/></g></svg></div>
+      <div class="r-body"><span class="chip flag">E2 · At the reorder gate</span><h3>The Scale Spec</h3><div class="rwhen">5,000–10,000 units · offset · 3–9 wks</div>
+        <div class="bom">
+          <div class="bl"><span>Offset carton + soft-touch + blind deboss + interior</span><span>$0.35–0.50 / $0.28–0.40</span></div>
+          <div class="bl"><span>CR pouch (stock $0.20 or custom-fit $0.43)</span><span>$0.20 / $0.20</span></div>
+          <div class="bl"><span>Tamper + insert + assembly</span><span>$0.20 / $0.17</span></div>
+          <div class="bl total"><span>All-in @5k / @10k</span><span>≈ $0.75–0.90 / $0.65–0.77</span></div>
+        </div>
+        <div class="rmeta"><b>Margin @10k: ≈ $3.50–3.60.</b> One-time tooling: brass deboss die $200–1,000 (art transfers as-is, engineer-reviewed). US (CannaCarton) buys 3-wk lead; China (QinPrinting $0.16 base) buys the price floor.</div>
+      </div>
+    </div>
+    <div class="recipe">
+      <div class="r-stage"><svg width="120" height="120" viewBox="0 0 100 92"><path d="M50,84 L22,68 L22,34 L50,18 L78,34 L78,68 Z" fill="url(#gBoard)" stroke="#D0C2A4"/><path d="M50,18 L36,4 L50,11 L64,4 Z" fill="#F6EFDF" stroke="#D0C2A4"/><g transform="translate(20,26) scale(.75)"><use href="#mark" color="#B3A182"/></g></svg></div>
+      <div class="r-body"><span class="chip warn">E3 · The earned v2</span><h3>The Signature Structure</h3><div class="rwhen">After the brand proves · custom die</div>
+        <div class="bom">
+          <div class="bl"><span>Custom-die carton (petal-top / bespoke fold)</span><span>$0.45–0.80 @5k · EST</span></div>
+          <div class="bl"><span>CR tub inner (CoolJarz 40-dram, Wyld-feel)</span><span>$0.174</span></div>
+          <div class="bl"><span>Shrink band + insert + assembly</span><span>$0.22</span></div>
+          <div class="bl total"><span>All-in @5k</span><span>≈ $0.85–1.20</span></div>
+        </div>
+        <div class="rmeta"><b>Why wait:</b> a signature die is a bet you make once the shelf says yes — Wyld's flower-open only works because everyone already reaches for it. Custom die $300–800 + structural engineering. Requires the cube-ish footprint.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 SPEC SHEET -->
+<section>
+  <div class="secno">07 · The FRUITS carton, specified</div>
+  <h2>The spec sheet a printer can quote today</h2>
+  <div class="spec">
+    <h3>FRUITS Fruit Chews · 100mg · Carton E1→E2</h3>
+    <div class="s-sub">One spec, two print methods — digital at pilot, offset at scale. Every line traceable to §§01–06 above.</div>
+    <div class="spec-grid">
+      <div>
+        <div class="s-row"><span class="sk">Structure</span><span class="sv">Straight tuck end (STE)</span></div>
+        <div class="s-row"><span class="sk">Outer dims</span><span class="sv">3.75 × 2.0 × 4.75" (sized to inner — confirm vs Dymapak sample)</span></div>
+        <div class="s-row"><span class="sk">Board</span><span class="sv">SBS C1S 18pt (alt: Neenah hemp vellum — swatch test)</span></div>
+        <div class="s-row"><span class="sk">Print</span><span class="sv">CMYK, cream flood + terracotta + warm brown</span></div>
+        <div class="s-row"><span class="sk">Interior</span><span class="sv">1-color terracotta — hidden strap inside lid panel</span></div>
+        <div class="s-row"><span class="sk">Laminate</span><span class="sv">Soft-touch (PET-treated film; 24h cure before deboss)</span></div>
+        <div class="s-row"><span class="sk">Deboss (E2)</span><span class="sv">Blind, single-level brass chisel die, locked logo art</span></div>
+      </div>
+      <div>
+        <div class="s-row"><span class="sk">Front panel</span><span class="sv">CANNABIS-INFUSED &gt; "Fruit Chews" · symbol 12.7mm black · NET WT 45 g · 1.58 OZ</span></div>
+        <div class="s-row"><span class="sk">Inner</span><span class="sv">Dymapak Secure Sack, white, printed symbol + UID/batch zone</span></div>
+        <div class="s-row"><span class="sk">Tamper</span><span class="sv">Seal sticker over carton flap + heat-sealed inner</span></div>
+        <div class="s-row"><span class="sk">Insert</span><span class="sv">Gov warning · nutrition · instructions · story (per §17406(c))</span></div>
+        <div class="s-row"><span class="sk">Imagery rule</span><span class="sv">No gummy pictures · no kid-appeal · no "Los Angeles"</span></div>
+        <div class="s-row"><span class="sk">Cost target</span><span class="sv">≈$1.40 @1k (E1) → ≈$0.70 @10k (E2)</span></div>
+        <div class="s-row"><span class="sk">Quote pack</span><span class="sv">FoldedColor · CannaCarton · QinPrinting (+ SlideSafe wildcard)</span></div>
+      </div>
+    </div>
+    <div class="s-risks"><b>Open risks, honestly:</b> ① the 0.4mm deboss hairlines sit at the published floor — die-engraver review before any die is cut; ② the Dymapak gram-bag capacity is tight for 45g — order the $204 case, stuff 10 real-size gummies, before locking carton dims; ③ interior print near glue flaps must be knocked out or the glue fails; ④ variable data (UID/batch/date) plan = co-packer sticker at pilot, inline inkjet at scale.</div>
+  </div>
+</section>
+
+<!-- 08 NEXT -->
+<section>
+  <div class="secno">08 · This week, in order</div>
+  <h2>Five moves, ~$300 total, no commitments</h2>
+  <div class="next"><ol>
+    <li><b>Run the FoldedColor quoter</b> (2 minutes, exact numbers for our size at every tier) — <a class="lnk" href="https://foldedcolor.com/reverse-tuck-end.html" target="_blank" rel="noopener">foldedcolor.com ↗</a></li>
+    <li><b>Send the spec sheet (§07) to CannaCarton + QinPrinting</b> for formal quotes — <a class="lnk" href="https://cannacartonllc.com/custom-folding-cartons/" target="_blank" rel="noopener">cannacarton ↗</a> <a class="lnk" href="https://www.qinprinting.com/custom-paperboard-boxes/" target="_blank" rel="noopener">qinprinting ↗</a></li>
+    <li><b>Order the Dymapak pouch case</b> ($204–227/1,000 — the pilot's CR layer, and the fit test) + request the free SlideSafe all-in-one quote while there — <a class="lnk" href="https://dymapak.com/shop/" target="_blank" rel="noopener">dymapak ↗</a></li>
+    <li><b>Buy one Wyld pack</b> (~$17 at any LA dispensary) — measure the box, judge the tub, feel the petal-open.</li>
+    <li><b>Order swatches:</b> Neenah hemp folding board swatchbook + PackMojo sample kit ($29) for finish reference (soft-touch, foil, deboss on real board).</li>
+  </ol></div>
+</section>
+
+<footer>
+  <b>Method &amp; flags:</b> Six research lanes, 2026-07-17: carton suppliers (4 instant-quote + 6 cannabis-specialist), CR inners (verified live prices), CA DCC regs read verbatim from the Jan-2026 consolidated text (§§17402–17412, §15000 definitions, via official PDF + Cornell LII), print/finish constraints from mill &amp; converter technical guidance (Holmen, Gentlever, HP, Komori, JohnsByrne, Boxcar, Owosso), Wyld/Kiva/1906 teardowns from primary interviews and case studies. SOLID = posted price/reg text/manufacturer page · EST = triangulated (all EST figures need the §08 quotes to become real). Key unknowns closed only by physical objects: Wyld box dims, Dymapak capacity fit, deboss hairline crispness. Companion docs: PACKAGING-DECISION-BOARD.html (live: jasper4-web.github.io/shared-pages/fruits-packaging-board) · PACKAGING-COST-ANALYSIS.md (§7a audit). Not legal advice — attorney + distributor sign-off before print, per the project's standing rule.
+</footer>
+</div>
+</body>
+</html>
