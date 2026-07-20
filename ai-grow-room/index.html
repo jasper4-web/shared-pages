@@ -146,6 +146,42 @@
   footer a{color:var(--ink2);}
   .foothead{color:var(--ink2);letter-spacing:.1em;text-transform:uppercase;font-size:10.5px;margin-bottom:8px;}
 
+  /* your-setup tailored block */
+  .yours{background:linear-gradient(135deg,var(--grow-fill),transparent);border:1px solid var(--grow);border-radius:18px;padding:24px 24px 26px;}
+  .yours .ylead{font-size:clamp(1.1rem,2.6vw,1.4rem);font-weight:800;letter-spacing:-.015em;line-height:1.25;}
+  .yours .ylead .g{color:var(--grow);}
+  .yours .ysub{color:var(--ink2);font-size:14px;margin-top:10px;max-width:72ch;} .yours .ysub b{color:var(--ink);font-weight:650;}
+  .factchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+  .fchip{font-family:var(--mono);font-size:11px;color:var(--ink2);background:var(--panel);border:1px solid var(--line2);border-radius:8px;padding:6px 10px;}
+  .fchip b{color:var(--ink);} .fchip.warn{border-color:var(--red);color:var(--red);}
+  .tablewrap{overflow-x:auto;margin-top:20px;border:1px solid var(--line);border-radius:14px;background:var(--panel);}
+  table.dev{width:100%;border-collapse:collapse;font-size:13px;min-width:660px;}
+  table.dev th,table.dev td{padding:12px 15px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.45;}
+  table.dev tr:last-child td{border-bottom:0;}
+  table.dev thead th{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);background:var(--panel2);font-weight:700;}
+  table.dev td .dv{font-weight:750;display:block;}
+  table.dev td .sub{font-family:var(--mono);font-size:11px;color:var(--ink3);}
+  table.dev .ac{color:var(--ink2);} table.dev .ha{color:var(--ink);}
+  table.dev .warnc{color:var(--red);font-weight:700;}
+  table.dev .okc{color:var(--grow-ink);font-weight:700;}
+  .colwin{background:var(--grow-fill);}
+  .buylists{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;}
+  .bl{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;position:relative;}
+  .bl.win{border-color:var(--grow);box-shadow:0 0 0 1px var(--grow),var(--shadow);}
+  .bl h4{font-size:15px;letter-spacing:-.01em;margin:0 0 4px;}
+  .bl .blk{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);}
+  .wintag{position:absolute;top:-10px;right:14px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#07130c;background:var(--grow);padding:4px 10px;border-radius:999px;}
+  .bl .rows{margin-top:12px;display:flex;flex-direction:column;}
+  .bl .r{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;padding:8px 0;border-top:1px solid var(--line);}
+  .bl .r:first-child{border-top:0;} .bl .r .rn{color:var(--ink2);} .bl .r .rn b{color:var(--ink);} .bl .r .rc{font-family:var(--mono);white-space:nowrap;color:var(--ink);font-weight:600;}
+  .bl .total{display:flex;justify-content:space-between;margin-top:6px;padding-top:12px;border-top:2px solid var(--line2);font-weight:800;}
+  .bl.win .total .rc{color:var(--grow-ink);} .bl .total .rc{font-family:var(--mono);}
+  .verdictbanner{margin-top:20px;background:var(--panel);border:1px solid var(--grow);border-left-width:4px;border-radius:12px;padding:16px 18px;font-size:14px;color:var(--ink2);}
+  .verdictbanner b{color:var(--ink);} .verdictbanner .g{color:var(--grow-ink);font-weight:700;}
+  .safetybar{margin-top:14px;background:var(--red-fill);border:1px solid var(--red);border-radius:12px;padding:14px 16px;font-size:13px;color:var(--ink2);display:flex;gap:11px;align-items:flex-start;}
+  .safetybar .sk{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--red);font-weight:700;flex:0 0 auto;padding-top:1px;}
+  .safetybar b{color:var(--ink);}
+
   /* toolbox */
   .tools-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
   .tool{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;}
@@ -172,7 +208,7 @@
   .toolnote{font-size:12.5px;color:var(--ink3);font-family:var(--mono);margin-top:16px;text-align:center;}
 
   @media (max-width:760px){
-    .paths,.trio,.proof,.tools-grid{grid-template-columns:1fr;}
+    .paths,.trio,.proof,.tools-grid,.buylists{grid-template-columns:1fr;}
     .split{grid-template-columns:1fr;}
     .hero{padding:40px 0 20px;}
   }
@@ -187,11 +223,93 @@
   <header class="hero reveal">
     <span class="tag"><span class="dot"></span>Feasibility briefing · fact-checked, 24 sources</span>
     <h1>Can my AI actually <span class="g">run my grow room?</span></h1>
-    <p class="deck"><b>Yes — the watching half is solved and reliable today.</b> The "AI runs everything by itself, unsupervised" half is real but still hobbyist-grade and needs babysitting. Here's exactly where the line sits, and the honest path across it.</p>
+    <p class="deck"><b>Yes — the watching half is solved and reliable today.</b> The "AI runs everything by itself, unsupervised" half is real but still hobbyist-grade and needs babysitting. Here's exactly where the line sits — built around <b>your</b> exact room, not generic gear.</p>
   </header>
 
   <section class="reveal">
-    <div class="stitle">Where the line actually sits</div>
+    <div class="stitle">Your room · the straight answer</div>
+    <div class="yours">
+      <div class="ylead">Do you need an all‑AC‑Infinity setup? <span class="g">No — and for your gear, AC Infinity is the wrong buy.</span></div>
+      <div class="ysub">AC Infinity <i>can</i> switch your own plug‑in devices on/off — through one accessory, the <b>UIS Control Plug</b>. But it's a dumb slave that needs a ~$90 AC Infinity controller you don't own, it's on/off only, and AC Infinity's whole advantage is variable‑speed control of <b>their fans</b> — which you have zero of. <b>Every device you own is simple on/off</b>, so you'd pay ~$197 to duplicate what your two Inkbirds already do — and your space heater is <b>banned</b> from the Control Plug anyway.</div>
+      <div class="factchips">
+        <span class="fchip">Accessory: <b>UIS Control Plug (AC‑ADA3)</b></span>
+        <span class="fchip"><b>$29.99</b> · 125V / 15A / 1800W</span>
+        <span class="fchip">on/off only · needs a <b>~$90 controller</b></span>
+        <span class="fchip warn">⚠ heaters banned (fire risk)</span>
+      </div>
+
+      <div class="tablewrap">
+        <table class="dev">
+          <thead><tr><th>Your device</th><th>~Load</th><th>Via AC Infinity</th><th class="colwin">Via smart plug + Home Assistant</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="dv">Space heater</span><span class="sub">on the Inkbird ITC‑308</span></td>
+              <td>~1500W<br><span class="sub">12.5A</span></td>
+              <td class="ac"><span class="warnc">Banned</span> on the Control Plug — fire risk from cycling</td>
+              <td class="colwin ha"><b>Keep on the Inkbird</b> (or a hardwired Shelly 1PM relay). <span class="warnc">Never a plug.</span></td>
+            </tr>
+            <tr>
+              <td><span class="dv">Humidifier</span><span class="sub">Inkbird IHC, incoming</span></td>
+              <td>~20–100W</td>
+              <td class="ac">Control Plug on/off <span class="sub">(+ controller)</span></td>
+              <td class="colwin ha">Kasa/Sonoff plug — or just let the Inkbird IHC switch it</td>
+            </tr>
+            <tr>
+              <td><span class="dv">Dehumidifier</span><span class="sub">Inkbird IHC, incoming</span></td>
+              <td>~50–700W</td>
+              <td class="ac">Control Plug on/off</td>
+              <td class="colwin ha">Smart plug — <i>confirm it auto‑restarts after a power cut</i></td>
+            </tr>
+            <tr>
+              <td><span class="dv">Gavita LED light</span><span class="sub">on a wall timer</span></td>
+              <td>~240–320W</td>
+              <td class="ac">Control Plug on/off</td>
+              <td class="colwin ha">Kasa plug w/ schedule → replaces the timer, cockpit sets 18/6</td>
+            </tr>
+            <tr>
+              <td><span class="dv">Temp / RH / VPD data</span><span class="sub">3× dumb TempPro now</span></td>
+              <td>—</td>
+              <td class="ac">1 cloud‑only probe (69 Pro)</td>
+              <td class="colwin ha"><span class="okc">✓ Your real goal.</span> Cheap Zigbee sensors → HA computes VPD → <b>local API into your cockpit</b></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="buylists">
+        <div class="bl">
+          <div class="blk">Route A</div>
+          <h4>AC Infinity</h4>
+          <div class="rows">
+            <div class="r"><span class="rn"><b>Controller 69 Pro</b> (WiFi, 4‑port + probe)</span><span class="rc">$89.99</span></div>
+            <div class="r"><span class="rn">UIS Power Adapter <span class="sub">(to power it)</span></span><span class="rc">$16.99</span></div>
+            <div class="r"><span class="rn">3× UIS Control Plug <span class="sub">(not the heater)</span></span><span class="rc">$89.97</span></div>
+            <div class="r"><span class="rn">Heater → stays on Inkbird</span><span class="rc">$0</span></div>
+          </div>
+          <div class="total"><span>Total · does less, no local data</span><span class="rc">≈ $197</span></div>
+        </div>
+        <div class="bl win">
+          <span class="wintag">Best for you</span>
+          <div class="blk">Route B</div>
+          <h4>Home Assistant + smart plugs</h4>
+          <div class="rows">
+            <div class="r"><span class="rn"><b>Home Assistant</b> (spare PC/Pi, or $99 Green)</span><span class="rc">$0–99</span></div>
+            <div class="r"><span class="rn">2–3× Kasa KP125M plugs <span class="sub">(local)</span></span><span class="rc">~$26–39</span></div>
+            <div class="r"><span class="rn">2–3× Zigbee temp/RH sensors + dongle</span><span class="rc">~$52–75</span></div>
+            <div class="r"><span class="rn">Heater → stays on Inkbird</span><span class="rc">$0</span></div>
+          </div>
+          <div class="total"><span>Total · real data + local API to your cockpit</span><span class="rc">≈ $78–114</span></div>
+        </div>
+      </div>
+
+      <div class="verdictbanner"><span class="g">The call for you:</span> <b>Home Assistant + smart plugs, and keep the Inkbirds doing the actual switching.</b> Your setup is all mixed‑brand on/off with no AC Infinity fans, your heater can't go on AC Infinity anyway, and your real goal is getting live data into your cockpit + a way for Claude to see and toggle things — which is exactly what Home Assistant's free local API does, and AC Infinity's cloud doesn't. <i>One exception: if you later add a real modulating exhaust fan, a WiFi 69 Pro becomes a fair hub — a future airflow decision, not today's.</i></div>
+
+      <div class="safetybar"><span class="sk">Heat = the only real risk</span><span>A full <b>1500W heater draws ~12.5A</b> — over the 12A continuous‑load limit <i>and</i> over the Inkbird's own 10A/1100W outlet. Run a <b>≤1000W heater</b> on the Inkbird, or switch a bigger one through a heavy‑duty relay. Never on any plug‑in smart module.</span></div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="stitle">Where the general line sits</div>
     <div class="mat">
       <div class="mrow">
         <div class="top"><div class="lbl">Monitor · alert · AI advises <span>— sensors feed the cockpit, Claude reads history &amp; recommends</span></div><span class="pill live">Live today</span></div>
