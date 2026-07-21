@@ -110,12 +110,13 @@
   .grow.gslider{gap:2px;}
   .gau.slider svg{cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none;}
   .instr{position:relative;}
+  .instr .grow{padding-bottom:32px;} /* reserve the corner so the capture button never sits on the VPD gauge */
   .minicap{position:absolute;right:9px;bottom:9px;width:38px;height:38px;border-radius:50%;border:0;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(43,54,35,.24);cursor:pointer;z-index:3;}
   .minicap:active{background:var(--green2);} .minicap i{width:19px;height:19px;}
   .capmsg{position:absolute;right:54px;bottom:16px;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--green2);background:var(--green-w);border:1px solid #CADEC6;padding:4px 9px;border-radius:999px;opacity:0;transition:opacity .18s;pointer-events:none;z-index:3;white-space:nowrap;}
   .capmsg.show{opacity:1;}
   .glabelrow{display:flex;align-items:center;justify-content:center;gap:6px;}
-  .gpm{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line2);background:var(--raise);color:var(--ink);font-size:15px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-sm);padding:0;}
+  .gpm{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line2);background:var(--raise);color:var(--ink);font-size:18px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-sm);padding:0;}
   .gpm:active{background:var(--card2);}
   .kpwrap{display:none;margin-top:10px;}
   .kpwrap.show{display:block;}
@@ -276,10 +277,24 @@
   .modal-bg.center{align-items:center;padding:16px;}
   .grab{width:38px;height:4px;border-radius:999px;background:var(--line2);margin:2px auto 12px;}
   .modal h3{margin:0 0 4px;font-size:16px;} .modal p{margin:0 0 10px;font-size:12.5px;color:var(--ink2);}
-  .modal textarea.big{min-height:190px;font-family:var(--mono);font-size:12px;}
-  .mrowb{display:flex;gap:9px;margin-top:12px;} .mrowb .btn{flex:1;} .mrowb .btn.hold{flex:0 0 auto;}
+  .modal textarea.big{min-height:190px;font-family:var(--mono);font-size:16px;}
+  .mrowb{display:flex;gap:9px;margin-top:12px;} .mrowb .btn{flex:1;width:auto;} .mrowb .btn.hold{flex:0 0 auto;}
+  /* toast — feedback where the thumb is */
+  .toast{position:fixed;left:50%;transform:translateX(-50%) translateY(8px);bottom:calc(74px + env(safe-area-inset-bottom));z-index:70;background:var(--green);color:#fff;font-family:var(--body);font-size:13px;font-weight:700;padding:10px 16px;border-radius:999px;box-shadow:0 6px 18px rgba(43,54,35,.3);opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;max-width:86vw;text-align:center;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast.warn{background:var(--bad);}
+  /* origin banner — one canonical home for the data */
+  .originbar{display:none;max-width:440px;margin:0 auto;background:var(--warn-w);border:1px solid var(--warn);border-radius:0 0 13px 13px;padding:9px 13px;font-size:12px;color:#6d5210;line-height:1.45;}
+  .originbar.show{display:block;}
+  .originbar a{color:var(--green2);font-weight:700;}
+  .originbar button{appearance:none;border:0;background:none;color:#8a6412;font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;padding:2px 0 0;display:block;}
+  /* masthead plant banner (reinstated) */
+  .plantbanner{width:100%;height:102px;margin:10px auto 0;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;}
+  .plantbanner svg{display:block;height:100%;width:auto;max-width:100%;overflow:visible;}
+  .plantbanner .leaf{transform-box:fill-box;transform-origin:0 100%;}
 </style>
 
+<div class="originbar" id="originBar">This isn't the app's home — <b>logs saved here stay here.</b> Use the canonical link: <a href="https://jasper4-web.github.io/shared-pages/zangria-grow-cockpit/">jasper4-web.github.io → zangria-grow-cockpit</a>. If you've been logging on THIS page, go to Guide → Data safety → Copy backup, then Restore it at the canonical link.<button type="button" id="originDismiss">Dismiss for this visit</button></div>
 <header class="mast">
   <div class="runhead"><span>Zangria · Field Journal</span><span class="lite"><span class="b"></span><span id="liteState">LIGHTS —</span></span></div>
   <div class="mrow"><div class="d"><span>Day</span> <span id="dayNum">—</span></div><span class="chip" id="stageChip">—</span><span class="chip dome" id="domeChip" style="display:none">Domes · &gt;70</span></div>
@@ -299,6 +314,7 @@
       <div class="attn none" id="attn"><i data-lucide="leaf"></i><div><div class="at" id="attnT">—</div><div class="as" id="attnS"></div></div></div>
       <div class="sec"><span class="e">Room now · <span id="roomLbl">climate</span></span><span class="sx">drag a dial</span></div>
       <div class="instr"><div class="grow" id="gauges"></div><span class="capmsg" id="capMsgG"></span><button type="button" class="minicap" id="capBtnG" aria-label="Capture this reading"><i data-lucide="camera"></i></button></div>
+      <div class="plantbanner" id="plantStage" aria-hidden="true"></div>
       <div class="sec"><span class="e">Plants</span></div>
       <div class="prow" id="board"></div>
       <div class="sec"><span class="e">Today so far</span></div>
@@ -340,7 +356,6 @@
       <div class="cap evrib" id="evRibbon"></div>
 
       <div class="btnrow"><button class="btn ghost" id="copyTodayBtn"><i data-lucide="send"></i>Copy today to send me</button></div>
-      <div class="savedflag" id="savedFlag"></div>
     </div>
     <div class="foot" id="foot1"></div>
   </section>
@@ -367,6 +382,11 @@
       <div class="setrow"><div><div class="sl">Humidity controller installed</div><div class="sh">Inkbird IHC — flips humidity to AUTO</div></div><button type="button" class="toggle" id="tgIhc" aria-pressed="false"></button></div>
       <div class="setrow"><div><div class="sl">Inkbird heater set-point</div><div class="sh">°F the Inkbird kicks the heater on</div></div><div class="setnum"><input type="number" id="setHeat" inputmode="numeric"></div></div>
     </div>
+    <div class="sec"><span class="e">Data safety</span></div>
+    <div class="gear" style="padding:2px 14px">
+      <div class="setrow"><div><div class="sl">Copy backup</div><div class="sh">Full journal + settings as text — save it anywhere safe</div></div><button type="button" class="btn ghost" id="backupBtn" style="width:auto;margin-left:auto;padding:9px 14px;font-size:12.5px">Copy</button></div>
+      <div class="setrow"><div><div class="sl">Restore from backup</div><div class="sh">Paste a backup here to bring your journal onto this device</div></div><button type="button" class="btn ghost" id="restoreBtn" style="width:auto;margin-left:auto;padding:9px 14px;font-size:12.5px">Paste…</button></div>
+    </div>
     <div class="sec"><span class="e">Reference</span></div>
     <details class="ref" open><summary>6-week set-points <span class="chev" data-lucide="chevron-right"></span></summary><div class="ref-body" style="overflow-x:auto"><table class="wk" id="refTable"></table></div></details>
     <details class="ref"><summary>Red lines — act now <span class="chev" data-lucide="chevron-right"></span></summary><div class="ref-body">
@@ -384,6 +404,8 @@
 
 </main>
 
+<div class="toast" id="toastEl" role="status" aria-live="polite"></div>
+
 <nav class="tabs" aria-label="Sections"><div class="inner" role="tablist">
   <button class="tab" role="tab" aria-selected="true" aria-controls="pane-today" data-pane="today"><i data-lucide="sun"></i>Today</button>
   <button class="tab" role="tab" aria-selected="false" aria-controls="pane-plants" data-pane="plants"><i data-lucide="sprout"></i>Plants</button>
@@ -400,7 +422,7 @@
     <div class="envchips" id="edEnv"></div>
     <div class="field"><label>What / how much <span class="hint">— optional</span></label><input type="text" id="edDetail" placeholder="e.g. neem oil, foliar, lights-off…"></div>
     <div class="field" id="edPlantsField"><label>Which plants</label><div class="pchips" id="edPlants"></div></div>
-    <input type="file" id="edPhotoInput" accept="image/*" capture="environment" style="display:none">
+    <input type="file" id="edPhotoInput" accept="image/*" style="display:none">
     <div class="photorow"><button class="btn ghost" id="edPhotoBtn" style="flex:0 0 auto;width:auto;padding:11px 16px"><i data-lucide="camera"></i>Add photo</button><img id="edThumb" class="photothumb" style="display:none" alt="photo"></div>
     <div class="mrowb"><button class="btn ghost hold" id="edCancel" style="flex:0 0 auto;padding:13px 18px">Cancel</button><button class="btn primary" id="edSave"><i data-lucide="check"></i>Save event</button></div>
   </div>
@@ -423,7 +445,7 @@
 <!-- copy modal -->
 <div class="modal-bg center" id="modalBg" role="dialog" aria-modal="true" aria-label="Copy">
   <div class="modal center"><h3 id="modalTitle">Copy &amp; send</h3><p>Copied to your clipboard — paste it to me. Attach the day's photos too if you took any.</p>
-  <textarea id="modalText" class="big" readonly></textarea><div class="mrowb"><button class="btn primary" id="modalCopy">Copy again</button><button class="btn ghost hold" id="modalClose" style="flex:0 0 auto;padding:13px 18px">Close</button></div></div>
+  <textarea id="modalText" class="big" readonly></textarea><div class="mrowb"><button class="btn primary" id="modalCopy">Copy again</button><button class="btn primary" id="modalApply" style="display:none">Restore now</button><button class="btn ghost hold" id="modalClose" style="flex:0 0 auto;padding:13px 18px">Close</button></div></div>
 </div>
 
 <script>/* inlined: lib/gsap/gsap.min.js */
@@ -679,6 +701,10 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   if(CFG.domesOn===undefined)CFG.domesOn=true;
   if(CFG.ihc===undefined)CFG.ihc=false;
   if(CFG.heaterSet===undefined)CFG.heaterSet=wk.s1;
+  // sanitize: a historical race could leave null events; never let them poison renders
+  Object.keys(store.entries).forEach(function(k){var e=store.entries[k];if(e&&e.events)e.events=e.events.filter(Boolean);});
+  // ask the browser to protect this storage from eviction (best-effort)
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
 
   /* ---- demo seed (display-only preview) ---- */
   var isDemo=false, demoKeys=[];
@@ -701,7 +727,9 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   if(!draft.lo)draft.lo={t:null,r:null};
   function curEntry(){ return (isDemo && store.entries[todayKey]) ? store.entries[todayKey] : draft; }
   function commitDraft(){draft.day=Math.max(0,todayDnum);draft.week=todayWeek;store.entries[todayKey]=JSON.parse(JSON.stringify(draft));save();}
-  function exitDemo(){ if(!isDemo)return; demoKeys.forEach(function(k){ delete store.entries[k]; }); isDemo=false; draft=blankDraft(); dial.temp=null; dial.rh=null; setFoot(); }
+  function exitDemo(){ if(!isDemo)return; demoKeys.forEach(function(k){ delete store.entries[k]; }); isDemo=false; draft=blankDraft(); dial.temp=null; dial.rh=null; setFoot();
+    // purge must leave NO ghost of the sample data on screen — re-render everything
+    renderBoards();renderGauges();renderTrendPeek();renderCaps();renderRibbon(); }
   function setFoot(){$("foot1").textContent=(isDemo?"Sample data for preview — your first save replaces it · ":"")+"Day 0 = Jul 17, 2026";}
 
   /* ---- dome-aware targets ---- */
@@ -759,7 +787,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     if(has){var nd=polar(cx,cy,r,ang(o.val));parts+='<circle cx="'+nd[0].toFixed(2)+'" cy="'+nd[1].toFixed(2)+'" r="4.5" fill="'+col+'"/><circle cx="'+nd[0].toFixed(2)+'" cy="'+nd[1].toFixed(2)+'" r="1.7" fill="#fff"/>';}
     parts+='<text x="50" y="44" text-anchor="middle" font-family="Geist Mono,monospace" font-weight="700" font-size="'+fs+'" fill="'+numcol+'">'+o.disp+'</text>'+
       '<text x="50" y="57" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8" fill="'+cvar("--ink3")+'">'+o.sub+'</text></svg>';
-    if(ctrlK) parts+='<div class="glabelrow"><button type="button" class="gpm minus" data-gk="'+ctrlK+'" data-d="-1" aria-label="down">−</button><div class="glabel" style="color:'+o.color+'">'+o.label+'</div><button type="button" class="gpm plus" data-gk="'+ctrlK+'" data-d="1" aria-label="up">+</button></div>';
+    if(ctrlK) parts+='<div class="glabelrow"><button type="button" class="gpm minus" data-gk="'+ctrlK+'" data-d="-1" aria-label="down">−</button><div class="glabel" style="color:'+o.color+';white-space:nowrap">'+(ctrlK==="rh"?"RH":"TEMP")+'</div><button type="button" class="gpm plus" data-gk="'+ctrlK+'" data-d="1" aria-label="up">+</button></div>';
     else parts+='<div class="glabel" style="color:'+o.color+'">'+o.label+'</div>';
     return parts;
   }
@@ -855,12 +883,15 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     plantBad.forEach(function(x){issues.push(x+" bad droop");});
     envIssues.forEach(function(x){issues.push(x);});
     plantWarn.forEach(function(x){issues.push(x+" slight");});
-    var cls,icon,head,sub,serious=plantBad.length+envIssues.length;
+    var cls,icon,head,sub,serious=plantBad.length+envIssues.length,watch=plantWarn.length;
     if(noReading&&!plantBad.length&&!plantWarn.length){
-      cls="none";icon="leaf";head="No reading yet today";sub="Switch to Log, read the room off the TempPro, tap Capture.";
+      cls="none";icon="leaf";head="No reading yet today";sub="Drag the dials to match the TempPro, then tap the camera to capture.";
     } else if(issues.length){
       cls="warn";icon="alert-triangle";
-      head=serious?(serious+(serious>1?" things need":" thing needs")+" attention"):(plantWarn.length+" to watch");
+      var hp=[];
+      if(serious)hp.push(serious+(serious>1?" need":" needs")+" attention");
+      if(watch)hp.push(watch+" to watch");
+      head=hp.join(" · ");
       sub=issues.slice(0,3).join(" · ")+(issues.length>3?" …":"");
     } else {
       cls="calm";icon="check-circle";head=CFG.domesOn?"Room & domes on target":"Room on target";sub="All three plants steady.";
@@ -939,8 +970,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       s=(cur==null?"":String(cur));
       if(s.length>=3)s="";
       s=s+n; var v=parseInt(s,10);
-      if(v>maxFor(active))v=parseInt(n,10);
-      setField(active,v);
+      if(v<=maxFor(active))setField(active,v); // overflowing digit is ignored, not a reset
     }
     syncLog();
   }
@@ -972,15 +1002,25 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     return Math.round(min+((d-135)/270)*(max-min));
   }
   function gaugeSvgFor(){if(!gdrag||!gdrag.cont)return null;var c=gdrag.cont.children[gdrag.k==="temp"?0:1];return c?c.querySelector("svg"):null;}
-  function onGMove(ev){ if(!gdrag)return; var svg=gaugeSvgFor(); if(!svg)return; if(ev.cancelable)ev.preventDefault(); setDialK(gdrag.k,gvalFrom(svg,ev,gdrag.min,gdrag.max)); }
+  function onGMove(ev){
+    if(!gdrag)return;
+    if(!gdrag.armed){ // require real movement before the dial writes anything — a stray tap changes nothing
+      var dx=(ev.clientX||0)-gdrag.sx, dy=(ev.clientY||0)-gdrag.sy;
+      if(dx*dx+dy*dy<36)return;
+      gdrag.armed=true; exitDemo();
+    }
+    var svg=gaugeSvgFor(); if(!svg)return; if(ev.cancelable)ev.preventDefault();
+    setDialK(gdrag.k,gvalFrom(svg,ev,gdrag.min,gdrag.max));
+  }
   window.addEventListener("pointermove",onGMove,{passive:false});
   window.addEventListener("pointerup",function(){gdrag=null;});
   window.addEventListener("pointercancel",function(){gdrag=null;});
   function wireSlider(gauEl,k,min,max,cont){
     var svg=gauEl.querySelector("svg"); if(!svg)return;
-    svg.addEventListener("pointerdown",function(ev){ev.preventDefault();exitDemo();gdrag={k:k,min:min,max:max,cont:cont};setDialK(k,gvalFrom(svg,ev,min,max));});
+    svg.addEventListener("pointerdown",function(ev){ev.preventDefault();gdrag={k:k,min:min,max:max,cont:cont,sx:ev.clientX,sy:ev.clientY,armed:false};});
   }
 
+  var persistT=null;
   function syncLog(){
     var rl=CFG.domesOn?"Dome RH %":"RH %";
     function hvh(pre,t,r){
@@ -990,13 +1030,16 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       var b=(r!=null?r+"%":"—")+(rc?'<span class="cx"></span>':'');
       return a+' / '+b;
     }
-    $("hiV").innerHTML=hvh("hi",draft.hi.t,draft.hi.r);
-    $("loV").innerHTML=hvh("lo",draft.lo.t,draft.lo.r);
+    var HH=isDemo?((curEntry().hi)||{t:null,r:null}):draft.hi, LL=isDemo?((curEntry().lo)||{t:null,r:null}):draft.lo;
+    $("hiV").innerHTML=hvh("hi",HH.t,HH.r);
+    $("loV").innerHTML=hvh("lo",LL.t,LL.r);
     $("hiV").parentNode.setAttribute("aria-pressed",(active==="hi.t"||active==="hi.r")?"true":"false");
     $("loV").parentNode.setAttribute("aria-pressed",(active==="lo.t"||active==="lo.r")?"true":"false");
     $("kphint").textContent=active.indexOf("hi")===0?("Typing today high — "+(active==="hi.t"?"temp °F":rl)+"  ·  tap the chip again to swap"):active.indexOf("lo")===0?("Typing today low — "+(active==="lo.t"?"temp °F":rl)+"  ·  tap the chip again to swap"):"Type a value";
     $("capClock").textContent=nowClock();
     renderGauges();renderTrendPeek();
+    // dialed/typed values must survive a closed tab — persist the draft, debounced
+    if(!isDemo){clearTimeout(persistT);persistT=setTimeout(commitDraft,600);}
   }
   function $$(sel){return [].slice.call(document.querySelectorAll(sel));}
 
@@ -1010,9 +1053,11 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     renderCaps();renderGauges();renderTrendPeek();
     return t;
   }
+  var toastT=null;
+  function toast(msg,warn){var t=$("toastEl");if(!t)return;t.textContent=msg;t.className="toast show"+(warn?" warn":"");clearTimeout(toastT);toastT=setTimeout(function(){t.className="toast";},2400);}
   function captureReading(){ // Log mode button
-    var t=doCapture(),f=$("savedFlag");
-    f.textContent=t?("✓ Captured "+t):"Dial temp + humidity first";setTimeout(function(){f.textContent="";},2200);
+    var t=doCapture();
+    if(t)toast("✓ Captured "+t); else toast("Dial temp + humidity first",true);
   }
   function captureGlance(){ // mini button in the Room-now bubble
     var t=doCapture(),m=$("capMsgG"),b=$("capBtnG");
@@ -1078,7 +1123,8 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     $("edThumb").style.display="none";
     $("evBg").classList.add("open");
     if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});
-    setTimeout(function(){if(type==="photo")$("edPhotoBtn").click();else $("edDetail").focus();},60);
+    if(type==="photo"){$("edPhotoInput").click();} // synchronous: stays inside the tap's user-activation (iOS)
+    else if(window.matchMedia&&matchMedia("(hover: hover)").matches){setTimeout(function(){$("edDetail").focus();},60);} // never pop the keyboard on phones
   }
   function togglePlantChip(p){
     var sel=evEditing.plants.slice();
@@ -1103,18 +1149,21 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   });
   $("edCancel").addEventListener("click",function(){$("evBg").classList.remove("open");});
   $("evBg").addEventListener("click",function(e){if(e.target===this)this.classList.remove("open");});
+  var evSaving=false;
   $("edSave").addEventListener("click",function(){
-    if(!evEditing)return;
-    evEditing.detail=$("edDetail").value.trim();
+    if(!evEditing||evSaving)return; // guard: a second tap while the photo is writing must be a no-op
+    evSaving=true;
+    var ev=evEditing;
+    ev.detail=$("edDetail").value.trim();
     var doSave=function(){
-      draft.events.push(evEditing);commitDraft();
+      draft.events.push(ev);commitDraft();
       renderRibbon();
       $("evBg").classList.remove("open");
-      var f=$("savedFlag");f.textContent="✓ "+evType(evEditing.type).label+" logged "+evEditing.time;setTimeout(function(){f.textContent="";},2400);
-      evEditing=null;
+      toast("✓ "+evType(ev.type).label+" logged "+ev.time);
+      evEditing=null;evSaving=false;
     };
     if(evPhotoData){
-      var pid="p"+Date.now();evEditing.thumb=evPhotoThumb;evEditing.photoId=pid;
+      var pid="p"+Date.now();ev.thumb=evPhotoThumb;ev.photoId=pid;
       IDB.put(pid,evPhotoData).then(doSave).catch(doSave);
     } else doSave();
   });
@@ -1144,12 +1193,13 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     plantEventsFor(id).forEach(function(x){items.push({dn:dnum(x.dt),t:parseTime(x.e.time),dt:x.dt,kind:"event",e:x.e});});
     items.sort(function(a,b){return (b.dn-a.dn)||(b.t-a.t);});
     if(!items.length)return '<div class="capempty" style="padding:6px 2px">Nothing logged for this plant yet.</div>';
+    var more=items.length>8?'<div class="capempty" style="padding:6px 2px 0">+'+(items.length-8)+' older — full history on the Log tab</div>':'';
     return '<div class="tl">'+items.slice(0,8).map(function(it){
       var dd=MONTHS[it.dt.getMonth()]+" "+it.dt.getDate()+(it.kind==="event"&&it.e.time&&it.e.time!=="—"?" · "+it.e.time:"");
       if(it.kind==="status"){var kk=STATUS[it.s].k;return '<div class="tli '+kk+'"><span class="dot"><i data-lucide="'+(kk==="ok"?"trending-up":kk==="bad"?"trending-down":"minus")+'"></i></span><div class="dd">'+dd+'</div><div class="tt">'+STATUS[it.s].t+(it.n?' <span class="q">— "'+esc(it.n)+'"</span>':'')+'</div></div>';}
       var et=evType(it.e.type),env=it.e.env,envs=(env&&env.temp!=null)?(' <span class="q">@ '+env.temp+'°/'+env.rh+'%</span>'):'';
       return '<div class="tli evrow"><span class="dot"><i data-lucide="'+et.icon+'"></i></span><div class="dd">'+dd+'</div><div class="tt">'+et.label+(it.e.detail?' <span class="q">— '+esc(it.e.detail)+'</span>':'')+envs+'</div></div>';
-    }).join('')+'</div>';
+    }).join('')+'</div>'+more;
   }
   function openPlant(id){
     psPlant=id;
@@ -1167,7 +1217,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     // health strip + trend
     var strip="", stripDays=hist.slice(-6);
     if(stripDays.length){
-      strip='<div class="slabel">Health this week'+(trend.label!=="No data"?' <span class="trendtag '+trend.cls+'">'+(trend.arrow?trend.arrow+" ":"")+trend.label+'</span>':'')+'</div><div class="hstrip">'+
+      strip='<div class="slabel">Health — recent days'+(trend.label!=="No data"?' <span class="trendtag '+trend.cls+'">'+(trend.arrow?trend.arrow+" ":"")+trend.label+'</span>':'')+'</div><div class="hstrip">'+
         stripDays.map(function(h,i){return '<div class="hday'+(i===stripDays.length-1?" now":"")+'">'+plantArt(STATUS[h.s].k,28)+'<div class="hd">'+(h.dt.getMonth()+1)+'/'+h.dt.getDate()+'</div></div>';}).join('')+'</div>';
       if(stripDays.length>1){
         var W=300,H=30,n=stripDays.length;
@@ -1204,6 +1254,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     draft.plants[psPlant].s=psSel;draft.plants[psPlant].n=$("psNote").value.trim();
     commitDraft();renderBoards();renderGauges();
     $("psBg").classList.remove("open");
+    toast("✓ Plant #"+psPlant+" — "+(STATUS[psSel]?STATUS[psSel].t:"status")+" saved");
   });
 
   /* ---- modes ---- */
@@ -1223,7 +1274,13 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   $$("#numpad button").forEach(function(b){b.addEventListener("click",function(){pressNum(b.getAttribute("data-n"));});});
   $("capBtn").addEventListener("click",function(){hideKeypad();captureReading();});
   $("capBtnG").addEventListener("click",captureGlance);
-  setInterval(function(){var c=$("capClock");if(c)c.textContent=nowClock();},15000);
+  setInterval(function(){
+    var c=$("capClock");if(c)c.textContent=nowClock();
+    // lights flip at 10AM/4PM and the day flips at midnight — a tab left open must not go stale
+    var h2=new Date().getHours(), lo=(h2>=16||h2<10);
+    if(lo!==lightsOn){lightsOn=lo;var ls=$("liteState");if(ls)ls.textContent="LIGHTS "+(lightsOn?"ON":"OFF");}
+    if(keyOf(new Date())!==todayKey && !document.querySelector(".modal-bg.open")){location.reload();}
+  },15000);
 
   /* ---- tabs ---- */
   var panes={today:$("pane-today"),plants:$("pane-plants"),log:$("pane-log"),guide:$("pane-guide")};
@@ -1247,7 +1304,8 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     }
     var rds=(e.readings&&e.readings.length)?e.readings:null;
     if(rds){L.push("  Captures ("+rds.length+"):");rds.forEach(function(r){L.push("    "+(r.time&&r.time!=="—"?r.time:"—")+" · "+r.temp+"°F / "+r.rh+"%  ·  VPD "+(r.vpd!=null?Number(r.vpd).toFixed(2):vpd(r.temp,r.rh).toFixed(2)));});}
-    L.push("  Watered: "+(e.watered==="yes"?"Yes":"No"));
+    var wev=(e.events||[]).filter(function(x){return x&&x.type==="water";});
+    L.push("  Watered: "+(wev.length?("Yes — "+wev.map(function(x){return (x.time&&x.time!=="—"?x.time:"")+(x.detail?" ("+x.detail+")":"");}).join(", ").trim()):"No"));
     PLANTS.forEach(function(p){var pl=(e.plants&&e.plants[p.id])||{};if(pl.s||pl.n)L.push("  "+p.name+" ("+p.role+"): "+statusText(pl.s)+(pl.n?' — "'+pl.n+'"':""));});
     var evs=(e.events&&e.events.length)?e.events:null;
     if(evs){L.push("  Events ("+evs.length+"):");evs.forEach(function(ev){
@@ -1259,15 +1317,70 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     return L.join("\n");
   }
   function tryCopy(t){try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t);}catch(e){}}
-  function openModal(title,text){$("modalTitle").textContent=title;var ta=$("modalText");ta.value=text;$("modalBg").classList.add("open");tryCopy(text);setTimeout(function(){ta.focus();ta.setSelectionRange(0,text.length);},50);}
+  var modalOnApply=null;
+  function openModal(title,text,opts){
+    opts=opts||{};
+    $("modalTitle").textContent=title;
+    var ta=$("modalText");ta.value=text;ta.readOnly=!opts.editable;
+    modalOnApply=opts.onApply||null;
+    $("modalApply").style.display=modalOnApply?"":"none";
+    $("modalCopy").style.display=modalOnApply?"none":"";
+    $("modalBg").classList.add("open");
+    if(!opts.editable)tryCopy(text);
+    if(window.matchMedia&&matchMedia("(hover: hover)").matches&&!opts.editable){setTimeout(function(){ta.focus();ta.setSelectionRange(0,text.length);},50);} // no auto-zoom/scroll on phones
+    if(opts.editable){setTimeout(function(){ta.focus();},50);}
+  }
+  function cfgLine(){return "Config: Domes "+(CFG.domesOn?"ON":"OFF")+" · Humidity ctrl "+(CFG.ihc?"AUTO (Inkbird IHC)":"not installed yet")+" · Heater set "+CFG.heaterSet+"° (Inkbird ITC-308) · Lights 18/6 (ON 4PM → OFF 10AM)";}
+  function photoCue(e){
+    var ph=(e.events||[]).filter(function(x){return x&&(x.photoId||x.type==="photo");});
+    if(!ph.length)return "";
+    var p=todayKey.split("-"),folder="photo-log/"+p[0]+"-"+("0"+p[1]).slice(-2)+"-"+("0"+p[2]).slice(-2)+"-day"+Math.max(0,todayDnum)+"/";
+    return "\nPhotos today: "+ph.length+" ("+ph.map(function(x){var pls=(x.plants&&x.plants[0]!=="all")?(" #"+x.plants.join(" #")):"";return (x.time||"—")+" "+evType(x.type).label+pls;}).join(", ")+") — I'm attaching them; file into "+folder;
+  }
+  function stripThumbs(e){
+    var c=JSON.parse(JSON.stringify(e));
+    if(c.events)c.events.forEach(function(x){if(x)delete x.thumb;});
+    return c;
+  }
+  function dataTail(e){
+    try{return "\n\n--- DATA v1 (machine block — also serves as today's backup) ---\n"+JSON.stringify({app:"zangria-cockpit",key:todayKey,config:CFG,entry:stripThumbs(e)});}catch(err){return "";}
+  }
   $("copyTodayBtn").addEventListener("click",function(){
-    if(isDemo){openModal("Copy today (sample)","SAMPLE DATA — preview only, not your real log.\n\nZANGRIA GROW — daily update\n"+report(todayKey,store.entries[todayKey]));return;}
+    if(isDemo){openModal("Copy today (sample)","SAMPLE DATA — preview only, not your real log.\n\nZANGRIA GROW — daily update\n"+cfgLine()+"\n"+report(todayKey,store.entries[todayKey]));return;}
     commitDraft();
-    openModal("Copy today to send me","ZANGRIA GROW — daily update\n"+report(todayKey,store.entries[todayKey]));
+    var e=store.entries[todayKey];
+    openModal("Copy today to send me","ZANGRIA GROW — daily update\n"+cfgLine()+"\n"+report(todayKey,e)+photoCue(e)+dataTail(e));
   });
   function keysSorted(){return Object.keys(store.entries).sort(function(a,b){return dnum(new Date(b.split("-")[0],b.split("-")[1]-1,b.split("-")[2]))-dnum(new Date(a.split("-")[0],a.split("-")[1]-1,a.split("-")[2]));});}
-  $("copyAllBtn").addEventListener("click",function(){var ks=keysSorted();if(!ks.length){openModal("Full log","No entries yet.");return;}var pre=isDemo?"SAMPLE DATA — preview only, not your real log.\n\n":"";openModal(isDemo?"Copy full log (sample)":"Copy full log to send me",pre+"ZANGRIA GROW — full log ("+ks.length+" day"+(ks.length>1?"s":"")+")\n\n"+ks.map(function(k){return report(k,store.entries[k]);}).join("\n\n"));});
+  $("copyAllBtn").addEventListener("click",function(){var ks=keysSorted();if(!ks.length){openModal("Full log","No entries yet.");return;}var pre=isDemo?"SAMPLE DATA — preview only, not your real log.\n\n":"";openModal(isDemo?"Copy full log (sample)":"Copy full log to send me",pre+"ZANGRIA GROW — full log ("+ks.length+" day"+(ks.length>1?"s":"")+")\n"+cfgLine()+"\n\n"+ks.map(function(k){return report(k,store.entries[k]);}).join("\n\n"));});
   $("modalCopy").addEventListener("click",function(){tryCopy($("modalText").value);});
+  $("modalApply").addEventListener("click",function(){if(modalOnApply)modalOnApply($("modalText").value);});
+  /* ---- backup / restore (Guide → Data safety) ---- */
+  $("backupBtn").addEventListener("click",function(){
+    if(isDemo){toast("Nothing to back up yet — sample data only",true);return;}
+    commitDraft();
+    var text=JSON.stringify({v:1,at:new Date().toISOString(),app:"zangria-cockpit",store:store});
+    openModal("Backup — copied. Keep it somewhere safe.",text);
+  });
+  $("restoreBtn").addEventListener("click",function(){
+    openModal("Restore — paste a backup, then tap Restore now","",{editable:true,onApply:function(txt){
+      try{
+        var b=JSON.parse(txt);
+        exitDemo();
+        if(b&&b.app==="zangria-cockpit"&&b.entry&&b.key){ // a single-day DATA v1 block from a Copy-today paste
+          store.entries[b.key]=b.entry;
+          if(b.config)Object.assign(CFG,b.config);
+        } else {
+          var st=(b&&b.store)?b.store:b;
+          if(!st||!st.entries)throw new Error("no entries");
+          Object.keys(st.entries).forEach(function(k){if(st.entries[k])store.entries[k]=st.entries[k];});
+          if(st.config)Object.assign(CFG,st.config);
+        }
+        save();
+        location.reload();
+      }catch(err){ toast("Couldn't read that backup — paste the whole block",true); }
+    }});
+  });
   $("modalClose").addEventListener("click",function(){$("modalBg").classList.remove("open");});
   $("modalBg").addEventListener("click",function(e){if(e.target===this)this.classList.remove("open");});
   document.addEventListener("keydown",function(e){if(e.key==="Escape"){["evBg","psBg","modalBg"].forEach(function(id){var m=$(id);if(m&&m.classList.contains("open"))m.classList.remove("open");});}});
@@ -1279,12 +1392,13 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       var age=Math.max(0,todayDnum-dnum(p.pot))+1,hist=[],latest=null;
       ks.forEach(function(k){var pl=store.entries[k].plants&&store.entries[k].plants[p.id];if(pl&&(pl.s||pl.n)){hist.push({k:k,pl:pl});if(!latest)latest=pl;}});
       var k=latest&&STATUS[latest.s]?STATUS[latest.s].k:"none";
-      var h='<div class="bigp '+k+'"><div class="t">'+plantArt(k,26)+'<span class="nm">'+p.name+' — '+p.role+'</span></div>'+
+      var h='<div class="bigp '+k+'" data-pid="'+p.id+'" style="cursor:pointer"><div class="t">'+plantArt(k,26)+'<span class="nm">'+p.name+' — '+p.role+'</span></div>'+
         '<p class="meta">Day <b>'+age+'</b> in its pot · potted '+MONTHS[p.pot.getMonth()]+" "+p.pot.getDate()+'</p>';
       h+=latest?'<div class="last"><b>Latest:</b> '+statusText(latest.s)+(latest.n?' — "'+latest.n+'"':"")+'</div>':'<div class="last">No status logged yet — set it on Today · Log.</div>';
       if(hist.length>1){h+='<div class="hist">';hist.slice(0,6).forEach(function(x){var dt=new Date(x.k.split("-")[0],x.k.split("-")[1]-1,x.k.split("-")[2]),dk=STATUS[x.pl.s]?STATUS[x.pl.s].k:"none",col=dk==="ok"?cvar("--ok"):dk==="bad"?cvar("--bad"):dk==="warn"?cvar("--warn"):cvar("--ink3");h+='<div class="h"><span class="hdot" style="background:'+col+'"></span><span class="hd">'+MONTHS[dt.getMonth()]+" "+dt.getDate()+'</span><span>'+statusText(x.pl.s)+(x.pl.n?' — '+esc(x.pl.n):"")+'</span></div>';});h+='</div>';}
       h+='</div>';host.innerHTML+=h;
     });
+    [].forEach.call(host.querySelectorAll(".bigp[data-pid]"),function(c){c.addEventListener("click",function(){openPlant(c.getAttribute("data-pid"));});});
   }
   /* ---- log tab ---- */
   function renderLog(){
@@ -1304,7 +1418,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});
   }
   /* ---- guide ---- */
-  (function(){var t=$("refTable");var head='<tr><th style="text-align:left">Wk</th><th>Day</th><th>Night</th><th>RH</th><th>VPD</th><th>H/Hu/De</th></tr>';
+  (function(){var t=$("refTable");var head='<tr><th style="text-align:left">Wk</th><th>Day</th><th>Night</th><th>RH</th><th>VPD</th><th>Heat/Hum/Dehu</th></tr>';
     t.innerHTML=head+WEEKS.map(function(k){return '<tr'+(k.w===todayWeek?' class="now"':'')+'><td class="wkn">W'+k.w+'</td><td class="mono">'+k.day+'°</td><td class="mono">'+k.night+'°</td><td class="mono">'+k.rh+'%</td><td class="mono">'+k.vpd+'</td><td class="mono" style="font-size:10px">'+k.s1+'/'+k.s2+'/'+k.s3+'</td></tr>';}).join("");})();
   /* settings */
   function syncSettings(){$("tgDome").setAttribute("aria-pressed",CFG.domesOn?"true":"false");$("tgIhc").setAttribute("aria-pressed",CFG.ihc?"true":"false");$("setHeat").value=CFG.heaterSet;$("domeChip").style.display=CFG.domesOn?"inline-flex":"none";}
@@ -1312,8 +1426,37 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   $("tgIhc").addEventListener("click",function(){CFG.ihc=!CFG.ihc;save();syncSettings();renderGauges();});
   $("setHeat").addEventListener("change",function(){var v=parseInt(this.value,10);if(!isNaN(v)){CFG.heaterSet=v;save();renderGauges();}});
 
+  /* ---- masthead plant (reinstated — 12-stage module, grows with the real grow) ---- */
+  function initPlantAnim(){
+    var host=$("plantStage"); if(!host||!window.ZANGRIA_STAGES) return;
+    var st=window.zangriaStageForDay(Math.max(0,todayDnum));
+    var ENV={1:[104,11],2:[96,14],3:[84,20],4:[74,26],5:[60,34],6:[48,46],7:[52,62],8:[54,74],9:[52,80],10:[58,82],11:[55,84],12:[56,85]};
+    var e=ENV[st.i]||[56,85], padTop=8, padX=12, minHalf=52, botY=149;
+    var hw=Math.max(e[1]+padX,minHalf), x0=110-hw, w=2*hw, y0=e[0]-padTop, h=botY-y0;
+    host.innerHTML='<svg viewBox="'+x0+' '+y0+' '+w+' '+h+'" preserveAspectRatio="xMidYMax meet" role="img" aria-label="Grow-stage plant, '+st.name+'">'+window.ZANGRIA_POT+st.foliage+'</svg>';
+    var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if(reduce||!window.gsap)return;
+    gsap.fromTo("#plantStage .sway",{rotation:-1.6},{rotation:1.6,duration:3.5,ease:"sine.inOut",yoyo:true,repeat:-1,svgOrigin:"110 120"});
+    gsap.utils.toArray("#plantStage .leaf").forEach(function(el){
+      var d=parseFloat(el.style.getPropertyValue("--d"))||0;
+      gsap.fromTo(el,{rotation:-1.3},{rotation:1.3,duration:2.4,ease:"sine.inOut",yoyo:true,repeat:-1,delay:d,transformOrigin:"0% 100%"});
+    });
+  }
+
+  /* ---- one canonical home for the data ---- */
+  (function(){
+    var CANON="jasper4-web.github.io";
+    if(location.host!==CANON){
+      var ok=false; try{ok=!!sessionStorage.getItem("zang-origin-ok");}catch(e){}
+      if(!ok){
+        var b=$("originBar"); if(b)b.classList.add("show");
+        var d=$("originDismiss"); if(d)d.addEventListener("click",function(){try{sessionStorage.setItem("zang-origin-ok","1");}catch(e){} $("originBar").classList.remove("show");});
+      }
+    }
+  })();
+
   /* ---- init ---- */
-  renderBoards();renderGauges();renderTrendPeek();renderEgrid();renderCaps();renderRibbon();syncLog();syncSettings();
+  renderBoards();renderGauges();renderTrendPeek();renderEgrid();renderCaps();renderRibbon();syncLog();syncSettings();initPlantAnim();
   if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});
   if(location.hash==="#log")setMode("log"); else if(location.hash==="#guide"){document.querySelector('.tab[data-pane=guide]').click();} else if(location.hash==="#plant2")openPlant("2");
 })();
