@@ -2,62 +2,92 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SANO Systems — See It Working</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root { --bg:#09090B; --card:#111114; --line:#1e1e22; --blue:#0070F3; --cream:#f5f0e8; --dim:#9a9aa3; }
-* { box-sizing:border-box; margin:0; }
-body { background:var(--bg); color:var(--cream); font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
-.wrap { max-width:560px; margin:0 auto; padding:32px 18px 70px; }
-.logo { font-size:13px; letter-spacing:3px; color:var(--blue); font-weight:700; }
-h1 { font-size:clamp(24px,6vw,32px); margin:8px 0 6px; }
-.sub { color:var(--dim); font-size:14.5px; margin-bottom:24px; }
-.item { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:18px; }
-.item h2 { font-size:16px; margin-bottom:4px; }
-.item p { color:var(--dim); font-size:13.5px; margin-bottom:12px; }
-video { width:100%; border-radius:10px; background:#000; aspect-ratio:9/16; max-height:70vh; }
-audio { width:100%; }
-.transcript { margin-top:10px; font-size:12.5px; color:var(--dim); }
-.transcript summary { color:var(--blue); cursor:pointer; font-size:13px; }
-.transcript p { margin-top:8px; }
-.transcript b { color:var(--cream); }
-.cta { background:var(--card); border:1px solid var(--blue); border-radius:14px; padding:18px; text-align:center; margin-top:24px; }
-.cta a.tel { display:inline-block; margin-top:8px; background:var(--blue); color:#fff; text-decoration:none; font-weight:700; padding:12px 24px; border-radius:10px; }
-.cta a.pkg { display:block; margin-top:12px; color:var(--blue); font-size:14px; }
-</style></head><body><div class="wrap">
+:root{
+  --black:#000000; --black-card:rgba(6,6,10,0.51); --black-elevated:rgba(10,10,16,0.56);
+  --blue:#0070F3; --blue-bright:#338EF7; --cyan:#00D4FF; --amber:#E8943A;
+  --text-primary:#F2EBE0; --text-secondary:#DDD6CB; --text-muted:#B5AEA3;
+  --border:rgba(255,255,255,0.06); --border-hover:rgba(255,255,255,0.12); --border-accent:rgba(0,112,243,0.3);
+  --radius:6px; --radius-lg:8px; --ease:cubic-bezier(0.16,1,0.3,1);
+  --font:"Space Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+body{background:var(--black);color:var(--text-primary);font:16px/1.6 var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.glow{position:fixed;inset:0;z-index:0;pointer-events:none;background:
+  radial-gradient(ellipse 80% 55% at 50% -12%, rgba(0,112,243,0.16), transparent 60%),
+  radial-gradient(ellipse 45% 35% at 90% 40%, rgba(0,212,255,0.05), transparent 60%)}
+.wrap{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:44px 20px 80px}
+.label{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-muted);font-weight:500}
+h1{font-size:clamp(28px,7vw,40px);font-weight:700;letter-spacing:-.035em;line-height:1.1;margin:12px 0 8px}
+h1 .grad{background:linear-gradient(100deg,var(--cyan),var(--blue) 45%,var(--blue-bright));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--text-secondary);font-size:15px;margin-bottom:28px}
+.item{background:var(--black-card);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:20px;transition:border-color .4s var(--ease)}
+.item:hover{border-color:var(--border-hover)}
+.item h2{font-size:16.5px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
+.item p{color:var(--text-muted);font-size:13.5px;margin-bottom:14px}
+video{width:100%;border-radius:var(--radius);background:#000;aspect-ratio:9/16;max-height:70vh}
+audio{width:100%}
+.first{border:1px solid transparent;background:
+  linear-gradient(rgba(6,6,10,.86),rgba(6,6,10,.86)) padding-box,
+  linear-gradient(120deg,rgba(0,112,243,.75),rgba(0,212,255,.55),rgba(0,112,243,.25)) border-box;
+  box-shadow:0 0 50px rgba(0,112,243,.1)}
+.transcript{margin-top:12px;font-size:12.5px;color:var(--text-muted)}
+.transcript summary{color:var(--blue-bright);cursor:pointer;font-size:13px}
+.transcript p{margin-top:8px}
+.transcript b{color:var(--text-primary)}
+.cta{background:var(--black-card);border:1px solid var(--border-accent);border-radius:var(--radius-lg);padding:24px 20px;text-align:center;margin-top:26px}
+.cta b{font-size:16px}
+.btn{display:inline-block;margin-top:14px;background:rgba(6,6,10,.85);color:var(--text-primary);text-decoration:none;font-weight:600;padding:13px 26px;border-radius:var(--radius);border:1px solid rgba(0,112,243,.4);transition:box-shadow .35s var(--ease),transform .35s var(--ease)}
+.btn:hover{box-shadow:0 0 20px rgba(0,112,243,.15),0 0 60px rgba(0,112,243,.08);transform:translateY(-1px)}
+.cta a.pkg{display:block;margin-top:14px;color:var(--blue-bright);font-size:14px;text-decoration:none}
+.reveal{opacity:0;transform:translateY(14px);filter:blur(6px);transition:all .8s var(--ease)}
+.reveal.in{opacity:1;transform:none;filter:none}
+</style></head><body>
+<div class="glow"></div>
+<div class="wrap">
 
-<div class="logo">SANO SYSTEMS</div>
-<h1>Don't take our word for it.</h1>
-<p class="sub">Three ways your business could be working while you sleep — and a real recording of the AI receptionist doing its job.</p>
+<div class="label reveal">SANO SYSTEMS · PROOF</div>
+<h1 class="reveal">Don't take our word for it. <span class="grad">Watch it work.</span></h1>
+<p class="sub reveal">Three ways your business could be working while you sleep — and a real recording of the AI receptionist doing its job.</p>
 
-<div class="item">
+<div class="item first reveal">
   <h2>🎧 The AI receptionist takes a 2 AM emergency call</h2>
-  <p>A real recording of the AI answering, booking the first slot of the day, and texting the confirmation — while the owner sleeps.</p>
+  <p>A real recording: the AI answers, books the first slot of the day, and texts the confirmation — while the owner sleeps.</p>
   <audio controls preload="metadata" src="media/SANO-4-AI-Receptionist-Call.mp3"></audio>
   <details class="transcript"><summary>read the call</summary>
   <p><b>AI:</b> "Thanks for calling Reliable Plumbing! This is Sana, the 24-hour assistant…" <b>Caller:</b> "…water coming out from under my water heater…" <b>AI:</b> books the 7 AM first slot, texts the confirmation, and walks him to the shutoff valve. <b>Caller:</b> "Honestly, I expected a voicemail. Thank you."</p></details>
 </div>
 
-<div class="item">
+<div class="item reveal">
   <h2>💬 Answers at 2 AM — the website chat</h2>
   <p>Your web chat answering questions and capturing the job while the competition sleeps.</p>
   <video controls preload="metadata" src="media/SANO-1-AI-Chat-2AM.mp4"></video>
 </div>
 
-<div class="item">
+<div class="item reveal">
   <h2>📊 Your whole business in one dashboard</h2>
   <p>Every lead, message, booking, and review — one place, on your phone.</p>
   <video controls preload="metadata" src="media/SANO-2-Client-Dashboard.mp4"></video>
 </div>
 
-<div class="item">
+<div class="item reveal">
   <h2>⚡ Speed wins the job</h2>
   <p>Businesses that respond in the first 5 minutes convert about 8x better. The system replies in seconds.</p>
   <video controls preload="metadata" src="media/SANO-3-Speed-Wins.mp4"></video>
 </div>
 
-<div class="cta">
+<div class="cta reveal">
   <b>Want this answering YOUR phone?</b><br>
-  <a class="tel" href="tel:8323962496">Call or text Jasper — (832) 396-2496</a>
+  <a class="btn" href="tel:8323962496">Call or text Jasper — (832) 396-2496</a>
   <a class="pkg" href="index.html">See packages &amp; pricing →</a>
 </div>
 
-</div></body></html>
+</div>
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(Math.min(i,4)*60)+'ms';io.observe(el)});
+</script>
+</body></html>
