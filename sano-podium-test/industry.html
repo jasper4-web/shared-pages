@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SANO for your industry</title>
+<meta name="description" content="SANO's 24/7 AI Employee and full toolset, tailored to your industry." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="industries">
+<div id="site-nav"></div>
+<main id="ind-root"></main>
+<div id="site-footer"></div>
+
+<script>
+/* One template, four verticals — Podium-style industry pages, SANO's own copy. */
+var DATA = {
+  'home-services': {
+    emoji:'🔧', label:'Home Services', name:'home services', ai:'your AI Receptionist',
+    trades:'HVAC, plumbing, electrical, roofing, landscaping & cleaning',
+    headline:'The 24/7 AI Employee for home services',
+    sub:'One system for your calls, your jobs, and your customers — answering every lead in seconds, booking straight onto your calendar, and filling your slow season before it starts.',
+    pain:['40%','of home-services leads are lost after hours — when no one answers the phone'],
+    out:['36 sec','average response with SANO — before your competition even sees the lead'],
+    pillars:[
+      ['Never miss a call','The AI answers every call and web lead 24/7 — books the job or texts you the details in seconds.'],
+      ['Fill the calendar','Qualified leads booked directly onto your schedule; dormant customers reactivated automatically.'],
+      ['Win the reviews','Every finished job triggers a review request — so you outrank the shop down the street.']
+    ],
+    feats:[
+      ['Answers every lead before your competition','Your #1 converting employee — responds immediately, 24/7, and never lets a hot lead go cold.',['Answers calls, texts & web chats in one voice','Books directly onto your dispatch calendar','Every lead in one inbox — nothing slips']],
+      ['From the first call to the paid invoice','One connected system so a lead never falls between your phone, calendar, and paperwork.',['Smart follow-up until the job is booked','Reminders that cut no-shows','Text-to-pay so you get paid on the spot']],
+      ['Your slow season doesn’t have to be slow','Reactivate the customers you already have and keep the schedule full year-round.',['Automated maintenance & membership reminders','Seasonal campaigns to past customers','Review requests that build your reputation']]
+    ],
+    quotes:[['147 calls / mo','"SANO’s AI answered 147 calls in our first month that we would have missed."','JR','Houston HVAC Company'],['12 → 67 reviews','"We went from 12 Google reviews to 67 in three months."','MT','Houston Plumbing Company']],
+    faqs:[
+      ['Will the AI actually book jobs onto my calendar?','Yes. It connects to your scheduling system, checks real availability, and books the appointment during the call or text — then confirms it automatically.'],
+      ['Do my customers know it’s AI?','It sounds like a friendly, professional team member. When something’s outside its knowledge, it gracefully takes a message and texts you right away.'],
+      ['How hard is it to switch?','We build and configure everything for you and test it with you — nothing goes live until you approve it. Most setups are live in about 14–30 days.']
+    ]
+  },
+  'auto': {
+    emoji:'🚗', label:'Auto', name:'auto dealerships & shops', ai:'Sammy, your AI Service Advisor',
+    trades:'Dealerships, repair shops, detailing, body & tire shops',
+    headline:'The 24/7 AI Employee for auto dealerships & shops',
+    sub:'Answer every service call, book more appointments and test drives, and turn your customer database into repeat revenue — automatically, day and night.',
+    pain:['2+ hrs','the average response time that lets buyers walk to the next lot'],
+    out:['Seconds','to answer and follow up on every service call, quote, and web lead — 24/7'],
+    pillars:[
+      ['Book more service','Every service call and web request answered and scheduled instantly — bays stay full, even after close.'],
+      ['Sell more cars','Instant follow-up on every inquiry, with test drives booked before the buyer cools off.'],
+      ['Bring them back','Automated service reminders and offers that turn a one-time buyer into a lifetime customer.']
+    ],
+    feats:[
+      ['Answers every buyer before the next lot does','Your fastest-responding advisor — instant on every call, text, and web lead, 24/7.',['Answers calls, texts & website chats in one voice','Books test drives & service onto your schedule','Every lead in one inbox — nothing sits overnight']],
+      ['From first inquiry to signed deal','Connected, persistent follow-up that moves buyers down the funnel while your team is on the floor.',['Smart follow-up until they’re booked','Reminders that cut service no-shows','Text-to-pay so approved repair work is authorized fast']],
+      ['Turn your database into recurring revenue','The customers you already sold to are your cheapest sale — SANO reactivates them on autopilot.',['Automated service & maintenance reminders','Targeted promotions to past customers','Review requests after every visit']]
+    ],
+    quotes:[['Faster follow-up','"Leads used to sit until someone was free. Now every one gets answered in seconds."','SM','Houston Auto Repair'],['More bays booked','"Our service calendar fills itself now — even the after-hours calls."','RG','Houston Tire & Service']],
+    faqs:[
+      ['Can it book test drives and service appointments?','Yes — it checks your real availability and books test drives or service slots during the conversation, then confirms with the customer.'],
+      ['Does it work after the showroom closes?','That’s where it shines. After-hours calls and web leads get answered and booked instead of going cold overnight.'],
+      ['Will it fit how our shop already runs?','We configure it around your process and tools, test it with you, and nothing goes live until you approve it.']
+    ]
+  },
+  'med-spa': {
+    emoji:'💆', label:'Med Spa & Wellness', name:'aesthetics & wellness', ai:'Bella, your AI Front Desk',
+    trades:'Med spas, dental, chiropractic, salons & wellness clinics',
+    headline:'The 24/7 AI Employee for aesthetics & wellness',
+    sub:'Fill your appointment book, cut no-shows, and give every client a concierge experience — without adding front-desk staff.',
+    pain:['38%','of booking requests come in after hours, when the front desk is closed'],
+    out:['24/7','concierge booking that captures the client while they’re ready'],
+    pillars:[
+      ['Fill the book','Every inquiry answered and booked instantly, day or night, in a warm on-brand voice.'],
+      ['Cut no-shows','Smart reminders, confirmations, and easy rescheduling that protect your calendar.'],
+      ['Delight clients','A concierge experience on every channel — calls, texts, and DMs in one place.']
+    ],
+    feats:[
+      ['A front desk that never sleeps','Answers and books every client inquiry, 24/7, so a missed call is never a missed appointment.',['Books consultations & treatments','One inbox for calls, texts & DMs','Warm, on-brand tone']],
+      ['Protect your calendar','Fewer gaps, fewer no-shows, more revenue per chair.',['Automated reminders & confirmations','Easy rescheduling','Deposits & text-to-pay']],
+      ['Keep clients coming back','Reactivate past clients and promote new treatments automatically.',['Rebooking campaigns','New-treatment promotions','Review requests after every visit']]
+    ],
+    quotes:[['Fewer no-shows','"Reminders and easy rescheduling cleaned up our calendar almost overnight."','LP','Houston Med Spa'],['Book fills itself','"After-hours requests used to vanish. Now they turn into booked appointments."','AC','Houston Wellness Clinic']],
+    faqs:[
+      ['Can it match our brand’s tone?','Yes — we tune the voice to sound like your front desk: warm, professional, and on-brand in English and Spanish.'],
+      ['Will it reduce no-shows?','It sends smart reminders and confirmations and makes rescheduling effortless, which protects your calendar.'],
+      ['Is client information handled carefully?','Yes. It collects only what’s needed to book and routes anything sensitive straight to your team.']
+    ]
+  },
+  'professional': {
+    emoji:'💼', label:'Professional Services', name:'professional services', ai:'your AI Intake Assistant',
+    trades:'Law firms, accounting, real estate, insurance & consulting',
+    headline:'The 24/7 AI Employee for professional services',
+    sub:'Capture every new-client inquiry, qualify and schedule consultations, and follow up relentlessly — so no lead ever slips.',
+    pain:['78%','of clients hire the first professional who responds'],
+    out:['24/7','intake coverage so you win the client while they’re ready'],
+    pillars:[
+      ['Capture every inquiry','Answer and qualify every new-client lead instantly, on every channel.'],
+      ['Book consultations','Qualified leads scheduled straight onto your calendar.'],
+      ['Follow up relentlessly','Persistent, professional follow-up until they book.']
+    ],
+    feats:[
+      ['Win the client who’s ready now','Instant, professional intake on every channel, 24/7 — so you’re the first to respond.',['Qualifies & schedules consultations','One inbox for calls, texts & web','Confidential and on-brand']],
+      ['From inquiry to booked consult','Connected intake and follow-up that converts.',['Smart follow-up sequences','Consultation reminders','Intake details captured automatically']],
+      ['Grow referrals & reputation','Turn happy clients into reviews and referrals.',['Review requests after every matter','Referral campaigns','Reputation dashboard']]
+    ],
+    quotes:[['More consults booked','"Every after-hours inquiry now becomes a scheduled consult instead of a missed call."','DR','Houston Law Firm'],['Faster intake','"New clients get a response in seconds — we’re first in the door now."','KB','Houston Accounting Firm']],
+    faqs:[
+      ['Is client intake kept confidential?','Yes. It collects only what’s needed to schedule and routes sensitive details straight to your team.'],
+      ['Can it qualify leads before they reach me?','It asks your qualifying questions, books qualified consultations, and hands the rest to you with full context.'],
+      ['Will it sound professional enough for our firm?','We tune the tone to match your firm — measured, professional, and on-brand.']
+    ]
+  }
+};
+
+var check = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+function esc(s){return s;}
+var slug = (new URLSearchParams(location.search).get('ind')) || 'home-services';
+var d = DATA[slug] || DATA['home-services'];
+document.title = 'SANO for ' + d.label + ' | AI Employee';
+
+var pillars = d.pillars.map(function(p,i){
+  return '<div class="step reveal"><div class="n">'+(i+1)+'</div><h3>'+p[0]+'</h3><p>'+p[1]+'</p></div>';
+}).join('');
+
+var feats = d.feats.map(function(f,i){
+  var bullets = f[2].map(function(b){return '<li>'+check+b+'</li>';}).join('');
+  return '<div class="frow '+(i%2?'flip':'')+' reveal"><div class="fcopy"><h3>'+f[0]+'</h3><p>'+f[1]+'</p><ul>'+bullets+'</ul></div>'+
+    '<div class="visual"><div class="dash"><div class="dash-row">'+
+      '<div class="dash-stat"><b>'+d.out[0]+'</b><span>response</span></div>'+
+      '<div class="dash-stat"><b>24/7</b><span>coverage</span></div>'+
+      '<div class="dash-stat"><b>EN·ES</b><span>bilingual</span></div></div>'+
+      '<div class="dash-bars"><i style="height:40%"></i><i style="height:55%"></i><i style="height:50%"></i><i style="height:72%"></i><i class="on" style="height:86%"></i><i class="on" style="height:100%"></i></div>'+
+    '</div></div></div>';
+}).join('');
+
+var quotes = d.quotes.map(function(q){
+  return '<div class="quote reveal"><div class="metric">'+q[0]+'</div><p>'+q[1]+'</p><div class="who"><span class="av">'+q[2]+'</span><div><b>Early Adopter</b><span>'+q[3]+'</span></div></div></div>';
+}).join('');
+
+var faqs = d.faqs.map(function(f){
+  return '<details><summary>'+f[0]+'<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">'+f[1]+'</div></details>';
+}).join('');
+
+document.getElementById('ind-root').innerHTML =
+  '<section class="page-hero tint"><div class="wrap reveal">'+
+    '<span class="eyebrow">'+d.emoji+' AI for '+d.label+'</span>'+
+    '<h1>'+d.headline+'</h1><p class="sub">'+d.sub+'</p>'+
+    '<div class="hero-cta"><a href="demo.html" class="btn btn-teal btn-lg">Watch a demo</a><a href="#how" class="btn btn-ghost btn-lg">See how it works</a></div>'+
+    '<p style="margin-top:22px;color:var(--ink-mut);font-size:14px">Built for '+d.trades+'. Meet '+d.ai+'.</p>'+
+  '</div></section>'+
+
+  '<section class="band"><div class="wrap"><div class="statband reveal">'+
+    '<div class="s"><b>'+d.pain[0]+'</b><span>'+d.pain[1]+'</span></div>'+
+    '<div class="s"><b>'+d.out[0]+'</b><span>'+d.out[1]+'</span></div>'+
+    '<div class="s"><b>24/7</b><span>coverage, English &amp; Spanish</span></div>'+
+    '<div class="s"><b>All-in-one</b><span>built &amp; managed for you</span></div>'+
+  '</div></div></section>'+
+
+  '<section class="band paper" id="how"><div class="wrap"><div class="sec-head reveal"><p class="kick">Built for '+d.label+'</p><h2>AI built for '+d.name+'. Designed to convert.</h2></div><div class="steps">'+pillars+'</div></div></section>'+
+
+  '<section class="band"><div class="wrap">'+feats+'</div></section>'+
+
+  '<section class="dark-band"><div class="wrap"><div class="sec-head reveal"><h2>From missed calls to a full calendar</h2><p>Slow response, missed calls, and forgotten follow-ups cost you revenue. SANO closes the gaps.</p></div>'+
+    '<div class="cmp reveal"><div class="cmp-row head"><span class="lab">&nbsp;</span><span class="col-b">Without SANO</span><span class="col-a">With SANO</span></div>'+
+    '<div class="cmp-row"><span class="lab">Response time</span><span class="before"><span class="x">✕</span> '+d.pain[0]+' lost</span><span class="after"><span class="c">✓</span> '+d.out[0]+'</span></div>'+
+    '<div class="cmp-row"><span class="lab">After-hours leads</span><span class="before"><span class="x">✕</span> Go cold overnight</span><span class="after"><span class="c">✓</span> Answered &amp; booked automatically</span></div>'+
+    '<div class="cmp-row"><span class="lab">Your tools</span><span class="before"><span class="x">✕</span> Scattered, constant handoffs</span><span class="after"><span class="c">✓</span> One AI system, done for you</span></div>'+
+    '<div class="cmp-row"><span class="lab">Follow-up</span><span class="before"><span class="x">✕</span> Forgotten when you’re busy</span><span class="after"><span class="c">✓</span> Automatic, until they book</span></div></div>'+
+  '</div></section>'+
+
+  '<section class="band paper"><div class="wrap"><div class="sec-head reveal"><p class="kick">Proof</p><h2>What '+d.label+' businesses see</h2></div><div class="tg">'+quotes+'</div></div></section>'+
+
+  '<section class="band"><div class="wrap"><div class="sec-head reveal"><p class="kick">Questions</p><h2>'+d.label+' — answered</h2></div><div class="faq reveal">'+faqs+'</div></div></section>'+
+
+  '<section class="cta"><div class="wrap"><div class="cta-box reveal"><h2>Ready to fill your calendar in '+d.name+'?</h2><p>See exactly what SANO would build for your business — free, no commitment.</p><div class="hero-cta"><a href="demo.html" class="btn btn-onteal btn-lg">Watch a demo</a></div></div></div></section>';
+</script>
+<script src="shared.js"></script>
+</body>
+</html>
