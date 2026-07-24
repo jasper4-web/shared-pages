@@ -48,15 +48,17 @@
       <h1 style="font-size:clamp(34px,4.6vw,52px)">See exactly what we'd run for your business.</h1>
       <p class="sub" style="max-width:40ch">Free, no commitment. Tell us a little about your business and we'll show you the department we'd run for you &mdash; answering calls, booking work, and following up.</p>
       <ul style="list-style:none;margin-top:24px;display:grid;gap:12px">
-        <li style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Your phone answered &mdash; by text on Starter, live voice from Growth, in English or Spanish</li>
-        <li id="hero-b2" style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>A missed call turning into a booked job on its own</li>
-        <li style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Exactly what we'd run for you, and what it costs</li>
+        <li style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Your phone answered &mdash; by text on Starter, live voice from Growth, in English or Spanish</li>
+        <li id="hero-b2" style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>A missed call turning into a booked job on its own</li>
+        <li style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Exactly what we'd run for you, and what it costs</li>
       </ul>
       <div class="hero-trust" style="margin-top:26px"><span class="t"><span aria-hidden="true">&#10003;</span> We run it</span><span class="t"><span aria-hidden="true">&#10003;</span> You never touch it</span><span class="t"><span aria-hidden="true">&#10003;</span> Se habla Espa&ntilde;ol</span></div>
     </div>
 
     <div class="form-card reveal">
       <div id="demo-form-wrap"><h2>Request your demo</h2>
+      <p class="plan-echo" id="ind-echo" hidden></p>
+      <p class="form-reassure"><strong>Free, no commitment</strong> &middot; 15 minutes &middot; we aim to reply within one business hour</p>
       <p class="fsub">Takes 30 seconds. <strong>We aim to reply within one business hour</strong> — we'd be hypocrites otherwise.<br /><span style="font-size:12.5px">No server on this test site: the button opens a prefilled email, or copies your details to paste anywhere.</span></p>
       <form id="demo-form" action="mailto:hello@sanosystems.com" method="post" enctype="text/plain">
         <div class="frow2">
@@ -67,7 +69,7 @@
           </div>
           <div class="field">
             <label for="business">Business name</label>
-            <input id="business" name="business" type="text" autocomplete="organization" placeholder="Rivera Plumbing" required aria-required="true" aria-describedby="err-business" />
+            <input id="business" name="business" type="text" autocomplete="organization" placeholder="Your business name" required aria-required="true" aria-describedby="err-business" />
             <p class="field-err" id="err-business" hidden>Please enter your business name.</p>
           </div>
         </div>
@@ -98,7 +100,6 @@
           <label for="sms"><input type="checkbox" id="sms" name="sms" /><span>Text me about my demo from SANO Systems. Consent isn't required to request a demo. Message frequency varies; message and data rates may apply; reply STOP to opt out, HELP for help. We never share your number. See our <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms</a>.</span></label>
         </div>
         <input type="hidden" id="plan" name="plan" value="" />
-        <p class="plan-echo" id="ind-echo" hidden></p>
         <p class="plan-echo" id="plan-echo" hidden></p>
         <p class="form-err-global" id="form-err" role="alert" hidden>Please fix the highlighted fields above.</p>
         <button type="submit" class="btn btn-blue btn-lg" style="width:100%">Review and send my request</button>
@@ -108,7 +109,7 @@
 
       <noscript><p class="ns-fallback" style="margin:0 0 16px">JavaScript is off, so the form can't send. Email <strong>hello@sanosystems.com</strong> or call <strong>(832) 555-SANO</strong> <em>(placeholder number on this test site)</em>.</p></noscript>
       <div id="demo-ok" role="status" tabindex="-1" style="display:none;text-align:center;padding:20px 0">
-        <div style="width:56px;height:56px;border-radius:50%;background:var(--blue-t);color:var(--blue-d);display:grid;place-items:center;margin:0 auto 16px"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--blue-t);color:var(--blue-d);display:grid;place-items:center;margin:0 auto 16px"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
         <h2 id="ok-title">Almost there &mdash; one tap left</h2>
         <p class="fsub" id="ok-msg">Your details are ready to send. Because this is a design test, nothing is stored on our side &mdash; tap below and it opens an email with everything filled in.</p>
         <a id="ok-send" class="btn btn-blue btn-lg" style="width:100%" href="mailto:hello@sanosystems.com">Send my request</a>
@@ -134,11 +135,11 @@
   <div class="wrap">
     <div class="sec-head reveal"><p class="kick">Before you ask</p><h2>What to expect</h2></div>
     <div class="faq reveal">
-      <details><summary>Is this a sales pitch?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">It's a working demo. We show you the department we'd run for your business and what it would cost. If it isn't a fit, we'll say so &mdash; we'd rather not take on work we can't do well.</div></details>
-      <details><summary>How long does it take?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">About 15 minutes. If you want to go deeper on your industry's blueprint we'll happily use more, but 15 is enough to know whether it's worth continuing.</div></details>
-      <details><summary>Do I need to prepare anything?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">No. It helps if you know roughly how many calls you miss and when your busiest hours are, but we can work that out together.</div></details>
-      <details><summary>What if I already pay for something similar?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">Tell us what you have. If it works and you like it, we'll often run that for you instead of replacing it. The value we add is doing the work, not selling you another subscription.</div></details>
-      <details><summary>Will you spam me afterwards?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">No. We'll reach out to set a time, and follow up once if we don't hear back. Tell us to stop and we stop.</div></details>
+      <details><summary>Is this a sales pitch?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">It's a working demo. We show you the department we'd run for your business and what it would cost. If it isn't a fit, we'll say so &mdash; we'd rather not take on work we can't do well.</div></details>
+      <details><summary>How long does it take?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">About 15 minutes. If you want to go deeper on your industry's blueprint we'll happily use more, but 15 is enough to know whether it's worth continuing.</div></details>
+      <details><summary>Do I need to prepare anything?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">No. It helps if you know roughly how many calls you miss and when your busiest hours are, but we can work that out together.</div></details>
+      <details><summary>What if I already pay for something similar?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">Tell us what you have. If it works and you like it, we'll often run that for you instead of replacing it. The value we add is doing the work, not selling you another subscription.</div></details>
+      <details><summary>Will you spam me afterwards?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">No. We'll reach out to set a time, and follow up once if we don't hear back. Tell us to stop and we stop.</div></details>
     </div>
   </div>
 </section>
