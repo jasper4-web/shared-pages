@@ -8,12 +8,27 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="icon" href="sano-logo.png" />
+<meta name="theme-color" content="#09090B" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Book a demo | SANO Systems" />
+<meta property="og:description" content="See the AI department we'd build for your business and run for you. Free, no commitment." />
+<meta property="og:image" content="sano-logo.png" />
+<meta property="og:site_name" content="SANO Systems" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Book a demo | SANO Systems" />
+<meta name="twitter:description" content="See the AI department we'd build for your business and run for you. Free, no commitment." />
 <link rel="stylesheet" href="styles.css" />
 <noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body data-page="demo">
 <a href="#main" class="skip">Skip to content</a>
 <div id="site-nav"></div>
+<noscript>
+  <div class="ns-fallback"><strong>JavaScript is off.</strong> The form below won't send — email
+  <a href="mailto:hello@sanosystems.com?subject=Demo%20request">hello@sanosystems.com</a> or call
+  <a href="tel:+18325557266">(832) 555-SANO</a> (placeholder number on this test site).</div>
+</noscript>
 <noscript>
   <nav class="ns-nav"><a href="index.html">SANO Systems</a> ·
     <a href="ai-employee.html">What we run</a> ·
@@ -36,13 +51,13 @@
         <li style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>A missed call turning into a booked job on its own</li>
         <li style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Exactly what we'd run for you, and what it costs</li>
       </ul>
-      <div class="hero-trust" style="margin-top:26px">&#10003; We run it &nbsp;&middot;&nbsp; &#10003; You never touch it &nbsp;&middot;&nbsp; &#10003; Se habla Espa&ntilde;ol</div>
+      <div class="hero-trust" style="margin-top:26px"><span aria-hidden="true">&#10003;</span> We run it &nbsp;&middot;&nbsp; <span aria-hidden="true">&#10003;</span> You never touch it &nbsp;&middot;&nbsp; <span aria-hidden="true">&#10003;</span> Se habla Espa&ntilde;ol</div>
     </div>
 
     <div class="form-card reveal">
       <div id="demo-form-wrap"><h2>Request your demo</h2>
       <p class="fsub">Takes 30 seconds. <strong>We reply within one business hour</strong> — we'd be hypocrites otherwise.</p>
-      <form id="demo-form" action="mailto:hello@sanosystems.com" method="post" enctype="text/plain">
+      <form id="demo-form">
         <div class="frow2">
           <div class="field">
             <label for="name">Your name</label>
@@ -88,7 +103,7 @@
         <h2 id="ok-title">Almost there &mdash; one tap left</h2>
         <p class="fsub" id="ok-msg">Your details are ready to send. Because this is a design test, nothing is stored on our side &mdash; tap below and it opens an email with everything filled in.</p>
         <a id="ok-send" class="btn btn-blue btn-lg" style="width:100%" href="mailto:hello@sanosystems.com">Send my request</a>
-        <p style="font-size:12px;color:var(--ink-mut);margin-top:12px">Didn't open? Email <a href="mailto:hello@sanosystems.com" style="color:var(--blue);font-weight:600">hello@sanosystems.com</a>.</p>
+        <p style="font-size:12px;color:var(--ink-mut);margin-top:12px">Didn't open? Email <strong>hello@sanosystems.com</strong> or call <strong>(832) 555-SANO</strong>. <button type="button" id="copy-btn" class="btn btn-ghost" style="margin-top:10px">Copy my details</button></p>
       </div>
     </div>
   </div>
@@ -131,7 +146,10 @@
   /* options are in the HTML so the form works without JS; nothing to build here */
 
   /* pre-select the industry the visitor already picked */
-  var pre = new URLSearchParams(location.search).get('ind');
+  var params = new URLSearchParams(location.search);
+  var planEl = document.getElementById('plan');
+  if (planEl) planEl.value = params.get('plan') || '';
+  var pre = params.get('ind');
   if (pre && Array.prototype.some.call(sel.options, function (o) { return o.value === pre; })) sel.value = pre;
 
   var form = document.getElementById('demo-form');
@@ -172,6 +190,8 @@
                'Phone: ' + val('phone') + '\n' +
                'Email: ' + val('email') + '\n' +
                'Industry: ' + chosen + '\n' +
+               'Plan of interest: ' + (planEl && planEl.value ? planEl.value : '(not specified)') + '\n' +
+               'OK to text: ' + (document.getElementById('sms').checked ? 'yes' : 'no') + '\n' +
                'Biggest bottleneck: ' + (val('note') || '(not given)');
     document.getElementById('ok-send').setAttribute('href',
       'mailto:hello@sanosystems.com?subject=' + encodeURIComponent('Demo request — ' + val('business')) +
@@ -180,6 +200,10 @@
     document.getElementById('ok-title').textContent = 'Thanks' + (first ? ', ' + first : '') + ' — one tap left';
     document.getElementById('demo-form-wrap').style.display = 'none';
     ok.style.display = 'block';
+    var cp = document.getElementById('copy-btn');
+    if (cp) cp.addEventListener('click', function () {
+      navigator.clipboard && navigator.clipboard.writeText(body).then(function(){ cp.textContent = 'Copied ✓'; });
+    });
     ok.focus();
   });
 })();

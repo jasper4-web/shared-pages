@@ -4,11 +4,21 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Industry blueprint | SANO Systems</title>
-<meta name="description" content="Your industry's AI department, already built. We shape the blueprint to your business and run it for you." />
+<meta name="description" content="Your industry's AI department. We shape the blueprint to your business and run it for you." />
 <link rel="canonical" href="industry.html" id="canon" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="icon" href="sano-logo.png" />
+<meta name="theme-color" content="#09090B" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Industry blueprint | SANO Systems" />
+<meta property="og:description" content="Your industry's AI department. We shape the blueprint to your business and run it for you." />
+<meta property="og:image" content="sano-logo.png" />
+<meta property="og:site_name" content="SANO Systems" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Industry blueprint | SANO Systems" />
+<meta name="twitter:description" content="Your industry's AI department. We shape the blueprint to your business and run it for you." />
 <link rel="stylesheet" href="styles.css" />
 <noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
 </head>
@@ -48,7 +58,7 @@
 
   if (!d) { location.replace('industries.html'); return; }
 
-  document.title = d.label + ' — your AI department, already built | SANO Systems';
+  document.title = d.label + (d.built ? ' — your AI department, already built' : ' — your AI department, shaped for your trade') + ' | SANO Systems';
   var md = document.querySelector('meta[name="description"]');
   if (md) md.setAttribute('content', d.sub);
   var canon = document.getElementById('canon');
@@ -57,12 +67,14 @@
   var check = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
   var ex = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
-  var others = IND.filter(function (x) { return x.slug !== d.slug; }).slice(0, 4).map(function (i) {
+  var _i = IND.indexOf(d);
+  var others = IND.slice(_i + 1).concat(IND.slice(0, _i)).slice(0, 4).map(function (i) {
     return '<a class="ind reveal" href="industry.html?ind=' + i.slug + '"><div class="em" aria-hidden="true">' + i.em + '</div><h3>' + i.label + '</h3><p>' + i.tag + '</p><span class="more">See the blueprint &rarr;</span></a>';
   }).join('');
 
   root.innerHTML =
     '<section class="page-hero tint"><div class="wrap reveal">' +
+      '<a href="industries.html" class="backlink">&larr; All industry blueprints</a>' +
       '<span class="eyebrow"><span aria-hidden="true">' + d.em + '</span> ' + d.label + '</span>' +
       '<h1>' + d.headline + '</h1>' +
       '<p class="sub">' + d.sub + '</p>' +
@@ -73,7 +85,9 @@
     '<section class="band" id="blueprint"><div class="wrap">' +
       '<div class="sec-head reveal"><span class="blueprint">&#10022; The ' + d.label + ' blueprint</span>' +
       '<h2 style="margin-top:16px">What&rsquo;s actually inside it</h2>' +
-      '<p>We don&rsquo;t start from a blank page. This is the setup we&rsquo;ve built for your trade &mdash; we shape it to how you work, you approve it, then we run it.</p></div>' +
+      '<p>' + (d.built
+        ? 'We don&rsquo;t start from a blank page. This is the setup we&rsquo;ve already built for your trade &mdash; we shape it to how you work, you approve it, then we run it.'
+        : 'We&rsquo;ve mapped this trade and this is the shape your department takes. We build it around how you actually work, you approve it, then we run it. (Our fully built-out blueprints today are HVAC, plumbing and roofing &mdash; yours gets built with you.)') + '</p></div>' +
       '<div class="feat-grid">' +
         d.blueprint.map(function (b, i) {
           return '<div class="feat reveal"><div class="ic" aria-hidden="true">' + (i + 1) + '</div><h3 style="font-size:17px">' + b + '</h3></div>';
@@ -123,7 +137,8 @@
     '<section class="band paper"><div class="wrap">' +
       '<div class="sec-head reveal"><p class="kick">Other blueprints</p><h2>Not quite your business?</h2></div>' +
       '<div class="ind-grid">' + others + '</div>' +
-      '<p style="text-align:center;color:var(--ink-mut);font-size:14px;margin-top:26px" class="reveal">These are examples, not limits. <a href="demo.html" style="color:var(--blue);font-weight:600">Tell us what you do</a> and we&rsquo;ll build the blueprint around it.</p>' +
+      '<p style="text-align:center;margin-top:20px" class="reveal"><a href="industries.html" style="color:var(--blue);font-weight:600">See all eight blueprints &rarr;</a></p>' +
+      '<p style="text-align:center;color:var(--ink-mut);font-size:14px;margin-top:10px" class="reveal">These are examples, not limits. <a href="demo.html" style="color:var(--blue);font-weight:600">Tell us what you do</a> and we&rsquo;ll build the blueprint around it.</p>' +
     '</div></section>' +
 
     '<section class="band"><div class="wrap">' +

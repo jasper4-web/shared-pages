@@ -17,7 +17,7 @@
     '<header><div class="wrap nav">' +
       '<a href="index.html" class="brand"><img src="sano-logo.png" alt="" width="30" height="30"/> SANO Systems</a>' +
       '<ul class="nav-links">' +
-        '<li class="' + (page === 'product' ? 'active' : '') + '"><a href="ai-employee.html"' + (page === 'product' ? ' aria-current="page"' : '') + ' aria-haspopup="true">What we run ' + caret + '</a>' +
+        '<li class="' + (page === 'product' ? 'active' : '') + '"><a href="ai-employee.html"' + (page === 'product' ? ' aria-current="page"' : '') + '>What we run ' + caret + '</a>' +
           '<div class="dropdown">' +
             '<a href="ai-employee.html#frontdesk"><b>The front desk</b><span>Calls, texts &amp; booking, around the clock</span></a>' +
             '<a href="ai-employee.html#followup"><b>The follow-up</b><span>Chased until you get an answer</span></a>' +
@@ -26,11 +26,11 @@
             '<a href="ai-employee.html#command"><b>Your monthly report</b><span>What happened, in plain English</span></a>' +
           '</div>' +
         '</li>' +
-        '<li class="' + (page === 'industries' ? 'active' : '') + '"><a href="industries.html"' + (page === 'industries' ? ' aria-current="page"' : '') + ' aria-haspopup="true">Industries ' + caret + '</a>' +
+        '<li class="' + (page === 'industries' ? 'active' : '') + '"><a href="industries.html"' + (page === 'industries' ? ' aria-current="true"' : '') + '>Industries ' + caret + '</a>' +
           '<div class="dropdown">' + indDrop + '</div>' +
         '</li>' +
         '<li class="' + (page === 'pricing' ? 'active' : '') + '"><a href="pricing.html"' + (page === 'pricing' ? ' aria-current="page"' : '') + '>Pricing</a></li>' +
-        '<li class="' + (page === 'resources' ? 'active' : '') + '"><a href="resources.html"' + (page === 'resources' ? ' aria-current="page"' : '') + '>Resources</a></li>' +
+        '<li class="' + (page === 'resources' ? 'active' : '') + '"><a href="resources.html"' + (page === 'resources' ? ' aria-current="true"' : '') + '>Resources</a></li>' +
         '<li class="' + (page === 'about' ? 'active' : '') + '"><a href="about.html"' + (page === 'about' ? ' aria-current="page"' : '') + '>Why SANO</a></li>' +
       '</ul>' +
       '<div class="nav-right">' +
@@ -39,11 +39,14 @@
         '<a href="demo.html" class="btn btn-blue">Book a demo</a>' + '<button class="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>' +
       '</div>' +
     '</div></header>' +
-    '<div class="mobile-menu" id="mobile-menu">' +
+    '<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu">' +
       '<button class="mm-close" aria-label="Close menu">&times;</button>' +
       '<a href="index.html" class="mm-home"><img src="sano-logo.png" alt="" width="26" height="26"/> SANO Systems</a>' +
-      '<a href="ai-employee.html">What we run</a><a href="industries.html">Industries</a>' +
-      '<a href="pricing.html">Pricing</a><a href="resources.html">Resources</a><a href="about.html">Why SANO</a>' +
+      '<a href="ai-employee.html"' + (page === 'product' ? ' class="mm-on" aria-current="page"' : '') + '>What we run</a>' +
+      '<a href="industries.html"' + (page === 'industries' ? ' class="mm-on"' : '') + '>Industries</a>' +
+      '<a href="pricing.html"' + (page === 'pricing' ? ' class="mm-on" aria-current="page"' : '') + '>Pricing</a>' +
+      '<a href="resources.html"' + (page === 'resources' ? ' class="mm-on"' : '') + '>Resources</a>' +
+      '<a href="about.html"' + (page === 'about' ? ' class="mm-on" aria-current="page"' : '') + '>Why SANO</a>' +
       '<a href="tel:' + PHONE + '">' + PHONE_D + '</a>' +
       '<a href="demo.html" class="btn btn-blue btn-lg">Book a demo</a>' +
     '</div>';
@@ -105,6 +108,8 @@
 
   var obs = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
-  }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+  }, { threshold: 0, rootMargin: '0px 0px -30px 0px' });
   document.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el); });
+  /* belt-and-braces: never leave content invisible if the observer misbehaves */
+  setTimeout(function () { document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); }); }, 2500);
 })();
