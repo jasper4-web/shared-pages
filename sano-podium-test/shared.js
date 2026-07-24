@@ -19,7 +19,7 @@
       '<ul class="nav-links">' +
         '<li class="' + (page === 'product' ? 'active' : '') + '"><a href="ai-employee.html">What we run ' + caret + '</a>' +
           '<div class="dropdown">' +
-            '<a href="ai-employee.html"><b>The front desk</b><span>Calls, texts &amp; booking, around the clock</span></a>' +
+            '<a href="ai-employee.html#frontdesk"><b>The front desk</b><span>Calls, texts &amp; booking, around the clock</span></a>' +
             '<a href="ai-employee.html#reviews"><b>Reviews &amp; reputation</b><span>Asked for after every job</span></a>' +
             '<a href="ai-employee.html#marketing"><b>Marketing &amp; payments</b><span>Campaigns, follow-up, pay-by-text</span></a>' +
             '<a href="ai-employee.html#command"><b>Your monthly report</b><span>What happened, in plain English</span></a>' +
@@ -34,15 +34,14 @@
       '</ul>' +
       '<div class="nav-right">' +
         '<a href="tel:' + PHONE + '" class="nav-phone">' + PHONE_D + '</a>' +
-        '<a href="demo.html" class="btn btn-blue">Watch a demo</a>' +
-        '<button class="nav-burger" aria-label="Menu"><span></span><span></span><span></span></button>' +
+        '<a href="demo.html" class="btn btn-blue">Book a demo</a>' + '<button class="nav-burger" aria-label="Menu"><span></span><span></span><span></span></button>' +
       '</div>' +
     '</div></header>' +
     '<div class="mobile-menu">' +
       '<a href="ai-employee.html">What we run</a><a href="industries.html">Industries</a>' +
       '<a href="pricing.html">Pricing</a><a href="resources.html">Resources</a><a href="about.html">Why SANO</a>' +
       '<a href="tel:' + PHONE + '">' + PHONE_D + '</a>' +
-      '<a href="demo.html" class="btn btn-blue btn-lg">Watch a demo</a>' +
+      '<a href="demo.html" class="btn btn-blue btn-lg">Book a demo</a>' +
     '</div>';
 
   var indFoot = IND.slice(0, 4).map(function (i) {
@@ -64,13 +63,13 @@
         '<div class="foot-col"><h4>Industries</h4>' + indFoot + '</div>' +
         '<div class="foot-col"><h4>Company</h4>' +
           '<a href="about.html">Why SANO</a><a href="resources.html">Resources</a>' +
-          '<a href="demo.html">Watch a demo</a><a href="demo.html">Contact</a></div>' +
+          '<a href="about.html#bilingual">Se habla Español</a><a href="demo.html">Contact</a></div>' +
         '<div class="foot-col"><h4>Get started</h4>' +
-          '<a href="demo.html">Book a demo</a><a href="tel:' + PHONE + '">Call us</a>' +
-          '<a href="demo.html">Se habla Español</a></div>' +
+          '<a href="demo.html">Book a demo</a><a href="tel:' + PHONE + '">Talk to a person</a>' +
+          '<a href="pricing.html">See pricing</a></div>' +
       '</div>' +
       '<div class="foot-base"><span>© 2026 SANO Systems LLC. (Design test — not the live site.)</span>' +
-        '<span>Privacy Policy · Terms of Service</span></div>' +
+        '<span><a href="privacy.html" style="color:#8A8A93">Privacy Policy</a> · <a href="terms.html" style="color:#8A8A93">Terms of Service</a></span></div>' +
     '</div></footer>';
 
   var navMount = document.getElementById('site-nav');
