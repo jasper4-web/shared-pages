@@ -13,12 +13,11 @@
   var caret = '<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>';
 
   var nav =
-    '<a href="#main" class="skip">Skip to content</a>' +
     '<div class="ribbon">🧪 DESIGN TEST — SANO Systems inside Podium\'s structure &amp; flow. <b>Not our live site;</b> phone &amp; email shown are placeholders.</div>' +
     '<header><div class="wrap nav">' +
       '<a href="index.html" class="brand"><img src="sano-logo.png" alt="" width="30" height="30"/> SANO Systems</a>' +
       '<ul class="nav-links">' +
-        '<li class="' + (page === 'product' ? 'active' : '') + '"><a href="ai-employee.html">What we run ' + caret + '</a>' +
+        '<li class="' + (page === 'product' ? 'active' : '') + '"><a href="ai-employee.html"' + (page === 'product' ? ' aria-current="page"' : '') + ' aria-haspopup="true">What we run ' + caret + '</a>' +
           '<div class="dropdown">' +
             '<a href="ai-employee.html#frontdesk"><b>The front desk</b><span>Calls, texts &amp; booking, around the clock</span></a>' +
             '<a href="ai-employee.html#followup"><b>The follow-up</b><span>Chased until you get an answer</span></a>' +
@@ -27,12 +26,12 @@
             '<a href="ai-employee.html#command"><b>Your monthly report</b><span>What happened, in plain English</span></a>' +
           '</div>' +
         '</li>' +
-        '<li class="' + (page === 'industries' ? 'active' : '') + '"><a href="industries.html">Industries ' + caret + '</a>' +
+        '<li class="' + (page === 'industries' ? 'active' : '') + '"><a href="industries.html"' + (page === 'industries' ? ' aria-current="page"' : '') + ' aria-haspopup="true">Industries ' + caret + '</a>' +
           '<div class="dropdown">' + indDrop + '</div>' +
         '</li>' +
-        '<li class="' + (page === 'pricing' ? 'active' : '') + '"><a href="pricing.html">Pricing</a></li>' +
-        '<li class="' + (page === 'resources' ? 'active' : '') + '"><a href="resources.html">Resources</a></li>' +
-        '<li class="' + (page === 'about' ? 'active' : '') + '"><a href="about.html">Why SANO</a></li>' +
+        '<li class="' + (page === 'pricing' ? 'active' : '') + '"><a href="pricing.html"' + (page === 'pricing' ? ' aria-current="page"' : '') + '>Pricing</a></li>' +
+        '<li class="' + (page === 'resources' ? 'active' : '') + '"><a href="resources.html"' + (page === 'resources' ? ' aria-current="page"' : '') + '>Resources</a></li>' +
+        '<li class="' + (page === 'about' ? 'active' : '') + '"><a href="about.html"' + (page === 'about' ? ' aria-current="page"' : '') + '>Why SANO</a></li>' +
       '</ul>' +
       '<div class="nav-right">' +
         '<a href="tel:' + PHONE + '" class="nav-phone">' + PHONE_D + '</a>' +
@@ -71,7 +70,7 @@
           '<a href="about.html#bilingual">Se habla Español</a><a href="demo.html">Contact us</a></div>' +
         '<div class="foot-col"><h4>Get started</h4>' +
           '<a href="demo.html">Book a demo</a><a href="tel:' + PHONE + '">Talk to a person</a>' +
-          '<a href="pricing.html">See pricing</a></div>' +
+          '<a href="resources.html">Free guides</a></div>' +
       '</div>' +
       '<div class="foot-base"><span>© 2026 SANO Systems LLC. (Design test — not the live site.)</span>' +
         '<span><a href="privacy.html" style="color:#8A8A93">Privacy Policy</a> · <a href="terms.html" style="color:#8A8A93">Terms of Service</a></span></div>' +

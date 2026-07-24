@@ -13,6 +13,7 @@
 <noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body data-page="industries">
+<a href="#main" class="skip">Skip to content</a>
 <div id="site-nav"></div>
 <noscript>
   <nav class="ns-nav"><a href="index.html">SANO Systems</a> ·
@@ -23,7 +24,7 @@
     <a href="about.html">Why SANO</a> ·
     <a href="demo.html">Book a demo</a></nav>
 </noscript>
-<main id="main"><div id="ind-root">
+<main id="main" tabindex="-1"><div id="ind-root">
   <noscript>
     <section class="band"><div class="wrap-narrow" style="text-align:center">
       <h1>Industry blueprints</h1>
@@ -53,8 +54,8 @@
   var canon = document.getElementById('canon');
   if (canon) canon.setAttribute('href', 'industry.html?ind=' + d.slug);
 
-  var check = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
-  var ex = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  var check = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+  var ex = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
   var others = IND.filter(function (x) { return x.slug !== d.slug; }).slice(0, 4).map(function (i) {
     return '<a class="ind reveal" href="industry.html?ind=' + i.slug + '"><div class="em" aria-hidden="true">' + i.em + '</div><h3>' + i.label + '</h3><p>' + i.tag + '</p><span class="more">See the blueprint &rarr;</span></a>';
@@ -62,11 +63,11 @@
 
   root.innerHTML =
     '<section class="page-hero tint"><div class="wrap reveal">' +
-      '<span class="eyebrow">' + d.em + ' ' + d.label + '</span>' +
+      '<span class="eyebrow"><span aria-hidden="true">' + d.em + '</span> ' + d.label + '</span>' +
       '<h1>' + d.headline + '</h1>' +
       '<p class="sub">' + d.sub + '</p>' +
-      '<div class="hero-cta"><a href="#blueprint" class="btn btn-blue btn-lg">See what&rsquo;s inside</a>' +
-      '<a href="demo.html?ind=' + d.slug + '" class="btn btn-ghost btn-lg">Book a demo</a></div>' +
+      '<div class="hero-cta"><a href="demo.html?ind=' + d.slug + '" class="btn btn-blue btn-lg">Book a demo</a>' +
+      '<a href="#blueprint" class="btn btn-ghost btn-lg">See what&rsquo;s inside</a></div>' +
     '</div></section>' +
 
     '<section class="band" id="blueprint"><div class="wrap">' +
@@ -79,6 +80,7 @@
         }).join('') +
       '</div>' +
       '<p class="blueprint-season reveal">' + d.season + '</p>' +
+      '<p class="price-strip reveal">Blueprints start at <strong>$397/mo</strong> plus a one-time fee to stand it up. Text-back and messaging on every plan; live voice answering from Growth. <a href="pricing.html">See the four levels &rarr;</a></p>' +
     '</div></section>' +
 
     '<section class="band paper"><div class="wrap">' +
@@ -88,7 +90,7 @@
           '<div class="j-col"><h3 class="j-h">What&rsquo;s costing you today</h3><ul class="j-list j-pain">' +
             d.pains.map(function (p) { return '<li>' + ex + '<span>' + p + '</span></li>'; }).join('') +
           '</ul></div>' +
-          '<div class="j-col"><h3 class="j-h">What we take over</h3><ul class="j-list j-fix">' +
+          '<div class="j-col"><h3 class="j-h">What we take over</h3><p class="tier-inline">Text-back on every plan; live voice from Growth.</p><ul class="j-list j-fix">' +
             d.runs.map(function (r) { return '<li>' + check + '<span>' + r + '</span></li>'; }).join('') +
           '</ul></div>' +
         '</div>' +
@@ -128,7 +130,7 @@
       '<div class="sec-head reveal"><p class="kick">Questions</p><h2>' + d.label + ', answered</h2></div>' +
       '<div class="faq reveal">' +
         d.faqs.map(function (f) {
-          return '<details><summary>' + f[0] + '<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">' + f[1] + '</div></details>';
+          return '<details><summary>' + f[0] + '<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">' + f[1] + '</div></details>';
         }).join('') +
       '</div>' +
       '<p style="text-align:center;margin-top:30px" class="reveal"><a href="pricing.html" style="color:var(--blue);font-weight:600;font-size:16px">See what it costs &rarr;</a></p>' +
@@ -138,6 +140,7 @@
       '<h2>Let&rsquo;s shape your ' + d.label + ' blueprint</h2>' +
       '<p>15 minutes. We&rsquo;ll walk you through the version we&rsquo;d build for your business.</p>' +
       '<div class="hero-cta"><a href="demo.html?ind=' + d.slug + '" class="btn btn-onblue btn-lg">Book your free demo</a></div>' +
+      '<p class="cta-phone">Or call <a href="tel:+18325557266">(832) 555-SANO</a> &mdash; a person picks up.</p>' +
     '</div></div></section>';
 })();
 </script>
