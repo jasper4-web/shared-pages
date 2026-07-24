@@ -87,6 +87,7 @@
   .tool .t-ico svg{width:20px;height:20px;stroke:var(--cyan);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
   .tool b{font-family:var(--font);font-size:15.5px;display:block;margin-bottom:5px}
   .tool p{font-size:13px;color:var(--mut);line-height:1.5}
+  .tool .how{display:block;margin-top:9px;font-size:12.5px;color:#9aa4b5;border-left:2px solid rgba(0,212,255,.35);padding-left:9px}
   .tool .kills{display:block;margin-top:9px;font-family:var(--font);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--amber)}
   .pack-foot{text-align:center;color:var(--mut);font-size:14.5px;max-width:520px;margin:26px auto 0}
   .pack-foot b{color:var(--ink)}
@@ -140,34 +141,48 @@
   .sticky .lab{font-family:var(--font);font-weight:600;font-size:13px;color:var(--mut);margin-right:auto}
   .sticky .btn{padding:11px 18px;font-size:14px}
 
-  /* offer bot */
-  .bot-launch{position:fixed;right:18px;bottom:74px;z-index:75;display:inline-flex;align-items:center;gap:9px;
+
+  /* ===== SANO Assistant ===== */
+  .sb-launch{position:fixed;right:18px;bottom:74px;z-index:75;display:inline-flex;align-items:center;gap:9px;
     background:var(--grad);color:#05121f;font-family:var(--font);font-weight:600;font-size:13.5px;
     border:none;border-radius:999px;padding:11px 16px;cursor:pointer;box-shadow:0 12px 30px -8px rgba(0,112,243,.6)}
-  .bot-launch svg{width:17px;height:17px;stroke:#05121f;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-  .bot-panel{position:fixed;right:18px;bottom:128px;z-index:76;width:340px;max-width:calc(100vw - 36px);
+  .sb-launch svg{width:17px;height:17px;stroke:#05121f;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .sb-panel{position:fixed;right:18px;bottom:74px;z-index:76;width:370px;max-width:calc(100vw - 32px);
     background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;
-    box-shadow:0 30px 70px -20px rgba(0,0,0,.8);display:none;flex-direction:column}
-  .bot-panel.open{display:flex}
-  .bot-head{display:flex;align-items:center;gap:10px;padding:13px 15px;background:var(--panel2);border-bottom:1px solid var(--line)}
-  .bot-head .av{width:30px;height:30px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#05121f;font-weight:700;font-family:var(--font);font-size:12px}
-  .bot-head b{font-family:var(--font);font-size:13.5px}
-  .bot-head .st{font-size:10.5px;color:var(--good);display:flex;align-items:center;gap:5px}
-  .bot-head .st:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--good)}
-  .bot-head .x{margin-left:auto;background:none;border:none;color:var(--mut);font-size:20px;cursor:pointer;line-height:1}
-  .bot-body{padding:14px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:9px}
-  .bot-msg{max-width:88%;padding:9px 12px;border-radius:13px;font-size:13px;line-height:1.45}
-  .bot-msg.bot{background:rgba(255,255,255,.07);border-bottom-left-radius:4px;align-self:flex-start}
-  .bot-msg.me{background:var(--blue);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
-  .bot-msg b{color:inherit;font-weight:600}
-  .bot-chips{display:flex;flex-wrap:wrap;gap:7px;padding:0 14px 12px}
-  .bot-chip{font-family:var(--font);font-size:11.5px;color:var(--cyan);background:rgba(0,112,243,.12);border:1px solid var(--line);border-radius:999px;padding:6px 11px;cursor:pointer}
-  .bot-chip:hover{border-color:var(--cyan)}
-  .bot-input{display:flex;gap:8px;padding:11px 13px;border-top:1px solid var(--line)}
-  .bot-input input{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--ink);font-family:'Inter';font-size:13.5px;outline:none}
-  .bot-input input:focus{border-color:var(--cyan)}
-  .bot-input button{background:var(--grad);color:#05121f;border:none;border-radius:10px;padding:0 14px;font-family:var(--font);font-weight:600;font-size:13px;cursor:pointer}
-  @media (max-width:680px){.bot-launch{bottom:70px}.bot-panel{bottom:122px}}
+    box-shadow:0 30px 70px -20px rgba(0,0,0,.85);display:none;flex-direction:column}
+  .sb-panel.open{display:flex}
+  .sb-head{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--panel2);border-bottom:1px solid var(--line)}
+  .sb-av{width:30px;height:30px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;
+    color:#05121f;font-weight:700;font-family:var(--font);font-size:13px;flex:none}
+  .sb-id{display:flex;flex-direction:column;line-height:1.25}
+  .sb-id b{font-family:var(--font);font-size:13.5px}
+  .sb-st{font-size:10.5px;color:var(--mut)}
+  .sb-x{margin-left:auto;background:none;border:none;color:var(--mut);font-size:22px;cursor:pointer;line-height:1;padding:0 4px}
+  .sb-x:hover{color:var(--ink)}
+  .sb-body{padding:14px;height:330px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;overscroll-behavior:contain}
+  .sb-msg{max-width:90%;padding:10px 13px;border-radius:14px;font-size:13.5px;line-height:1.5;word-wrap:break-word}
+  .sb-bot{background:rgba(255,255,255,.07);border-bottom-left-radius:4px;align-self:flex-start;color:#d8dde8}
+  .sb-bot b{color:var(--ink)}
+  .sb-me{background:var(--blue);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+  .sb-dots{display:inline-flex;gap:4px;padding:2px 0}
+  .sb-dots i{width:6px;height:6px;border-radius:50%;background:var(--mut);animation:sbBlink 1.1s infinite}
+  .sb-dots i:nth-child(2){animation-delay:.18s}.sb-dots i:nth-child(3){animation-delay:.36s}
+  @keyframes sbBlink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+  .sb-chips{display:flex;flex-wrap:wrap;gap:7px;padding:0 13px 11px}
+  .sb-chip{font-family:var(--font);font-size:11.5px;color:var(--cyan);background:rgba(0,112,243,.12);
+    border:1px solid var(--line);border-radius:999px;padding:6px 11px;cursor:pointer;text-align:left}
+  .sb-chip:hover{border-color:var(--cyan)}
+  .sb-input{display:flex;gap:8px;padding:11px 13px;border-top:1px solid var(--line)}
+  .sb-input input{flex:1;min-width:0;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:10px;
+    padding:10px 12px;color:var(--ink);font-family:'Inter',sans-serif;font-size:16px;outline:none}
+  .sb-input input:focus{border-color:var(--cyan)}
+  .sb-input button{background:var(--grad);color:#05121f;border:none;border-radius:10px;padding:0 15px;
+    font-family:var(--font);font-weight:600;font-size:13px;cursor:pointer;flex:none}
+  @media (max-width:680px){
+    .sb-launch{bottom:70px;right:14px}
+    .sb-panel{right:12px;left:12px;bottom:70px;width:auto;max-width:none}
+    .sb-body{height:min(46vh,340px)}
+  }
 
   @media (max-width:680px){
     .sano-bar .by{display:none}
@@ -221,67 +236,75 @@
     </div>
   </section>
 
-  <!-- DIRECTION NOTE -->
-  <section class="dirnote">
-    <div class="dirnote-card reveal">
-      <span class="amber-tag">How this works</span>
-      <h2>You change nothing. It runs behind your number.</h2>
-      <p>Your phone number stays on the truck, your website, and your Google page — <b>nothing about how customers reach you changes.</b> We plug the system in behind it. When you say yes, one <b>10-minute questionnaire</b> (your real hours, services, the questions you're sick of answering) is all we need — we build the rest.</p>
-    </div>
-  </section>
-
   <!-- THE PACKAGE (boom layout) -->
   <section class="pack">
     <div class="sec-head reveal">
-      <div class="eyebrow">What's actually running behind the scenes</div>
-      <h2>One package. Seven jobs you stop doing.</h2>
-      <p>Each of these runs on its own, 24/7 — and everything it does shows up as a simple text or a note in your app.</p>
+      <div class="eyebrow">This is what you're getting</div>
+      <h2>Seven jobs come off <span class="grad">your</span> plate.</h2>
+      <p><b>All seven are yours — one package, nothing to pick between, nothing held back for a bigger tier.</b> Each one runs on its own, around the clock, and everything it does reaches you as a plain text.</p>
     </div>
     <div class="tools reveal">
       <div class="tool">
         <div class="t-ico"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
         <b>Missed-call text-back</b>
         <p>You're under a car, a call comes in, you can't grab it. Seconds later they get a text from AVRS — and the conversation keeps going without you.</p>
+        <span class="how">Most people won't leave a voicemail, but almost everyone answers a text. This is the difference between that job going to you or to the next shop they call.</span>
         <span class="kills">Kills: lost jobs from missed calls</span>
       </div>
       <div class="tool">
         <div class="t-ico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
         <b>Auto-answers</b>
-        <p>"Do you come to Willis?" "How much is a brake job roughly?" The questions you answer twenty times a week get answered instantly, the way you'd answer them.</p>
+        <p>"Do you come to Willis?" "How much is a brake job roughly?" "Can you do it while I'm at work?" The questions you answer twenty times a week get answered instantly — in your words, not a script.</p>
+        <span class="how">You give us your five or six most common ones once. Anything it hasn't been taught, it hands straight to you instead of guessing.</span>
         <span class="kills">Kills: the same questions, all day</span>
       </div>
       <div class="tool">
         <div class="t-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
         <b>Real-availability booking</b>
-        <p>People book straight into the times you actually work — with travel buffer built in. You get a text when it lands. No call, no "let me check my week."</p>
+        <p>People book straight into the times you actually work — with travel time built in between stops, so you're never booked in Conroe and Katy back to back. You just get a text when one lands.</p>
+        <span class="how">You set the rules once. It can't book you outside your hours, can't double-book you, and can't hand out a slot you already filled.</span>
         <span class="kills">Kills: checking your schedule mid-job</span>
       </div>
       <div class="tool">
         <div class="t-ico"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
         <b>Review engine</b>
-        <p>After every finished job, the customer gets a short text asking for a Google review. You're at 12 reviews with a 5.0 — this grows it without you ever asking again.</p>
+        <p>After every finished job the customer gets a short text with your Google link. You're at a <b>5.0 with 12 reviews</b> — the rating is already perfect, the count is what's holding you back against shops with eighty.</p>
+        <span class="how">This is the highest-leverage one on the list for you. It compounds every single month, and you never have to ask another human being for a favor.</span>
         <span class="kills">Kills: chasing people for reviews</span>
       </div>
       <div class="tool">
         <div class="t-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
         <b>Customer log</b>
-        <p>Every customer, their vehicle, their plate, and every job you've done for them — pulled up in two taps. "What did I do on the Watts truck last spring?" Answered.</p>
+        <p>Every customer, their vehicle, their plate, and every job you've done for them — two taps. "What did I do on the Watts truck last spring?" There it is, with the date and the amount.</p>
+        <span class="how">Nothing lives in your head or in a notebook in the door pocket anymore. When a repeat customer calls, you know their car before they finish the sentence.</span>
         <span class="kills">Kills: keeping it all in your head</span>
       </div>
       <div class="tool">
         <div class="t-ico"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
         <b>Your number, untouched</b>
-        <p>(936) 444-3031 stays on your truck, your site, your Google. We route it behind the scenes — every text the system sends clearly says it's AVRS.</p>
+        <p>(936) 444-3031 stays on your truck, your site, and your Google page. We route it behind the scenes — and every automatic text identifies itself as AVRS Automotive in the first line.</p>
+        <span class="how">Nothing to re-letter, no listings to update, nobody to tell. If you ever walked away, your line is exactly as it is today.</span>
         <span class="kills">Kills: re-lettering the truck</span>
       </div>
       <div class="tool">
         <div class="t-ico"><svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></div>
         <b>The app + monthly numbers</b>
-        <p>The app you just tapped through, on your phone from day one — plus a plain-English monthly rundown: jobs booked, questions handled, reviews earned, hours saved.</p>
+        <p>The app you just tapped through, on your phone from day one — plus a plain-English monthly rundown: jobs booked without a call, questions handled, reviews earned, hours given back.</p>
+        <span class="how">No dashboard homework. If those numbers ever stop being worth $249 to you, you'll see it before we do — and you can leave that month.</span>
         <span class="kills">Kills: wondering if it's working</span>
       </div>
     </div>
-    <p class="pack-foot reveal"><b>The point isn't more tech.</b> It's that nothing falls through the cracks — and your evenings stop being admin time.</p>
+    <p class="pack-foot reveal"><b>The point isn't more tech.</b> It's that nothing falls through the cracks — and your evenings stop being admin time. Every one of these is yours on day one, at the same price.</p>
+  </section>
+
+  <!-- DIRECTION NOTE (moved: lands after he's seen what he gets) -->
+  <section class="dirnote">
+    <div class="dirnote-card reveal">
+      <span class="amber-tag">And here's the easy part</span>
+      <h2>You change nothing. It runs behind your number.</h2>
+      <p>Your phone number stays on the truck, your website, and your Google page — <b>nothing about how customers reach you changes.</b> No new number to learn, nothing to re-letter, no telling your regulars anything. We plug the system in behind the line you already have.</p>
+      <p style="margin-top:14px">Your whole job is <b>one 10-minute form</b> — your real hours, your services, and the questions you're sick of answering. That's the only thing nobody can do for you. We build the rest.</p>
+    </div>
   </section>
 
   <!-- OFFER -->
@@ -359,28 +382,6 @@
 
 </div>
 
-<button class="bot-launch" id="botLaunch" aria-label="Ask about the deal">
-  <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Ask about the deal
-</button>
-<div class="bot-panel" id="botPanel" role="dialog" aria-label="SANO offer assistant">
-  <div class="bot-head">
-    <div class="av">AI</div><b>SANO AI</b><span class="st">about your deal</span>
-    <button class="x" id="botClose" aria-label="Close">×</button>
-  </div>
-  <div class="bot-body" id="botBody">
-    <div class="bot-msg bot">Hey Anthony — I can answer quick questions about the deal: price, what's included, what you'd have to do. What do you want to know?</div>
-  </div>
-  <div class="bot-chips" id="botChips">
-    <button class="bot-chip">What's the deal?</button>
-    <button class="bot-chip">What do I have to do?</button>
-    <button class="bot-chip">How long does it take?</button>
-    <button class="bot-chip">What if I don't like it?</button>
-  </div>
-  <div class="bot-input">
-    <input id="botInput" type="text" placeholder="Ask a question…" autocomplete="off">
-    <button id="botSend">Send</button>
-  </div>
-</div>
 
 <script>
   document.documentElement.classList.add('js');
@@ -390,34 +391,10 @@
   setTimeout(function(){rv.forEach(function(el){el.classList.add('in');});},2000);
   window.addEventListener('load',function(){setTimeout(function(){rv.forEach(function(el){el.classList.add('in');});},1000);});
 
-  (function(){
-    var launch=document.getElementById('botLaunch'),panel=document.getElementById('botPanel'),
-        close=document.getElementById('botClose'),body=document.getElementById('botBody'),
-        input=document.getElementById('botInput'),send=document.getElementById('botSend'),
-        chips=document.getElementById('botChips');
-    if(!launch) return;
-    launch.addEventListener('click',function(){panel.classList.add('open');launch.style.display='none';input.focus();});
-    close.addEventListener('click',function(){panel.classList.remove('open');launch.style.display='inline-flex';});
-    function add(html,who){var d=document.createElement('div');d.className='bot-msg '+(who||'bot');d.innerHTML=html;body.appendChild(d);body.scrollTop=body.scrollHeight;}
-    function answer(q){
-      q=q.toLowerCase();
-      if(/price|cost|how much|deal|fee|\bpay\b|\$|catch/.test(q)) return "It's <b>$1 total for your first 3 months</b> — card on file, so it's a real service. After that it's <b>$249/mo, cancel anytime, no contract</b>. Setup fee waived for good; in trade, three short phone videos on how it's going. That's the whole deal.";
-      if(/what do i|have to do|my part|work for me|involve|form|questionnaire/.test(q)) return "One <b>10-minute form</b> — your real hours, services, and the questions you're tired of answering. SANO builds everything else. Bookings and updates just show up as <b>texts on your phone</b>.";
-      if(/how long|fast|\btime\b|when|weeks|live|launch/.test(q)) return "<b>2–3 weeks</b> realistically, with some back-and-forth. Honestly — you're the first client, so it might be 3½ to do it right.";
-      if(/don't like|doesn.t work|cancel|quit|leave|refund|contract/.test(q)) return "Cancel anytime with a text — <b>you're out a dollar</b>. Your number, Google page, and truck stay exactly as they are. No contract, ever.";
-      if(/number|phone|936|truck|change/.test(q)) return "Your number <b>(936) 444-3031 stays everywhere it already is</b> — truck, website, Google. The system runs behind it, and every automatic text clearly says it's AVRS Automotive.";
-      if(/include|come with|\bget\b|package|tools/.test(q)) return "Seven tools, all set up for you: <b>missed-call text-back</b>, <b>auto-answers</b> for repeat questions, <b>real-availability booking</b>, the <b>review engine</b>, a full <b>customer log</b> (vehicles, plates, history), your <b>same number</b> routed behind the scenes, and <b>the app</b> with plain-English monthly numbers.";
-      if(/review|google|star/.test(q)) return "After every finished job, the customer gets a short text asking for a Google review — <b>you never have to ask again</b>. You're at a 5.0 with 12 reviews; this grows it on autopilot.";
-      if(/app|numbers real|sample|example|fake/.test(q)) return "The app preview uses <b>sample customers and example numbers</b> so you can feel how it works. Your real app starts from zero and fills with your actual business. And yes — the app is included, on your phone from day one.";
-      if(/why|\bfirst\b|\$1|dollar|founding/.test(q)) return "You're <b>client #1</b>. SANO needs to prove this on a real shop and learn from a real owner — that's worth more than three months of fees. In exchange you get the founding deal nobody else will get.";
-      if(/after|month 4|then what|249/.test(q)) return "From month 4 it's <b>$249/mo</b> — said out loud from day one so there's no surprise. Cancel anytime; founding clients keep their price as new tools roll out.";
-      return "Good one — text me directly and I'll give you the straight answer: <b>(832) 396-2496</b>. Quick version: $1 for 3 months, then $249/mo, cancel anytime, and you change nothing about how customers reach you.";
-    }
-    function ask(q){if(!q||!q.trim())return;add(q,'me');var a=answer(q);setTimeout(function(){add(a,'bot');},320);}
-    send.addEventListener('click',function(){ask(input.value);input.value='';});
-    input.addEventListener('keydown',function(e){if(e.key==='Enter'){ask(input.value);input.value='';}});
-    chips.addEventListener('click',function(e){if(e.target.classList.contains('bot-chip')){ask(e.target.textContent);}});
-  })();
 </script>
+
+<!-- SANO Assistant: reusable engine + AVRS-specific knowledge base -->
+<script src="avrs-kb.js"></script>
+<script src="sano-bot.js"></script>
 </body>
 </html>
