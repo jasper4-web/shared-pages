@@ -13,10 +13,10 @@
   var caret = '<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>';
 
   var nav =
-    '<div class="ribbon">🧪 DESIGN TEST — SANO Systems inside Podium\'s structure &amp; flow. <b>Not our live site;</b> phone &amp; email shown are placeholders.</div>' +
+    '<div class="ribbon"><span aria-hidden="true">🧪</span> DESIGN TEST — SANO Systems inside Podium\'s structure &amp; flow. <b>Not our live site;</b> phone &amp; email shown are placeholders.</div>' +
     '<header><div class="wrap nav">' +
       '<a href="index.html" class="brand"><img src="sano-logo.png" alt="" width="30" height="30"/> SANO Systems</a>' +
-      '<ul class="nav-links">' +
+      '<nav aria-label="Main"><ul class="nav-links">' +
         '<li class="' + (page === 'product' ? 'active' : '') + '"><a href="ai-employee.html"' + (page === 'product' ? ' aria-current="page"' : '') + '>What we run ' + caret + '</a>' +
           '<div class="dropdown">' +
             '<a href="ai-employee.html#frontdesk"><b>The front desk</b><span>Calls, texts &amp; booking, around the clock</span></a>' +
@@ -32,7 +32,7 @@
         '<li class="' + (page === 'pricing' ? 'active' : '') + '"><a href="pricing.html"' + (page === 'pricing' ? ' aria-current="page"' : '') + '>Pricing</a></li>' +
         '<li class="' + (page === 'resources' ? 'active' : '') + '"><a href="resources.html"' + (page === 'resources' ? ' aria-current="true"' : '') + '>Resources</a></li>' +
         '<li class="' + (page === 'about' ? 'active' : '') + '"><a href="about.html"' + (page === 'about' ? ' aria-current="page"' : '') + '>Why SANO</a></li>' +
-      '</ul>' +
+      '</ul></nav>' +
       '<div class="nav-right">' +
         '<a href="tel:' + PHONE + '" class="nav-phone">' + PHONE_D + '</a>' +
         '<a href="tel:' + PHONE + '" class="nav-call" aria-label="Call us"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.11 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>' +
@@ -43,9 +43,9 @@
       '<button class="mm-close" aria-label="Close menu">&times;</button>' +
       '<a href="index.html" class="mm-home"><img src="sano-logo.png" alt="" width="26" height="26"/> SANO Systems</a>' +
       '<a href="ai-employee.html"' + (page === 'product' ? ' class="mm-on" aria-current="page"' : '') + '>What we run</a>' +
-      '<a href="industries.html"' + (page === 'industries' ? ' class="mm-on"' : '') + '>Industries</a>' +
+      '<a href="industries.html"' + (page === 'industries' ? ' class="mm-on" aria-current="page"' : '') + '>Industries</a>' +
       '<a href="pricing.html"' + (page === 'pricing' ? ' class="mm-on" aria-current="page"' : '') + '>Pricing</a>' +
-      '<a href="resources.html"' + (page === 'resources' ? ' class="mm-on"' : '') + '>Resources</a>' +
+      '<a href="resources.html"' + (page === 'resources' ? ' class="mm-on" aria-current="page"' : '') + '>Resources</a>' +
       '<a href="about.html"' + (page === 'about' ? ' class="mm-on" aria-current="page"' : '') + '>Why SANO</a>' +
       '<a href="tel:' + PHONE + '">' + PHONE_D + '</a>' +
       '<a href="demo.html" class="btn btn-blue btn-lg">Book a demo</a>' +
@@ -73,7 +73,7 @@
           '<a href="about.html#bilingual">Se habla Español</a><a href="mailto:' + EMAIL + '">Contact us</a></div>' +
         '<div class="foot-col"><h4>Get started</h4>' +
           '<a href="demo.html">Book a demo</a><a href="tel:' + PHONE + '">Talk to a person</a>' +
-          '<a href="resources.html">Free guides</a></div>' +
+          '<a href="resources.html">Guides</a></div>' +
       '</div>' +
       '<div class="foot-base"><span>© 2026 SANO Systems LLC. (Design test — not the live site.)</span>' +
         '<span><a href="privacy.html" style="color:#8A8A93">Privacy Policy</a> · <a href="terms.html" style="color:#8A8A93">Terms of Service</a></span></div>' +
@@ -91,6 +91,8 @@
     menu.classList.toggle('open', open);
     burger.setAttribute('aria-expanded', open ? 'true' : 'false');
     document.body.style.overflow = open ? 'hidden' : '';
+    var mainEl = document.getElementById('main');
+    if (mainEl) { if (open) { mainEl.setAttribute('inert',''); } else { mainEl.removeAttribute('inert'); } }
   }
   var closeBtn = menu ? menu.querySelector('.mm-close') : null;
   if (burger && menu) {
@@ -103,7 +105,13 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && menu.classList.contains('open')) { setMenu(false); burger.focus(); } });
     menu.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
     /* rotating to desktop must never leave the scroll lock on */
-    window.addEventListener('resize', function () { if (window.innerWidth > 960) setMenu(false); });
+    window.addEventListener('resize', function () { if (window.innerWidth > 1080) setMenu(false); });
+  }
+
+  /* the header/ribbon mount after the browser resolved the fragment — re-scroll */
+  if (location.hash) {
+    var target = document.querySelector(location.hash);
+    if (target) requestAnimationFrame(function () { target.scrollIntoView(); });
   }
 
   var obs = new IntersectionObserver(function (entries) {
@@ -111,5 +119,5 @@
   }, { threshold: 0, rootMargin: '0px 0px -30px 0px' });
   document.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el); });
   /* belt-and-braces: never leave content invisible if the observer misbehaves */
-  setTimeout(function () { document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); }); }, 2500);
+  setTimeout(function () { document.querySelectorAll('.reveal:not(.in)').forEach(function (el) { var r = el.getBoundingClientRect(); if (r.top < window.innerHeight * 1.5) el.classList.add('in'); }); }, 2500);
 })();
