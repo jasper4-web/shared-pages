@@ -78,6 +78,18 @@
         '<span><a href="privacy.html" style="color:#8A8A93">Privacy Policy</a> · <a href="terms.html" style="color:#8A8A93">Terms of Service</a></span></div>' +
     '</div></footer>';
 
+  /* One source of truth for the risk-reversal + contact lines under every CTA.
+     These were hardcoded in 18 files and had already drifted apart. */
+  var GUARANTEE = '<strong>30 days from go-live, money-back on the monthly fee</strong> — taking it also ends the minimum term. ' +
+    'Setup is <strong>half at kickoff, half at go-live</strong>; you don\'t owe the balance if we don\'t deliver your approved blueprint.';
+  var CONTACT = 'Or <a href="sms:' + PHONE + '?&body=' + encodeURIComponent('I\'d like a demo for my business') + '">text us</a>, ' +
+    'or call <a href="tel:' + PHONE + '">' + PHONE_D + '</a> — you\'ll get a person, not a queue. ' +
+    '<em>(Placeholder number on this test site.)</em>';
+  document.querySelectorAll('.cta-box').forEach(function (box) {
+    var g = box.querySelector('.cta-guarantee'); if (g) g.innerHTML = GUARANTEE;
+    var c = box.querySelector('.cta-phone'); if (c) c.innerHTML = CONTACT;
+  });
+
   var navMount = document.getElementById('site-nav');
   var footMount = document.getElementById('site-footer');
   if (navMount) navMount.innerHTML = nav;
