@@ -15,6 +15,7 @@ window.SANO_BOT_CONFIG = {
   avatar: 'S',
   launchLabel: 'Ask about the deal',
   revealAfter: '.stage',   /* stay hidden until past the hero demo */
+  hideAfter: '.cta',       /* and step aside once the CTA + answers are on screen */
   placeholder: 'Ask me anything about it…',
   greeting: "Hey Anthony — ask me anything about this: the price, what you'd have to do, how your phone works, what happens if you don't like it. I'll give you straight answers. Anything I can't answer, Jasper will.",
 
@@ -49,8 +50,8 @@ window.SANO_BOT_CONFIG = {
   ambient: 'customer client customers text texts phone number app month monthly ' +
            'business job jobs service services system people thing week day time',
 
-  starters: ['price', 'whatido', 'timeline', 'cancel'],
-  popular: ['price', 'whatido', 'tools', 'phone_number', 'cancel', 'timeline', 'proof'],
+  starters: ['price', 'dayday', 'whatido', 'cancel'],
+  popular: ['price', 'dayday', 'whatido', 'tools', 'phone_number', 'cancel', 'timeline'],
 
   kb: [
     /* ---------------- THE DEAL ---------------- */
@@ -126,7 +127,7 @@ window.SANO_BOT_CONFIG = {
     },
     {
       id: 'timeline', chip: 'How long does it take?', q: 'how long until live setup time weeks',
-      phrases: ['how long', 'how fast', 'when will it', 'how soon', 'up and running'],
+      phrases: ['how long', 'how fast', 'when will it', 'how soon', 'up and running', 'be running', 'be live'],
       keys: 'long fast weeks days live launch ready start soon quick timeline duration',
       a: "<b>2–3 weeks</b> realistically, with a little back-and-forth to get your details right.<br><br>Straight answer: you're the first client, so plan on <b>3½ weeks</b>. Jasper would rather take the extra week and hand you something that works than rush it and patch it in front of you.",
       next: ['delay', 'whatido', 'golive']
@@ -201,17 +202,26 @@ window.SANO_BOT_CONFIG = {
     },
     {
       id: 'app', chip: 'The app', q: 'app phone application download iphone android',
-      phrases: ['the app', 'download the app', 'on my phone', 'app included', 'app come with'],
+      phrases: ['the app', 'download the app', 'on my phone', 'app included', 'app come with',
+                 'get an app', 'my own app', 'an app'],
       keys: 'app application download iphone android phone install screen',
-      a: "Yours from <b>day one</b>, free with the package — it's the app you just tapped through on this page.<br><br>Everything in one place: messages, your calendar, customers, reviews, and a plain-English monthly rundown. Works on iPhone and Android.<br><br>One honest note: at this price it's the standard app, not one with AVRS's name and icon on the App Store — that carries a real platform cost and isn't worth it for you right now. <b>Every feature is identical.</b>",
+      a: "<b>Yours from day one, free with the package</b> — the app you just tapped through. Messages, calendar, customers, reviews, and a plain-English monthly rundown, on iPhone or Android.<br><br>Two straight answers about it. It's a <b>standard app — your name and icon aren't on it</b>; putting AVRS on the icon costs real money and adds no features, so it's not worth yours today. Everything your <i>customers</i> see still says AVRS Automotive.<br><br>And <b>you never have to run it</b> — no updates, no settings, no maintenance. That's ours, permanently. If you never opened it once, everything would still work.",
       next: ['brandedapp', 'learn', 'tools']
     },
     {
       id: 'brandedapp', chip: 'Can it have my name on it?', q: 'branded app my logo my name app store custom',
-      phrases: ['my name on it', 'my logo', 'branded', 'app store', 'my own app'],
+      phrases: ['my name on it', 'my name on', 'my logo', 'branded', 'app store', 'name on the app', 'my brand'],
       keys: 'branded brand logo icon custom appstore label',
       a: "Eventually, yes — but it'd be a bad use of your money today.<br><br>Putting AVRS's name and icon on the app itself carries a <b>few hundred a month in platform cost</b>, plus an Apple business account. It buys <b>branding, not a single extra feature</b> — everything works identically either way.<br><br>If AVRS grows to where your own app in the App Store matters, that's a good conversation to have then.",
       next: ['app', 'roadmap']
+    },
+    {
+      id: 'dayday', chip: 'What does it look like day to day?', q: 'day to day daily experience what changes for me how will it look',
+      phrases: ['day to day', 'daily', 'what changes for me', 'what will i see', 'look like for me',
+                 'how will this look', 'on my end', 'my experience'],
+      keys: 'daily routine experience change look see feel normal everyday',
+      a: "Mostly it looks like <b>your phone buzzing with things that already happened.</b> A job books itself and you get a text with the name, the vehicle and the time. Someone asks a question at 9pm and it's answered — you just see it in the morning.<br><br>You answer your own calls exactly like you do now; the system only steps in when you can't get to it.<br><br>You also get <b>your own app, free, day one</b> — for looking things up when you feel like it. It's a standard app, so your name isn't on the icon, but everything your <i>customers</i> see says AVRS. And <b>you never run it, update it, or maintain it</b> — that's ours. If you never opened it once, everything would still work.",
+      next: ['app', 'whatido', 'phone_number']
     },
     {
       id: 'report', chip: 'The monthly rundown', q: 'monthly report numbers results how do I know',
@@ -394,7 +404,7 @@ window.SANO_BOT_CONFIG = {
       id: 'payments', chip: 'Can it take payments?', q: 'payments invoices get paid card charge customers',
       phrases: ['take payments', 'invoice', 'get paid', 'charge customers', 'accept cards', 'pay through'],
       keys: 'payment invoice paid card charge billing money collect deposit checkout',
-      a: "Not in what you're getting on day one — <b>it's on the roadmap</b>, and founding clients get it first at no extra cost.<br><br>Rather than half-build it now, Jasper would rather nail the seven tools you're getting. When invoices-and-pay-by-text lands, it just shows up in your account.",
+      a: "Not in the seven tools you're getting — so the honest answer is <b>no, not on day one</b>. You'd keep collecting the way you do now.<br><br>Jasper would rather nail what you're actually getting than half-build something extra. If getting paid is a real headache for you, tell him — that's exactly the kind of thing he wants to hear from his first client: <b>(832) 396-2496</b>.",
       next: ['roadmap', 'tools']
     },
     {
@@ -415,11 +425,19 @@ window.SANO_BOT_CONFIG = {
       id: 'roadmap', chip: "What's coming later?", q: 'roadmap future new features coming soon updates',
       phrases: ['coming later', 'roadmap', 'new features', 'in the future', 'what else', 'adding', 'add next'],
       keys: 'roadmap future coming later new features updates upgrade next soon',
-      a: "Three things in the works, and <b>founding clients get them first, at your locked price:</b><br><br>• <b>AI phone answering</b> — it talks when you can't, not just texts<br>• <b>Invoices &amp; payments</b> — get paid by text<br>• <b>Repeat-customer nudges</b> — oil-change reminders and the like<br><br>No upgrade fees. Keeping up with this stuff is SANO's job, not yours.",
+      a: "Keeping up with this stuff is SANO's job, not yours — that's most of what you're paying for. As the tools get better your setup gets better with them, at <b>the same price, with no upgrade fees</b>, and founding clients get new things first.<br><br>Jasper would rather not read you a list of things that don't exist yet. Ask him what's actually close and he'll tell you straight: <b>(832) 396-2496</b>.",
       next: ['payments', 'month4']
     },
 
     /* ---------------- SERVICE ---------------- */
+    {
+      id: 'maintenance', chip: 'Do I have to maintain it?', q: 'update maintain manage upkeep run it myself software updates',
+      phrases: ['have to update', 'do i update', 'maintain', 'maintenance', 'upkeep',
+                 'keep it running', 'manage it', 'run it myself', 'updates'],
+      keys: 'update updates maintain maintenance upkeep manage admin settings configure install',
+      a: "<b>No. None of it. Ever.</b> That's the whole point of paying someone instead of buying software.<br><br>No updates to install, no settings to configure, nothing to keep alive. If something needs changing — your hours, your prices, a new question you're sick of answering — <b>you text Jasper and he changes it.</b> You don't log into anything to make it happen.<br><br>The app is there for you to <i>look</i> at, not to run. If you never opened it once, everything would still work exactly the same.",
+      next: ['app', 'support', 'dayday']
+    },
     {
       id: 'support', chip: 'Who do I call if it breaks?', q: 'support help breaks problem who do I call fix',
       phrases: ['if it breaks', 'who do i call', 'support', 'need help', 'something goes wrong'],
@@ -430,7 +448,7 @@ window.SANO_BOT_CONFIG = {
     {
       id: 'changes', chip: 'What if I want changes?', q: 'changes adjust tweak different hours prices update',
       phrases: ['want changes', 'change something', 'adjust it', 'tweak'],
-      keys: 'change adjust tweak modify update different edit revise alter',
+      keys: 'change adjust tweak modify different edit revise alter',
       a: "Just say so — <b>included, not billed hourly.</b> Hours change, prices change, you think of a better way to answer a question. Text it over and it gets changed.<br><br>Expect the first couple of weeks after go-live to involve some of this. That's normal and it's how it ends up sounding like you instead of like a template.",
       next: ['support', 'golive']
     },
