@@ -20,7 +20,7 @@
 <meta name="twitter:title" content="Request a demo | SANO Systems" />
 <meta name="twitter:description" content="See the AI department we'd build for your business and run for you. Free, no commitment." />
 <link rel="stylesheet" href="styles.css" />
-<noscript><style>.reveal{opacity:1!important;transform:none!important}#demo-form{display:none}</style></noscript>
+<noscript><style>.reveal{opacity:1!important;transform:none!important}#demo-form-wrap{display:none}</style></noscript>
 </head>
 <body data-page="demo">
 <a href="#main" class="skip">Skip to content</a>
@@ -104,11 +104,13 @@
         <p style="font-size:12px;color:var(--ink-mut);text-align:center;margin-top:12px">By submitting, you agree we can contact you about your demo. No spam, ever. See our <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms</a>.</p>
       </form></div>
 
+      <noscript><p class="ns-fallback" style="margin:0 0 16px">JavaScript is off, so the form can't send. Email <strong>hello@sanosystems.com</strong> or call <strong>(832) 555-SANO</strong> <em>(placeholder number on this test site)</em>.</p></noscript>
       <div id="demo-ok" role="status" tabindex="-1" style="display:none;text-align:center;padding:20px 0">
         <div style="width:56px;height:56px;border-radius:50%;background:var(--blue-t);color:var(--blue-d);display:grid;place-items:center;margin:0 auto 16px"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
         <h2 id="ok-title">Almost there &mdash; one tap left</h2>
         <p class="fsub" id="ok-msg">Your details are ready to send. Because this is a design test, nothing is stored on our side &mdash; tap below and it opens an email with everything filled in.</p>
         <a id="ok-send" class="btn btn-blue btn-lg" style="width:100%" href="mailto:hello@sanosystems.com">Send my request</a>
+        <textarea id="copy-fallback" readonly hidden rows="7" style="width:100%;margin-top:12px;font-size:12px"></textarea>
         <p style="font-size:12px;color:var(--ink-mut);margin-top:12px">If your email app didn't open, use this instead — then paste into any email to <strong>hello@sanosystems.com</strong>. <button type="button" id="copy-btn" class="btn btn-ghost btn-lg" style="width:100%;margin-top:10px">Copy my details instead</button></p>
       </div>
     </div>
@@ -224,7 +226,16 @@
     ok.style.display = 'block';
     var cp = document.getElementById('copy-btn');
     if (cp) cp.addEventListener('click', function () {
-      navigator.clipboard && navigator.clipboard.writeText(body).then(function(){ cp.textContent = 'Copied ✓'; });
+      function showFallback() {
+        var ta = document.getElementById('copy-fallback');
+        if (!ta) return;
+        ta.value = body + '\n\nSend to: hello@sanosystems.com';
+        ta.hidden = false; ta.focus(); ta.select();
+        cp.textContent = 'Select all and copy ↑';
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(body).then(function () { cp.textContent = 'Copied ✓'; }).catch(showFallback);
+      } else { showFallback(); }
     });
     var backBtn = document.querySelector('.cta-box a[href="#name"]');
     if (backBtn) { backBtn.setAttribute('href', '#demo-ok'); backBtn.textContent = 'Review what you sent'; }
