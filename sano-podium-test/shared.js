@@ -83,7 +83,7 @@
   /* One source of truth for the risk-reversal + contact lines under every CTA.
      These were hardcoded in 18 files and had already drifted apart. */
   var GUARANTEE = '<strong>30 days after it starts answering, money-back on the monthly fee</strong> — taking it also ends the minimum term. ' +
-    'Setup is <strong>half to begin, half the day it starts answering your customers</strong>; you don\'t owe the balance if we don\'t deliver the plan you approved.';
+    'The one-time setup pays for building it and isn\'t refunded once we start, but it is <strong>split half to begin, half the day it starts answering</strong> — and you don\'t owe the second half if we don\'t deliver the plan you approved.';
   var CONTACT = 'Or <a href="sms:' + PHONE + '?&body=' + encodeURIComponent('I\'d like a demo for my business') + '">text us</a>, ' +
     'or call <a href="tel:' + PHONE + '">' + PHONE_D + '</a> — you\'ll get a person, not a queue. ' +
     '<em>(Placeholder number on this test site.)</em>';
@@ -207,10 +207,30 @@
     if (target) requestAnimationFrame(function () { target.scrollIntoView(); });
   }
 
-  var obs = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
-  }, { threshold: 0, rootMargin: '0px 0px -30px 0px' });
-  document.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el); });
-  /* belt-and-braces: never leave content invisible if the observer misbehaves */
-  setTimeout(function () { document.querySelectorAll('.reveal:not(.in)').forEach(function (el) { var r = el.getBoundingClientRect(); if (r.top < window.innerHeight * 1.5) el.classList.add('in'); }); }, 2500);
+  /* Reveal-on-scroll animation with a hard guarantee that content is NEVER
+     left invisible (a real customer read the un-revealed dark bands as "broken"). */
+  function sweep() {
+    var vh = window.innerHeight || 800;
+    document.querySelectorAll('.reveal:not(.in)').forEach(function (el) {
+      if (el.getBoundingClientRect().top < vh + 300) el.classList.add('in');
+    });
+  }
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function (entries, o) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); o.unobserve(e.target); } });
+    }, { threshold: 0, rootMargin: '0px 0px 300px 0px' });
+    document.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+  }
+  window.addEventListener('scroll', sweep, { passive: true });
+  window.addEventListener('resize', sweep);
+  sweep();
+  /* timer-driven sweep does not depend on scroll events firing; after 4s,
+     reveal everything unconditionally so nothing can ever stay hidden. */
+  var ticks = 0;
+  var iv = setInterval(function () {
+    sweep();
+    if (++ticks > 16) { document.querySelectorAll('.reveal:not(.in)').forEach(function (el) { el.classList.add('in'); }); clearInterval(iv); }
+  }, 250);
 })();
