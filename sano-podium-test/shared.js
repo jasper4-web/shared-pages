@@ -36,7 +36,7 @@
       '<div class="nav-right">' +
         '<a href="tel:' + PHONE + '" class="nav-phone">' + PHONE_D + '</a>' +
         '<a href="tel:' + PHONE + '" class="nav-call" aria-label="Call us"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.11 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>' +
-        '<a href="demo.html" class="btn btn-blue">Book a demo</a>' + '<button class="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>' +
+        '<a href="demo.html" class="btn btn-blue">Request a demo</a>' + '<button class="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>' +
       '</div>' +
     '</div></header>' +
     '<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu">' +
@@ -48,7 +48,7 @@
       '<a href="resources.html"' + (page === 'resources' ? ' class="mm-on" aria-current="page"' : '') + '>Resources</a>' +
       '<a href="about.html"' + (page === 'about' ? ' class="mm-on" aria-current="page"' : '') + '>Why SANO</a>' +
       '<a href="tel:' + PHONE + '">' + PHONE_D + '</a>' +
-      '<a href="demo.html" class="btn btn-blue btn-lg">Book a demo</a>' +
+      '<a href="demo.html" class="btn btn-blue btn-lg">Request a demo</a>' +
     '</div>';
 
   var indFoot = IND.slice(0, 4).map(function (i) {
@@ -72,7 +72,7 @@
           '<a href="about.html">Why SANO</a><a href="resources.html">Resources</a>' +
           '<a href="about.html#bilingual">Se habla Español</a><a href="mailto:' + EMAIL + '">Contact us</a></div>' +
         '<div class="foot-col"><h4>Get started</h4>' +
-          '<a href="demo.html">Book a demo</a><a href="tel:' + PHONE + '">Talk to a person</a>' +
+          '<a href="demo.html">Request a demo</a><a href="tel:' + PHONE + '">Talk to a person</a>' +
           '<a href="resources.html">Guides</a></div>' +
       '</div>' +
       '<div class="foot-base"><span>© 2026 SANO Systems LLC. (Design test — not the live site.)</span>' +
