@@ -8,7 +8,7 @@
    ===================================================================== */
 window.SANO_INDUSTRIES = [
   {
-    slug: 'hvac', em: '❄️', label: 'HVAC', tag: 'Heating, cooling & air quality',
+    slug: 'hvac', built: true, em: '❄️', label: 'HVAC', tag: 'Heating, cooling & air quality',
     headline: 'Your AI department, already built for HVAC',
     sub: 'When a compressor dies in the heat, the homeowner calls every shop on the list. The one that answers gets the job. We make sure that\'s you — and you never touch a thing.',
     pains: [
@@ -40,7 +40,7 @@ window.SANO_INDUSTRIES = [
     ]
   },
   {
-    slug: 'plumbing', em: '🔧', label: 'Plumbing', tag: 'Service, repair & drain work',
+    slug: 'plumbing', built: true, em: '🔧', label: 'Plumbing', tag: 'Service, repair & drain work',
     headline: 'Your AI department, already built for plumbing',
     sub: 'You are under a house with both hands busy. The phone rings. Someone with an active leak is calling down the list. We answer for you — and book it.',
     pains: [
@@ -65,14 +65,14 @@ window.SANO_INDUSTRIES = [
     truth: 'A call that goes to voicemail during an active leak is usually not a call that comes back.',
     objection: ['"The big franchises have 24/7 phone staff."', 'Now so do you — without hiring a single person or paying a night shift.'],
     faqs: [
-      ['Can it answer while I am on a job?', 'That is exactly when it works hardest. It picks up on the first ring whether you are free or elbow-deep under a sink.'],
+      ['Can it answer while I am on a job?', 'That is exactly when it works hardest. On Starter it texts back within seconds; from Growth up it picks up the phone live, whether you are free or elbow-deep under a sink.'],
       ['Will customers know it is not me?', 'It sounds like a friendly, professional person on your team, and it speaks English and Spanish. Anything it cannot answer comes straight to you.'],
       ['Does it help me get paid faster?', 'Yes. It can send the invoice and a secure pay-by-text link right after the job, instead of it waiting until you get home.'],
       ['Is the texting compliant? I don\'t want trouble.', 'Yes — and it matters most when you are texting after hours. Here is how we handle it, rather than a blanket promise. Marketing texts only go to people who have given written permission. Every one has a clear way to stop, and we honor it immediately. We register your number for business texting properly instead of blasting from an unregistered line. We are not your lawyers, and we will decline a campaign we think puts you at risk.']
     ]
   },
   {
-    slug: 'roofing', em: '🏠', label: 'Roofing', tag: 'Repair, replacement & storm work',
+    slug: 'roofing', built: true, em: '🏠', label: 'Roofing', tag: 'Repair, replacement & storm work',
     headline: 'Your AI department, already built for roofing',
     sub: 'You are on a roof for eight hours. After a storm the phone does not stop. We answer all of it, follow up on every estimate, and keep you first in line.',
     pains: [
@@ -97,15 +97,15 @@ window.SANO_INDUSTRIES = [
     truth: 'Most estimates are followed up once, if at all. The follow-up nobody has time for is where the work actually closes.',
     objection: ['"The national brands out-market me."', 'They have full-time marketing teams. We are yours — for a fraction of one salary.'],
     faqs: [
-      ['Can it keep up after a big storm?', 'Yes. It answers every caller at once, so nobody sits on hold and no one gets a voicemail while you are on a roof.'],
+      ['Can it keep up after a big storm?', 'Yes. From Growth up it answers every caller at once, so nobody sits on hold while you are on a roof. On Starter every missed call gets an instant text back instead.'],
       ['Does it chase my estimates?', 'It follows up automatically on a schedule you approve — the part that usually gets dropped when you are busy.'],
       ['What about the slow months?', 'Your blueprint includes check-in and inspection campaigns to your past customers so the phone still rings between storms.'],
-      ['Is the texting compliant? I don\'t want trouble.', 'Yes — and it matters most after a storm, when you are contacting a whole neighbourhood. Here is how we handle it, rather than a blanket promise. Marketing texts only go to people who have given written permission. Every one has a clear way to stop, and we honor it immediately. We register your number for business texting properly instead of blasting from an unregistered line. We are not your lawyers, and we will decline a campaign we think puts you at risk.']
+      ['Is the texting compliant? I don\'t want trouble.', 'Yes — and it matters most after a storm, when you are contacting a whole neighborhood. Here is how we handle it, rather than a blanket promise. Marketing texts only go to people who have given written permission. Every one has a clear way to stop, and we honor it immediately. We register your number for business texting properly instead of blasting from an unregistered line. We are not your lawyers, and we will decline a campaign we think puts you at risk.']
     ]
   },
   {
-    slug: 'home-services', em: '🧰', label: 'Home Services', tag: 'Electrical, landscaping, cleaning, pest',
-    headline: 'Your AI department, already built for home services',
+    slug: 'home-services', built: false, em: '🧰', label: 'Home Services', tag: 'Electrical, landscaping, cleaning, pest',
+    headline: 'Your AI department, shaped for home services',
     sub: 'Electrical, landscaping, cleaning, pest control, pools, remodeling — if the work happens at someone\'s home and starts with a phone call, this is built for you.',
     pains: [
       'You are on a job with your hands full while new customers are calling.',
@@ -136,8 +136,8 @@ window.SANO_INDUSTRIES = [
     ]
   },
   {
-    slug: 'auto', em: '🚗', label: 'Auto', tag: 'Dealers, repair, body & tire',
-    headline: 'Your AI department, already built for auto',
+    slug: 'auto', built: false, em: '🚗', label: 'Auto', tag: 'Dealers, repair, body & tire',
+    headline: 'Your AI department, shaped for auto',
     sub: 'Service calls, quote requests, and test-drive inquiries answered the moment they come in — so the buyer who is ready right now talks to you and not the next lot.',
     pains: [
       'Calls come in while every advisor is already with a customer.',
@@ -168,8 +168,8 @@ window.SANO_INDUSTRIES = [
     ]
   },
   {
-    slug: 'med-spa', em: '💆', label: 'Med Spa & Aesthetics', tag: 'Med spas, salons & wellness',
-    headline: 'Your AI department, already built for aesthetics & wellness',
+    slug: 'med-spa', built: false, em: '💆', label: 'Med Spa & Aesthetics', tag: 'Med spas, salons & wellness',
+    headline: 'Your AI department, shaped for aesthetics & wellness',
     sub: 'A warm, on-brand front desk that never closes — booking consultations, protecting your calendar, and bringing clients back, without adding staff.',
     pains: [
       'A lot of booking requests arrive after the front desk has gone home.',
@@ -195,13 +195,13 @@ window.SANO_INDUSTRIES = [
     faqs: [
       ['Can it sound like our brand?', 'Yes. We write and tune the voice with you so it sounds like your front desk, in English and Spanish.'],
       ['Will it reduce no-shows?', 'It sends reminders and confirmations and makes rescheduling simple, which is what protects the calendar.'],
-      ['How is client information handled?', 'The assistant collects the name, contact details and the treatment they are asking about. Where that counts as protected health information it is handled that way — not used for anything else, not sent anywhere it should not go. It does not ask for medical history, and anything sensitive is routed to your team. If your practice needs a signed business associate agreement, we will tell you before you pay us whether we can sign one for the setup you want.'],
+      ['How is client information handled?', 'The assistant collects the name, contact details and the treatment they are asking about. Where that counts as protected health information it is handled that way — not used for anything else, not sent anywhere it should not go. It does not ask for medical history, and anything sensitive is routed to your team. If you are a covered practice, we sign a business associate agreement before anything touches patient information — no agreement, no launch.'],
       ['Is the texting compliant? I don\'t want trouble.', 'Yes — and it matters most when you are promoting a treatment. Here is how we handle it, rather than a blanket promise. Marketing texts only go to people who have given written permission. Every one has a clear way to stop, and we honor it immediately. We register your number for business texting properly instead of blasting from an unregistered line. We are not your lawyers, and we will decline a campaign we think puts you at risk.']
     ]
   },
   {
-    slug: 'dental', em: '🦷', label: 'Dental & Health', tag: 'Dental, chiro, vet & clinics',
-    headline: 'Your AI department, already built for practices',
+    slug: 'dental', built: false, em: '🦷', label: 'Dental & Health', tag: 'Dental, chiro, vet & clinics',
+    headline: 'Your AI department, shaped for practices',
     sub: 'New-patient calls answered and booked the moment they come in, recall handled automatically, and a schedule that stays full — without adding front-desk hours.',
     pains: [
       'New-patient calls come in while the front desk is with someone in the office.',
@@ -227,13 +227,13 @@ window.SANO_INDUSTRIES = [
     faqs: [
       ['Does it replace our front desk?', 'No. It covers what they cannot get to — calls while they are busy, after-hours inquiries, and recall outreach.'],
       ['Can it handle recall?', 'Yes. Recall and overdue-visit reminders run on a schedule you approve.'],
-['How do you handle patient privacy and HIPAA?', 'Straight answer: the assistant collects the name, contact details and the reason for the call. For a practice that reason counts as protected health information, so it is handled that way — it is not used for anything else and it is not sent anywhere it should not go. The assistant does not ask for clinical history, and anything sensitive is routed to your team rather than handled automatically. Where you need a signed business associate agreement, we will tell you before you pay us whether we can sign one for the setup you want.'],
+['How do you handle patient privacy and HIPAA?', 'Straight answer: the assistant collects the name, contact details and the reason for the call. For a practice that reason counts as protected health information, so it is handled that way — it is not used for anything else and it is not sent anywhere it should not go. The assistant does not ask for clinical history, and anything sensitive is routed to your team rather than handled automatically. If you are a covered practice, we sign a business associate agreement before anything touches patient information — no agreement, no launch.'],
       ['Is the texting compliant? I don\'t want trouble.', 'Yes — and it matters most when you are running recall. Here is how we handle it, rather than a blanket promise. Marketing texts only go to people who have given written permission. Every one has a clear way to stop, and we honor it immediately. We register your number for business texting properly instead of blasting from an unregistered line. We are not your lawyers, and we will decline a campaign we think puts you at risk.']
     ]
   },
   {
-    slug: 'retail', em: '🛍️', label: 'Retail & Local Shops', tag: 'Shops, studios & storefronts',
-    headline: 'Your AI department, already built for local shops',
+    slug: 'retail', built: false, em: '🛍️', label: 'Retail & Local Shops', tag: 'Shops, studios & storefronts',
+    headline: 'Your AI department, shaped for local shops',
     sub: 'Answer every question, take every booking, and stay in touch with the customers you already have — while you are busy running the floor.',
     pains: [
       'Questions come in by phone, text, and social while you are helping someone in person.',
