@@ -570,3 +570,10 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
 /* icons only fill a container that has an explicit size */
 .pick .em .ico,.ind .em .ico,.feat .ic .ico,.v-badge .ic .ico{display:block;width:100%;height:100%}
 .bubble .ico,p > .ico,li > .ico{width:15px;height:15px;vertical-align:-2px}
+
+/* on a phone the form leads, so its reason-to-complete has to travel with it */
+.vp-mobile{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:8px;font-size:14px;color:var(--ink-soft)}
+.vp-mobile li{position:relative;padding-left:22px;line-height:1.5}
+.vp-mobile li::before{content:'';position:absolute;left:0;top:6px;width:12px;height:7px;border-left:2.5px solid var(--blue);border-bottom:2.5px solid var(--blue);transform:rotate(-45deg)}
+@media(min-width:901px){.vp-mobile{display:none}}
+@media(max-width:900px){.demo-hero .hero-grid > .reveal > ul{display:none!important}}
