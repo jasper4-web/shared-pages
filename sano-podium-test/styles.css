@@ -85,12 +85,14 @@ header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdro
 /* ---------- hero (home split) ---------- */
 .hero{padding:76px 0 44px}
 .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--blue-d);background:var(--blue-t);padding:7px 14px;border-radius:999px;margin-bottom:22px}
+.hero-grid>*{min-width:0}
+.eyebrow{display:inline-flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:13px;font-weight:600;color:var(--blue-d);background:var(--blue-t);padding:7px 14px;border-radius:999px;margin-bottom:22px}
 .hero h1{font-size:clamp(40px,5.4vw,62px);font-weight:700}
 .hero p.sub{font-size:20px;color:var(--ink-soft);margin-top:22px;max-width:34ch}
 .hero-cta{display:flex;gap:14px;margin-top:32px;flex-wrap:wrap}
 .hero-trust{margin-top:26px;font-size:14px;color:var(--ink-mut);display:flex;align-items:center;gap:4px 14px;flex-wrap:wrap}
 .hero-trust>span{white-space:nowrap}
+@media(max-width:480px){.hero-trust>.t{white-space:normal}}
 @media(max-width:960px){.hero-grid{grid-template-columns:1fr;gap:36px}.hero p.sub{max-width:none}}
 
 /* ---------- page hero (centered, inner pages) ---------- */
@@ -583,3 +585,9 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
   .form-card{padding:22px 18px}
   .form-card .btn-lg{white-space:normal}
 }
+
+/* customer-comprehension round: reassurance bands on industry pages */
+.mapped-reassure{max-width:60ch;margin:18px auto 0;font-size:15.5px;line-height:1.6;color:var(--ink-soft);background:var(--blue-t);border-radius:12px;padding:14px 18px}
+.privacy-band{max-width:60ch;margin:14px auto 0;font-size:15px;line-height:1.6;color:var(--ink-soft);background:var(--paper-2);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:12px 16px;text-align:left}
+.bp-gloss{max-width:70ch;margin:0 auto 6px;color:var(--ink-mut);font-size:15px}
+.how-it-sounds{max-width:70ch;margin:22px auto 0;font-size:15.5px;line-height:1.65;color:var(--ink-soft);background:var(--paper);border-radius:12px;padding:14px 18px}
