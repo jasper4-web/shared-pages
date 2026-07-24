@@ -36,7 +36,7 @@
       '<div class="nav-right">' +
         '<a href="tel:' + PHONE + '" class="nav-phone">' + PHONE_D + '</a>' +
         '<a href="tel:' + PHONE + '" class="nav-call" aria-label="Call us"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.11 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>' +
-        '<a href="demo.html" class="btn btn-blue">Request a demo</a>' + '<button class="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>' +
+        '<a href="demo.html" class="btn btn-blue"' + (page === 'demo' ? ' aria-current="page"' : '') + '>Request a demo</a>' + '<button class="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>' +
       '</div>' +
     '</div></header>' +
     '<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu">' +
@@ -57,24 +57,24 @@
 
   var foot =
     '<footer><div class="wrap">' +
-      '<div class="foot-grid">' +
+      '<nav aria-label="Footer"><div class="foot-grid">' +
         '<div class="foot-brand">' +
           '<div class="brand"><img src="sano-logo.png" alt="" width="30" height="30"/> SANO Systems</div>' +
           '<p>You run your business. We run the AI.</p>' +
           '<a href="tel:' + PHONE + '" class="c">' + PHONE_D + '</a>' +
           '<a href="mailto:' + EMAIL + '" class="c">' + EMAIL + '</a>' +
         '</div>' +
-        '<div class="foot-col"><h4>What we run</h4>' +
+        '<div class="foot-col"><h2 class="foot-col-h">What we run</h2>' +
           '<a href="ai-employee.html#frontdesk">The front desk</a><a href="ai-employee.html#reviews">Reviews</a>' +
-          '<a href="ai-employee.html#marketing">Marketing &amp; payments</a><a href="pricing.html">Pricing</a></div>' +
-        '<div class="foot-col"><h4>Industries</h4>' + indFoot + '</div>' +
-        '<div class="foot-col"><h4>Company</h4>' +
-          '<a href="about.html">Why SANO</a><a href="resources.html">Resources</a>' +
+          '<a href="ai-employee.html#marketing">Marketing &amp; payments</a><a href="sample-blueprint.html">Sample blueprint</a></div>' +
+        '<div class="foot-col"><h2 class="foot-col-h">Industries</h2>' + indFoot + '</div>' +
+        '<div class="foot-col"><h2 class="foot-col-h">Company</h2>' +
+          '<a href="about.html">Why SANO</a><a href="resources.html">Resources</a><a href="pricing.html">Pricing</a>' +
           '<a href="about.html#bilingual">Se habla Español</a><a href="mailto:' + EMAIL + '">Contact us</a></div>' +
-        '<div class="foot-col"><h4>Get started</h4>' +
+        '<div class="foot-col"><h2 class="foot-col-h">Get started</h2>' +
           '<a href="demo.html">Request a demo</a><a href="tel:' + PHONE + '">Talk to a person</a>' +
           '<a href="resources.html">Guides</a></div>' +
-      '</div>' +
+      '</div></nav>' +
       '<div class="foot-base"><span>© 2026 SANO Systems LLC. (Design test — not the live site.)</span>' +
         '<span><a href="privacy.html" style="color:#8A8A93">Privacy Policy</a> · <a href="terms.html" style="color:#8A8A93">Terms of Service</a></span></div>' +
     '</div></footer>';
@@ -91,8 +91,8 @@
     menu.classList.toggle('open', open);
     burger.setAttribute('aria-expanded', open ? 'true' : 'false');
     document.body.style.overflow = open ? 'hidden' : '';
-    var mainEl = document.getElementById('main');
-    if (mainEl) { if (open) { mainEl.setAttribute('inert',''); } else { mainEl.removeAttribute('inert'); } }
+    [document.querySelector('header'), document.getElementById('main'), document.getElementById('site-footer')]
+      .forEach(function (el) { if (!el) return; if (open) { el.setAttribute('inert',''); } else { el.removeAttribute('inert'); } });
   }
   var closeBtn = menu ? menu.querySelector('.mm-close') : null;
   if (burger && menu) {
