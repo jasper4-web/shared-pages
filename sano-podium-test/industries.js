@@ -36,7 +36,6 @@ window.SANO_INDUSTRIES = [
       ['Do I have to learn any of this?', 'No. That is the whole point. We build it, we run it, and we keep improving it. You approve it once and then go back to running your business.'],
       ['Will it handle emergency calls differently?', 'Yes. Your blueprint separates "my AC is out right now" from "I want a quote next month," so urgent jobs get treated as urgent.'],
       ['What if it does not know an answer?', 'It never guesses about your business. It takes the details and passes them to you right away, so the customer still feels taken care of.'],
-      ['Is the texting compliant? I don\'t want trouble.', 'It matters most in a heat wave, when you are messaging a lot of people at once. Here is how we handle it, rather than a blanket yes. Marketing texts only go to people who have given written permission. Every one has a clear way to stop, and we honor it immediately. We register your number for business texting properly instead of blasting from an unregistered line. We are not your lawyers, and we will decline a campaign we think puts you at risk.']
     ]
   },
   {
@@ -68,7 +67,6 @@ window.SANO_INDUSTRIES = [
       ['Can it answer while I am on a job?', 'That is exactly when it works hardest. On Starter it texts back within seconds; from Growth up it picks up the phone live, whether you are free or elbow-deep under a sink.'],
       ['Will customers know it is not me?', 'It sounds like a friendly, professional person on your team, and it speaks English and Spanish. Anything it cannot answer comes straight to you.'],
       ['Does it help me get paid faster?', 'Yes — invoicing and pay-by-text come in at the Scale level. It sends the invoice and a secure pay-by-text link right after the job, instead of it waiting until you get home.'],
-      ['Is the texting compliant? I don\'t want trouble.', 'It matters most when you are texting after hours. Here is how we handle it, rather than a blanket yes. Marketing texts only go to people who have given written permission. Every one has a clear way to stop, and we honor it immediately. We register your number for business texting properly instead of blasting from an unregistered line. We are not your lawyers, and we will decline a campaign we think puts you at risk.']
     ]
   },
   {
@@ -100,7 +98,6 @@ window.SANO_INDUSTRIES = [
       ['Can it keep up after a big storm?', 'Yes. From Growth up it answers every caller at once, so nobody sits on hold while you are on a roof. On Starter every missed call gets an instant text back instead.'],
       ['Does it chase my estimates?', 'It follows up automatically on a schedule you approve — the part that usually gets dropped when you are busy.'],
       ['What about the slow months?', 'Your blueprint includes check-in and inspection campaigns to your past customers so the phone still rings between storms.'],
-      ['Is the texting compliant? I don\'t want trouble.', 'It matters most after a storm, when you are contacting a whole neighborhood. Here is how we handle it, rather than a blanket yes. Marketing texts only go to people who have given written permission. Every one has a clear way to stop, and we honor it immediately. We register your number for business texting properly instead of blasting from an unregistered line. We are not your lawyers, and we will decline a campaign we think puts you at risk.']
     ]
   },
   {
@@ -132,7 +129,6 @@ window.SANO_INDUSTRIES = [
       ['My trade is not listed. Does it still work?', 'Yes. The blueprint is shaped to your services and how you actually work. Any business that books jobs and answers calls fits.'],
       ['Do I have to manage it?', 'No. We build it, run it, and improve it. That is what you are paying for.'],
       ['Will it work with how I already schedule?', 'We fit it around your existing calendar and process instead of forcing you to change how you work.'],
-      ['Is the texting compliant? I don\'t want trouble.', 'It matters most when you are running a seasonal campaign. Here is how we handle it, rather than a blanket yes. Marketing texts only go to people who have given written permission. Every one has a clear way to stop, and we honor it immediately. We register your number for business texting properly instead of blasting from an unregistered line. We are not your lawyers, and we will decline a campaign we think puts you at risk.']
     ]
   },
   {
@@ -164,7 +160,6 @@ window.SANO_INDUSTRIES = [
       ['Can it book service and test drives?', 'Yes — against your real availability, then it confirms with the customer automatically.'],
       ['Does it work after we close?', 'That is where it earns its keep. Evening and weekend inquiries get answered and booked instead of going cold.'],
       ['Will it fit how our shop runs?', 'We build it around your process. Nothing goes live until you have seen it and approved it.'],
-      ['Is the texting compliant? I don\'t want trouble.', 'It matters most when you are messaging a service list. Here is how we handle it, rather than a blanket yes. Marketing texts only go to people who have given written permission. Every one has a clear way to stop, and we honor it immediately. We register your number for business texting properly instead of blasting from an unregistered line. We are not your lawyers, and we will decline a campaign we think puts you at risk.']
     ]
   },
   {
@@ -196,7 +191,6 @@ window.SANO_INDUSTRIES = [
       ['Can it sound like our brand?', 'Yes. We write and tune the voice with you so it sounds like your front desk, in English and Spanish.'],
       ['Will it reduce no-shows?', 'It sends reminders and confirmations and makes rescheduling simple, which is what protects the calendar.'],
       ['How is client information handled?', 'The assistant collects the name, contact details and the treatment they are asking about. Where that counts as protected health information it is handled that way — not used for anything else, not sent anywhere it should not go. It does not ask for medical history, and anything sensitive is routed to your team. If you are a covered practice, we sign a business associate agreement before anything touches patient information — no agreement, no launch.'],
-      ['Is the texting compliant? I don\'t want trouble.', 'It matters most when you are promoting a treatment. Here is how we handle it, rather than a blanket yes. Marketing texts only go to people who have given written permission. Every one has a clear way to stop, and we honor it immediately. We register your number for business texting properly instead of blasting from an unregistered line. We are not your lawyers, and we will decline a campaign we think puts you at risk.']
     ]
   },
   {
@@ -228,7 +222,6 @@ window.SANO_INDUSTRIES = [
       ['Does it replace our front desk?', 'No. It covers what they cannot get to — calls while they are busy, after-hours inquiries, and recall outreach.'],
       ['Can it handle recall?', 'Yes. Recall and overdue-visit reminders run on a schedule you approve.'],
 ['How do you handle patient privacy and HIPAA?', 'Straight answer: the assistant collects the name, contact details and the reason for the call. For a practice that reason counts as protected health information, so it is handled that way — it is not used for anything else and it is not sent anywhere it should not go. The assistant does not ask for clinical history, and anything sensitive is routed to your team rather than handled automatically. If you are a covered practice, we sign a business associate agreement before anything touches patient information — no agreement, no launch.'],
-      ['Is the texting compliant? I don\'t want trouble.', 'It matters most when you are running recall. Here is how we handle it, rather than a blanket yes. Marketing texts only go to people who have given written permission. Every one has a clear way to stop, and we honor it immediately. We register your number for business texting properly instead of blasting from an unregistered line. We are not your lawyers, and we will decline a campaign we think puts you at risk.']
     ]
   },
   {
@@ -260,7 +253,6 @@ window.SANO_INDUSTRIES = [
       ['I do not take appointments. Is this still useful?', 'Yes. Answering questions instantly and staying in touch with past customers matters whether or not you book time slots.'],
       ['Can it answer messages from social too?', 'Phone and text are what we run today, and they land in one place. Social messaging is not part of the service yet — we would rather say so than sell you something we have not built.'],
       ['Do I have to run any of it?', 'No. We build it and run it. You approve how it sounds and then get on with your day.'],
-      ['Is the texting compliant? I don\'t want trouble.', 'It matters most when you are sending a promotion. Here is how we handle it, rather than a blanket yes. Marketing texts only go to people who have given written permission. Every one has a clear way to stop, and we honor it immediately. We register your number for business texting properly instead of blasting from an unregistered line. We are not your lawyers, and we will decline a campaign we think puts you at risk.']
     ]
   }
 ];
