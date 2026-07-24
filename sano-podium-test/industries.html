@@ -64,7 +64,7 @@
 <section class="band paper">
   <div class="wrap">
     <div class="sec-head reveal"><p class="kick">Pick yours</p><h2>See what's inside your blueprint</h2></div>
-    <div class="ind-grid" id="all-inds"><a class="ind" href="industry.html?ind=hvac"><div class="em" aria-hidden="true">❄️</div><h3>HVAC</h3><p>Heating, cooling & air quality</p><span class="more">See the blueprint &rarr;</span></a><a class="ind" href="industry.html?ind=plumbing"><div class="em" aria-hidden="true">🔧</div><h3>Plumbing</h3><p>Service, repair & drain work</p><span class="more">See the blueprint &rarr;</span></a><a class="ind" href="industry.html?ind=roofing"><div class="em" aria-hidden="true">🏠</div><h3>Roofing</h3><p>Repair, replacement & storm work</p><span class="more">See the blueprint &rarr;</span></a><a class="ind" href="industry.html?ind=home-services"><div class="em" aria-hidden="true">🧰</div><h3>Home Services</h3><p>Electrical, landscaping, cleaning, pest</p><span class="more">See the blueprint &rarr;</span></a><a class="ind" href="industry.html?ind=auto"><div class="em" aria-hidden="true">🚗</div><h3>Auto</h3><p>Dealers, repair, body & tire</p><span class="more">See the blueprint &rarr;</span></a><a class="ind" href="industry.html?ind=med-spa"><div class="em" aria-hidden="true">💆</div><h3>Med Spa & Aesthetics</h3><p>Med spas, salons & wellness</p><span class="more">See the blueprint &rarr;</span></a><a class="ind" href="industry.html?ind=dental"><div class="em" aria-hidden="true">🦷</div><h3>Dental & Health</h3><p>Dental, chiro, vet & clinics</p><span class="more">See the blueprint &rarr;</span></a><a class="ind" href="industry.html?ind=retail"><div class="em" aria-hidden="true">🛍️</div><h3>Retail & Local Shops</h3><p>Shops, studios & storefronts</p><span class="more">See the blueprint &rarr;</span></a></div>
+    <div class="ind-grid" id="all-inds"><a class="ind" href="industry-hvac.html"><div class="em" aria-hidden="true">❄️</div><h3>HVAC</h3><p>Heating, cooling & air quality</p><span class="more">See the blueprint &rarr;</span></a><a class="ind" href="industry-plumbing.html"><div class="em" aria-hidden="true">🔧</div><h3>Plumbing</h3><p>Service, repair & drain work</p><span class="more">See the blueprint &rarr;</span></a><a class="ind" href="industry-roofing.html"><div class="em" aria-hidden="true">🏠</div><h3>Roofing</h3><p>Repair, replacement & storm work</p><span class="more">See the blueprint &rarr;</span></a><a class="ind" href="industry-home-services.html"><div class="em" aria-hidden="true">🧰</div><h3>Home Services</h3><p>Electrical, landscaping, cleaning, pest</p><span class="more">See the blueprint &rarr;</span></a><a class="ind" href="industry-auto.html"><div class="em" aria-hidden="true">🚗</div><h3>Auto</h3><p>Dealers, repair, body & tire</p><span class="more">See the blueprint &rarr;</span></a><a class="ind" href="industry-med-spa.html"><div class="em" aria-hidden="true">💆</div><h3>Med Spa & Aesthetics</h3><p>Med spas, salons & wellness</p><span class="more">See the blueprint &rarr;</span></a><a class="ind" href="industry-dental.html"><div class="em" aria-hidden="true">🦷</div><h3>Dental & Health</h3><p>Dental, chiro, vet & clinics</p><span class="more">See the blueprint &rarr;</span></a><a class="ind" href="industry-retail.html"><div class="em" aria-hidden="true">🛍️</div><h3>Retail & Local Shops</h3><p>Shops, studios & storefronts</p><span class="more">See the blueprint &rarr;</span></a></div>
     <p style="text-align:center;color:var(--ink-mut);font-size:14px;margin-top:26px" class="reveal">
       These are examples, not limits. If your business answers calls, books work, or follows up with customers, we'll build the blueprint around what you actually do.
     </p>
@@ -78,7 +78,7 @@
     <h2>Let's shape your blueprint</h2>
     <p>15 minutes. We'll walk you through the version we'd build for your business.</p>
     <div class="hero-cta"><a href="demo.html" class="btn btn-onblue btn-lg">Book your free demo</a></div>
-      <p class="cta-phone">Or call <a href="tel:+18325557266">(832) 555-SANO</a> — a person picks up. <em>(Placeholder number on this test site.)</em></p>
+      <p class="cta-phone">Or call <a href="tel:+18325557266">(832) 555-SANO</a> — a real person answers, not a queue. <em>(Placeholder number on this test site.)</em></p>
   </div></div>
 </section>
 
@@ -92,7 +92,7 @@
 (function () {
   var IND = window.SANO_INDUSTRIES || [];
   document.getElementById('all-inds').innerHTML = IND.map(function (i) {
-    return '<a class="ind reveal" href="industry.html?ind=' + i.slug + '">' +
+    return '<a class="ind reveal" href="industry-' + i.slug + '.html">' +
       '<div class="em" aria-hidden="true">' + i.em + '</div><h3>' + i.label + '</h3><p>' + i.tag + '</p>' +
       '<span class="more">See the blueprint →</span></a>';
   }).join('');
