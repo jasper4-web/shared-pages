@@ -37,9 +37,10 @@
         '<li class="' + (page === 'about' ? 'active' : '') + '"><a href="about.html"' + (page === 'about' ? (here('about.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>Why SANO</a></li>' +
       '</ul></nav>' +
       '<div class="nav-right">' +
-        '<a href="tel:' + PHONE + '" class="nav-phone">' + PHONE_D + '</a>' +
+        '<div class="nav-contact"><a href="tel:' + PHONE + '" class="nav-phone">' + PHONE_D + '</a>' +
+          '<a href="about.html#bilingual" class="nav-es">Se habla Espa&ntilde;ol</a></div>' +
         '<a href="tel:' + PHONE + '" class="nav-call" aria-label="Call us"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.11 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>' +
-        '<a href="demo.html" class="btn btn-blue"' + (page === 'demo' ? ' aria-current="page"' : '') + '>Request a demo</a>' + '<button class="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>' +
+        '<a href="demo.html" class="btn btn-blue nav-cta" aria-label="Request a demo"' + (page === 'demo' ? ' aria-current="page"' : '') + '>Request a demo</a>' + '<button class="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>' +
       '</div>' +
     '</div></header>' +
     '<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu">' +
@@ -51,6 +52,7 @@
       '<a href="resources.html"' + (page === 'resources' ? ' class="mm-on" aria-current="' + (here('resources.html') ? 'page' : 'true') + '"' : '') + '>Resources</a>' +
       '<a href="about.html"' + (page === 'about' ? ' class="mm-on" aria-current="' + (here('about.html') ? 'page' : 'true') + '"' : '') + '>Why SANO</a>' +
       '<a href="tel:' + PHONE + '">' + PHONE_D + '</a>' +
+      '<a href="about.html#bilingual">Se habla Espa&ntilde;ol</a>' +
       '<a href="demo.html" class="btn btn-blue btn-lg">Request a demo</a>' +
     '</div>';
 
