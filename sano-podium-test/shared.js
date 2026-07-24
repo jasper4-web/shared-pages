@@ -82,8 +82,8 @@
 
   /* One source of truth for the risk-reversal + contact lines under every CTA.
      These were hardcoded in 18 files and had already drifted apart. */
-  var GUARANTEE = '<strong>30 days from go-live, money-back on the monthly fee</strong> — taking it also ends the minimum term. ' +
-    'Setup is <strong>half at kickoff, half at go-live</strong>; you don\'t owe the balance if we don\'t deliver your approved blueprint.';
+  var GUARANTEE = '<strong>30 days after it starts answering, money-back on the monthly fee</strong> — taking it also ends the minimum term. ' +
+    'Setup is <strong>half to begin, half the day it starts answering your customers</strong>; you don\'t owe the balance if we don\'t deliver the plan you approved.';
   var CONTACT = 'Or <a href="sms:' + PHONE + '?&body=' + encodeURIComponent('I\'d like a demo for my business') + '">text us</a>, ' +
     'or call <a href="tel:' + PHONE + '">' + PHONE_D + '</a> — you\'ll get a person, not a queue. ' +
     '<em>(Placeholder number on this test site.)</em>';
