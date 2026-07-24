@@ -144,7 +144,7 @@ window.SANO_INDUSTRIES = [
       'Answers every service call and web inquiry, day or night',
       'Books service and repair appointments on your schedule',
       'Follows up on quotes and inquiries until you get an answer',
-      'Brings past customers back with service reminders'
+      'Answers "is my car ready?" status calls, and brings past customers back with reminders'
     ],
     blueprint: [
       'A script trained on service and sales questions',
@@ -188,9 +188,11 @@ window.SANO_INDUSTRIES = [
     truth: 'An empty chair cannot be resold later. Reminders and easy rescheduling are what keep the day full.',
     objection: ['"Our brand voice matters."', 'Agreed. We tune the wording with you, and nothing speaks to a client until you have signed off on how it sounds.'],
     faqs: [
+      ['Will it answer medical questions?', 'No — never. Dosing, candidacy, whether a treatment is right for someone, contraindications, results: every one of those is handed to your clinical team or supervising provider. The assistant books, reminds and answers logistics, and stays completely out of anything clinical.'],
+      ['Can a new client book straight into a treatment?', 'No. New clients are booked into a consultation first, not an injectable or treatment chair — the assistant knows the difference and protects your calendar.'],
       ['Can it sound like our brand?', 'Yes. We write and tune the voice with you so it sounds like your front desk, in English and Spanish.'],
       ['Will it reduce no-shows?', 'It sends reminders and confirmations and makes rescheduling simple, which is what protects the calendar.'],
-      ['How is client information handled?', 'The assistant collects the name, contact details and the treatment they are asking about. Where that counts as protected health information, it is handled that way. It is not used for anything else. It does not go anywhere it should not. It does not ask for medical history, and anything sensitive is routed to your team. If you are a covered practice, we sign a business associate agreement before anything touches patient information — no agreement, no launch.'],
+      ['How is client information handled?', 'The assistant collects the name, contact details and the treatment they are asking about. Where that counts as protected health information, it is handled that way. It is not used for anything else. It does not go anywhere it should not. It does not ask for medical history, and anything sensitive is routed to your team. If you run a medical med spa, we sign a business associate agreement before anything touches patient information — no agreement, no launch.'],
     ]
   },
   {
@@ -219,11 +221,13 @@ window.SANO_INDUSTRIES = [
     truth: 'Recall is the most predictable work a practice has, and it is usually the first thing that slips when the front desk gets busy.',
     objection: ['"We have front-desk staff."', 'This is not a replacement. It covers the overflow, the after-hours calls, and the recall work that keeps getting pushed to tomorrow.'],
     faqs: [
+      ['What about an after-hours call from someone in pain?', 'It follows the rules you approve: it can text you or your on-call line right away, give only the emergency guidance you have pre-approved, and it never offers clinical advice. You decide what counts as urgent and what happens next — it just makes sure the call is not missed.'],
+      ['Can it tell people whether we take their insurance?', 'It answers in-network yes or no from the plan list you give us, and books the visit. Anything past that — a coverage estimate, a claim question — it captures and hands to your front desk instead of guessing.'],
       ['How does it handle insurance and billing questions?', 'It does not guess at coverage or quote a price it is not sure of. It captures the plan details and the question, books the visit if the patient wants one, and passes the billing question straight to your front desk with everything already written down — so your team gives the accurate answer instead of the patient hearing a wrong one.'],
       ['Does it book into our practice software?', 'It books into the calendar we set up and keeps it in sync. For practices on Dentrix, Eaglesoft or Open Dental it hands your team the booking to drop in rather than writing into your chart directly, so nothing double-books a chair. We confirm exactly how it connects with you before launch.'],
       ['Does it replace our front desk?', 'No. It covers what they cannot get to — calls while they are busy, after-hours inquiries, and recall outreach.'],
       ['Can it handle recall?', 'Yes. Recall and overdue-visit reminders run on a schedule you approve.'],
-['How do you handle patient privacy and HIPAA?', 'Straight answer: the assistant collects the name, contact details and the reason for the call. For a practice, that reason counts as protected health information. So it is handled that way. It is not used for anything else, and it does not go anywhere it should not. The assistant does not ask for clinical history, and anything sensitive is routed to your team rather than handled automatically. If you are a covered practice, we sign a business associate agreement before anything touches patient information — no agreement, no launch.'],
+['How do you handle patient privacy and HIPAA?', 'Straight answer: the assistant collects the name, contact details and the reason for the call. For a practice, that reason counts as protected health information. So it is handled that way. It is not used for anything else, and it does not go anywhere it should not. The assistant does not ask for clinical history, and anything sensitive is routed to your team rather than handled automatically. If you run a medical med spa, we sign a business associate agreement before anything touches patient information — no agreement, no launch.'],
     ]
   },
   {
