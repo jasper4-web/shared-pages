@@ -184,7 +184,7 @@ window.SANO_INDUSTRIES = [
     ],
     blueprint: [
       'A warm, on-brand script for consultations and treatments',
-      'Booking with deposits where you want them',
+      'Booking that works with however you already take deposits',
       'Reminders and confirmations that cut no-shows',
       'Rebooking and new-treatment campaigns to past clients',
       'The same review request after every visit'
@@ -241,14 +241,14 @@ window.SANO_INDUSTRIES = [
       'Reviews only happen by luck, so your rating does not reflect your service.'
     ],
     runs: [
-      'Answers questions about hours, stock, and services across every channel',
+      'Answers questions about hours, stock and services by phone and text',
       'Takes bookings and appointments where you offer them',
       'Runs promotions and reminders to past customers',
       'The same review ask after every purchase or visit'
     ],
     blueprint: [
       'A script trained on your hours, services, and common questions',
-      'One place for calls, texts, and messages',
+      'One place for calls and texts',
       'Promotion and win-back campaigns to past customers',
       'Booking and reminders where you take appointments',
       'The same review request after a purchase or visit'
@@ -258,7 +258,7 @@ window.SANO_INDUSTRIES = [
     objection: ['"I am small — is this overkill?"', 'Start with the front desk that never sleeps and add from there. The point is to stop losing people you already earned.'],
     faqs: [
       ['I do not take appointments. Is this still useful?', 'Yes. Answering questions instantly and staying in touch with past customers matters whether or not you book time slots.'],
-      ['Can it answer messages from social too?', 'Yes — calls, texts, and messages land in one place and get answered the same way.'],
+      ['Can it answer messages from social too?', 'Phone and text are what we run today, and they land in one place. Social messaging is not part of the service yet — we would rather say so than sell you something we have not built.'],
       ['Do I have to run any of it?', 'No. We build it and run it. You approve how it sounds and then get on with your day.'],
       ['Is the texting compliant? I don\'t want trouble.', 'Yes — and it matters most when you are sending a promotion. Here is how we handle it, rather than a blanket promise. Marketing texts only go to people who have given written permission. Every one has a clear way to stop, and we honor it immediately. We register your number for business texting properly instead of blasting from an unregistered line. We are not your lawyers, and we will decline a campaign we think puts you at risk.']
     ]

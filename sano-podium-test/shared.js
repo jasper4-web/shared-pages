@@ -70,7 +70,7 @@
         '<div class="foot-col"><h4>Industries</h4>' + indFoot + '</div>' +
         '<div class="foot-col"><h4>Company</h4>' +
           '<a href="about.html">Why SANO</a><a href="resources.html">Resources</a>' +
-          '<a href="about.html#bilingual">Se habla Español</a><a href="demo.html">Contact us</a></div>' +
+          '<a href="about.html#bilingual">Se habla Español</a><a href="mailto:' + EMAIL + '">Contact us</a></div>' +
         '<div class="foot-col"><h4>Get started</h4>' +
           '<a href="demo.html">Book a demo</a><a href="tel:' + PHONE + '">Talk to a person</a>' +
           '<a href="resources.html">Free guides</a></div>' +
