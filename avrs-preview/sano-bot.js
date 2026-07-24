@@ -354,12 +354,17 @@
        given element. On a phone the floating pill otherwise sits on top of the
        hero demo and covers it, which reads as sloppy — and the assistant is
        most useful further down anyway, at the offer and the FAQ. */
-    if (CFG.revealAfter) {
-      var gate = document.querySelector(CFG.revealAfter);
+    if (CFG.revealAfter || CFG.hideAfter) {
+      var gate = CFG.revealAfter ? document.querySelector(CFG.revealAfter) : null;
+      var endGate = CFG.hideAfter ? document.querySelector(CFG.hideAfter) : null;
       var update = function () {
         if (panel.classList.contains('open')) return;
+        /* past the opening section... */
         var past = !gate || gate.getBoundingClientRect().bottom < 90;
-        launcher.classList.toggle('sb-hidden', !past);
+        /* ...but not yet into the closing section, where the page's own CTA and
+           answers are on screen and a floating pill would just cover them */
+        var ended = endGate && endGate.getBoundingClientRect().top < window.innerHeight * 0.55;
+        launcher.classList.toggle('sb-hidden', !past || ended);
       };
       window.addEventListener('scroll', update, { passive: true });
       window.addEventListener('resize', update, { passive: true });
