@@ -10,29 +10,31 @@
     return '<a href="industry-' + i.slug + '.html"><b>' + i.label + '</b><span>' + i.tag + '</span></a>';
   }).join('');
 
+  var HERE = (location.pathname.split('/').pop() || 'index.html');
+  function here(f) { return HERE === f; }
   var caret = '<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>';
 
   var nav =
     '<div class="ribbon"><span aria-hidden="true">🧪</span> DESIGN TEST — SANO Systems inside Podium\'s structure &amp; flow. <b>Not our live site;</b> phone &amp; email shown are placeholders.</div>' +
     '<header><div class="wrap nav">' +
-      '<a href="index.html" class="brand"><img src="sano-logo.png" alt="" width="30" height="30"/> SANO Systems</a>' +
+      '<a href="index.html" class="brand" aria-label="SANO Systems — home"><img src="sano-logo.png" alt="" width="30" height="30"/><span class="bt">SANO Systems</span></a>' +
       '<nav aria-label="Main"><ul class="nav-links">' +
-        '<li class="' + (page === 'product' ? 'active' : '') + '"><a href="ai-employee.html"' + (page === 'product' ? ' aria-current="page"' : '') + '>What we run ' + caret + '</a>' +
+        '<li class="' + (page === 'product' ? 'active' : '') + '"><a href="ai-employee.html"' + (page === 'product' ? (here('ai-employee.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>What we run ' + caret + '</a>' +
           '<div class="dropdown">' +
             '<a href="ai-employee.html#frontdesk"><b>The front desk</b><span>Calls, texts &amp; booking, around the clock</span></a>' +
             '<a href="ai-employee.html#followup"><b>The follow-up</b><span>Chased until you get an answer</span></a>' +
-            '<a href="ai-employee.html#reviews"><b>Reviews &amp; reputation</b><span>Asked for after every job</span></a>' +
+            '<a href="ai-employee.html#reviews"><b>Reviews</b><span>Asked for after every job</span></a>' +
             '<a href="ai-employee.html#marketing"><b>Marketing &amp; payments</b><span>Campaigns, follow-up, pay-by-text</span></a>' +
             '<a href="ai-employee.html#command"><b>Your monthly report</b><span>What happened, in plain English</span></a>' +
             '<a href="sample-blueprint.html"><b>See a sample blueprint</b><span>The document a client actually approves</span></a>' +
           '</div>' +
         '</li>' +
-        '<li class="' + (page === 'industries' ? 'active' : '') + '"><a href="industries.html"' + (page === 'industries' ? ' aria-current="page"' : '') + '>Industries ' + caret + '</a>' +
+        '<li class="' + (page === 'industries' ? 'active' : '') + '"><a href="industries.html"' + (page === 'industries' ? (here('industries.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>Industries ' + caret + '</a>' +
           '<div class="dropdown">' + indDrop + '</div>' +
         '</li>' +
-        '<li class="' + (page === 'pricing' ? 'active' : '') + '"><a href="pricing.html"' + (page === 'pricing' ? ' aria-current="page"' : '') + '>Pricing</a></li>' +
-        '<li class="' + (page === 'resources' ? 'active' : '') + '"><a href="resources.html"' + (page === 'resources' ? ' aria-current="page"' : '') + '>Resources</a></li>' +
-        '<li class="' + (page === 'about' ? 'active' : '') + '"><a href="about.html"' + (page === 'about' ? ' aria-current="page"' : '') + '>Why SANO</a></li>' +
+        '<li class="' + (page === 'pricing' ? 'active' : '') + '"><a href="pricing.html"' + (page === 'pricing' ? (here('pricing.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>Pricing</a></li>' +
+        '<li class="' + (page === 'resources' ? 'active' : '') + '"><a href="resources.html"' + (page === 'resources' ? (here('resources.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>Resources</a></li>' +
+        '<li class="' + (page === 'about' ? 'active' : '') + '"><a href="about.html"' + (page === 'about' ? (here('about.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>Why SANO</a></li>' +
       '</ul></nav>' +
       '<div class="nav-right">' +
         '<a href="tel:' + PHONE + '" class="nav-phone">' + PHONE_D + '</a>' +
@@ -43,11 +45,11 @@
     '<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu">' +
       '<button class="mm-close" aria-label="Close menu">&times;</button>' +
       '<a href="index.html" class="mm-home"><img src="sano-logo.png" alt="" width="26" height="26"/> SANO Systems</a>' +
-      '<a href="ai-employee.html"' + (page === 'product' ? ' class="mm-on" aria-current="page"' : '') + '>What we run</a>' +
-      '<a href="industries.html"' + (page === 'industries' ? ' class="mm-on" aria-current="page"' : '') + '>Industries</a>' +
-      '<a href="pricing.html"' + (page === 'pricing' ? ' class="mm-on" aria-current="page"' : '') + '>Pricing</a>' +
-      '<a href="resources.html"' + (page === 'resources' ? ' class="mm-on" aria-current="page"' : '') + '>Resources</a>' +
-      '<a href="about.html"' + (page === 'about' ? ' class="mm-on" aria-current="page"' : '') + '>Why SANO</a>' +
+      '<a href="ai-employee.html"' + (page === 'product' ? ' class="mm-on" aria-current="' + (here('ai-employee.html') ? 'page' : 'true') + '"' : '') + '>What we run</a>' +
+      '<a href="industries.html"' + (page === 'industries' ? ' class="mm-on" aria-current="' + (here('industries.html') ? 'page' : 'true') + '"' : '') + '>Industries</a>' +
+      '<a href="pricing.html"' + (page === 'pricing' ? ' class="mm-on" aria-current="' + (here('pricing.html') ? 'page' : 'true') + '"' : '') + '>Pricing</a>' +
+      '<a href="resources.html"' + (page === 'resources' ? ' class="mm-on" aria-current="' + (here('resources.html') ? 'page' : 'true') + '"' : '') + '>Resources</a>' +
+      '<a href="about.html"' + (page === 'about' ? ' class="mm-on" aria-current="' + (here('about.html') ? 'page' : 'true') + '"' : '') + '>Why SANO</a>' +
       '<a href="tel:' + PHONE + '">' + PHONE_D + '</a>' +
       '<a href="demo.html" class="btn btn-blue btn-lg">Request a demo</a>' +
     '</div>';
@@ -100,10 +102,22 @@
     if (!trigger || !dd) return;
     trigger.setAttribute('aria-expanded', 'false');
     dd.setAttribute('role', 'group');
-    li.addEventListener('focusin', function () { trigger.setAttribute('aria-expanded', 'true'); });
-    li.addEventListener('focusout', function (e) { if (!li.contains(e.relatedTarget)) trigger.setAttribute('aria-expanded', 'false'); });
+    li.addEventListener('focusin', function () {
+      if (li.classList.contains('dismissed')) return;
+      trigger.setAttribute('aria-expanded', 'true');
+    });
+    li.addEventListener('focusout', function (e) {
+      if (!li.contains(e.relatedTarget)) { trigger.setAttribute('aria-expanded', 'false'); li.classList.remove('dismissed'); }
+    });
+    li.addEventListener('mouseleave', function () { li.classList.remove('dismissed'); });
     li.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') { trigger.setAttribute('aria-expanded', 'false'); trigger.focus(); }
+      if (e.key === 'Escape') {
+        li.classList.add('dismissed');
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.focus();
+      } else if (li.classList.contains('dismissed')) {
+        li.classList.remove('dismissed');
+      }
     });
   });
 
