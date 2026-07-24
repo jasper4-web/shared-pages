@@ -18,7 +18,7 @@
   --dark:#09090B;
   --dark-2:#131317;
   --amber:#F5A623;
-  --radius:14px; --radius-sm:10px; --radius-lg:24px;
+  --radius:16px; --radius-sm:10px; --radius-lg:24px;
   --shadow:0 10px 40px rgba(9,9,11,.08);
   --shadow-lg:0 24px 70px rgba(9,9,11,.14);
   --wrap:1180px; --wrap-narrow:920px;
@@ -600,7 +600,8 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
 .door-wrap{width:100%}
 .door-head{text-align:center;margin-bottom:26px}
 .door-head h1{font-size:clamp(25px,3.8vw,44px);line-height:1.08}
-.door-head p{font-size:clamp(15px,1.7vw,19px);color:var(--ink-soft);margin-top:12px}
+.door-head p{font-size:clamp(15px,1.7vw,18px);color:var(--ink-soft);margin-top:12px;max-width:64ch;margin-inline:auto;line-height:1.55}
+.door-head p b{color:var(--ink)}
 .door-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1000px;margin:0 auto}
 .door-tile{display:flex;flex-direction:column;align-items:flex-start;gap:9px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 20px;transition:border-color .18s,box-shadow .18s,transform .18s}
 .door-tile:hover{border-color:var(--blue);box-shadow:var(--shadow);transform:translateY(-3px)}
@@ -625,9 +626,78 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
 }
 /* the disclaimer ribbon must not steal the phone's first screen */
 @media(max-width:900px){.ribbon{font-size:11px;padding:5px 12px;line-height:1.35}}
+/* very small phones: shave so the orientation line + all 8 tiles still fit one screen */
+@media(max-width:560px){
+  .door-head p{font-size:13px;line-height:1.45;margin-top:8px}
+  .door-head h1{font-size:clamp(21px,6vw,27px)}
+  .door-head{margin-bottom:9px}
+  .door-tile{padding:11px 10px}
+  .door-grid{gap:8px}
+}
 
 /* industry-page hook section (the trade-specific promise, now below the brand hero) */
 #hook{padding-top:44px;padding-bottom:8px}
 #hook h2{font-size:clamp(24px,3.2vw,34px)}
 .hook-sub{font-size:19px;color:var(--ink-soft);line-height:1.6;margin:16px auto 0;max-width:60ch}
 #hook .mapped-reassure,#hook .privacy-band{margin-left:auto;margin-right:auto}
+
+/* ============ industry page: intentional pass (aesthetics reconciliation) ============ */
+/* 2-column hero with a chat visual, left-aligned, overriding the centered .page-hero */
+.ind-hero-sec{padding:56px 0 60px;text-align:left}
+.ind-hero-sec .backlink{display:inline-block;margin-bottom:20px}
+.ind-hero{align-items:center}
+.hero-tags{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.hero-tags .eyebrow{margin-bottom:0}
+.ready-tag{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:5px 11px;border-radius:999px;white-space:nowrap}
+.ind-hero h1{max-width:none;margin:0;font-size:clamp(34px,4.4vw,52px);text-wrap:balance}
+.ind-hero .sub{max-width:44ch;margin-top:20px}
+.ind-hero .hero-cta{justify-content:flex-start}
+.ind-hero .visual{margin-top:0}
+@media(max-width:960px){
+  .ind-hero-sec{text-align:center;padding:40px 0 44px}
+  .hero-tags{justify-content:center}
+  .ind-hero .sub{max-width:none;margin-inline:auto}
+  .ind-hero .hero-cta{justify-content:center}
+  .ind-hero .visual{margin-top:8px}
+}
+
+/* #hook is now a real section (kick + trade headline + emotional line), not filler */
+#hook .kick{margin-bottom:10px}
+#hook h2{font-size:clamp(25px,3.4vw,36px)}
+.hook-sub{font-size:19px;color:var(--ink-soft);line-height:1.65;margin:16px auto 0;max-width:60ch}
+
+/* blueprint intro reads as prose, not placeholder italics */
+.bp-gloss{font-size:15.5px;color:var(--ink-mut);max-width:70ch;margin:0 auto 8px;line-height:1.6}
+.bp-gloss em{font-style:normal}
+
+/* ONE callout system for the two supporting notes; price is the distinct money callout */
+.how-it-sounds,.minutes-note{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 20px;font-size:15px;line-height:1.6;text-align:left;margin:20px auto 0;max-width:760px}
+.price-strip{background:var(--blue-t);border:1px solid rgba(0,112,243,.25);border-radius:12px;padding:16px 20px;font-size:15px;line-height:1.6;text-align:left;margin:20px auto 0;max-width:760px;color:var(--ink-soft)}
+.blueprint-season{max-width:760px;margin:18px auto 0;text-align:left;font-size:15px;color:var(--ink-mut)}
+
+/* numbered blueprint rows must not look like the FAQ accordion (no border, clearly static) */
+.bp-list li{background:#fff;border:none;box-shadow:0 1px 3px rgba(9,9,11,.06)}
+
+/* industry / 'other blueprints' cards line up across a row regardless of copy length */
+.ind{display:flex;flex-direction:column}
+.ind .badge-built,.ind .badge-mapped{margin-top:auto}
+.ind .more{margin-top:14px}
+
+/* 'We build yours' badge should read with the same confidence as the blue one */
+.badge-mapped{background:#F3EFE6;color:#4A3D22}
+
+/* CTA fine-print shouldn't be a full-width gray wall under the buttons */
+.cta-guarantee{max-width:62ch;margin-left:auto;margin-right:auto}
+
+/* corner radius matches the doorway's 16px across the card system */
+
+/* industries 'same bones' = 6 cards in a clean 3+3 (was ragged 4+2) */
+.feat-grid-3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:820px){.feat-grid-3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.feat-grid-3{grid-template-columns:1fr}}
+/* resources: tighten the space before the closing CTA so the page doesn't read half-built */
+.res-tail{padding-bottom:20px}
+
+/* sample-blueprint: numbered sections get structure instead of reading like a Word doc */
+.article h2.sb-h{margin-top:40px;padding-top:26px;border-top:1px solid var(--line)}
+.article h2.sb-h:first-of-type{border-top:none;padding-top:0;margin-top:24px}
