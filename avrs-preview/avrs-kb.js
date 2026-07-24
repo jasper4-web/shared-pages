@@ -14,6 +14,7 @@ window.SANO_BOT_CONFIG = {
   subtitle: 'answers about your deal',
   avatar: 'S',
   launchLabel: 'Ask about the deal',
+  revealAfter: '.stage',   /* stay hidden until past the hero demo */
   placeholder: 'Ask me anything about it…',
   greeting: "Hey Anthony — ask me anything about this: the price, what you'd have to do, how your phone works, what happens if you don't like it. I'll give you straight answers. Anything I can't answer, Jasper will.",
 
