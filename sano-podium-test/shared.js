@@ -13,6 +13,7 @@
   var caret = '<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>';
 
   var nav =
+    '<a href="#main" class="skip">Skip to content</a>' +
     '<div class="ribbon">🧪 DESIGN TEST — SANO Systems inside Podium\'s structure &amp; flow. <b>Not our live site;</b> phone &amp; email shown are placeholders.</div>' +
     '<header><div class="wrap nav">' +
       '<a href="index.html" class="brand"><img src="sano-logo.png" alt="" width="30" height="30"/> SANO Systems</a>' +
@@ -20,6 +21,7 @@
         '<li class="' + (page === 'product' ? 'active' : '') + '"><a href="ai-employee.html">What we run ' + caret + '</a>' +
           '<div class="dropdown">' +
             '<a href="ai-employee.html#frontdesk"><b>The front desk</b><span>Calls, texts &amp; booking, around the clock</span></a>' +
+            '<a href="ai-employee.html#followup"><b>The follow-up</b><span>Chased until you get an answer</span></a>' +
             '<a href="ai-employee.html#reviews"><b>Reviews &amp; reputation</b><span>Asked for after every job</span></a>' +
             '<a href="ai-employee.html#marketing"><b>Marketing &amp; payments</b><span>Campaigns, follow-up, pay-by-text</span></a>' +
             '<a href="ai-employee.html#command"><b>Your monthly report</b><span>What happened, in plain English</span></a>' +
@@ -34,10 +36,13 @@
       '</ul>' +
       '<div class="nav-right">' +
         '<a href="tel:' + PHONE + '" class="nav-phone">' + PHONE_D + '</a>' +
+        '<a href="tel:' + PHONE + '" class="nav-call" aria-label="Call us"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.11 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>' +
         '<a href="demo.html" class="btn btn-blue">Book a demo</a>' + '<button class="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>' +
       '</div>' +
     '</div></header>' +
     '<div class="mobile-menu" id="mobile-menu">' +
+      '<button class="mm-close" aria-label="Close menu">&times;</button>' +
+      '<a href="index.html" class="mm-home"><img src="sano-logo.png" alt="" width="26" height="26"/> SANO Systems</a>' +
       '<a href="ai-employee.html">What we run</a><a href="industries.html">Industries</a>' +
       '<a href="pricing.html">Pricing</a><a href="resources.html">Resources</a><a href="about.html">Why SANO</a>' +
       '<a href="tel:' + PHONE + '">' + PHONE_D + '</a>' +
@@ -85,10 +90,18 @@
     burger.setAttribute('aria-expanded', open ? 'true' : 'false');
     document.body.style.overflow = open ? 'hidden' : '';
   }
+  var closeBtn = menu ? menu.querySelector('.mm-close') : null;
   if (burger && menu) {
-    burger.addEventListener('click', function () { setMenu(!menu.classList.contains('open')); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+    burger.addEventListener('click', function () {
+      var open = !menu.classList.contains('open');
+      setMenu(open);
+      if (open) { var f = menu.querySelector('a'); if (f) f.focus(); }
+    });
+    if (closeBtn) closeBtn.addEventListener('click', function () { setMenu(false); burger.focus(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && menu.classList.contains('open')) { setMenu(false); burger.focus(); } });
     menu.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+    /* rotating to desktop must never leave the scroll lock on */
+    window.addEventListener('resize', function () { if (window.innerWidth > 960) setMenu(false); });
   }
 
   var obs = new IntersectionObserver(function (entries) {

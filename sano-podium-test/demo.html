@@ -13,6 +13,16 @@
 </head>
 <body data-page="demo">
 <div id="site-nav"></div>
+<noscript>
+  <nav class="ns-nav"><a href="index.html">SANO Systems</a> ·
+    <a href="ai-employee.html">What we run</a> ·
+    <a href="industries.html">Industries</a> ·
+    <a href="pricing.html">Pricing</a> ·
+    <a href="resources.html">Resources</a> ·
+    <a href="about.html">Why SANO</a> ·
+    <a href="demo.html">Book a demo</a></nav>
+</noscript>
+<main id="main">
 
 <section class="hero" style="padding-top:56px">
   <div class="wrap hero-grid">
@@ -29,9 +39,9 @@
     </div>
 
     <div class="form-card reveal">
-      <h2>Book your free demo</h2>
-      <p class="fsub">Takes 30 seconds. We'll reach out to set a time.</p>
-      <form id="demo-form" novalidate>
+      <h2>Request your demo</h2>
+      <p class="fsub">Takes 30 seconds. We'll get back to you to lock in a time that works.</p>
+      <form id="demo-form" action="mailto:hello@sanosystems.com" method="post" enctype="text/plain">
         <div class="frow2">
           <div class="field">
             <label for="name">Your name</label>
@@ -107,6 +117,10 @@
   </div>
 </section>
 
+</main>
+<noscript>
+  <nav class="ns-nav"><a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a> · <a href="industries.html">All industries</a></nav>
+</noscript>
 <div id="site-footer"></div>
 <script src="industries.js"></script>
 <script>
@@ -128,6 +142,7 @@
   if (pre && Array.prototype.some.call(sel.options, function (o) { return o.value === pre; })) sel.value = pre;
 
   var form = document.getElementById('demo-form');
+  form.noValidate = true;  /* we do richer, accessible validation in JS */
   var globalErr = document.getElementById('form-err');
   var ok = document.getElementById('demo-ok');
 

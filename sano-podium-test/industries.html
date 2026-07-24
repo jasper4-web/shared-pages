@@ -13,10 +13,20 @@
 </head>
 <body data-page="industries">
 <div id="site-nav"></div>
+<noscript>
+  <nav class="ns-nav"><a href="index.html">SANO Systems</a> ·
+    <a href="ai-employee.html">What we run</a> ·
+    <a href="industries.html">Industries</a> ·
+    <a href="pricing.html">Pricing</a> ·
+    <a href="resources.html">Resources</a> ·
+    <a href="about.html">Why SANO</a> ·
+    <a href="demo.html">Book a demo</a></nav>
+</noscript>
+<main id="main">
 
 <section class="page-hero tint">
   <div class="wrap reveal">
-    <span class="eyebrow">● Industry blueprints</span>
+    <span class="eyebrow"><span aria-hidden="true">●</span> Industry blueprints</span>
     <h1>We don't start from a blank page</h1>
     <p class="sub">A blueprint is your industry's department, already built — how calls get answered, what gets asked, what gets followed up, and when reminders go out. We shape it to your business, you approve it, and then we run it.</p>
   </div>
@@ -28,12 +38,12 @@
     <div class="sec-head reveal"><p class="kick">What's in every blueprint</p><h2>The same bones, tailored to your trade</h2>
     <p>Whatever your industry, five things are always in there. What changes is the language, the priorities, and the timing.</p></div>
     <div class="feat-grid">
-      <div class="feat reveal"><div class="ic">🗣️</div><h3>A trained way of answering</h3><p>The questions your customers actually ask, answered the way you'd answer them — in English and Spanish.</p></div>
-      <div class="feat reveal"><div class="ic">🚨</div><h3>Urgent vs. routine, sorted</h3><p>Every trade has an emergency. The blueprint knows which calls can't wait and treats them that way.</p></div>
-      <div class="feat reveal"><div class="ic">📅</div><h3>Booking and reminders</h3><p>Real availability, confirmations, and reminders that keep the calendar honest.</p></div>
-      <div class="feat reveal"><div class="ic">🔁</div><h3>Follow-up that doesn't quit</h3><p>Quotes and leads chased on a schedule you approve, until there's an answer either way.</p></div>
-      <div class="feat reveal"><div class="ic">⭐</div><h3>Reviews, asked every time</h3><p>The same ask after every completed job — and if someone wasn't happy, you hear about it the same day.</p></div>
-      <div class="feat reveal"><div class="ic">🌦️</div><h3>Your season, built in</h3><p>Busy months get capacity. Slow months get campaigns to the customers you already have.</p></div>
+      <div class="feat reveal"><div class="ic" aria-hidden="true">🗣️</div><h3>A trained way of answering</h3><p>The questions your customers actually ask, answered the way you'd answer them — in English and Spanish.</p></div>
+      <div class="feat reveal"><div class="ic" aria-hidden="true">🚨</div><h3>Urgent vs. routine, sorted</h3><p>Every trade has an emergency. The blueprint knows which calls can't wait and treats them that way.</p></div>
+      <div class="feat reveal"><div class="ic" aria-hidden="true">📅</div><h3>Booking and reminders</h3><p>Real availability, confirmations, and reminders that keep the calendar honest.</p></div>
+      <div class="feat reveal"><div class="ic" aria-hidden="true">🔁</div><h3>Follow-up that doesn't quit</h3><p>Quotes and leads chased on a schedule you approve, until there's an answer either way.</p></div>
+      <div class="feat reveal"><div class="ic" aria-hidden="true">⭐</div><h3>Reviews, asked every time</h3><p>The same ask after every completed job — and if someone wasn't happy, you hear about it the same day.</p></div>
+      <div class="feat reveal"><div class="ic" aria-hidden="true">🌦️</div><h3>Your season, built in</h3><p>Busy months get capacity. Slow months get campaigns to the customers you already have.</p></div>
     </div>
   </div>
 </section>
@@ -54,7 +64,7 @@
   <div class="wrap">
     <div class="sec-head reveal"><p class="kick">How it becomes yours</p><h2>From blueprint to your department</h2></div>
     <div class="steps">
-      <div class="step reveal"><div class="n">1</div><h3>We start from your trade</h3><p>You're not paying us to invent it from scratch. The proven version for your industry is the starting point.</p></div>
+      <div class="step reveal"><div class="n">1</div><h3>We start from your trade</h3><p>You're not paying us to invent it from scratch. The version we've already built for your industry is the starting point.</p></div>
       <div class="step reveal"><div class="n">2</div><h3>We shape it to you</h3><p>Your services, your service area, your pricing, your hours, your tone. This is the part that makes it sound like your business and not a template.</p></div>
       <div class="step reveal"><div class="n">3</div><h3>You approve, we run it</h3><p>You hear how it answers and see what it sends before a single customer does. Then it's ours to run and keep current.</p></div>
     </div>
@@ -72,6 +82,10 @@
   </div></div>
 </section>
 
+</main>
+<noscript>
+  <nav class="ns-nav"><a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a> · <a href="industries.html">All industries</a></nav>
+</noscript>
 <div id="site-footer"></div>
 <script src="industries.js"></script>
 <script>
@@ -79,7 +93,7 @@
   var IND = window.SANO_INDUSTRIES || [];
   document.getElementById('all-inds').innerHTML = IND.map(function (i) {
     return '<a class="ind reveal" href="industry.html?ind=' + i.slug + '">' +
-      '<div class="em">' + i.em + '</div><h3>' + i.label + '</h3><p>' + i.tag + '</p>' +
+      '<div class="em" aria-hidden="true">' + i.em + '</div><h3>' + i.label + '</h3><p>' + i.tag + '</p>' +
       '<span class="more">See the blueprint →</span></a>';
   }).join('');
 })();
