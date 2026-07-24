@@ -24,6 +24,7 @@
             '<a href="ai-employee.html#reviews"><b>Reviews &amp; reputation</b><span>Asked for after every job</span></a>' +
             '<a href="ai-employee.html#marketing"><b>Marketing &amp; payments</b><span>Campaigns, follow-up, pay-by-text</span></a>' +
             '<a href="ai-employee.html#command"><b>Your monthly report</b><span>What happened, in plain English</span></a>' +
+            '<a href="sample-blueprint.html"><b>See a sample blueprint</b><span>The document a client actually approves</span></a>' +
           '</div>' +
         '</li>' +
         '<li class="' + (page === 'industries' ? 'active' : '') + '"><a href="industries.html"' + (page === 'industries' ? ' aria-current="true"' : '') + '>Industries ' + caret + '</a>' +
@@ -72,8 +73,8 @@
           '<a href="about.html">Why SANO</a><a href="resources.html">Resources</a><a href="pricing.html">Pricing</a>' +
           '<a href="about.html#bilingual">Se habla Español</a><a href="mailto:' + EMAIL + '">Contact us</a></div>' +
         '<div class="foot-col"><h2 class="foot-col-h">Get started</h2>' +
-          '<a href="demo.html">Request a demo</a><a href="tel:' + PHONE + '">Talk to a person</a>' +
-          '<a href="resources.html">Guides</a></div>' +
+          '<a href="demo.html">Request a demo</a>' +
+          '</div>' +
       '</div></nav>' +
       '<div class="foot-base"><span>© 2026 SANO Systems LLC. (Design test — not the live site.)</span>' +
         '<span><a href="privacy.html" style="color:#8A8A93">Privacy Policy</a> · <a href="terms.html" style="color:#8A8A93">Terms of Service</a></span></div>' +
@@ -84,6 +85,19 @@
   if (navMount) navMount.innerHTML = nav;
   if (footMount) footMount.innerHTML = foot;
 
+  document.querySelectorAll('.nav-links > li').forEach(function (li) {
+    var trigger = li.querySelector('a'); var dd = li.querySelector('.dropdown');
+    if (!trigger || !dd) return;
+    trigger.setAttribute('aria-haspopup', 'true');
+    trigger.setAttribute('aria-expanded', 'false');
+    dd.setAttribute('role', 'group');
+    li.addEventListener('focusin', function () { trigger.setAttribute('aria-expanded', 'true'); });
+    li.addEventListener('focusout', function (e) { if (!li.contains(e.relatedTarget)) trigger.setAttribute('aria-expanded', 'false'); });
+    li.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { trigger.setAttribute('aria-expanded', 'false'); trigger.focus(); }
+    });
+  });
+
   var burger = document.querySelector('.nav-burger');
   var menu = document.querySelector('.mobile-menu');
   function setMenu(open) {
@@ -91,7 +105,7 @@
     menu.classList.toggle('open', open);
     burger.setAttribute('aria-expanded', open ? 'true' : 'false');
     document.body.style.overflow = open ? 'hidden' : '';
-    [document.querySelector('header'), document.getElementById('main'), document.getElementById('site-footer')]
+    [document.querySelector('header'), document.getElementById('main'), document.getElementById('site-footer'), document.querySelector('.skip')]
       .forEach(function (el) { if (!el) return; if (open) { el.setAttribute('inert',''); } else { el.removeAttribute('inert'); } });
   }
   var closeBtn = menu ? menu.querySelector('.mm-close') : null;
@@ -99,7 +113,7 @@
     burger.addEventListener('click', function () {
       var open = !menu.classList.contains('open');
       setMenu(open);
-      if (open) { var f = menu.querySelector('a'); if (f) f.focus(); }
+      if (open) { var f = menu.querySelector('.mm-close') || menu.querySelector('a'); if (f) f.focus(); }
     });
     if (closeBtn) closeBtn.addEventListener('click', function () { setMenu(false); burger.focus(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && menu.classList.contains('open')) { setMenu(false); burger.focus(); } });
