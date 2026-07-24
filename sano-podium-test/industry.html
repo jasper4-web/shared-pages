@@ -5,98 +5,122 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Industry blueprint | SANO Systems</title>
 <meta name="description" content="Your industry's AI department, already built. We shape the blueprint to your business and run it for you." />
+<link rel="canonical" href="industry.html" id="canon" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
+<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body data-page="industries">
 <div id="site-nav"></div>
-<main id="ind-root"></main>
+<main id="ind-root">
+  <noscript>
+    <section class="band"><div class="wrap-narrow" style="text-align:center">
+      <h1>Industry blueprints</h1>
+      <p class="sub">Choose your industry to see what's inside its blueprint.</p>
+      <p><a href="industries.html" style="color:var(--blue);font-weight:600">View all industry blueprints &rarr;</a></p>
+    </div></section>
+  </noscript>
+</main>
 <div id="site-footer"></div>
 
 <script src="industries.js"></script>
 <script>
 (function () {
   var IND = window.SANO_INDUSTRIES || [];
-  var slug = new URLSearchParams(location.search).get('ind') || 'hvac';
-  var d = IND.filter(function (x) { return x.slug === slug; })[0] || IND[0];
-  document.title = 'SANO Systems for ' + d.label;
+  var slug = new URLSearchParams(location.search).get('ind');
+  var d = IND.filter(function (x) { return x.slug === slug; })[0];
+  var root = document.getElementById('ind-root');
+
+  if (!d) {
+    document.title = 'Choose your industry | SANO Systems';
+    root.innerHTML =
+      '<section class="page-hero tint"><div class="wrap">' +
+        '<span class="eyebrow">&#9679; Industry blueprints</span>' +
+        '<h1>Which business are you in?</h1>' +
+        '<p class="sub">Pick your industry and we&rsquo;ll show you what&rsquo;s inside its blueprint.</p>' +
+      '</div></section>' +
+      '<section class="band"><div class="wrap"><div class="ind-grid">' +
+        IND.map(function (i) {
+          return '<a class="ind" href="industry.html?ind=' + i.slug + '"><div class="em">' + i.em + '</div>' +
+            '<h3>' + i.label + '</h3><p>' + i.tag + '</p><span class="more">See the blueprint &rarr;</span></a>';
+        }).join('') +
+      '</div></div></section>';
+    return;
+  }
+
+  document.title = d.label + ' — your AI department, already built | SANO Systems';
+  var md = document.querySelector('meta[name="description"]');
+  if (md) md.setAttribute('content', d.sub);
+  var canon = document.getElementById('canon');
+  if (canon) canon.setAttribute('href', 'industry.html?ind=' + d.slug);
 
   var check = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
   var ex = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
   var others = IND.filter(function (x) { return x.slug !== d.slug; }).slice(0, 4).map(function (i) {
-    return '<a class="ind reveal" href="industry.html?ind=' + i.slug + '"><div class="em">' + i.em + '</div><h3>' + i.label + '</h3><p>' + i.tag + '</p><span class="more">See the blueprint →</span></a>';
+    return '<a class="ind reveal" href="industry.html?ind=' + i.slug + '"><div class="em">' + i.em + '</div><h3>' + i.label + '</h3><p>' + i.tag + '</p><span class="more">See the blueprint &rarr;</span></a>';
   }).join('');
 
-  document.getElementById('ind-root').innerHTML =
-    /* HERO */
+  root.innerHTML =
     '<section class="page-hero tint"><div class="wrap reveal">' +
       '<span class="eyebrow">' + d.em + ' ' + d.label + '</span>' +
       '<h1>' + d.headline + '</h1>' +
       '<p class="sub">' + d.sub + '</p>' +
-      '<div class="hero-cta"><a href="#blueprint" class="btn btn-blue btn-lg">See what\'s inside</a>' +
-      '<a href="demo.html" class="btn btn-ghost btn-lg">Book a demo</a></div>' +
+      '<div class="hero-cta"><a href="#blueprint" class="btn btn-blue btn-lg">See what&rsquo;s inside</a>' +
+      '<a href="demo.html?ind=' + d.slug + '" class="btn btn-ghost btn-lg">Book a demo</a></div>' +
     '</div></section>' +
 
-    /* PAIN vs RUN */
-    '<section class="band"><div class="wrap">' +
-      '<div class="sec-head reveal"><p class="kick">The honest picture</p><h2>What it looks like right now — and what we take over</h2></div>' +
+    '<section class="band" id="blueprint"><div class="wrap">' +
+      '<div class="sec-head reveal"><span class="blueprint">&#10022; The ' + d.label + ' blueprint</span>' +
+      '<h2 style="margin-top:16px">What&rsquo;s actually inside it</h2>' +
+      '<p>We don&rsquo;t start from a blank page. This is the proven setup for your trade &mdash; we shape it to how you work, you approve it, then we run it.</p></div>' +
+      '<div class="feat-grid">' +
+        d.blueprint.map(function (b, i) {
+          return '<div class="feat reveal"><div class="ic">' + (i + 1) + '</div><h3 style="font-size:17px">' + b + '</h3></div>';
+        }).join('') +
+      '</div>' +
+      '<p class="blueprint-season reveal">' + d.season + '</p>' +
+    '</div></section>' +
+
+    '<section class="band paper"><div class="wrap">' +
+      '<div class="sec-head reveal"><p class="kick">Why it&rsquo;s built that way</p><h2>The problems it was shaped around</h2></div>' +
       '<div class="journey open" style="margin-top:0"><div class="journey-body">' +
         '<div class="journey-grid">' +
-          '<div class="j-col"><h4>What\'s costing you today</h4><ul class="j-list j-pain">' +
+          '<div class="j-col"><h4>What&rsquo;s costing you today</h4><ul class="j-list j-pain">' +
             d.pains.map(function (p) { return '<li>' + ex + '<span>' + p + '</span></li>'; }).join('') +
           '</ul></div>' +
-          '<div class="j-col"><h4>What we run for you</h4><ul class="j-list j-fix">' +
+          '<div class="j-col"><h4>What we take over</h4><ul class="j-list j-fix">' +
             d.runs.map(function (r) { return '<li>' + check + '<span>' + r + '</span></li>'; }).join('') +
           '</ul></div>' +
         '</div>' +
       '</div></div>' +
     '</div></section>' +
 
-    /* THE BLUEPRINT */
-    '<section class="band paper" id="blueprint"><div class="wrap">' +
-      '<div class="sec-head reveal"><span class="blueprint">✦ The ' + d.label + ' blueprint</span>' +
-      '<h2 style="margin-top:16px">Already built. We shape it to you.</h2>' +
-      '<p>We don\'t start from a blank page for every client. Your industry has a proven setup — we tailor it to how you actually work, then run it.</p></div>' +
-      '<div class="feat-grid">' +
-        d.blueprint.map(function (b, i) {
-          return '<div class="feat reveal"><div class="ic">' + (i + 1) + '</div><h3 style="font-size:17px">' + b + '</h3></div>';
-        }).join('') +
-      '</div>' +
-      '<p style="text-align:center;color:var(--ink-mut);font-size:15px;margin-top:34px;max-width:70ch;margin-inline:auto" class="reveal">' + d.season + '</p>' +
-    '</div></section>' +
-
-    /* OBJECTION */
     '<section class="band"><div class="wrap-narrow reveal" style="text-align:center">' +
       '<p class="kick" style="font-size:13px;font-weight:600;color:var(--blue-d);text-transform:uppercase;letter-spacing:.08em">The question we always get</p>' +
       '<h2 style="font-size:clamp(24px,3vw,34px);margin-top:14px">' + d.objection[0] + '</h2>' +
       '<p style="font-size:18px;color:var(--ink-soft);margin-top:18px">' + d.objection[1] + '</p>' +
     '</div></section>' +
 
-    /* WHAT CHANGES IN YOUR WEEK (industry-specific, not the shared table) */
     '<section class="dark-band"><div class="wrap">' +
       '<div class="sec-head reveal"><h2>What changes in your week</h2>' +
-      '<p>Not a longer to-do list — a shorter one.</p></div>' +
+      '<p>Not a longer to-do list &mdash; a shorter one.</p></div>' +
       '<div class="feat-grid" style="max-width:960px;margin:0 auto">' +
-        '<div class="feat reveal" style="background:var(--dark-2);border-color:rgba(255,255,255,.09)">' +
-          '<div class="ic" style="background:rgba(0,112,243,.15);color:#4D9BFF">📞</div>' +
-          '<h3 style="color:#fff">Your phone stops being a problem</h3>' +
-          '<p style="color:#9A9AA3">Every call and message is answered while you work — and the ones worth your time reach you with the details already taken.</p></div>' +
-        '<div class="feat reveal" style="background:var(--dark-2);border-color:rgba(255,255,255,.09)">' +
-          '<div class="ic" style="background:rgba(0,112,243,.15);color:#4D9BFF">🌙</div>' +
-          '<h3 style="color:#fff">Your evenings come back</h3>' +
-          '<p style="color:#9A9AA3">No more catching up on quotes, follow-ups and invoices at 9pm. It went out hours ago, without you.</p></div>' +
-        '<div class="feat reveal" style="background:var(--dark-2);border-color:rgba(255,255,255,.09)">' +
-          '<div class="ic" style="background:rgba(0,112,243,.15);color:#4D9BFF">📅</div>' +
-          '<h3 style="color:#fff">Your slow stretches get worked</h3>' +
-          '<p style="color:#9A9AA3">' + d.season + '</p></div>' +
+        '<div class="feat feat-dark reveal"><div class="ic">&#128222;</div>' +
+          '<h3>Your phone stops being a problem</h3>' +
+          '<p>Every call and message is answered while you work &mdash; and the ones worth your time reach you with the details already taken.</p></div>' +
+        '<div class="feat feat-dark reveal"><div class="ic">&#127769;</div>' +
+          '<h3>Your evenings come back</h3>' +
+          '<p>No more catching up on quotes, follow-ups and invoices at 9pm. It went out hours ago, without you.</p></div>' +
+        '<div class="feat feat-dark reveal"><div class="ic">&#128197;</div>' +
+          '<h3>Your slow stretches get worked</h3>' +
+          '<p>Campaigns and check-ins go to the customers you already have, instead of the phone just going quiet.</p></div>' +
       '</div>' +
-      '<p class="sources" style="margin-top:34px"><strong style="color:#fff">' + d.truth + '</strong></p>' +
+      '<p class="owner-note reveal">What owners tell us: <strong>' + d.truth + '</strong></p>' +
     '</div></section>' +
 
-    /* FAQ */
     '<section class="band"><div class="wrap">' +
       '<div class="sec-head reveal"><p class="kick">Questions</p><h2>' + d.label + ', answered</h2></div>' +
       '<div class="faq reveal">' +
@@ -104,20 +128,19 @@
           return '<details><summary>' + f[0] + '<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">' + f[1] + '</div></details>';
         }).join('') +
       '</div>' +
+      '<p style="text-align:center;margin-top:30px" class="reveal"><a href="pricing.html" style="color:var(--blue);font-weight:600;font-size:16px">See what it costs &rarr;</a></p>' +
     '</div></section>' +
 
-    /* OTHER INDUSTRIES */
     '<section class="band paper"><div class="wrap">' +
       '<div class="sec-head reveal"><p class="kick">Other blueprints</p><h2>Not quite your business?</h2></div>' +
       '<div class="ind-grid">' + others + '</div>' +
-      '<p style="text-align:center;color:var(--ink-mut);font-size:14px;margin-top:26px" class="reveal">These are examples, not limits. <a href="demo.html" style="color:var(--blue);font-weight:600">Tell us what you do</a> and we\'ll build the blueprint around it.</p>' +
+      '<p style="text-align:center;color:var(--ink-mut);font-size:14px;margin-top:26px" class="reveal">These are examples, not limits. <a href="demo.html" style="color:var(--blue);font-weight:600">Tell us what you do</a> and we&rsquo;ll build the blueprint around it.</p>' +
     '</div></section>' +
 
-    /* CTA */
     '<section class="cta"><div class="wrap"><div class="cta-box reveal">' +
-      '<h2>Let\'s take the AI off your plate.</h2>' +
-      '<p>See the ' + d.label + ' department we\'d build for you — free, no commitment.</p>' +
-      '<div class="hero-cta"><a href="demo.html" class="btn btn-onblue btn-lg">Book your free demo</a></div>' +
+      '<h2>Let&rsquo;s shape your ' + d.label + ' blueprint</h2>' +
+      '<p>15 minutes. We&rsquo;ll walk you through the version we&rsquo;d build for your business.</p>' +
+      '<div class="hero-cta"><a href="demo.html?ind=' + d.slug + '" class="btn btn-onblue btn-lg">Book your free demo</a></div>' +
     '</div></div></section>';
 })();
 </script>
