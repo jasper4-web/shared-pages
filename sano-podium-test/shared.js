@@ -27,11 +27,11 @@
             '<a href="sample-blueprint.html"><b>See a sample blueprint</b><span>The document a client actually approves</span></a>' +
           '</div>' +
         '</li>' +
-        '<li class="' + (page === 'industries' ? 'active' : '') + '"><a href="industries.html"' + (page === 'industries' ? ' aria-current="true"' : '') + '>Industries ' + caret + '</a>' +
+        '<li class="' + (page === 'industries' ? 'active' : '') + '"><a href="industries.html"' + (page === 'industries' ? ' aria-current="page"' : '') + '>Industries ' + caret + '</a>' +
           '<div class="dropdown">' + indDrop + '</div>' +
         '</li>' +
         '<li class="' + (page === 'pricing' ? 'active' : '') + '"><a href="pricing.html"' + (page === 'pricing' ? ' aria-current="page"' : '') + '>Pricing</a></li>' +
-        '<li class="' + (page === 'resources' ? 'active' : '') + '"><a href="resources.html"' + (page === 'resources' ? ' aria-current="true"' : '') + '>Resources</a></li>' +
+        '<li class="' + (page === 'resources' ? 'active' : '') + '"><a href="resources.html"' + (page === 'resources' ? ' aria-current="page"' : '') + '>Resources</a></li>' +
         '<li class="' + (page === 'about' ? 'active' : '') + '"><a href="about.html"' + (page === 'about' ? ' aria-current="page"' : '') + '>Why SANO</a></li>' +
       '</ul></nav>' +
       '<div class="nav-right">' +
@@ -71,10 +71,8 @@
         '<div class="foot-col"><h2 class="foot-col-h">Industries</h2>' + indFoot + '</div>' +
         '<div class="foot-col"><h2 class="foot-col-h">Company</h2>' +
           '<a href="about.html">Why SANO</a><a href="resources.html">Resources</a><a href="pricing.html">Pricing</a>' +
-          '<a href="about.html#bilingual">Se habla Español</a><a href="mailto:' + EMAIL + '">Contact us</a></div>' +
-        '<div class="foot-col"><h2 class="foot-col-h">Get started</h2>' +
-          '<a href="demo.html">Request a demo</a>' +
-          '</div>' +
+          '<a href="about.html#bilingual">Se habla Español</a><a href="demo.html">Request a demo</a></div>' +
+        
       '</div></nav>' +
       '<div class="foot-base"><span>© 2026 SANO Systems LLC. (Design test — not the live site.)</span>' +
         '<span><a href="privacy.html" style="color:#8A8A93">Privacy Policy</a> · <a href="terms.html" style="color:#8A8A93">Terms of Service</a></span></div>' +
@@ -88,7 +86,6 @@
   document.querySelectorAll('.nav-links > li').forEach(function (li) {
     var trigger = li.querySelector('a'); var dd = li.querySelector('.dropdown');
     if (!trigger || !dd) return;
-    trigger.setAttribute('aria-haspopup', 'true');
     trigger.setAttribute('aria-expanded', 'false');
     dd.setAttribute('role', 'group');
     li.addEventListener('focusin', function () { trigger.setAttribute('aria-expanded', 'true'); });
@@ -107,6 +104,8 @@
     document.body.style.overflow = open ? 'hidden' : '';
     [document.querySelector('header'), document.getElementById('main'), document.getElementById('site-footer'), document.querySelector('.skip')]
       .forEach(function (el) { if (!el) return; if (open) { el.setAttribute('inert',''); } else { el.removeAttribute('inert'); } });
+    var skip = document.querySelector('.skip');
+    if (skip) { if (open) { skip.setAttribute('tabindex','-1'); } else { skip.removeAttribute('tabindex'); } }
   }
   var closeBtn = menu ? menu.querySelector('.mm-close') : null;
   if (burger && menu) {
