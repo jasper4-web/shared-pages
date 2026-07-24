@@ -179,7 +179,11 @@
   }
   var pre = params.get('ind');
   if (!pre) { try { pre = sessionStorage.getItem('sano_ind') || ''; } catch (e) { pre = ''; } }
-  if (pre && Array.prototype.some.call(sel.options, function (o) { return o.value === pre; })) {
+  if (pre === 'other') {
+    sel.value = 'other';
+    var ieo = document.getElementById('ind-echo');
+    if (ieo) { ieo.innerHTML = 'Your trade isn&rsquo;t one of our eight yet &mdash; that&rsquo;s fine. Tell us what you do below and we&rsquo;ll map a blueprint around it.'; ieo.hidden = false; }
+  } else if (pre && Array.prototype.some.call(sel.options, function (o) { return o.value === pre; })) {
     sel.value = pre;
     var d0 = (typeof IND !== 'undefined') ? IND.filter(function (x) { return x.slug === pre; })[0] : null;
     if (d0) {
