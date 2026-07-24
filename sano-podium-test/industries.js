@@ -8,7 +8,7 @@
    ===================================================================== */
 window.SANO_INDUSTRIES = [
   {
-    slug: 'hvac', built: true, em: '❄️', label: 'HVAC', tag: 'Heating, cooling & air quality',
+    slug: 'hvac', week: [['&#128222;','The 102-degree Tuesday stops costing you','When four people call in the same hour, all four get answered and booked instead of three hitting voicemail.'],['&#127769;','Your evenings come back','No more returning calls from the truck at 8pm. The ones that mattered were already booked hours ago.'],['&#128197;','Renewals stop slipping','Maintenance agreements get chased on schedule instead of whenever someone remembers.']], built: true, em: '❄️', label: 'HVAC', tag: 'Heating, cooling & air quality',
     headline: 'Your AI department, already built for HVAC',
     sub: 'When a compressor dies in the heat, the homeowner calls every shop on the list. The one that answers gets the job. We make sure that\'s you — and you never touch a thing.',
     pains: [
@@ -40,7 +40,7 @@ window.SANO_INDUSTRIES = [
     ]
   },
   {
-    slug: 'plumbing', built: true, em: '🔧', label: 'Plumbing', tag: 'Service, repair & drain work',
+    slug: 'plumbing', week: [['&#128222;','The crawl space stops costing you jobs','You cannot answer with both hands under a sink. It answers, and the emergency reaches you with the address already taken.'],['&#127769;','Invoices go out before you get home','Instead of three unsent invoices sitting in your head at 9pm.'],['&#128197;','Quiet weeks get worked','Past customers hear from you about water heaters and drains without you writing a thing.']], built: true, em: '🔧', label: 'Plumbing', tag: 'Service, repair & drain work',
     headline: 'Your AI department, already built for plumbing',
     sub: 'You are under a house with both hands busy. The phone rings. Someone with an active leak is calling down the list. We answer for you — and book it.',
     pains: [
@@ -72,7 +72,7 @@ window.SANO_INDUSTRIES = [
     ]
   },
   {
-    slug: 'roofing', built: true, em: '🏠', label: 'Roofing', tag: 'Repair, replacement & storm work',
+    slug: 'roofing', week: [['&#128222;','The storm rush stops overwhelming you','Everyone who calls after hail gets answered, not just the ones who called while you were on the ground.'],['&#127769;','Estimates stop dying quietly','Every quote gets followed up more than once, on a schedule, without you remembering to.'],['&#128197;','The gap between storms gets worked','Inspection and check-in campaigns keep the phone alive when the weather is calm.']], built: true, em: '🏠', label: 'Roofing', tag: 'Repair, replacement & storm work',
     headline: 'Your AI department, already built for roofing',
     sub: 'You are on a roof for eight hours. After a storm the phone does not stop. We answer all of it, follow up on every estimate, and keep you first in line.',
     pains: [
@@ -104,7 +104,7 @@ window.SANO_INDUSTRIES = [
     ]
   },
   {
-    slug: 'home-services', built: false, em: '🧰', label: 'Home Services', tag: 'Electrical, landscaping, cleaning, pest',
+    slug: 'home-services', week: [['&#128222;','Being on a job stops costing you the next one','Calls get answered and booked while your hands are full.'],['&#127769;','Quotes stop going quiet','Follow-up runs on its own until you get a yes or a no.'],['&#128197;','Repeat work comes back around','Seasonal and recurring customers get reminded before they call someone else.']], built: false, em: '🧰', label: 'Home Services', tag: 'Electrical, landscaping, cleaning, pest',
     headline: 'Your AI department, shaped for home services',
     sub: 'Electrical, landscaping, cleaning, pest control, pools, remodeling — if the work happens at someone\'s home and starts with a phone call, this is built for you.',
     pains: [
@@ -136,7 +136,7 @@ window.SANO_INDUSTRIES = [
     ]
   },
   {
-    slug: 'auto', built: false, em: '🚗', label: 'Auto', tag: 'Dealers, repair, body & tire',
+    slug: 'auto', week: [['&#128222;','Three phones ringing at once stops being a problem','Every service call gets answered, even when every advisor is already with a customer.'],['&#127769;','After-hours inquiries stop going cold','The person who found you at 9pm has an appointment by the time you open.'],['&#128197;','Your bays stay full in the slow weeks','Service-due reminders go to the customers you already sold.']], built: false, em: '🚗', label: 'Auto', tag: 'Dealers, repair, body & tire',
     headline: 'Your AI department, shaped for auto',
     sub: 'Service calls, quote requests, and test-drive inquiries answered the moment they come in — so the buyer who is ready right now talks to you and not the next lot.',
     pains: [
@@ -168,7 +168,7 @@ window.SANO_INDUSTRIES = [
     ]
   },
   {
-    slug: 'med-spa', built: false, em: '💆', label: 'Med Spa & Aesthetics', tag: 'Med spas, salons & wellness',
+    slug: 'med-spa', week: [['&#128222;','The front desk stops being a bottleneck','Inquiries get answered and booked while your team is with a client in the room.'],['&#127769;','Gaps stop appearing overnight','Reminders and easy rescheduling protect the calendar you already filled.'],['&#128197;','Past clients come back on their own','Rebooking and new-treatment campaigns run without anyone remembering to send them.']], built: false, em: '💆', label: 'Med Spa & Aesthetics', tag: 'Med spas, salons & wellness',
     headline: 'Your AI department, shaped for aesthetics & wellness',
     sub: 'A warm, on-brand front desk that never closes — booking consultations, protecting your calendar, and bringing clients back, without adding staff.',
     pains: [
@@ -200,7 +200,7 @@ window.SANO_INDUSTRIES = [
     ]
   },
   {
-    slug: 'dental', built: false, em: '🦷', label: 'Dental & Health', tag: 'Dental, chiro, vet & clinics',
+    slug: 'dental', week: [['&#128222;','New-patient calls stop going to voicemail','They get answered and booked while the front desk is with someone at the counter.'],['&#127769;','Recall stops slipping','Overdue patients get contacted on schedule instead of whenever there is a quiet moment.'],['&#128197;','Cancellations stop leaving holes','The waitlist gets worked automatically to refill the slot.']], built: false, em: '🦷', label: 'Dental & Health', tag: 'Dental, chiro, vet & clinics',
     headline: 'Your AI department, shaped for practices',
     sub: 'New-patient calls answered and booked the moment they come in, recall handled automatically, and a schedule that stays full — without adding front-desk hours.',
     pains: [
@@ -232,7 +232,7 @@ window.SANO_INDUSTRIES = [
     ]
   },
   {
-    slug: 'retail', built: false, em: '🛍️', label: 'Retail & Local Shops', tag: 'Shops, studios & storefronts',
+    slug: 'retail', week: [['&#128222;','Questions get answered while you are on the floor','Hours, stock and services, without you stopping what you are doing.'],['&#127769;','First-time customers stop disappearing','They hear from you again, instead of never.'],['&#128197;','Quiet weeks get a reason to visit','Promotions and win-backs go out to the people who already bought once.']], built: false, em: '🛍️', label: 'Retail & Local Shops', tag: 'Shops, studios & storefronts',
     headline: 'Your AI department, shaped for local shops',
     sub: 'Answer every question, take every booking, and stay in touch with the customers you already have — while you are busy running the floor.',
     pains: [
