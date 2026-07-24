@@ -192,7 +192,7 @@ window.SANO_INDUSTRIES = [
       ['Can a new client book straight into a treatment?', 'No. New clients are booked into a consultation first, not an injectable or treatment chair — the assistant knows the difference and protects your calendar.'],
       ['Can it sound like our brand?', 'Yes. We write and tune the voice with you so it sounds like your front desk, in English and Spanish.'],
       ['Will it reduce no-shows?', 'It sends reminders and confirmations and makes rescheduling simple, which is what protects the calendar.'],
-      ['How is client information handled?', 'The assistant collects the name, contact details and the treatment they are asking about. Where that counts as protected health information, it is handled that way. It is not used for anything else. It does not go anywhere it should not. It does not ask for medical history, and anything sensitive is routed to your team. If you run a medical med spa, we sign a HIPAA business associate agreement before anything touches patient information — no agreement, no launch.'],
+      ['How is client information handled?', 'The assistant collects the name, contact details and the treatment they are asking about. Where that counts as protected health information, it is handled that way. It is not used for anything else. It does not go anywhere it should not. It does not ask for medical history, and anything sensitive is routed to your team. And for a medical med spa, that business associate agreement is signed during setup — before the assistant takes a single call.'],
     ]
   },
   {
@@ -261,3 +261,125 @@ window.SANO_INDUSTRIES = [
     ]
   }
 ];
+
+/* =====================================================================
+   THE DEPARTMENT BOARD — the full catalogue of what SANO runs.
+   Every entry here must trace to a real line on pricing.html; nothing is
+   invented to fill the grid, and `tier` is the level it FIRST becomes
+   available (the plans are cumulative, so a Scale client also has every
+   starter/growth card). `d` is the default line; an industry can override
+   any card with a trade-specific line via its own `caps` map.
+   ===================================================================== */
+window.SANO_TIERS = [
+  { key: 'starter', label: 'Starter', price: '$397/mo' },
+  { key: 'growth',  label: 'Growth',  price: '$999/mo', rec: true },
+  { key: 'scale',   label: 'Scale',   price: '$1,995/mo' },
+  { key: 'total',   label: 'Total',   price: '$4,997/mo' }
+];
+
+window.SANO_CAPABILITIES = [
+  { key:'textback', tier:'starter', name:'Missed calls texted back',
+    d:'A call you can’t pick up gets a text back within seconds — in English or Spanish — and the conversation carries on without you.' },
+  { key:'booking', tier:'starter', name:'Booking &amp; reminders',
+    d:'People book into the times you actually work, and everyone gets reminded before the day arrives.' },
+  { key:'reviews', tier:'starter', name:'Reviews asked for',
+    d:'After every finished job the customer gets a short, well-timed text asking for a Google review. You never chase one again.' },
+  { key:'google', tier:'starter', name:'Your Google listing kept sharp',
+    d:'Hours, services and photos stay current on the page most people actually judge you by.' },
+  { key:'report', tier:'starter', name:'A monthly report, in plain English',
+    d:'What came in, what got booked, what we changed — told to you in words, not a dashboard you have to learn.' },
+
+  { key:'voice', tier:'growth', name:'A real voice answering',
+    d:'Your phone gets picked up out loud, day or night, by an assistant that says it’s an assistant. 500 talk-minutes a month, more at Scale.' },
+  { key:'sitechat', tier:'growth', name:'An assistant on your website',
+    d:'The people comparing you to two other companies get their questions answered on the spot instead of leaving.' },
+  { key:'followup', tier:'growth', name:'Quotes chased until you get an answer',
+    d:'Every quote and lead is followed up on a schedule until it’s a yes or a no — the part that always gets dropped.' },
+  { key:'campaigns', tier:'growth', name:'Campaigns to your own list',
+    d:'Email and text campaigns that bring back customers you already earned, instead of paying to find new ones.' },
+  { key:'bilingual', tier:'growth', name:'Answered out loud in Spanish',
+    d:'Live bilingual voice, so a Spanish-speaking caller gets a real conversation — not a language you had to hire for.' },
+
+  { key:'landing', tier:'scale', name:'Landing pages built &amp; maintained',
+    d:'Pages built for the work you want more of, kept current by us — not a site you have to nag someone to update.' },
+  { key:'ads', tier:'scale', name:'Your ads planned &amp; managed',
+    d:'We plan and run the ads; the media budget stays yours and is paid straight to Google or Meta.' },
+  { key:'payments', tier:'scale', name:'Invoices &amp; pay-by-text',
+    d:'The invoice goes out and gets paid from a phone, so money stops sitting in your truck for a week.' },
+  { key:'strategy', tier:'scale', name:'A monthly strategy call',
+    d:'A standing call to look at what’s working, what isn’t, and what we should change next month.' },
+
+  { key:'app', tier:'total', name:'Your own branded app',
+    d:'Your customers, jobs and numbers in an app with your name on it — on your phone and theirs.' },
+  { key:'manager', tier:'total', name:'A dedicated manager',
+    d:'One person who knows your business by name, weekly calls, and a four-hour response target in writing.' }
+];
+
+/* Trade-specific lines for the cards where the wording actually earns its keep.
+   Anything not overridden falls back to the catalogue's default `d`. */
+window.SANO_CAPS_BY_INDUSTRY = {
+  'hvac': {
+    textback: 'The 102-degree Tuesday when four people call in the same hour — all four get a text back in seconds, instead of three hitting voicemail.',
+    voice: 'The compressor dies at 9pm. Your phone gets picked up out loud and the job is on tomorrow’s schedule before you’ve read the message.',
+    booking: 'Tune-ups and service calls drop into the slots you actually run, with drive time built in.',
+    followup: 'The system-replacement quote gets chased on a schedule until you get a yes or a no.',
+    campaigns: 'Spring cooling and fall heating check-ups go out to your whole list without you writing a word.',
+    reviews: 'Every finished install asks for the Google review — at the moment the house is finally cool.',
+  },
+  'plumbing': {
+    textback: 'Both hands are under a sink. The active leak calling down the list gets answered anyway.',
+    voice: 'The 2am burst pipe gets a real conversation, gets the address taken, and reaches you as an emergency — not a voicemail.',
+    booking: 'Service calls land on your schedule sorted by what’s actually urgent, with drive time built in.',
+    followup: 'The water-heater quote that went quiet gets followed up until it’s a yes or a no.',
+    campaigns: 'Quiet weeks get worked — past customers hear about drains and water heaters without you writing a thing.',
+    reviews: 'The review gets asked for right after the leak stops, which is when people actually feel like writing one.',
+  },
+  'roofing': {
+    textback: 'The morning after the storm, when every roof in the county is calling — nobody drops to voicemail.',
+    voice: 'Hail hit last night and they’re calling down the list. Yours gets picked up out loud and the inspection gets set.',
+    booking: 'Inspections and estimates land on your schedule around the crews you already have out.',
+    followup: 'The estimate sitting in someone’s inbox gets chased until they decide — insurance timelines and all.',
+    campaigns: 'After a storm season, past customers hear from you about inspections without you writing a thing.',
+    reviews: 'The review gets asked for once the roof is finished and the yard is clean — not a month later.',
+  },
+  'home-services': {
+    textback: 'You’re on a ladder or behind a mower. The call still gets answered, in English or Spanish.',
+    voice: 'The after-hours call about a dead breaker or a wasp nest gets a real conversation instead of a beep.',
+    booking: 'Jobs drop into the routes and days you actually work, with travel time built in.',
+    followup: 'The estimate that went quiet gets chased on a schedule until you get an answer.',
+    campaigns: 'Seasonal work — the quarterly service, the spring clean-up — goes out to your list on its own.',
+    reviews: 'Every finished visit asks for the Google review, while the work still looks new.',
+  },
+  'auto': {
+    textback: 'You’re under a car with both hands busy. The call gets a text back in seconds and the conversation keeps going.',
+    voice: 'The tow-in call at closing time gets picked up out loud, with the vehicle and the problem already written down.',
+    booking: 'Jobs land in the bays you actually have open, with the vehicle and the work noted.',
+    followup: 'The estimate they’re still thinking about gets followed up until they decide.',
+    campaigns: 'Oil-change and inspection reminders go back out to the cars you’ve already worked on.',
+    reviews: 'The review gets asked for when they pick the car up and it’s running right.',
+  },
+  'med-spa': {
+    textback: 'The consultation enquiry that came in at 10pm gets a warm, on-brand reply before she books somewhere else.',
+    voice: 'Calls about treatments and pricing get a real, on-brand conversation instead of a voicemail she won’t leave.',
+    booking: 'Appointments book into your real availability, and work with however you already take deposits.',
+    followup: 'The consultation that hasn’t booked yet gets followed up warmly, not chased.',
+    campaigns: 'Rebooking and new-treatment offers go out to past clients on a schedule you approve.',
+    reviews: 'The review gets asked for after the visit, at the point the result is showing.',
+  },
+  'dental': {
+    textback: 'The new-patient enquiry after hours gets answered and booked, instead of going to the practice down the road.',
+    voice: 'Calls get a real conversation that never asks for clinical history and routes anything sensitive to your team.',
+    booking: 'Appointments book into your real chair time, with the reminders that cut no-shows.',
+    followup: 'Treatment plans that weren’t scheduled get a gentle follow-up until the patient decides.',
+    campaigns: 'Recall and hygiene reminders go out on schedule, so the chair doesn’t sit empty.',
+    reviews: 'The review gets asked for after the appointment, at the moment they’re happiest.',
+  },
+  'retail': {
+    textback: '“Are you open?” “Do you have it in stock?” — answered in seconds, while they’re still deciding where to drive.',
+    voice: 'The call about hours, stock or a class gets picked up out loud, even when the shop floor is busy.',
+    booking: 'Classes, fittings and appointments book straight into your real calendar.',
+    followup: 'The enquiry that didn’t turn into a visit gets one more touch before it goes cold.',
+    campaigns: 'New arrivals and events go out to the customers who already know you.',
+    reviews: 'The review gets asked for after the visit, while the bag is still in their hand.',
+  },
+};
