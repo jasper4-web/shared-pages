@@ -226,6 +226,8 @@
     if (cp) cp.addEventListener('click', function () {
       navigator.clipboard && navigator.clipboard.writeText(body).then(function(){ cp.textContent = 'Copied ✓'; });
     });
+    var backBtn = document.querySelector('.cta-box a[href="#name"]');
+    if (backBtn) { backBtn.setAttribute('href', '#demo-ok'); backBtn.textContent = 'Review what you sent'; }
     ok.focus();
     } catch (err) {
       /* never let a script error swallow a lead */
