@@ -350,6 +350,22 @@
       launcher.focus();
     }
 
+    /* Optional: keep the launcher out of the way until the reader is past a
+       given element. On a phone the floating pill otherwise sits on top of the
+       hero demo and covers it, which reads as sloppy — and the assistant is
+       most useful further down anyway, at the offer and the FAQ. */
+    if (CFG.revealAfter) {
+      var gate = document.querySelector(CFG.revealAfter);
+      var update = function () {
+        if (panel.classList.contains('open')) return;
+        var past = !gate || gate.getBoundingClientRect().bottom < 90;
+        launcher.classList.toggle('sb-hidden', !past);
+      };
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+      update();
+    }
+
     /* expose for tests */
     window.SANO_BOT = { ask: ask, askId: askId, score: score, open: open, close: close, kb: KB };
   }

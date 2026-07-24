@@ -8,6 +8,14 @@
 --green:#12A55F;--mint:#E7F7EF;--amber:#E08A25;--cream:#FDF3E5;--star:#F5A623;--red:#D92D20;
 --sf:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;--brand:'Space Grotesk',system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* Tapping tabs quickly was registering as double-tap-to-zoom, which blew the
+   demo up mid-tour and looked broken. Every tappable thing opts out. */
+label,button,a,.nav,.nb,.sc,.pin,.qrow,.tapme,.back,.itab,.cp{touch-action:manipulation}
+/* nothing inside the phone should rubber-band the page behind it */
+.scr,.chips{overscroll-behavior:contain}
+/* stop long-press text selection turning the demo blue mid-tap */
+.nav,.nb,.h2,.itab,.cp,.tapx{-webkit-user-select:none;user-select:none}
 
 /* FULL-VIEWPORT SHELL — page never scrolls, so the tab bar can never leave the screen */
 html,body{height:100%;overflow:hidden}
