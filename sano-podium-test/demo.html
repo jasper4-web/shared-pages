@@ -41,7 +41,7 @@
 </noscript>
 <main id="main" tabindex="-1">
 
-<section class="hero" style="padding-top:56px">
+<section class="hero demo-hero" style="padding-top:56px">
   <div class="wrap hero-grid">
     <div class="reveal">
       <span class="eyebrow"><span aria-hidden="true">&#9679;</span> Request a demo</span>
@@ -49,7 +49,7 @@
       <p class="sub" style="max-width:40ch">Free, no commitment. Tell us a little about your business and we'll show you the department we'd run for you &mdash; answering calls, booking work, and following up.</p>
       <ul style="list-style:none;margin-top:24px;display:grid;gap:12px">
         <li style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Your phone answered &mdash; by text on Starter, live voice from Growth, in English or Spanish</li>
-        <li style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>A missed call turning into a booked job on its own</li>
+        <li id="hero-b2" style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>A missed call turning into a booked job on its own</li>
         <li style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Exactly what we'd run for you, and what it costs</li>
       </ul>
       <div class="hero-trust" style="margin-top:26px"><span class="t"><span aria-hidden="true">&#10003;</span> We run it</span><span class="t"><span aria-hidden="true">&#10003;</span> You never touch it</span><span class="t"><span aria-hidden="true">&#10003;</span> Se habla Espa&ntilde;ol</span></div>
@@ -78,15 +78,15 @@
             <p class="field-err" id="err-phone" hidden>Please enter a phone number with at least 10 digits.</p>
           </div>
           <div class="field">
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="jane@riveraplumbing.com" required aria-required="true" aria-describedby="err-email" />
-            <p class="field-err" id="err-email" hidden>Please enter a valid email address.</p>
+            <label for="email">Email <span style="color:var(--ink-mut);font-weight:400">(optional)</span></label>
+            <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="jane@riveraplumbing.com" aria-describedby="err-email" />
+            <p class="field-err" id="err-email" hidden>That email address doesn&rsquo;t look right.</p>
           </div>
         </div>
         <div class="field">
           <label for="industry">Industry</label>
           <select id="industry" name="industry" required aria-required="true" aria-describedby="err-industry">
-            <option value="" disabled selected>Choose your industry&hellip;</option><option value="hvac">❄️  HVAC</option><option value="plumbing">🔧  Plumbing</option><option value="roofing">🏠  Roofing</option><option value="home-services">🧰  Home Services</option><option value="auto">🚗  Auto</option><option value="med-spa">💆  Med Spa & Aesthetics</option><option value="dental">🦷  Dental & Health</option><option value="retail">🛍️  Retail & Local Shops</option><option value="other">Something else</option>
+            <option value="" disabled selected>Choose your industry&hellip;</option><option value="hvac">HVAC</option><option value="plumbing">Plumbing</option><option value="roofing">Roofing</option><option value="home-services">Home Services</option><option value="auto">Auto</option><option value="med-spa">Med Spa & Aesthetics</option><option value="dental">Dental & Health</option><option value="retail">Retail & Local Shops</option><option value="other">Something else</option>
           </select>
           <p class="field-err" id="err-industry" hidden>Please choose your industry.</p>
         </div>
@@ -98,9 +98,11 @@
           <label for="sms"><input type="checkbox" id="sms" name="sms" /><span>Text me about my demo from SANO Systems. Consent isn't required to request a demo. Message frequency varies; message and data rates may apply; reply STOP to opt out, HELP for help. We never share your number. See our <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms</a>.</span></label>
         </div>
         <input type="hidden" id="plan" name="plan" value="" />
+        <p class="plan-echo" id="ind-echo" hidden></p>
         <p class="plan-echo" id="plan-echo" hidden></p>
         <p class="form-err-global" id="form-err" role="alert" hidden>Please fix the highlighted fields above.</p>
         <button type="submit" class="btn btn-blue btn-lg" style="width:100%">Review and send my request</button>
+        <p class="sms-alt">In a hurry? <a href="sms:+18325557266?body=I%27d%20like%20a%20demo%20for%20my%20business">Text us instead</a> &mdash; <em>(placeholder number on this test site)</em>.</p>
         <p style="font-size:12px;color:var(--ink-mut);text-align:center;margin-top:12px">By submitting, you agree we can contact you about your demo. No spam, ever. See our <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms</a>.</p>
       </form></div>
 
@@ -174,7 +176,20 @@
     echo.hidden = false;
   }
   var pre = params.get('ind');
-  if (pre && Array.prototype.some.call(sel.options, function (o) { return o.value === pre; })) sel.value = pre;
+  if (!pre) { try { pre = sessionStorage.getItem('sano_ind') || ''; } catch (e) { pre = ''; } }
+  if (pre && Array.prototype.some.call(sel.options, function (o) { return o.value === pre; })) {
+    sel.value = pre;
+    var d0 = (typeof IND !== 'undefined') ? IND.filter(function (x) { return x.slug === pre; })[0] : null;
+    if (d0) {
+      var ie = document.getElementById('ind-echo');
+      if (ie) {
+        ie.innerHTML = 'You came from the <strong>' + d0.label + '</strong> blueprint. We&rsquo;ll bring that to the call.';
+        ie.hidden = false;
+      }
+      var b2 = document.getElementById('hero-b2');
+      if (b2 && d0.runs && d0.runs[0]) b2.lastChild.textContent = d0.runs[0];
+    }
+  }
 
   var form = document.getElementById('demo-form');
   form.noValidate = true;  /* we do richer, accessible validation in JS */
@@ -193,7 +208,7 @@
       ['name', function (v) { return v.length > 0; }],
       ['business', function (v) { return v.length > 0; }],
       ['phone', function (v) { return v.replace(/\D/g, '').length >= 10; }],
-      ['email', function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }],
+      ['email', function (v) { return v === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }],
       ['industry', function (v) { return v.length > 0; }]
     ];
     var firstBad = null;
@@ -213,7 +228,7 @@
     var body = 'Name: ' + val('name') + '\n' +
                'Business: ' + val('business') + '\n' +
                'Phone: ' + val('phone') + '\n' +
-               'Email: ' + val('email') + '\n' +
+               'Email: ' + (val('email') || '(not given)') + '\n' +
                'Industry: ' + chosen + '\n' +
                'Plan of interest: ' + (planEl && planEl.value ? planEl.value : '(not specified)') + '\n' +
                'OK to text: ' + (document.getElementById('sms').checked ? 'yes' : 'no') + '\n' +

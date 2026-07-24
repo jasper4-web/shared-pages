@@ -15,7 +15,7 @@
   var caret = '<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>';
 
   var nav =
-    '<div class="ribbon"><span aria-hidden="true">🧪</span> DESIGN TEST — SANO Systems inside Podium\'s structure &amp; flow. <b>Not our live site;</b> phone &amp; email shown are placeholders.</div>' +
+    '<div class="ribbon"><span class="rib-dot" aria-hidden="true"></span> DESIGN TEST — SANO Systems inside Podium\'s structure &amp; flow. <b>Not our live site;</b> phone &amp; email shown are placeholders.</div>' +
     '<header><div class="wrap nav">' +
       '<a href="index.html" class="brand" aria-label="SANO Systems — home"><img src="sano-logo.png" alt="" width="30" height="30"/><span class="bt">SANO Systems</span></a>' +
       '<nav aria-label="Main"><ul class="nav-links">' +
@@ -92,10 +92,37 @@
     var c = box.querySelector('.cta-phone'); if (c) c.innerHTML = CONTACT;
   });
 
+  /* The picker's whole value is the branch it puts a visitor on. Every demo link
+     that lives in the nav, the mobile menu or the footer used to drop it, so a
+     visitor who read the dental blueprint arrived at a blank form. Carry it. */
+  var IND_CTX = '';
+  try {
+    var q0 = new URLSearchParams(location.search).get('ind');
+    var stored = null;
+    try { stored = sessionStorage.getItem('sano_ind'); } catch (e0) {}
+    IND_CTX = q0 || document.body.getAttribute('data-ind') || stored || '';
+    if (IND_CTX && !IND.some(function (x) { return x.slug === IND_CTX; })) IND_CTX = '';
+    if (IND_CTX) { try { sessionStorage.setItem('sano_ind', IND_CTX); } catch (e1) {} }
+  } catch (e) { IND_CTX = ''; }
+  function carryInd() {
+    if (!IND_CTX) return;
+    document.querySelectorAll('a[href^="demo.html"]').forEach(function (a) {
+      var h = a.getAttribute('href') || '';
+      var hash = h.indexOf('#') > -1 ? h.slice(h.indexOf('#')) : '';
+      var base = hash ? h.slice(0, h.indexOf('#')) : h;
+      var bits = base.split('?');
+      var sp = new URLSearchParams(bits[1] || '');
+      if (sp.get('ind')) return;
+      sp.set('ind', IND_CTX);
+      a.setAttribute('href', bits[0] + '?' + sp.toString() + hash);
+    });
+  }
+
   var navMount = document.getElementById('site-nav');
   var footMount = document.getElementById('site-footer');
   if (navMount) navMount.innerHTML = nav;
   if (footMount) footMount.innerHTML = foot;
+  carryInd();
 
   document.querySelectorAll('.nav-links > li').forEach(function (li) {
     var trigger = li.querySelector('a'); var dd = li.querySelector('.dropdown');
