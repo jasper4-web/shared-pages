@@ -14,7 +14,16 @@
 </head>
 <body data-page="industries">
 <div id="site-nav"></div>
-<main id="ind-root">
+<noscript>
+  <nav class="ns-nav"><a href="index.html">SANO Systems</a> ·
+    <a href="ai-employee.html">What we run</a> ·
+    <a href="industries.html">Industries</a> ·
+    <a href="pricing.html">Pricing</a> ·
+    <a href="resources.html">Resources</a> ·
+    <a href="about.html">Why SANO</a> ·
+    <a href="demo.html">Book a demo</a></nav>
+</noscript>
+<main id="main"><div id="ind-root">
   <noscript>
     <section class="band"><div class="wrap-narrow" style="text-align:center">
       <h1>Industry blueprints</h1>
@@ -22,7 +31,10 @@
       <p><a href="industries.html" style="color:var(--blue);font-weight:600">View all industry blueprints &rarr;</a></p>
     </div></section>
   </noscript>
-</main>
+</div></main>
+<noscript>
+  <nav class="ns-nav"><a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a> · <a href="industries.html">All industries</a></nav>
+</noscript>
 <div id="site-footer"></div>
 
 <script src="industries.js"></script>
@@ -33,22 +45,7 @@
   var d = IND.filter(function (x) { return x.slug === slug; })[0];
   var root = document.getElementById('ind-root');
 
-  if (!d) {
-    document.title = 'Choose your industry | SANO Systems';
-    root.innerHTML =
-      '<section class="page-hero tint"><div class="wrap">' +
-        '<span class="eyebrow">&#9679; Industry blueprints</span>' +
-        '<h1>Which business are you in?</h1>' +
-        '<p class="sub">Pick your industry and we&rsquo;ll show you what&rsquo;s inside its blueprint.</p>' +
-      '</div></section>' +
-      '<section class="band"><div class="wrap"><div class="ind-grid">' +
-        IND.map(function (i) {
-          return '<a class="ind" href="industry.html?ind=' + i.slug + '"><div class="em">' + i.em + '</div>' +
-            '<h3>' + i.label + '</h3><p>' + i.tag + '</p><span class="more">See the blueprint &rarr;</span></a>';
-        }).join('') +
-      '</div></div></section>';
-    return;
-  }
+  if (!d) { location.replace('industries.html'); return; }
 
   document.title = d.label + ' — your AI department, already built | SANO Systems';
   var md = document.querySelector('meta[name="description"]');
@@ -60,7 +57,7 @@
   var ex = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
   var others = IND.filter(function (x) { return x.slug !== d.slug; }).slice(0, 4).map(function (i) {
-    return '<a class="ind reveal" href="industry.html?ind=' + i.slug + '"><div class="em">' + i.em + '</div><h3>' + i.label + '</h3><p>' + i.tag + '</p><span class="more">See the blueprint &rarr;</span></a>';
+    return '<a class="ind reveal" href="industry.html?ind=' + i.slug + '"><div class="em" aria-hidden="true">' + i.em + '</div><h3>' + i.label + '</h3><p>' + i.tag + '</p><span class="more">See the blueprint &rarr;</span></a>';
   }).join('');
 
   root.innerHTML =
@@ -75,10 +72,10 @@
     '<section class="band" id="blueprint"><div class="wrap">' +
       '<div class="sec-head reveal"><span class="blueprint">&#10022; The ' + d.label + ' blueprint</span>' +
       '<h2 style="margin-top:16px">What&rsquo;s actually inside it</h2>' +
-      '<p>We don&rsquo;t start from a blank page. This is the proven setup for your trade &mdash; we shape it to how you work, you approve it, then we run it.</p></div>' +
+      '<p>We don&rsquo;t start from a blank page. This is the setup we&rsquo;ve built for your trade &mdash; we shape it to how you work, you approve it, then we run it.</p></div>' +
       '<div class="feat-grid">' +
         d.blueprint.map(function (b, i) {
-          return '<div class="feat reveal"><div class="ic">' + (i + 1) + '</div><h3 style="font-size:17px">' + b + '</h3></div>';
+          return '<div class="feat reveal"><div class="ic" aria-hidden="true">' + (i + 1) + '</div><h3 style="font-size:17px">' + b + '</h3></div>';
         }).join('') +
       '</div>' +
       '<p class="blueprint-season reveal">' + d.season + '</p>' +
@@ -88,10 +85,10 @@
       '<div class="sec-head reveal"><p class="kick">Why it&rsquo;s built that way</p><h2>The problems it was shaped around</h2></div>' +
       '<div class="journey open" style="margin-top:0"><div class="journey-body">' +
         '<div class="journey-grid">' +
-          '<div class="j-col"><h4>What&rsquo;s costing you today</h4><ul class="j-list j-pain">' +
+          '<div class="j-col"><h3 class="j-h">What&rsquo;s costing you today</h3><ul class="j-list j-pain">' +
             d.pains.map(function (p) { return '<li>' + ex + '<span>' + p + '</span></li>'; }).join('') +
           '</ul></div>' +
-          '<div class="j-col"><h4>What we take over</h4><ul class="j-list j-fix">' +
+          '<div class="j-col"><h3 class="j-h">What we take over</h3><ul class="j-list j-fix">' +
             d.runs.map(function (r) { return '<li>' + check + '<span>' + r + '</span></li>'; }).join('') +
           '</ul></div>' +
         '</div>' +
@@ -108,17 +105,23 @@
       '<div class="sec-head reveal"><h2>What changes in your week</h2>' +
       '<p>Not a longer to-do list &mdash; a shorter one.</p></div>' +
       '<div class="feat-grid" style="max-width:960px;margin:0 auto">' +
-        '<div class="feat feat-dark reveal"><div class="ic">&#128222;</div>' +
+        '<div class="feat feat-dark reveal"><div class="ic" aria-hidden="true">&#128222;</div>' +
           '<h3>Your phone stops being a problem</h3>' +
           '<p>Every call and message is answered while you work &mdash; and the ones worth your time reach you with the details already taken.</p></div>' +
-        '<div class="feat feat-dark reveal"><div class="ic">&#127769;</div>' +
+        '<div class="feat feat-dark reveal"><div class="ic" aria-hidden="true">&#127769;</div>' +
           '<h3>Your evenings come back</h3>' +
           '<p>No more catching up on quotes, follow-ups and invoices at 9pm. It went out hours ago, without you.</p></div>' +
-        '<div class="feat feat-dark reveal"><div class="ic">&#128197;</div>' +
+        '<div class="feat feat-dark reveal"><div class="ic" aria-hidden="true">&#128197;</div>' +
           '<h3>Your slow stretches get worked</h3>' +
           '<p>Campaigns and check-ins go to the customers you already have, instead of the phone just going quiet.</p></div>' +
       '</div>' +
-      '<p class="owner-note reveal">What owners tell us: <strong>' + d.truth + '</strong></p>' +
+      '<p class="owner-note reveal">Why it&rsquo;s built this way: <strong>' + d.truth + '</strong></p>' +
+    '</div></section>' +
+
+    '<section class="band paper"><div class="wrap">' +
+      '<div class="sec-head reveal"><p class="kick">Other blueprints</p><h2>Not quite your business?</h2></div>' +
+      '<div class="ind-grid">' + others + '</div>' +
+      '<p style="text-align:center;color:var(--ink-mut);font-size:14px;margin-top:26px" class="reveal">These are examples, not limits. <a href="demo.html" style="color:var(--blue);font-weight:600">Tell us what you do</a> and we&rsquo;ll build the blueprint around it.</p>' +
     '</div></section>' +
 
     '<section class="band"><div class="wrap">' +
@@ -129,12 +132,6 @@
         }).join('') +
       '</div>' +
       '<p style="text-align:center;margin-top:30px" class="reveal"><a href="pricing.html" style="color:var(--blue);font-weight:600;font-size:16px">See what it costs &rarr;</a></p>' +
-    '</div></section>' +
-
-    '<section class="band paper"><div class="wrap">' +
-      '<div class="sec-head reveal"><p class="kick">Other blueprints</p><h2>Not quite your business?</h2></div>' +
-      '<div class="ind-grid">' + others + '</div>' +
-      '<p style="text-align:center;color:var(--ink-mut);font-size:14px;margin-top:26px" class="reveal">These are examples, not limits. <a href="demo.html" style="color:var(--blue);font-weight:600">Tell us what you do</a> and we&rsquo;ll build the blueprint around it.</p>' +
     '</div></section>' +
 
     '<section class="cta"><div class="wrap"><div class="cta-box reveal">' +
