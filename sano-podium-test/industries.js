@@ -20,22 +20,23 @@ window.SANO_INDUSTRIES = [
       'Answers every call, text, and web message — day, night, weekend',
       'Books the job straight onto your schedule',
       'Runs your maintenance-agreement renewals and seasonal check-up reminders',
-      'Asks every finished job for a review, so your rating keeps climbing'
+      'Asks every finished job for a review — the same ask, every customer'
     ],
     blueprint: [
       'A trained answering script that knows HVAC questions',
       'Emergency vs. routine call handling, sorted automatically',
       'Seasonal tune-up campaigns (spring cooling, fall heating)',
       'Maintenance-plan renewal reminders',
-      'Review requests timed to the end of every job'
+      'The same review request after every job, sent at the right moment'
     ],
-    season: 'Built around your year: tune-up season in spring, the summer rush, and the slow winter months when renewals and nurture keep the calendar full.',
+    season: 'Built around your year: tune-up season in spring, the summer rush, and the slow winter months when renewals and check-ins keep the calendar full.',
     truth: 'Evenings and weekends are a big share of the calls a shop gets — and they land when nobody is at a desk.',
     objection: ['"I already use a dispatch system."', 'Good — keep it. We work in front of it. We catch the first call, the first text, and the first follow-up, then hand you a booked job.'],
     faqs: [
       ['Do I have to learn any of this?', 'No. That is the whole point. We build it, we run it, and we keep improving it. You approve it once and then go back to running your business.'],
       ['Will it handle emergency calls differently?', 'Yes. Your blueprint separates "my AC is out right now" from "I want a quote next month," so urgent jobs get treated as urgent.'],
-      ['What if it does not know an answer?', 'It never guesses about your business. It takes the details and passes them to you right away, so the customer still feels taken care of.']
+      ['What if it does not know an answer?', 'It never guesses about your business. It takes the details and passes them to you right away, so the customer still feels taken care of.'],
+      ['Is the texting compliant? I don\'t want trouble.', 'Yes, and we take it seriously. Messages go to people who contacted you or are already your customers, every marketing text has a clear way to stop, and we honour it immediately. We register your number for business texting properly instead of blasting from an unregistered line, and we will not run a campaign we think puts you at risk.']
     ]
   },
   {
@@ -57,8 +58,8 @@ window.SANO_INDUSTRIES = [
       'An answering script trained on common plumbing calls',
       'Emergency routing so urgent leaks reach you fast',
       'Automatic follow-up on quotes that have gone quiet',
-      'Invoice and pay-by-text so payment happens same day',
-      'Review requests after every completed job'
+      'Invoice and pay-by-text sent as soon as the job is done',
+      'The same review request after every completed job'
     ],
     season: 'Plumbing emergencies never stop, so the answering side runs year-round — with extra pushes around remodel season and water-heater season.',
     truth: 'A call that goes to voicemail during an active leak is usually not a call that comes back.',
@@ -66,7 +67,8 @@ window.SANO_INDUSTRIES = [
     faqs: [
       ['Can it answer while I am on a job?', 'That is exactly when it works hardest. It picks up on the first ring whether you are free or elbow-deep under a sink.'],
       ['Will customers know it is not me?', 'It sounds like a friendly, professional person on your team, and it speaks English and Spanish. Anything it cannot answer comes straight to you.'],
-      ['Does it help me get paid faster?', 'Yes. It can send the invoice and a secure pay-by-text link right after the job, instead of it waiting until you get home.']
+      ['Does it help me get paid faster?', 'Yes. It can send the invoice and a secure pay-by-text link right after the job, instead of it waiting until you get home.'],
+      ['Is the texting compliant? I don\'t want trouble.', 'Yes, and we take it seriously. Messages go to people who contacted you or are already your customers, every marketing text has a clear way to stop, and we honour it immediately. We register your number for business texting properly instead of blasting from an unregistered line, and we will not run a campaign we think puts you at risk.']
     ]
   },
   {
@@ -82,22 +84,23 @@ window.SANO_INDUSTRIES = [
       'Answers the storm rush without you hiring temporary help',
       'Follows up on every estimate, more than once, until you get an answer',
       'Keeps past customers warm through the slow months',
-      'Collects reviews so you look established next to the national brands'
+      'Asks for a review after every completed job, so your rating reflects your real work'
     ],
     blueprint: [
       'A script trained on storm-damage and inspection calls',
-      'Estimate follow-up sequences that run on their own',
-      'Slow-season nurture so you stay top of mind between storms',
+      'Estimate follow-ups that run on their own',
+      'Slow-season check-ins so you stay top of mind between storms',
       'Inspection and appointment reminders',
-      'Review requests after every completed roof'
+      'The same review request after every completed roof'
     ],
-    season: 'Tuned to the roofing year: storm prep in spring, the peak-season rush, hurricane-season repairs, and winter inspection and nurture campaigns.',
+    season: 'Tuned to the roofing year: storm prep in spring, the peak-season rush, hurricane-season repairs, and winter inspection and check-in campaigns.',
     truth: 'Most estimates are followed up once, if at all. The follow-up nobody has time for is where the work actually closes.',
     objection: ['"The national brands out-market me."', 'They have full-time marketing teams. We are yours — for a fraction of one salary.'],
     faqs: [
       ['Can it keep up after a big storm?', 'Yes. It answers every caller at once, so nobody sits on hold and no one gets a voicemail while you are on a roof.'],
       ['Does it chase my estimates?', 'It follows up automatically on a schedule you approve — the part that usually gets dropped when you are busy.'],
-      ['What about the slow months?', 'Your blueprint includes nurture and inspection campaigns to your past customers so the phone still rings between storms.']
+      ['What about the slow months?', 'Your blueprint includes check-in and inspection campaigns to your past customers so the phone still rings between storms.'],
+      ['Is the texting compliant? I don\'t want trouble.', 'Yes, and we take it seriously. Messages go to people who contacted you or are already your customers, every marketing text has a clear way to stop, and we honour it immediately. We register your number for business texting properly instead of blasting from an unregistered line, and we will not run a campaign we think puts you at risk.']
     ]
   },
   {
@@ -120,15 +123,16 @@ window.SANO_INDUSTRIES = [
       'Booking and reminders that cut no-shows',
       'Quote follow-up that runs without you',
       'Recurring-service and seasonal reminders',
-      'Review requests after every job'
+      'The same review request after every job'
     ],
-    season: 'Shaped around your busy and slow months, so the quiet stretches get nurture campaigns instead of silence.',
+    season: 'Shaped around your busy and slow months, so the quiet stretches get campaigns instead of silence.',
     truth: 'Most home-service jobs go to whoever responds first — not whoever quotes lowest.',
     objection: ['"I am only a few people."', 'You do not need more people. You need to stop losing the customers already trying to reach you.'],
     faqs: [
       ['My trade is not listed. Does it still work?', 'Yes. The blueprint is shaped to your services and how you actually work. Any business that books jobs and answers calls fits.'],
       ['Do I have to manage it?', 'No. We build it, run it, and improve it. That is what you are paying for.'],
-      ['Will it work with how I already schedule?', 'We fit it around your existing calendar and process instead of forcing you to change how you work.']
+      ['Will it work with how I already schedule?', 'We fit it around your existing calendar and process instead of forcing you to change how you work.'],
+      ['Is the texting compliant? I don\'t want trouble.', 'Yes, and we take it seriously. Messages go to people who contacted you or are already your customers, every marketing text has a clear way to stop, and we honour it immediately. We register your number for business texting properly instead of blasting from an unregistered line, and we will not run a campaign we think puts you at risk.']
     ]
   },
   {
@@ -151,7 +155,7 @@ window.SANO_INDUSTRIES = [
       'Service and test-drive booking on your real availability',
       'Automatic follow-up on quotes and inquiries',
       'Service-due and maintenance reminders to past customers',
-      'Review requests after every visit'
+      'The same review request after every visit'
     ],
     season: 'Set up for the way your bays and floor actually run, including the after-hours window when nobody is there to pick up.',
     truth: 'The shop that answers first usually gets the appointment — the rest leave a voicemail nobody returns.',
@@ -159,7 +163,8 @@ window.SANO_INDUSTRIES = [
     faqs: [
       ['Can it book service and test drives?', 'Yes — against your real availability, then it confirms with the customer automatically.'],
       ['Does it work after we close?', 'That is where it earns its keep. Evening and weekend inquiries get answered and booked instead of going cold.'],
-      ['Will it fit how our shop runs?', 'We build it around your process. Nothing goes live until you have seen it and approved it.']
+      ['Will it fit how our shop runs?', 'We build it around your process. Nothing goes live until you have seen it and approved it.'],
+      ['Is the texting compliant? I don\'t want trouble.', 'Yes, and we take it seriously. Messages go to people who contacted you or are already your customers, every marketing text has a clear way to stop, and we honour it immediately. We register your number for business texting properly instead of blasting from an unregistered line, and we will not run a campaign we think puts you at risk.']
     ]
   },
   {
@@ -180,9 +185,9 @@ window.SANO_INDUSTRIES = [
     blueprint: [
       'A warm, on-brand script for consultations and treatments',
       'Booking with deposits where you want them',
-      'Reminder and confirmation sequences to cut no-shows',
+      'Reminders and confirmations that cut no-shows',
       'Rebooking and new-treatment campaigns to past clients',
-      'Review requests after every visit'
+      'The same review request after every visit'
     ],
     season: 'Built around your treatment menu and the times clients actually reach out — which is usually evenings and weekends.',
     truth: 'An empty chair cannot be resold later. Reminders and easy rescheduling are what keep the day full.',
@@ -190,7 +195,8 @@ window.SANO_INDUSTRIES = [
     faqs: [
       ['Can it sound like our brand?', 'Yes. We write and tune the voice with you so it sounds like your front desk, in English and Spanish.'],
       ['Will it reduce no-shows?', 'It sends reminders and confirmations and makes rescheduling simple, which is what protects the calendar.'],
-      ['Is client information handled carefully?', 'It collects only what is needed to book, and anything sensitive goes straight to your team.']
+      ['How is client information handled?', 'The assistant collects only what is needed to book — name, contact details, and the treatment they are asking about. It does not ask for or store medical history, and anything sensitive is routed to your team rather than handled automatically. If your practice needs a signed business associate agreement, we sign one before anything goes live.'],
+      ['Is the texting compliant? I don\'t want trouble.', 'Yes, and we take it seriously. Messages go to people who contacted you or are already your customers, every marketing text has a clear way to stop, and we honour it immediately. We register your number for business texting properly instead of blasting from an unregistered line, and we will not run a campaign we think puts you at risk.']
     ]
   },
   {
@@ -210,10 +216,10 @@ window.SANO_INDUSTRIES = [
     ],
     blueprint: [
       'A professional script for new-patient and scheduling calls',
-      'Recall and hygiene-reminder sequences',
+      'Recall and hygiene reminders',
       'Appointment confirmations and reminders',
       'Waitlist outreach to refill cancellations',
-      'Review requests after appointments'
+      'The same review request after every appointment'
     ],
     season: 'Set up around your recall cycles and the hours patients actually call, including evenings when the office is closed.',
     truth: 'Recall is the most predictable work a practice has, and it is usually the first thing that slips when the front desk gets busy.',
@@ -221,7 +227,8 @@ window.SANO_INDUSTRIES = [
     faqs: [
       ['Does it replace our front desk?', 'No. It covers what they cannot get to — calls while they are busy, after-hours inquiries, and recall outreach.'],
       ['Can it handle recall?', 'Yes. Recall and overdue-visit reminders run on a schedule you approve.'],
-      ['Is patient information kept private?', 'It captures only what is needed to schedule, and anything sensitive is routed to your team rather than handled automatically.']
+['How do you handle patient privacy and HIPAA?', 'Straight answer: the assistant only collects what is needed to book or route a call — name, contact details, and the reason for the visit. It does not ask for or store clinical information, and anything sensitive goes straight to your team instead of being handled automatically. Where a signed business associate agreement is required for how you want to use it, we sign one before anything goes live. If your setup needs more than that, we will tell you before you pay us.'],
+      ['Is the texting compliant? I don\'t want trouble.', 'Yes, and we take it seriously. Messages go to people who contacted you or are already your customers, every marketing text has a clear way to stop, and we honour it immediately. We register your number for business texting properly instead of blasting from an unregistered line, and we will not run a campaign we think puts you at risk.']
     ]
   },
   {
@@ -244,7 +251,7 @@ window.SANO_INDUSTRIES = [
       'One place for calls, texts, and messages',
       'Promotion and win-back campaigns to past customers',
       'Booking and reminders where you take appointments',
-      'Review requests after a purchase or visit'
+      'The same review request after a purchase or visit'
     ],
     season: 'Built around your busy periods and the promotions you want to run, so the quiet weeks are not left to chance.',
     truth: 'Most local shops never hear from a customer again after the first visit — not because of the service, but because nobody followed up.',
@@ -252,7 +259,8 @@ window.SANO_INDUSTRIES = [
     faqs: [
       ['I do not take appointments. Is this still useful?', 'Yes. Answering questions instantly and staying in touch with past customers matters whether or not you book time slots.'],
       ['Can it answer messages from social too?', 'Yes — calls, texts, and messages land in one place and get answered the same way.'],
-      ['Do I have to run any of it?', 'No. We build it and run it. You approve how it sounds and then get on with your day.']
+      ['Do I have to run any of it?', 'No. We build it and run it. You approve how it sounds and then get on with your day.'],
+      ['Is the texting compliant? I don\'t want trouble.', 'Yes, and we take it seriously. Messages go to people who contacted you or are already your customers, every marketing text has a clear way to stop, and we honour it immediately. We register your number for business texting properly instead of blasting from an unregistered line, and we will not run a campaign we think puts you at risk.']
     ]
   }
 ];

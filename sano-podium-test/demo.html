@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
+<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body data-page="demo">
 <div id="site-nav"></div>
@@ -16,16 +17,15 @@
 <section class="hero" style="padding-top:56px">
   <div class="wrap hero-grid">
     <div class="reveal">
-      <span class="eyebrow">● Book a demo</span>
-      <h1 style="font-size:clamp(34px,4.6vw,52px)">See exactly what we'd build for your business.</h1>
-      <p class="sub" style="max-width:40ch">Free, no commitment. Tell us a little about your business and we'll show you the department we'd run for you — answering calls, booking work, and following up.</p>
+      <span class="eyebrow">&#9679; Book a demo</span>
+      <h1 style="font-size:clamp(34px,4.6vw,52px)">See exactly what we'd run for your business.</h1>
+      <p class="sub" style="max-width:40ch">Free, no commitment. Tell us a little about your business and we'll show you the department we'd run for you &mdash; answering calls, booking work, and following up.</p>
       <ul style="list-style:none;margin-top:24px;display:grid;gap:12px">
-        <li style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Your phone answered live — in English or Spanish</li>
+        <li style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Your phone answered live &mdash; in English or Spanish</li>
         <li style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>A missed call turning into a booked job on its own</li>
         <li style="display:flex;gap:10px;color:var(--ink-soft)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0070F3" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Exactly what we'd run for you, and what it costs</li>
       </ul>
-      <div class="hero-trust" style="margin-top:26px">We run it · You never touch it · Se habla Español</div>
-      <p style="margin-top:20px;color:var(--ink-mut)">Prefer to talk now? Call <a href="tel:+18325557266" style="color:var(--blue-d);font-weight:600">(832) 555-SANO</a></p>
+      <div class="hero-trust" style="margin-top:26px">&#10003; We run it &nbsp;&middot;&nbsp; &#10003; You never touch it &nbsp;&middot;&nbsp; &#10003; Se habla Espa&ntilde;ol</div>
     </div>
 
     <div class="form-card reveal">
@@ -33,28 +33,51 @@
       <p class="fsub">Takes 30 seconds. We'll reach out to set a time.</p>
       <form id="demo-form" novalidate>
         <div class="frow2">
-          <div class="field"><label for="name">Your name</label><input id="name" name="name" type="text" placeholder="Jane Rivera" /></div>
-          <div class="field"><label for="business">Business name</label><input id="business" name="business" type="text" placeholder="Rivera Plumbing" /></div>
+          <div class="field">
+            <label for="name">Your name</label>
+            <input id="name" name="name" type="text" autocomplete="name" placeholder="Jane Rivera" required aria-required="true" aria-describedby="err-name" />
+            <p class="field-err" id="err-name" hidden>Please enter your name.</p>
+          </div>
+          <div class="field">
+            <label for="business">Business name</label>
+            <input id="business" name="business" type="text" autocomplete="organization" placeholder="Rivera Plumbing" required aria-required="true" aria-describedby="err-business" />
+            <p class="field-err" id="err-business" hidden>Please enter your business name.</p>
+          </div>
         </div>
         <div class="frow2">
-          <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" placeholder="(832) 555-0199" /></div>
-          <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" placeholder="jane@riveraplumbing.com" /></div>
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(555) 555-0199" required aria-required="true" aria-describedby="err-phone" />
+            <p class="field-err" id="err-phone" hidden>Please enter a phone number with at least 10 digits.</p>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="jane@riveraplumbing.com" required aria-required="true" aria-describedby="err-email" />
+            <p class="field-err" id="err-email" hidden>Please enter a valid email address.</p>
+          </div>
         </div>
-        <div class="field"><label for="industry">Industry</label>
-          <select id="industry" name="industry"><!--filled from industries.js-->
-            <option value="" disabled selected>Choose your industry…</option>
+        <div class="field">
+          <label for="industry">Industry</label>
+          <select id="industry" name="industry" required aria-required="true" aria-describedby="err-industry">
+            <option value="" disabled selected>Choose your industry&hellip;</option>
           </select>
+          <p class="field-err" id="err-industry" hidden>Please choose your industry.</p>
         </div>
-        <div class="field"><label for="note">Your biggest bottleneck <span style="color:var(--ink-mut);font-weight:400">(optional)</span></label><textarea id="note" name="note" placeholder="e.g. We miss calls when we're on a job and lose the customer."></textarea></div>
-        <p id="form-err" style="display:none;color:#C4462F;font-size:14px;margin-bottom:10px">Please fix the highlighted fields.</p>
+        <div class="field">
+          <label for="note">Your biggest bottleneck <span style="color:var(--ink-mut);font-weight:400">(optional)</span></label>
+          <textarea id="note" name="note" placeholder="e.g. We miss calls when we're on a job and lose the customer."></textarea>
+        </div>
+        <p class="form-err-global" id="form-err" role="alert" hidden>Please fix the highlighted fields above.</p>
         <button type="submit" class="btn btn-blue btn-lg" style="width:100%">Book my free demo</button>
         <p style="font-size:12px;color:var(--ink-mut);text-align:center;margin-top:12px">By submitting, you agree we can contact you about your demo. No spam, ever.</p>
       </form>
-      <div id="demo-ok" style="display:none;text-align:center;padding:20px 0">
+
+      <div id="demo-ok" role="status" tabindex="-1" style="display:none;text-align:center;padding:20px 0">
         <div style="width:56px;height:56px;border-radius:50%;background:var(--blue-t);color:var(--blue-d);display:grid;place-items:center;margin:0 auto 16px"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-        <h2>You're in. 🎉</h2>
-        <p class="fsub" id="ok-msg">Thanks — we'll reach out shortly to set up your demo.</p>
-        <a href="tel:+18325557266" class="btn btn-ghost">Or call (832) 555-SANO now</a>
+        <h2 id="ok-title">Almost there &mdash; one tap left</h2>
+        <p class="fsub" id="ok-msg">Your details are ready to send. Because this is a design test, nothing is stored on our side &mdash; tap below and it opens an email with everything filled in.</p>
+        <a id="ok-send" class="btn btn-blue btn-lg" style="width:100%" href="mailto:hello@sanosystems.com">Send my request</a>
+        <p style="font-size:12px;color:var(--ink-mut);margin-top:12px">Didn't open? Email <a href="mailto:hello@sanosystems.com" style="color:var(--blue);font-weight:600">hello@sanosystems.com</a>.</p>
       </div>
     </div>
   </div>
@@ -64,21 +87,20 @@
   <div class="wrap">
     <div class="sec-head reveal"><p class="kick">What happens next</p><h2>From here, it's easy.</h2></div>
     <div class="steps">
-      <div class="step reveal"><div class="n">1</div><h3>We reach out fast</h3><p>A real person from SANO reaches out to set a time that works for you.</p></div>
+      <div class="step reveal"><div class="n">1</div><h3>We reach out</h3><p>A real person from SANO gets back to you to set a time that actually works around your jobs.</p></div>
       <div class="step reveal"><div class="n">2</div><h3>You watch the demo</h3><p>15 minutes. We show it working and map it to where your time and leads are going.</p></div>
-      <div class="step reveal"><div class="n">3</div><h3>You decide — no pressure</h3><p>If it's a fit, we build it — and nothing goes live until you approve it. If not, no hard feelings.</p></div>
+      <div class="step reveal"><div class="n">3</div><h3>You decide &mdash; no pressure</h3><p>If it's a fit, we build it &mdash; and nothing goes live until you approve it. If not, no hard feelings.</p></div>
     </div>
   </div>
 </section>
 
-<!-- DEMO FAQ -->
 <section class="band">
   <div class="wrap">
     <div class="sec-head reveal"><p class="kick">Before you book</p><h2>What to expect</h2></div>
     <div class="faq reveal">
-      <details><summary>Is this a sales pitch?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">It's a working demo. We show you the department we'd run for your business and what it would cost. If it isn't a fit, we'll say so — we'd rather not take on work we can't do well.</div></details>
-      <details><summary>How long does it take?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">About 15 minutes. If you want to go deeper on your industry's blueprint, we'll happily use more — but 15 is enough to know if it's worth continuing.</div></details>
-      <details><summary>Do I need to prepare anything?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">No. It helps if you know roughly how many calls you miss and what your busiest hours look like, but we can work that out together.</div></details>
+      <details><summary>Is this a sales pitch?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">It's a working demo. We show you the department we'd run for your business and what it would cost. If it isn't a fit, we'll say so &mdash; we'd rather not take on work we can't do well.</div></details>
+      <details><summary>How long does it take?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">About 15 minutes. If you want to go deeper on your industry's blueprint we'll happily use more, but 15 is enough to know whether it's worth continuing.</div></details>
+      <details><summary>Do I need to prepare anything?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">No. It helps if you know roughly how many calls you miss and when your busiest hours are, but we can work that out together.</div></details>
       <details><summary>What if I already pay for something similar?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">Tell us what you have. If it works and you like it, we'll often run that for you instead of replacing it. The value we add is doing the work, not selling you another subscription.</div></details>
       <details><summary>Will you spam me afterwards?<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="a">No. We'll reach out to set a time, and follow up once if we don't hear back. Tell us to stop and we stop.</div></details>
     </div>
@@ -88,41 +110,72 @@
 <div id="site-footer"></div>
 <script src="industries.js"></script>
 <script>
-(function(){
-  var sel=document.getElementById('industry'); if(!sel) return;
-  (window.SANO_INDUSTRIES||[]).forEach(function(i){
-    var o=document.createElement('option'); o.textContent=i.em+'  '+i.label+' — '+i.tag; sel.appendChild(o);
+(function () {
+  var sel = document.getElementById('industry');
+  var IND = window.SANO_INDUSTRIES || [];
+  IND.forEach(function (i) {
+    var o = document.createElement('option');
+    o.value = i.slug;                       /* real value, not the display label */
+    o.textContent = i.em + '  ' + i.label;
+    sel.appendChild(o);
   });
-  var o=document.createElement('option'); o.textContent='Something else'; sel.appendChild(o);
+  var other = document.createElement('option');
+  other.value = 'other'; other.textContent = 'Something else';
+  sel.appendChild(other);
+
+  /* pre-select the industry the visitor already picked */
+  var pre = new URLSearchParams(location.search).get('ind');
+  if (pre && Array.prototype.some.call(sel.options, function (o) { return o.value === pre; })) sel.value = pre;
+
+  var form = document.getElementById('demo-form');
+  var globalErr = document.getElementById('form-err');
+  var ok = document.getElementById('demo-ok');
+
+  function setError(el, msgEl, bad) {
+    el.setAttribute('aria-invalid', bad ? 'true' : 'false');
+    el.classList.toggle('is-invalid', bad);
+    msgEl.hidden = !bad;
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var checks = [
+      ['name', function (v) { return v.length > 0; }],
+      ['business', function (v) { return v.length > 0; }],
+      ['phone', function (v) { return v.replace(/\D/g, '').length >= 10; }],
+      ['email', function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }],
+      ['industry', function (v) { return v.length > 0; }]
+    ];
+    var firstBad = null;
+    checks.forEach(function (c) {
+      var el = document.getElementById(c[0]);
+      var bad = !c[1]((el.value || '').trim());
+      setError(el, document.getElementById('err-' + c[0]), bad);
+      if (bad && !firstBad) firstBad = el;
+    });
+    globalErr.hidden = !firstBad;
+    if (firstBad) { firstBad.focus(); return; }
+
+    /* No backend on a design-test site — build a real mailto so the lead is never silently destroyed. */
+    var val = function (id) { return (document.getElementById(id).value || '').trim(); };
+    var chosen = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].textContent : '';
+    var body = 'Name: ' + val('name') + '\n' +
+               'Business: ' + val('business') + '\n' +
+               'Phone: ' + val('phone') + '\n' +
+               'Email: ' + val('email') + '\n' +
+               'Industry: ' + chosen + '\n' +
+               'Biggest bottleneck: ' + (val('note') || '(not given)');
+    document.getElementById('ok-send').setAttribute('href',
+      'mailto:hello@sanosystems.com?subject=' + encodeURIComponent('Demo request — ' + val('business')) +
+      '&body=' + encodeURIComponent(body));
+    var first = val('name').split(' ')[0];
+    document.getElementById('ok-title').textContent = 'Thanks' + (first ? ', ' + first : '') + ' — one tap left';
+    form.style.display = 'none';
+    ok.style.display = 'block';
+    ok.focus();
+  });
 })();
 </script>
 <script src="shared.js"></script>
-<script>
-(function(){
-  var form = document.getElementById('demo-form');
-  if(!form) return;
-  var reqd = ['name','business','phone','email','industry'];
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    var bad = false;
-    reqd.forEach(function(id){
-      var el = document.getElementById(id);
-      var v = (el.value||'').trim();
-      var ok = v.length > 0;
-      if(id==='email') ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-      if(id==='phone') ok = (v.replace(/\D/g,'').length >= 10);
-      el.style.borderColor = ok ? '' : '#C4462F';
-      if(!ok) bad = true;
-    });
-    document.getElementById('form-err').style.display = bad ? 'block' : 'none';
-    if(bad) return;
-    /* TODO(owner-wire-backend): send this to a real inbox/webhook. Demo shows success state. */
-    var name = (document.getElementById('name').value||'').trim().split(' ')[0];
-    document.getElementById('ok-msg').textContent = 'Thanks' + (name ? ', ' + name : '') + " — we'll reach out shortly to set up your demo.";
-    form.style.display = 'none';
-    document.getElementById('demo-ok').style.display = 'block';
-  });
-})();
-</script>
 </body>
 </html>

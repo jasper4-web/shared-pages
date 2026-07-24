@@ -13,9 +13,9 @@
   var caret = '<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>';
 
   var nav =
-    '<div class="ribbon">🧪 DESIGN TEST — SANO Systems inside Podium\'s structure &amp; flow. <b>Not our live site.</b></div>' +
+    '<div class="ribbon">🧪 DESIGN TEST — SANO Systems inside Podium\'s structure &amp; flow. <b>Not our live site;</b> phone &amp; email shown are placeholders.</div>' +
     '<header><div class="wrap nav">' +
-      '<a href="index.html" class="brand"><img src="sano-logo.png" alt="SANO Systems"/> SANO Systems</a>' +
+      '<a href="index.html" class="brand"><img src="sano-logo.png" alt="" width="30" height="30"/> SANO Systems</a>' +
       '<ul class="nav-links">' +
         '<li class="' + (page === 'product' ? 'active' : '') + '"><a href="ai-employee.html">What we run ' + caret + '</a>' +
           '<div class="dropdown">' +
@@ -34,10 +34,10 @@
       '</ul>' +
       '<div class="nav-right">' +
         '<a href="tel:' + PHONE + '" class="nav-phone">' + PHONE_D + '</a>' +
-        '<a href="demo.html" class="btn btn-blue">Book a demo</a>' + '<button class="nav-burger" aria-label="Menu"><span></span><span></span><span></span></button>' +
+        '<a href="demo.html" class="btn btn-blue">Book a demo</a>' + '<button class="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>' +
       '</div>' +
     '</div></header>' +
-    '<div class="mobile-menu">' +
+    '<div class="mobile-menu" id="mobile-menu">' +
       '<a href="ai-employee.html">What we run</a><a href="industries.html">Industries</a>' +
       '<a href="pricing.html">Pricing</a><a href="resources.html">Resources</a><a href="about.html">Why SANO</a>' +
       '<a href="tel:' + PHONE + '">' + PHONE_D + '</a>' +
@@ -52,18 +52,18 @@
     '<footer><div class="wrap">' +
       '<div class="foot-grid">' +
         '<div class="foot-brand">' +
-          '<div class="brand"><img src="sano-logo.png" alt="SANO Systems"/> SANO Systems</div>' +
+          '<div class="brand"><img src="sano-logo.png" alt="" width="30" height="30"/> SANO Systems</div>' +
           '<p>You run your business. We run the AI.</p>' +
           '<a href="tel:' + PHONE + '" class="c">' + PHONE_D + '</a>' +
           '<a href="mailto:' + EMAIL + '" class="c">' + EMAIL + '</a>' +
         '</div>' +
         '<div class="foot-col"><h4>What we run</h4>' +
-          '<a href="ai-employee.html">The front desk</a><a href="ai-employee.html#reviews">Reviews</a>' +
+          '<a href="ai-employee.html#frontdesk">The front desk</a><a href="ai-employee.html#reviews">Reviews</a>' +
           '<a href="ai-employee.html#marketing">Marketing &amp; payments</a><a href="pricing.html">Pricing</a></div>' +
         '<div class="foot-col"><h4>Industries</h4>' + indFoot + '</div>' +
         '<div class="foot-col"><h4>Company</h4>' +
           '<a href="about.html">Why SANO</a><a href="resources.html">Resources</a>' +
-          '<a href="about.html#bilingual">Se habla Español</a><a href="demo.html">Contact</a></div>' +
+          '<a href="about.html#bilingual">Se habla Español</a><a href="demo.html">Contact us</a></div>' +
         '<div class="foot-col"><h4>Get started</h4>' +
           '<a href="demo.html">Book a demo</a><a href="tel:' + PHONE + '">Talk to a person</a>' +
           '<a href="pricing.html">See pricing</a></div>' +
@@ -79,7 +79,17 @@
 
   var burger = document.querySelector('.nav-burger');
   var menu = document.querySelector('.mobile-menu');
-  if (burger && menu) burger.addEventListener('click', function () { menu.classList.toggle('open'); });
+  function setMenu(open) {
+    if (!menu || !burger) return;
+    menu.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  if (burger && menu) {
+    burger.addEventListener('click', function () { setMenu(!menu.classList.contains('open')); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+    menu.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+  }
 
   var obs = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
