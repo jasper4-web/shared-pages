@@ -93,6 +93,11 @@
           <label for="note">Your biggest bottleneck <span style="color:var(--ink-mut);font-weight:400">(optional)</span></label>
           <textarea id="note" name="note" placeholder="e.g. We miss calls when we're on a job and lose the customer."></textarea>
         </div>
+        <div class="field field-check">
+          <label for="sms"><input type="checkbox" id="sms" name="sms" /> Text me about my demo. Message and data rates may apply; reply STOP to opt out. We never share your number.</label>
+        </div>
+        <input type="hidden" id="plan" name="plan" value="" />
+        <p class="plan-echo" id="plan-echo" hidden></p>
         <p class="form-err-global" id="form-err" role="alert" hidden>Please fix the highlighted fields above.</p>
         <button type="submit" class="btn btn-blue btn-lg" style="width:100%">Book my free demo</button>
         <p style="font-size:12px;color:var(--ink-mut);text-align:center;margin-top:12px">By submitting, you agree we can contact you about your demo. No spam, ever.</p>
@@ -148,7 +153,14 @@
   /* pre-select the industry the visitor already picked */
   var params = new URLSearchParams(location.search);
   var planEl = document.getElementById('plan');
-  if (planEl) planEl.value = params.get('plan') || '';
+  var PLAN_LABEL = { starter: 'Starter — $397/mo', growth: 'Growth — $999/mo', scale: 'Scale — $1,995/mo', total: 'Total Transformation — $4,997/mo' };
+  var planParam = params.get('plan') || '';
+  if (planEl) planEl.value = planParam;
+  var echo = document.getElementById('plan-echo');
+  if (echo && PLAN_LABEL[planParam]) {
+    echo.textContent = "You're asking about " + PLAN_LABEL[planParam] + ". Not sure it's the right one? We'll tell you honestly.";
+    echo.hidden = false;
+  }
   var pre = params.get('ind');
   if (pre && Array.prototype.some.call(sel.options, function (o) { return o.value === pre; })) sel.value = pre;
 
@@ -183,6 +195,7 @@
     if (firstBad) { firstBad.focus(); return; }
 
     /* No backend on a design-test site — build a real mailto so the lead is never silently destroyed. */
+    try {
     var val = function (id) { return (document.getElementById(id).value || '').trim(); };
     var chosen = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].textContent : '';
     var body = 'Name: ' + val('name') + '\n' +
@@ -205,6 +218,13 @@
       navigator.clipboard && navigator.clipboard.writeText(body).then(function(){ cp.textContent = 'Copied ✓'; });
     });
     ok.focus();
+    } catch (err) {
+      /* never let a script error swallow a lead */
+      document.getElementById('ok-send').setAttribute('href', 'mailto:hello@sanosystems.com?subject=Demo%20request');
+      document.getElementById('demo-form-wrap').style.display = 'none';
+      ok.style.display = 'block';
+      ok.focus();
+    }
   });
 })();
 </script>
