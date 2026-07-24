@@ -118,14 +118,23 @@
       sp.set('ind', IND_CTX);
       a.setAttribute('href', bits[0] + '?' + sp.toString() + hash);
     });
-    /* a dental visitor should never be handed the HVAC artifact */
-    if (IND_CTX !== 'hvac') {
-      document.querySelectorAll('a[href^="sample-blueprint.html"]').forEach(function (a) {
-        if (!/sample blueprint/i.test(a.textContent)) return;
+    /* A visitor on a non-HVAC branch should not be closed with the HVAC artifact.
+       Scoped to CTA buttons only -- nav and footer links to it are navigation, not
+       an ask -- and reversible, because the visitor can change their mind. */
+    document.querySelectorAll('.cta-box a[href], .hero-cta a[href]').forEach(function (a) {
+      if (!a.hasAttribute('data-orig-href')) {
+        if (!/^sample-blueprint\.html/.test(a.getAttribute('href') || '')) return;
+        a.setAttribute('data-orig-href', a.getAttribute('href'));
+        a.setAttribute('data-orig-text', a.textContent);
+      }
+      if (IND_CTX && IND_CTX !== 'hvac') {
         a.setAttribute('href', 'pricing.html');
         a.textContent = 'See what it costs';
-      });
-    }
+      } else {
+        a.setAttribute('href', a.getAttribute('data-orig-href'));
+        a.textContent = a.getAttribute('data-orig-text');
+      }
+    });
   }
   /* the picker is the centrepiece: clicking a tile must arm the branch for the
      nav, footer and mobile menu too, not just for the panel's own button. */
