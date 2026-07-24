@@ -12,7 +12,7 @@
 
   var HERE = (location.pathname.split('/').pop() || 'index.html');
   function here(f) { return HERE === f; }
-  var caret = '<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>';
+  var caret = '<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
 
   var nav =
     '<div class="ribbon"><span class="rib-dot" aria-hidden="true"></span> DESIGN TEST — SANO Systems inside Podium\'s structure &amp; flow. <b>Not our live site;</b> phone &amp; email shown are placeholders.</div>' +
@@ -38,7 +38,7 @@
       '</ul></nav>' +
       '<div class="nav-right">' +
         '<a href="tel:' + PHONE + '" class="nav-phone">' + PHONE_D + '</a>' +
-        '<a href="tel:' + PHONE + '" class="nav-call" aria-label="Call us"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.11 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>' +
+        '<a href="tel:' + PHONE + '" class="nav-call" aria-label="Call us"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.11 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>' +
         '<a href="demo.html" class="btn btn-blue"' + (page === 'demo' ? ' aria-current="page"' : '') + '>Request a demo</a>' + '<button class="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>' +
       '</div>' +
     '</div></header>' +
@@ -104,7 +104,7 @@
     if (IND_CTX && !IND.some(function (x) { return x.slug === IND_CTX; })) IND_CTX = '';
     if (IND_CTX) { try { sessionStorage.setItem('sano_ind', IND_CTX); } catch (e1) {} }
   } catch (e) { IND_CTX = ''; }
-  function carryInd() {
+  function carryInd(force) {
     if (!IND_CTX) return;
     document.querySelectorAll('a[href^="demo.html"]').forEach(function (a) {
       var h = a.getAttribute('href') || '';
@@ -112,11 +112,29 @@
       var base = hash ? h.slice(0, h.indexOf('#')) : h;
       var bits = base.split('?');
       var sp = new URLSearchParams(bits[1] || '');
-      if (sp.get('ind')) return;
+      /* force: the visitor just changed their mind in the picker, so an older
+         industry already on the link must be overwritten, not kept. */
+      if (sp.get('ind') && !force) return;
       sp.set('ind', IND_CTX);
       a.setAttribute('href', bits[0] + '?' + sp.toString() + hash);
     });
+    /* a dental visitor should never be handed the HVAC artifact */
+    if (IND_CTX !== 'hvac') {
+      document.querySelectorAll('a[href^="sample-blueprint.html"]').forEach(function (a) {
+        if (!/sample blueprint/i.test(a.textContent)) return;
+        a.setAttribute('href', 'pricing.html');
+        a.textContent = 'See what it costs';
+      });
+    }
   }
+  /* the picker is the centrepiece: clicking a tile must arm the branch for the
+     nav, footer and mobile menu too, not just for the panel's own button. */
+  window.SANO_setInd = function (slug) {
+    if (!slug || !IND.some(function (x) { return x.slug === slug; })) return;
+    IND_CTX = slug;
+    try { sessionStorage.setItem('sano_ind', slug); } catch (e) {}
+    carryInd(true);
+  };
 
   var navMount = document.getElementById('site-nav');
   var footMount = document.getElementById('site-footer');

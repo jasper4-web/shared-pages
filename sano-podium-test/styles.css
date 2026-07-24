@@ -551,13 +551,22 @@ a.pick{text-decoration:none}
 /* ---------- line icons ----------
    brand-kit.md forbids clip-art icons; emoji were doing that job in 95 places.
    One stroke weight, one grid, inherits colour from whatever holds it. */
-.ico{display:block;width:100%;height:100%;stroke-width:1.75;overflow:visible}
+.ico{display:inline-block;width:24px;height:24px;stroke-width:1.75;overflow:visible;flex:none}
 .pick .em,.ind .em{display:grid;place-items:center;width:30px;height:30px;color:var(--blue-d);font-size:0}
 .feat .ic{padding:12px}
-.feat .ic .ico{width:100%;height:100%}
+
 .v-badge .ic{padding:8px}
 .post .thumb{font-size:0}
 .post .thumb .ico{width:48px;height:48px;color:var(--blue-d);opacity:.85}
 .feat-dark .ic{background:rgba(255,255,255,.08);color:#8FC2FF}
 .page-hero .eyebrow .ico,.eyebrow .ico{width:14px;height:14px;display:inline-block;vertical-align:-2px}
 .rib-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#4D9BFF;vertical-align:1px;margin-right:4px}
+
+/* an .ico inside running text is an inline glyph, not a tile icon */
+
+.form-reassure{font-size:14px;color:var(--blue-d);background:var(--blue-t);border-radius:8px;padding:9px 12px;margin:0 0 12px;text-align:center}
+table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;margin-right:2px}
+
+/* icons only fill a container that has an explicit size */
+.pick .em .ico,.ind .em .ico,.feat .ic .ico,.v-badge .ic .ico{display:block;width:100%;height:100%}
+.bubble .ico,p > .ico,li > .ico{width:15px;height:15px;vertical-align:-2px}
