@@ -246,11 +246,31 @@
 .cs-x:hover{background:rgba(255,255,255,.08)}
 .cs-x:hover::before{color:#fff}
 
-/* the app mockup is aria-hidden: its inner inputs must not be tab stops.
-   display:none keeps :checked and label activation intact, so the CSS tabs still work. */
-.appdemo .tabr,.appdemo .drill{display:none}
+/* Visually hidden but FOCUSABLE. display:none removed these from the tab order and
+   made the whole mockup mouse-only — a worse outcome than the fabricated-content
+   exposure it was meant to solve. The sr-only paragraph before the app frames
+   everything inside it as an illustration. */
+.appdemo .tabr,.appdemo .drill{position:absolute;width:1px;height:1px;opacity:0;
+  pointer-events:none;clip-path:inset(50%)}
+
+/* M2: the page scrolled freely under an open sheet — wheel and End both moved it,
+   leaving the panel floating over the footer. overscroll-behavior was dead code
+   because .cap-sheet is not a scroll container. */
+html{scrollbar-gutter:stable}
+body:has(.cap-radio:not(#co-none):checked){overflow:hidden}
+.cap-sheet{overflow:auto;overscroll-behavior:contain}
+
+/* m2: ringing the row was pointless — opening the sheet occludes it. Ring the panel. */
+.cap-band:has(.cap-radio:not(#co-none):focus-visible) .cap-radio:checked + .cap-sheet .cs-panel{
+  outline:3px solid #4D9BFF;outline-offset:2px}
+
+/* M4: bars >=79.7% all clamped to the same height, so Aug(82) and Sep(100) rendered
+   identical in a chart whose only job is to make the last month the peak. */
+.appdemo .bc{display:grid;grid-template-rows:1fr auto;align-items:end}
+.appdemo .bc .b{align-self:end}
 
 /* forced-colors: all four tier pills rendered identically, so the selection was invisible */
 @media (forced-colors: active){
   .tier-radio:checked + .tier-lab{border-width:3px;outline:3px solid CanvasText;outline-offset:2px}
 }
+.capset{border:0;padding:0;margin:0}
