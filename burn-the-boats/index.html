@@ -56,14 +56,22 @@ button{font-family:inherit}
 .vice.warn{border-color:rgba(255,179,64,.35)} .vice.warn .vv{color:var(--gold)}
 .vice.bad{border-color:rgba(255,77,94,.4)} .vice.bad .vv{color:var(--blood)}
 
-/* ---------- verdict ---------- */
-.verdict{margin-top:14px;border-radius:15px;padding:13px 15px;border:1px solid var(--line2);
-  background:linear-gradient(150deg,#181327,#100d18)}
-.verdict.him{border-color:rgba(207,226,255,.4);background:linear-gradient(150deg,#12203a,#0a1120)}
-.verdict.short{border-color:rgba(255,107,44,.3);background:linear-gradient(150deg,#1e1410,#120c0b)}
-.vk{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase}
-.vt{font-family:'Clash Display',sans-serif;font-size:16px;line-height:1.25;margin-top:6px;letter-spacing:-.015em}
-.verdict.him .vt{color:var(--ghost)} .verdict.short .vt{color:#e8b79a}
+/* ---------- glance: mini radar + stats, the top-of-page snapshot ---------- */
+.glance{margin-top:14px;border-radius:15px;padding:13px 14px;border:1px solid var(--line2);
+  background:linear-gradient(150deg,#181327,#100d18);display:grid;
+  grid-template-columns:104px 1fr;gap:13px;align-items:center;cursor:pointer}
+.mini{flex:none}
+.mini-stats{display:grid;gap:4px;min-width:0}
+.ms{display:grid;grid-template-columns:44px 1fr 22px;gap:7px;align-items:center}
+.ms .n{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.08em;color:#8b83a0}
+.ms .t{height:4px;border-radius:99px;background:#221d33;overflow:hidden;position:relative}
+.ms .t i{position:absolute;left:0;top:0;bottom:0;border-radius:99px}
+.ms .v{font-family:'Geist Mono',monospace;font-size:9px;font-weight:700;text-align:right;color:var(--ink)}
+.proj{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.07);padding-top:10px;margin-top:2px;
+  font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:var(--faint);
+  display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.proj b{font-size:12px;letter-spacing:-.01em}
+.proj .good{color:var(--phos)} .proj .warn{color:var(--gold)} .proj .bad{color:var(--blood)}
 
 /* ---------- rail ---------- */
 .rail-wrap{padding:15px 2px 2px}
@@ -284,7 +292,11 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
     </div>
   </div>
 
-  <div class="verdict" id="verdict"></div>
+  <div class="glance" id="glance">
+    <svg class="mini" id="miniRadar" width="104" height="104" viewBox="0 0 104 104"></svg>
+    <div class="mini-stats" id="miniStats"></div>
+    <div class="proj" id="proj"></div>
+  </div>
 
   <div class="rail-wrap">
     <div class="rail" id="rail"><div class="now" id="railNow"></div></div>
@@ -307,9 +319,6 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
     <div class="ws-l"><span>WEEKLY EXECUTION</span><span>85% = ROUND WON</span></div>
     <div class="ws-note" id="wsNote"></div>
   </div>
-
-  <h2 class="sec">Rewards <u id="xpNow">0 XP</u></h2>
-  <div class="card" id="rewards"></div>
 
   <h2 class="sec">This run</h2>
   <div class="card" id="runcard"></div>
@@ -406,10 +415,11 @@ const SATURDAY=[
 ];
 
 const WINS=[
-  {k:'chores', n:'Laundry / dishes / cleaned', xp:15, dom:'MIND'},
-  {k:'cooked', n:'Cooked instead of ordering', xp:20, dom:'BODY'},
-  {k:'said_no',n:'Said no to something',       xp:25, dom:'WORK'},
-  {k:'bed',    n:'In bed on time',             xp:20, dom:'BODY'},
+  {k:'chores', n:'Laundry / dishes / cleaned',  xp:15, dom:'MIND'},
+  {k:'cooked', n:'Cooked instead of ordering',  xp:20, dom:'BODY'},
+  {k:'said_no',n:'Said no to something',        xp:25, dom:'WORK'},
+  {k:'bed',    n:'In bed on time',              xp:20, dom:'BODY'},
+  {k:'present',n:'Real time with someone',      xp:25, dom:'PEOPLE'},
 ];
 
 const DEFAULT={
@@ -423,7 +433,8 @@ const DEFAULT={
     PEOPLE: {lag:'Nobody got the leftovers', lead:'Real presence, phone down',       at:60, target:100, unit:'%'},
   },
   vices:{
-    dish:{label:'THE DISHWASHER', mode:'weekly', allow:1, week:0, streakBest:0, lastSlip:null, slips:0},
+    dish:{label:'THE DISHWASHER', mode:'weekly', allow:1, week:0, weekKey:null,
+          streak:0, streakBest:0, lastSlip:null, slips:0},
     smoke:{label:'SMOKE',        mode:'gate',   gate:'12:00', cleanStreak:0, bestClean:0, slips:0, lastSlip:null, target24:24},
   },
   penance:null,
@@ -517,19 +528,95 @@ function recount(){
   w.due=due;w.done=done;
 }
 
-/* ---------- domains derive from execution, plus the declared lag ---------- */
-function domainStats(){
-  const out={},w=week(),exec=w.due?w.done/w.due:0;
-  DOMAINS.forEach(d=>{
-    const g=S.december[d.k]; if(!g){out[d.k]=50;return}
-    const prog=g.unit==='lbs'
-      ? Math.max(0,Math.min(1,(g.at-170)/(g.target-170)))
-      : Math.max(0,Math.min(1,g.at/(g.target||100)));
-    out[d.k]=Math.round((prog*0.6 + exec*0.4)*100);          // 60% where you are, 40% how you're executing
+/* ================= THE PROGRESSION CURVE =================
+   Tuned so PERFECT execution reaches 99 OVR on Dec 1 exactly.
+   Verified: 100% -> Dec 1 · 95% -> Dec 8 · 90% -> Dec 16 · 85% -> Dec 24 · 80% -> Jan 1 (misses).
+   Every domain earns its own progress from the blocks that credit it, so the radar shows
+   WHICH parts of the life you're actually feeding. OVR is the average — earned, never typed. */
+const START_OVR=50, TARGET_OVR=99;
+
+/* Weekly-threshold sources. These are NOT daily obligations — they're quotas — so they are
+   scored per week, not per day. Without this, FAITH and PEOPLE have no input path at all and
+   sit frozen at the starting value no matter how perfectly he runs. */
+const QUOTAS=[
+  {src:'block', id:'bible',   dom:'FAITH',  n:3},   // Bible + text Kells, 3x a week
+  {src:'block', id:'gym',     dom:'BODY',   n:2},   // gym 2x a week
+  {src:'win',   id:'present', dom:'PEOPLE', n:3},   // real time with someone, phone down
+  {src:'win',   id:'cooked',  dom:'BODY',   n:4},
+  {src:'win',   id:'said_no', dom:'WORK',   n:3},
+  {src:'win',   id:'chores',  dom:'MIND',   n:3},
+  {src:'win',   id:'bed',     dom:'BODY',   n:4},
+];
+
+/* Recomputed from the stored day records every time — self-healing, cannot drift.
+   Scored a week at a time so daily blocks and weekly quotas can live on the same scale. */
+function domainProgress(){
+  const prog={};DOMAINS.forEach(d=>prog[d.k]=0);
+  const tk=today(),nm=nowMin();
+
+  const weeks={};
+  Object.keys(S.days).forEach(k=>{
+    const dt=new Date(k+'T00:00:00'); if(dt.getDay()===0)return;
+    (weeks[mondayOf(dt)]=weeks[mondayOf(dt)]||[]).push(k);
   });
+
+  Object.keys(weeks).forEach(wk=>{
+    const earned={},avail={};
+    DOMAINS.forEach(d=>{earned[d.k]=0;avail[d.k]=0});
+    let elapsed=0;
+
+    weeks[wk].sort().forEach(k=>{
+      const rec=S.days[k]; if(rec.off)return;
+      const g=new Date(k+'T00:00:00').getDay(), sh=g===6?SATURDAY:WEEKDAY;
+      elapsed++;
+      sh.filter(SCORED).forEach(b=>{
+        if(b.opt)return;                                   // quota items handled below
+        if(k===tk&&mins(b.e)>nm)return;
+        if(rec.wait&&rec.wait[b.id])return;
+        b.dom.forEach(dk=>{avail[dk]++; if(rec.done[b.id])earned[dk]++});
+      });
+    });
+
+    /* quotas: count the week's hits against its target, once */
+    QUOTAS.forEach(q=>{
+      let hits=0;
+      weeks[wk].forEach(k=>{
+        const rec=S.days[k]; if(!rec||rec.off)return;
+        if(q.src==='block'? rec.done[q.id] : (rec.wins&&rec.wins[q.id])) hits++;
+      });
+      avail[q.dom]+=q.n;
+      earned[q.dom]+=Math.min(q.n,hits);
+    });
+
+    DOMAINS.forEach(d=>{
+      if(!avail[d.k])return;
+      prog[d.k]+=(earned[d.k]/avail[d.k])*elapsed;          // week's rate × days it covered
+    });
+  });
+
+  const out={};
+  DOMAINS.forEach(d=>{ out[d.k]=Math.max(0,Math.min(1,prog[d.k]/TOTAL_DAYS)) });
+  return out;
+}
+function domainStats(){
+  const p=domainProgress(),out={};
+  DOMAINS.forEach(d=>{ out[d.k]=Math.round(START_OVR+(TARGET_OVR-START_OVR)*p[d.k]) });
   return out;
 }
 const ovr=()=>{const s=domainStats();return Math.round(DOMAINS.reduce((a,d)=>a+s[d.k],0)/DOMAINS.length)};
+
+/* At the pace you've actually kept, when do you hit 99? */
+function projection(){
+  const p=domainProgress();
+  const avg=DOMAINS.reduce((a,d)=>a+p[d.k],0)/DOMAINS.length;   // 0..1 of the way to 99
+  const elapsed=Math.max(1,dayNo());
+  const rate=avg/elapsed;                                        // progress per weekday so far
+  if(rate<=0)return {date:null,rate:0,pct:0};
+  const need=Math.max(0,(1-avg)/rate);                           // weekdays still required
+  const c=new Date();let k=0;
+  while(k<need&&k<400){c.setDate(c.getDate()+1);if(c.getDay()>0&&c.getDay()<6)k++}
+  return {date:c,rate,pct:Math.round(avg*100),days:Math.ceil(need)};
+}
 
 /* ---------- vices ---------- */
 function viceState(){
@@ -538,13 +625,26 @@ function viceState(){
   const beforeNoon=m<mins(v.smoke.gate);
   return {smokeClean,beforeNoon};
 }
+/* The dishwasher streak = consecutive weeks kept at or under the threshold.
+   Rolls when the week changes; only a week that went OVER breaks it. */
+function rollDishWeek(){
+  const v=S.vices.dish,mk=mondayOf(new Date());
+  if(v.weekKey===mk)return;
+  if(v.weekKey){                                  // a completed week just ended
+    if(v.week<=v.allow){v.streak++;v.streakBest=Math.max(v.streakBest,v.streak)}
+    else v.streak=0;
+  }
+  v.weekKey=mk; v.week=0; save();
+}
 function renderVices(){
+  rollDishWeek();
   const v=S.vices,vs=viceState();
   const a=$('viceA'),b=$('viceB');
-  const dishOK=v.dish.week<=v.dish.allow;
-  a.className='vice '+(dishOK?'ok':'bad');
-  a.innerHTML=`<div class="vl">${esc(v.dish.label)}</div>
-    <div class="vv">${v.dish.week} / ${v.dish.allow}</div><div class="vs">THIS WEEK</div>`;
+  const over=v.dish.week>v.dish.allow;
+  a.className='vice '+(over?'bad':'ok');
+  a.innerHTML=`<div class="vl">${esc(v.dish.label)} · STREAK</div>
+    <div class="vv">${v.dish.streak}w</div>
+    <div class="vs">${v.dish.week} / ${v.dish.allow} THIS WEEK${over?' · OVER':''}</div>`;
   a.onclick=()=>openVice('dish');
   const gateLive=vs.beforeNoon;
   b.className='vice '+(gateLive?(vs.smokeClean?'ok':'bad'):'warn');
@@ -556,7 +656,9 @@ function renderVices(){
 function openVice(k){
   const v=S.vices[k];
   const body = k==='dish'
-    ? `<div class="fld"><label>Target</label><div class="val">About once a week. Used <b>${v.week}</b> of ${v.allow} this week.</div></div>`
+    ? `<div class="fld"><label>Target</label><div class="val">About once a week. Used <b>${v.week}</b> of ${v.allow} this week.</div></div>
+       <div class="fld"><label>Streak</label><div class="val"><b>${v.streak} weeks</b> at or under the threshold · best ${v.streakBest}.
+       Only a week that goes <b>over</b> breaks it.</div></div>`
     : `<div class="fld"><label>The rule</label><div class="val">Nothing before <b>12:00</b>. Clean streak: <b>${v.cleanStreak} days</b> · best ${v.bestClean}.</div></div>
        <div class="fld"><label>Optional bonus</label><div class="val">A full <b>${v.target24}h clean</b> pays big. Clear it a few times and the bar rises.</div></div>`;
   sheet(`
@@ -599,8 +701,8 @@ function render(){
     return;}
   $('sabbath').classList.remove('on');
   autoMark(); recount();
-  renderStatus(); renderVices(); renderVerdict(); renderRail();
-  renderNext(); renderSched(); renderWins(); renderWeek(); renderRewards(); renderRun(); renderChar();
+  renderStatus(); renderVices(); renderGlance(); renderRail();
+  renderNext(); renderSched(); renderWins(); renderWeek(); renderRun(); renderChar();
   $('foot').innerHTML=`BURN THE BOATS · DAY ${dayNo()} / ${TOTAL_DAYS}<br>WHAT IS THE MILLIONAIRE VERSION OF YOURSELF DOING RIGHT NOW?`;
 }
 function renderStatus(){
@@ -613,22 +715,30 @@ function renderStatus(){
   $('stExec').textContent=p+'%';
   $('stExec').style.color=p>=85?'var(--phos)':p>=70?'var(--gold)':'var(--blood)';
 }
-/* The rival is a DAILY verdict, not a permanent deficit. */
-function renderVerdict(){
-  const d=day(),sh=shape(),el=$('verdict');
-  const due=sh.filter(b=>SCORED(b)&&!b.opt&&mins(b.e)<=nowMin()&&!(d.wait&&d.wait[b.id]));
-  const hit=due.filter(b=>d.done[b.id]).length;
-  const pct=due.length?hit/due.length:1;
-  if(d.off){el.className='verdict';el.innerHTML=`<div class="vk">Off-script day</div>
-    <div class="vt">Today doesn't count against you. One a month — this was it.</div>`;return}
-  if(!due.length){el.className='verdict';el.innerHTML=`<div class="vk">The day is open</div>
-    <div class="vt">Nothing owed yet. Act like him from the first block.</div>`;return}
-  if(pct===1){el.className='verdict him';el.innerHTML=`<div class="vk">Today's verdict</div>
-    <div class="vt">You acted exactly like your millionaire self today. Every single thing due — done.</div>`;}
-  else if(pct>=.85){el.className='verdict';el.innerHTML=`<div class="vk">Today's verdict</div>
-    <div class="vt">He'd recognise this day. ${hit} of ${due.length}. Close it clean.</div>`;}
-  else{el.className='verdict short';el.innerHTML=`<div class="vk">Today's verdict</div>
-    <div class="vt">You fell short — ${hit} of ${due.length}. Tomorrow you act like him from 6:00.</div>`;}
+/* Top-of-page snapshot: where you are, on one small graph, with the date you hit 99. */
+function renderGlance(){
+  const s=domainStats(),p=domainProgress();
+  const n=DOMAINS.length,C=52,RD=38;
+  const pt2=(i,v)=>{const a=(-90+i*(360/n))*Math.PI/180;return[C+Math.cos(a)*RD*v,C+Math.sin(a)*RD*v]};
+  const pl=vs=>vs.map((v,i)=>pt2(i,v).join(',')).join(' ');
+  let h='';
+  [.33,.66,1].forEach(r=>h+=`<polygon points="${pl(DOMAINS.map(()=>r))}" fill="none" stroke="#2a2438" stroke-width="1"/>`);
+  h+=`<polygon points="${pl(DOMAINS.map(()=>1))}" fill="none" stroke="#3d3550" stroke-width="1"/>`;
+  h+=`<polygon points="${pl(DOMAINS.map(d=>s[d.k]/100))}" fill="rgba(224,178,94,.28)" stroke="#E0B25E" stroke-width="1.6"/>`;
+  DOMAINS.forEach((d,i)=>{const[x,y]=pt2(i,s[d.k]/100);
+    h+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.1" fill="${d.c}"/>`});
+  $('miniRadar').innerHTML=h;
+
+  $('miniStats').innerHTML=DOMAINS.map(d=>`<div class="ms">
+    <span class="n">${d.label.replace('THE ','')}</span>
+    <span class="t"><i style="width:${s[d.k]}%;background:${d.c}"></i></span>
+    <span class="v">${s[d.k]}</span></div>`).join('');
+
+  const pr=projection(),el=$('proj');
+  if(!pr.date){el.innerHTML=`<span>NO PACE YET</span><b class="warn">START TODAY</b>`;return}
+  const y=pr.date.getFullYear(),md=pr.date.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const cls=pr.date<=new Date('2026-12-01T23:59:59')?'good':pr.date<=new Date('2026-12-31T23:59:59')?'warn':'bad';
+  el.innerHTML=`<span>AT THIS PACE · 99 OVR ON</span><b class="${cls}">${md}${y>2026?" '"+String(y).slice(2):''}</b>`;
 }
 function renderRail(){
   const sh=shape();if(!sh.length)return;
@@ -719,20 +829,25 @@ function renderWeek(){
   $('wsNote').innerHTML=p>=85?`<b>Round won.</b> He executes at 100% — 85% takes the week from him.`
     :`<b>${Math.max(0,Math.ceil(w.due*0.85)-w.done)} more</b> to take this round.`;
 }
-function renderRewards(){
-  $('xpNow').textContent=S.xp.toLocaleString()+' XP';
-  $('rewards').innerHTML=S.rewards.map((r,i)=>{
-    const can=S.xp>=r.cost;
-    return `<div class="stat"><span style="color:${r.done?'var(--faint)':'var(--ink)'}">${esc(r.n)}${r.done?' · claimed':''}</span>
-      ${r.done?'<b style="color:var(--faint)">—</b>'
-      :`<button class="btn ${can?'':'gh'} sm" style="width:auto;padding:8px 13px;min-height:36px"
-         onclick="claim(${i})">${can?'CLAIM':r.cost.toLocaleString()}</button>`}</div>`;
-  }).join('');
+/* Rewards live on their own page — off the daily surface, still one tap away. */
+function openRewards(){
+  sheet(`<div class="sh-k">EARNED, NOT GIVEN</div>
+    <div class="sh-t">Rewards</div>
+    <div class="sh-sub">${S.xp.toLocaleString()} XP BANKED</div>
+    ${S.rewards.map((r,i)=>{
+      const can=S.xp>=r.cost;
+      return `<div class="stat"><span style="color:${r.done?'var(--faint)':'var(--ink)'}">${esc(r.n)}${r.done?' · claimed':''}</span>
+        ${r.done?'<b style="color:var(--faint)">—</b>'
+        :`<button class="btn ${can?'':'gh'} sm" style="width:auto;padding:9px 14px;min-height:38px"
+           onclick="claim(${i})">${can?'CLAIM':r.cost.toLocaleString()}</button>`}</div>`}).join('')}
+    <div class="chain" style="margin-top:16px"><div><div class="cl">How you earn</div>
+      <div class="cv">Clean focus run <b>+65</b> · block done <b>+25</b> · small win <b>+15–25</b> ·
+      clean vice day <b>+40</b> · made up a slip <b>+60</b></div></div></div>`);
 }
 function claim(i){
   const r=S.rewards[i];
   if(S.xp<r.cost){toast(`${(r.cost-S.xp).toLocaleString()} XP short`,'bad');return}
-  S.xp-=r.cost;r.done=1;save();render();toast(`Earned: ${r.n}`,'good');
+  S.xp-=r.cost;r.done=1;save();closeSheet();render();toast(`Earned: ${r.n}`,'good');
 }
 function renderRun(){
   const d=day(),m=monthKey(),used=S.offScript[m]||0;
@@ -746,8 +861,10 @@ function renderRun(){
       <span style="color:var(--dim)">${esc(S.penance.text)}</span></span>
       <button class="btn sm" style="width:auto;padding:8px 12px;min-height:36px" onclick="clearPenance()">DONE</button></div>`:''}
     <div class="stat" style="gap:8px">
-      <button class="btn gh sm" onclick="offScript()" ${used>=1||d.off?'disabled':''}>${d.off?'Today is off-script':'Mark today off-script'}</button>
-      <button class="btn gh sm" onclick="exportSave()">Backup</button></div>`;
+      <button class="btn sm" onclick="openRewards()">Rewards · ${S.xp.toLocaleString()} XP</button>
+      <button class="btn gh sm" onclick="exportSave()">Backup</button></div>
+    <div class="stat" style="border-bottom:0">
+      <button class="btn gh sm" onclick="offScript()" ${used>=1||d.off?'disabled':''}>${d.off?'Today is off-script — it cannot hurt you':'Mark today off-script'}</button></div>`;
 }
 function offScript(){
   const m=monthKey();if((S.offScript[m]||0)>=1){toast('Used this month','bad');return}
