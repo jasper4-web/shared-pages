@@ -4,10 +4,13 @@
 
    EVERY factual claim here must match PITCH-KIT.md and README.md.
    If the offer changes, this file changes in the same commit.
-   Locked facts: $1 first 3 months -> $249/mo - cancel anytime,
-   no contract - setup waived in trade for 3 phone videos -
-   seven tools, ONE package - his (936) number is untouched -
-   2-3 weeks (say 3.5) - A2P carrier registration is the long pole.
+   Locked facts (D-0058, 2026-07-25): he is on the GROWTH package -
+   $1/month for SIX months ($6 total) -> then the full $999/mo -
+   $2,497 setup fee waived in trade for 3 phone videos - total saved
+   $8,485 - cancel anytime, no contract - his (936) number untouched -
+   ~30 days to live (Growth standard) - A2P carrier registration is
+   the long pole. NEVER say he can put his name/icon on his owner app:
+   verified impossible at any price (D-0057 s4).
    ============================================================ */
 window.SANO_BOT_CONFIG = {
   title: 'SANO Assistant',
@@ -60,7 +63,7 @@ window.SANO_BOT_CONFIG = {
       phrases: ['how much', 'what does it cost', 'what is the price', 'how much is it',
                  'the deal', 'run me', 'the damage', 'a subscription'],
       keys: 'price dollar 249 total pay paying payment cheap expensive worth deal rate subscription damage',
-      a: "<b>$1 total for your first 3 months.</b> Not a dollar a month — a dollar, once, card on file so it's a real account and not a favor.<br><br>After that it's <b>$249/month, cancel anytime, no contract.</b> That's the real price and I'm telling you now so there's no surprise at month four.<br><br>Setup fee is <b>waived permanently</b> — normally that's the big up-front line, and you're not paying it.",
+      a: "<b>$1 a month for your first six months</b> — six dollars, total, on a card so it's a real account and not a favor.<br><br>After that it's <b>$999/month</b>, the regular price of the Growth package. Cancel anytime, no contract. I'm telling you the real number now so month seven isn't a surprise.<br><br>And the <b>$2,497 setup fee is waived entirely.</b> Add it up: that's <b>$8,485 you don't pay.</b>",
       next: ['catch', 'month4', 'videos', 'cancel']
     },
     {
@@ -68,14 +71,14 @@ window.SANO_BOT_CONFIG = {
       phrases: ['the catch', 'why so cheap', 'why is it $1', 'why a dollar', 'too good to be true',
                  'only a dollar', 'just a dollar', 'why is it 1'],
       keys: 'catch why dollar cheap free scam trick founding first gimmick',
-      a: "You're <b>client #1</b>. Jasper's building SANO and needs to prove it on a real shop and learn from a real owner — that's worth more to him than three months of your money.<br><br>The actual catch, stated plainly: <b>three short phone videos</b> about how it's going (day one, 30 days, 90 days), and he'll ask you a lot of questions along the way. That's it. No lock-in, no hidden fee.",
+      a: "You're <b>client #1</b>. Jasper's building SANO and needs to prove it on a real shop and learn from a real owner — that's worth more to him than six months of your money.<br><br>The actual catch, stated plainly: <b>three short phone videos</b> about how it's going (day one, 30 days, 90 days), and he'll ask you a lot of questions along the way. That's it. No lock-in, no hidden fee.",
       next: ['videos', 'firstclient', 'month4']
     },
     {
-      id: 'month4', chip: 'What happens at month 4?', q: 'after 3 months what happens then price go up',
-      phrases: ['month 4', 'after three months', 'after the 3 months', 'then what'],
-      keys: 'after month4 fourth later renew renewal continue goes up increase raise future',
-      a: "It becomes <b>$249/month</b> — the number you already know, said out loud from day one specifically so month four isn't a surprise.<br><br>Nothing auto-traps you: it's month to month, cancel anytime with a text. And as a founding client, <b>your price stays put</b> as new tools get added — you don't get re-priced later for saying yes early.",
+      id: 'month4', chip: 'What happens after the six months?', q: 'after six months what happens then price go up month 7',
+      phrases: ['month 7', 'month seven', 'after six months', 'after the six months', 'after the 6 months', 'then what'],
+      keys: 'after month7 seventh later renew renewal continue goes up increase raise future 999',
+      a: "After your six months it becomes <b>$999/month</b> — the regular Growth price, the number you already know from day one.<br><br>Straight about it: there's no secret discounted rate that carries on. <b>The six months at a dollar IS the founding deal.</b> After that you pay what everyone pays, because by then it should have earned it. It's month to month — cancel anytime with a text.",
       next: ['cancel', 'roadmap', 'price']
     },
     {
@@ -90,7 +93,7 @@ window.SANO_BOT_CONFIG = {
       phrases: ["don't like", 'want out', 'back out', 'change my mind', 'sign anything',
                  'sign a contract', 'locked in', 'lock me in'],
       keys: 'cancel quit contract commitment locked trap refund stuck escape terminate obligation sign agreement',
-      a: "<b>Cancel anytime with one text.</b> No contract, no notice period, no cancellation fee — and you're out a grand total of <b>one dollar</b>.<br><br>Your number, your Google page, your truck, your customers: all exactly as they were. Nothing is held hostage. Worst case you got three months of free help and you walk.",
+      a: "<b>Cancel anytime with one text.</b> No contract, no notice period, no cancellation fee — and you're out a grand total of <b>a few dollars</b>.<br><br>Your number, your Google page, your truck, your customers: all exactly as they were. Nothing is held hostage. Worst case you got six months of a full business system for six dollars and you walk.",
       next: ['mydata', 'phone_number', 'month4']
     },
     {
@@ -98,7 +101,7 @@ window.SANO_BOT_CONFIG = {
       phrases: ['pay today', 'pay anything', 'up front', 'down payment', 'deposit',
                  'card on file', 'pay now'],
       keys: 'today upfront deposit card credit charge initial',
-      a: "<b>One dollar</b>, on a card on file. No deposit, no down payment, no setup fee.<br><br>The dollar isn't about money — it makes you a real customer instead of a favor, and it proves the payment side works before month four rolls around.",
+      a: "<b>One dollar</b>, on a card. No deposit, no down payment, and no setup fee — that $2,497 is waived outright.<br><br>The dollar isn't about money — it makes you a real customer instead of a favor, and it proves the payment side works long before the full price starts.",
       next: ['price', 'catch']
     },
 
@@ -129,7 +132,7 @@ window.SANO_BOT_CONFIG = {
       id: 'timeline', chip: 'How long does it take?', q: 'how long until live setup time weeks',
       phrases: ['how long', 'how fast', 'when will it', 'how soon', 'up and running', 'be running', 'be live'],
       keys: 'long fast weeks days live launch ready start soon quick timeline duration',
-      a: "<b>2–3 weeks</b> realistically, with a little back-and-forth to get your details right.<br><br>Straight answer: you're the first client, so plan on <b>3½ weeks</b>. Jasper would rather take the extra week and hand you something that works than rush it and patch it in front of you.",
+      a: "<b>About 30 days.</b> That's the standard build time for the Growth package, and Jasper would rather hold to it than rush you.<br><br>One piece genuinely isn't in his hands — the phone carriers have to approve your number before it can send automatic texts, and that takes a week or two on its own. Everything else gets built while that's pending.",
       next: ['delay', 'whatido', 'golive']
     },
     {
@@ -137,7 +140,7 @@ window.SANO_BOT_CONFIG = {
       phrases: ['what could delay', 'hold it up', 'go wrong', 'take longer',
                  'slow it down', 'slow this down', 'push it back'],
       keys: 'delay slow late longer wait problem holdup carrier registration approval a2p',
-      a: "One real thing, and it's not in our hands: <b>carrier registration</b>.<br><br>Before any business can send automatic texts, the phone carriers have to approve the number. That takes a week or two and nobody can speed it up. Everything else gets built while that's pending.<br><br>That's the honest reason for saying 3½ weeks instead of 2 — better you hear it now than get an excuse later.",
+      a: "One real thing, and it's not in our hands: <b>carrier registration</b>.<br><br>Before any business can send automatic texts, the phone carriers have to approve the number. That takes a week or two and nobody can speed it up. Everything else gets built while that's pending.<br><br>That's the honest reason the number is 30 days and not two weeks — better you hear it now than get an excuse later.",
       next: ['timeline', 'ein']
     },
     {
@@ -154,7 +157,7 @@ window.SANO_BOT_CONFIG = {
       phrases: ['what do i get', 'what is included', 'comes with', 'the package',
                  'am i getting', 'actually getting', 'actually get', 'all seven'],
       keys: 'get included include package tools everything comes features list all seven',
-      a: "<b>All seven, one package — there's nothing to choose.</b><br><br>1. <b>Missed-call text-back</b><br>2. <b>Auto-answers</b> for your repeat questions<br>3. <b>Real-availability booking</b><br>4. <b>Review engine</b><br>5. <b>Customer log</b> — vehicles, plates, history<br>6. <b>Your number, untouched</b><br>7. <b>The app + a plain-English monthly rundown</b><br><br>Ask me about any one of them and I'll go deeper.",
+      a: "You're on the <b>Growth package</b> and you get all of it — nothing to choose between. The seven that matter most for you:<br><br>1. <b>Missed-call text-back</b><br>2. <b>Auto-answers</b> for your repeat questions<br>3. <b>Real-availability booking</b><br>4. <b>Review engine</b><br>5. <b>Customer log</b> — vehicles, plates, history<br>6. <b>Your number, untouched</b><br>7. <b>The app + a plain-English monthly rundown</b><br><br>Ask me about any one of them and I'll go deeper.",
       next: ['missedcall', 'autoanswers', 'booking', 'reviews'], weight: 1
     },
     {
@@ -212,8 +215,8 @@ window.SANO_BOT_CONFIG = {
       id: 'brandedapp', chip: 'Can it have my name on it?', q: 'branded app my logo my name app store custom',
       phrases: ['my name on it', 'my name on', 'my logo', 'branded', 'app store', 'name on the app', 'my brand'],
       keys: 'branded brand logo icon custom appstore label',
-      a: "Eventually, yes — but it'd be a bad use of your money today.<br><br>Putting AVRS's name and icon on the app itself carries a <b>few hundred a month in platform cost</b>, plus an Apple business account. It buys <b>branding, not a single extra feature</b> — everything works identically either way.<br><br>If AVRS grows to where your own app in the App Store matters, that's a good conversation to have then.",
-      next: ['app', 'roadmap']
+      a: "Not on the app <i>you</i> use — that one's a standard app, and that's just how the platform works. Nobody sells a version with your name on that.<br><br>What matters more: <b>everything your customers ever see says AVRS Automotive</b> — every text, every booking confirmation, every review request. Your brand is on the parts your customers touch.<br><br>Down the road there's a bigger package where your <i>customers</i> get an app of their own with your name on it. That's a real thing, it's not built yet, and it's not what you need right now.",
+      next: ['app', 'maintenance', 'dayday']
     },
     {
       id: 'dayday', chip: 'What does it look like day to day?', q: 'day to day daily experience what changes for me how will it look',
@@ -227,7 +230,7 @@ window.SANO_BOT_CONFIG = {
       id: 'report', chip: 'The monthly rundown', q: 'monthly report numbers results how do I know',
       phrases: ['monthly report', 'the numbers', 'monthly rundown'],
       keys: 'report numbers summary rundown stats recap breakdown',
-      a: "Once a month, in plain English — no dashboard homework:<br><br>• Jobs booked without a phone call<br>• Questions answered without you<br>• Reviews earned<br>• Calls caught that you'd have missed<br>• Roughly how many hours that gave you back<br><br>If those numbers ever stop justifying $249, you'll see it before Jasper does — and you can cancel with a text.",
+      a: "Once a month, in plain English — no dashboard homework:<br><br>• Jobs booked without a phone call<br>• Questions answered without you<br>• Reviews earned<br>• Calls caught that you'd have missed<br>• Roughly how many hours that gave you back<br><br>If those numbers ever stop justifying what you're paying, you'll see it before Jasper does — and you can cancel with a text.",
       next: ['proof', 'month4']
     },
 
@@ -355,7 +358,7 @@ window.SANO_BOT_CONFIG = {
       id: 'mydata', chip: 'Do I keep my data if I leave?', q: 'keep my data if I leave export customers own',
       phrases: ['if i leave', 'keep my data', 'my customer list', 'export', 'my contacts', 'keep my contacts'],
       keys: 'keep own leave export download take list data ownership mine',
-      a: "Yes. <b>You own your customer list</b> — if you ever cancel, you get it exported, plates and service history included.<br><br>Nothing is held hostage to make leaving painful. That's on purpose: if the only reason you'd stay is that leaving is hard, it isn't worth $249.",
+      a: "Yes. <b>You own your customer list</b> — if you ever cancel, you get it exported, plates and service history included.<br><br>Nothing is held hostage to make leaving painful. That's on purpose: if the only reason you'd stay is that leaving is hard, it isn't worth paying for.",
       next: ['cancel', 'security']
     },
     {
@@ -363,7 +366,7 @@ window.SANO_BOT_CONFIG = {
       phrases: ['done this before', 'done this for', 'your first', 'any experience',
                  'other clients', 'other shops', 'who else', 'anyone else', 'anyone using'],
       keys: 'experience before first done other clients references proof track record trust new',
-      a: "Straight up: <b>you're the first.</b> That's exactly why you're getting three months for a dollar instead of paying setup like everyone after you.<br><br>The tech isn't experimental — it runs on a platform thousands of shops already use. What's new is Jasper building it around <b>your</b> business. And you're the one guy who can fire him for free. If he can't make it work for you, he's got no business selling it to anyone else.",
+      a: "Straight up: <b>you're the first.</b> That's exactly why you're getting six months at a dollar and no setup fee, instead of paying $2,497 up front like everyone after you.<br><br>The tech isn't experimental — it runs on a platform thousands of shops already use. What's new is Jasper building it around <b>your</b> business. And you're the one guy who can fire him for free. If he can't make it work for you, he's got no business selling it to anyone else.",
       next: ['catch', 'proof', 'support']
     },
     {
@@ -404,7 +407,7 @@ window.SANO_BOT_CONFIG = {
       id: 'payments', chip: 'Can it take payments?', q: 'payments invoices get paid card charge customers',
       phrases: ['take payments', 'invoice', 'get paid', 'charge customers', 'accept cards', 'pay through'],
       keys: 'payment invoice paid card charge billing money collect deposit checkout',
-      a: "Not in the seven tools you're getting — so the honest answer is <b>no, not on day one</b>. You'd keep collecting the way you do now.<br><br>Jasper would rather nail what you're actually getting than half-build something extra. If getting paid is a real headache for you, tell him — that's exactly the kind of thing he wants to hear from his first client: <b>(832) 396-2496</b>.",
+      a: "Not in the Growth package — so the honest answer is <b>no, not on day one</b>. You'd keep collecting the way you do now.<br><br>Jasper would rather nail what you're actually getting than half-build something extra. If getting paid is a real headache for you, tell him — that's exactly the kind of thing he wants to hear from his first client: <b>(832) 396-2496</b>.",
       next: ['roadmap', 'tools']
     },
     {
@@ -456,7 +459,7 @@ window.SANO_BOT_CONFIG = {
       id: 'golive', chip: 'What happens when I say yes?', q: 'what happens next say yes start process steps',
       phrases: ['if i say yes', 'what happens next', 'how do we start', 'next steps'],
       keys: 'yes start begin next steps process first day kickoff go',
-      a: "Day one, in order:<br><br>1. Jasper sets up your account and charges the <b>$1</b><br>2. You get the <b>10-minute form</b><br>3. Carrier registration starts (the long pole — begins immediately)<br>4. He writes down your <b>baseline numbers</b> so results are provable later<br>5. Video #1 — a minute on your phone<br><br>Then he builds for 2–3 weeks, tests it with you, and you go live.",
+      a: "Day one, in order:<br><br>1. Jasper sets up your account and charges the first <b>$1</b><br>2. You get the <b>10-minute form</b><br>3. Carrier registration starts (the long pole — begins immediately)<br>4. He writes down your <b>baseline numbers</b> so results are provable later<br>5. Video #1 — a minute on your phone<br><br>Then he builds it out over about 30 days, tests it with you, and you go live.",
       next: ['whatido', 'timeline', 'delay']
     },
     {
