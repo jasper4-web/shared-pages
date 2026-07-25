@@ -275,8 +275,8 @@ window.SANO_TIERS = [
      levels, and a page that claims they are is quotable against us. */
   { key: 'starter', label: 'Starter', price: '$397/mo',   setup: '$997',    live: '14 days', min: 'Three-month minimum', usage: 'about $60\u2013200/mo in usage at cost' },
   { key: 'growth',  label: 'Growth',  price: '$999/mo',   setup: '$2,497',  live: '30 days', min: 'Three-month minimum', usage: 'about $60\u2013200/mo in usage at cost', rec: true },
-  { key: 'scale',   label: 'Scale',   price: '$1,995/mo', setup: '$4,997',  live: '45 days', min: 'Three-month minimum', usage: 'usage bundled in' },
-  { key: 'total',   label: 'Total',   price: '$4,997/mo', setup: '$14,997', live: '60&ndash;75 days', min: 'Six-month minimum',   usage: 'usage bundled in' }
+  { key: 'scale',   label: 'Scale',   price: '$1,995/mo', setup: '$4,997',  live: '45 days', min: 'Three-month minimum', usage: 'and no separate usage bill — it is bundled into this plan' },
+  { key: 'total',   label: 'Total',   price: '$4,997/mo', setup: '$14,997', live: '60&ndash;75 days', min: 'Six-month minimum',   usage: 'and no separate usage bill — it is bundled into this plan' }
 ];
 
 window.SANO_CAPABILITIES = [
