@@ -257,8 +257,14 @@
    leaving the panel floating over the footer. overscroll-behavior was dead code
    because .cap-sheet is not a scroll container. */
 html{scrollbar-gutter:stable}
-body:has(.cap-radio:not(#co-none):checked){overflow:hidden}
-.cap-sheet{overflow:auto;overscroll-behavior:contain}
+/* overflow:hidden on BODY does nothing when the scrolling element is the root —
+   the page still scrolled 1200px behind an open sheet. It has to go on html. */
+html:has(.cap-radio:not(#co-none):checked),
+html:has(.cap-radio:not(#co-none):checked) body{overflow:hidden}
+/* NOT overflow:auto — on the mobile bottom sheet that combined with align-items:
+   flex-end to push the panel (and its close button) off the top of the screen.
+   Scroll containment is handled by the root lock above. */
+.cap-sheet{overscroll-behavior:contain}
 
 /* m2: ringing the row was pointless — opening the sheet occludes it. Ring the panel. */
 .cap-band:has(.cap-radio:not(#co-none):focus-visible) .cap-radio:checked + .cap-sheet .cs-panel{

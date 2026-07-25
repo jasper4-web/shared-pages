@@ -1228,8 +1228,17 @@ header{z-index:90}
    already going (the burger's coordinates), and clear every interactive element out
    from under it. Tapping "the burger" now closes the menu, as expected, and the
    navigate-away hazard is gone. */
-.mobile-menu{padding-top:126px}
-.mm-close{top:68px;right:12px;z-index:5}
+.mobile-menu{padding-top:132px}
+/* The previous fix pinned .mm-close to a constant 68px, which only lined up with
+   the burger because the DESIGN TEST ribbon happens to push the header down. At
+   768px it missed, and with the ribbon hidden (i.e. production chrome) it missed
+   at every width. Instead: a fixed close TARGET covering the whole top-right
+   corner, so it lands on the burger wherever the chrome puts it, with the glyph
+   drawn where the burger actually is. */
+.mm-close{position:fixed;top:0;right:0;width:74px;height:136px;z-index:5;
+  display:flex;align-items:flex-end;justify-content:center;padding-bottom:16px;
+  font-size:34px;line-height:1;color:var(--ink);background:none;border:none;cursor:pointer}
+.mm-close:focus-visible{outline:3px solid var(--blue);outline-offset:-4px;border-radius:12px}
 
 /* Locked app pins dimmed via opacity on the PARENT, which multiplies down onto the
    .applock chip that is the only explanation for the dimming — 1.38:1. Same defect
@@ -1255,3 +1264,7 @@ header{z-index:90}
    to "Runs on every level", which is precisely the wrong half to keep. */
 .appdemo .guide .gt{min-width:0}
 .appdemo .guide{min-width:0}
+
+/* the coach pill ran 496px of nowrap inside a narrower column between 1001 and
+   1120px, so .stage{overflow-x:clip} sliced its right cap off */
+@media(max-width:1200px){ .coach{white-space:normal;max-width:100%} }
