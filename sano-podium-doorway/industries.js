@@ -330,7 +330,7 @@ window.SANO_CAPABILITIES = [
     more:'Everything you have been tapping through, carrying your name and your logo, on your phone and your customers’ phones. There is a real platform cost behind it, which is why it sits at this level.' },
   { key:'manager', short:'Dedicated manager', tier:'total', name:'A dedicated manager',
     d:'One person who knows your business by name, weekly calls, and a four-hour response target in writing.',
-    more:'One person who knows your business by name, weekly calls, and a four-hour response target written into your agreement. You stop explaining yourself from scratch every time.' }
+    more:'It is written into your agreement, not offered as a courtesy \u2014 so there is a named person accountable for your setup rather than a queue. You stop explaining your business from scratch every time you need something changed.' }
 ];
 
 /* Trade-specific lines for the cards where the wording actually earns its keep.
