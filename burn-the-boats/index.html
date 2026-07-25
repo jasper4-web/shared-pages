@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07060b">
+<title>Burn the Boats — Character Sheet</title>
+<link rel="stylesheet" href="lib/fonts/fonts.css">
+<style>
+:root{
+  /* YOU — warm, gold, alive */
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#8b8496; --faint:#5a5468;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E;
+  --c-foc:#38E1D8; --c-dis:#4ADE80; --c-exe:#E0B25E; --c-fth:#B08CFF; --c-cap:#7FB4FF; --c-bod:#FF6B2C;
+  /* HIM — cold, clinical, perfect */
+  --ghost:#CFE2FF; --ghost-d:#8FB4E8; --ghost-bg:#070C16; --ghost-line:#1c2c47;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);overscroll-behavior:none}
+body{font-family:'Satoshi',system-ui,sans-serif;line-height:1.45;-webkit-font-smoothing:antialiased;
+  user-select:none;transition:background .18s}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:200;
+  background-image:url('assets/grain/grain-fine.svg');opacity:.04;mix-blend-mode:overlay}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+.mono{font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums}
+
+.sheet{max-width:470px;margin:0 auto;padding:14px 14px 30px;position:relative}
+
+/* ================= VEIL STATE ================= */
+/* Everything keys off body[data-veil]. him = total takeover. */
+body[data-veil="him"]{background:var(--ghost-bg)}
+.only-you{transition:opacity .07s linear}
+.only-him{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .07s linear}
+body[data-veil="him"] .only-you{opacity:0}
+body[data-veil="him"] .only-him{opacity:1}
+
+/* the scan sweep that accompanies a tear */
+.scan{position:fixed;left:0;right:0;height:180px;z-index:150;pointer-events:none;opacity:0;
+  background:linear-gradient(180deg,transparent,rgba(207,226,255,.13) 45%,rgba(207,226,255,.03) 60%,transparent);
+  border-top:1px solid rgba(207,226,255,.32)}
+body[data-veil="tear"] .scan,body[data-veil="collapse"] .scan{opacity:1;animation:sweep .42s linear}
+@keyframes sweep{from{transform:translateY(-190px)}to{transform:translateY(105vh)}}
+
+/* ================= HEADER ================= */
+.top{display:flex;align-items:center;gap:10px;margin-bottom:14px;position:relative;min-height:40px}
+.lvbox{position:relative;min-width:132px;flex:none}
+.lv{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--faint)}
+.title{font-family:'Clash Display',sans-serif;font-size:16px;letter-spacing:-.01em;color:var(--gold);line-height:1.1}
+.only-him .lv{color:#4d6a90}
+.only-him .title{color:var(--ghost);font-size:12.5px;line-height:1.15;letter-spacing:-.01em}
+.fuelwrap{flex:1}
+.fuel-t{height:5px;border-radius:99px;background:#1a1420;overflow:hidden;position:relative}
+.fuel-t i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#7a3a12,var(--ember))}
+.fuel-l{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:8px;
+  letter-spacing:.13em;color:#6b4530;margin-top:5px}
+body[data-veil="him"] .fuel-t{background:#101c2e}
+body[data-veil="him"] .fuel-t i{background:linear-gradient(90deg,#2d4b78,var(--ghost-d))}
+body[data-veil="him"] .fuel-l{color:#3f5f8c}
+
+/* ================= HERO CARD ================= */
+.hero{position:relative;background:radial-gradient(120% 100% at 50% 0%,#191428,#0d0b14 62%,#0a0810);
+  border:1px solid var(--line2);border-radius:20px;padding:16px 14px 14px;overflow:hidden;
+  box-shadow:0 24px 60px -28px #000;transition:background .18s,border-color .18s}
+body[data-veil="him"] .hero{background:radial-gradient(120% 100% at 50% 0%,#0f1c31,#080e1a 62%,#060a12);
+  border-color:#22385a;box-shadow:0 24px 70px -26px rgba(80,140,220,.32)}
+.hero::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .12s;
+  background:repeating-linear-gradient(180deg,rgba(207,226,255,.05) 0 1px,transparent 1px 3px)}
+body[data-veil="him"] .hero::before{opacity:1}
+
+.who{position:relative;text-align:center;margin-bottom:6px;min-height:56px}
+.ovr{font-family:'Clash Display',sans-serif;font-size:56px;line-height:.82;letter-spacing:-.05em;color:var(--gold)}
+.only-him .ovr{color:var(--ghost);text-shadow:0 0 26px rgba(143,180,232,.5)}
+.nm{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.24em;color:#8c7346;margin-top:6px}
+.only-him .nm{color:var(--ghost-d)}
+
+/* radar */
+.radarwrap{position:relative;height:256px;margin:2px 0 6px}
+.radarwrap svg{position:absolute;inset:0;margin:auto;display:block}
+
+/* stat rows */
+.stats{margin-top:4px}
+.srow{display:grid;grid-template-columns:62px 1fr 30px 40px;gap:8px;align-items:center;
+  padding:5.5px 0;border-bottom:1px solid rgba(255,255,255,.045)}
+.srow:last-child{border-bottom:0}
+.srow .n{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.12em;color:#6c6380}
+body[data-veil="him"] .srow .n{color:#4d6a90}
+.srow .t{height:6px;border-radius:99px;background:#191527;overflow:hidden;position:relative}
+body[data-veil="him"] .srow .t{background:#111e31}
+.srow .t i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;transition:width .16s cubic-bezier(.3,0,.1,1)}
+.srow .t u{position:absolute;top:-2px;bottom:-2px;left:99%;width:1.5px;background:#4a5670;opacity:.65}
+body[data-veil="him"] .srow .t u{opacity:0}
+.srow .v{font-family:'Geist Mono',monospace;font-size:11px;text-align:right;font-weight:600;color:var(--ink)}
+.srow .d{font-family:'Geist Mono',monospace;font-size:9px;text-align:right;letter-spacing:.02em;
+  opacity:0;transition:opacity .1s;color:var(--blood);font-weight:600}
+body[data-veil="him"] .srow .d{opacity:1}
+.srow .v.low{color:var(--c-bod)}
+body[data-veil="him"] .srow .v{color:var(--ghost)}
+
+/* perks */
+.perks{display:flex;gap:6px;margin-top:13px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06)}
+.perk{flex:1;aspect-ratio:1;max-height:34px;border:1px solid #241f36;border-radius:8px;display:grid;place-items:center;
+  font-size:13px;color:#2f2947;background:#0f0d18;transition:.14s}
+.perk.on{border-color:rgba(224,178,94,.45);color:var(--gold);background:rgba(224,178,94,.07);
+  box-shadow:0 0 16px -6px rgba(224,178,94,.55)}
+body[data-veil="him"] .perk{border-color:rgba(207,226,255,.4);color:var(--ghost);background:rgba(143,180,232,.09);
+  box-shadow:0 0 16px -6px rgba(143,180,232,.6)}
+
+/* the verdict line that only he shows */
+.verdict{position:relative;margin-top:12px;padding-top:11px;border-top:1px solid rgba(207,226,255,.14);
+  min-height:34px}
+.vtext{font-family:'Clash Display',sans-serif;font-size:13px;line-height:1.35;color:var(--ghost-d);text-align:center}
+.vtext b{color:var(--ghost)}
+
+/* ================= SECTIONS ================= */
+h2.sec{font-size:9.5px;font-family:'Geist Mono',monospace;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--faint);margin:22px 0 9px;font-weight:700}
+body[data-veil="him"] h2.sec{color:#3f5f8c}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative;
+  transition:background .18s,border-color .18s}
+body[data-veil="him"] .card{background:#080e18;border-color:var(--ghost-line)}
+
+.sched{position:relative}
+.sblk{display:grid;grid-template-columns:38px 1fr 20px;gap:9px;align-items:center;padding:8px 11px;
+  border-bottom:1px solid rgba(255,255,255,.04);font-family:'Geist Mono',monospace;font-size:10px}
+.sblk:last-child{border-bottom:0}
+.sblk .tm{color:#4a4553;letter-spacing:-.02em}
+.sblk .nm2{color:#9891a6;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sblk .ck{width:15px;height:15px;border-radius:4px;border:1.5px solid #2a2438;justify-self:end}
+.sblk.done .ck{background:var(--phos);border-color:var(--phos)}
+.sblk.done .nm2{color:#4d5a52}
+.sblk.now{background:rgba(224,178,94,.09)}
+.sblk.now .nm2{color:var(--gold)}
+.sblk.now .ck{border-color:var(--gold)}
+/* his day: everything already done, always */
+.only-him .sblk .ck{background:var(--ghost);border-color:var(--ghost)}
+.only-him .sblk .nm2{color:#4d6a90}
+.only-him .sblk .tm{color:#33507a}
+
+/* controls */
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
+.btn{border:0;border-radius:11px;padding:13px 12px;font-family:'Satoshi',sans-serif;font-size:14px;font-weight:600;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;cursor:pointer;transition:transform .1s,filter .15s}
+.btn:active{transform:scale(.975)}
+.btn.gh{background:transparent;border:1px solid var(--line2);color:var(--dim)}
+.btn.gh:active{background:var(--panel2)}
+.btn:disabled{opacity:.35;pointer-events:none}
+body[data-veil="him"] .btn{background:linear-gradient(135deg,#CFE2FF,#7FA8DC);color:#061020}
+body[data-veil="him"] .btn.gh{background:transparent;border-color:var(--ghost-line);color:#4d6a90}
+
+/* pierce control */
+.pierce{margin-top:16px;display:flex;align-items:center;gap:9px;padding:11px 13px;border-radius:12px;
+  background:var(--panel);border:1px solid var(--line);transition:.18s}
+body[data-veil="him"] .pierce{background:#080e18;border-color:var(--ghost-line)}
+.pierce .lab{flex:1;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--faint);line-height:1.6}
+.pierce .lab b{color:var(--dim);font-weight:400;display:block}
+.hold{border:1px solid var(--line2);background:var(--panel2);color:var(--dim);border-radius:9px;
+  padding:9px 13px;font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.13em;cursor:pointer;
+  touch-action:none;transition:.14s;white-space:nowrap}
+.hold:active,.hold.on{border-color:var(--ghost);color:var(--ghost);background:rgba(143,180,232,.1);
+  box-shadow:0 0 20px -6px rgba(143,180,232,.7)}
+.tog{width:38px;height:21px;border-radius:99px;background:#1e1a2b;border:1px solid var(--line2);position:relative;
+  cursor:pointer;flex:none;transition:.16s}
+.tog i{position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:99px;background:#5a5468;transition:.16s}
+.tog.on{background:rgba(224,178,94,.22);border-color:rgba(224,178,94,.5)}
+.tog.on i{left:19px;background:var(--gold)}
+
+.foot{text-align:center;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.16em;
+  color:#3a3546;margin-top:20px;line-height:1.9}
+</style>
+</head>
+<body data-veil="you">
+
+<div class="scan"></div>
+
+<div class="sheet" id="sheet">
+
+  <!-- ===== header ===== -->
+  <div class="top">
+    <div class="lvbox">
+      <div class="only-you">
+        <div class="lv">LEVEL 6</div>
+        <div class="title">Operator</div>
+      </div>
+      <div class="only-him">
+        <div class="lv">LEVEL 10 · MAX</div>
+        <div class="title">The Millionaire Version</div>
+      </div>
+    </div>
+    <div class="fuelwrap">
+      <div class="fuel-t"><i style="width:62.6%"></i></div>
+      <div class="fuel-l"><span>57 DAYS OF FUEL</span><span>WK 07</span></div>
+    </div>
+  </div>
+
+  <!-- ===== hero character card ===== -->
+  <div class="hero" id="hero">
+
+    <div class="who">
+      <div class="only-you">
+        <div class="ovr" id="ovrYou">74</div>
+        <div class="nm">JASPER · GOLD</div>
+      </div>
+      <div class="only-him">
+        <div class="ovr">99</div>
+        <div class="nm">THE MILLIONAIRE VERSION</div>
+      </div>
+    </div>
+
+    <div class="radarwrap">
+      <svg id="radar" width="252" height="256" viewBox="0 0 252 256"></svg>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="perks" id="perks"></div>
+
+    <div class="verdict">
+      <div class="only-him">
+        <div class="vtext">He is ahead of you in <b>all six</b>.<br>The widest gap is <b>Body, by 55</b>.</div>
+      </div>
+      <div class="only-you">
+        <div class="vtext" style="color:#6d5c3c;font-family:'Geist Mono';font-size:8.5px;letter-spacing:.16em">
+          +3 OVR THIS WEEK · NEXT TIER AT 80</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== today ===== -->
+  <h2 class="sec">Today · <span id="doneCount">4 of 10</span></h2>
+  <div class="card">
+    <div class="sched">
+      <div class="only-you" id="schedYou"></div>
+      <div class="only-him" id="schedHim"></div>
+    </div>
+  </div>
+
+  <div class="acts">
+    <button class="btn" id="runBtn">Focus run · 75m</button>
+    <button class="btn gh" id="passBtn">Step away · <span id="passN">2</span> left</button>
+  </div>
+
+  <!-- ===== pierce control ===== -->
+  <div class="pierce">
+    <div class="lab">PIERCE THE VEIL<b>hold to see him · auto every 9s</b></div>
+    <button class="hold" id="holdBtn">HOLD</button>
+    <div class="tog on" id="autoTog" title="auto-flicker"><i></i></div>
+  </div>
+
+  <div class="foot">BURN THE BOATS · DAY 34 / 91<br>WHAT IS THE MILLIONAIRE VERSION OF YOURSELF DOING RIGHT NOW?</div>
+</div>
+
+<script>
+/* ============================================================
+   CHARACTER SHEET — the veil is a total takeover, not an overlay.
+   ============================================================ */
+
+const STATS=[
+  {k:'FOCUS',      v:91, c:'var(--c-foc)'},
+  {k:'DISCIPLINE', v:82, c:'var(--c-dis)'},
+  {k:'EXECUTION',  v:71, c:'var(--c-exe)'},
+  {k:'FAITH',      v:68, c:'var(--c-fth)'},
+  {k:'CAPITAL',    v:57, c:'var(--c-cap)'},
+  {k:'BODY',       v:44, c:'var(--c-bod)'},
+];
+const HIM=99;
+
+const DAY=[
+  ['06:00','Wake · pre-market',1],['06:30','Market open',1],['07:45','3 priorities',1],
+  ['08:15','Block 1 · SANO',1],['10:00','Block 2 · SANO',2],['11:15','Workout',0],
+  ['12:45','Market close',0],['13:05','Block 3 · Fruits',0],['14:50','Block 4 · admin',0],
+  ['21:00','Reset · phone away',0],
+];
+
+/* ---------- stat rows ---------- */
+(function(){
+  const el=document.getElementById('stats');
+  el.innerHTML=STATS.map(s=>`
+    <div class="srow" data-k="${s.k}">
+      <span class="n">${s.k}</span>
+      <span class="t"><i data-bar style="width:${s.v}%;background:${s.c}"></i><u></u></span>
+      <span class="v ${s.v<50?'low':''}" data-val>${s.v}</span>
+      <span class="d">+${HIM-s.v}</span>
+    </div>`).join('');
+})();
+
+/* ---------- perks ---------- */
+(function(){
+  const G=['◈','✦','◉','▲','✕','◇'];
+  document.getElementById('perks').innerHTML=G.map((g,i)=>
+    `<div class="perk${i<3?' on':''}">${g}</div>`).join('');
+})();
+
+/* ---------- schedule (yours, and his — his is always complete) ---------- */
+(function(){
+  const row=(t,n,st,him)=>`<div class="sblk ${him?'done':st===1?'done':st===2?'now':''}">
+      <span class="tm">${t}</span><span class="nm2">${n}</span><span class="ck"></span></div>`;
+  document.getElementById('schedYou').innerHTML=DAY.map(([t,n,s])=>row(t,n,s,false)).join('');
+  document.getElementById('schedHim').innerHTML=DAY.map(([t,n])=>row(t,n,1,true)).join('');
+  document.getElementById('doneCount').textContent=DAY.filter(d=>d[2]===1).length+' of '+DAY.length;
+})();
+
+/* ---------- the radar ---------- */
+/* cy/rad leave headroom for the axis labels + delta badges at 1.22r — at 1.3r the top label clipped */
+const R={cx:126,cy:122,rad:84};
+function pt(i,v,n){
+  const a=(-90+i*(360/n))*Math.PI/180;
+  return [R.cx+Math.cos(a)*R.rad*v, R.cy+Math.sin(a)*R.rad*v];
+}
+function poly(vals){ return vals.map((v,i)=>pt(i,v,vals.length).join(',')).join(' '); }
+
+(function drawRadar(){
+  const svg=document.getElementById('radar');
+  const n=STATS.length;
+  const mine=STATS.map(s=>s.v/100), full=STATS.map(()=>HIM/100);
+  let h='';
+
+  h+=`<defs>
+    <linearGradient id="gYou" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E0B25E" stop-opacity=".5"/>
+      <stop offset="100%" stop-color="#38E1D8" stop-opacity=".3"/></linearGradient>
+    <linearGradient id="gHim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#CFE2FF" stop-opacity=".34"/>
+      <stop offset="100%" stop-color="#6E9BD8" stop-opacity=".2"/></linearGradient>
+    <pattern id="hatch" width="5" height="5" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="5" stroke="#FF4D5E" stroke-width="1.4" stroke-opacity=".5"/></pattern>
+  </defs>`;
+
+  // web
+  [.25,.5,.75,1].forEach(r=>{
+    h+=`<polygon class="web" points="${poly(STATS.map(()=>r))}" fill="none" stroke="#241f36" stroke-width="1"/>`;
+  });
+  STATS.forEach((_,i)=>{
+    const[x,y]=pt(i,1,n);
+    h+=`<line class="web" x1="${R.cx}" y1="${R.cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#241f36" stroke-width="1"/>`;
+  });
+
+  // ---- HIM layer: full hexagon + the GAP between you and him, hatched ----
+  // fill-rule evenodd on (his polygon + your polygon) renders exactly the deficit area.
+  h+=`<g class="himlayer" opacity="0">
+    <polygon points="${poly(full)}" fill="url(#gHim)" stroke="#CFE2FF" stroke-width="1.8"/>
+    <path d="M${poly(full).replace(/ /g,' L').replace(/,/g,' ')} Z M${poly(mine).replace(/ /g,' L').replace(/,/g,' ')} Z"
+          fill="url(#hatch)" fill-rule="evenodd" opacity=".55"/>
+    <polygon points="${poly(mine)}" fill="none" stroke="#FF4D5E" stroke-width="1.2" stroke-dasharray="3 2.5" opacity=".85"/>
+  </g>`;
+
+  // ---- YOU layer ----
+  h+=`<g class="youlayer">
+    <polygon points="${poly(mine)}" fill="url(#gYou)" stroke="#E0B25E" stroke-width="1.9"/>`;
+  STATS.forEach((s,i)=>{const[x,y]=pt(i,s.v/100,n);
+    h+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="${s.c.replace('var(--c-','#').replace(')','')}"/>`;});
+  h+=`</g>`;
+
+  // his vertex dots (on top when pierced)
+  h+=`<g class="himdots" opacity="0">`;
+  STATS.forEach((_,i)=>{const[x,y]=pt(i,HIM/100,n);
+    h+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.2" fill="#CFE2FF"/>`;});
+  h+=`</g>`;
+
+  // labels
+  STATS.forEach((s,i)=>{
+    const[x,y]=pt(i,1.22,n);
+    h+=`<text class="rlab" x="${x.toFixed(1)}" y="${y.toFixed(1)}" font-family="Geist Mono" font-size="8"
+         letter-spacing="1.1" text-anchor="middle" dominant-baseline="middle" fill="#5d5470">${s.k.slice(0,3)}</text>`;
+    const[gx,gy]=pt(i,1.22,n);
+    h+=`<text class="glab" x="${gx.toFixed(1)}" y="${(gy+9).toFixed(1)}" font-family="Geist Mono" font-size="7.5"
+         text-anchor="middle" fill="#FF4D5E" opacity="0" font-weight="600">+${HIM-s.v}</text>`;
+  });
+
+  svg.innerHTML=h;
+  // fix vertex dot colours (CSS vars don't resolve inside SVG attrs)
+  const HEX=['#38E1D8','#4ADE80','#E0B25E','#B08CFF','#7FB4FF','#FF6B2C'];
+  svg.querySelectorAll('.youlayer circle').forEach((c,i)=>c.setAttribute('fill',HEX[i]));
+})();
+
+/* ---------- the takeover ---------- */
+const body=document.body;
+const svg=document.getElementById('radar');
+const himLayer=svg.querySelector('.himlayer');
+const himDots=svg.querySelector('.himdots');
+const youLayer=svg.querySelector('.youlayer');
+const gLabs=svg.querySelectorAll('.glab');
+const rLabs=svg.querySelectorAll('.rlab');
+const bars=document.querySelectorAll('[data-bar]');
+const vals=document.querySelectorAll('[data-val]');
+
+function paint(him){
+  himLayer.setAttribute('opacity', him?'1':'0');
+  himDots.setAttribute('opacity', him?'1':'0');
+  youLayer.setAttribute('opacity', him?'0':'1');
+  gLabs.forEach(l=>l.setAttribute('opacity',him?'1':'0'));
+  rLabs.forEach(l=>l.setAttribute('fill',him?'#4d6a90':'#5d5470'));
+  svg.querySelectorAll('.web').forEach(w=>w.setAttribute('stroke',him?'#1c2c47':'#241f36'));
+  bars.forEach((b,i)=>{
+    b.style.width=(him?HIM:STATS[i].v)+'%';
+    b.style.background=him?'linear-gradient(90deg,#6E9BD8,#CFE2FF)':STATS[i].c;
+  });
+  vals.forEach((v,i)=>{ v.textContent = him?HIM:STATS[i].v; });
+}
+
+paint(false);   // normalise the initial state instead of relying on attribute defaults
+
+let state='you', held=false, auto=true, timer=null;
+function setState(s){ state=s; body.dataset.veil=s; }
+
+/* a tear is a stutter, never a fade — that's what sells it */
+function tear(then){
+  setState('tear');
+  const seq=[[0,1],[70,0],[110,1],[155,0],[185,1],[250,0],[285,1]];
+  seq.forEach(([t,on])=>setTimeout(()=>{ paint(!!on); body.dataset.veil= on?'him':'tear'; },t));
+  setTimeout(()=>{ setState('him'); paint(true); then&&then(); },330);
+}
+function collapse(){
+  setState('collapse');
+  const seq=[[0,1],[60,0],[95,1],[140,0],[175,0]];
+  seq.forEach(([t,on])=>setTimeout(()=>{ paint(!!on); body.dataset.veil= on?'him':'collapse'; },t));
+  setTimeout(()=>{ setState('you'); paint(false); },210);
+}
+
+function cycle(){
+  if(!auto||held) return schedule();
+  tear(()=>{
+    setTimeout(()=>{ if(!held){ collapse(); } schedule(); },2400);
+  });
+}
+function schedule(){ clearTimeout(timer); timer=setTimeout(cycle, 9000); }
+schedule();
+
+/* hold to pierce — deliberate, and it never becomes wallpaper */
+const hold=document.getElementById('holdBtn');
+function pierceOn(e){
+  e.preventDefault(); held=true; hold.classList.add('on');
+  clearTimeout(timer); tear();
+}
+function pierceOff(){
+  if(!held) return; held=false; hold.classList.remove('on');
+  collapse(); schedule();
+}
+hold.addEventListener('pointerdown',pierceOn);
+window.addEventListener('pointerup',pierceOff);
+window.addEventListener('pointercancel',pierceOff);
+
+/* off switch — a thing that flickers for four months needs one */
+const tog=document.getElementById('autoTog');
+tog.onclick=()=>{ auto=!auto; tog.classList.toggle('on',auto); if(auto) schedule(); else clearTimeout(timer); };
+
+/* ---------- phone pass (2/day) ---------- */
+let passes=2, running=false, paused=false, pauseLeft=0, pauseT=null;
+const passBtn=document.getElementById('passBtn'), runBtn=document.getElementById('runBtn');
+runBtn.onclick=()=>{
+  running=!running;
+  runBtn.textContent = running?'Running · 74:58 clean':'Focus run · 75m';
+  runBtn.style.filter = running?'saturate(.5) brightness(.85)':'';
+};
+passBtn.onclick=()=>{
+  if(!running){ flash(passBtn,'Start a run first'); return; }
+  if(paused || passes<=0) return;
+  passes--; paused=true; pauseLeft=120;
+  document.getElementById('passN').textContent=passes;
+  clearInterval(pauseT);
+  pauseT=setInterval(()=>{
+    pauseLeft--;
+    passBtn.textContent = `Back in ${String(Math.floor(pauseLeft/60))}:${String(pauseLeft%60).padStart(2,'0')}`;
+    if(pauseLeft<=0){ clearInterval(pauseT); paused=false;
+      passBtn.innerHTML=`Step away · <span id="passN">${passes}</span> left`; }
+  },1000);
+  passBtn.textContent='Back in 2:00';
+  // returning to the tab inside the window resumes clean
+  const back=()=>{ if(document.visibilityState==='visible'&&paused){
+    clearInterval(pauseT); paused=false;
+    passBtn.innerHTML=`Step away · <span id="passN">${passes}</span> left`;
+    flash(passBtn,'Resumed clean'); document.removeEventListener('visibilitychange',back); } };
+  document.addEventListener('visibilitychange',back);
+};
+function flash(el,msg){
+  const o=el.innerHTML; el.textContent=msg;
+  setTimeout(()=>{ el.innerHTML=o; },1400);
+}
+</script>
+</body>
+</html>
