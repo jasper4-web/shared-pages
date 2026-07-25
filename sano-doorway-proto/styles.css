@@ -1181,3 +1181,33 @@ section.band{padding:96px 0}
   table.cmp th:nth-child(3),table.cmp td:nth-child(3){width:31%}
   table.cmp th:nth-child(4),table.cmp td:nth-child(4){width:25%}
 }
+
+/* ============ SWEEP ROUND 1 — defects found by three independent auditors ============ */
+
+/* The reduced-motion block killed `.appdemo *` animations — but the chat bubbles'
+   only opacity:1 came FROM that animation (base rule is opacity:0). So honouring an
+   accessibility preference erased the page's central proof: five blank bubbles.
+   Verified on the live pages, not just the prototype. */
+@media(prefers-reduced-motion:reduce){
+  .appdemo .bub{opacity:1!important;transform:none!important}
+  .appdemo .bc .b{transform:scaleY(1)!important}
+}
+
+/* "$999/mo" on the SELECTED package measured 3.76:1 — primary chrome, not mockup. */
+.tier-radio:checked + .tier-lab span{color:#fff}
+
+/* contrast inside the mockup: 1.4.3 applies to rendered text regardless of whether
+   assistive tech is told to skip it */
+.appdemo .st.done{color:#0A7A46}          /* was #12A55F on #E7F7EF = 2.88:1 */
+.appdemo .stars{color:#B36F00}            /* was #F5A623 on #fff = 2.03:1 — it conveys the rating */
+.appdemo .applock{color:#5C6473}          /* was #8A94A3 = 2.69:1 — this chip IS the tier signal */
+.appdemo .miss{color:#B42318}             /* was 4.44:1, six hundredths short */
+
+/* nav targets under 24x24 (WCAG 2.5.8), stacked so the spacing exception misses them */
+.nav-phone,.nav-es{padding-block:4px}
+/* the invented reviews are the most persuasive objects in the mockup — they must
+   say so where they are, not two inches away in a header chip */
+.appdemo .samplenote{font-size:11.5px;line-height:1.4;color:#6B7280;background:#F7F9FC;
+  border:1px dashed #D6DCE5;border-radius:8px;padding:7px 9px;margin:8px 0 10px}
+.appdemo .sec .t span{display:block;font-size:10.5px;font-weight:500;color:var(--muted);
+  text-transform:none;letter-spacing:0;margin-top:2px}
