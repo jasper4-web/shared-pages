@@ -169,3 +169,28 @@
 /* hero: shorter, so the app is the first real object you meet */
 .proto-hero h1{max-width:20ch;font-size:clamp(30px,4.1vw,48px)}
 @media(max-width:640px){.proto-hero h1{font-size:27px;max-width:none}}
+
+/* ---- SWEEP ROUND 1 ---- */
+/* the proto has no .cap tiles, so the live reveal rule (radio + .cap + sheet) could
+   never match. Here the sheet is the radio's immediate next sibling. */
+.cap-radio:checked + .cap-sheet{display:flex}
+/* focus must land somewhere VISIBLE: the 1x1 radios sit far from the row they drive */
+.cap-radio:focus-visible + .cap-sheet{outline:3px solid #4D9BFF}
+.fr-row:has(+ *) {}
+/* 400% zoom produced 60px of horizontal document scroll — traced to the app's glow
+   pseudo-element at width:min(760px,150%). Same trap the carousel hit earlier. */
+.stage{overflow-x:clip}
+
+/* the turn: they have just finished poking at the app, which is exactly when
+   "and none of this is your job" lands hardest */
+.magic{max-width:720px;margin:clamp(44px,6vw,72px) auto 0;text-align:center}
+.magic h3{font-family:var(--disp);font-size:clamp(25px,3.4vw,38px);color:#fff;
+  letter-spacing:-.025em;line-height:1.1;text-wrap:balance}
+.magic p{margin-top:16px;font-size:clamp(16px,1.8vw,18.5px);line-height:1.62;color:#B8C7D4}
+.magic strong{color:#fff}
+.money{max-width:720px;margin:26px auto 0;padding:16px 20px;border-radius:14px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  font-size:15px;line-height:1.62;color:#B8C7D4;text-align:left}
+.money strong{color:#fff}
+.money a{color:#4D9BFF;font-weight:600}
+@media(max-width:640px){.magic{margin-top:40px}.magic p{font-size:16px}.money{font-size:14.5px;padding:14px 16px}}
