@@ -127,7 +127,7 @@
 
 /* ---------- tablet ---------- */
 @media(max-width:1000px){
-  .stage-grid{grid-template-columns:1fr;gap:32px;padding-top:56px;max-width:560px}
+  .stage-grid{grid-template-columns:minmax(0,1fr);gap:32px;padding-top:56px;max-width:560px}
   .stage-side{text-align:center}
   .stage-side .tier-switch{justify-content:center}
   .stage-side .cap-count{text-align:center}
@@ -280,3 +280,10 @@ html:has(.cap-radio:not(#co-none):checked) body{overflow:hidden}
   .tier-radio:checked + .tier-lab{border-width:3px;outline:3px solid CanvasText;outline-offset:2px}
 }
 .capset{border:0;padding:0;margin:0}
+
+/* M3: the app's tab radios are 0x0 at the TOP of the phone while their focus ring
+   was proxied onto a label at the BOTTOM — the browser scrolls the input into view,
+   not the ring, so at most viewport heights nothing visible was highlighted. Ring
+   the phone too: whatever is scrolled into view, some of it is on screen. */
+.appdemo .phone:has(.tabr:focus-visible),
+.appdemo .phone:has(.drill:focus-visible){outline:3px solid var(--blue);outline-offset:5px;border-radius:28px}
