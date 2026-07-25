@@ -1274,3 +1274,17 @@ header{z-index:90}
 /* .brand{overflow:hidden} clipped the final "s" off SANO Systems at 320 and 412 */
 .brand{overflow:visible}
 .brand .bt{overflow:hidden;text-overflow:clip}
+
+/* ============ SWEEP ROUND 5 ============ */
+/* the phone's stat grid floored at min-content and clipped 37px at 320 CSS px */
+.appdemo .sgrid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+/* forced-colors drops gradient fills, so the whole chart rendered as an empty box
+   and the unread badge went white-on-white */
+@media (forced-colors: active){
+  .appdemo .bc .b{forced-color-adjust:none;background:Highlight;border:1px solid CanvasText}
+  .appdemo .un{forced-color-adjust:none;background:Highlight;color:HighlightText}
+}
+/* three literal AA misses inside the illustration */
+.appdemo .days .mut{color:#6B7280}       /* was #C6CBD4 = 1.63:1 */
+.appdemo .un{background:#0B7A46}          /* white on #12A55F was 3.19:1 at 10.5px/700 */
+.appdemo .stars{color:#8A5600}            /* was #B36F00 = 4.05:1 */
