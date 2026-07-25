@@ -1,0 +1,171 @@
+/* =====================================================================
+   PROTOTYPE ONLY — the app-as-centrepiece trade page.
+   Loaded AFTER styles.css, so it overrides the live layout without
+   touching it. Nothing in here ships until this shape is approved.
+   ===================================================================== */
+
+/* ---------- the cream hero stays, but the SEAM is the thing that was
+   reading as two stacked slabs. It now ramps into the dark instead of
+   butting against it, and the hero is short enough that the app is the
+   first real object you meet. ---------- */
+.proto-hero{
+  background:linear-gradient(180deg,#FBF8F3 0%,#f5f0e8 52%,#EDE6DA 100%);
+  padding:44px 0 56px;text-align:center;position:relative}
+.proto-hero h1{font-size:clamp(32px,4.6vw,54px);line-height:1.06;letter-spacing:-.025em;
+  margin:16px auto 0;max-width:16ch;text-wrap:balance}
+.proto-hero .sub{max-width:56ch;margin:18px auto 0;font-size:clamp(16px,1.7vw,18.5px);
+  line-height:1.55;color:var(--ink-soft)}
+.proto-hero .sub strong{color:var(--ink)}
+
+/* the stage is where the app lives — one continuous dark field, lit from
+   the top so the phone reads as sitting ON something */
+.stage.dark-band{
+  padding:0 0 84px;
+  background:
+    radial-gradient(120% 62% at 50% 0%, rgba(0,112,243,.16), rgba(0,112,243,0) 58%),
+    radial-gradient(90% 50% at 50% 30%, #14141A 0%, #09090B 74%), #09090B;
+  position:relative}
+.stage::before{content:"";position:absolute;inset:0 0 auto;height:150px;pointer-events:none;
+  background:linear-gradient(180deg,#EDE6DA 0%,rgba(237,230,218,.55) 22%,rgba(9,9,11,0) 100%);
+  opacity:.14}
+
+/* ---------- step 1 + the app, side by side on desktop ---------- */
+.stage-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);
+  gap:clamp(28px,4vw,64px);align-items:center;padding:72px 0 0;max-width:1040px;margin:0 auto}
+.stage-side .kick{margin-bottom:12px}
+.stage-side h2{font-size:clamp(26px,3.2vw,38px);color:#fff;line-height:1.1;letter-spacing:-.02em;text-wrap:balance}
+.stage-sub{margin-top:14px;font-size:16px;line-height:1.6;color:#9FB0BF;max-width:46ch}
+.stage-side .tier-switch{justify-content:flex-start;margin:24px 0 0;max-width:none}
+.stage-side .cap-count{text-align:left;margin-top:14px;font-size:15px}
+.stage-note{margin-top:22px;padding:16px 18px;border-radius:14px;font-size:15px;line-height:1.6;
+  color:#C3D2DE;background:rgba(0,112,243,.12);border:1px solid rgba(0,112,243,.3);max-width:46ch}
+.stage-note strong{color:#fff}
+
+/* the phone: bezel, cushion and a brand glow so white-on-black stops
+   reading as a pasted rectangle */
+.stage-app{position:relative;display:flex;flex-direction:column;align-items:center}
+.stage-app .appdemo{position:relative;z-index:1;width:100%;max-width:400px}
+.stage-app .appdemo .phone{
+  border-radius:26px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.14),
+    0 0 0 10px rgba(255,255,255,.04),
+    0 46px 92px -26px rgba(0,0,0,.92),
+    0 0 140px -34px rgba(0,112,243,.55)}
+.stage-app::before{content:"";position:absolute;z-index:0;pointer-events:none;
+  left:50%;top:2%;transform:translateX(-50%);width:min(760px,150%);aspect-ratio:1/1.2;
+  background:radial-gradient(closest-side,rgba(0,112,243,.22),rgba(0,112,243,0) 72%)}
+.stage-cap{margin-top:18px;font-size:13px;color:#7E90A1;text-align:center}
+
+/* ---------- the coach mark: says the gesture out loud, once ---------- */
+.coach{position:relative;z-index:2;display:inline-flex;align-items:center;gap:9px;
+  margin-bottom:16px;padding:9px 16px 9px 13px;border-radius:999px;
+  background:rgba(0,112,243,.16);border:1px solid rgba(77,155,255,.45);
+  color:#BBD9FF;font-size:13.5px;font-weight:600;white-space:nowrap}
+.coach-dot{width:9px;height:9px;border-radius:50%;background:#4D9BFF;flex:none;
+  box-shadow:0 0 0 0 rgba(77,155,255,.7);animation:coachpulse 2.4s ease-out infinite}
+@keyframes coachpulse{
+  0%{box-shadow:0 0 0 0 rgba(77,155,255,.65)}
+  70%{box-shadow:0 0 0 12px rgba(77,155,255,0)}
+  100%{box-shadow:0 0 0 0 rgba(77,155,255,0)}}
+/* it has done its job the moment they move off the default level */
+.cap-band:has(#t-starter:checked) .coach,
+.cap-band:has(#t-scale:checked) .coach,
+.cap-band:has(#t-total:checked) .coach{opacity:0;transform:translateY(-4px);pointer-events:none}
+.coach{transition:opacity .3s ease,transform .3s ease}
+@media(prefers-reduced-motion:reduce){.coach-dot{animation:none}.coach{transition:none}}
+
+/* ---------- the fast track: the breadth section survives, but as four
+   themed cards you can skim, not sixteen tiles you have to trudge ---------- */
+.fasttrack{margin-top:clamp(56px,7vw,88px)}
+.ft-head{text-align:center;max-width:640px;margin:0 auto 26px}
+.ft-head h2{font-size:clamp(24px,3vw,34px);color:#fff;letter-spacing:-.02em;text-wrap:balance}
+.ft-head p{margin-top:10px;font-size:15px;color:#9FB0BF}
+.fr-scroll{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;max-width:1040px;margin:0 auto}
+.fr-card{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.012)),#101016;
+  border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:18px 14px 14px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.fr-head{padding:0 4px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:8px}
+.fr-head b{display:block;font-family:var(--disp);font-size:15px;color:#fff;line-height:1.25;letter-spacing:-.01em}
+.fr-head span{display:block;margin-top:5px;font-size:12.5px;line-height:1.4;color:#8FA3B4}
+.fr-row{display:flex;align-items:center;gap:9px;padding:9px 8px;border-radius:10px;cursor:pointer;
+  transition:background .16s,opacity .2s;min-height:44px}
+.fr-row:hover{background:rgba(77,155,255,.12)}
+.fr-row:active{background:rgba(77,155,255,.2)}
+.fr-ic{width:26px;height:26px;flex:none;border-radius:8px;background:rgba(0,112,243,.18);
+  color:#4D9BFF;display:grid;place-items:center;padding:5px}
+.fr-ic .ico{width:100%;height:100%}
+.fr-n{flex:1;min-width:0;font-size:13.5px;color:#E4EBF1;line-height:1.25}
+.fr-row .cap-tier{flex:none}
+
+/* locked rows follow the same per-property dimming as the live board —
+   never a blanket opacity, so the tier chip stays readable */
+.cap-band:has(#t-starter:checked) .fr-growth,
+.cap-band:has(#t-starter:checked) .fr-scale,
+.cap-band:has(#t-starter:checked) .fr-total,
+.cap-band:has(#t-growth:checked) .fr-scale,
+.cap-band:has(#t-growth:checked) .fr-total,
+.cap-band:has(#t-scale:checked) .fr-total{background:rgba(255,255,255,.02)}
+.cap-band:has(#t-starter:checked) .fr-growth .fr-n,
+.cap-band:has(#t-starter:checked) .fr-scale .fr-n,
+.cap-band:has(#t-starter:checked) .fr-total .fr-n,
+.cap-band:has(#t-growth:checked) .fr-scale .fr-n,
+.cap-band:has(#t-growth:checked) .fr-total .fr-n,
+.cap-band:has(#t-scale:checked) .fr-total .fr-n{color:#7E8794}
+.cap-band:has(#t-starter:checked) .fr-growth .fr-ic,
+.cap-band:has(#t-starter:checked) .fr-scale .fr-ic,
+.cap-band:has(#t-starter:checked) .fr-total .fr-ic,
+.cap-band:has(#t-growth:checked) .fr-scale .fr-ic,
+.cap-band:has(#t-growth:checked) .fr-total .fr-ic,
+.cap-band:has(#t-scale:checked) .fr-total .fr-ic{background:rgba(255,255,255,.06);color:#8FA3B4}
+.cap-band:has(#t-starter:checked) .fr-growth .cap-tier::before,
+.cap-band:has(#t-starter:checked) .fr-scale .cap-tier::before,
+.cap-band:has(#t-starter:checked) .fr-total .cap-tier::before,
+.cap-band:has(#t-growth:checked) .fr-scale .cap-tier::before,
+.cap-band:has(#t-growth:checked) .fr-total .cap-tier::before,
+.cap-band:has(#t-scale:checked) .fr-total .cap-tier::before{content:"↑ "}
+
+/* ---------- tablet ---------- */
+@media(max-width:1000px){
+  .stage-grid{grid-template-columns:1fr;gap:32px;padding-top:56px;max-width:560px}
+  .stage-side{text-align:center}
+  .stage-side .tier-switch{justify-content:center}
+  .stage-side .cap-count{text-align:center}
+  .stage-sub,.stage-note{margin-inline:auto}
+  .fr-scroll{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* ---------- phone: the app IS the hero, and the fast track becomes a
+   swipeable rail so four groups cost one card of height ---------- */
+@media(max-width:640px){
+  .proto-hero{padding:30px 0 40px}
+  .proto-hero .sub{font-size:16px;margin-top:14px}
+  .stage.dark-band{padding-bottom:56px}
+  .stage-grid{padding-top:36px;gap:26px}
+  .stage-side h2{font-size:26px}
+  .stage-sub{font-size:15px}
+  .coach{font-size:12.5px;white-space:normal;text-align:left;line-height:1.35;padding:9px 14px}
+  .stage-app .appdemo .phone{box-shadow:
+    0 0 0 1px rgba(255,255,255,.14),
+    0 0 0 7px rgba(255,255,255,.035),
+    0 30px 60px -22px rgba(0,0,0,.9),
+    0 0 100px -30px rgba(0,112,243,.5)}
+  .fasttrack{margin-top:48px}
+  /* the bleed is done with scroll-padding, not negative margins — negative
+     margins escaped .wrap and pushed documentElement.scrollWidth past the
+     viewport, which body{overflow-x:hidden} was quietly masking */
+  .fr-scroll{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;padding:2px 0 12px;
+    scroll-padding-left:0;overscroll-behavior-x:contain;scrollbar-width:none}
+  .fr-scroll::-webkit-scrollbar{display:none}
+  .fr-card{flex:0 0 82%;scroll-snap-align:center}
+  .ft-head h2{font-size:23px}
+}
+@media(max-width:380px){ .fr-card{flex:0 0 88%} }
+
+/* the reused comparison band now sits directly under the stage — both dark.
+   Give it its own ground so the two do not read as one endless field. */
+.stage + .dark-band{background:#0C0C11;border-top:1px solid rgba(255,255,255,.07)}
+/* hero: shorter, so the app is the first real object you meet */
+.proto-hero h1{max-width:20ch;font-size:clamp(30px,4.1vw,48px)}
+@media(max-width:640px){.proto-hero h1{font-size:27px;max-width:none}}
