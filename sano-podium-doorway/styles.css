@@ -1248,3 +1248,10 @@ header{z-index:90}
 /* the four drill-down radios inside the app are 0x0 and focusable with no ring */
 .appdemo .drill:focus-visible ~ div .tapme,
 .appdemo .drill:focus-visible ~ div .back{outline:3px solid var(--blue);outline-offset:2px;border-radius:8px}
+
+/* The guide caption's flex item defaulted to min-width:auto and refused to shrink,
+   so it overflowed 37px and pushed the tier-disclosure pill outside the phone frame
+   on every phone width — truncating "Runs on every level — greyed tiles are a rung up"
+   to "Runs on every level", which is precisely the wrong half to keep. */
+.appdemo .guide .gt{min-width:0}
+.appdemo .guide{min-width:0}
