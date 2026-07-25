@@ -798,8 +798,7 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
   background:#14141A;border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:26px 26px 24px;
   box-shadow:0 30px 80px rgba(0,0,0,.6);animation:capin .18s ease}
 @keyframes capin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.cs-x{position:absolute;top:10px;right:12px;width:40px;height:40px;display:grid;place-items:center;
-  font-size:26px;line-height:1;color:#9FB0BF;cursor:pointer;border-radius:10px}
+/* superseded: the close is a focusable input now, styled below */
 .cs-x:hover{background:rgba(255,255,255,.08);color:#fff}
 .cs-head{display:flex;align-items:center;gap:13px;padding-right:40px}
 .cs-head .cap-ic{width:44px;height:44px;border-radius:12px;padding:9px}
@@ -824,7 +823,7 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
 .cap-band:has(#t-starter:checked) .cap-total,
 .cap-band:has(#t-growth:checked) .cap-scale,
 .cap-band:has(#t-growth:checked) .cap-total,
-.cap-band:has(#t-scale:checked) .cap-total{opacity:.42;border-color:rgba(255,255,255,.06)}
+.cap-band:has(#t-scale:checked) .cap-total{border-color:rgba(255,255,255,.06);background:#0F0F14;box-shadow:none}
 .cap-band:has(#t-starter:checked) .cap-growth .cap-ic,
 .cap-band:has(#t-starter:checked) .cap-scale .cap-ic,
 .cap-band:has(#t-starter:checked) .cap-total .cap-ic,
@@ -986,4 +985,199 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
   .ind-hero-sec{padding:26px 0 24px}
   .ind-hero .hero-tags{margin-bottom:13px;gap:8px}
   .ind-hero .sub{margin-top:13px}
+}
+
+/* =================================================================
+   AESTHETIC PASS — round 1: the defects all three reviewers agree on.
+   Each of these was independently measured, not a matter of taste.
+   ================================================================= */
+
+/* 1. MY BUG, from the app transplant. I namespaced #id selectors and the
+      markup's for="" attributes, but missed [for=] ATTRIBUTE selectors in the
+      app's own CSS — so the five tab labels styled `label[for=t-home]` never
+      matched the emitted `for="ad-t-home"`. Every tab rendered identical grey
+      no matter which screen was open: tapping produced a screen change with no
+      confirmation on the control you actually touched. */
+.appdemo #ad-t-home:checked ~ .adnav label[for="ad-t-home"],
+.appdemo #ad-t-conv:checked ~ .adnav label[for="ad-t-conv"],
+.appdemo #ad-t-cal:checked  ~ .adnav label[for="ad-t-cal"],
+.appdemo #ad-t-cont:checked ~ .adnav label[for="ad-t-cont"],
+.appdemo #ad-t-rev:checked  ~ .adnav label[for="ad-t-rev"]{
+  color:#0B63CE;font-weight:600;background:rgba(11,99,206,.09)}
+.appdemo #ad-t-home:focus-visible ~ .adnav label[for="ad-t-home"],
+.appdemo #ad-t-conv:focus-visible ~ .adnav label[for="ad-t-conv"],
+.appdemo #ad-t-cal:focus-visible  ~ .adnav label[for="ad-t-cal"],
+.appdemo #ad-t-cont:focus-visible ~ .adnav label[for="ad-t-cont"],
+.appdemo #ad-t-rev:focus-visible  ~ .adnav label[for="ad-t-rev"]{
+  outline:3px solid #0B63CE;outline-offset:-2px;border-radius:9px}
+
+/* 2. "We build yours" was #F3EFE6 on a #F5F0E8 hero — measured 1.01:1, i.e.
+      invisible on six of the eight trade pages. Amber is the brand's rare
+      premium accent and "we build yours" is exactly the bespoke story. */
+.badge-mapped{background:rgba(245,166,35,.14);color:#6E4A0C;
+  box-shadow:inset 0 0 0 1px rgba(245,166,35,.40)}
+.hero-tags .ready-tag.badge-mapped{color:#5E3F0A}
+
+/* 3. A pill stretched to 218px reads as a rendering error. `.ind` is a flex
+      column, whose default align-items:stretch was overriding inline-block. */
+.ind .badge-built,.ind .badge-mapped{align-self:flex-start}
+
+/* 4. #hook is the ONLY per-trade section on the page and it rendered as an
+      unfinished draft: its kicker computed 16px/400/near-black while every
+      other kicker is 14px/600/uppercase, and its h2 came out 36px against the
+      generic blueprint h2's 44px — the hierarchy was inverted. */
+.kick{font-size:14px;font-weight:600;color:var(--blue-d);
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+.dark-band .kick{color:#9FB0BF}
+#hook{padding:84px 0}
+#hook .kick{margin-bottom:14px}
+#hook h2{font-size:clamp(28px,4vw,44px);text-wrap:balance}
+
+/* 5. Three rules were dead code, each a single class losing to a two-token
+      descendant selector. The worst: the CTA legal disclosure was authored at
+      14px under a comment reading "the disclosure must not be the least
+      legible thing on the page" — and rendered at 18px, LARGER than body copy. */
+.cta-box p.cta-guarantee{font-size:14.5px;line-height:1.6;max-width:62ch;text-wrap:pretty}
+.cta-box p.cta-phone{font-size:15px}
+.cta-box p.cta-phone em{font-size:13px}
+.sec-head p.bp-gloss{font-size:15.5px;line-height:1.6;color:var(--ink-mut)}
+
+/* ============ AESTHETIC PASS — round 2: reconciled across the three lenses ============ */
+
+/* A. LOCKED TILES. Both original proposals were impossible: opacity on a
+      parent multiplies down, so a child chip can never out-contrast a .42
+      parent. Dimming per-property instead keeps all four locked signals AND
+      takes the only text that EXPLAINS the state from 2.20:1 to 6.77:1. */
+.cap-band:has(#t-starter:checked) .cap-growth > b,
+.cap-band:has(#t-starter:checked) .cap-scale > b,
+.cap-band:has(#t-starter:checked) .cap-total > b,
+.cap-band:has(#t-growth:checked) .cap-scale > b,
+.cap-band:has(#t-growth:checked) .cap-total > b,
+.cap-band:has(#t-scale:checked) .cap-total > b{color:#7E8794}
+.cap-band:has(#t-starter:checked) .cap-growth .cap-tier,
+.cap-band:has(#t-starter:checked) .cap-scale .cap-tier,
+.cap-band:has(#t-starter:checked) .cap-total .cap-tier,
+.cap-band:has(#t-growth:checked) .cap-scale .cap-tier,
+.cap-band:has(#t-growth:checked) .cap-total .cap-tier,
+.cap-band:has(#t-scale:checked) .cap-total .cap-tier{background:rgba(255,255,255,.08);color:#9FB0BF;opacity:1}
+
+/* B. TILE AFFORDANCE. The border was never the load-bearing part — :active is.
+      Touch has no :hover, so a finger press previously produced no feedback. */
+.cap:active{transform:scale(.97);background:#1B1B24;border-color:#4D9BFF}
+.cap-hint{margin:0 0 14px;color:#93A5B6}
+
+/* C. The tier switch is a CONTROL, not a surface. Folding it into the card
+      recipe would drop the three unselected pills to 1.21:1 and turn the best
+      moment on the page into one button and three ghosts. */
+.tier-lab{border-color:rgba(255,255,255,.30);background:rgba(255,255,255,.06)}
+.tier-lab:active{transform:scale(.97)}
+.tier-radio:checked + .tier-lab{transform:none}
+
+/* D. KEYBOARD (WCAG 2.4.7). The 16-tile grid was one tab stop landing on a
+      1x1 radio with no visible partner, and the sheet close was a label —
+      unfocusable, and Enter/Space do not activate one. */
+.cap-band:has(#co-none:focus-visible) .cap-grid{outline:3px solid #4D9BFF;outline-offset:8px;border-radius:20px}
+.cs-x{appearance:none;-webkit-appearance:none;border:0;background:none;position:absolute;top:8px;right:10px;width:44px;height:44px;border-radius:10px;cursor:pointer;margin:0}
+.cs-x::before{content:"×";display:grid;place-items:center;height:100%;font-size:28px;line-height:1;color:#C3D2DE}
+.cs-x:hover{background:rgba(255,255,255,.08)}
+.cs-x:hover::before{color:#fff}
+.cs-x:focus-visible{outline:3px solid #4D9BFF;outline-offset:2px}
+
+/* E. Scroll containment: an open sheet let the board slide under the scrim
+      (measured scrollY 887 -> 1287), and the embedded app was a full-width
+      scroll trap on a phone. */
+.cap-sheet,.cs-panel{overscroll-behavior:contain}
+.cs-scrim{touch-action:none}
+.appdemo .scr{overscroll-behavior:contain}
+@media(max-width:820px){.appdemo .phone{height:min(700px,78vh);max-height:700px;max-width:326px}}
+
+/* F. The app's tab radios are 0x0, so the global focus ring painted on
+      nothing and Chrome then outlined the whole 400x685 screen instead. */
+.appdemo .scr:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+
+/* ============ AESTHETIC PASS — round 3: the reconciled set ============
+   Where the three lenses disagreed, the winner and the reason:
+   - .cap border: TYPOGRAPHY. The file already runs a two-tier convention —
+     table.cmp/.feat-dark at .09 (static surface), .tier-lab at .16 (control).
+     .cap is a <label> that opens a modal, so it is a control. This also hands
+     the interaction reviewer the affordance it wanted at no extra cost.
+   - .cap-tier: both converged DOWN to 10px. 9px was under the legibility floor,
+     11px could not hold "UNLOCKS AT SCALE" inside a tile.
+   - hero pills: unanimous — keep the 999px pill, fix the real defect, which was
+     two different heights (35 vs 29px) offset by 12px. 8px would have made an
+     inert label read as an input field.
+   - band padding: mobile step-down and desktop 96px are compatible. Brand's
+     "collapse adjacent bands" rule is NOT shipped — traced against the actual
+     sequence it fires 5 times, every one of them at a colour change. */
+
+/* two micro sizes replacing seven (9/9.5/10/11/12/12.5/13) */
+:root{--t-chip:10px;--t-label:12.5px}
+.cap-tier{font-size:var(--t-chip);line-height:1.2;letter-spacing:.05em}
+@media(max-width:820px){.cap-tier{font-size:var(--t-chip);letter-spacing:.03em}}
+
+/* border tiers: surface / control / overlay */
+.cap-foot,.cap-band .how-it-sounds.on-dark,.cap-band .minutes-note.on-dark,
+table.cmp,.feat-dark{border-color:rgba(255,255,255,.09)}
+.cap{border-color:rgba(255,255,255,.16)}
+.cs-panel{border-color:rgba(255,255,255,.14)}
+
+/* hero pills: one geometry, one baseline, and not pretending to be controls */
+.hero-tags .eyebrow,.hero-tags .ready-tag,
+.hero-tags .badge-built,.hero-tags .badge-mapped{
+  margin:0;min-height:34px;padding:0 15px;font-size:var(--t-label);
+  line-height:1;display:inline-flex;align-items:center;border-radius:999px;cursor:default}
+.hero-tags .eyebrow svg{width:16px;height:16px}
+.ind-hero-sec .badge-mapped{background:rgba(245,166,35,.18);
+  box-shadow:inset 0 0 0 1px rgba(180,120,20,.42)}
+
+/* vertical rhythm: .band never stepped down on mobile — 168px between every
+   section on a phone, while .dark-band and .page-hero both correctly compress */
+section.band{padding:96px 0}
+@media(max-width:820px){section.band{padding:56px 0}.cta{padding:60px 0}}
+@media(max-width:520px){section.band{padding:44px 0}.cta{padding:48px 0}}
+#hook{padding:96px 0}
+@media(max-width:820px){#hook{padding:56px 0}}
+@media(max-width:520px){#hook{padding:44px 0}}
+
+/* measure: the dark note stack ran 78-82ch and sat on four different left edges.
+   Three concentric measures now — 940 data, 730 head, 680 reading copy. */
+.cap-grid{max-width:940px;margin-inline:auto}
+.cap-band .how-it-sounds.on-dark,.cap-band .minutes-note.on-dark,
+.cap-foot,.app-doneforyou{max-width:680px;padding:18px 20px}
+.app-doneforyou p{font-size:15px}
+.faq{max-width:720px}
+.bp-list{max-width:640px}
+
+/* the hint sits under the count now, so it must not compete with it */
+.cap-hint{font-size:13px;margin:8px 0 14px;color:#93A5B6}
+
+/* headings broke badly everywhere — balance was set on the hero h1 alone */
+.sec-head h2,#hook h2,.cta-box h2,.app-lead h3,.app-doneforyou h3,
+.ind h3,.step h3,.faq summary{text-wrap:balance}
+.page-hero p.sub,.hook-sub,.cap-band .sec-head p,
+.cta-guarantee,.bp-gloss,.step p{text-wrap:pretty}
+
+/* leading was assigned by nothing: one 1.60 ratio served 10px chips and 19px leads */
+.bp-list li{line-height:1.45}
+.cap-tier,.badge-built,.badge-mapped,.ready-tag{line-height:1.2}
+.faq .a,.cta-guarantee,.cap-band .how-it-sounds,.cap-band .minutes-note,.cap-foot{line-height:1.65}
+
+/* 16 tiles in 3 columns left an orphan that needed a bespoke hack; two columns
+   below 560 divides evenly and gives the label and chip their size back */
+@media(max-width:560px){
+  .cap-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cap b{font-size:13.5px}
+  .cap-grid > label.cap:last-of-type{grid-column:auto;flex-direction:column;padding:16px 10px 13px}
+  .cap-grid > label.cap:last-of-type b{font-size:13.5px}
+}
+@media(max-width:430px){.ind-hero h1{font-size:29px}}
+
+/* the comparison table asked readers to compare three columns set at three
+   different measures (20ch vs 45ch) */
+@media(min-width:861px){
+  table.cmp{table-layout:fixed}
+  table.cmp tbody th.lab{width:19%}
+  table.cmp th:nth-child(2),table.cmp td:nth-child(2){width:25%}
+  table.cmp th:nth-child(3),table.cmp td:nth-child(3){width:31%}
+  table.cmp th:nth-child(4),table.cmp td:nth-child(4){width:25%}
 }
