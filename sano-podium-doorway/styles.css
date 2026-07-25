@@ -1272,8 +1272,12 @@ header{z-index:90}
    button in the header above it was white */
 .mobile-menu a.btn-blue{color:#fff}
 /* .brand{overflow:hidden} clipped the final "s" off SANO Systems at 320 and 412 */
-.brand{overflow:visible}
-.brand .bt{overflow:hidden;text-overflow:clip}
+/* Round 4 set .brand{overflow:visible} to stop the wordmark clipping — and in the
+   same edit re-added the clip one level down on .bt, so it never actually fixed
+   anything. At 412px (the modal Android width) it rendered "SANO Systen" with
+   55px of empty space beside it, so it was never a space constraint either. */
+.brand{overflow:visible;flex:0 0 auto}
+.brand .bt{overflow:visible}
 
 /* ============ SWEEP ROUND 5 ============ */
 /* the phone's stat grid floored at min-content and clipped 37px at 320 CSS px */
@@ -1288,3 +1292,11 @@ header{z-index:90}
 .appdemo .days .mut{color:#6B7280}       /* was #C6CBD4 = 1.63:1 */
 .appdemo .un{background:#0B7A46}          /* white on #12A55F was 3.19:1 at 10.5px/700 */
 .appdemo .stars{color:#8A5600}            /* was #B36F00 = 4.05:1 */
+
+/* .faq details{overflow:hidden} clipped the summary's focus ring entirely — the
+   summary fills the box, so a 3px outline at +2px offset lands outside the clip.
+   Measured 0 pixels changed on focus for three of the four accordions. */
+.faq summary:focus-visible{outline-offset:-3px}
+/* the close glyph was bottom-aligned in a 136px box, so with the ribbon hidden it
+   sat ~60px below where the burger actually is */
+.mm-close{align-items:center;padding-bottom:0}
