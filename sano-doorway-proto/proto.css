@@ -194,3 +194,62 @@
 .money strong{color:#fff}
 .money a{color:#4D9BFF;font-weight:600}
 @media(max-width:640px){.magic{margin-top:40px}.magic p{font-size:16px}.money{font-size:14.5px;padding:14px 16px}}
+
+/* the all-in figures are NOT uniform across levels; the line must track the picker */
+.money .mn{display:none}
+.cap-band:has(#t-starter:checked) .mn-starter,
+.cap-band:has(#t-growth:checked) .mn-growth,
+.cap-band:has(#t-scale:checked) .mn-scale,
+.cap-band:has(#t-total:checked) .mn-total{display:block}
+
+/* ---- SWEEP ROUND 2 ---- */
+/* the back-link was display:block and 1132px wide — clicking empty space anywhere
+   across the top of the page navigated off it */
+.proto-hero .backlink{display:inline-flex;width:max-content}
+
+/* the coach mark was hidden for three tiers but not for Growth, which is the DEFAULT —
+   so it reappeared every time someone explored and came back. It has done its job once
+   any sheet has been opened, too. */
+.cap-band:has(.cap-radio:not(#co-none):checked) .coach{opacity:0;transform:translateY(-4px);pointer-events:none}
+
+/* a mid-page action at the emotional peak: previously the next actionable thing after
+   "the app isn't the magic" was ~4,200px away */
+.magic-cta{display:inline-flex;align-items:center;gap:9px;margin-top:22px;padding:14px 26px;
+  border-radius:999px;background:var(--blue);color:#fff;font-weight:600;font-size:16px;
+  box-shadow:0 10px 30px -10px rgba(0,112,243,.7);transition:transform .18s,background .18s}
+.magic-cta:hover{background:#0060DC;transform:translateY(-1px)}
+.magic-cta:focus-visible{outline:3px solid #4D9BFF;outline-offset:3px}
+.coach strong{color:#fff}
+
+/* ---- SWEEP ROUND 2b: keyboard ---- */
+.cap-band:has(#co-textback:focus-visible) .fr-row[for="co-textback"],
+.cap-band:has(#co-booking:focus-visible) .fr-row[for="co-booking"],
+.cap-band:has(#co-reviews:focus-visible) .fr-row[for="co-reviews"],
+.cap-band:has(#co-google:focus-visible) .fr-row[for="co-google"],
+.cap-band:has(#co-report:focus-visible) .fr-row[for="co-report"],
+.cap-band:has(#co-voice:focus-visible) .fr-row[for="co-voice"],
+.cap-band:has(#co-sitechat:focus-visible) .fr-row[for="co-sitechat"],
+.cap-band:has(#co-followup:focus-visible) .fr-row[for="co-followup"],
+.cap-band:has(#co-campaigns:focus-visible) .fr-row[for="co-campaigns"],
+.cap-band:has(#co-bilingual:focus-visible) .fr-row[for="co-bilingual"],
+.cap-band:has(#co-landing:focus-visible) .fr-row[for="co-landing"],
+.cap-band:has(#co-ads:focus-visible) .fr-row[for="co-ads"],
+.cap-band:has(#co-payments:focus-visible) .fr-row[for="co-payments"],
+.cap-band:has(#co-strategy:focus-visible) .fr-row[for="co-strategy"],
+.cap-band:has(#co-app:focus-visible) .fr-row[for="co-app"],
+.cap-band:has(#co-manager:focus-visible) .fr-row[for="co-manager"]{outline:3px solid #4D9BFF;outline-offset:2px;background:rgba(77,155,255,.14)}
+.cap-band:has(#co-none:focus-visible) .fr-scroll{outline:3px solid #4D9BFF;outline-offset:8px;border-radius:18px}
+/* the close is a label now; give it the same ring when the scrim has focus-within */
+.cs-x{position:absolute;top:8px;right:10px;width:44px;height:44px;border-radius:10px;cursor:pointer;display:grid;place-items:center}
+.cs-x::before{content:"×";font-size:28px;line-height:1;color:#C3D2DE}
+.cs-x:hover{background:rgba(255,255,255,.08)}
+.cs-x:hover::before{color:#fff}
+
+/* the app mockup is aria-hidden: its inner inputs must not be tab stops.
+   display:none keeps :checked and label activation intact, so the CSS tabs still work. */
+.appdemo .tabr,.appdemo .drill{display:none}
+
+/* forced-colors: all four tier pills rendered identically, so the selection was invisible */
+@media (forced-colors: active){
+  .tier-radio:checked + .tier-lab{border-width:3px;outline:3px solid CanvasText;outline-offset:2px}
+}
