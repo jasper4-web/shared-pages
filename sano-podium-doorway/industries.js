@@ -31,7 +31,7 @@ window.SANO_INDUSTRIES = [
     ],
     season: 'Built around your year: tune-up season in spring, the summer rush, and the slow winter months when renewals and check-ins keep the calendar full.',
     truth: 'Evenings and weekends are a big share of the calls a shop gets — and they land when nobody is at a desk.',
-    objection: ['"I already use a dispatch system."', 'Good — keep it. We work in front of it. We catch the first call, the first text, and the first follow-up, then hand you a booked job.'],
+    objection: ['“I already use a dispatch system.”', 'Good — keep it. We work in front of it. We catch the first call, the first text, and the first follow-up, then hand you a booked job.'],
     faqs: [
       ['Do I have to learn any of this?', 'No. That is the whole point. We build it, we run it, and we keep improving it. You approve it once and then go back to running your business.'],
       ['Will it handle emergency calls differently?', 'Yes. Your blueprint separates "my AC is out right now" from "I want a quote next month," so urgent jobs get treated as urgent.'],
@@ -62,7 +62,7 @@ window.SANO_INDUSTRIES = [
     ],
     season: 'Plumbing emergencies never stop, so the answering side runs year-round — with extra pushes around remodel season and water-heater season.',
     truth: 'A call that goes to voicemail during an active leak is usually not a call that comes back.',
-    objection: ['"The big franchises have 24/7 phone staff."', 'Now so do you — without hiring a single person or paying a night shift.'],
+    objection: ['“The big franchises have 24/7 phone staff.”', 'Now so do you — without hiring a single person or paying a night shift.'],
     faqs: [
       ['Can it answer while I am on a job?', 'That is exactly when it works hardest. On Starter it texts back within seconds. From Growth up it picks up the phone live. It does not matter whether you are free or elbow-deep under a sink.'],
       ['Will customers know it is not me?', 'It sounds like a friendly, professional person on your team, and it speaks English and Spanish. Anything it cannot answer comes straight to you.'],
@@ -93,7 +93,7 @@ window.SANO_INDUSTRIES = [
     ],
     season: 'Tuned to the roofing year: storm prep in spring, the peak-season rush, hurricane-season repairs, and winter inspection and check-in campaigns.',
     truth: 'A lot of estimates get followed up once, if at all. The follow-up nobody has time for is where the work actually closes.',
-    objection: ['"The national brands out-market me."', 'They have full-time marketing teams. We are yours — for a fraction of one salary.'],
+    objection: ['“The national brands out-market me.”', 'They have full-time marketing teams. We are yours — for a fraction of one salary.'],
     faqs: [
       ['Can it keep up after a big storm?', 'Yes. From Growth up it answers every caller at once, so nobody sits on hold while you are on a roof. On Starter every missed call gets an instant text back instead.'],
       ['Does it chase my estimates?', 'It follows up automatically on a schedule you approve — the part that usually gets dropped when you are busy.'],
@@ -124,7 +124,7 @@ window.SANO_INDUSTRIES = [
     ],
     season: 'Shaped around your busy and slow months, so the quiet stretches get campaigns instead of silence.',
     truth: 'A lot of home-service jobs go to whoever responds first — not whoever quotes lowest.',
-    objection: ['"I am only a few people."', 'You do not need more people. You need to stop losing the customers already trying to reach you.'],
+    objection: ['“I am only a few people.”', 'You do not need more people. You need to stop losing the customers already trying to reach you.'],
     faqs: [
       ['My trade is not listed. Does it still work?', 'Yes. The blueprint is shaped to your services and how you actually work. Any business that books jobs and answers calls fits.'],
       ['Do I have to manage it?', 'No. We build it, run it, and improve it. That is what you are paying for.'],
@@ -155,7 +155,7 @@ window.SANO_INDUSTRIES = [
     ],
     season: 'Set up for the way your bays and floor actually run, including the after-hours window when nobody is there to pick up.',
     truth: 'The shop that answers first usually gets the appointment — the rest leave a voicemail nobody returns.',
-    objection: ['"We already have a front desk."', 'Keep them. This covers the calls they cannot get to — nights, weekends, and the times three phones ring at once.'],
+    objection: ['“We already have a front desk.”', 'Keep them. This covers the calls they cannot get to — nights, weekends, and the times three phones ring at once.'],
     faqs: [
       ['Can it book service and repair jobs?', 'Yes — against your real availability, then it confirms with the customer automatically.'],
       ['Does it work after we close?', 'That is where it earns its keep. Evening and weekend inquiries get answered and booked instead of going cold.'],
@@ -186,7 +186,7 @@ window.SANO_INDUSTRIES = [
     ],
     season: 'Built around your treatment menu and the times clients actually reach out — which is usually evenings and weekends.',
     truth: 'An empty chair cannot be resold later. Reminders and easy rescheduling are what keep the day full.',
-    objection: ['"Our brand voice matters."', 'Agreed. We tune the wording with you, and nothing speaks to a client until you have signed off on how it sounds.'],
+    objection: ['“Our brand voice matters.”', 'Agreed. We tune the wording with you, and nothing speaks to a client until you have signed off on how it sounds.'],
     faqs: [
       ['Will it answer medical questions?', 'No — never. Dosing, candidacy, whether a treatment is right for someone, contraindications, results: every one of those is handed to your clinical team or supervising provider. The assistant books, reminds and answers logistics, and stays completely out of anything clinical.'],
       ['Can a new client book straight into a treatment?', 'No. New clients are booked into a consultation first, not an injectable or treatment chair — the assistant knows the difference and protects your calendar.'],
@@ -219,7 +219,7 @@ window.SANO_INDUSTRIES = [
     ],
     season: 'Set up around your recall cycles and the hours patients actually call, including evenings when the office is closed.',
     truth: 'Recall is the most predictable work a practice has, and it is usually the first thing that slips when the front desk gets busy.',
-    objection: ['"We have front-desk staff."', 'This is not a replacement. It covers the overflow, the after-hours calls, and the recall work that keeps getting pushed to tomorrow.'],
+    objection: ['“We have front-desk staff.”', 'This is not a replacement. It covers the overflow, the after-hours calls, and the recall work that keeps getting pushed to tomorrow.'],
     faqs: [
       ['What about an after-hours call from someone in pain?', 'It follows the rules you approve: it can text you or your on-call line right away, give only the emergency guidance you have pre-approved, and it never offers clinical advice. You decide what counts as urgent and what happens next — it just makes sure the call is not missed.'],
       ['How does it handle insurance questions?', 'It answers in-network yes or no from the plan list you give us, and books the visit. Anything past that — a coverage estimate, a claim or billing question — it captures with the plan details and hands straight to your front desk, so your team gives the accurate answer instead of the patient hearing a wrong one. It never guesses at coverage or quotes a price it is not sure of.'],
@@ -253,7 +253,7 @@ window.SANO_INDUSTRIES = [
     ],
     season: 'Built around your busy periods and the promotions you want to run, so the quiet weeks are not left to chance.',
     truth: 'A lot of local shops never hear from a customer again after the first visit. It is rarely the service. Nobody followed up.',
-    objection: ['"I am small — is this overkill?"', 'Start with the front desk that never sleeps and add from there. The point is to stop losing people you already earned.'],
+    objection: ['“I am small — is this overkill?”', 'Start with the front desk that never sleeps and add from there. The point is to stop losing people you already earned.'],
     faqs: [
       ['I do not take appointments. Is this still useful?', 'Yes. Answering questions instantly and staying in touch with past customers matters whether or not you book time slots.'],
       ['Can it answer messages from social too?', 'Phone and text are what we run today, and they land in one place. Social messaging is not part of the service yet — we would rather say so than sell you something we have not built.'],
