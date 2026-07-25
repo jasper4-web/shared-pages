@@ -63,6 +63,9 @@
   /* attention banner */
   .attn{display:flex;align-items:center;gap:11px;border-radius:15px;padding:12px 13px;margin:12px 0 4px;border:1px solid;}
   .attn.warn{background:var(--bad-w);border-color:#E9C4BC;} .attn.calm{background:var(--green-w);border-color:#CADEC6;} .attn.none{background:var(--card2);border-color:var(--line2);}
+  /* crit = a RED LINE. Must read categorically louder than an amber band miss. */
+  .attn.crit{background:var(--bad);border-color:var(--bad);box-shadow:0 4px 16px rgba(168,58,42,.28);}
+  .attn.crit .at{color:#fff;font-size:14.5px;} .attn.crit .as{color:#FBE7E3;} .attn.crit i{color:#fff;}
   .attn i{width:21px;height:21px;flex:0 0 auto;} .attn.warn i{color:var(--bad);} .attn.calm i{color:var(--green2);} .attn.none i{color:var(--ink3);}
   .attn .at{font-weight:700;font-size:13.5px;} .attn.warn .at{color:var(--bad);} .attn.calm .at{color:var(--green2);} .attn.none .at{color:var(--ink2);}
   .attn .as{font-size:12px;color:var(--ink2);margin-top:1px;}
@@ -89,6 +92,13 @@
   .solo .sub{font-family:var(--mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);margin-top:3px;}
   .solo .nte{font-size:12px;color:var(--ink2);margin-top:9px;line-height:1.4;}
   .solo .nte b{color:var(--ink);font-weight:600;}
+  .gapwarn{background:var(--warn-w);border:1px solid #E8D5A8;border-radius:12px;padding:10px 12px;font-size:12px;color:#6d5210;line-height:1.45;margin:14px 0 0;}
+  .tells{display:flex;flex-wrap:wrap;gap:6px;}
+  .tell{appearance:none;font-family:var(--body);font-size:11.5px;font-weight:600;padding:7px 10px;border-radius:999px;border:1.5px solid var(--line2);background:var(--paper);color:var(--ink2);cursor:pointer;}
+  .tell[aria-pressed=true]{border-color:var(--green);background:var(--green-w);color:var(--green2);}
+  .tell.f[aria-pressed=true]{border-color:var(--bad);background:var(--bad-w);color:var(--bad);}
+  .tell.g[aria-pressed=true]{border-color:var(--ok);background:var(--green-w);color:var(--green2);}
+  .envchips.stale{opacity:.62;}
   .solo .setter{margin-top:11px;padding-top:11px;border-top:1px solid var(--line);}
   .solo .sq{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:700;margin-bottom:7px;}
   .full{appearance:none;background:none;border:0;padding:8px 0 0;margin:0;font-family:var(--body);font-size:12px;font-weight:700;color:var(--green2);cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
@@ -100,6 +110,7 @@
   .dueck[aria-pressed=true]{background:var(--green);border-color:var(--green);}
   .dueck svg{width:13px;height:13px;color:#fff;opacity:0;stroke-width:3;} .dueck[aria-pressed=true] svg{opacity:1;}
   .dueb{min-width:0;flex:1;} .dueb .dl{font-size:13px;font-weight:600;line-height:1.3;} .dueb .dh{font-size:11.5px;color:var(--ink3);margin-top:3px;line-height:1.35;}
+  .dueb .dg{font-size:11.5px;color:var(--green2);font-weight:600;margin-top:3px;line-height:1.35;}
   .dueck[aria-pressed=true]+.dueb .dl{text-decoration:line-through;color:var(--ink3);font-weight:500;}
   .duetag{flex:0 0 auto;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:4px 8px;border-radius:999px;margin-top:1px;}
   .duetag.now{background:var(--warn-w);color:#8a6412;} .duetag.soon{background:var(--card2);color:var(--ink3);} .duetag.late{background:var(--bad-w);color:var(--bad);}
@@ -211,6 +222,23 @@
   .photorow{display:flex;align-items:center;gap:10px;margin-top:4px;}
   .photothumb{width:52px;height:52px;border-radius:11px;object-fit:cover;border:1px solid var(--line2);}
   .photocount{font-family:var(--mono);font-size:11px;color:var(--ink3);}
+  .numrow{display:flex;align-items:center;gap:9px;}
+  .numrow input{flex:1;min-width:0;} .numrow .unit{font-family:var(--mono);font-size:11px;color:var(--ink3);flex:0 0 auto;}
+  .evitem .edit{width:13px;height:13px;color:var(--ink3);flex:0 0 auto;opacity:.55;}
+  .evitem[data-ev-i]{cursor:pointer;}
+  .crow{position:relative;}
+  .capx{appearance:none;border:0;background:none;color:var(--ink3);font-size:16px;line-height:1;padding:2px 4px;margin-left:auto;cursor:pointer;flex:0 0 auto;}
+  .toast.tappable{cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+  .photoview{width:100%;max-width:520px;background:var(--card);border-radius:16px;overflow:hidden;}
+  .photoview img{width:100%;display:block;max-height:72vh;object-fit:contain;background:#0d0d0d;}
+  .photobar{display:flex;align-items:center;gap:9px;padding:11px 13px;}
+  .photobar #photoMsg{font-size:12px;color:var(--ink3);flex:1;min-width:0;}
+  .dangerlink{appearance:none;background:none;border:0;width:100%;text-align:center;padding:12px 0 2px;margin:0;font-family:var(--body);font-size:12.5px;font-weight:700;color:var(--bad);cursor:pointer;}
+  .hint2{font-size:11.5px;color:var(--ink3);margin-top:5px;line-height:1.35;}
+  .callout2{background:var(--warn-w);border:1px solid #E8D5A8;border-radius:12px;padding:10px 12px;font-size:12.5px;color:#6d5210;line-height:1.45;margin:0 0 10px;}
+  .dlirow{display:flex;align-items:baseline;gap:8px;margin-top:9px;padding-top:9px;border-top:1px solid var(--line);}
+  .dlirow .dv{font-family:var(--display);font-weight:600;font-size:17px;} .dlirow .dl{font-size:11.5px;color:var(--ink3);}
+  .dlirow.ok .dv{color:var(--ok);} .dlirow.low .dv{color:var(--warn);} .dlirow.high .dv{color:var(--bad);}
   /* multi-photo strip — one event can carry a whole shoot */
   .photostrip{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;}
   .photostrip:empty{margin-top:0;}
@@ -247,6 +275,9 @@
   .ref-body{padding:0 15px 15px;}
   table.wk{width:100%;border-collapse:collapse;font-size:12px;} table.wk th,table.wk td{padding:6px 4px;text-align:center;border-bottom:1px solid var(--line);}
   table.wk th{font-size:9px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink3);font-weight:700;} table.wk td.wkn{text-align:left;font-weight:700;} table.wk tr.now td{background:var(--green-w);}
+  table.wk tr.grp td{background:var(--card2);font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);font-weight:700;text-align:left;padding:7px 4px;}
+  .chip.stale{background:var(--warn-w);color:#8a6412;}
+  .crow .dk{color:var(--ink3);font-style:italic;}
   .reflist{font-size:13px;color:var(--ink2);line-height:1.6;margin:0;padding-left:18px;} .reflist b{color:var(--ink);}
   .redrow{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:12.5px;} .redrow:last-child{border-bottom:0;}
   .redrow .rv{font-family:var(--mono);font-weight:700;color:var(--bad);flex:0 0 58px;} .redrow b{color:var(--ink);}
@@ -354,8 +385,8 @@
       <div class="cap">
         <div class="grow gslider" id="gaugesLog"></div>
         <div class="hl">
-          <button type="button" class="hlbox up" data-k="hi" aria-pressed="false"><span class="hk">▲ today high</span><span class="hv" id="hiV">— <span class="sub">tap</span></span></button>
-          <button type="button" class="hlbox dn" data-k="lo" aria-pressed="false"><span class="hk">▼ today low</span><span class="hv" id="loV">— <span class="sub">tap</span></span></button>
+          <button type="button" class="hlbox up" data-k="hi" aria-pressed="false"><span class="hk">▲ high since reset</span><span class="hv" id="hiV">— <span class="sub">tap</span></span></button>
+          <button type="button" class="hlbox dn" data-k="lo" aria-pressed="false"><span class="hk">▼ low since reset</span><span class="hv" id="loV">— <span class="sub">tap</span></span></button>
         </div>
         <div class="kpwrap" id="kpwrap">
           <div class="kphint" id="kphint">Type a value</div>
@@ -389,7 +420,9 @@
   <section class="pane" id="pane-plants" role="tabpanel" aria-label="Plant">
     <div id="pdBody"></div>
     <div class="slabel">How does she look right now?</div>
-    <div class="seg st" id="psSeg"><button type="button" data-s="perky">Perky</button><button type="button" data-s="slight">Slight droop</button><button type="button" data-s="bad">Bad droop</button><button type="button" data-s="other">Other</button></div>
+    <div class="seg st" id="psSeg"><button type="button" data-s="perky">Perky</button><button type="button" data-s="slight">Slight droop</button><button type="button" data-s="bad">Bad droop</button></div>
+    <div class="slabel">What else do you see?</div>
+    <div class="tells" id="psTells"></div>
     <div class="field" style="margin-top:10px"><input type="text" id="psNote" placeholder="note for today (optional)"></div>
     <div class="btnrow"><button class="btn primary" id="psSave"><i data-lucide="check"></i>Save status</button></div>
     <div class="slabel">What changed it</div>
@@ -409,7 +442,11 @@
   <section class="pane" id="pane-guide" role="tabpanel" aria-label="Guide">
     <div class="sec" style="margin-top:16px"><span class="e">Setup</span></div>
     <div class="gear" style="padding:2px 14px">
+      <div class="setrow"><div><div class="sl">Strain</div><div class="sh">Exact spelling from the clone label — the harvest estimate depends on it</div></div><div class="setnum"><input type="text" id="setStrain" placeholder="—" style="width:104px;text-align:right"></div></div>
       <div class="setrow"><div><div class="sl">Light height</div><div class="sh">Inches from the light face down to the canopy</div></div><div class="setnum"><input type="number" id="setLight" inputmode="numeric" placeholder="—"></div></div>
+      <div class="setrow"><div><div class="sl">Measured PPFD</div><div class="sh">µmol at canopy — Photone app or a meter</div></div><div class="setnum"><input type="number" id="setPpfd" inputmode="numeric" placeholder="—"></div></div>
+      <div class="setrow"><div><div class="sl">Lights on / off</div><div class="sh">Hour of day, 24h. Drives the dark-window bands.</div></div><div class="setnum"><input type="number" id="setOn" inputmode="numeric" style="width:44px"> <input type="number" id="setOff" inputmode="numeric" style="width:44px"></div></div>
+      <div class="setrow"><div><div class="sl">VPD leaf offset</div><div class="sh">°C below air. 1.0 for LED; raise only if you measure leaf temp.</div></div><div class="setnum"><input type="number" id="setLeaf" inputmode="decimal" step="0.5"></div></div>
       <div class="setrow"><div><div class="sl">Humidity controller installed</div><div class="sh">Inkbird IHC — flips humidity to AUTO</div></div><button type="button" class="toggle" id="tgIhc" aria-pressed="false"></button></div>
       <div class="setrow"><div><div class="sl">Inkbird heater set-point</div><div class="sh">°F the Inkbird kicks the heater on</div></div><div class="setnum"><input type="number" id="setHeat" inputmode="numeric"></div></div>
     </div>
@@ -427,14 +464,16 @@
       <div class="redrow"><span class="rv">RH&gt;75%</span><span><b>Too damp.</b> Dehumidifier + air.</span></div>
     </div></details>
     <details class="ref"><summary>Light height — the only dial <span class="chev" data-lucide="chevron-right"></span></summary><div class="ref-body">
-      <p style="margin:0 0 9px;font-size:13px;color:var(--ink2)">Gavita 1700e at 100%, no dimmer — <b>height is the only intensity control</b>. Drop it one step at a time, hold 3 days, watch the top growth before the next step.</p>
+      <p style="margin:0 0 9px;font-size:13px;color:var(--ink2)">Gavita 1700e at 100% — <b>height is your intensity control</b>. Drop one step, hold 3 days, watch the top growth before the next step.</p>
+      <div class="callout2"><b>Inches are not a measurement.</b> Three experienced growers estimated this plant's current light at 150–200, 230–320 and 460–490 µmol from the same photo — a 3× spread. Height alone can't tell you if she has enough. <b>Get one number:</b> the free <i>Photone</i> phone app is good enough, a PAR meter is better. Then log it with a Light move and the app will track her actual daily dose.</p>
       <ul class="reflist">
-        <li><b>54"</b> — the step down off the ceiling. Roughly doubles her light.</li>
+        <li><b>54"</b> — the step down off the ceiling. Roughly <b>+30%</b> at the centre, not double.</li>
         <li><b>42"</b> — after 3 good days at 54".</li>
-        <li><b>36"</b> — the veg home. Don't go lower without a reason.</li>
+        <li><b>36"</b> — as low as you go in veg. That is Gavita's <i>flowering</i> hang height, and on your 18/6 it delivers about 1.5× the daily dose it would at 12/12.</li>
       </ul>
-      <p style="margin:9px 0 0;font-size:13px;color:var(--ink2)"><b>Back off 6" if</b> the top leaves cup or taco <i>upward</i>, tips bleach pale, or the newest growth claws. Plain droop is <b>not</b> a burn sign.</p>
-      <p style="margin:7px 0 0;font-size:13px;color:var(--ink2)">Measure light face → top of the plant. Log every move with the <b>Light move</b> event so the height rides in your export.</p>
+      <p style="margin:9px 0 0;font-size:13px;color:var(--ink2)">Aim for <b>daily dose (DLI)</b>, not inches: <b>18–22</b> mol while she establishes, <b>25–30</b> through veg, <b>30–38</b> late veg, <b>30–40</b> in flower. The app computes it from your PPFD reading and your light cycle.</p>
+      <p style="margin:7px 0 0;font-size:13px;color:var(--ink2)"><b>Back off 6" if</b> the top leaves cup or taco <i>upward</i>, tips bleach pale, or the newest growth claws. Plain droop is <b>not</b> a burn sign.</p>
+      <p style="margin:7px 0 0;font-size:13px;color:var(--ink2)">If she is over-lit and you can't raise the light further: offset the pot from dead centre, or hang a 30–50% shade cloth.</p>
     </div></details>
     <details class="ref"><summary>Watering — the finger test <span class="chev" data-lucide="chevron-right"></span></summary><div class="ref-body">
       <p style="margin:0 0 9px;font-size:13px;color:var(--ink2)">A 30-gal pot with a small plant holds water for a long time. <b>The surface being dry means nothing.</b></p>
@@ -465,14 +504,24 @@
   <div class="modal">
     <div class="grab"></div>
     <div class="edtop"><div class="edic"><i data-lucide="leaf" id="edIcon"></i></div><div><div class="edt" id="edTitle">Event</div><div class="edt2" id="edTime">—</div></div></div>
-    <p class="edcap">Captured automatically</p>
+    <p class="edcap" id="edCap">Room at your last reading</p>
     <div class="envchips" id="edEnv"></div>
     <div class="field" id="edPickField"><label id="edPickLabel">Pick one</label><div class="pchips" id="edPick"></div></div>
+    <div class="field" id="edNumField"><label id="edNumLabel">Value</label><div class="numrow"><input type="number" id="edNum" inputmode="decimal" step="any"><span class="unit" id="edNumUnit"></span></div><div class="hint2" id="edNumHint"></div></div>
     <div class="field"><label id="edDetailLabel">What / how much <span class="hint">— optional</span></label><input type="text" id="edDetail" placeholder="e.g. neem oil, foliar, lights-off…"></div>
     <input type="file" id="edPhotoInput" accept="image/*" multiple style="display:none">
     <div class="photorow"><button class="btn ghost" id="edPhotoBtn" style="flex:0 0 auto;width:auto;padding:11px 16px"><i data-lucide="camera"></i>Add photos</button><span class="photocount" id="edPhotoCount"></span></div>
     <div class="photostrip" id="edThumbs"></div>
     <div class="mrowb"><button class="btn ghost hold" id="edCancel" style="flex:0 0 auto;padding:13px 18px">Cancel</button><button class="btn primary" id="edSave"><i data-lucide="check"></i>Save event</button></div>
+    <button type="button" class="dangerlink" id="edDelete" style="display:none">Delete this entry</button>
+  </div>
+</div>
+
+<!-- photo viewer -->
+<div class="modal-bg center" id="photoBg" role="dialog" aria-modal="true" aria-label="Photo">
+  <div class="photoview">
+    <img id="photoImg" alt="grow photo">
+    <div class="photobar"><span id="photoMsg"></span><a id="photoDl" class="btn ghost" style="display:none;width:auto;padding:9px 14px;font-size:12.5px">Save</a><button class="btn ghost" id="photoClose" style="width:auto;padding:9px 14px;font-size:12.5px">Close</button></div>
   </div>
 </div>
 
@@ -502,33 +551,118 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
 <script>
 (function(){
   "use strict";
-  var WEEKS=[
-    {w:1,stage:"Establish & root",day:76,dLo:72,dHi:78,night:70,rh:65,rLo:60,rHi:70,vLo:0.6,vHi:0.8,vpd:"0.7",s1:68,s2:60,s3:70},
-    {w:2,stage:"Early veg",day:77,dLo:73,dHi:80,night:70,rh:60,rLo:55,rHi:65,vLo:0.7,vHi:0.9,vpd:"0.8",s1:67,s2:55,s3:68},
-    {w:3,stage:"Veg + first training",day:78,dLo:74,dHi:82,night:69,rh:57,rLo:52,rHi:62,vLo:0.8,vHi:1.0,vpd:"0.9",s1:66,s2:52,s3:65},
-    {w:4,stage:"Heavy veg",day:79,dLo:75,dHi:82,night:69,rh:55,rLo:50,rHi:60,vLo:0.9,vHi:1.1,vpd:"1.0",s1:66,s2:50,s3:62},
-    {w:5,stage:"Heavy veg · canopy fill",day:79,dLo:75,dHi:82,night:68,rh:52,rLo:48,rHi:57,vLo:0.95,vHi:1.15,vpd:"1.05",s1:65,s2:48,s3:60},
-    {w:6,stage:"Heavy veg · filling out",day:80,dLo:75,dHi:83,night:68,rh:50,rLo:45,rHi:55,vLo:1.0,vHi:1.2,vpd:"1.1",s1:65,s2:45,s3:58},
-    {w:7,stage:"Late veg",day:80,dLo:75,dHi:83,night:68,rh:50,rLo:45,rHi:55,vLo:1.0,vHi:1.2,vpd:"1.1",s1:65,s2:45,s3:58},
-    {w:8,stage:"Late veg · training out",day:80,dLo:75,dHi:83,night:67,rh:48,rLo:44,rHi:54,vLo:1.05,vHi:1.25,vpd:"1.15",s1:64,s2:44,s3:57},
-    {w:9,stage:"Pre-flip",day:80,dLo:75,dHi:83,night:67,rh:48,rLo:44,rHi:54,vLo:1.05,vHi:1.25,vpd:"1.15",s1:64,s2:44,s3:57},
-    {w:10,stage:"Pre-flip hold",day:79,dLo:74,dHi:82,night:67,rh:47,rLo:43,rHi:52,vLo:1.1,vHi:1.3,vpd:"1.2",s1:64,s2:43,s3:56}
+  /* ================= CLIMATE TRUTH LAYER =================
+     Rebuilt 2026-07-25 after a 3-master-grower audit. The previous table was authored
+     by hand, one number at a time, and disagreed with this app's OWN vpd() from week 2
+     on: at the old W6 set-point (80°F/50%) vpd() returned 1.36 against a stated band of
+     1.0–1.2, so hitting the target turned the gauge red, and from W5 there was no
+     in-band temp/RH pair that also satisfied the VPD band.
+     RH is now DERIVED from the target VPD, never typed:  rh = (svp(Ta-off) - VPD)/svp(Ta) * 100
+     A startup assertion re-checks every row, so this can't silently drift again.
+     Night bands are real (the old `night` column was read by ONE line — the Guide table —
+     so every midday dark-window reading was graded against the lights-ON band).
+     Heater set-point holds 68°F through veg / 66°F flower: it must NOT step down, the
+     living-soil root+microbial floor is ~65°F.  Sources in GROWER-AUDIT-2026-07-25.md. */
+  var VEG=[
+    {w:1, stage:"Establish & root",       day:76,dLo:73,dHi:79,nLo:69,nHi:78,rh:70,rLo:66,rHi:73,vLo:0.65,vHi:0.85,s1:68,s2:66,s3:76},
+    {w:2, stage:"Early veg",              day:77,dLo:74,dHi:80,nLo:70,nHi:79,rh:67,rLo:64,rHi:71,vLo:0.75,vHi:0.95,s1:68,s2:64,s3:74},
+    {w:3, stage:"Veg + first training",   day:78,dLo:75,dHi:81,nLo:71,nHi:80,rh:67,rLo:64,rHi:70,vLo:0.80,vHi:1.00,s1:68,s2:64,s3:73},
+    {w:4, stage:"Heavy veg",              day:79,dLo:76,dHi:82,nLo:72,nHi:81,rh:66,rLo:63,rHi:69,vLo:0.85,vHi:1.05,s1:68,s2:63,s3:72},
+    {w:5, stage:"Heavy veg · canopy fill",day:79,dLo:76,dHi:82,nLo:72,nHi:81,rh:65,rLo:62,rHi:68,vLo:0.90,vHi:1.10,s1:68,s2:62,s3:71},
+    {w:6, stage:"Heavy veg · filling out",day:80,dLo:77,dHi:83,nLo:73,nHi:82,rh:64,rLo:61,rHi:67,vLo:0.95,vHi:1.15,s1:68,s2:61,s3:70},
+    {w:7, stage:"Late veg",               day:80,dLo:77,dHi:83,nLo:73,nHi:82,rh:63,rLo:60,rHi:66,vLo:1.00,vHi:1.20,s1:68,s2:60,s3:69},
+    {w:8, stage:"Late veg · training out",day:80,dLo:77,dHi:83,nLo:73,nHi:82,rh:63,rLo:60,rHi:66,vLo:1.00,vHi:1.20,s1:68,s2:60,s3:69},
+    {w:9, stage:"Pre-flip",               day:80,dLo:77,dHi:83,nLo:73,nHi:82,rh:61,rLo:59,rHi:64,vLo:1.05,vHi:1.25,s1:68,s2:59,s3:67},
+    {w:10,stage:"Pre-flip",               day:80,dLo:77,dHi:83,nLo:73,nHi:82,rh:61,rLo:59,rHi:64,vLo:1.05,vHi:1.25,s1:68,s2:59,s3:67},
+    {w:11,stage:"Extended veg",           day:80,dLo:77,dHi:83,nLo:73,nHi:82,rh:61,rLo:59,rHi:64,vLo:1.05,vHi:1.25,s1:68,s2:59,s3:67},
+    {w:12,stage:"Extended veg · hold",    day:80,dLo:77,dHi:83,nLo:73,nHi:82,rh:61,rLo:59,rHi:64,vLo:1.05,vHi:1.25,s1:68,s2:59,s3:67}
   ];
-  var MAXWK=WEEKS.length;
+  var FLOWER=[
+    {w:1, stage:"Stretch",                day:79,dLo:76,dHi:82,nLo:72,nHi:81,rh:57,rLo:54,rHi:60,vLo:1.15,vHi:1.35,s1:66,s2:54,s3:62},
+    {w:2, stage:"Stretch",                day:79,dLo:76,dHi:82,nLo:72,nHi:81,rh:57,rLo:54,rHi:60,vLo:1.15,vHi:1.35,s1:66,s2:54,s3:62},
+    {w:3, stage:"Stretch ends · bud set", day:79,dLo:76,dHi:82,nLo:72,nHi:81,rh:57,rLo:54,rHi:60,vLo:1.15,vHi:1.35,s1:66,s2:54,s3:62},
+    {w:4, stage:"Bulking",                day:78,dLo:75,dHi:81,nLo:71,nHi:80,rh:53,rLo:50,rHi:56,vLo:1.25,vHi:1.45,s1:66,s2:50,s3:58},
+    {w:5, stage:"Bulking",                day:78,dLo:75,dHi:81,nLo:71,nHi:80,rh:53,rLo:50,rHi:56,vLo:1.25,vHi:1.45,s1:66,s2:50,s3:58},
+    {w:6, stage:"Bulking",                day:78,dLo:75,dHi:81,nLo:71,nHi:80,rh:53,rLo:50,rHi:56,vLo:1.25,vHi:1.45,s1:66,s2:50,s3:58},
+    {w:7, stage:"Ripening",               day:75,dLo:72,dHi:78,nLo:68,nHi:77,rh:45,rLo:42,rHi:49,vLo:1.35,vHi:1.55,s1:66,s2:42,s3:51},
+    {w:8, stage:"Ripening",               day:75,dLo:72,dHi:78,nLo:68,nHi:77,rh:45,rLo:42,rHi:49,vLo:1.35,vHi:1.55,s1:66,s2:42,s3:51},
+    {w:9, stage:"Ripening",               day:75,dLo:72,dHi:78,nLo:68,nHi:77,rh:45,rLo:42,rHi:49,vLo:1.35,vHi:1.55,s1:66,s2:42,s3:51},
+    {w:10,stage:"Finish",                 day:73,dLo:70,dHi:76,nLo:66,nHi:75,rh:40,rLo:36,rHi:44,vLo:1.40,vHi:1.60,s1:66,s2:36,s3:46},
+    {w:11,stage:"Finish",                 day:73,dLo:70,dHi:76,nLo:66,nHi:75,rh:40,rLo:36,rHi:44,vLo:1.40,vHi:1.60,s1:66,s2:36,s3:46},
+    {w:12,stage:"Finish · harvest window",day:73,dLo:70,dHi:76,nLo:66,nHi:75,rh:40,rLo:36,rHi:44,vLo:1.40,vHi:1.60,s1:66,s2:36,s3:46}
+  ];
+  VEG.forEach(function(r){r.phase="veg";}); FLOWER.forEach(function(r){r.phase="flower";});
+  var MAXWK=VEG.length, MAXFW=FLOWER.length;
   /* ONE plant. Grow 2 lost #2 and #3; the survivor carries the grow. */
-  var PLANT={id:"1",name:"The Survivor",role:"Zangria",pot:new Date(2026,6,17)};
-  var STATUS={perky:{t:"Perky",k:"ok"},slight:{t:"Slight droop",k:"warn"},bad:{t:"Bad droop",k:"bad"},other:{t:"Other",k:"none"}};
+  var PLANT={id:"1",name:"The Survivor",pot:new Date(2026,6,17)};
+  function strainName(){return (CFG&&CFG.strain)?CFG.strain:"strain unconfirmed";}
+  /* TURGOR is the primary axis and stays exactly as it was — after Grow 1 it earns that.
+     "Other" is gone: statusScore() returned 0 for it, BELOW "bad", so the day he correctly
+     flagged light stress the trend read Declining and the art drew a dying plant. */
+  var STATUS={perky:{t:"Perky",k:"ok"},slight:{t:"Slight droop",k:"warn"},bad:{t:"Bad droop",k:"bad"}};
+  /* TELLS are an independent axis — what he can SEE. The Guide already tells him to watch
+     for the first three; the app previously had nowhere to put them. */
+  var TELLS=[
+    {k:"push",  t:"New growth pushing", good:true},
+    {k:"ylow",  t:"Yellowing — lower only"},
+    {k:"ymid",  t:"Yellowing into mid-canopy", flag:"topdress"},
+    {k:"cup",   t:"Cupping / taco UP",   flag:"light"},
+    {k:"bleach",t:"Tips bleached",       flag:"light"},
+    {k:"claw",  t:"Clawing down",        flag:"light"},
+    {k:"spots", t:"Spots"},
+    {k:"bugs",  t:"Bugs seen",           flag:"pest"},
+    {k:"none",  t:"Nothing new", good:true}
+  ];
+  function tellsOn(day){var e=day||curEntry();var p=(e.plants||{})["1"]||{};return p.tells||[];}
+  /* Any of the three burn tells inside 3 days of a light move = back it up and hold. */
+  function lightStressActive(){
+    var moved=null;
+    keysSorted().forEach(function(k){(store.entries[k].events||[]).forEach(function(e){
+      if(e&&e.type==="light"){var d=dnum(dtOf(k));if(moved===null||d>moved)moved=d;}});});
+    var hit=null;
+    keysSorted().forEach(function(k){
+      var d=dnum(dtOf(k)),pl=(store.entries[k].plants||{})["1"];
+      if(!pl||!pl.tells)return;
+      if(todayDnum-d>3)return;
+      if(pl.tells.indexOf("cup")>=0||pl.tells.indexOf("bleach")>=0||pl.tells.indexOf("claw")>=0){ if(hit===null||d>hit)hit=d; }
+    });
+    if(hit===null)return null;
+    return {day:hit,sinceMove:(moved!==null?hit-moved:null)};
+  }
+  /* The master log's own escalation tell, verbatim: mid-canopy yellowing over ~5 days. */
+  function midYellowRun(){
+    var n=0;
+    keysSorted().slice(0,5).forEach(function(k){
+      var pl=(store.entries[k].plants||{})["1"];
+      if(pl&&pl.tells&&pl.tells.indexOf("ymid")>=0)n++;
+    });
+    return n;
+  }
   /* pick = a required one-tap choice shown in the event sheet (replaces the old which-plants picker) */
   var EVTYPES=[
-    {t:"water",label:"Water",icon:"droplets",hot:true,pick:{label:"How much",opts:["1 cup","2 cups","Half gal","Full soak"]}},
+    {t:"water",label:"Water",icon:"droplets",hot:true,pick:{label:"How much",opts:["1 cup","2 cups","Half gal","1 gal","Full soak"]}},
     {t:"soil",label:"Soil check",icon:"hand",hot:true,pick:{label:"Two knuckles deep it feels",opts:["Dry","Damp","Wet"]},detail:"Where you checked — optional"},
     {t:"photo",label:"Photo",icon:"camera",hot:true},
-    {t:"light",label:"Light move",icon:"move-vertical",pick:{label:"New height above canopy",opts:["60\"","54\"","48\"","42\"","36\"","30\""],sets:"lightIn"}},
-    {t:"topdress",label:"Top-dress",icon:"layers"},
-    {t:"tea",label:"Compost tea",icon:"cup-soda"},
-    {t:"training",label:"Training",icon:"git-branch",pick:{label:"What you did",opts:["Top","LST","Tie-down","Defoliate"]}},
+    {t:"light",label:"Light move",icon:"move-vertical",
+     pick:{label:"New height above her canopy",opts:['60"','54"','48"','42"','36"','30"'],sets:"lightIn"},
+     num:{key:"ppfd",label:"Measured PPFD at canopy",unit:"µmol",hint:"Photone app or a meter. Leave blank if you have no reading.",sets:"ppfd"}},
+    {t:"measure",label:"Measure her",icon:"ruler",
+     pick:{label:"What you measured",opts:["Height","Widest span","Node count"]},
+     num:{key:"val",label:"Value",unit:"in / nodes",hint:"Height & span in inches; nodes as a count."}},
+    {t:"topdress",label:"Top-dress",icon:"layers",
+     pick:{label:"What went on",opts:["Castings","Craft blend","Kelp/alfalfa","Neem/karanja meal","Other"]},
+     num:{key:"cups",label:"How much",unit:"cups"},detail:"Product name — worth recording exactly"},
+    {t:"tea",label:"Compost tea",icon:"cup-soda",
+     pick:{label:"What kind",opts:["Compost/EWC","Aerated AACT","Molasses only","Other"]},detail:"Recipe / how long brewed"},
+    {t:"training",label:"Training",icon:"git-branch",pick:{label:"What you did",opts:["Top","LST","Tie-down","Defoliate","Supercrop"]}},
     {t:"scout",label:"Scout",icon:"search",pick:{label:"Result",opts:["Clean","Found something"]},detail:"Where you looked / what you saw"},
-    {t:"ipm",label:"IPM",icon:"spray-can"},
+    {t:"ipm",label:"IPM",icon:"spray-can",
+     pick:{label:"Product",opts:["Neem/karanja","Insecticidal soap","BT / mosquito bits","Predators","Other"]},
+     detail:"Rate + method (foliar/drench) — a plant you'll smoke deserves the record"},
+    {t:"airflow",label:"Airflow",icon:"wind",
+     pick:{label:"Fans right now",opts:["Aimed away — leaves just moving","Direct on her","Off"]},
+     detail:"Grow 1 died partly to a fan pointed straight at a transplant"},
+    {t:"flip",label:"Flip to 12/12",icon:"moon",pick:{label:"Confirm",opts:["Flipped to 12/12"]},sets:"flipDay"},
     {t:"note",label:"Note",icon:"pencil"}
   ];
   /* legacy types kept so old entries still render after the single-plant switch */
@@ -542,29 +676,62 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   var DAY0=new Date(2026,6,17), KEY="zangria-cockpit-v1", MS=86400000;
   var MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   function dnum(dt){var a=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate());return Math.floor((a-DAY0)/MS);}
-  function weekOf(n){var w=n<=0?1:Math.ceil(n/7);return w<1?1:(w>MAXWK?MAXWK:w);}
+  /* Phase/week resolution. Before the flip we're on the veg table; after it, flower weeks
+     count from CFG.flipDay. The old weekOf() clamped at 10 and never admitted it, so the
+     entire flower run — the part he's never done well — would have been graded against
+     veg bands while the masthead froze at "Wk 10". `stale` makes running off the end honest. */
+  function stageFor(n){
+    var d=Math.max(0,n);
+    if(CFG&&CFG.flipDay!=null&&d>CFG.flipDay){
+      var fw=Math.ceil((d-CFG.flipDay)/7)||1;
+      var stale=fw>MAXFW;
+      return {phase:"flower",week:Math.min(fw,MAXFW),shown:fw,row:FLOWER[Math.min(fw,MAXFW)-1],stale:stale};
+    }
+    var w=d<=0?1:Math.ceil(d/7);
+    return {phase:"veg",week:Math.min(w,MAXWK),shown:w,row:VEG[Math.min(w,MAXWK)-1],stale:w>MAXWK};
+  }
+  function weekOf(n){return stageFor(n).week;}
+  function stageLabel(st){return (st.phase==="flower"?"F":"Wk ")+st.shown+" · "+st.row.stage;}
   function keyOf(dt){return dt.getFullYear()+"-"+(dt.getMonth()+1)+"-"+dt.getDate();}
   function fmt(dt){return DOW[dt.getDay()]+" "+MONTHS[dt.getMonth()]+" "+dt.getDate();}
   function svp(tc){return 0.6108*Math.exp(17.27*tc/(tc+237.3));}
-  function vpd(tf,rh){var ta=(tf-32)*5/9,tl=ta-2;var v=svp(tl)-svp(ta)*(rh/100);return v<0?0:v;}
-  function rvpd(tf,rh){return Math.round(vpd(tf,rh)*100)/100;}
+  /* Leaf sits BELOW air by a radiative offset. The old code hard-coded 2°C — an HPS-era
+     number that, at his verified 77.4°F/65%, printed 0.76 where the real figure is ~0.94.
+     That error ran in the dangerous direction: it says the air is gentler than it is,
+     hiding exactly the transpiration-outruns-roots deficit that killed Grow 1.
+     Under LED at ambient CO2 the published offset is ~1°C. And in the dark window there
+     is no radiant load and stomata are shut, so leaf ≈ air and VPD isn't meaningful. */
+  var LEAF_OFF_DEFAULT=1.0;
+  function leafOff(lightsOnNow){ return lightsOnNow===false ? 0 : (CFG&&CFG.leafOffsetC!=null?CFG.leafOffsetC:LEAF_OFF_DEFAULT); }
+  function vpd(tf,rh,lightsOnNow){var ta=(tf-32)*5/9,tl=ta-leafOff(lightsOnNow);var v=svp(tl)-svp(ta)*(rh/100);return v<0?0:v;}
+  function rvpd(tf,rh,lightsOnNow){return Math.round(vpd(tf,rh,lightsOnNow)*100)/100;}
+  /* RH that lands a given VPD at a given air temp — the table is derived from this, not typed */
+  function rhForVpd(tf,v,lightsOnNow){var ta=(tf-32)*5/9;var r=(svp(ta-leafOff(lightsOnNow))-v)/svp(ta)*100;return Math.max(0,Math.min(100,r));}
   function fin(x){var v=parseFloat(x);return isNaN(v)?null:v;}
   function $(id){return document.getElementById(id);}
   function esc(s){return String(s).replace(/[<>&]/g,function(c){return c==="<"?"&lt;":c===">"?"&gt;":"&amp;";});}
 
-  var now=new Date(), todayKey=keyOf(now), todayDnum=dnum(now), todayWeek=weekOf(todayDnum), wk=WEEKS[todayWeek-1];
-  var hr=now.getHours(), lightsOn=(hr>=16||hr<10);
+  var now=new Date(), todayKey=keyOf(now), todayDnum=dnum(now);
 
-  /* ---- store + config ---- */
+  /* ---- store + config (MUST come before stage resolution — stageFor() reads CFG.flipDay) ---- */
   var store={entries:{},config:{}};
   try{var raw=localStorage.getItem(KEY);if(raw)store=JSON.parse(raw)||{entries:{},config:{}};}catch(e){}
   if(!store.entries)store.entries={};
   if(!store.config)store.config={};
   var CFG=store.config;
   if(CFG.ihc===undefined)CFG.ihc=false;
-  if(CFG.heaterSet===undefined)CFG.heaterSet=wk.s1;
   if(CFG.lightIn===undefined)CFG.lightIn=null;      // inches, light face → canopy
+  if(CFG.ppfd===undefined)CFG.ppfd=null;            // measured µmol/m²/s at canopy
+  if(CFG.flipDay===undefined)CFG.flipDay=null;      // grow-day the 12/12 flip happened
+  if(CFG.onHour===undefined)CFG.onHour=16;          // lights ON 4PM
+  if(CFG.offHour===undefined)CFG.offHour=10;        // lights OFF 10AM
+  if(CFG.leafOffsetC===undefined)CFG.leafOffsetC=LEAF_OFF_DEFAULT;
   if(!CFG.dueDone)CFG.dueDone={};                    // milestoneId -> ISO day it was checked
+
+  function lightsOnAt(h){ var on=CFG.onHour, off=CFG.offHour; return on>off ? (h>=on||h<off) : (h>=on&&h<off); }
+  var STAGE=stageFor(todayDnum), wk=STAGE.row, todayWeek=STAGE.week;
+  var hr=now.getHours(), lightsOn=lightsOnAt(hr);
+  if(CFG.heaterSet===undefined)CFG.heaterSet=wk.s1;
   // single-plant migration: domes are retired with #2/#3, so the dome-phase targets can never re-arm
   if(CFG.domesOn){CFG.domesOn=false;}
   delete CFG.domesOn;
@@ -577,14 +744,61 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   var isDemo=false, demoKeys=[];
   if(Object.keys(store.entries).length===0){
     isDemo=true;
-    var rd=function(t,tf,rh){return{time:t,temp:tf,rh:rh,vpd:rvpd(tf,rh)};};
+    var rd=function(t,tf,rh){return{time:t,temp:tf,rh:rh,vpd:rvpd(tf,rh,true),lights:true,leafOff:leafOff(true)};};
     var ev=function(tm,ty,pick,detail){return{id:"d"+tm+ty,time:tm,type:ty,pick:pick||"",detail:detail||"",plants:["1"],env:null};};
     var mk=function(off,e){var d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-off);e.day=Math.max(0,dnum(d));e.week=weekOf(dnum(d));if(!e.events)e.events=[];store.entries[keyOf(d)]=e;demoKeys.push(keyOf(d));};
-    mk(2,{temp:"76",rh:"62",hi:{t:81,r:70},lo:{t:68,r:52},plants:{"1":{s:"perky",n:""}},notes:"",readings:[rd("09:10",75,60),rd("18:20",76,62)],events:[ev("09:12","soil","Damp","next to the rootball"),ev("18:25","photo","","evening check")]});
-    mk(1,{temp:"77",rh:"64",hi:{t:83,r:72},lo:{t:69,r:55},plants:{"1":{s:"perky",n:"new growth pushing at the crown"}},notes:"",readings:[rd("08:45",76,63),rd("17:40",77,64)],events:[ev("17:45","light","54\"","one step down off the ceiling")]});
-    mk(0,{temp:"77",rh:"65",hi:{t:82,r:70},lo:{t:70,r:56},plants:{"1":{s:"perky",n:"lower leaves still going gold, top is green"}},notes:"Dome off — open-room reading at last.",readings:[rd("09:20",76,64),rd("11:35",77,65)],events:[ev("11:36","soil","Damp","walked away, no water")]});
+    mk(2,{temp:"76",rh:"62",hi:{t:81,r:70},lo:{t:68,r:52},plants:{"1":{s:"perky",n:"",tells:["push"]}},notes:"",readings:[rd("09:10",75,60),rd("18:20",76,62)],events:[ev("09:12","soil","Damp","next to the rootball"),ev("18:25","photo","","evening check")]});
+    mk(1,{temp:"77",rh:"64",hi:{t:83,r:72},lo:{t:69,r:55},plants:{"1":{s:"perky",n:"new growth pushing at the crown",tells:["push"]}},notes:"",readings:[rd("08:45",76,63),rd("17:40",77,64)],events:[ev("17:45","soil","Damp","")]});
+    mk(0,{temp:"77",rh:"65",hi:{t:82,r:70},lo:{t:70,r:56},plants:{"1":{s:"perky",n:"lower leaves still going gold, top is green",tells:["push","ylow"]}},notes:"Dome off — open-room reading at last.",readings:[rd("09:20",76,64),rd("11:35",77,65)],events:[ev("11:36","soil","Damp","walked away, no water")]});
   }
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){}}
+  /* The old save() swallowed every error, so a full quota looked exactly like success.
+     On a phone used 3x/day for five months, silent write failure is data loss. */
+  var storageBroken=false;
+  function save(){
+    try{ localStorage.setItem(KEY,JSON.stringify(store)); storageBroken=false; return true; }
+    catch(e){
+      if(!storageBroken){
+        storageBroken=true;
+        toast("⚠ Couldn't save — storage is full. Guide → Copy backup NOW.",true);
+      }
+      return false;
+    }
+  }
+  /* Merge instead of overwrite. Two tabs on the same phone (the origin banner literally
+     tells him to open the canonical link, which makes a second one) each held their own
+     in-memory draft; whichever wrote last replaced the whole day. Readings and events are
+     append-only sets keyed by time+type, so a stale tab can no longer erase the other's work. */
+  function mergeEntry(mine,theirs){
+    if(!theirs)return mine;
+    if(!mine)return theirs;
+    var out=JSON.parse(JSON.stringify(theirs));
+    // A deletion is an intentional act and must beat a union merge, or anything the grower
+    // removes comes straight back from the copy another tab (or this one) already wrote.
+    var tomb={};
+    (mine.gone||[]).concat(theirs.gone||[]).forEach(function(k){tomb[k]=1;});
+    out.gone=Object.keys(tomb);
+    function unite(a,b,keyf){
+      var seen={},res=[];
+      (a||[]).concat(b||[]).forEach(function(x){ if(!x)return; var k=keyf(x); if(tomb[k]||seen[k])return; seen[k]=1; res.push(x); });
+      return res;
+    }
+    // MINE first: this tab's edit of an event must beat the older copy on disk,
+    // otherwise unite() keeps the stale one and the edit silently vanishes.
+    out.readings=unite(mine.readings,theirs.readings,function(r){return r.time+"|"+r.temp+"|"+r.rh;});
+    out.events  =unite(mine.events,  theirs.events,  function(e){return e.id||(e.time+"|"+e.type);});
+    out.readings.sort(function(a,b){return parseTime(a.time)-parseTime(b.time);});
+    out.events.sort(function(a,b){return parseTime(a.time)-parseTime(b.time);});
+    // scalars: last writer wins, but never overwrite a real value with a blank
+    ["temp","rh","notes"].forEach(function(k){ if(mine[k]!==""&&mine[k]!=null)out[k]=mine[k]; });
+    ["hi","lo"].forEach(function(k){ if(mine[k]&&(mine[k].t!=null||mine[k].r!=null))out[k]=mine[k]; });
+    if(mine.plants&&mine.plants["1"]&&(mine.plants["1"].s||mine.plants["1"].n)){
+      out.plants=out.plants||{}; out.plants["1"]=mine.plants["1"];
+    }
+    return out;
+  }
+  function reloadStore(){
+    try{ var raw2=localStorage.getItem(KEY); if(!raw2)return null; var st=JSON.parse(raw2); return (st&&st.entries)?st:null; }catch(e){ return null; }
+  }
   function blankDraft(){return {temp:"",rh:"",watered:"no",hi:{t:null,r:null},lo:{t:null,r:null},plants:{},notes:"",readings:[],events:[]};}
   var draft=(!isDemo&&store.entries[todayKey])?JSON.parse(JSON.stringify(store.entries[todayKey])):blankDraft();
   if(!draft.plants)draft.plants={};
@@ -593,16 +807,115 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   if(!draft.hi)draft.hi={t:null,r:null};
   if(!draft.lo)draft.lo={t:null,r:null};
   function curEntry(){ return (isDemo && store.entries[todayKey]) ? store.entries[todayKey] : draft; }
-  function commitDraft(){draft.day=Math.max(0,todayDnum);draft.week=todayWeek;store.entries[todayKey]=JSON.parse(JSON.stringify(draft));save();}
+  function commitDraft(){
+    draft.day=Math.max(0,todayDnum);draft.week=todayWeek;draft.phase=STAGE.phase;
+    // re-read what's on disk first — another tab may have written since we loaded
+    var disk=reloadStore();
+    if(disk){
+      Object.keys(disk.entries).forEach(function(k){ if(k!==todayKey&&!store.entries[k])store.entries[k]=disk.entries[k]; });
+      store.entries[todayKey]=mergeEntry(JSON.parse(JSON.stringify(draft)), disk.entries[todayKey]);
+    } else {
+      store.entries[todayKey]=JSON.parse(JSON.stringify(draft));
+    }
+    save();
+  }
   function exitDemo(){ if(!isDemo)return; demoKeys.forEach(function(k){ delete store.entries[k]; }); isDemo=false; draft=blankDraft(); dial.temp=null; dial.rh=null; setFoot();
     // purge must leave NO ghost of the sample data on screen — re-render everything
     renderBoards();renderGauges();renderTrendPeek();renderCaps();renderRibbon();renderDue(); }
   function setFoot(){$("foot1").textContent=(isDemo?"Sample data for preview — your first save replaces it · ":"")+"Day 0 = Jul 17, 2026";}
 
+  /* ================= RED LINES =================
+     These were four static HTML rows in a collapsed Guide panel that NO code ever read,
+     so an 81°F room and a 92°F room produced the identical amber "1 thing to fix".
+     Now they are data, they drive a top-priority alert branch, and they are drawn on
+     the gauge faces. A red line is categorically louder than a band miss — a band miss
+     keeps the amber wording; only a red line gets the STOP verb. */
+  var REDLINES={
+    veg:    { on:{tCrit:60,tWarn:65,tHotWarn:84,tHotCrit:86,rhDry:40,rhDryCrit:30,rhDamp:75,vpdHigh:1.40,vpdLow:0.50},
+              off:{tCrit:58,tWarn:62,tHotWarn:86,tHotCrit:88,rhDamp:80} },
+    flower: { on:{tCrit:58,tWarn:62,tHotWarn:82,tHotCrit:84,rhDry:35,rhDryCrit:30,rhDamp:60,vpdHigh:1.70,vpdLow:0.90},
+              off:{tCrit:58,tWarn:62,tHotWarn:84,tHotCrit:86,rhDamp:58} },
+    soilCold:62
+  };
+  function redLines(){
+    var base=REDLINES[STAGE.phase==="flower"?"flower":"veg"];
+    var R=lightsOn?base.on:base.off;
+    var rhDamp=R.rhDamp;
+    // bud rot is a late-flower disease — the ceiling tightens as she fills out
+    if(STAGE.phase==="flower"){ if(STAGE.week>=10)rhDamp=50; else if(STAGE.week>=4)rhDamp=55; }
+    return {tempLo:R.tCrit,tempHi:R.tHotCrit||R.tHotWarn,rhLo:R.rhDryCrit||30,rhHi:rhDamp,
+            tWarn:R.tWarn,tHotWarn:R.tHotWarn,rhDry:R.rhDry,vpdHigh:R.vpdHigh,vpdLow:R.vpdLow};
+  }
+  /* Returns the single most serious red line that is live, or null. */
+  function redAlert(tv,rv,vv){
+    var R=redLines(), fl=(STAGE.phase==="flower");
+    function A(head,sub){return {head:head,sub:sub};}
+    if(tv!=null&&tv<=R.tempLo)
+      return A("STOP — "+tv+"°F. Cold enough to stall her roots. Heater on now.",
+               "Living soil idles below 65°F and cold roots can't drink — this looks exactly like thirst. Do NOT water on it.");
+    if(tv!=null&&tv>=R.tempHi)
+      return A("STOP — "+tv+"°F. Raise the light and get air moving.",
+               fl?"Above 84°F in flower you cook off terpenes and invite airy buds.":"Above 85°F in veg she stops growing and starts just surviving.");
+    if(rv!=null&&rv<=R.rhLo)
+      return A("STOP — air is "+rv+"%. Humidifier on.","She can't hold turgor in air this dry.");
+    if(fl&&rv!=null&&rv>=R.rhHi)
+      return A("STOP — "+rv+"% RH in flower. Bud rot starts here.",
+               "Dehumidifier plus air movement now. Inside a dense cola it runs 20–30 points higher than the room.");
+    if(!fl&&rv!=null&&rv>=R.rhHi)
+      return A("STOP — "+rv+"% RH. Too damp to stay ahead of mould.","Dehumidifier and more air across the canopy.");
+    // VPD red lines only mean something while the lights are on
+    if(lightsOn&&vv!=null&&R.vpdHigh&&vv>=R.vpdHigh)
+      return A("STOP — VPD "+vv.toFixed(2)+". She's asked to transpire faster than her roots can supply.",
+               "RAISE HUMIDITY FIRST — do not water, do not lower the light. This is what killed Grow 1.");
+    if(lightsOn&&vv!=null&&R.vpdLow&&vv<=R.vpdLow)
+      return A("Air is too still and wet for her to drink","Nutrients move with the water. Get more air across the canopy.");
+    return null;
+  }
+  /* Light dose. Inches alone say nothing — three competent growers estimated her current
+     intensity at 150-200, 230-320 and 460-490 µmol from the SAME inputs, which is exactly
+     why the app must not compute PPFD from height. It asks for a measurement instead.
+     DLI (mol/m²/day) = PPFD × photoperiod_hours × 3600 / 1e6 */
+  function photoperiodHrs(){ var on=CFG.onHour,off=CFG.offHour; return on>off ? (24-on+off) : (off-on); }
+  function dliFrom(ppfd){ return ppfd==null?null:(ppfd*photoperiodHrs()*3600/1e6); }
+  function dliTarget(){
+    if(STAGE.phase==="flower") return {lo:30,hi:40,note:"flower"};
+    var d=Math.max(0,todayDnum);
+    if(d<=14) return {lo:18,hi:22,note:"establishing"};
+    if(d<=35) return {lo:25,hi:30,note:"veg"};
+    return {lo:30,hi:38,note:"late veg"};
+  }
+  function dliState(){
+    var dli=dliFrom(CFG.ppfd); if(dli==null)return null;
+    var t=dliTarget();
+    return {dli:dli,lo:t.lo,hi:t.hi,note:t.note,state:dli<t.lo?"low":(dli>t.hi?"high":"ok")};
+  }
   /* ---- targets (open room — domes retired with #2/#3) ---- */
   function targets(){
-    return {dLo:wk.dLo,dHi:wk.dHi,rLo:wk.rLo,rHi:wk.rHi,vLo:wk.vLo,vHi:wk.vHi,rhLbl:"Humidity %",roomLbl:"room climate"};
+    /* In the dark window his room is a DIFFERENT room: no 645W load, stomata shut.
+       Grading a legitimate 71°F midday reading against the lights-ON band was firing
+       "room is cold" on every single midday check — textbook alarm fatigue. */
+    var dark=!lightsOn;
+    return {
+      dLo: dark?wk.nLo:wk.dLo, dHi: dark?wk.nHi:wk.dHi,
+      rLo: wk.rLo,
+      // a little more RH slack in the dark during veg; NONE in flower — that's how bud rot starts
+      rHi: dark ? (wk.phase==="flower" ? wk.rHi : wk.rHi+6) : wk.rHi,
+      vLo: wk.vLo, vHi: wk.vHi,
+      gradeVpd: !dark,
+      rhLbl:"Humidity %", roomLbl: dark?"dark window":"room climate"
+    };
   }
+  /* The old table was hand-authored per-cell and silently drifted out of agreement with
+     vpd(). Assert it on every load so that can never happen again unnoticed. */
+  (function assertTables(){
+    var bad=[];
+    VEG.concat(FLOWER).forEach(function(r){
+      var v=vpd(r.day,r.rh,true);
+      if(v<r.vLo-0.055||v>r.vHi+0.055) bad.push((r.phase==="flower"?"F":"W")+r.w+" "+r.day+"°/"+r.rh+"% → VPD "+v.toFixed(2)+" outside "+r.vLo+"–"+r.vHi);
+    });
+    if(bad.length&&window.console&&console.warn)console.warn("[zangria] climate table inconsistent:\n"+bad.join("\n"));
+    window.__zangriaTableErrors=bad;
+  })();
 
   /* ---- photos (IndexedDB) ---- */
   var IDB=(function(){
@@ -632,7 +945,8 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   /* ---- masthead ---- */
   $("dayNum").textContent=Math.max(0,todayDnum);
   $("liteState").textContent="LIGHTS "+(lightsOn?"ON":"OFF");
-  $("stageChip").textContent="Wk "+todayWeek+" · "+wk.stage;
+  $("stageChip").textContent=stageLabel(STAGE);
+  if(STAGE.stale)$("stageChip").classList.add("stale");
   setFoot();
 
   /* ---- gauges (arc) ---- */
@@ -644,12 +958,21 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     var cx=50,cy=45,r=36,S=135,E=405,sw=8;
     function ang(v){return S+Math.max(0,Math.min(1,(v-o.min)/(o.max-o.min)))*(E-S);}
     var has=o.val!=null&&!isNaN(o.val);
-    var col=o.state==="ok"||!has?o.color:cvar("--bad");
-    var numcol=!has?cvar("--ink3"):(o.state==="ok"?cvar("--green2"):cvar("--bad"));
+    // muted = shown but deliberately NOT graded (VPD in the dark window). Without this the
+    // "none" state fell through to red, so the face said "n/a" in red — a contradiction.
+    var muted=!!o.muted;
+    var col=muted?cvar("--ink3"):((o.state==="ok"||!has)?o.color:cvar("--bad"));
+    var numcol=(!has||muted)?cvar("--ink3"):(o.state==="ok"?cvar("--green2"):cvar("--bad"));
     var fs=(""+o.disp).length>3?17:21;
     var parts='<svg viewBox="0 0 100 94"><path d="'+arcp(cx,cy,r,S,E)+'" fill="none" stroke="'+cvar("--line")+'" stroke-width="'+sw+'" stroke-linecap="round"/>';
     if(has){var va=ang(o.val);parts+='<path d="'+arcp(cx,cy,r,S,va)+'" fill="none" stroke="'+col+'" stroke-width="'+sw+'" stroke-linecap="round"/>';}
-    parts+='<path d="'+arcp(cx,cy,r-6.5,ang(o.tLo),ang(o.tHi))+'" fill="none" stroke="'+cvar("--green")+'" stroke-opacity=".95" stroke-width="2.8" stroke-linecap="round"/>';
+    if(!muted)parts+='<path d="'+arcp(cx,cy,r-6.5,ang(o.tLo),ang(o.tHi))+'" fill="none" stroke="'+cvar("--green")+'" stroke-opacity=".95" stroke-width="2.8" stroke-linecap="round"/>';
+    // draw the RED LINES on the face, so the alarm points are visible not buried in the Guide
+    (o.reds||[]).forEach(function(rv){
+      if(rv==null||rv<o.min||rv>o.max)return;
+      var a0=ang(rv), p1=polar(cx,cy,r+5.5,a0), p2=polar(cx,cy,r-5.5,a0);
+      parts+='<line x1="'+p1[0].toFixed(2)+'" y1="'+p1[1].toFixed(2)+'" x2="'+p2[0].toFixed(2)+'" y2="'+p2[1].toFixed(2)+'" stroke="'+cvar("--bad")+'" stroke-width="1.6" stroke-opacity=".75" stroke-linecap="round"/>';
+    });
     if(has){var nd=polar(cx,cy,r,ang(o.val));parts+='<circle cx="'+nd[0].toFixed(2)+'" cy="'+nd[1].toFixed(2)+'" r="4.5" fill="'+col+'"/><circle cx="'+nd[0].toFixed(2)+'" cy="'+nd[1].toFixed(2)+'" r="1.7" fill="#fff"/>';}
     parts+='<text x="50" y="44" text-anchor="middle" font-family="Geist Mono,monospace" font-weight="700" font-size="'+fs+'" fill="'+numcol+'">'+o.disp+'</text>'+
       '<text x="50" y="57" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8" fill="'+cvar("--ink3")+'">'+o.sub+'</text></svg>';
@@ -697,23 +1020,37 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
 
   /* ---- live reading (dial) ---- */
   var dial={temp:null,rh:null};
+  var dialSeeded={temp:false,rh:false};   // true = this value came from a target seed, not a measurement
   (function(){
     var ce=curEntry();
     if(fin(ce.temp)!=null){dial.temp=fin(ce.temp);dial.rh=fin(ce.rh);}
     else{var last=(ce.readings&&ce.readings.length)?ce.readings[ce.readings.length-1]:null;if(last){dial.temp=fin(last.temp);dial.rh=fin(last.rh);}}
   })();
-  function curVpd(){return (dial.temp!=null&&dial.rh!=null)?rvpd(dial.temp,dial.rh):null;}
+  function lastCapture(){var rs=(curEntry().readings)||[];return rs.length?rs[rs.length-1]:null;}
+  function curVpd(){return (dial.temp!=null&&dial.rh!=null)?rvpd(dial.temp,dial.rh,lightsOn):null;}
 
   function renderGauges(){
     var T=targets();
-    var tv=dial.temp, rv=dial.rh, vv=(tv!=null&&rv!=null)?rvpd(tv,rv):null;
-    var ts=bandState(tv,T.dLo,T.dHi), rs=bandState(rv,T.rLo,T.rHi), vs=bandState(vv,T.vLo,T.vHi);
-    function ctr(lo,hi,half){var m=(lo+hi)/2;return{min:m-half,max:m+half};}
-    var sT=ctr(T.dLo,T.dHi,18), sR=ctr(T.rLo,T.rHi,(T.rHi-T.rLo)/2+12), sV=ctr(T.vLo,T.vHi,0.6);
+    var tv=dial.temp, rv=dial.rh, vv=(tv!=null&&rv!=null)?rvpd(tv,rv,lightsOn):null;
+    var ts=bandState(tv,T.dLo,T.dHi), rs=bandState(rv,T.rLo,T.rHi);
+    // In the dark window stomata are shut and there is no radiant load — VPD isn't
+    // meaningful, so show it but do NOT grade it green/red.
+    var vs=T.gradeVpd?bandState(vv,T.vLo,T.vHi):"none";
+    /* Scales must be able to DISPLAY the app's own alarm points. The old band-derived
+       scale put the 60°F red line and a real 75% RH spike off the end of the arc, and
+       the drag clamp meant the primary input physically couldn't express an excursion. */
+    var RL=redLines();
+    function span(lo,hi,mustLo,mustHi,pad){
+      var min=Math.min(lo,mustLo)-pad, max=Math.max(hi,mustHi)+pad;
+      return {min:Math.floor(min),max:Math.ceil(max)};
+    }
+    var sT=span(T.dLo,T.dHi,RL.tempLo,RL.tempHi,4);
+    var sR=span(T.rLo,T.rHi,Math.min(RL.rhLo,30),Math.max(RL.rhHi,80),4);
+    var sV={min:0,max:Math.max(2.0,T.vHi+0.5)};
     var G=[
-      {label:"Temp",val:tv,disp:tv!=null?tv+"°":"—",sub:T.dLo+"–"+T.dHi,min:sT.min,max:sT.max,tLo:T.dLo,tHi:T.dHi,color:cvar("--temp"),state:ts},
-      {label:"Humidity",val:rv,disp:rv!=null?rv+"%":"—",sub:T.rLo+"–"+T.rHi,min:sR.min,max:sR.max,tLo:T.rLo,tHi:T.rHi,color:cvar("--hum"),state:rs},
-      {label:"VPD",val:vv,disp:vv!=null?vv.toFixed(2):"—",sub:T.vLo+"–"+T.vHi,min:sV.min,max:sV.max,tLo:T.vLo,tHi:T.vHi,color:cvar("--vpd"),state:vs}
+      {label:"Temp",val:tv,disp:tv!=null?tv+"°":"—",sub:T.dLo+"–"+T.dHi+(lightsOn?"":" dark"),min:sT.min,max:sT.max,tLo:T.dLo,tHi:T.dHi,color:cvar("--temp"),state:ts,reds:[RL.tempLo,RL.tempHi]},
+      {label:"Humidity",val:rv,disp:rv!=null?rv+"%":"—",sub:T.rLo+"–"+T.rHi,min:sR.min,max:sR.max,tLo:T.rLo,tHi:T.rHi,color:cvar("--hum"),state:rs,reds:[RL.rhLo,RL.rhHi]},
+      {label:"VPD",val:vv,disp:vv!=null?vv.toFixed(2):"—",sub:T.gradeVpd?(T.vLo+"–"+T.vHi):"not graded · dark",min:sV.min,max:sV.max,tLo:T.vLo,tHi:T.vHi,color:cvar("--vpd"),state:vs,muted:!T.gradeVpd,reds:T.gradeVpd?[RL.vpdLow,RL.vpdHigh]:[]}
     ];
     var gg=$("gauges");
     gg.innerHTML=G.map(function(g,i){return '<div class="gau'+(i<2?' slider':'')+'">'+gauge(g)+'</div>';}).join("");
@@ -734,44 +1071,107 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     }
     $("roomLbl").textContent=T.roomLbl;
     renderGear(tv,rv);
-    renderAttn(tv,rv,ts,rs);
+    renderAttn(tv,rv,ts,rs,vs);
   }
 
-  function renderAttn(tv,rv,ts,rs){
+  /* Priority order matters more than any single string here. The app was built to stop
+     the water reflex, and it was grading the air and calling the day done. */
+  function renderAttn(tv,rv,ts,rs,vs){
     var el=$("attn");
     var pl=(curEntry().plants||{})["1"]||{};
-    var envIssues=[];
-    if(tv!=null&&ts!=="ok")envIssues.push(ts==="low"?"room is cold":"room is hot");
-    if(rv!=null&&rs!=="ok")envIssues.push(rs==="low"?"air is dry":"air is damp");
-    var noReading=(tv==null&&rv==null);
+    var vv=curVpd();
     var cls,icon,head,sub;
-    if(pl.s==="bad"){
-      cls="warn";icon="alert-triangle";head="She's in bad droop";
-      sub=(lightsOn?"Check soil two knuckles deep before anything else — droop is not proof of thirst."
-                   :"Lights are off — droop reads worse mid-dark. Confirm at 4PM before you act.")
-          +(envIssues.length?"  Also: "+envIssues.join(" · ")+".":"");
-    } else if(envIssues.length){
-      cls="warn";icon="alert-triangle";
-      head=envIssues.length>1?"2 things to fix":"1 thing to fix";
-      sub=envIssues.join(" · ")+(pl.s==="slight"?" · she's slightly droopy too":"");
-    } else if(pl.s==="slight"){
-      cls="warn";icon="alert-triangle";head="Slight droop — watch her";
-      sub=lightsOn?"Room is on target, so it isn't climate. Soil check before you reach for water."
-                  :"Lights are off — mild droop is normal in the dark window. Confirm at 4PM.";
-    } else if(noReading){
-      cls="none";icon="leaf";head="No reading yet today";sub="Drag the dials to match the TempPro, then tap the camera to capture.";
-    } else if(!pl.s){
-      cls="none";icon="leaf";head="Room on target";sub="Set how she looks — one tap on the card below.";
-    } else {
-      cls="calm";icon="check-circle";head="Room on target";
-      // never claim "nothing needs you" while the Due strip is showing open jobs
-      var nOpen=dueList().filter(function(x){return !x.checked;}).length;
-      sub="She's "+(STATUS[pl.s]?STATUS[pl.s].t.toLowerCase():"logged")+". "+
-          (nOpen?(nOpen===1?"One job":nOpen+" jobs")+" still due below.":"Nothing needs you right now.");
+
+    // 0. RED LINE — outranks everything, including bad droop.
+    var RA=redAlert(tv,rv,vv);
+    if(RA){ cls="crit"; icon="octagon-alert"; head=RA.head; sub=RA.sub; }
+    else {
+      var lstress=lightStressActive();
+      var pest=openPestAlert();          // Scout "Found something" with no IPM after it
+      var wGap=hoursSinceLastWater();
+      var soilD=daysSinceEvent("soil"), soilWas=lastEventPick("soil");
+      var envIssues=[];
+      if(tv!=null&&ts!=="ok")envIssues.push(ts==="low"?"room is cold":"room is hot");
+      if(rv!=null&&rs!=="ok")envIssues.push(rs==="low"?"air is dry":"air is damp");
+      var noReading=(tv==null&&rv==null);
+
+      if(lstress){
+        cls="warn";icon="sun";head="Back the light up 6 inches";
+        sub="You logged "+(tellsOn().indexOf("cup")>=0?"cupping":tellsOn().indexOf("bleach")>=0?"bleached tips":"clawing")+
+            (lstress.sinceMove!=null?" "+lstress.sinceMove+"d after a light move":"")+
+            ". Raise it and hold 3 days before touching it again.";
+      } else if(pest){
+        cls="warn";icon="bug";head="Pest found "+pest.when+" — not treated yet";
+        sub="Re-scout undersides and new growth. Don't let this ride.";
+      } else if(wGap!=null&&wGap<48){
+        cls="warn";icon="droplets";head="You watered "+Math.round(wGap)+"h ago";
+        sub="In 30 gallons that's too soon to pour again. Finger test two knuckles deep first.";
+      } else if(pl.s==="bad"){
+        cls="warn";icon="alert-triangle";head="She's in bad droop";
+        sub=droopCoach();
+      } else if(soilD===null||soilD>2){
+        cls="warn";icon="hand";head="Put a finger in that pot";
+        sub="Two knuckles deep, next to the rootball — not the edge. "+(soilD===null?"You haven't checked yet.":"Last check was "+soilD+" days ago.");
+      } else if(soilWas==="Wet"){
+        cls="warn";icon="hand";head="Soil is still wet";
+        sub="Nothing to do but wait. The surface being dry means nothing in a 30-gal.";
+      } else if(lightsOn&&vs==="high"){
+        cls="warn";icon="alert-triangle";head="She's transpiring faster than her roots can supply";
+        sub="Raise humidity FIRST. Do not water, do not lower the light.";
+      } else if(lightsOn&&vs==="low"){
+        cls="warn";icon="alert-triangle";head="Air is too still and wet for her to drink";
+        sub="Nutrients move with the water. More air across the canopy.";
+      } else if(envIssues.length){
+        cls="warn";icon="alert-triangle";
+        head=envIssues.length>1?"2 things to fix":"1 thing to fix";
+        sub=envIssues.join(" · ")+(pl.s==="slight"?" · she's slightly droopy too":"")+(lightsOn?"":"  (dark-window band)");
+      } else if(pl.s==="slight"){
+        cls="warn";icon="alert-triangle";head="Slight droop — watch her";
+        sub=droopCoach();
+      } else if(noReading){
+        cls="none";icon="leaf";head="No reading yet today";sub="Dial the TempPro numbers in, then tap the camera to capture.";
+      } else if(!pl.s){
+        cls="none";icon="leaf";head="Room on target";sub="Set how she looks — one tap on the card below.";
+      } else {
+        cls="calm";icon="check-circle";head="Room on target";
+        var nOpen=dueList().filter(function(x){return !x.checked;}).length;
+        sub="She's "+(STATUS[pl.s]?STATUS[pl.s].t.toLowerCase():"logged")+". "+
+            (nOpen?(nOpen===1?"One job":nOpen+" jobs")+" still due below.":"Nothing needs you right now.");
+      }
     }
     el.className="attn "+cls;
     el.innerHTML='<i data-lucide="'+icon+'"></i><div><div class="at">'+esc(head)+'</div><div class="as">'+esc(sub)+'</div></div>';
     if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});
+  }
+  /* His photoperiod is inverted vs. a normal grower's, and the old advice ("confirm at
+     4PM") had it backwards: 4PM is the START of her light period, i.e. her BEST moment. */
+  function droopCoach(){
+    return "4PM is her BASELINE — after 6h dark she should be fully lifted. "+
+           "9–10AM, the END of her 18h light period, is the STRESS TEST: drooping THEN is real. "+
+           "Then: (1) soil check two knuckles deep, (2) is a fan hitting her, (3) is the room hot or the air dry?";
+  }
+  function openPestAlert(){
+    var found=null,treated=null;
+    keysSorted().forEach(function(k){
+      var d=dnum(dtOf(k)), evs=store.entries[k].events||[];
+      evs.forEach(function(e){
+        if(!e)return;
+        if(e.type==="scout"&&e.pick&&e.pick.indexOf("Found")===0){ if(found===null||d>found)found=d; }
+        if(e.type==="ipm"){ if(treated===null||d>treated)treated=d; }
+      });
+    });
+    if(found===null)return null;
+    if(todayDnum-found>7)return null;
+    if(treated!==null&&treated>=found)return null;
+    return {when:(todayDnum-found===0?"today":(todayDnum-found)+"d ago")};
+  }
+  function hoursSinceLastWater(){
+    var best=null;
+    keysSorted().forEach(function(k){
+      var d=dnum(dtOf(k)),evs=store.entries[k].events||[];
+      evs.forEach(function(e){ if(e&&e.type==="water"){ var h=(todayDnum-d)*24+ (24-parseTime(e.time)/60); if(best===null||h<best)best=h; } });
+    });
+    return best;
   }
 
   function renderGear(tv,rv){
@@ -779,9 +1179,15 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     rows+='<div class="gr"><i class="gi" data-lucide="thermometer"></i><div><div class="nm">Temperature</div><div class="rl">Inkbird ITC-308 · auto</div></div><span class="stt auto"><span class="dt"></span>AUTO · '+CFG.heaterSet+'°</span></div>';
     if(CFG.ihc) rows+='<div class="gr"><i class="gi" data-lucide="droplets"></i><div><div class="nm">Humidity</div><div class="rl">Inkbird IHC · auto</div></div><span class="stt auto"><span class="dt"></span>AUTO</span></div>';
     else rows+='<div class="gr"><i class="gi" data-lucide="droplets"></i><div><div class="nm">Humidity</div><div class="rl">Inkbird IHC · not installed yet</div></div><span class="stt soon"><span class="dt"></span>SOON</span></div>';
-    rows+='<div class="gr"><i class="gi" data-lucide="sun"></i><div><div class="nm">Light</div><div class="rl">Gavita 1700e · 100%, no dimmer</div></div><span class="stt man"><span class="dt"></span>'+(CFG.lightIn?CFG.lightIn+'" MANUAL':'SET IT')+'</span></div>';
+    var ds=dliState();
+    var lrl = CFG.lightIn?(CFG.lightIn+'" above canopy'):'height not set';
+    if(ds) lrl += ' · '+ds.dli.toFixed(0)+' mol/day (want '+ds.lo+'–'+ds.hi+')';
+    else if(CFG.lightIn) lrl += ' · no PPFD reading yet';
+    var lcls = ds? (ds.state==="ok"?"auto":"man") : "soon";
+    var lbadge = ds? (ds.state==="ok"?"IN BAND":(ds.state==="low"?"LOW":"TOO MUCH")) : (CFG.lightIn?'MEASURE IT':'SET IT');
+    rows+='<div class="gr"><i class="gi" data-lucide="sun"></i><div><div class="nm">Light</div><div class="rl">'+lrl+'</div></div><span class="stt '+lcls+'"><span class="dt"></span>'+lbadge+'</span></div>';
     $("gear").innerHTML=rows;
-    $("gearWk").textContent="Wk "+todayWeek;
+    $("gearWk").textContent=(STAGE.phase==="flower"?"Flower wk ":"Wk ")+STAGE.shown;
     if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});
   }
 
@@ -793,16 +1199,19 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     // the 12-stage art module counts from seed; she arrived as a rooted clone, so its NAME is wrong here.
     // the week table is the honest stage text — the art stays as decoration only.
     var stage=wk.stage;
-    var seg='<div class="seg st" data-seg="'+sfx+'">'+["perky","slight","bad","other"].map(function(s){
+    var seg='<div class="seg st" data-seg="'+sfx+'">'+["perky","slight","bad"].map(function(s){
       return '<button type="button" data-s="'+s+'" aria-pressed="'+(pl.s===s?"true":"false")+'">'+STATUS[s].t+'</button>';
     }).join("")+'</div>';
+    var cur=pl.tells||[];
+    var tells='<div class="sq" style="margin-top:12px">What else do you see?</div><div class="tells" data-tells="'+sfx+'">'+
+      TELLS.map(function(t){return '<button type="button" class="tell'+(t.flag?" f":"")+(t.good?" g":"")+'" data-t="'+t.k+'" aria-pressed="'+(cur.indexOf(t.k)>=0?"true":"false")+'">'+t.t+'</button>';}).join("")+'</div>';
     return '<div class="solo '+k+'">'+
       '<div class="top"><div class="art">'+plantArt(k,46)+'</div><div class="who">'+
         '<div class="nm">'+PLANT.name+'</div>'+
-        '<div class="sub">'+PLANT.role+' · day '+plantAge()+' · '+esc(stage)+'</div>'+
+        '<div class="sub">'+strainName()+' · day '+plantAge()+' · '+esc(stage)+'</div>'+
       '</div>'+statusPill(k,st?st.t:"Not set today")+'</div>'+
       (pl.n?'<div class="nte"><b>Today:</b> '+esc(pl.n)+'</div>':'')+
-      '<div class="setter"><div class="sq">How does she look?</div>'+seg+
+      '<div class="setter"><div class="sq">How does she look?</div>'+seg+tells+
       '<button type="button" class="full" data-full="1"><i data-lucide="history"></i>Her full record</button></div>'+
     '</div>';
   }
@@ -811,9 +1220,30 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     $$("[data-seg] button[data-s]").forEach(function(b){
       b.addEventListener("click",function(){setPlantStatus(b.getAttribute("data-s"));});
     });
+    $$("[data-tells] button[data-t]").forEach(function(b){
+      b.addEventListener("click",function(){toggleTell(b.getAttribute("data-t"));});
+    });
     $$("[data-full]").forEach(function(b){
       b.addEventListener("click",function(){document.querySelector('.tab[data-pane=plants]').click();});
     });
+  }
+  function toggleTell(k){
+    exitDemo();
+    if(!draft.plants["1"])draft.plants["1"]={s:"",n:"",tells:[]};
+    var arr=draft.plants["1"].tells||[];
+    var i=arr.indexOf(k);
+    if(i>=0)arr.splice(i,1);
+    else{
+      // "Nothing new" is exclusive — it can't coexist with an observation
+      if(k==="none")arr=[];
+      else arr=arr.filter(function(x){return x!=="none";});
+      arr.push(k);
+    }
+    draft.plants["1"].tells=arr;
+    commitDraft();renderBoards();renderGauges();renderDue();renderPlantIfVisible();
+    var T=null;TELLS.forEach(function(t){if(t.k===k)T=t;});
+    if(i<0&&T&&T.flag==="light")toast("Noted — if this followed a light move, raise it 6\"",true);
+    else if(i<0&&T&&T.flag==="topdress"&&midYellowRun()>=3)toast("3 of the last 5 days — time to top-dress",true);
   }
   function setPlantStatus(s){
     exitDemo();
@@ -842,50 +1272,114 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       '<div class="tb h"><div class="tl">Humidity</div><div class="now">'+(rhs.length?rhs[rhs.length-1]+"%":"—")+'</div>'+spark(rhs,cvar("--hum"))+'</div>';
   }
 
+  /* The master log's own Jul-24 entry opens by naming a six-day log hole as "the same
+     failure shape that killed Grow 1". The app rendered non-consecutive days as adjacent
+     cards and drew a continuous health line across them — manufacturing continuity. */
+  function missedDays(){
+    var have={},out=[];
+    Object.keys(store.entries).forEach(function(k){ if(!isDemo||demoKeys.indexOf(k)<0)have[dnum(dtOf(k))]=1; });
+    var first=null;
+    Object.keys(have).forEach(function(d){d=Number(d);if(first===null||d<first)first=d;});
+    if(first===null)return [];
+    for(var d=first;d<todayDnum;d++) if(!have[d]) out.push(d);
+    return out;
+  }
   /* ---- DUE strip: what this day of the grow actually asks of him ---- */
-  /* pri 1 = the decision of the moment, 3 = keep-in-mind. Anything inside its window is genuinely due. */
+  function hasEvent(type,pick,withinDays){
+    var found=false;
+    keysSorted().forEach(function(k){
+      var d=dnum(dtOf(k));
+      if(withinDays!=null&&(todayDnum-d)>withinDays)return;
+      (store.entries[k].events||[]).forEach(function(e){
+        if(!e||e.type!==type)return;
+        if(pick&&(e.pick||"").indexOf(pick)!==0)return;
+        found=true;
+      });
+    });
+    return found;
+  }
+  function lastMeasure(kind){
+    var best=null,val=null;
+    keysSorted().forEach(function(k){var d=dnum(dtOf(k));
+      (store.entries[k].events||[]).forEach(function(e){
+        if(e&&e.type==="measure"&&e.pick===kind&&e.num!=null){ if(best===null||d>=best){best=d;val=e.num;} }
+      });});
+    return val;
+  }
+  /* pri 1 = the decision of the moment, 3 = keep-in-mind.
+     kind:"plant" = gated on the plant, NOT the calendar — these get a gate line instead of
+     a time badge, because a red LATE badge on "Top her" applies calendar pressure to a
+     decision the app explicitly tells him not to make on the calendar.
+     repeat = days before a ticked item comes back (nothing recurring was expressible before). */
   var MILESTONES=[
-    {id:"reading", pri:1, from:0,  to:999, label:"Log a room reading",               hint:"Dial the TempPro numbers in and tap capture.", done:function(){return ((curEntry().readings)||[]).length>0;}},
-    {id:"status",  pri:1, from:0,  to:999, label:"Set how she looks",                hint:"One tap on the card below — it's her health record.", done:function(){var p=(curEntry().plants||{})["1"]||{};return !!p.s;}},
-    {id:"light",   pri:1, from:5,  to:18,  label:"Step the light down + log it",     hint:"Measure light face → top of her. Off the ceiling to 54\", then 42\", then 36\" — one step, hold 3 days.", done:function(){return CFG.lightIn!=null;}},
-    {id:"minmax",  pri:2, from:6,  to:14,  label:"Reset the hygrometer min/max",     hint:"So the high/low you log is today's, not leftover history."},
-    {id:"strain",  pri:2, from:0,  to:21,  label:"Confirm the strain from the label",hint:"Exact spelling + shop. The whole harvest estimate hangs on it."},
-    {id:"ihc",     pri:2, from:8,  to:24,  label:"Install the humidity controller",  hint:"Inkbird IHC — then flip it to AUTO in Guide → Setup.", done:function(){return !!CFG.ihc;}},
-    {id:"sticky",  pri:3, from:2,  to:20,  label:"Yellow sticky cards up",           hint:"Cheapest early warning you'll ever buy."},
-    {id:"nodes",   pri:1, from:12, to:26,  label:"Count her nodes",                  hint:"The topping gate is 5–6 nodes — a plant call, not a date."},
-    {id:"top",     pri:1, from:14, to:32,  label:"Top her",                          hint:"Only once she's healthy with 5–6 nodes. Then LST to the pot rim."},
-    {id:"topdress",pri:2, from:21, to:45,  label:"First top-dress",                  hint:"When new growth ramps — the Light Recipe runs lean."},
-    {id:"filter",  pri:1, from:38, to:70,  label:"Hang the carbon filter",           hint:"Before the flip — flower smell in a house is a different animal."}
+    {id:"reading", pri:1, from:0,  to:9999,label:"Log a room reading",               hint:"Dial the TempPro numbers in and tap capture.", done:function(){return ((curEntry().readings)||[]).length>0;}},
+    {id:"status",  pri:1, from:0,  to:9999,label:"Set how she looks",                hint:"One tap on the card below — it's her health record.", done:function(){var p=(curEntry().plants||{})["1"]||{};return !!p.s;}},
+    {id:"morning", pri:1, from:0,  to:9999,label:"Morning check — the honest one",   hint:"End of her 18h light period. If she's drooping NOW it's real; at 4PM she's rested.", window:[8,10], done:function(){return ((curEntry().readings)||[]).some(function(r){var m=parseTime(r.time);return m>=8*60&&m<10*60;});}},
+    {id:"light",   pri:1, from:5,  to:9999,kind:"plant",label:"Step the light down + log it", gate:"Gate: she's pushing new growth and shows no cupping, bleaching or clawing.",
+      hint:"Measure light face → top of her. 54\" → 42\" → 36\", one step, hold 3 days. Log a PPFD reading if you have one.",
+      done:function(){ if(lightStressActive())return true; /* held while she recovers */ return CFG.lightIn!=null&&hasEvent("light",null,3); }},
+    {id:"ppfd",    pri:1, from:6,  to:9999,label:"Get one light measurement",        hint:"Free Photone app or a PAR meter. Inches alone can't tell you if she has enough.", done:function(){return CFG.ppfd!=null;}},
+    {id:"minmax",  pri:2, from:6,  to:9999,repeat:7,label:"Reset the hygrometer min/max", hint:"The TP50 doesn't auto-clear — without this every high/low is since an unknown date."},
+    {id:"strain",  pri:2, from:0,  to:9999,label:"Confirm the strain from the label",hint:"Exact spelling + shop. The whole harvest estimate hangs on it.", done:function(){return !!(CFG.strain&&CFG.strain.length);}},
+    {id:"soilchk", pri:2, from:0,  to:9999,repeat:3,label:"Finger test the soil",    hint:"Two knuckles deep by the rootball. Log it even when you don't water — that's the record.", done:function(){var d=daysSinceEvent("soil");return d!=null&&d<=2;}},
+    {id:"ihc",     pri:2, from:8,  to:9999,label:"Install the humidity controller",  hint:"Inkbird IHC — then flip it to AUTO in Guide → Setup.", done:function(){return !!CFG.ihc;}},
+    {id:"backup",  pri:2, from:3,  to:9999,repeat:14,label:"Copy a backup off this phone", hint:"Guide → Data safety → Copy backup. iOS can evict this storage without warning."},
+    {id:"sticky",  pri:3, from:2,  to:9999,repeat:30,label:"Yellow sticky cards — up / changed", hint:"Cheapest early warning you'll ever buy.", done:function(){return hasEvent("scout",null,30);}},
+    {id:"nodes",   pri:1, from:10, to:9999,kind:"plant",label:"Count her nodes",     gate:"Gate: you can see distinct node pairs up the main stem.",
+      hint:"Log it with Measure → Node count. The topping gate is 5–6 nodes.", done:function(){return lastMeasure("Node count")!=null;}},
+    {id:"top",     pri:1, from:12, to:9999,kind:"plant",label:"Top her",             gate:"Gate: 5–6 nodes AND actively pushing new growth. Not a date.",
+      hint:"Then LST to the pot rim to open her up wide.", done:function(){return hasEvent("training","Top");}},
+    {id:"topdress",pri:2, from:18, to:9999,kind:"plant",label:"First top-dress",     gate:"Gate: yellowing reaching mid-canopy on 3 of 5 days, or clearly hungry new growth.",
+      hint:"The Light Recipe runs lean. Castings + a craft blend, watered in.", done:function(){return hasEvent("topdress");}},
+    {id:"width",   pri:2, from:20, to:9999,repeat:14,label:"Measure her widest span",hint:"One plant filling a 1700e footprint IS the strategy — this is how you know it's working.", done:function(){return lastMeasure("Widest span")!=null&&hasEvent("measure",null,14);}},
+    {id:"filter",  pri:1, from:38, to:9999,kind:"plant",label:"Hang the carbon filter", gate:"Gate: before you flip. Flower smell in a house is a different animal.", hint:"You already own it."},
+    {id:"flip",    pri:1, from:45, to:9999,kind:"plant",label:"Flip to 12/12",       gate:"Gate: canopy is about half the final size you want. Not a date.",
+      hint:"Log it with the Flip event — that starts the flower clock and switches every target.", done:function(){return CFG.flipDay!=null;}}
   ];
   function dueList(){
     var d=Math.max(0,todayDnum),out=[];
+    var hrNow=new Date().getHours();
     MILESTONES.forEach(function(m){
-      if(d<m.from||d>m.to)return;
-      // derived items read the real data; the rest are one-time jobs he ticks off himself
-      var checked=m.done?m.done():!!CFG.dueDone[m.id];
-      var span=Math.max(1,m.to-m.from), frac=(d-m.from)/span;
-      out.push({id:m.id,label:m.label,hint:m.hint,checked:checked,pri:m.pri,frac:frac,
-                tag:checked?null:(frac>=0.6?"late":"now"),auto:!!m.done});
+      if(d<m.from)return;                                  // window hasn't opened
+      if(m.window&&(hrNow<m.window[0]||hrNow>=m.window[1]))return;  // time-of-day job
+      var checked;
+      if(m.done)checked=m.done();
+      else if(m.repeat)checked=!!CFG.dueDone[m.id]&&(d-(CFG.dueDoneDay&&CFG.dueDoneDay[m.id]!=null?CFG.dueDoneDay[m.id]:-999))<m.repeat;
+      else checked=!!CFG.dueDone[m.id];
+      var tag=null;
+      if(!checked){
+        if(m.kind==="plant")tag=null;                       // plant calls never get a clock badge
+        else if(d>m.to)tag="overdue";
+        else tag=(m.pri===1?"now":"now");
+      }
+      out.push({id:m.id,label:m.label,hint:m.hint,gate:m.gate||null,checked:checked,pri:m.pri,
+                over:(m.kind!=="plant"&&d>m.to),tag:tag,auto:!!m.done,kind:m.kind||"date"});
     });
     return out;
   }
-  var dueShowDone=false;
+  var dueShowDone=false, dueShowAll=false;
   function dueRow(x){
+    var tagCls=x.over?"late":(x.tag||"");
+    var tagTxt=x.over?"overdue":(x.tag||"");
     return '<div class="duer"><button type="button" class="dueck" data-due="'+x.id+'" aria-pressed="'+(x.checked?"true":"false")+'" aria-label="'+esc(x.label)+'"><i data-lucide="check"></i></button>'+
-      '<div class="dueb"><div class="dl">'+esc(x.label)+'</div><div class="dh">'+esc(x.hint)+'</div></div>'+
-      (x.tag?'<span class="duetag '+x.tag+'">'+x.tag+'</span>':'')+'</div>';
+      '<div class="dueb"><div class="dl">'+esc(x.label)+'</div>'+
+        (x.gate?'<div class="dg">'+esc(x.gate)+'</div>':'')+
+        '<div class="dh">'+esc(x.hint)+'</div></div>'+
+      (tagTxt?'<span class="duetag '+tagCls+'">'+tagTxt+'</span>':'')+'</div>';
   }
   function renderDue(){
     var host=$("dueStrip");if(!host)return;
     var L=dueList(),open=L.filter(function(x){return !x.checked;}),done=L.filter(function(x){return x.checked;});
     $("dueCount").textContent=open.length?open.length+(open.length===1?" open":" open"):"all clear";
     if(!L.length){host.innerHTML='<div class="dueempty">Nothing scheduled for today.</div>';return;}
-    // decision-of-the-moment first, then whichever window is closing soonest — Glance has to stay glanceable
-    open.sort(function(a,b){return (a.pri-b.pri)||(b.frac-a.frac);});
-    var CAP=3, shown=open.slice(0,CAP), hidden=open.length-shown.length;
+    // overdue first, then decision-of-the-moment — Glance has to stay glanceable
+    open.sort(function(a,b){return (b.over?1:0)-(a.over?1:0)||(a.pri-b.pri);});
+    var CAP=dueShowAll?open.length:3, shown=open.slice(0,CAP), hidden=open.length-shown.length;
     var h=shown.map(dueRow).join("");
     if(!open.length)h+='<div class="dueempty">Everything due is done. Nice.</div>';
-    if(hidden>0)h+='<div class="duer"><div class="dueb"><div class="dh">+'+hidden+' more further out — they surface as their day comes.</div></div></div>';
+    // these are due TODAY — the old copy said "further out", which was simply false
+    if(hidden>0)h+='<div class="duer"><button type="button" class="full" id="dueMore" style="padding:0">Show '+hidden+' more due today</button></div>';
+    else if(dueShowAll&&open.length>3)h+='<div class="duer"><button type="button" class="full" id="dueMore" style="padding:0">Show fewer</button></div>';
     // ticked items must stay reachable, otherwise a mis-tap is unrecoverable
     if(done.length){
       h+='<div class="duer"><button type="button" class="full" id="dueToggle" style="padding:0">'+(dueShowDone?"Hide":"Show")+' '+done.length+' done</button></div>';
@@ -894,6 +1388,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     host.innerHTML=h;
     $$("[data-due]").forEach(function(b){b.addEventListener("click",function(){toggleDue(b.getAttribute("data-due"));});});
     var dt=$("dueToggle");if(dt)dt.addEventListener("click",function(){dueShowDone=!dueShowDone;renderDue();});
+    var dm=$("dueMore");if(dm)dm.addEventListener("click",function(){dueShowAll=!dueShowAll;renderDue();});
     if(window.lucide)lucide.createIcons({attrs:{'stroke-width':3}});
   }
   function toggleDue(id){
@@ -904,7 +1399,10 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     }
     exitDemo();
     var wasDone=!!CFG.dueDone[id];
-    if(wasDone)delete CFG.dueDone[id];else CFG.dueDone[id]=todayKey;
+    if(!CFG.dueDoneDay)CFG.dueDoneDay={};
+    if(wasDone){delete CFG.dueDone[id];delete CFG.dueDoneDay[id];}
+    else{CFG.dueDone[id]=todayKey;CFG.dueDoneDay[id]=Math.max(0,todayDnum);
+         if(id==="minmax")CFG.lastMinMaxReset=todayKey;}
     save();renderDue();
     // the row leaves the list when ticked — confirm it so that never reads as a glitch
     toast(wasDone?"↩ Back on the list — "+m.label:"✓ "+m.label);
@@ -921,8 +1419,9 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     return null;
   }
   function setField(f,v){
-    if(f==="temp"){dial.temp=v;draft.temp=v==null?"":String(v);}
-    else if(f==="rh"){dial.rh=v;draft.rh=v==null?"":String(v);}
+    // dial is UI state only — draft.temp/rh are written ONLY by doCapture()
+    if(f==="temp"){dial.temp=v;draft.dialTemp=v;}
+    else if(f==="rh"){dial.rh=v;draft.dialRh=v;}
     else if(f==="hi.t")draft.hi.t=v; else if(f==="hi.r")draft.hi.r=v;
     else if(f==="lo.t")draft.lo.t=v; else if(f==="lo.r")draft.lo.r=v;
   }
@@ -945,14 +1444,17 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   function setActive(f){active=f;syncLog();}
   function showKeypad(){$("kpwrap").classList.add("show");syncLog();}
   function hideKeypad(){$("kpwrap").classList.remove("show");}
-  function setDialK(k,v){
+  function setDialK(k,v){ if(k==="temp")draft.dialTemp=v; else if(k==="rh")draft.dialRh=v;
     if(k==="temp"){v=Math.max(40,Math.min(110,v));dial.temp=v;draft.temp=String(v);}
     else{v=Math.max(5,Math.min(99,v));dial.rh=v;draft.rh=String(v);}
     syncLog();
   }
   function stepDial(k,d){
     exitDemo();
-    var cur=(k==="temp")?(dial.temp==null?wk.day:dial.temp):(dial.rh==null?wk.rh:dial.rh);
+    var lastR=lastCapture();
+    var seedT=lastR?Number(lastR.temp):wk.day, seedR=lastR?Number(lastR.rh):wk.rh;
+    var cur=(k==="temp")?(dial.temp==null?seedT:dial.temp):(dial.rh==null?seedR:dial.rh);
+    if(dial[k]==null&&!lastR)dialSeeded[k]=true;   // no prior reading: this is a guess, not data
     setDialK(k,cur+d);
   }
   /* ---- draggable gauge sliders (drag the arc to set temp/RH) ---- */
@@ -1014,13 +1516,26 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     exitDemo();
     if(dial.temp==null||dial.rh==null)return null;
     var t=nowClock();
-    draft.readings.push({time:t,temp:dial.temp,rh:dial.rh,vpd:rvpd(dial.temp,dial.rh)});
+    draft.readings.push({time:t,temp:dial.temp,rh:dial.rh,vpd:rvpd(dial.temp,dial.rh,lightsOn),lights:lightsOn,leafOff:leafOff(lightsOn)});
+    // the CAPTURE is the measurement — this is the only place the day's room number is set
+    draft.temp=String(dial.temp);draft.rh=String(dial.rh);
+    dialSeeded.temp=false;dialSeeded.rh=false;
     commitDraft();
     renderCaps();renderGauges();renderTrendPeek();
     return t;
   }
   var toastT=null;
-  function toast(msg,warn){var t=$("toastEl");if(!t)return;t.textContent=msg;t.className="toast show"+(warn?" warn":"");clearTimeout(toastT);toastT=setTimeout(function(){t.className="toast";},2400);}
+  var toastAction=null;
+  function toast(msg,warn,onTap){
+    var t=$("toastEl");if(!t)return;
+    t.textContent=msg;t.className="toast show"+(warn?" warn":"")+(onTap?" tappable":"");
+    toastAction=onTap||null;
+    clearTimeout(toastT);toastT=setTimeout(function(){t.className="toast";toastAction=null;},onTap?5200:2400);
+  }
+  $("toastEl").addEventListener("click",function(){
+    if(!toastAction)return;
+    var fn=toastAction;toastAction=null;this.className="toast";fn();
+  });
   function captureReading(){ // Log mode button
     var t=doCapture();
     if(t)toast("✓ Captured "+t); else toast("Dial temp + humidity first",true);
@@ -1033,11 +1548,35 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       setTimeout(function(){m.classList.remove("show");b.innerHTML='<i data-lucide="camera"></i>';if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});},1900);
     } else { m.textContent="dial it first";m.classList.add("show");setTimeout(function(){m.classList.remove("show");},1700); }
   }
+  function readingKey(r){return r.time+"|"+r.temp+"|"+r.rh;}
+  function tomb(k){ if(!draft.gone)draft.gone=[]; if(draft.gone.indexOf(k)<0)draft.gone.push(k); }
+  function untomb(k){
+    if(draft.gone){var i=draft.gone.indexOf(k); if(i>=0)draft.gone.splice(i,1);}
+    // clear it on disk as well — a union of tombstones would otherwise re-delete on merge
+    var disk=reloadStore();
+    if(disk&&disk.entries[todayKey]&&disk.entries[todayKey].gone){
+      var g=disk.entries[todayKey].gone, j=g.indexOf(k);
+      if(j>=0){ g.splice(j,1); try{localStorage.setItem(KEY,JSON.stringify(disk));}catch(e){} }
+    }
+    if(store.entries[todayKey]&&store.entries[todayKey].gone){
+      var g2=store.entries[todayKey].gone,j2=g2.indexOf(k); if(j2>=0)g2.splice(j2,1);
+    }
+  }
+  function delReading(i){
+    var gone=draft.readings[i]; if(!gone)return;
+    draft.readings.splice(i,1);tomb(readingKey(gone));commitDraft();renderCaps();renderGauges();renderTrendPeek();renderDue();
+    toast("Reading removed — tap to undo",false,function(){
+      untomb(readingKey(gone));draft.readings.splice(i,0,gone);commitDraft();renderCaps();renderGauges();renderTrendPeek();renderDue();toast("Restored");
+    });
+  }
   function renderCaps(){
     var host=$("caps");var rs=(curEntry().readings)||[];
     var hd='<div class="clh">Today · '+rs.length+(rs.length===1?" reading":" readings")+'</div>';
     if(!rs.length){host.innerHTML=hd+'<div class="capempty">No captures yet — dial the room and tap Capture.</div>';return;}
-    host.innerHTML=hd+rs.map(function(r,i){return '<div class="crow'+(i===rs.length-1?' now':'')+'"><span class="ct">'+(r.time&&r.time!=="—"?r.time:"—")+'</span><span class="cv">'+r.temp+'°F / '+r.rh+'%  ·  VPD <b>'+(r.vpd!=null?Number(r.vpd).toFixed(2):rvpd(r.temp,r.rh).toFixed(2))+'</b></span></div>';}).join("");
+    host.innerHTML=hd+rs.map(function(r,i){return '<div class="crow'+(i===rs.length-1?' now':'')+'" data-cap-i="'+i+'"><span class="ct">'+(r.time&&r.time!=="—"?r.time:"—")+'</span><span class="cv">'+r.temp+'°F / '+r.rh+'%  ·  '+(r.lights===false?'<span class="dk">dark — VPD n/a</span>':'VPD <b>'+(r.vpd!=null?Number(r.vpd).toFixed(2):rvpd(r.temp,r.rh,true).toFixed(2))+'</b>')+'</span><button type="button" class="capx" data-capx="'+i+'" aria-label="Remove this reading">&times;</button></div>';}).join("");
+    $$("#caps [data-capx]").forEach(function(b){
+      b.addEventListener("click",function(ev){ev.stopPropagation();delReading(parseInt(b.getAttribute("data-capx"),10));});
+    });
   }
 
   /* event grid */
@@ -1050,25 +1589,60 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     var evs=(curEntry().events)||[];
     var host=$("evRibbon");
     if(!evs.length){host.innerHTML='<div class="capempty" style="padding:8px 2px">No events logged today — tap one above the moment you do it.</div>';return;}
-    host.innerHTML=evs.slice().reverse().map(function(e){
+    var idx=evs.map(function(_,i){return i;}).reverse();
+    host.innerHTML=evs.slice().reverse().map(function(e,i){
       var et=evType(e.type);
       var pk=e.pick?' · <b>'+esc(e.pick)+'</b>':"";
-      var ths=evThumbs(e), thumb=ths.slice(0,3).map(function(t){return '<img src="'+t+'" alt="">';}).join("")+(ths.length>3?'<span class="evmore">+'+(ths.length-3)+'</span>':"");
-      return '<div class="evitem"><i data-lucide="'+et.icon+'"></i><span class="evt">'+(e.time||"—")+'</span><span class="evd"><b>'+et.label+'</b>'+pk+(e.detail?' — '+esc(e.detail):"")+'</span>'+thumb+'</div>';
+      var pids=evPhotoIds(e);
+      var ths=evThumbs(e), thumb=ths.slice(0,3).map(function(t,ti){return '<img src="'+t+'" alt="photo" data-pid="'+(pids[ti]||"")+'">';}).join("")+(ths.length>3?'<span class="evmore">+'+(ths.length-3)+'</span>':"");
+      var nv=(e.num!=null?' <b>'+e.num+'</b>':'');
+      return '<div class="evitem" data-ev-i="'+idx[i]+'" role="button" tabindex="0"><i data-lucide="'+et.icon+'"></i><span class="evt">'+(e.time||"—")+'</span><span class="evd"><b>'+et.label+'</b>'+pk+nv+(e.detail?' — '+esc(e.detail):"")+'</span>'+thumb+'<i class="edit" data-lucide="pencil"></i></div>';
     }).join("");
+    wirePhotoTaps("#evRibbon");
+    $$("#evRibbon [data-ev-i]").forEach(function(el){
+      el.addEventListener("click",function(){
+        var i=parseInt(el.getAttribute("data-ev-i"),10);
+        var ev=draft.events[i]; if(!ev)return;
+        openEvent(ev.type,i);
+      });
+    });
     if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});
   }
 
+  /* Photo viewer — IDB.get existed and was called from nowhere, so every full-res photo
+     written since Batch 3 has been unreachable. photoCue() promises the mentor "I'm
+     attaching them"; this is what makes that promise keepable. */
+  function openPhoto(photoId,thumb){
+    var bg=$("photoBg"), img=$("photoImg"), dl=$("photoDl");
+    img.src=thumb||"";                       // instant, then swap in full-res
+    bg.classList.add("open");
+    if(!photoId)return;
+    IDB.get(photoId).then(function(data){
+      if(data){ img.src=data; dl.href=data; dl.download=photoId+".jpg"; dl.style.display=""; }
+      else { $("photoMsg").textContent="Full-size copy isn't on this device — only the thumbnail."; }
+    }).catch(function(){ $("photoMsg").textContent="Couldn't read the stored photo."; });
+  }
+  function wirePhotoTaps(root){
+    $$(root+" [data-pid]").forEach(function(el){
+      el.addEventListener("click",function(ev){
+        ev.stopPropagation();
+        openPhoto(el.getAttribute("data-pid"),el.getAttribute("src")||el.getAttribute("data-thumb"));
+      });
+    });
+  }
   /* event modal */
-  var evEditing=null, evPhotos=[], evPhotoBusy=0;
-  function openEvent(type){
+  var evEditing=null, evEditingIdx=-1, evPhotos=[], evPhotoBusy=0;
+  function openEvent(type,existing){
     exitDemo();
     var et=evType(type);
-    evEditing={id:"e"+Date.now(),time:nowClock(),type:type,detail:"",pick:"",plants:["1"],env:snapEnv(),thumbs:[],photoIds:[]};
+    evEditingIdx=(existing==null)?-1:existing;
+    var src=(existing!=null)?draft.events[existing]:null;
+    evEditing = src ? JSON.parse(JSON.stringify(src))
+                    : {id:"e"+Date.now(),time:nowClock(),type:type,detail:"",pick:"",plants:["1"],env:snapEnv(),thumbs:[],photoIds:[]};
     evPhotos=[];
     $("edIcon").setAttribute("data-lucide",et.icon);
     $("edTitle").textContent=et.label;
-    $("edTime").textContent="logging "+evEditing.time;
+    $("edTime").textContent=(existing!=null?"editing ":"logging ")+evEditing.time;
     // env chips
     var e=evEditing.env, chips=[];
     chips.push('<span class="ec">Day <b>'+e.day+'</b> · Wk '+e.week+'</span>');
@@ -1077,6 +1651,11 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     if(e.vpd!=null)chips.push('<span class="ec v"><span class="k">VPD</span> <b>'+e.vpd.toFixed(2)+'</b></span>');
     chips.push('<span class="ec"><span class="k">lights</span> '+(e.lights?"on":"off")+'</span>');
     if(e.temp==null)chips.push('<span class="ec"><span class="k">no reading yet</span></span>');
+    var stale=(e.src!=="capture")||(e.ageMin!=null&&e.ageMin>60);
+    $("edCap").textContent = e.temp==null ? "No room reading yet today"
+      : (e.src==="capture" ? ("From your "+e.at+" reading"+(e.ageMin!=null?" — "+(e.ageMin<60?e.ageMin+" min ago":Math.round(e.ageMin/60)+" h ago"):""))
+                           : "Dial position — not a captured reading");
+    $("edEnv").className="envchips"+(stale?" stale":"");
     $("edEnv").innerHTML=chips.join("");
     // quick-pick (replaces the old which-plants picker — there's only one plant now)
     if(et.pick){
@@ -1085,20 +1664,41 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       $("edPick").innerHTML=et.pick.opts.map(function(o){return '<button type="button" class="pchip" data-p="'+esc(o)+'" aria-pressed="false">'+esc(o)+'</button>';}).join("");
       $$("#edPick .pchip").forEach(function(b){b.addEventListener("click",function(){setPick(b.getAttribute("data-p"));});});
     } else $("edPickField").style.display="none";
+    if(et.num){
+      $("edNumField").style.display="";
+      $("edNumLabel").textContent=et.num.label;
+      $("edNumUnit").textContent=et.num.unit||"";
+      $("edNumHint").textContent=et.num.hint||"";
+      $("edNum").value="";
+    } else $("edNumField").style.display="none";
     $("edDetailLabel").innerHTML=et.detail?esc(et.detail):'What / how much <span class="hint">— optional</span>';
     $("edDetail").placeholder=et.pick?"anything worth remembering…":"e.g. neem oil, foliar, lights-off…";
-    $("edDetail").value="";
+    $("edDetail").value=evEditing.detail||"";
+    if(et.pick&&evEditing.pick){ setPickExact(evEditing.pick); }
+    if(et.num&&evEditing.num!=null){ $("edNum").value=evEditing.num; }
+    evPhotos=(evEditing.thumbs||[]).map(function(t,i){return {thumb:t,data:null,existingId:(evEditing.photoIds||[])[i]||null};});
     renderEdThumbs();
+    $("edDelete").style.display=(existing!=null)?"":"none";
     $("evBg").classList.add("open");
     if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});
     if(type==="photo"){$("edPhotoInput").click();} // synchronous: stays inside the tap's user-activation (iOS)
     else if(window.matchMedia&&matchMedia("(hover: hover)").matches){setTimeout(function(){$("edDetail").focus();},60);} // never pop the keyboard on phones
   }
-  function setPick(v){
-    evEditing.pick=(evEditing.pick===v)?"":v;
-    $$("#edPick .pchip").forEach(function(b){b.setAttribute("aria-pressed",b.getAttribute("data-p")===evEditing.pick?"true":"false");});
+  function setPick(v){ setPickExact((evEditing.pick===v)?"":v); }
+  function setPickExact(v){
+    evEditing.pick=v;
+    $$("#edPick .pchip").forEach(function(b){b.setAttribute("aria-pressed",b.getAttribute("data-p")===v?"true":"false");});
   }
-  function snapEnv(){return {day:Math.max(0,todayDnum),week:todayWeek,temp:dial.temp,rh:dial.rh,vpd:curVpd(),lights:lightsOn};}
+  function snapEnv(){
+    var lastR=lastCapture(), src=(lastR&&Number(lastR.temp)===dial.temp&&Number(lastR.rh)===dial.rh)?"capture":"dial";
+    var ageMin=null;
+    if(src==="capture"&&lastR&&lastR.time&&lastR.time!=="—"){
+      var nowM=new Date().getHours()*60+new Date().getMinutes();
+      ageMin=Math.max(0,nowM-parseTime(lastR.time));
+    }
+    return {day:Math.max(0,todayDnum),week:todayWeek,phase:STAGE.phase,temp:dial.temp,rh:dial.rh,
+            vpd:curVpd(),lights:lightsOn,leafOff:leafOff(lightsOn),src:src,at:(lastR?lastR.time:null),ageMin:ageMin};
+  }
   $("edPhotoBtn").addEventListener("click",function(){$("edPhotoInput").click();});
   function renderEdThumbs(){
     var host=$("edThumbs"); if(!host)return;
@@ -1133,7 +1733,22 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       });
     })();
   });
-  $("edCancel").addEventListener("click",function(){$("evBg").classList.remove("open");});
+  $("edCancel").addEventListener("click",function(){$("evBg").classList.remove("open");evEditingIdx=-1;});
+  $("edDelete").addEventListener("click",function(){
+    if(evEditingIdx<0)return;
+    var gone=draft.events[evEditingIdx];
+    draft.events.splice(evEditingIdx,1);
+    tomb(gone.id||(gone.time+"|"+gone.type));
+    commitDraft();renderRibbon();renderDue();renderGauges();renderPlantIfVisible();
+    $("evBg").classList.remove("open");evEditing=null;evEditingIdx=-1;
+    undoStack={kind:"event",data:gone};
+    toast("Deleted "+evType(gone.type).label+" — tap to undo",false,function(){
+      untomb(gone.id||(gone.time+"|"+gone.type));
+      draft.events.splice(draft.events.length,0,gone);
+      commitDraft();renderRibbon();renderDue();renderGauges();renderPlantIfVisible();toast("Restored");
+    });
+  });
+  var undoStack=null;
   $("evBg").addEventListener("click",function(e){if(e.target===this)this.classList.remove("open");});
   var evSaving=false;
   $("edSave").addEventListener("click",function(){
@@ -1144,41 +1759,53 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     evSaving=true;
     var ev=evEditing;
     ev.detail=$("edDetail").value.trim();
-    // a Light move is also the record of where the light IS — keep config in step
+    // an event that records a physical change is also the record of the CURRENT state
+    if(et0.num){ var nv=parseFloat($("edNum").value); ev.num=isNaN(nv)?null:nv; }
     if(et0.pick&&et0.pick.sets==="lightIn"&&ev.pick){
       var inch=parseInt(ev.pick,10);
-      if(!isNaN(inch)){CFG.lightIn=inch;save();}
+      if(!isNaN(inch)){CFG.lightIn=inch;}
     }
+    if(et0.num&&et0.num.sets==="ppfd"&&ev.num!=null){ CFG.ppfd=ev.num; }
+    if(et0.sets==="flipDay"&&ev.pick){
+      CFG.flipDay=Math.max(0,todayDnum);
+      toast("Flipped — flower week 1 starts now");
+    }
+    save();
     var doSave=function(){
-      draft.events.push(ev);commitDraft();
+      if(evEditingIdx>=0)draft.events[evEditingIdx]=ev; else draft.events.push(ev);
+      commitDraft();
       renderRibbon();renderDue();renderGauges();syncSettings();
       $("evBg").classList.remove("open");
-      toast("✓ "+et0.label+(ev.pick?" · "+ev.pick:"")+" logged "+ev.time);
-      evEditing=null;evSaving=false;
+      toast((evEditingIdx>=0?"✓ Updated ":"✓ ")+et0.label+(ev.pick?" · "+ev.pick:"")+(evEditingIdx>=0?"":" logged "+ev.time));
+      evEditing=null;evEditingIdx=-1;evSaving=false;
+      renderPlantIfVisible();
     };
     if(evPhotos.length){
       var stamp=Date.now(), shots=evPhotos.slice();
       ev.thumbs=shots.map(function(x){return x.thumb;});
-      ev.photoIds=shots.map(function(x,i){return "p"+stamp+"_"+i;});
+      ev.photoIds=shots.map(function(x,i){return x.existingId||("p"+stamp+"_"+i);});
+      shots=shots.filter(function(x){return !x.existingId&&x.data;});
       // Save the ENTRY FIRST, then write full-res photos in the background.
       // IndexedDB can be slow, evicted, or (on some origins) never settle at all —
       // losing the log entry to protect a photo is exactly the wrong trade.
       doSave();
-      Promise.all(shots.map(function(x,i){return IDB.put(ev.photoIds[i],x.data);}))
+      Promise.all(shots.map(function(x){return IDB.put(x._id||(x._id=ev.photoIds[ev.thumbs.indexOf(x.thumb)]),x.data);}))
         .catch(function(){ toast("Photos saved small-size only — full-res didn't store",true); });
     } else doSave();
   });
 
   /* ---- the plant's full record (Plant tab — vitals + health trend + timeline) ---- */
   var psSel="";
-  function statusScore(s){return s==="perky"?3:s==="slight"?2:s==="bad"?1:0;}
+  // legacy 'other' rows return null and are EXCLUDED from the trend rather than scored zero
+  function statusScore(s){return s==="perky"?3:s==="slight"?2:s==="bad"?1:null;}
   function dtOf(k){return new Date(k.split("-")[0],k.split("-")[1]-1,k.split("-")[2]);}
-  function plantHistory(){var arr=[];keysSorted().slice().reverse().forEach(function(k){var pl=store.entries[k].plants&&store.entries[k].plants["1"];if(pl&&pl.s&&STATUS[pl.s]){arr.push({key:k,dt:dtOf(k),s:pl.s,n:pl.n||""});}});return arr;} // chronological
+  function plantHistory(){var arr=[];keysSorted().slice().reverse().forEach(function(k){var pl=store.entries[k].plants&&store.entries[k].plants["1"];if(pl&&pl.s&&STATUS[pl.s]){arr.push({key:k,dt:dtOf(k),s:pl.s,n:pl.n||"",tells:pl.tells||[]});}});return arr;} // chronological
   function plantEventsAll(){var arr=[];keysSorted().forEach(function(k){var evs=store.entries[k].events;if(evs)evs.forEach(function(e){if(e)arr.push({dt:dtOf(k),e:e});});});return arr;} // newest-first
   function daysSinceEvent(type){var best=null;keysSorted().forEach(function(k){var evs=store.entries[k].events;if(evs)evs.forEach(function(e){if(e&&e.type===type){var d=dnum(dtOf(k));if(best===null||d>best)best=d;}});});return best===null?null:(todayDnum-best);}
   // pick only — detail is free text and would overflow the vitals tile
   function lastEventPick(type){var best=null,pick=null;keysSorted().forEach(function(k){var evs=store.entries[k].events;if(evs)evs.forEach(function(e){if(e&&e.type===type&&e.pick){var d=dnum(dtOf(k));if(best===null||d>=best){best=d;pick=e.pick;}}});});return pick;}
-  function healthTrend(hist){
+  function healthTrend(hist0){
+    var hist=(hist0||[]).filter(function(h){return statusScore(h.s)!=null;});
     if(!hist.length)return{label:"No data",cls:""};
     var last=statusScore(hist[hist.length-1].s);
     if(hist.length===1)return last>=3?{label:"Steady",cls:"ok"}:last===2?{label:"Watch",cls:"warn"}:{label:"Struggling",cls:"bad"};
@@ -1192,7 +1819,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   function statusPill(k,txt){return '<span class="statuspill '+(k==="none"?"":k)+'"><span class="d"></span>'+txt+'</span>';}
   function pdTimelineHTML(hist,limit){
     var items=[];
-    hist.forEach(function(h){items.push({dn:dnum(h.dt),t:99999,dt:h.dt,kind:"status",s:h.s,n:h.n});});
+    hist.forEach(function(h){items.push({dn:dnum(h.dt),t:99999,dt:h.dt,kind:"status",s:h.s,n:h.n,tells:h.tells||[]});});
     plantEventsAll().forEach(function(x){items.push({dn:dnum(x.dt),t:parseTime(x.e.time),dt:x.dt,kind:"event",e:x.e});});
     items.sort(function(a,b){return (b.dn-a.dn)||(b.t-a.t);});
     if(!items.length)return '<div class="capempty" style="padding:6px 2px">Nothing logged yet — the first reading you capture starts her record.</div>';
@@ -1200,13 +1827,16 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     var more=items.length>n?'<div class="capempty" style="padding:6px 2px 0">+'+(items.length-n)+' older — full history on the Log tab</div>':'';
     return '<div class="tl">'+items.slice(0,n).map(function(it){
       var dd=MONTHS[it.dt.getMonth()]+" "+it.dt.getDate()+(it.kind==="event"&&it.e.time&&it.e.time!=="—"?" · "+it.e.time:"");
-      if(it.kind==="status"){var kk=STATUS[it.s].k;return '<div class="tli '+kk+'"><span class="dot"><i data-lucide="'+(kk==="ok"?"trending-up":kk==="bad"?"trending-down":"minus")+'"></i></span><div class="dd">'+dd+'</div><div class="tt">'+STATUS[it.s].t+(it.n?' <span class="q">— "'+esc(it.n)+'"</span>':'')+'</div></div>';}
+      if(it.kind==="status"){var kk=STATUS[it.s]?STATUS[it.s].k:"none";
+        var tl=(it.tells||[]).map(function(x){var f=null;TELLS.forEach(function(t){if(t.k===x)f=t.t;});return f||x;});
+        return '<div class="tli '+kk+'"><span class="dot"><i data-lucide="'+(kk==="ok"?"trending-up":kk==="bad"?"trending-down":"minus")+'"></i></span><div class="dd">'+dd+'</div><div class="tt">'+(STATUS[it.s]?STATUS[it.s].t:it.s)+(tl.length?' <span class="q">· '+esc(tl.join(" · "))+'</span>':'')+(it.n?' <span class="q">— "'+esc(it.n)+'"</span>':'')+'</div></div>';}
       var et=evType(it.e.type),env=it.e.env,envs=(env&&env.temp!=null)?(' <span class="q">@ '+env.temp+'°/'+env.rh+'%</span>'):'';
       var pk=it.e.pick?' <b>'+esc(it.e.pick)+'</b>':'';
       var np=evPhotoCount(it.e), ph=np?' <span class="q">📷'+(np>1?" "+np:"")+'</span>':'';
       return '<div class="tli evrow"><span class="dot"><i data-lucide="'+et.icon+'"></i></span><div class="dd">'+dd+'</div><div class="tt">'+et.label+pk+(it.e.detail?' <span class="q">— '+esc(it.e.detail)+'</span>':'')+ph+envs+'</div></div>';
     }).join('')+'</div>'+more;
   }
+  function renderPlantIfVisible(){ if($("pane-plants")&&$("pane-plants").classList.contains("active"))renderPlant(); }
   function renderPlant(){
     var p=PLANT, id="1";
     var pl=(curEntry().plants||{})[id]||{};psSel=pl.s||"";
@@ -1218,7 +1848,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     var wd=daysSinceEvent("water"), sd=daysSinceEvent("soil"), soilWas=lastEventPick("soil");
     var roomTxt=(dial.temp!=null&&dial.rh!=null)?(dial.temp+"° / "+dial.rh+"%"):"—";
     // header
-    var head='<div class="pdhead" style="margin-top:16px"><div class="pdart '+k+'">'+plantArt(k,54)+'</div><div class="pdid"><div class="pdname">'+p.name+'</div><div class="pdsub">Zangria · potted '+MONTHS[p.pot.getMonth()]+' '+p.pot.getDate()+' · Day '+age+'</div></div>'+statusPill(k,curS&&STATUS[curS]?STATUS[curS].t:"Not set")+'</div>';
+    var head='<div class="pdhead" style="margin-top:16px"><div class="pdart '+k+'">'+plantArt(k,54)+'</div><div class="pdid"><div class="pdname">'+p.name+'</div><div class="pdsub">'+esc(strainName())+' · potted '+MONTHS[p.pot.getMonth()]+' '+p.pot.getDate()+' · Day '+age+'</div></div>'+statusPill(k,curS&&STATUS[curS]?STATUS[curS].t:"Not set")+'</div>';
     // health strip + trend
     var strip="", stripDays=hist.slice(-6);
     if(stripDays.length){
@@ -1240,12 +1870,19 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       tile("Health",trend.label,hist.length?(hist.length+" logs"):"—",trend.cls,true)+
       tile("Watered",wd===null?"—":(wd===0?"today":wd+"d"),wd===null?"none yet":(wd===0?"":"ago"),wd===null?"":"")+
       tile("Soil",soilWas?soilWas:"—",sd===null?"never checked":(sd===0?"checked today":sd+"d ago"),(soilWas==="Wet"?"warn":""),true)+
-      tile("Light",CFG.lightIn?CFG.lightIn+'"':"—",CFG.lightIn?"above canopy":"set it in Guide","",true)+
+      (function(){var ds=dliState();return tile("Light",ds?ds.dli.toFixed(0):(CFG.lightIn?CFG.lightIn+'"':"—"),ds?("mol/day · want "+ds.lo+"–"+ds.hi):(CFG.lightIn?"no PPFD yet":"not set"),ds?(ds.state==="ok"?"ok":"warn"):"",true);})()+
+      (function(){var sp=lastMeasure("Widest span"),nd=lastMeasure("Node count");
+        return tile("Size",sp!=null?sp+'"':(nd!=null?nd+" nodes":"—"),sp!=null?"widest span":(nd!=null?"nodes":"log a Measure"),"",true);})()+
       '</div>';
-    $("pdBody").innerHTML=head+strip+tiles;
+    var gaps=missedDays();
+    var gapHtml=gaps.length?'<div class="gapwarn"><b>'+gaps.length+' day'+(gaps.length>1?'s':'')+' with no entry.</b> Days '+gaps.slice(0,10).join(", ")+(gaps.length>10?'…':'')+'. The health line below skips them — it is not continuous.</div>':'';
+    $("pdBody").innerHTML=head+gapHtml+strip+tiles;
     // status setter + note + timeline
     $("psNote").value=pl.n||"";
     $$("#psSeg button").forEach(function(b){b.setAttribute("aria-pressed",b.getAttribute("data-s")===psSel?"true":"false");});
+    var curT=pl.tells||[];
+    $("psTells").innerHTML=TELLS.map(function(t){return '<button type="button" class="tell'+(t.flag?" f":"")+(t.good?" g":"")+'" data-t="'+t.k+'" aria-pressed="'+(curT.indexOf(t.k)>=0?"true":"false")+'">'+t.t+'</button>';}).join("");
+    $$("#psTells button[data-t]").forEach(function(b){b.addEventListener("click",function(){toggleTell(b.getAttribute("data-t"));});});
     $("pdTimeline").innerHTML=pdTimelineHTML(hist);
     if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});
   }
@@ -1279,10 +1916,25 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   setInterval(function(){
     var c=$("capClock");if(c)c.textContent=nowClock();
     // lights flip at 10AM/4PM and the day flips at midnight — a tab left open must not go stale
-    var h2=new Date().getHours(), lo=(h2>=16||h2<10);
-    if(lo!==lightsOn){lightsOn=lo;var ls=$("liteState");if(ls)ls.textContent="LIGHTS "+(lightsOn?"ON":"OFF");}
+    var h2=new Date().getHours(), lo=lightsOnAt(h2);
+    if(lo!==lightsOn){
+      lightsOn=lo;var ls=$("liteState");if(ls)ls.textContent="LIGHTS "+(lightsOn?"ON":"OFF");
+      // bands, VPD grading and the verdict ALL change at the flip — re-render, don't just relabel
+      renderGauges();renderTrendPeek();renderDue();
+    }
     if(keyOf(new Date())!==todayKey && !document.querySelector(".modal-bg.open")){location.reload();}
   },15000);
+
+  /* A sibling tab wrote — pull it in rather than let the two diverge. */
+  window.addEventListener("storage",function(e){
+    if(e.key!==KEY)return;
+    var disk=reloadStore(); if(!disk)return;
+    Object.keys(disk.entries).forEach(function(k){ if(k!==todayKey)store.entries[k]=disk.entries[k]; });
+    var merged=mergeEntry(JSON.parse(JSON.stringify(draft)),disk.entries[todayKey]);
+    store.entries[todayKey]=merged;
+    if(!isDemo){ draft=JSON.parse(JSON.stringify(merged)); }
+    renderBoards();renderGauges();renderTrendPeek();renderCaps();renderRibbon();renderDue();renderPlantIfVisible();
+  });
 
   /* ---- tabs ---- */
   var panes={today:$("pane-today"),plants:$("pane-plants"),log:$("pane-log"),guide:$("pane-guide")};
@@ -1297,23 +1949,46 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   /* ---- copy / export ---- */
   function statusText(s){return STATUS[s]?STATUS[s].t:"—";}
   function report(k,e){
-    var dt=new Date(k.split("-")[0],k.split("-")[1]-1,k.split("-")[2]),tw=WEEKS[(e.week||weekOf(dnum(dt)))-1];
-    var L=["• "+fmt(dt)+", "+dt.getFullYear()+"  (Day "+(e.day!=null?e.day:dnum(dt))+", Week "+(e.week||weekOf(dnum(dt)))+")"];
-    var vv=(e.temp&&e.rh)?vpd(parseFloat(e.temp),parseFloat(e.rh)).toFixed(2):null;
-    L.push("  Room: "+(e.temp?e.temp+"°F":"—")+" / "+(e.rh?e.rh+"%":"—")+(vv?"  (VPD "+vv+")":"")+"   target "+tw.day+"°F / "+tw.rh+"%");
-    if(e.hi&&(e.hi.t!=null||e.hi.r!=null)||e.lo&&(e.lo.t!=null||e.lo.r!=null)){
-      L.push("  Day high/low: "+(e.hi&&e.hi.t!=null?e.hi.t+"°":"—")+"/"+(e.lo&&e.lo.t!=null?e.lo.t+"°":"—")+" temp · "+(e.hi&&e.hi.r!=null?e.hi.r+"%":"—")+"/"+(e.lo&&e.lo.r!=null?e.lo.r+"%":"—")+" RH");
-    }
+    var dt=new Date(k.split("-")[0],k.split("-")[1]-1,k.split("-")[2]),est=stageFor(e.day!=null?e.day:dnum(dt)),tw=est.row;
+    var L=["• "+fmt(dt)+", "+dt.getFullYear()+"  (Day "+(e.day!=null?e.day:dnum(dt))+", "+(est.phase==="flower"?"Flower wk ":"Veg wk ")+est.shown+" — "+tw.stage+")"];
     var rds=(e.readings&&e.readings.length)?e.readings:null;
-    if(rds){L.push("  Captures ("+rds.length+"):");rds.forEach(function(r){L.push("    "+(r.time&&r.time!=="—"?r.time:"—")+" · "+r.temp+"°F / "+r.rh+"%  ·  VPD "+(r.vpd!=null?Number(r.vpd).toFixed(2):vpd(r.temp,r.rh).toFixed(2)));});}
+    // The day's room number is a CAPTURE or it doesn't exist. Never print a dial position.
+    if(rds){
+      var lastR=rds[rds.length-1];
+      var vv=lastR.vpd!=null?Number(lastR.vpd):vpd(lastR.temp,lastR.rh,lastR.lights!==false);
+      L.push("  Room (last capture "+lastR.time+"): "+lastR.temp+"°F / "+lastR.rh+"%"+
+             (lastR.lights===false?"  — dark window, VPD n/a":"  — VPD "+vv.toFixed(2)+" (leaf = air −"+(lastR.leafOff!=null?lastR.leafOff:1)+"°C, lights on)"));
+      L.push("  Target this week: "+tw.dLo+"–"+tw.dHi+"°F day / "+tw.nLo+"–"+tw.nHi+"°F dark · RH "+tw.rLo+"–"+tw.rHi+"% · VPD "+tw.vLo.toFixed(2)+"–"+tw.vHi.toFixed(2));
+    } else {
+      L.push("  Room: NOT CAPTURED TODAY");
+    }
+    if(e.hi&&(e.hi.t!=null||e.hi.r!=null)||e.lo&&(e.lo.t!=null||e.lo.r!=null)){
+      L.push("  High/low since last reset"+(CFG.lastMinMaxReset?" ("+CFG.lastMinMaxReset+")":" (reset date UNKNOWN)")+": "+
+             (e.hi&&e.hi.t!=null?e.hi.t+"°":"—")+"/"+(e.lo&&e.lo.t!=null?e.lo.t+"°":"—")+" temp · "+
+             (e.hi&&e.hi.r!=null?e.hi.r+"%":"—")+"/"+(e.lo&&e.lo.r!=null?e.lo.r+"%":"—")+" RH");
+    }
+    if(rds){L.push("  Captures ("+rds.length+"):");rds.forEach(function(r){
+      L.push("    "+(r.time&&r.time!=="—"?r.time:"—")+" · "+r.temp+"°F / "+r.rh+"%"+(r.lights===false?"  (dark)":"  · VPD "+(r.vpd!=null?Number(r.vpd).toFixed(2):vpd(r.temp,r.rh,true).toFixed(2))));});}
+    // the three questions a remote diagnosis always opens with
+    var wd=daysSinceEvent("water"), sd=daysSinceEvent("soil"), soilWas=lastEventPick("soil");
     var wev=(e.events||[]).filter(function(x){return x&&x.type==="water";});
-    L.push("  Watered: "+(wev.length?("Yes — "+wev.map(function(x){return (x.time&&x.time!=="—"?x.time:"")+(x.detail?" ("+x.detail+")":"");}).join(", ").trim()):"No"));
-    Object.keys(e.plants||{}).sort().forEach(function(pid){var pl=e.plants[pid]||{};if(pl.s||pl.n){var nm=pid==="1"?"The Survivor":("Plant #"+pid+" (retired)");L.push("  "+nm+": "+statusText(pl.s)+(pl.n?' — "'+pl.n+'"':""));}});
+    L.push("  Water: "+(wev.length?("TODAY — "+wev.map(function(x){return (x.time||"")+(x.pick?" "+x.pick:"")+(x.detail?" ("+x.detail+")":"");}).join(", ").trim())
+                                  :(wd==null?"never logged":wd+" days ago")));
+    L.push("  Soil: "+(soilWas?soilWas:"never checked")+(sd==null?"":(sd===0?" (checked today)":" (checked "+sd+"d ago)")));
+    var ds=dliState();
+    L.push("  Light: "+(CFG.lightIn?CFG.lightIn+'" above canopy':"height not set")+
+           (CFG.ppfd!=null?" · "+CFG.ppfd+" µmol → "+dliFrom(CFG.ppfd).toFixed(0)+" mol/day (want "+dliTarget().lo+"–"+dliTarget().hi+")":" · NO PPFD MEASUREMENT"));
+    Object.keys(e.plants||{}).sort().forEach(function(pid){var pl=e.plants[pid]||{};
+      if(pl.s||pl.n||(pl.tells&&pl.tells.length)){
+        var nm=pid==="1"?"Her":("Plant #"+pid+" (retired)");
+        var tl=(pl.tells||[]).map(function(kk){var f=null;TELLS.forEach(function(t){if(t.k===kk)f=t.t;});return f||kk;});
+        L.push("  "+nm+": "+statusText(pl.s)+(tl.length?"  [ "+tl.join(" · ")+" ]":"")+(pl.n?' — "'+pl.n+'"':""));
+      }});
     var evs=(e.events&&e.events.length)?e.events.filter(Boolean):null;
     if(evs&&evs.length){L.push("  Events ("+evs.length+"):");evs.forEach(function(ev){
       var et=evType(ev.type),env=ev.env;
-      var envs=env&&env.temp!=null?("  @ "+env.temp+"°F/"+env.rh+"%"+(env.vpd!=null?" VPD "+Number(env.vpd).toFixed(2):"")):"";
-      L.push("    "+(ev.time||"—")+" · "+et.label+(ev.pick?" · "+ev.pick:"")+(ev.detail?': "'+ev.detail+'"':"")+envs+(evPhotoCount(ev)?"  ["+evPhotoCount(ev)+" photo"+(evPhotoCount(ev)>1?"s":"")+"]":""));
+      var envs=env&&env.temp!=null?("  @ "+env.temp+"°F/"+env.rh+"%"+(env.vpd!=null?" VPD "+Number(env.vpd).toFixed(2):"")+(env.lights===false?" dark":"")+(env.src==="dial"?" [dial, not a capture]":"")):"";
+      L.push("    "+(ev.time||"—")+" · "+et.label+(ev.pick?" · "+ev.pick:"")+(ev.num!=null?" · "+ev.num:"")+(ev.detail?': "'+ev.detail+'"':"")+envs+(evPhotoCount(ev)?"  ["+evPhotoCount(ev)+" photo"+(evPhotoCount(ev)>1?"s":"")+"]":""));
     });}
     if(e.notes)L.push("  Notes: "+e.notes);
     return L.join("\n");
@@ -1332,7 +2007,20 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     if(window.matchMedia&&matchMedia("(hover: hover)").matches&&!opts.editable){setTimeout(function(){ta.focus();ta.setSelectionRange(0,text.length);},50);} // no auto-zoom/scroll on phones
     if(opts.editable){setTimeout(function(){ta.focus();},50);}
   }
-  function cfgLine(){return "Config: ONE plant (the survivor — #2/#3 lost, domes retired) · Light "+(CFG.lightIn?CFG.lightIn+'" above canopy':"height not set")+" · Humidity ctrl "+(CFG.ihc?"AUTO (Inkbird IHC)":"not installed yet")+" · Heater set "+CFG.heaterSet+"° (Inkbird ITC-308) · Lights 18/6 (ON 4PM → OFF 10AM)";}
+  function cfgLine(){
+    var ph=photoperiodHrs();
+    var L="Config: ONE plant (the survivor) · "+(CFG.strain?CFG.strain:"strain UNCONFIRMED")+
+      " · Lights "+ph+"/"+(24-ph)+" ON "+CFG.onHour+":00 OFF "+CFG.offHour+":00"+
+      " · Light "+(CFG.lightIn?CFG.lightIn+'"':"height not set")+(CFG.ppfd!=null?" @ "+CFG.ppfd+" µmol":" (no PPFD reading)")+
+      " · Heater "+CFG.heaterSet+"° (Inkbird ITC-308"+(CFG.heaterSet!==wk.s1?" — SHOULD BE "+wk.s1+"°":"")+")"+
+      " · Humidity "+(CFG.ihc?"AUTO (Inkbird IHC)":"NOT installed")+
+      " · VPD leaf offset "+ (CFG.leafOffsetC!=null?CFG.leafOffsetC:1) +"°C";
+    if(CFG.flipDay!=null)L+=" · FLIPPED on day "+CFG.flipDay;
+    var gaps=missedDays();
+    if(gaps.length)L+="\nGAPS: "+gaps.length+" day"+(gaps.length>1?"s":"")+" with no entry (days "+gaps.slice(0,8).join(", ")+(gaps.length>8?"…":"")+")";
+    if(STAGE.stale)L+="\n⚠ Past the end of the target table — the targets above are STALE.";
+    return L;
+  }
   function photoCue(e){
     var ph=(e.events||[]).filter(function(x){return x&&(evPhotoCount(x)||x.type==="photo");});
     if(!ph.length)return "";
@@ -1384,9 +2072,11 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       }catch(err){ toast("Couldn't read that backup — paste the whole block",true); }
     }});
   });
+  $("photoClose").addEventListener("click",function(){$("photoBg").classList.remove("open");$("photoMsg").textContent="";$("photoDl").style.display="none";});
+  $("photoBg").addEventListener("click",function(e){if(e.target===this)this.classList.remove("open");});
   $("modalClose").addEventListener("click",function(){$("modalBg").classList.remove("open");});
   $("modalBg").addEventListener("click",function(e){if(e.target===this)this.classList.remove("open");});
-  document.addEventListener("keydown",function(e){if(e.key==="Escape"){["evBg","modalBg"].forEach(function(id){var m=$(id);if(m&&m.classList.contains("open"))m.classList.remove("open");});}});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"){["evBg","modalBg","photoBg"].forEach(function(id){var m=$(id);if(m&&m.classList.contains("open"))m.classList.remove("open");});}});
 
   /* ---- log tab ---- */
   function renderLog(){
@@ -1396,7 +2086,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       '<div class="tb h"><div class="tl">Humidity</div><div class="now">'+(rhs.length?rhs[rhs.length-1]+"%":"—")+'</div>'+spark(rhs,cvar("--hum"))+'</div>';
     var list=$("logList");if(!ks.length){list.innerHTML='<div class="empty">No days logged yet.<br>Log your first on the Today tab.</div>';return;}
     list.innerHTML=ks.map(function(k){var e=store.entries[k],dt=new Date(k.split("-")[0],k.split("-")[1]-1,k.split("-")[2]);
-      var h='<div class="logentry"><div class="le-top"><span class="le-date">'+fmt(dt)+'</span><span class="le-day">Day '+(e.day!=null?e.day:dnum(dt))+' · Wk '+(e.week||weekOf(dnum(dt)))+'</span></div>';
+      var h='<div class="logentry"><div class="le-top"><span class="le-date">'+fmt(dt)+'</span><span class="le-day">Day '+(e.day!=null?e.day:dnum(dt))+' · '+(function(){var q=stageFor(e.day!=null?e.day:dnum(dt));return (q.phase==="flower"?"F":"Wk ")+q.shown;})()+'</span></div>';
       h+='<div class="le-row"><b>Room:</b> '+(e.temp?e.temp+"°F":"—")+' / '+(e.rh?e.rh+"%":"—")+'</div>';
       // render whatever plant keys the entry actually has — pre-switch days recorded #2/#3 and that record stays honest
       Object.keys(e.plants||{}).sort().forEach(function(pid){var q=e.plants[pid];if(q&&(q.s||q.n)){var dk=STATUS[q.s]?STATUS[q.s].k:"none",col=dk==="ok"?cvar("--ok"):dk==="bad"?cvar("--bad"):dk==="warn"?cvar("--warn"):cvar("--ink3");var nm=pid==="1"?"She":("#"+pid);h+='<div class="le-row"><span class="pdot" style="background:'+col+'"></span><b>'+nm+':</b> '+statusText(q.s)+(q.n?' — '+esc(q.n):"")+'</div>';}});
@@ -1407,18 +2097,51 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});
   }
   /* ---- guide ---- */
-  (function(){var t=$("refTable");var head='<tr><th style="text-align:left">Wk</th><th>Day</th><th>Night</th><th>RH</th><th>VPD</th><th>Heat/Hum/Dehu</th></tr>';
-    t.innerHTML=head+WEEKS.map(function(k){return '<tr'+(k.w===todayWeek?' class="now"':'')+'><td class="wkn">W'+k.w+'</td><td class="mono">'+k.day+'°</td><td class="mono">'+k.night+'°</td><td class="mono">'+k.rh+'%</td><td class="mono">'+k.vpd+'</td><td class="mono" style="font-size:10px">'+k.s1+'/'+k.s2+'/'+k.s3+'</td></tr>';}).join("");})();
+  /* Reference table — now renders BOTH phases, real day/dark bands, and the derived RH.
+     It also shows the VPD band rather than a single number, because a point value is
+     what let the old table drift out of agreement with vpd() in the first place. */
+  function renderRefTable(){
+    var t=$("refTable"); if(!t)return;
+    var head='<tr><th style="text-align:left">Wk</th><th>Day °F</th><th>Dark °F</th><th>RH</th><th>VPD</th><th>Heat/Hum/Dehu</th></tr>';
+    function rows(list,pfx,activeW){
+      return list.map(function(k){
+        var isNow=(activeW===k.w);
+        return '<tr'+(isNow?' class="now"':'')+'><td class="wkn">'+pfx+k.w+'</td>'+
+          '<td class="mono">'+k.dLo+'–'+k.dHi+'</td>'+
+          '<td class="mono">'+k.nLo+'–'+k.nHi+'</td>'+
+          '<td class="mono">'+k.rLo+'–'+k.rHi+'%</td>'+
+          '<td class="mono">'+k.vLo.toFixed(2)+'–'+k.vHi.toFixed(2)+'</td>'+
+          '<td class="mono" style="font-size:10px">'+k.s1+'/'+k.s2+'/'+k.s3+'</td></tr>';
+      }).join("");
+    }
+    var h=head+'<tr class="grp"><td colspan="6">VEG</td></tr>'+rows(VEG,"W",STAGE.phase==="veg"?STAGE.week:-1)+
+          '<tr class="grp"><td colspan="6">FLOWER — from the day you flip</td></tr>'+rows(FLOWER,"F",STAGE.phase==="flower"?STAGE.week:-1);
+    t.innerHTML=h;
+  }
+  renderRefTable();
   /* settings */
   function syncSettings(){
     $("tgIhc").setAttribute("aria-pressed",CFG.ihc?"true":"false");
     $("setHeat").value=CFG.heaterSet;
     $("setLight").value=CFG.lightIn==null?"":CFG.lightIn;
+    $("setStrain").value=CFG.strain||"";
+    $("setPpfd").value=CFG.ppfd==null?"":CFG.ppfd;
+    $("setOn").value=CFG.onHour; $("setOff").value=CFG.offHour;
+    $("setLeaf").value=CFG.leafOffsetC;
     var lc=$("lightChip");
-    if(lc){lc.style.display=CFG.lightIn?"inline-flex":"none";lc.textContent='Light · '+CFG.lightIn+'"';}
+    if(lc){
+      var ds2=dliState();
+      lc.style.display=CFG.lightIn?"inline-flex":"none";
+      lc.textContent='Light · '+CFG.lightIn+'"'+(ds2?' · '+ds2.dli.toFixed(0)+' mol':'');
+    }
   }
   $("tgIhc").addEventListener("click",function(){CFG.ihc=!CFG.ihc;save();syncSettings();renderGauges();renderDue();});
   $("setHeat").addEventListener("change",function(){var v=parseInt(this.value,10);if(!isNaN(v)){CFG.heaterSet=v;save();renderGauges();}});
+  $("setStrain").addEventListener("change",function(){CFG.strain=this.value.trim();save();syncSettings();renderBoards();renderDue();renderPlantIfVisible();});
+  $("setPpfd").addEventListener("change",function(){var v=parseFloat(this.value);CFG.ppfd=isNaN(v)?null:v;save();syncSettings();renderGauges();renderDue();});
+  $("setOn").addEventListener("change",function(){var v=parseInt(this.value,10);if(!isNaN(v)&&v>=0&&v<24){CFG.onHour=v;save();location.reload();}});
+  $("setOff").addEventListener("change",function(){var v=parseInt(this.value,10);if(!isNaN(v)&&v>=0&&v<24){CFG.offHour=v;save();location.reload();}});
+  $("setLeaf").addEventListener("change",function(){var v=parseFloat(this.value);if(!isNaN(v)&&v>=0&&v<=4){CFG.leafOffsetC=v;save();renderGauges();}});
   $("setLight").addEventListener("change",function(){
     var v=parseInt(this.value,10);
     CFG.lightIn=isNaN(v)?null:v;save();syncSettings();renderGauges();renderDue();
