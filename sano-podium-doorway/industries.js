@@ -273,10 +273,10 @@ window.SANO_INDUSTRIES = [
 window.SANO_TIERS = [
   /* setup + min are read straight off pricing.html — they are NOT uniform across
      levels, and a page that claims they are is quotable against us. */
-  { key: 'starter', label: 'Starter', price: '$397/mo',   setup: '$997',    min: 'Three-month minimum', usage: 'about $60\u2013200/mo in usage at cost' },
-  { key: 'growth',  label: 'Growth',  price: '$999/mo',   setup: '$2,497',  min: 'Three-month minimum', usage: 'about $60\u2013200/mo in usage at cost', rec: true },
-  { key: 'scale',   label: 'Scale',   price: '$1,995/mo', setup: '$4,997',  min: 'Three-month minimum', usage: 'usage bundled in' },
-  { key: 'total',   label: 'Total',   price: '$4,997/mo', setup: '$14,997', min: 'Six-month minimum',   usage: 'usage bundled in' }
+  { key: 'starter', label: 'Starter', price: '$397/mo',   setup: '$997',    live: '14 days', min: 'Three-month minimum', usage: 'about $60\u2013200/mo in usage at cost' },
+  { key: 'growth',  label: 'Growth',  price: '$999/mo',   setup: '$2,497',  live: '30 days', min: 'Three-month minimum', usage: 'about $60\u2013200/mo in usage at cost', rec: true },
+  { key: 'scale',   label: 'Scale',   price: '$1,995/mo', setup: '$4,997',  live: '45 days', min: 'Three-month minimum', usage: 'usage bundled in' },
+  { key: 'total',   label: 'Total',   price: '$4,997/mo', setup: '$14,997', live: '60&ndash;75 days', min: 'Six-month minimum',   usage: 'usage bundled in' }
 ];
 
 window.SANO_CAPABILITIES = [
