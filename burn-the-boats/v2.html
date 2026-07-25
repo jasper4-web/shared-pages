@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07060b">
+<title>Burn the Boats</title>
+<link rel="stylesheet" href="lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#8b8496; --faint:#5a5468; --ghost-txt:#4a4553;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8;
+  --d-work:#E0B25E; --d-cap:#7FB4FF; --d-body:#FF6B2C; --d-faith:#B08CFF; --d-mind:#38E1D8; --d-people:#4ADE80;
+  --ghost:#CFE2FF; --ghost-d:#8FB4E8; --ghost-bg:#070C16; --ghost-line:#1c2c47;
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);overscroll-behavior-y:none}
+body{font-family:'Satoshi',system-ui,sans-serif;line-height:1.45;-webkit-font-smoothing:antialiased;user-select:none}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:300;
+  background-image:url('assets/grain/grain-fine.svg');opacity:.04;mix-blend-mode:overlay}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+.mono{font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums}
+.app{max-width:480px;margin:0 auto;padding:0 13px calc(30px + var(--safe-b))}
+
+/* ============ STATUS BAR ============ */
+.status{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:11px;
+  padding:11px 3px 10px;background:linear-gradient(180deg,var(--bg) 68%,rgba(7,6,11,.86));
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
+  margin:0 -13px;padding-left:16px;padding-right:16px;cursor:pointer}
+.st-ovr{display:flex;align-items:baseline;gap:5px;flex:none}
+.st-ovr b{font-family:'Clash Display',sans-serif;font-size:25px;color:var(--gold);line-height:1;letter-spacing:-.04em}
+.st-ovr span{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.16em;color:#6d5c3c}
+.st-mid{flex:1;min-width:0}
+.st-fuel{height:4px;border-radius:99px;background:#1a1420;overflow:hidden;position:relative}
+.st-fuel i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#7a3a12,var(--ember))}
+.st-lab{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7.5px;
+  letter-spacing:.12em;color:#6b4530;margin-top:5px}
+.st-wk{flex:none;text-align:right}
+.st-wk b{font-family:'Geist Mono',monospace;font-size:14px;font-weight:700;line-height:1;display:block;letter-spacing:-.02em}
+.st-wk span{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.14em;color:var(--faint)}
+.st-chev{flex:none;color:var(--faint);font-size:11px}
+
+/* ============ DAY RAIL ============ */
+.rail-wrap{padding:15px 2px 4px}
+.rail{height:9px;border-radius:3px;background:#141120;position:relative;overflow:hidden;display:flex;gap:1px}
+.rail i{height:100%;display:block}
+.rail .now{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--gold);
+  box-shadow:0 0 8px var(--gold);border-radius:2px;z-index:2}
+.rail-l{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7.5px;
+  letter-spacing:.12em;color:var(--ghost-txt);margin-top:6px}
+.timeleft{margin-top:12px;display:flex;align-items:baseline;gap:8px}
+.timeleft b{font-family:'Clash Display',sans-serif;font-size:27px;letter-spacing:-.035em;line-height:1;color:var(--ink)}
+.timeleft span{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.13em;color:var(--faint)}
+.timeleft .dow{margin-left:auto;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--gold)}
+
+/* ============ NEXT UP ============ */
+.nextup{margin-top:14px;border-radius:16px;padding:14px 15px;position:relative;overflow:hidden;
+  background:linear-gradient(150deg,#1b1526,#110e1a 60%,#0d0b14);border:1px solid var(--line2)}
+.nextup.live{border-color:rgba(224,178,94,.42);box-shadow:0 0 0 1px rgba(224,178,94,.1),0 10px 40px -16px rgba(224,178,94,.4)}
+.nu-k{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.nu-k i{width:6px;height:6px;border-radius:99px;background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.nu-k span{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase}
+.nu-k u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:9px;color:var(--faint);text-decoration:none;letter-spacing:.06em}
+.nu-t{font-family:'Clash Display',sans-serif;font-size:20px;letter-spacing:-.025em;line-height:1.12;margin-bottom:5px}
+.nu-obj{font-size:13.5px;color:var(--dim);line-height:1.4;margin-bottom:11px}
+.nu-obj.empty{color:var(--blood);font-style:italic}
+.nu-chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.chip{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.12em;padding:3px 7px;border-radius:4px;
+  border:1px solid var(--line2);color:var(--dim);text-transform:uppercase}
+
+.btn{border:0;border-radius:11px;padding:13px 12px;font-family:'Satoshi',sans-serif;font-size:14px;font-weight:600;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;cursor:pointer;width:100%;
+  transition:transform .1s,filter .15s}
+.btn:active{transform:scale(.975)}
+.btn.gh{background:transparent;border:1px solid var(--line2);color:var(--dim)}
+.btn.sm{padding:9px 11px;font-size:12.5px;border-radius:9px}
+.row2{display:grid;grid-template-columns:1fr auto;gap:7px}
+
+/* ============ SCHEDULE ============ */
+h2.sec{font-size:9px;font-family:'Geist Mono',monospace;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--faint);margin:22px 0 8px;font-weight:700;display:flex;justify-content:space-between;align-items:baseline}
+h2.sec u{text-decoration:none;color:var(--ghost-txt);letter-spacing:.1em}
+
+.arc{margin-bottom:14px}
+.arc-h{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:#3f3a4d;
+  text-transform:uppercase;padding:0 2px 6px;display:flex;justify-content:space-between}
+.blk{display:grid;grid-template-columns:40px 1fr 18px;gap:10px;align-items:start;padding:9px 11px;
+  border-radius:11px;background:var(--panel);border:1px solid var(--line);margin-bottom:5px;
+  cursor:pointer;position:relative;overflow:hidden;transition:border-color .15s,background .15s}
+.blk:active{background:var(--panel2)}
+.blk.deep{padding:13px 11px}
+.blk.past{opacity:.5}
+.blk.done{border-color:rgba(74,222,128,.2)}
+.blk.now{border-color:rgba(224,178,94,.5);background:rgba(224,178,94,.07);
+  box-shadow:0 0 0 1px rgba(224,178,94,.13)}
+.blk.miss{border-color:rgba(255,77,94,.3);background:rgba(255,77,94,.05)}
+.blk .bt{font-family:'Geist Mono',monospace;font-size:10px;color:var(--faint);letter-spacing:-.02em;padding-top:1px}
+.blk.now .bt{color:var(--gold)}
+.blk .bn{font-size:13.5px;font-weight:500;letter-spacing:-.01em;line-height:1.25}
+.blk.done .bn{color:#5f6a62}
+.blk .bo{font-size:11.5px;color:var(--faint);margin-top:3px;line-height:1.35;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.blk .bo.empty{color:rgba(255,77,94,.75);font-style:italic}
+.blk .bd{font-family:'Geist Mono',monospace;font-size:8px;color:#3f3a4d;letter-spacing:.1em;margin-top:4px}
+.blk .bc{width:17px;height:17px;border-radius:5px;border:1.5px solid #2a2438;justify-self:end;margin-top:1px;flex:none}
+.blk.done .bc{background:var(--phos);border-color:var(--phos)}
+.blk.miss .bc{border-color:rgba(255,77,94,.55);background:rgba(255,77,94,.14)}
+.blk.now .bc{border-color:var(--gold)}
+.blk .dom{position:absolute;left:0;top:0;bottom:0;width:2.5px}
+
+/* week score */
+.wkscore{margin-top:18px;border-radius:14px;border:1px solid var(--line);background:var(--panel);padding:13px 14px}
+.ws-h{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:9px}
+.ws-h b{font-family:'Clash Display',sans-serif;font-size:24px;letter-spacing:-.035em;line-height:1}
+.ws-h span{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.15em;color:var(--faint)}
+.ws-t{height:7px;border-radius:99px;background:#191527;position:relative;overflow:visible}
+.ws-t i{position:absolute;left:0;top:0;bottom:0;border-radius:99px}
+.ws-t u{position:absolute;top:-4px;bottom:-4px;left:85%;width:2px;background:var(--ghost);opacity:.75}
+.ws-l{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7.5px;
+  color:var(--faint);letter-spacing:.11em;margin-top:7px}
+.ws-note{margin-top:9px;font-size:12px;color:var(--dim);line-height:1.45}
+.ws-note b{color:var(--gold);font-weight:500}
+
+/* ============ SHEETS / OVERLAYS ============ */
+.ov{position:fixed;inset:0;z-index:200;background:rgba(4,3,7,.82);backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);display:none;align-items:flex-end;justify-content:center}
+.ov.on{display:flex}
+.sheet{width:100%;max-width:480px;background:#0c0a13;border:1px solid var(--line2);
+  border-radius:22px 22px 0 0;padding:8px 16px calc(22px + var(--safe-b));max-height:92vh;overflow-y:auto}
+.grab{width:34px;height:4px;border-radius:99px;background:var(--line2);margin:0 auto 15px}
+.sh-k{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase}
+.sh-t{font-family:'Clash Display',sans-serif;font-size:23px;letter-spacing:-.03em;margin:6px 0 3px;line-height:1.12}
+.sh-sub{font-family:'Geist Mono',monospace;font-size:9.5px;color:var(--faint);letter-spacing:.06em;margin-bottom:15px}
+.fld{margin-bottom:14px}
+.fld label{display:block;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.18em;
+  color:var(--faint);text-transform:uppercase;margin-bottom:6px}
+.fld .val{font-size:14.5px;color:var(--ink);line-height:1.45}
+.fld .val.empty{color:rgba(255,77,94,.8);font-style:italic}
+.fld .val.sub{color:var(--dim);font-size:13px}
+input[type=text],textarea,select{width:100%;background:var(--panel2);border:1px solid var(--line2);color:var(--ink);
+  border-radius:10px;padding:11px 12px;font-family:'Satoshi',sans-serif;font-size:14.5px;
+  appearance:none;-webkit-appearance:none;resize:none}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold)}
+.chain{border-left:2px solid var(--line2);padding-left:12px;margin:14px 0}
+.chain div{margin-bottom:9px}
+.chain div:last-child{margin-bottom:0}
+.chain .cl{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.17em;color:var(--faint);text-transform:uppercase}
+.chain .cv{font-size:13px;color:var(--dim);margin-top:2px;line-height:1.4}
+.chain .cv b{color:var(--ink);font-weight:500}
+
+/* ============ FOCUS RUN — FULLSCREEN ============ */
+.run{position:fixed;inset:0;z-index:280;background:#05070a;display:none;flex-direction:column;
+  align-items:center;justify-content:center;padding:26px;text-align:center}
+.run.on{display:flex}
+.run-k{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.26em;color:var(--rune);
+  text-transform:uppercase;margin-bottom:22px}
+.ring{width:min(70vw,270px);height:min(70vw,270px);position:relative;display:grid;place-items:center;margin-bottom:20px}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:4}
+.ring .bgc{stroke:#12161c}
+.ring .fgc{stroke:var(--rune);stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+.run-time{font-family:'Geist Mono',monospace;font-size:min(17vw,62px);font-weight:700;letter-spacing:-.05em;line-height:1}
+.run-task{font-size:15px;font-weight:600;margin-top:6px;padding:0 12px}
+.run-obj{font-size:12.5px;color:var(--dim);margin-top:5px;max-width:300px;line-height:1.4}
+.run-mult{font-family:'Geist Mono',monospace;font-size:11px;color:var(--phos);font-weight:700;
+  letter-spacing:.1em;margin:20px 0 6px}
+.run-warn{font-size:12.5px;color:var(--faint);max-width:290px;margin:0 auto 24px;line-height:1.5}
+.run.broke .fgc{stroke:var(--blood)} .run.broke .run-mult{color:var(--blood)}
+.run.paused .fgc{stroke:var(--gold)} .run.paused .run-mult{color:var(--gold)}
+.run-acts{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;max-width:340px}
+
+/* ============ SUNDAY ============ */
+.sabbath{position:fixed;inset:0;z-index:250;background:#06070a;display:none;
+  flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px}
+.sabbath.on{display:flex}
+.cross{width:112px;height:150px;position:relative;margin-bottom:34px;opacity:.92}
+.cross i{position:absolute;background:linear-gradient(180deg,#3a4358,#212838);border-radius:3px}
+.cross i:first-child{left:47px;top:0;width:18px;height:150px}
+.cross i:last-child{left:0;top:40px;width:112px;height:18px}
+.sabbath h1{font-family:'Clash Display',sans-serif;font-size:36px;letter-spacing:.14em;color:#7f8ba6;margin-bottom:12px}
+.sabbath p{font-size:14.5px;color:#4e5670;max-width:300px;line-height:1.55;margin:0 0 6px}
+.sabbath .rd{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.18em;color:#394054;margin-top:26px}
+.sabbath button{margin-top:26px;background:transparent;border:1px solid #2a3040;color:#5e6880;
+  border-radius:10px;padding:11px 20px;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;cursor:pointer}
+
+/* ============ CHARACTER (fullscreen) ============ */
+.charv{position:fixed;inset:0;z-index:240;background:var(--bg);display:none;overflow-y:auto;
+  padding:14px 14px calc(30px + var(--safe-b))}
+.charv.on{display:block}
+body[data-veil="him"] .charv{background:var(--ghost-bg)}
+.cv-top{display:flex;align-items:center;margin-bottom:14px}
+.cv-close{background:none;border:0;color:var(--faint);font-size:22px;cursor:pointer;padding:4px 8px;line-height:1}
+.only-you{transition:opacity .07s}
+.only-him{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .07s}
+body[data-veil="him"] .only-you{opacity:0}
+body[data-veil="him"] .only-him{opacity:1}
+.hero{position:relative;background:radial-gradient(120% 100% at 50% 0%,#191428,#0d0b14 62%,#0a0810);
+  border:1px solid var(--line2);border-radius:20px;padding:15px 14px;overflow:hidden;transition:.18s}
+body[data-veil="him"] .hero{background:radial-gradient(120% 100% at 50% 0%,#0f1c31,#080e1a 62%,#060a12);border-color:#22385a}
+.who{position:relative;text-align:center;min-height:54px;margin-bottom:4px}
+.ovr{font-family:'Clash Display',sans-serif;font-size:52px;line-height:.82;letter-spacing:-.05em;color:var(--gold)}
+.only-him .ovr{color:var(--ghost);text-shadow:0 0 24px rgba(143,180,232,.5)}
+.nm{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.22em;color:#8c7346;margin-top:6px}
+.only-him .nm{color:var(--ghost-d)}
+.radarwrap{position:relative;height:250px;margin:2px 0}
+.radarwrap svg{position:absolute;inset:0;margin:auto}
+.srow{display:grid;grid-template-columns:56px 1fr 28px 38px;gap:8px;align-items:center;padding:6px 0;
+  border-bottom:1px solid rgba(255,255,255,.045);cursor:pointer}
+.srow:last-child{border-bottom:0}
+.srow .n{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.11em;color:#6c6380}
+body[data-veil="him"] .srow .n{color:#4d6a90}
+.srow .t{height:6px;border-radius:99px;background:#191527;overflow:hidden;position:relative}
+.srow .t i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;transition:width .16s}
+.srow .v{font-family:'Geist Mono',monospace;font-size:11px;text-align:right;font-weight:600}
+.srow .d{font-family:'Geist Mono',monospace;font-size:9px;text-align:right;color:var(--blood);
+  font-weight:600;opacity:0;transition:opacity .1s}
+body[data-veil="him"] .srow .d{opacity:1}
+body[data-veil="him"] .srow .v{color:var(--ghost)}
+.goalchips{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:14px;padding-top:13px;
+  border-top:1px solid rgba(255,255,255,.06)}
+.gchip{border:1px solid var(--line2);border-radius:9px;padding:8px 7px;text-align:center;background:#0f0d18;cursor:pointer}
+.gchip .gl{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;color:#5b5270;margin-bottom:4px}
+.gchip .gp{font-family:'Geist Mono',monospace;font-size:13px;font-weight:700;letter-spacing:-.02em}
+.gchip .gb{height:2.5px;border-radius:99px;background:#1d1a29;margin-top:5px;overflow:hidden}
+.gchip .gb i{display:block;height:100%;border-radius:99px}
+.scan{position:fixed;left:0;right:0;height:170px;z-index:245;pointer-events:none;opacity:0;
+  background:linear-gradient(180deg,transparent,rgba(207,226,255,.12) 45%,transparent);
+  border-top:1px solid rgba(207,226,255,.3)}
+body[data-veil="tear"] .scan,body[data-veil="collapse"] .scan{opacity:1;animation:sweep .42s linear}
+@keyframes sweep{from{transform:translateY(-180px)}to{transform:translateY(105vh)}}
+.pierce{margin-top:14px;display:flex;align-items:center;gap:9px;padding:11px 13px;border-radius:12px;
+  background:var(--panel);border:1px solid var(--line)}
+.pierce .lab{flex:1;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.13em;color:var(--faint);line-height:1.6}
+.hold{border:1px solid var(--line2);background:var(--panel2);color:var(--dim);border-radius:9px;padding:9px 13px;
+  font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.13em;cursor:pointer;touch-action:none}
+.hold.on{border-color:var(--ghost);color:var(--ghost);background:rgba(143,180,232,.1)}
+.foot{text-align:center;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.15em;
+  color:#332f3f;margin-top:20px;line-height:1.9}
+</style>
+</head>
+<body data-veil="you">
+
+<div class="scan"></div>
+
+<div class="app" id="app">
+
+  <!-- ===== STATUS BAR ===== -->
+  <div class="status" id="statusBar">
+    <div class="st-ovr"><b id="stOvr">74</b><span>OVR</span></div>
+    <div class="st-mid">
+      <div class="st-fuel"><i id="stFuel" style="width:62%"></i></div>
+      <div class="st-lab"><span id="stDays">57 WEEKDAYS LEFT</span><span id="stWkN">WK 07</span></div>
+    </div>
+    <div class="st-wk"><b id="stExec">83%</b><span>EXECUTION</span></div>
+    <div class="st-chev">▸</div>
+  </div>
+
+  <!-- ===== DAY RAIL ===== -->
+  <div class="rail-wrap">
+    <div class="rail" id="rail"><div class="now" id="railNow"></div></div>
+    <div class="rail-l"><span id="railS">06:00</span><span id="railE">21:45</span></div>
+    <div class="timeleft">
+      <b id="tlBig">3h 45m</b><span>OF DEEP WORK LEFT</span>
+      <span class="dow" id="tlDow">MON</span>
+    </div>
+  </div>
+
+  <!-- ===== NEXT UP ===== -->
+  <div class="nextup" id="nextUp"></div>
+
+  <!-- ===== SCHEDULE ===== -->
+  <h2 class="sec">Today <u id="schCount"></u></h2>
+  <div id="sched"></div>
+
+  <!-- ===== WEEK SCORE ===== -->
+  <div class="wkscore">
+    <div class="ws-h"><b id="wsPct">83%</b><span id="wsFrac">10 / 12 TACTICS</span></div>
+    <div class="ws-t"><i id="wsBar" style="width:83%"></i><u></u></div>
+    <div class="ws-l"><span>WEEKLY EXECUTION</span><span>85% = ROUND WON</span></div>
+    <div class="ws-note" id="wsNote"></div>
+  </div>
+
+  <div class="foot">BURN THE BOATS · <span id="ftDay"></span><br>WHAT IS THE MILLIONAIRE VERSION OF YOURSELF DOING RIGHT NOW?</div>
+</div>
+
+<!-- ===== BLOCK DETAIL SHEET ===== -->
+<div class="ov" id="blkOv"><div class="sheet" id="blkSheet"></div></div>
+
+<!-- ===== GOALS SHEET ===== -->
+<div class="ov" id="goalOv"><div class="sheet" id="goalSheet"></div></div>
+
+<!-- ===== FOCUS RUN (fullscreen) ===== -->
+<div class="run" id="run">
+  <div class="run-k" id="runK">Focus run · device down</div>
+  <div class="ring">
+    <svg viewBox="0 0 200 200"><circle class="bgc" cx="100" cy="100" r="94"/><circle class="fgc" id="runRing" cx="100" cy="100" r="94"/></svg>
+    <div>
+      <div class="run-time mono" id="runTime">75:00</div>
+      <div class="run-task" id="runTask"></div>
+      <div class="run-obj" id="runObj"></div>
+    </div>
+  </div>
+  <div class="run-mult mono" id="runMult">UNBROKEN · +40 XP ON FINISH</div>
+  <p class="run-warn" id="runWarn">Leave this screen and the run breaks. That is the point.</p>
+  <div class="run-acts">
+    <button class="btn gh" id="runStep">Step away · 2</button>
+    <button class="btn gh" id="runEnd">End run</button>
+  </div>
+</div>
+
+<!-- ===== SUNDAY ===== -->
+<div class="sabbath" id="sabbath">
+  <div class="cross"><i></i><i></i></div>
+  <h1>SABBATH</h1>
+  <p>Closed. No blocks, no scoring, nothing to win today.</p>
+  <p style="color:#3d4458">Six days you burn the boats. The seventh you don't.</p>
+  <div class="rd" id="sabRead"></div>
+  <button id="sabLook">LOOK BACK AT THE WEEK</button>
+</div>
+
+<!-- ===== CHARACTER (fullscreen) ===== -->
+<div class="charv" id="charv">
+  <div class="cv-top"><button class="cv-close" id="cvClose">✕</button></div>
+  <div class="hero">
+    <div class="who">
+      <div class="only-you"><div class="ovr" id="cvOvr">74</div><div class="nm">JASPER · GOLD</div></div>
+      <div class="only-him"><div class="ovr">99</div><div class="nm">THE MILLIONAIRE VERSION</div></div>
+    </div>
+    <div class="radarwrap"><svg id="radar" width="252" height="250" viewBox="0 0 252 250"></svg></div>
+    <div id="cvStats"></div>
+    <div class="goalchips" id="cvGoals"></div>
+  </div>
+  <div class="pierce">
+    <div class="lab">PIERCE THE VEIL<br>hold to see him</div>
+    <button class="hold" id="holdBtn">HOLD</button>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   BURN THE BOATS
+   Goal engine: December (lag) → Month (lag) → Week (lead, scored) → Day (execution)
+   Borrowed: 4DX lead/lag + scoreboard test · 12 Week Year execution score (85% = won week)
+   ================================================================ */
+
+const RUN_END='2026-12-01';
+const HIM=99;
+
+/* ---------- domains: goal-bearing, not virtues ---------- */
+const DOMAINS=[
+  {k:'WORK',   label:'THE WORK', c:'#E0B25E'},
+  {k:'CAPITAL',label:'CAPITAL',  c:'#7FB4FF'},
+  {k:'BODY',   label:'BODY',     c:'#FF6B2C'},
+  {k:'FAITH',  label:'FAITH',    c:'#B08CFF'},
+  {k:'MIND',   label:'MIND',     c:'#38E1D8'},
+  {k:'PEOPLE', label:'PEOPLE',   c:'#4ADE80'},
+];
+
+/* ---------- default state (the goal cascade) ---------- */
+const DEFAULT={
+  v:2, xp:0, hp:100,
+  wig:'3 SANO clients signed by December 1',
+  december:{
+    WORK:   {lag:'3 SANO clients signed',      lead:'12 outreach conversations/wk', target:3, at:1},
+    CAPITAL:{lag:'Account at target',          lead:'Rules followed on every trade', target:100, at:57},
+    BODY:   {lag:'Back to fighting weight',    lead:'4 sessions/wk',                 target:100, at:44},
+    FAITH:  {lag:'Read through the New Testament', lead:'Bible + prayer daily',      target:100, at:68},
+    MIND:   {lag:'6 books, and I can build',   lead:'Reading block 3x/wk',           target:100, at:62},
+    PEOPLE: {lag:'Nobody feels like an afterthought', lead:'Date night + call home weekly', target:100, at:71},
+  },
+  months:{ '2026-08':'SANO: first paying client', '2026-09':'SANO: 2 clients, repeatable pitch',
+           '2026-10':'SANO: 3rd client + Spanish partner', '2026-11':'Hold 3, build the machine' },
+  week:{ /* keyed by monday iso */ },
+  days:{},
+};
+let S=load();
+
+/* ---------- the day shapes ---------- */
+const WEEKDAY=[
+  {id:'wake', s:'06:00',e:'06:30',n:'Wake · pre-market',dom:['BODY'],kind:'ritual'},
+  {id:'open', s:'06:30',e:'07:15',n:'Market open',sub:'Trade on phone while getting ready',dom:['CAPITAL'],kind:'market'},
+  {id:'prio', s:'07:45',e:'08:05',n:"Write today's 3 priorities",dom:['MIND'],kind:'ritual',writes:true},
+  {id:'b1',   s:'08:15',e:'09:45',n:'Block 1',dom:['WORK'],kind:'deep',focus:90},
+  {id:'b2',   s:'10:00',e:'11:15',n:'Block 2',dom:['WORK'],kind:'deep',focus:75},
+  {id:'body', s:'11:15',e:'12:45',n:'Workout · shower · lunch',dom:['BODY'],kind:'body'},
+  {id:'close',s:'12:45',e:'13:05',n:'Market close · log trades',dom:['CAPITAL'],kind:'market'},
+  {id:'b3',   s:'13:05',e:'14:20',n:'Block 3',dom:['WORK'],kind:'deep',focus:75},
+  {id:'walk', s:'14:20',e:'14:50',n:'Trail walk with the dog',dom:['BODY','MIND'],kind:'body'},
+  {id:'b4',   s:'14:50',e:'16:05',n:'Block 4',dom:['WORK'],kind:'deep',focus:75},
+  {id:'life', s:'16:45',e:'21:00',n:'Personal life',dom:['PEOPLE'],kind:'life'},
+  {id:'reset',s:'21:00',e:'21:30',n:'Clean · prep tomorrow · phone away',dom:['MIND'],kind:'ritual'},
+  {id:'bible',s:'21:30',e:'21:45',n:'Bible study · prayer',dom:['FAITH'],kind:'ritual'},
+];
+const SATURDAY=[
+  {id:'wake', s:'08:00',e:'08:45',n:'Slow start',dom:['BODY'],kind:'ritual'},
+  {id:'body', s:'09:00',e:'10:30',n:'Workout',dom:['BODY'],kind:'body'},
+  {id:'b1',   s:'11:00',e:'12:15',n:'Block 1',sub:'The one that matters',dom:['WORK'],kind:'deep',focus:75},
+  {id:'mon',  s:'12:30',e:'13:15',n:'Set Monday up',sub:'Next week ready before you rest',dom:['MIND'],kind:'ritual'},
+  {id:'life', s:'13:15',e:'21:30',n:'Yours',dom:['PEOPLE'],kind:'life'},
+  {id:'bible',s:'21:30',e:'21:45',n:'Bible study · prayer',dom:['FAITH'],kind:'ritual'},
+];
+
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const mins=t=>{const[h,m]=t.split(':').map(Number);return h*60+m};
+const nowMin=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()};
+const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const today=()=>iso(new Date());
+const dow=()=>new Date().getDay();           // 0 Sun .. 6 Sat
+function mondayOf(d){const x=new Date(d);const w=(x.getDay()+6)%7;x.setDate(x.getDate()-w);return iso(x)}
+function shape(){const d=dow();return d===0?[]:d===6?SATURDAY:WEEKDAY}
+function weekdaysLeft(){
+  const b=new Date(RUN_END+'T00:00:00');let n=0;const c=new Date();c.setHours(0,0,0,0);
+  while(c<b){const g=c.getDay();if(g>0&&g<6)n++;c.setDate(c.getDate()+1)}return n;
+}
+function load(){try{const r=localStorage.getItem('btb2');if(r){const p=JSON.parse(r);return Object.assign(JSON.parse(JSON.stringify(DEFAULT)),p)}}catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT))}
+function save(){try{localStorage.setItem('btb2',JSON.stringify(S))}catch(e){}}
+function day(k){k=k||today();if(!S.days[k])S.days[k]={done:{},miss:{},produced:{},focus:{},prio:[]};return S.days[k]}
+function week(k){k=k||mondayOf(new Date());
+  if(!S.week[k])S.week[k]={theme:{b1:'SANO',b2:'SANO',b3:'Fruits',b4:'Admin'},tactics:{},due:0,done:0};
+  return S.week[k]}
+
+/* ---------- the cascade: what is this block FOR ---------- */
+function tacticFor(b){
+  const w=week(), d=day();
+  if(b.kind!=='deep') return null;
+  // priority order: today's written priorities → this week's tactic for that slot
+  const idx={b1:0,b2:1,b3:2,b4:3}[b.id];
+  if(d.prio && d.prio[idx]) return {text:d.prio[idx], src:'today'};
+  if(w.tactics && w.tactics[b.id]) return {text:w.tactics[b.id], src:'week'};
+  return null;
+}
+function bizFor(b){const w=week();return (b.kind==='deep'&&w.theme[b.id])||null}
+
+/* ---------- render ---------- */
+function currentIdx(){const S2=shape(),m=nowMin();
+  for(let i=0;i<S2.length;i++) if(m>=mins(S2[i].s)&&m<mins(S2[i].e)) return i; return -1}
+function nextIdx(){const S2=shape(),m=nowMin();
+  for(let i=0;i<S2.length;i++) if(mins(S2[i].s)>m) return i; return -1}
+
+function render(){
+  if(dow()===0){ $('sabbath').classList.add('on'); renderSabbath(); return; }
+  $('sabbath').classList.remove('on');
+  renderStatus(); renderRail(); renderNext(); renderSched(); renderWeek(); renderChar();
+  $('ftDay').textContent=`DAY ${91-weekdaysLeft()+1} / 91`;
+}
+
+function renderStatus(){
+  const stats=domainStats();
+  const ovr=Math.round(DOMAINS.reduce((a,d)=>a+stats[d.k],0)/DOMAINS.length);
+  $('stOvr').textContent=ovr; $('cvOvr').textContent=ovr;
+  const wl=weekdaysLeft();
+  $('stDays').textContent=`${wl} WEEKDAYS LEFT`;
+  $('stFuel').style.width=(wl/91*100)+'%';
+  const w=week(); const pct=w.due?Math.round(w.done/w.due*100):0;
+  $('stExec').textContent=pct+'%';
+  $('stExec').style.color = pct>=85?'var(--phos)':pct>=70?'var(--gold)':'var(--blood)';
+  const wn=Math.ceil((new Date()-new Date('2026-07-27T00:00:00'))/6048e5)+1;
+  $('stWkN').textContent='WK '+pad(Math.max(1,wn));
+}
+
+function renderRail(){
+  const S2=shape(); if(!S2.length) return;
+  const rail=$('rail'); const s0=mins(S2[0].s), e0=mins(S2[S2.length-1].e), span=e0-s0;
+  [...rail.querySelectorAll('i')].forEach(x=>x.remove());
+  const d=day();
+  S2.forEach(b=>{
+    const seg=document.createElement('i');
+    const w=(mins(b.e)-mins(b.s))/span*100;
+    seg.style.width=w+'%';
+    const dm=DOMAINS.find(x=>x.k===b.dom[0]);
+    const done=d.done[b.id], past=nowMin()>=mins(b.e);
+    seg.style.background = done?dm.c : past?'#241f30' : b.kind==='deep'?'rgba(224,178,94,.3)':'#1c1828';
+    seg.style.opacity = done?'.9':'1';
+    rail.insertBefore(seg,$('railNow'));
+  });
+  const p=Math.max(0,Math.min(100,(nowMin()-s0)/span*100));
+  $('railNow').style.left=p+'%';
+  $('railS').textContent=S2[0].s; $('railE').textContent=S2[S2.length-1].e;
+  // deep work minutes remaining today
+  const left=S2.filter(b=>b.kind==='deep'&&!d.done[b.id]&&mins(b.e)>nowMin())
+    .reduce((a,b)=>a+(mins(b.e)-Math.max(mins(b.s),nowMin())),0);
+  $('tlBig').textContent = left>0 ? `${Math.floor(left/60)}h ${left%60}m` : 'Done';
+  $('tlDow').textContent=['SUN','MON','TUE','WED','THU','FRI','SAT'][dow()]+(dow()===6?' · LIGHT DAY':'');
+}
+
+function renderNext(){
+  const S2=shape(); const ci=currentIdx(), ni=nextIdx();
+  const i = ci>=0?ci:ni; const el=$('nextUp');
+  if(i<0){ el.innerHTML=`<div class="nu-k"><span>Day complete</span></div>
+    <div class="nu-t">Nothing left on the board</div>
+    <div class="nu-obj">Close out when you're ready.</div>`; el.classList.remove('live'); return; }
+  const b=S2[i], t=tacticFor(b), biz=bizFor(b), live=(ci>=0);
+  el.classList.toggle('live',live);
+  const dur=mins(b.e)-mins(b.s);
+  el.innerHTML=`
+    <div class="nu-k">${live?'<i></i>':''}<span>${live?'Now':'Next up'}</span><u>${b.s}–${b.e} · ${dur}m</u></div>
+    <div class="nu-t">${b.n}${biz?' · '+biz:''}</div>
+    <div class="nu-obj ${t?'':'empty'}">${t?t.text:(b.kind==='deep'?'No objective set — write it at 07:45':(b.sub||''))}</div>
+    <div class="nu-chips">${b.dom.map(k=>{const d=DOMAINS.find(x=>x.k===k);
+      return `<span class="chip" style="border-color:${d.c}44;color:${d.c}">${d.label}</span>`}).join('')}</div>
+    ${b.focus?`<div class="row2"><button class="btn" onclick="startRun('${b.id}')">Start focus run · ${b.focus}m</button>
+      <button class="btn gh sm" onclick="openBlk('${b.id}')">Detail</button></div>`
+      :`<button class="btn gh" onclick="openBlk('${b.id}')">Open</button>`}`;
+}
+
+const ARCS=[['Morning',0,3],['Deep work',3,5],['Midday',5,8],['Afternoon',8,10],['Evening',10,99]];
+function renderSched(){
+  const S2=shape(), d=day(), ci=currentIdx(), host=$('sched');
+  host.innerHTML='';
+  let done=0,total=0;
+  const groups = dow()===6 ? [['Saturday',0,99]] : ARCS;
+  groups.forEach(([name,a,z])=>{
+    const items=S2.slice(a,z); if(!items.length) return;
+    const arc=document.createElement('div'); arc.className='arc';
+    const mm=items.reduce((x,b)=>x+(mins(b.e)-mins(b.s)),0);
+    arc.innerHTML=`<div class="arc-h"><span>${name}</span><span>${Math.round(mm/60*10)/10}h</span></div>`;
+    items.forEach(b=>{
+      const i=S2.indexOf(b);
+      const isDone=d.done[b.id], isMiss=d.miss[b.id], isNow=i===ci, past=nowMin()>=mins(b.e);
+      total++; if(isDone) done++;
+      const t=tacticFor(b), biz=bizFor(b), dur=mins(b.e)-mins(b.s);
+      const dm=DOMAINS.find(x=>x.k===b.dom[0]);
+      const el=document.createElement('div');
+      el.className='blk'+(b.kind==='deep'?' deep':'')+(isDone?' done':'')+(isMiss?' miss':'')+(isNow?' now':'')+(past&&!isDone&&!isNow?' past':'');
+      el.onclick=()=>openBlk(b.id);
+      el.innerHTML=`<span class="dom" style="background:${dm.c};opacity:${isDone?.8:.35}"></span>
+        <span class="bt">${b.s}</span>
+        <div><div class="bn">${b.n}${biz?' · '+biz:''}</div>
+        ${b.kind==='deep'?`<div class="bo ${t?'':'empty'}">${t?t.text:'no objective set'}</div>`
+          :(b.sub?`<div class="bo">${b.sub}</div>`:'')}
+        <div class="bd">${dur}m · ${b.dom.join(' + ')}</div></div>
+        <span class="bc"></span>`;
+      arc.appendChild(el);
+    });
+    host.appendChild(arc);
+  });
+  $('schCount').textContent=`${done} of ${total}`;
+}
+
+function renderWeek(){
+  const w=week(); const pct=w.due?Math.round(w.done/w.due*100):0;
+  $('wsPct').textContent=pct+'%';
+  $('wsPct').style.color = pct>=85?'var(--phos)':pct>=70?'var(--gold)':'var(--blood)';
+  $('wsFrac').textContent=`${w.done} / ${w.due} TACTICS`;
+  const bar=$('wsBar'); bar.style.width=Math.min(100,pct)+'%';
+  bar.style.background = pct>=85?'var(--phos)':pct>=70?'var(--gold)':'var(--blood)';
+  $('wsNote').innerHTML = pct>=85
+    ? `<b>Round won.</b> He executes at 100% — you only need 85% to take the week.`
+    : `You need <b>${Math.max(0,Math.ceil(w.due*0.85)-w.done)} more</b> to take this round. 85% wins it.`;
+}
+
+function renderSabbath(){
+  const w=week(mondayOf(new Date(Date.now()-864e5)));
+  const pct=w.due?Math.round(w.done/w.due*100):0;
+  $('sabRead').textContent=`LAST WEEK · ${pct}% EXECUTION · ${pct>=85?'ROUND WON':'ROUND LOST'}`;
+}
+$('sabLook').onclick=()=>{$('sabbath').classList.remove('on')};
+
+/* ---------- domain stats ----------
+   Normalised to 0-100. WORK stores a real client COUNT (1 of 3), not a percentage —
+   averaging the raw count against 0-100 stats dragged the OVR down to 51. */
+function domainStats(){
+  const out={};
+  DOMAINS.forEach(d=>{
+    const g=S.december[d.k];
+    if(!g){ out[d.k]=50; return; }
+    const t=g.target||100;
+    out[d.k]=Math.max(0,Math.min(100,Math.round((g.at/t)*100)));
+  });
+  return out;
+}
+
+/* ---------- block detail sheet: the cascade made visible ---------- */
+function openBlk(id){
+  const b=shape().find(x=>x.id===id); if(!b) return;
+  const d=day(), t=tacticFor(b), biz=bizFor(b);
+  const dm=b.dom.map(k=>DOMAINS.find(x=>x.k===k));
+  const decGoal=S.december[b.dom[0]];
+  const dur=mins(b.e)-mins(b.s);
+  $('blkSheet').innerHTML=`
+    <div class="grab"></div>
+    <div class="sh-k">${b.s} – ${b.e} · ${dur} MIN</div>
+    <div class="sh-t">${b.n}${biz?' · '+biz:''}</div>
+    <div class="sh-sub">${dm.map(x=>x.label).join('  +  ')}</div>
+
+    <div class="fld"><label>What this block is for</label>
+      ${b.kind==='deep'
+        ? `<textarea id="objIn" rows="2" placeholder="The one thing this 75 minutes produces">${t?t.text:''}</textarea>`
+        : `<div class="val sub">${b.sub||b.n}</div>`}</div>
+
+    <div class="chain">
+      <div><div class="cl">Serves — December</div><div class="cv"><b>${decGoal?decGoal.lag:'—'}</b></div></div>
+      <div><div class="cl">Lead measure — weekly</div><div class="cv">${decGoal?decGoal.lead:'—'}</div></div>
+      <div><div class="cl">Builds on</div><div class="cv">${lastProduced(b.id)||'<span style="color:#4a4553">nothing logged yet</span>'}</div></div>
+    </div>
+
+    <div class="fld"><label>What did you produce?</label>
+      <input type="text" id="prodIn" placeholder="Logged at the end of the block" value="${(d.produced[b.id]||'').replace(/"/g,'&quot;')}"></div>
+
+    <div class="row2" style="margin-top:16px">
+      ${b.focus?`<button class="btn" onclick="closeBlk();startRun('${b.id}')">Start focus run</button>`
+                :`<button class="btn" onclick="markDone('${b.id}')">Mark complete</button>`}
+      <button class="btn gh sm" onclick="markMiss('${b.id}')">Missed</button>
+    </div>`;
+  $('blkOv').classList.add('on');
+  const oi=$('objIn'); if(oi) oi.onchange=()=>{ setTactic(b.id,oi.value); render(); };
+  const pi=$('prodIn'); if(pi) pi.onchange=()=>{ day().produced[b.id]=pi.value; save(); };
+}
+function closeBlk(){ $('blkOv').classList.remove('on'); }
+$('blkOv').onclick=e=>{ if(e.target.id==='blkOv') closeBlk(); };
+
+function setTactic(id,txt){
+  const idx={b1:0,b2:1,b3:2,b4:3}[id];
+  if(idx!==undefined){ const d=day(); d.prio=d.prio||[]; d.prio[idx]=txt; }
+  const w=week(); w.tactics[id]=txt; recount(); save();
+}
+function lastProduced(id){
+  const ks=Object.keys(S.days).sort().reverse();
+  for(const k of ks){ if(k===today()) continue; const p=S.days[k].produced?.[id]; if(p) return p; }
+  return null;
+}
+function markDone(id){ const d=day(); d.done[id]=true; delete d.miss[id]; recount(); save(); closeBlk(); render(); }
+function markMiss(id){ const d=day(); d.miss[id]=true; delete d.done[id]; recount(); save(); closeBlk(); render(); }
+
+/* Weekly execution score = tactics completed / tactics DUE (12 Week Year).
+   "Due" means elapsed — a block that hasn't happened yet cannot be owed.
+   Counting the whole week up front renders Monday morning as 5% and reads as failure. */
+/* Everything except unstructured personal time is a tactic — including the market blocks.
+   Trading the open and logging the close are behaviours he controls, and they are the only
+   input CAPITAL has; excluding them left that domain unmeasurable. */
+const SCORED = b => b.kind!=='life';
+function recount(){
+  const w=week(), mon=mondayOf(new Date()), tk=today(), nm=nowMin();
+  let due=0,done=0;
+  for(let i=0;i<6;i++){
+    const dt=new Date(mon+'T00:00:00'); dt.setDate(dt.getDate()+i);
+    const k=iso(dt);
+    if(k>tk) continue;                                   // the future owes you nothing
+    const sh=dt.getDay()===6?SATURDAY:WEEKDAY, rec=S.days[k];
+    sh.filter(SCORED).forEach(b=>{
+      if(k===tk && mins(b.e)>nm) return;                 // today: only what has already passed
+      due++; if(rec&&rec.done[b.id]) done++;
+    });
+  }
+  w.due=due; w.done=done;
+}
+
+/* ---------- FULLSCREEN FOCUS RUN + phone pass ---------- */
+let run=null, passes=2;
+function startRun(id){
+  const b=shape().find(x=>x.id===id); if(!b||!b.focus) return;
+  const t=tacticFor(b);
+  run={b, left:b.focus*60, total:b.focus*60, broken:false, paused:false, pauseLeft:0, t:null};
+  $('run').className='run on';
+  $('runTask').textContent=b.n+(bizFor(b)?' · '+bizFor(b):'');
+  $('runObj').textContent=t?t.text:'';
+  $('runStep').textContent=`Step away · ${passes}`;
+  $('runMult').textContent='UNBROKEN · +40 XP ON FINISH';
+  $('runWarn').textContent='Leave this screen and the run breaks. That is the point.';
+  tick(); run.t=setInterval(tick,1000);
+  if(navigator.wakeLock) navigator.wakeLock.request('screen').then(l=>run.lock=l).catch(()=>{});
+}
+function tick(){
+  if(!run) return;
+  if(run.paused){
+    run.pauseLeft--;
+    $('runTime').textContent=`${pad(Math.floor(run.pauseLeft/60))}:${pad(run.pauseLeft%60)}`;
+    $('runMult').textContent='PAUSED · GET BACK';
+    if(run.pauseLeft<=0){ run.paused=false; breakRun('You didn\'t come back in time.'); }
+    return;
+  }
+  $('runTime').textContent=`${pad(Math.floor(run.left/60))}:${pad(run.left%60)}`;
+  const C=2*Math.PI*94, r=$('runRing');
+  r.style.strokeDasharray=C; r.style.strokeDashoffset=C*(1-run.left/run.total);
+  if(run.left<=0) return finishRun();
+  run.left--;
+}
+function breakRun(msg){
+  if(!run||run.broken) return;
+  run.broken=true; $('run').classList.add('broke'); $('run').classList.remove('paused');
+  $('runMult').textContent='BROKEN · BONUS LOST';
+  $('runWarn').textContent=msg||'You picked up the phone. The block still counts — the bonus does not.';
+  day().focus[run.b.id]='broke'; save();
+}
+function finishRun(){
+  if(!run) return; clearInterval(run.t);
+  const d=day(), b=run.b;
+  d.done[b.id]=true;
+  d.focus[b.id]=run.broken?'broke':'clean';
+  if(!run.broken) S.xp+=40;
+  recount(); save();
+  $('runTime').textContent=run.broken?'TIME':'DONE';
+  $('runMult').textContent=run.broken?'BLOCK COUNTED · BONUS LOST':'CLEAN RUN · +65 XP';
+  setTimeout(closeRun,1600);
+}
+function closeRun(){
+  if(run&&run.t) clearInterval(run.t);
+  if(run&&run.lock) try{run.lock.release()}catch(e){}
+  run=null; $('run').className='run'; render();
+}
+$('runEnd').onclick=()=>{ if(run&&!run.broken&&run.left>0){ day().focus[run.b.id]='quit'; save(); } closeRun(); };
+$('runStep').onclick=()=>{
+  if(!run||run.paused||passes<=0) return;
+  passes--; run.paused=true; run.pauseLeft=120;
+  $('run').classList.add('paused');
+  $('runStep').textContent=`Step away · ${passes}`;
+  $('runWarn').textContent='Two minutes. Come back inside it and the run stays clean.';
+};
+/* real device detection — leaving WITHOUT the pass breaks it */
+document.addEventListener('visibilitychange',()=>{
+  if(!run) return;
+  if(document.hidden && !run.paused && !run.broken) breakRun();
+  if(!document.hidden && run.paused){
+    run.paused=false; $('run').classList.remove('paused');
+    $('runMult').textContent='RESUMED CLEAN';
+    $('runWarn').textContent='Back inside the window. Nothing lost.';
+  }
+});
+
+/* ---------- CHARACTER VIEW + VEIL ---------- */
+$('statusBar').onclick=()=>{ $('charv').classList.add('on'); renderChar(); };
+$('cvClose').onclick=()=>{ $('charv').classList.remove('on'); document.body.dataset.veil='you'; };
+
+function renderChar(){
+  const stats=domainStats();
+  $('cvStats').innerHTML=DOMAINS.map(d=>{
+    const v=stats[d.k];
+    return `<div class="srow" onclick="openGoal('${d.k}')">
+      <span class="n">${d.label}</span>
+      <span class="t"><i data-bar style="width:${v}%;background:${d.c}"></i></span>
+      <span class="v" data-val style="color:${v<50?d.c:'var(--ink)'}">${v}</span>
+      <span class="d">+${HIM-v}</span></div>`;
+  }).join('');
+  $('cvGoals').innerHTML=DOMAINS.map(d=>{
+    const g=S.december[d.k], p=Math.round((g.at/ (g.target||100))*100);
+    return `<div class="gchip" onclick="openGoal('${d.k}')">
+      <div class="gl">${d.label}</div>
+      <div class="gp" style="color:${d.c}">${d.k==='WORK'?g.at+'/'+g.target:p+'%'}</div>
+      <div class="gb"><i style="width:${Math.min(100,p)}%;background:${d.c}"></i></div></div>`;
+  }).join('');
+  drawRadar(stats);
+}
+
+const R={cx:126,cy:122,rad:84};
+function pt(i,v,n){const a=(-90+i*(360/n))*Math.PI/180;return[R.cx+Math.cos(a)*R.rad*v,R.cy+Math.sin(a)*R.rad*v]}
+function poly(vs){return vs.map((v,i)=>pt(i,v,vs.length).join(',')).join(' ')}
+function drawRadar(stats){
+  const n=DOMAINS.length, mine=DOMAINS.map(d=>stats[d.k]/100), full=DOMAINS.map(()=>HIM/100);
+  const P=a=>'M'+poly(a).replace(/ /g,' L').replace(/,/g,' ')+' Z';
+  let h=`<defs>
+    <linearGradient id="gY" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E0B25E" stop-opacity=".5"/><stop offset="100%" stop-color="#38E1D8" stop-opacity=".3"/></linearGradient>
+    <linearGradient id="gH" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#CFE2FF" stop-opacity=".34"/><stop offset="100%" stop-color="#6E9BD8" stop-opacity=".2"/></linearGradient>
+    <pattern id="hx" width="5" height="5" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="5" stroke="#FF4D5E" stroke-width="1.4" stroke-opacity=".5"/></pattern></defs>`;
+  [.25,.5,.75,1].forEach(r=>h+=`<polygon class="web" points="${poly(DOMAINS.map(()=>r))}" fill="none" stroke="#241f36"/>`);
+  DOMAINS.forEach((_,i)=>{const[x,y]=pt(i,1,n);
+    h+=`<line class="web" x1="${R.cx}" y1="${R.cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#241f36"/>`});
+  h+=`<g class="himL" opacity="0"><polygon points="${poly(full)}" fill="url(#gH)" stroke="#CFE2FF" stroke-width="1.8"/>
+      <path d="${P(full)} ${P(mine)}" fill="url(#hx)" fill-rule="evenodd" opacity=".55"/>
+      <polygon points="${poly(mine)}" fill="none" stroke="#FF4D5E" stroke-width="1.2" stroke-dasharray="3 2.5" opacity=".85"/></g>`;
+  h+=`<g class="youL"><polygon points="${poly(mine)}" fill="url(#gY)" stroke="#E0B25E" stroke-width="1.9"/>`;
+  DOMAINS.forEach((d,i)=>{const[x,y]=pt(i,stats[d.k]/100,n);
+    h+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="${d.c}"/>`});
+  h+=`</g>`;
+  DOMAINS.forEach((d,i)=>{const[x,y]=pt(i,1.22,n);
+    h+=`<text class="rlab" x="${x.toFixed(1)}" y="${y.toFixed(1)}" font-family="Geist Mono" font-size="7.5"
+      letter-spacing="1" text-anchor="middle" dominant-baseline="middle" fill="#5d5470">${d.label.replace('THE ','')}</text>
+      <text class="glab" x="${x.toFixed(1)}" y="${(y+8).toFixed(1)}" font-family="Geist Mono" font-size="7"
+      text-anchor="middle" fill="#FF4D5E" opacity="0" font-weight="600">+${HIM-stats[d.k]}</text>`});
+  $('radar').innerHTML=h;
+}
+function paintVeil(him){
+  const svg=$('radar'); if(!svg) return;
+  svg.querySelector('.himL')?.setAttribute('opacity',him?'1':'0');
+  svg.querySelector('.youL')?.setAttribute('opacity',him?'0':'1');
+  svg.querySelectorAll('.glab').forEach(l=>l.setAttribute('opacity',him?'1':'0'));
+  const stats=domainStats();
+  document.querySelectorAll('#cvStats [data-bar]').forEach((b,i)=>{
+    b.style.width=(him?HIM:stats[DOMAINS[i].k])+'%';
+    b.style.background=him?'linear-gradient(90deg,#6E9BD8,#CFE2FF)':DOMAINS[i].c;});
+  document.querySelectorAll('#cvStats [data-val]').forEach((v,i)=>{
+    v.textContent=him?HIM:stats[DOMAINS[i].k];});
+}
+let held=false;
+function tear(){ document.body.dataset.veil='tear';
+  [[0,1],[70,0],[110,1],[155,0],[185,1],[250,0],[285,1]].forEach(([t,on])=>
+    setTimeout(()=>{paintVeil(!!on);document.body.dataset.veil=on?'him':'tear'},t));
+  setTimeout(()=>{document.body.dataset.veil='him';paintVeil(true)},330); }
+function collapse(){ document.body.dataset.veil='collapse';
+  [[0,1],[60,0],[95,1],[140,0]].forEach(([t,on])=>setTimeout(()=>{paintVeil(!!on)},t));
+  setTimeout(()=>{document.body.dataset.veil='you';paintVeil(false)},200); }
+const hb=$('holdBtn');
+hb.addEventListener('pointerdown',e=>{e.preventDefault();held=true;hb.classList.add('on');tear()});
+window.addEventListener('pointerup',()=>{if(held){held=false;hb.classList.remove('on');collapse()}});
+
+/* ---------- GOAL SHEET — the December module ---------- */
+function openGoal(k){
+  const d=DOMAINS.find(x=>x.k===k), g=S.december[k];
+  $('goalSheet').innerHTML=`
+    <div class="grab"></div>
+    <div class="sh-k">DECEMBER GOAL</div>
+    <div class="sh-t" style="color:${d.c}">${d.label}</div>
+    <div class="sh-sub">LAG = the result · LEAD = what you control</div>
+    <div class="fld"><label>Lag — the December result</label>
+      <input type="text" id="gLag" value="${g.lag.replace(/"/g,'&quot;')}"></div>
+    <div class="fld"><label>Lead — the weekly behaviour that gets you there</label>
+      <input type="text" id="gLead" value="${g.lead.replace(/"/g,'&quot;')}"></div>
+    <div class="fld"><label>Where you are now</label>
+      <input type="text" id="gAt" value="${g.at}"></div>
+    <div class="chain">
+      <div><div class="cl">Why lead measures</div>
+      <div class="cv">You can't control whether the client signs. You can control the conversations.
+      <b>Score your execution, not your results.</b></div></div>
+    </div>
+    <button class="btn" onclick="saveGoal('${k}')">Save</button>`;
+  $('goalOv').classList.add('on');
+}
+function saveGoal(k){
+  S.december[k].lag=$('gLag').value; S.december[k].lead=$('gLead').value;
+  S.december[k].at=Math.max(0,Math.min(100,parseInt($('gAt').value)||0));
+  save(); $('goalOv').classList.remove('on'); renderChar(); renderStatus();
+}
+$('goalOv').onclick=e=>{ if(e.target.id==='goalOv') $('goalOv').classList.remove('on'); };
+
+/* ---------- boot ---------- */
+recount(); render();
+setInterval(()=>{ if(!run) render(); }, 30000);
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden&&!run) render(); });
+</script>
+</body>
+</html>
