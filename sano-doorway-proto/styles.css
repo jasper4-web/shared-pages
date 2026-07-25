@@ -1228,7 +1228,7 @@ header{z-index:90}
    already going (the burger's coordinates), and clear every interactive element out
    from under it. Tapping "the burger" now closes the menu, as expected, and the
    navigate-away hazard is gone. */
-.mobile-menu{padding-top:132px}
+.mobile-menu{padding-top:132px;z-index:95}
 /* The previous fix pinned .mm-close to a constant 68px, which only lined up with
    the burger because the DESIGN TEST ribbon happens to push the header down. At
    768px it missed, and with the ribbon hidden (i.e. production chrome) it missed
@@ -1265,6 +1265,12 @@ header{z-index:90}
 .appdemo .guide .gt{min-width:0}
 .appdemo .guide{min-width:0}
 
-/* the coach pill ran 496px of nowrap inside a narrower column between 1001 and
-   1120px, so .stage{overflow-x:clip} sliced its right cap off */
-@media(max-width:1200px){ .coach{white-space:normal;max-width:100%} }
+/* (coach wrapping moved to proto.css — it loads after this file and was winning) */
+
+/* .mobile-menu a{color:var(--ink)} out-specified .btn-blue, so the drawer's
+   "Request a demo" rendered near-black on blue at 4.37:1 while the identical
+   button in the header above it was white */
+.mobile-menu a.btn-blue{color:#fff}
+/* .brand{overflow:hidden} clipped the final "s" off SANO Systems at 320 and 412 */
+.brand{overflow:visible}
+.brand .bt{overflow:hidden;text-overflow:clip}

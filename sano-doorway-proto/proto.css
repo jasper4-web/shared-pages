@@ -287,3 +287,26 @@ html:has(.cap-radio:not(#co-none):checked) body{overflow:hidden}
    the phone too: whatever is scrolled into view, some of it is on screen. */
 .appdemo .phone:has(.tabr:focus-visible),
 .appdemo .phone:has(.drill:focus-visible){outline:3px solid var(--blue);outline-offset:5px;border-radius:28px}
+
+/* ---- SWEEP ROUND 4/5 ---- */
+/* The coach pill is 478px of nowrap text inside a 420px grid column, so it broke
+   out of its own rounded border and got hard-clipped from 1001px to 1215px —
+   including 1024, a very common width. My first fix went into styles.css, which
+   loads BEFORE this file, so proto.css's own white-space:nowrap kept winning. */
+/* never restore nowrap: the pill is capped at the 420px column and its content
+   needs 478px, so nowrap breaks out at every width above the cap, not just 1001-1215 */
+.coach{white-space:normal;max-width:100%}
+
+/* Focus containment for the sheet. There is no JS for a real focus trap, but
+   visibility:hidden removes everything behind the scrim from the tab order while
+   preserving layout — so Tab can no longer walk onto FAQ links that are invisible
+   under the overlay, scroll the page to them, and let Enter navigate away blind. */
+html:has(.cap-radio:not(#co-none):checked) main > section:not(#department),
+html:has(.cap-radio:not(#co-none):checked) #department > .wrap > *:not(.capset),
+html:has(.cap-radio:not(#co-none):checked) .ribbon,
+html:has(.cap-radio:not(#co-none):checked) header,
+html:has(.cap-radio:not(#co-none):checked) .mobile-menu,
+html:has(.cap-radio:not(#co-none):checked) a.skip,
+html:has(.cap-radio:not(#co-none):checked) #site-footer{visibility:hidden}
+html:has(.cap-radio:not(#co-none):checked) .capset,
+html:has(.cap-radio:not(#co-none):checked) .cap-radio:checked + .cap-sheet{visibility:visible}
