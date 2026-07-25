@@ -1211,3 +1211,40 @@ section.band{padding:96px 0}
   border:1px dashed #D6DCE5;border-radius:8px;padding:7px 9px;margin:8px 0 10px}
 .appdemo .sec .t span{display:block;font-size:10.5px;font-weight:500;color:var(--muted);
   text-transform:none;letter-spacing:0;margin-top:2px}
+
+/* ============ SWEEP ROUND 2 — live-site defects ============ */
+
+/* The burger sat UNDER its own drawer, so it could never close the menu — and at
+   <=344px its centre landed on the drawer's home link, so a real tap NAVIGATED AWAY
+   and destroyed everything the visitor had explored.
+   Raising header{z-index} alone did NOT work: #site-nav is display:contents and the
+   header never appeared in the paint stack at that point. So lift the burger itself
+   out of the header's flow while the drawer is open — it is the toggle, it must be
+   the topmost thing at its own coordinates. */
+header{z-index:90}
+/* position:fixed on the burger does NOT escape: header carries backdrop-filter, which
+   makes it a containing block, so the burger lands below the header's own box where the
+   header does not paint. So instead: put the CLOSE control exactly where the thumb is
+   already going (the burger's coordinates), and clear every interactive element out
+   from under it. Tapping "the burger" now closes the menu, as expected, and the
+   navigate-away hazard is gone. */
+.mobile-menu{padding-top:126px}
+.mm-close{top:68px;right:12px;z-index:5}
+
+/* Locked app pins dimmed via opacity on the PARENT, which multiplies down onto the
+   .applock chip that is the only explanation for the dimming — 1.38:1. Same defect
+   class already fixed on the capability tiles; it was never applied here. */
+.cap-band:has(#t-starter:checked) .app-growth,
+.cap-band:has(#t-starter:checked) .app-scale,
+.cap-band:has(#t-growth:checked) .app-scale{opacity:1;filter:none;pointer-events:none;cursor:default}
+.cap-band:has(#t-starter:checked) .app-growth .c,
+.cap-band:has(#t-starter:checked) .app-scale .c,
+.cap-band:has(#t-growth:checked) .app-scale .c{opacity:.4;filter:grayscale(1)}
+.cap-band:has(#t-starter:checked) .app-growth .l,
+.cap-band:has(#t-starter:checked) .app-scale .l,
+.cap-band:has(#t-growth:checked) .app-scale .l{color:#5F6672}
+.appdemo .applock{opacity:1;color:#4E5666;background:#E9ECF1}
+
+/* the four drill-down radios inside the app are 0x0 and focusable with no ring */
+.appdemo .drill:focus-visible ~ div .tapme,
+.appdemo .drill:focus-visible ~ div .back{outline:3px solid var(--blue);outline-offset:2px;border-radius:8px}
