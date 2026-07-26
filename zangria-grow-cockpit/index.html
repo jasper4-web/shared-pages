@@ -246,6 +246,9 @@
   .evitem img{width:30px;height:30px;border-radius:7px;object-fit:cover;border:1px solid var(--line);flex:0 0 auto;}
   .evitem img:first-of-type{margin-left:auto;}
   .evitem .evmore{font-family:var(--mono);font-size:10px;color:var(--ink3);flex:0 0 auto;}
+  /* a photo whose thumbnail didn't survive a restore — the blob may still be on another device */
+  .evitem .evnoprev{width:26px;height:26px;border-radius:7px;border:1px dashed var(--line2);color:var(--ink3);
+    display:flex;align-items:center;justify-content:center;font-size:11px;flex:0 0 auto;}
 
   /* form bits reused in modals */
   .field{margin-bottom:14px;} .field:last-child{margin-bottom:0;}
@@ -686,9 +689,24 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   function tellsOn(day){var e=day||curEntry();var p=(e.plants||{})["1"]||{};return p.tells||[];}
   /* Any of the three burn tells inside 3 days of a light move = back it up and hold. */
   function lightStressActive(){
-    var moved=null;
-    keysSorted().forEach(function(k){(store.entries[k].events||[]).forEach(function(e){
-      if(e&&e.type==="light"){var d=dnum(dtOf(k));if(moved===null||d>moved)moved=d;}});});
+    /* "moved" must mean moved CLOSER. Raising the light is itself a light event, so counting
+       every light move meant obeying "back the light up 6 inches" reset the clock and the same
+       banner fired again the next day — 42" -> 48" -> 54" -> 60" in three days, while the copy
+       told him to hold for three. Under-lighting is the variable that killed Grow 1. */
+    var moved=null, raised=null, prevIn=null;
+    keysSorted().slice().reverse().forEach(function(k){          // oldest -> newest
+      (store.entries[k].events||[]).forEach(function(e){
+        if(!e||e.type!=="light")return;
+        var d=dnum(dtOf(k)), h=evNums(e)["in"];
+        h=(h==null||isNaN(h))?null:Number(h);
+        // Only a KNOWN raise is exempt. The first light event has nothing to compare against,
+        // so an unknown direction still counts as a move — same as before this fix.
+        var up=(h!=null&&prevIn!=null&&h>prevIn);
+        if(up){ if(raised===null||d>raised)raised=d; }
+        else { if(moved===null||d>moved)moved=d; }
+        if(h!=null)prevIn=h;
+      });
+    });
     var hit=null,hitTell=null;
     keysSorted().forEach(function(k){
       var d=dnum(dtOf(k)),pl=(store.entries[k].plants||{})["1"];
@@ -699,6 +717,8 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       });
     });
     if(hit===null)return null;
+    // he has already acted on this: say "hold", don't tell him to raise it a second time
+    if(raised!==null&&todayDnum-raised<3)return {holding:true,since:todayDnum-raised,tell:hitTell};
     // the spec is "within 3 days of a LIGHT MOVE" — without this test, clawing (usually
     // overwatering) at 70" where she is UNDER-lit produced "raise the light", the wrong
     // direction on the one variable that killed Grow 1
@@ -841,6 +861,11 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
      so a stale tab can never revert a sibling's settings. */
   var CFGTOUCHED={};
   function touchCfg(){ for(var i=0;i<arguments.length;i++)CFGTOUCHED[arguments[i]]=1; }
+  /* dueDone/dueDoneDay are id-keyed MAPS, but CFGTOUCHED pins whole top-level keys — so one tab
+     ticking a box wrote its entire map over a sibling's and silently un-ticked the sibling's
+     work. These two reconcile per milestone id instead. */
+  var DUETOUCHED={};
+  function touchDue(id){ DUETOUCHED[id]=1; }
   var PURGED={};                 // demo keys deleted this session — must never come back from disk
   var AUTHORITATIVE=false;       // set only by Restore: this write REPLACES, it does not merge
   /* save() is the ONLY writer, and it RECONCILES. It used to blind-write the whole
@@ -860,12 +885,19 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
         });
         var dc=disk.config||{};
         Object.keys(dc).forEach(function(k){ if(!CFGTOUCHED[k]) CFG[k]=dc[k]; });
+        // per-id reconcile for the two checklist maps: adopt every id this tab hasn't touched,
+        // so a sibling's tick survives my write and mine survives theirs
+        ["dueDone","dueDoneDay"].forEach(function(mk){
+          if(!dc[mk]||!CFGTOUCHED[mk])return;          // untouched -> the loop above already took disk's
+          CFG[mk]=CFG[mk]||{};
+          Object.keys(dc[mk]).forEach(function(id){ if(!DUETOUCHED[id])CFG[mk][id]=dc[mk][id]; });
+        });
         delete CFG.domesOn;   // retired key — never let disk (or an old build) reintroduce it
       }
       localStorage.setItem(KEY,JSON.stringify(store));
       // "touched" means "changed since my last successful write", not "ever" — otherwise this
       // tab pins the key forever and keeps reverting a sibling's newer value
-      CFGTOUCHED={};
+      CFGTOUCHED={}; DUETOUCHED={};
       storageBroken=false; return true;
     }
     catch(e){
@@ -951,6 +983,17 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     }
     return out;
   }
+  /* "Is there anything in this day worth storing?" An entry the grower has not touched must
+     never reach disk — an empty day renders as a real card and exports as a phantom entry. */
+  function hasContent(e){
+    if(!e)return false;
+    if((e.readings||[]).length||(e.events||[]).length)return true;
+    if(e.hi&&(e.hi.t!=null||e.hi.r!=null))return true;
+    if(e.lo&&(e.lo.t!=null||e.lo.r!=null))return true;
+    var p=e.plants&&e.plants["1"];
+    if(p&&(p.s||p.n||(p.tells||[]).length))return true;
+    return !!(e.notes||e.temp||e.rh);
+  }
   function reloadStore(){
     try{ var raw2=localStorage.getItem(KEY); if(!raw2)return null; var st=JSON.parse(raw2); return (st&&st.entries)?st:null; }catch(e){ return null; }
   }
@@ -987,7 +1030,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
      without reloading the page. Exposing them costs nothing at runtime and lets the suite
      assert on them directly. (parseBackupPaste and applyRestore are hoisted declarations.) */
   window.__zt={
-    mergeEntry:mergeEntry, blankDraft:blankDraft, commitDraft:commitDraft,
+    mergeEntry:mergeEntry, blankDraft:blankDraft, commitDraft:commitDraft, hasContent:hasContent,
     parseBackupPaste:parseBackupPaste, applyRestore:applyRestore,
     purged:function(){return PURGED;}, demo:function(){return isDemo;}, todayKey:todayKey
   };
@@ -1012,12 +1055,19 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
               off:{tCrit:58,tWarn:62,tHotWarn:84,tHotCrit:86,rhDamp:58} },
     soilCold:62
   };
+  /* THE one place the damp ceiling is computed. It used to be inlined in redLines() and again,
+     differently, in bandFor() and renderRedRef() — so the Guide printed one number while the
+     alarm fired at another. Anything that shows or enforces a damp limit calls this. */
+  function dampCeiling(phase,week,dark){
+    var R=REDLINES[phase==="flower"?"flower":"veg"][dark?"off":"on"], d=R.rhDamp;
+    // bud rot is a late-flower disease — the ceiling tightens as she fills out
+    if(phase==="flower"){ if(week>=10)d=50; else if(week>=4)d=55; }
+    return d;
+  }
   function redLines(){
     var base=REDLINES[STAGE.phase==="flower"?"flower":"veg"];
     var R=lightsOn?base.on:base.off;
-    var rhDamp=R.rhDamp;
-    // bud rot is a late-flower disease — the ceiling tightens as she fills out
-    if(STAGE.phase==="flower"){ if(STAGE.week>=10)rhDamp=50; else if(STAGE.week>=4)rhDamp=55; }
+    var rhDamp=dampCeiling(STAGE.phase,STAGE.week,!lightsOn);
     return {tempLo:R.tCrit,tempHi:R.tHotCrit||R.tHotWarn,rhLo:R.rhDryCrit||30,rhHi:rhDamp,
             tWarn:R.tWarn,tHotWarn:R.tHotWarn,rhDry:R.rhDry,vpdHigh:R.vpdHigh,vpdLow:R.vpdLow};
   }
@@ -1084,19 +1134,24 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     return {dli:dli,lo:t.lo,hi:t.hi,note:t.note,state:st};
   }
   /* ---- targets (open room — domes retired with #2/#3) ---- */
-  function targets(){
+  // row/darkOv are for self-tests only — live callers pass nothing and get the current week.
+  function targets(row,darkOv){
     /* In the dark window his room is a DIFFERENT room: no 645W load, stomata shut.
        Grading a legitimate 71°F midday reading against the lights-ON band was firing
        "room is cold" on every single midday check — textbook alarm fatigue. */
-    var dark=!lightsOn;
+    var W=row||wk, dark=(darkOv==null)?!lightsOn:!!darkOv;
     return {
-      dLo: dark?wk.nLo:wk.dLo, dHi: dark?wk.nHi:wk.dHi,
-      rLo: wk.rLo,
+      dLo: dark?W.nLo:W.dLo, dHi: dark?W.nHi:W.dHi,
+      // BOTH ends come from bandFor(). The dry-end clamp was added to bandFor() but targets()
+      // kept reading the raw wk.rLo, so the Guide, the export and report() printed the clamped
+      // band while the live gauge graded against the unclamped one — flower wk7-12 could show a
+      // green temp gauge, a green humidity gauge and "STOP — VPD" on the same screen.
+      rLo: bandFor(W,dark).lo,
       // a little more RH slack in the dark during veg; NONE in flower — that's how bud rot starts
       // clamp the top of the band below the damp red line — in flower the two were derived
       // independently and overlapped, so 24 RH values graded GREEN while firing "STOP — bud rot"
-      rHi: bandFor(wk,dark).hi,
-      vLo: wk.vLo, vHi: wk.vHi,
+      rHi: bandFor(W,dark).hi,
+      vLo: W.vLo, vHi: W.vHi,
       gradeVpd: !dark,
       rhLbl:"Humidity %", roomLbl: dark?"dark window":"room climate"
     };
@@ -1106,8 +1161,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
      the same 24 flower values that fire "STOP — bud rot starts here". */
   function bandFor(row,dark){
     var R=REDLINES[row.phase==="flower"?"flower":"veg"][dark?"off":"on"];
-    var damp=R.rhDamp;
-    if(row.phase==="flower"){ if(row.w>=10)damp=50; else if(row.w>=4)damp=55; }
+    var damp=dampCeiling(row.phase,row.w,dark);
     var hi=dark?(row.phase==="flower"?row.rHi:row.rHi+6):row.rHi;
     // Clamp the DRY end too. The bands were derived from VPD at the set-point, so the hottest
     // + driest legal corner could exceed vpdHigh — an in-band temp AND an in-band RH together
@@ -1133,6 +1187,16 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       var b=bandFor(r,false);
       var worst=vpd(r.dHi,b.lo,true);          // hottest + driest legal corner
       if(R.vpdHigh&&worst>=R.vpdHigh) bad.push((r.phase==="flower"?"F":"W")+r.w+" corner "+r.dHi+"°/"+b.lo+"% → VPD "+worst.toFixed(2)+" trips the "+R.vpdHigh+" red line");
+      /* THE GAUGE MUST GRADE AGAINST THE BAND THE APP PUBLISHES. targets() read the raw rLo
+         while the Guide, report() and the export all read the clamped bandFor() — so in flower
+         wk7-12 the humidity gauge said "ok" at a value the export called out of band, next to a
+         STOP. Assert both ends, both windows, every week, on every load. */
+      [false,true].forEach(function(dk){
+        var pub=bandFor(r,dk), gauge=targets(r,dk);
+        if(gauge.rLo!==pub.lo||gauge.rHi!==pub.hi)
+          bad.push((r.phase==="flower"?"F":"W")+r.w+(dk?" dark":" lit")+" gauge grades "+gauge.rLo+"–"+gauge.rHi+
+                   "% but the app publishes "+pub.lo+"–"+pub.hi+"%");
+      });
     });
     if(bad.length&&window.console&&console.warn)console.warn("[zangria] climate table inconsistent:\n"+bad.join("\n"));
     window.__zangriaTableErrors=bad;
@@ -1244,9 +1308,12 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   var dialSeeded={temp:false,rh:false};   // true = this value came from a target seed, not a measurement
   (function(){
     var ce=curEntry();
-    // restore the half-entered dial first, then fall back to the last real capture
-    if(ce.dialTemp!=null){dial.temp=fin(ce.dialTemp);dial.rh=fin(ce.dialRh);}
-    else{var last=(ce.readings&&ce.readings.length)?ce.readings[ce.readings.length-1]:null;if(last){dial.temp=fin(last.temp);dial.rh=fin(last.rh);}}
+    // restore the half-entered dial first, then fall back to the last real capture — PER AXIS.
+    // Both axes used to hang off dialTemp alone, so dragging only the humidity arc lost it on
+    // reload, and dragging only temp blanked the humidity and VPD gauges that had a capture.
+    var last=(ce.readings&&ce.readings.length)?ce.readings[ce.readings.length-1]:null;
+    dial.temp = (ce.dialTemp!=null)?fin(ce.dialTemp):(last?fin(last.temp):null);
+    dial.rh   = (ce.dialRh  !=null)?fin(ce.dialRh)  :(last?fin(last.rh)  :null);
   })();
   function lastCapture(){var rs=(curEntry().readings)||[];return rs.length?rs[rs.length-1]:null;}
   function curVpd(){return (dial.temp!=null&&dial.rh!=null)?rvpd(dial.temp,dial.rh,lightsOn):null;}
@@ -1333,10 +1400,19 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       var noReading=(tv==null&&rv==null);
 
       if(lstress){
-        cls="warn";icon="sun";head="Back the light up 6 inches";
         var tn={cup:"cupping",bleach:"bleached tips",claw:"clawing"}[lstress.tell]||"a burn tell";
+        if(lstress.holding){
+          // he raised it already — the tell will outlast the fix by days, and repeating the
+          // instruction is what walks the light up to 60" one obedient step at a time
+          cls="warn";icon="sun";head="Holding — don't touch the light";
+          sub="You raised it "+(lstress.since===0?"today":lstress.since===1?"yesterday":lstress.since+" days ago")+
+              " and "+tn+" is still showing. That's expected — it takes about 3 days to read. "+
+              "Leave the height alone until day "+(todayDnum-lstress.since+3)+".";
+        } else {
+        cls="warn";icon="sun";head="Back the light up 6 inches";
         sub="You logged "+tn+" "+(lstress.sinceMove===0?"the same day as":lstress.sinceMove+"d after")+
             " a light move. Raise it and hold 3 days before touching it again.";
+        }
       } else if(pest){
         cls="warn";icon="bug";head="Pest found "+pest.when+" — not treated yet";
         sub="Re-scout undersides and new growth. Don't let this ride.";
@@ -1348,12 +1424,23 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
         sub=droopCoach();
       } else if(lightsOn&&vs==="high"){
         cls="warn";icon="alert-triangle";head="She's transpiring faster than her roots can supply";
-        sub="Raise humidity FIRST. Do not water, do not lower the light.";
+        /* "Raise humidity" is the right first move — UNLESS there is no humidity left to add.
+           In flower wk4+ the damp red line tightens to 55/50%, and the top of the RH band can
+           sit within a point of it: obeying the advice walks him straight into
+           "STOP — bud rot starts here". In that corner the only safe lever is temperature. */
+        var rhCeil=redLines().rhHi, atCeil=(rv!=null&&rv>=rhCeil-1);
+        sub = atCeil
+          ? ("You're at the damp ceiling ("+rhCeil+"%) — you can't add humidity from here without inviting rot. "+
+             "Drop the room 1–2°F instead. That lowers VPD without touching the light or the water.")
+          : "Raise humidity FIRST. Do not water, do not lower the light.";
       } else if(lightsOn&&vs==="low"){
         cls="warn";icon="alert-triangle";head="Air is too still and wet for her to drink";
         sub="Nutrients move with the water. More air across the canopy.";
-      } else if(soilWas==="Wet"){
-        // a branch whose own copy says "nothing to do" must not outrank an alarm
+      } else if(soilWas==="Wet"&&soilD!=null&&soilD<=1){
+        // a branch whose own copy says "nothing to do" must not outrank an alarm — and it must
+        // EXPIRE. With no recency test a "Wet" logged once silenced "Put a finger in that pot"
+        // forever, off a reading that means nothing in a 30-gal a week later, while the Due
+        // strip simultaneously listed the finger test as open.
         cls="warn";icon="hand";head="Soil is still wet";
         sub="Nothing to do but wait. The surface being dry means nothing in a 30-gal.";
       } else if(soilD===null||soilD>2){
@@ -1508,7 +1595,8 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       arr.push(k); remember(k);
     }
     draft.plants["1"].tells=arr;
-    commitDraft();renderBoards();renderGauges();renderDue();renderPlantIfVisible();
+    var okT=commitDraft();renderBoards();renderGauges();renderDue();renderPlantIfVisible();
+    if(!okT)return;   // save() has already said storage is full — don't bury it under advice
     var T=null;TELLS.forEach(function(t){if(t.k===k)T=t;});
     if(i<0&&T&&T.flag==="pest")toast("Noted — scout the undersides and new growth, then log an IPM",true);
     else if(i<0&&T&&T.flag==="light")toast("Noted — if this followed a light move, raise it 6\"",true);
@@ -1689,6 +1777,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     })();
     if(!CFG.dueDoneDay)CFG.dueDoneDay={};
     touchCfg("dueDone","dueDoneDay","lastMinMaxReset");
+    touchDue(id);   // only THIS milestone is mine; the rest of the map still belongs to disk
     if(wasDone){delete CFG.dueDone[id];delete CFG.dueDoneDay[id];}
     else{CFG.dueDone[id]=todayKey;CFG.dueDoneDay[id]=Math.max(0,todayDnum);
          if(id==="minmax")CFG.lastMinMaxReset=todayKey;}
@@ -1863,23 +1952,38 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   // re-capturing the same values that minute while the UI said "✓ Captured"
   function readingKey(r){return r.rid||(r.time+"|"+r.temp+"|"+r.rh);}
   function tomb(k){ if(!draft.gone)draft.gone=[]; if(draft.gone.indexOf(k)<0)draft.gone.push(k); }
+  // returns false if the tombstone could not be cleared FROM DISK. This is the app's only
+  // writer outside save(), and it used to swallow its own quota failure — the tombstone
+  // survived, the very next merge re-deleted the row, and the toast said "Restored".
   function untomb(k){
+    var ok=true;
     if(draft.gone){var i=draft.gone.indexOf(k); if(i>=0)draft.gone.splice(i,1);}
     // clear it on disk as well — a union of tombstones would otherwise re-delete on merge
     var disk=reloadStore();
     if(disk&&disk.entries[todayKey]&&disk.entries[todayKey].gone){
       var g=disk.entries[todayKey].gone, j=g.indexOf(k);
-      if(j>=0){ g.splice(j,1); try{localStorage.setItem(KEY,JSON.stringify(disk));}catch(e){} }
+      if(j>=0){ g.splice(j,1);
+        try{localStorage.setItem(KEY,JSON.stringify(disk));}
+        catch(e){ ok=false; toast("⚠ Couldn't undo — storage is full. Guide → Copy backup NOW.",true); }
+      }
     }
     if(store.entries[todayKey]&&store.entries[todayKey].gone){
       var g2=store.entries[todayKey].gone,j2=g2.indexOf(k); if(j2>=0)g2.splice(j2,1);
     }
+    return ok;
   }
   function delReading(i){
     var gone=draft.readings[i]; if(!gone)return;
-    draft.readings.splice(i,1);tomb(readingKey(gone));commitDraft();renderCaps();renderGauges();renderTrendPeek();renderDue();
+    draft.readings.splice(i,1);tomb(readingKey(gone));
+    var okX=commitDraft();renderCaps();renderGauges();renderTrendPeek();renderDue();
+    if(!okX)return;   // save() already said why; don't offer an undo for a delete that didn't land
     toast("Reading removed — tap to undo",false,function(){
-      untomb(readingKey(gone));draft.readings.splice(i,0,gone);commitDraft();renderCaps();renderGauges();renderTrendPeek();renderDue();toast("Restored");
+      var okU=untomb(readingKey(gone));
+      // append and let the merge re-sort by time — splicing at the ORIGINAL index is wrong the
+      // moment a sibling tab has added or removed a reading under us
+      draft.readings.push(gone);
+      var okR=commitDraft();renderCaps();renderGauges();renderTrendPeek();renderDue();
+      if(okU&&okR)toast("Restored");
     });
   }
   function renderCaps(){
@@ -1915,17 +2019,29 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       var et=evType(e.type);
       var pk=e.pick?' · <b>'+esc(e.pick)+'</b>':"";
       var pids=evPhotoIds(e);
-      // thumbs and photoIds are index-aligned, but a slot can hold an id with no preview.
-      // Pair first, then drop the previewless slots — never render src="null".
-      var pairs=[]; evThumbs(e).forEach(function(t,ti){ if(t)pairs.push({t:t,p:pids[ti]||""}); });
-      var thumb=pairs.slice(0,3).map(function(x){return '<img src="'+x.t+'" alt="photo" data-pid="'+x.p+'">';}).join("")+(pairs.length>3?'<span class="evmore">+'+(pairs.length-3)+'</span>':"");
-      var nt=evNumText(e), nv=(nt?' <b>'+esc(nt)+'</b>':'');
+      /* Slots over the LONGER of the two arrays, exactly as openEvent does. Counting from
+         previews instead of ids meant that on a restored device — where thumbs are stripped but
+         photoIds survive — the ribbon showed NOTHING while the Log tab, report(), photoCue()
+         and the editor all correctly said "2 photos". The export promised the mentor photos the
+         screen claimed didn't exist. Render a chip for a previewless slot, never src="null". */
+      var ths=evThumbs(e), slots=[];
+      for(var si=0,sn=Math.max(ths.length,pids.length);si<sn;si++)slots.push({t:ths[si]||null,p:pids[si]||""});
+      var thumb=slots.slice(0,3).map(function(x){
+        return x.t ? '<img src="'+x.t+'" alt="photo" data-pid="'+x.p+'">'
+                   : '<span class="evnoprev" data-pid="'+x.p+'" title="stored photo, no preview on this device">▣</span>';
+      }).join("")+(slots.length>3?'<span class="evmore">+'+(slots.length-3)+'</span>':"");
+      // separator matches the Log tab: "Water · 2 cups · 2.5 cups", not "Water · 2 cups 2.5 cups"
+      var nt=evNumText(e), nv=(nt?' · <b>'+esc(nt)+'</b>':'');
       return '<div class="evitem" data-ev-i="'+idx[i]+'" role="button" tabindex="0"><i data-lucide="'+et.icon+'"></i><span class="evt">'+(e.time||"—")+'</span><span class="evd"><b>'+et.label+'</b>'+pk+nv+(e.detail?' — '+esc(e.detail):"")+'</span>'+thumb+'<i class="edit" data-lucide="pencil"></i></div>';
     }).join("");
     wirePhotoTaps("#evRibbon");
     $$("#evRibbon [data-ev-i]").forEach(function(el){
       el.addEventListener("click",function(){
         var i=parseInt(el.getAttribute("data-ev-i"),10);
+        // the ribbon draws from curEntry(), which in demo mode is the SAMPLE entry, while this
+        // reads draft — so a tap on a sample row was a silent no-op under a label that says
+        // "tap one to edit". Don't exitDemo() here: that would delete the row he just tapped.
+        if(isDemo){ toast("That's sample data — log your own event above",true); return; }
         var ev=draft.events[i]; if(!ev)return;
         openEvent(ev.type,i);
       });
@@ -1955,7 +2071,19 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     });
   }
   /* event modal */
-  var evEditing=null, evEditingIdx=-1, evPhotos=[], evPhotoBusy=0, evSeq=0;
+  var evEditing=null, evEditingIdx=-1, evEditingId=null, evPhotos=[], evPhotoBusy=0, evSeq=0;
+  /* An open event modal holds a POSITION into draft.events, but the storage handler replaces
+     draft wholesale with a re-united, re-SORTED array whenever a sibling tab writes. The
+     position then points at a different event: saving wrote the edit to the wrong slot (and
+     unite() then discarded it while the toast said "✓ Updated"), and deleting tombstoned
+     somebody else's event — permanently, because a tombstone beats the union merge.
+     Identity, never position. */
+  function liveEvIdx(){
+    if(evEditingIdx<0)return -1;
+    if(!evEditingId)return (evEditingIdx<draft.events.length)?evEditingIdx:-1;
+    for(var i=0;i<draft.events.length;i++){ var e=draft.events[i]; if(e&&e.id===evEditingId)return i; }
+    return -1;
+  }
   /* Per-document salt. evSeq resets to 0 on every load, so two tabs saving in the same
      millisecond used to mint identical ids and unite() dropped one as a duplicate —
      and since the id is also the tombstone key, a delete could target the other tab's row. */
@@ -1965,6 +2093,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     var et=evType(type);
     evEditingIdx=(existing==null)?-1:existing;
     var src=(existing!=null)?draft.events[existing]:null;
+    evEditingId=(src&&src.id)?src.id:null;   // the anchor that survives a sibling tab's write
     // id must include a counter: two events logged in the same millisecond used to get
     // identical ids, and the merge then discarded one of them as a duplicate.
     evEditing = src ? JSON.parse(JSON.stringify(src))
@@ -2099,21 +2228,31 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       });
     })();
   });
-  $("edCancel").addEventListener("click",function(){$("evBg").classList.remove("open");evEditingIdx=-1;evSaving=false;});
+  $("edCancel").addEventListener("click",function(){$("evBg").classList.remove("open");evEditingIdx=-1;evEditingId=null;evSaving=false;});
   $("edDelete").addEventListener("click",function(){
     if(evEditingIdx<0)return;
-    var gone=draft.events[evEditingIdx];
-    draft.events.splice(evEditingIdx,1);
+    // resolve by id: the raw index may point at a sibling tab's event, or off the end
+    var ix=liveEvIdx(), gone=(ix>=0)?draft.events[ix]:null;
+    if(!gone){
+      $("evBg").classList.remove("open");evEditing=null;evEditingIdx=-1;evEditingId=null;
+      toast("Another tab changed today's events — reopen that one",true);return;
+    }
+    draft.events.splice(ix,1);
     tomb(gone.id||(gone.time+"|"+gone.type));
     // deleting the Flip event must actually un-flip, or he is stuck in flower forever
-    if(gone.type==="flip"){ CFG.flipDay=null; touchCfg("flipDay"); commitDraft(); save(); location.reload(); return; }
-    commitDraft();renderRibbon();renderDue();renderGauges();renderPlantIfVisible();
-    $("evBg").classList.remove("open");evEditing=null;evEditingIdx=-1;
+    if(gone.type==="flip"){ CFG.flipDay=null; touchCfg("flipDay");
+      if(!commitDraft()){ toast("⚠ Couldn't un-flip — storage is full. Free space, then try again.",true); return; }
+      location.reload(); return; }
+    var okD=commitDraft();renderRibbon();renderDue();renderGauges();renderPlantIfVisible();
+    $("evBg").classList.remove("open");evEditing=null;evEditingIdx=-1;evEditingId=null;
     undoStack={kind:"event",data:gone};
-    toast("Deleted "+evType(gone.type).label+" — tap to undo",false,function(){
-      untomb(gone.id||(gone.time+"|"+gone.type));
+    if(okD)toast("Deleted "+evType(gone.type).label+" — tap to undo",false,function(){
+      // untomb writes to disk itself, so it can fail on its own — don't claim a restore it
+      // didn't make, or the next merge silently re-deletes the row under a "Restored" toast
+      var okU=untomb(gone.id||(gone.time+"|"+gone.type));
       draft.events.splice(draft.events.length,0,gone);
-      commitDraft();renderRibbon();renderDue();renderGauges();renderPlantIfVisible();toast("Restored");
+      var okR=commitDraft();renderRibbon();renderDue();renderGauges();renderPlantIfVisible();
+      if(okU&&okR)toast("Restored");
     });
   });
   var undoStack=null;
@@ -2151,24 +2290,38 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     ev.nums=vals;
     if(vals.ppfd!==undefined)ev.num=vals.ppfd;      // back-compat with single-num events
     if(et0.num&&vals[et0.num.key]!=null)ev.num=vals[et0.num.key];
+    /* The event editor writes the SAME two config keys as the Settings rows, but skipped their
+       validation entirely — so a Light move of 0" gave CFG.lightIn=0, which is falsy: the gear
+       panel said "height not set" and showed SET IT, the light chip vanished, and the Due list
+       ticked "set the light height" as done. Same ranges, one place. */
+    function okLight(v){ return v!=null&&!isNaN(v)&&v>=6&&v<=96; }
+    function okPpfd(v){ return v!=null&&!isNaN(v)&&v>=0&&v<=2000; }
+    var rejected=[];
     if(et0.pick&&et0.pick.sets==="lightIn"&&ev.pick){
       var inch=parseInt(ev.pick,10);
-      if(!isNaN(inch)){CFG.lightIn=inch;touchCfg("lightIn");}
+      if(okLight(inch)){CFG.lightIn=inch;touchCfg("lightIn");}
+      else if(!isNaN(inch))rejected.push("light height must be 6–96 inches");
     }
     NF.forEach(function(n){
       if(!n.sets)return;
-      if(n.sets==="lightIn"&&vals[n.key]!=null){CFG.lightIn=vals[n.key];touchCfg("lightIn");}
+      if(n.sets==="lightIn"&&vals[n.key]!=null){
+        if(okLight(vals[n.key])){CFG.lightIn=Math.round(vals[n.key]);touchCfg("lightIn");}
+        else rejected.push("light height must be 6–96 inches");
+      }
     });
     if(vals.ppfd!==undefined){
-      if(vals.ppfd!=null){ CFG.ppfd=vals.ppfd; CFG.ppfdAt=CFG.lightIn; touchCfg("ppfd","ppfdAt"); }
+      if(vals.ppfd!=null&&!okPpfd(vals.ppfd)){ rejected.push("PPFD must be 0–2000 µmol"); }
+      else if(vals.ppfd!=null){ CFG.ppfd=vals.ppfd; CFG.ppfdAt=CFG.lightIn; touchCfg("ppfd","ppfdAt"); }
       else if(vals["in"]!=null){
         // moved the light without re-measuring: the old reading describes the OLD height
         // only warn if there WAS a reading to invalidate
         if(CFG.ppfd!=null){ CFG.ppfdAt=null; touchCfg("ppfdAt"); toast("Height logged — your PPFD reading is now stale, measure again",true); }
       }
     }
+    // refuse the whole save rather than log an event whose numbers we've silently dropped
+    if(rejected.length){ toast("Check that number — "+rejected[0],true); evSaving=false; return; }
     if(et0.sets==="flipDay"&&ev.pick){
-      var orig=(evEditingIdx>=0)?draft.events[evEditingIdx]:null;
+      var origIx=liveEvIdx(), orig=(origIx>=0)?draft.events[origIx]:null;
       if(orig&&orig.flipDay!=null){ ev.flipDay=orig.flipDay; }   // editing must not move the flip
       else{
         var onH=parseInt(prompt("Flipping to 12/12.\n\nWhat hour do the lights come ON now? (0–23)",String(CFG.onHour)),10);
@@ -2179,19 +2332,25 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
         ev.flipDay=CFG.flipDay;
         // WRITE THE EVENT FIRST — the old code reloaded before doSave() ever ran, so the
         // single most important milestone of the grow left no entry anywhere.
-        draft.events.push(ev); commitDraft(); save();
-        evEditing=null; evEditingIdx=-1; evSaving=false;
+        draft.events.push(ev);
+        var okF=commitDraft();
+        evEditing=null; evEditingIdx=-1; evEditingId=null; evSaving=false;
+        // the flip is the single most important milestone of the grow — never announce it,
+        // and never reload past the warning, if it did not reach disk
+        if(!okF){ toast("⚠ The flip did NOT save — storage is full. Free space, then flip again.",true); return; }
         alert("Flipped to 12/12.\nLights ON "+onH+":00 → OFF "+offH+":00.\n\nEvery target switches to the flower table now.");
         location.reload(); return;
       }
     }
     var doSave=function(){
-      if(evEditingIdx>=0)draft.events[evEditingIdx]=ev; else draft.events.push(ev);
+      // by id, not by position — a sibling tab's write re-sorts draft.events under an open modal
+      var wasEdit=(evEditingIdx>=0), sx=liveEvIdx();
+      if(sx>=0)draft.events[sx]=ev; else draft.events.push(ev);
       var okE=commitDraft();
       renderRibbon();renderDue();renderGauges();syncSettings();
       $("evBg").classList.remove("open");
-      if(okE)toast((evEditingIdx>=0?"✓ Updated ":"✓ ")+et0.label+(ev.pick?" · "+ev.pick:"")+(evEditingIdx>=0?"":" logged "+ev.time));
-      evEditing=null;evEditingIdx=-1;evSaving=false;
+      if(okE)toast((wasEdit?"✓ Updated ":"✓ ")+et0.label+(ev.pick?" · "+ev.pick:"")+(wasEdit?"":" logged "+ev.time));
+      evEditing=null;evEditingIdx=-1;evEditingId=null;evSaving=false;
       renderPlantIfVisible();
     };
     // ALWAYS write the arrays. Gating this on evPhotos.length meant removing every photo
@@ -2298,7 +2457,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     var tiles='<div class="slabel">Vitals</div><div class="tiles">'+
       tile("Day",age,"potted "+MONTHS[p.pot.getMonth()]+" "+p.pot.getDate())+
       tile("Stage",stage,"wk "+todayWeek,"",true)+
-      tile("Health",trend.label,hist.length?(hist.length+" logs"):"—",trend.cls,true)+
+      tile("Health",trend.label,hist.length?(hist.length+(hist.length===1?" log":" logs")):"—",trend.cls,true)+
       tile("Watered",wd===null?"—":(wd===0?"today":wd+"d"),wd===null?"none yet":(wd===0?"":"ago"),wd===null?"":"")+
       tile("Soil",soilWas?soilWas:"—",sd===null?"never checked":(sd===0?"checked today":sd+"d ago"),(soilWas==="Wet"?"warn":""),true)+
       (function(){var ds=dliState();return tile("Light",ds?ds.dli.toFixed(0):(CFG.lightIn?CFG.lightIn+'"':"—"),ds?("mol/day · want "+ds.lo+"–"+ds.hi):(CFG.lightIn?"no PPFD yet":"not set"),ds?(ds.state==="ok"?"ok":"warn"):"",true);})()+
@@ -2356,8 +2515,9 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     var h2=new Date().getHours(), lo=lightsOnAt(h2);
     if(lo!==lightsOn){
       lightsOn=lo;var ls=$("liteState");if(ls)ls.textContent="LIGHTS "+(lightsOn?"ON":"OFF");
-      // bands, VPD grading and the verdict ALL change at the flip — re-render, don't just relabel
-      renderGauges();renderTrendPeek();renderDue();
+      // bands, VPD grading and the verdict ALL change at the flip — re-render, don't just relabel.
+      // renderRedRef too: it was left out, so the Guide kept the pre-flip thresholds on screen.
+      renderGauges();renderTrendPeek();renderDue();renderRedRef();
     }
     if(keyOf(new Date())!==todayKey && !document.querySelector(".modal-bg.open")){location.reload();}
   },15000);
@@ -2372,8 +2532,12 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     if(isDemo&&Object.keys(disk.entries).length)exitDemo();
     // and a key that exists on disk is real by definition, so it must not stay tombstoned
     Object.keys(disk.entries).forEach(function(k){ if(k!==todayKey){delete PURGED[k];store.entries[k]=disk.entries[k];} });
+    /* Only materialise today if there is genuinely something to hold. mergeEntry(draft, undefined)
+       returns the blank draft, so a sibling's write used to stamp an EMPTY today into the store —
+       which then rendered as a real card in the Log tab and shipped in the full-log paste as a
+       phantom day reading "Room: NOT CAPTURED TODAY". */
     var merged=mergeEntry(JSON.parse(JSON.stringify(draft)),disk.entries[todayKey]);
-    store.entries[todayKey]=merged;
+    if(disk.entries[todayKey]||store.entries[todayKey]||hasContent(merged)) store.entries[todayKey]=merged;
     if(!isDemo){ draft=JSON.parse(JSON.stringify(merged)); }
     renderBoards();renderGauges();renderTrendPeek();renderCaps();renderRibbon();renderDue();renderPlantIfVisible();
   });
@@ -2424,7 +2588,12 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     var lightLine="  Light: "+(lh!=null?lh+'" above canopy':"height not known for this day");
     if(isToday){
       var ds=dliState();               // null when the reading is stale for the current height
-      if(ds)lightLine+=" · "+CFG.ppfd+" µmol → "+ds.dli.toFixed(0)+" mol/day (want "+ds.lo+"–"+ds.hi+")"+(ds.state==="over"?"  ⚠ ABOVE THE VEG CEILING OF "+DLI_VEG_CEILING:"");
+      // the screen badges "TOO MUCH"/"LOW" for an out-of-band DLI but the export only ever
+      // flagged the hard ceiling — so the alarm he's looking at didn't travel with the paste
+      if(ds)lightLine+=" · "+CFG.ppfd+" µmol → "+ds.dli.toFixed(0)+" mol/day (want "+ds.lo+"–"+ds.hi+")"+
+        (ds.state==="over"?"  ⚠ ABOVE THE VEG CEILING OF "+DLI_VEG_CEILING
+         :ds.state==="high"?"  ⚠ above the band"
+         :ds.state==="low"?"  ⚠ below the band":"");
       else if(CFG.ppfd!=null)lightLine+=" · "+CFG.ppfd+" µmol measured at "+(CFG.ppfdAt!=null?CFG.ppfdAt+'"':"an unknown height")+" — STALE, not re-measured since the light moved";
       else lightLine+=" · NO PPFD MEASUREMENT";
     }
@@ -2516,7 +2685,11 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     openModal("Copy today to send me","ZANGRIA GROW — daily update\n"+cfgLine()+"\n"+report(todayKey,e)+photoCue(e)+dataTail(e));
   });
   function keysSorted(){return Object.keys(store.entries).sort(function(a,b){return dnum(new Date(b.split("-")[0],b.split("-")[1]-1,b.split("-")[2]))-dnum(new Date(a.split("-")[0],a.split("-")[1]-1,a.split("-")[2]));});}
-  $("copyAllBtn").addEventListener("click",function(){var ks=keysSorted();if(!ks.length){openModal("Full log","No entries yet.");return;}var pre=isDemo?"SAMPLE DATA — preview only, not your real log.\n\n":"";var body=pre+"ZANGRIA GROW — full log ("+ks.length+" day"+(ks.length>1?"s":"")+")\n"+cfgLine()+"\n\n"+ks.map(function(k){return report(k,store.entries[k]);}).join("\n\n");
+  $("copyAllBtn").addEventListener("click",function(){
+    // flush the 600ms keypad debounce first, or a high/low typed a moment ago is on screen but
+    // missing from the paste. FLUSH, not commit — an untouched day must not gain an entry.
+    if(!isDemo&&persistT){clearTimeout(persistT);persistT=null;commitDraft();}
+    var ks=keysSorted();if(!ks.length){openModal("Full log","No entries yet.");return;}var pre=isDemo?"SAMPLE DATA — preview only, not your real log.\n\n":"";var body=pre+"ZANGRIA GROW — full log ("+ks.length+" day"+(ks.length>1?"s":"")+")\n"+cfgLine()+"\n\n"+ks.map(function(k){return report(k,store.entries[k]);}).join("\n\n");
     if(!isDemo){try{body+="\n\n--- FULL BACKUP v1 (paste into Guide → Restore) ---\n"+JSON.stringify({v:1,app:"zangria-cockpit",store:{entries:(function(){var o={};Object.keys(store.entries).forEach(function(k){o[k]=stripThumbs(store.entries[k]);});return o;})(),config:CFG}});}catch(err){}}
     openModal(isDemo?"Copy full log (sample)":"Copy full log to send me",body);});
   $("modalCopy").addEventListener("click",function(){tryCopy($("modalText").value,function(ok){toast(ok?"✓ Copied":"Couldn't copy — select the text above",!ok);});});
@@ -2537,16 +2710,29 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     // start of the payload, so every backup ever taken failed to parse. Try the paste
     // whole first, then slice from the FIRST '{"' after the last '--- ' marker line.
     var raw=String(txt).trim();
-    try{ return JSON.parse(raw); }
-    catch(e0){
-      var mk=raw.lastIndexOf("\n--- "), cut=raw.indexOf('{"',mk>=0?mk:0);
-      if(cut<0)throw e0;
-      return JSON.parse(raw.slice(cut));
+    try{ return JSON.parse(raw); }catch(e0){}
+    var mk=raw.lastIndexOf("\n--- "), cut=raw.indexOf('{"',mk>=0?mk:0);
+    if(cut<0)throw new Error("no payload found");
+    var tail=raw.slice(cut);
+    try{ return JSON.parse(tail); }catch(e1){}
+    // He keeps backups in a notes/chat app, so the paste often has something after the block
+    // ("thanks!", a signature, another message). Walk back from the last '}' until it parses.
+    for(var end=tail.lastIndexOf("}");end>0;end=tail.lastIndexOf("}",end-1)){
+      try{ return JSON.parse(tail.slice(0,end+1)); }catch(e2){}
     }
+    throw new Error("payload found but unparseable");
   }
   function applyRestore(b){
+        // VALIDATE BEFORE DESTROYING ANYTHING. exitDemo() used to run first, so pasting `null`
+        // (which JSON.parse happily accepts) or any non-backup JSON wiped the preview and
+        // re-rendered an empty app before the shape check threw.
+        var isDay=!!(b&&b.app==="zangria-cockpit"&&b.entry&&b.key);
+        if(!isDay){
+          var pre=(b&&b.store)?b.store:b;
+          if(!pre||!pre.entries||typeof pre.entries!=="object")throw new Error("no entries");
+        }
         exitDemo();
-        if(b&&b.app==="zangria-cockpit"&&b.entry&&b.key){ // a single-day DATA v1 block from a Copy-today paste
+        if(isDay){ // a single-day DATA v1 block from a Copy-today paste
           // MERGE, don't replace — the block has thumbs stripped, so assigning it wiped
           // every thumbnail for that day and made the stored photos unreachable
           // the DATA v1 block has thumbs stripped by design — carry the live ones across by id
@@ -2594,7 +2780,11 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   $("restoreBtn").addEventListener("click",function(){
     openModal("Restore — paste a backup, then tap Restore now","",{editable:true,onApply:function(txt){
       try{
-        applyRestore(parseBackupPaste(txt));
+        // Restore is the disaster-recovery path and a full disk is the likely disaster, so the
+        // two coincide. Reloading past a failed write showed the OLD data with no explanation.
+        if(applyRestore(parseBackupPaste(txt))===false){
+          toast("⚠ Restore didn't fit — storage is full. Free space, then try again.",true);return;
+        }
         location.reload();
       }catch(err){ toast("Couldn't read that backup — paste the whole block",true); }
     }});
@@ -2661,12 +2851,16 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     h+=row("≥"+on.tHotCrit+"°F","<b>STOP.</b> "+(fl?"Terpenes cook off and buds go airy.":"She stops growing and starts surviving."),"crit");
     h+=row("≤"+on.rhDryCrit+"%","<b>STOP.</b> She can't hold turgor in air this dry. Humidifier on.","crit");
     h+=row("≤"+on.rhDry+"%","Dry — target is "+bandFor(wk,false).lo+"–"+bandFor(wk,false).hi+"%. Humidifier up.");
-    h+=row("≥"+redLines().rhHi+"%","<b>STOP.</b> "+(fl?"Bud rot starts here. Dehumidifier + air now.":"Too damp to stay ahead of mould."),"crit");
+    // MUST be the lights-ON ceiling. redLines() returns whichever window is live right now, so
+    // opening the Guide during the dark window (10:00–16:00 — most of his waking hours) printed
+    // the DARK limit under the "Lights ON" heading: veg read ≥80% when the alarm fires at 75%.
+    h+=row("≥"+dampCeiling(STAGE.phase,STAGE.week,false)+"%","<b>STOP.</b> "+(fl?"Bud rot starts here. Dehumidifier + air now.":"Too damp to stay ahead of mould."),"crit");
     h+=row("≥"+on.vpdHigh,"<b>STOP.</b> VPD — transpiring faster than her roots can supply. RAISE HUMIDITY FIRST; do not water, do not lower the light.","crit");
     h+=row("≤"+on.vpdLow,"VPD low — air too still and wet for her to drink. More air across the canopy.");
     h+='<div class="redhd">Dark window ('+CFG.offHour+":00–"+CFG.onHour+':00)</div>';
     h+=row("≤"+off.tCrit+"°F","<b>STOP.</b> Too cold overnight.","crit");
-    h+=row("≥"+off.rhDamp+"%","Too damp in the dark"+(fl?" — this is when bud rot sets in.":"."));
+    // the dark row skipped the flower tightening too: it printed 58% while the banner fired at 52%
+    h+=row("≥"+dampCeiling(STAGE.phase,STAGE.week,true)+"%","Too damp in the dark"+(fl?" — this is when bud rot sets in.":"."));
     h+='<p class="redfoot">VPD is not graded while the lights are off — stomata are shut.'+(fl?" In flower the damp ceiling tightens: 60% from week 1, 55% from week 4, 50% from week 10.":"")+'</p>';
     host.innerHTML=h;
   }
@@ -2797,7 +2991,10 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
 
   $("clearFlip").addEventListener("click",function(){
     if(CFG.flipDay==null)return;
-    exitDemo();CFG.flipDay=null;touchCfg("flipDay");save();location.reload();
+    exitDemo();CFG.flipDay=null;touchCfg("flipDay");
+    // never reload past a failed write — the page would come back still in flower with no reason given
+    if(!save()){ toast("⚠ Couldn't un-flip — storage is full. Free space, then try again.",true); return; }
+    location.reload();
   });
 
   /* ---- one canonical home for the data ---- */
