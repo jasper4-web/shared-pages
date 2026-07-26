@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>Line Contextual Actions — Burn the Boats</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{--bg:#07060b;--panel:#0e0c16;--line:#1e1a2b;--line2:#2b2540;--ink:#EDEAE4;
+ --dim:#9a93a8;--faint:#6b6480;--gold:#E0B25E;--ember:#FF6B2C;--phos:#4ADE80;--blood:#FF4D5E}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.62}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px 80px}
+.top{position:sticky;top:0;z-index:9;background:rgba(7,6,11,.95);backdrop-filter:blur(12px);
+ border-bottom:1px solid var(--line);margin:0 -18px 26px;padding:13px 18px;display:flex;
+ align-items:center;gap:12px}
+.top a{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--gold);
+ text-decoration:none;min-height:44px;display:flex;align-items:center}
+.top span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint);
+ margin-left:auto;text-align:right}
+h1,h2,h3,h4{font-family:'Clash Display',sans-serif;letter-spacing:-.02em;line-height:1.15;margin:0}
+h1{font-size:31px;font-weight:700;margin:28px 0 16px}
+h2{font-size:23px;font-weight:600;margin:40px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+h3{font-size:18px;font-weight:600;margin:28px 0 10px;color:var(--gold)}
+h4{font-size:15px;font-weight:600;margin:22px 0 8px;color:var(--dim)}
+p{font-size:16px;color:var(--dim);margin:0 0 16px}
+strong{color:var(--ink);font-weight:600}
+em{color:var(--ink);font-style:italic}
+ul,ol{padding-left:22px;margin:0 0 18px}
+li{font-size:16px;color:var(--dim);margin-bottom:9px}
+li::marker{color:var(--faint)}
+code{font-family:'Geist Mono',monospace;font-size:13.5px;background:var(--panel);
+ border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#c8bfe0}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px;
+ overflow-x:auto;margin:0 0 18px}
+pre code{background:none;border:0;padding:0;font-size:13px;line-height:1.7;color:#bdb5d4}
+blockquote{margin:0 0 18px;padding:12px 0 12px 17px;border-left:3px solid var(--gold);
+ color:#c9bda0;font-size:16px}
+blockquote p{color:inherit;margin:0 0 8px}
+blockquote p:last-child{margin:0}
+hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+a{color:var(--gold)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 20px;
+ border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint);
+ text-transform:uppercase;text-align:left;padding:12px;background:var(--panel);
+ border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:12px;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td strong{color:var(--ink)}
+</style></head><body><div class="wrap">
+<div class="top"><a href="../work.html">&larr; ALL THE WORK</a><span>BURN THE BOATS</span></div>
+<h1>AGENT 4 — ROUND 4: THE LINE IS CHOSEN. GIVE EVERY BLOCK THE RIGHT BUTTONS.</h1>
+<p><strong>Turf:</strong> <code>renditions/rend-timeblock-v4.html</code> (new file — leave v3 intact)</p>
+<hr>
+<h2>The verdict</h2>
+<blockquote><p>&quot;<strong>The Line fully built looks good.</strong> We just need to make sure the little buttons that you can click </p><p>below what&#x27;s actually going on <strong>make sense</strong> — for example, if I&#x27;m doing the <strong>Bible · text Kells</strong>, </p><p>there should be quick buttons under that that make sense <strong>actually towards that</strong>, for each </p><p>individual thing. But the <strong>framework can stay the same</strong>.&quot;</p></blockquote>
+<blockquote><p>&quot;I think we have a <strong>pretty good framework with The Line</strong> and we should move forward with that one — </p><p>just making sure that we do it in the <strong>best clean way</strong>, and we aren&#x27;t just trying to put it up </p><p>quickly and get <strong>sloppy results</strong>.&quot;</p></blockquote>
+<p><strong>The Line ships.</strong> Framework locked. This round is about two things: <strong>contextual actions per block</strong>, and <strong>craft</strong>.</p>
+<h2>The problem, precisely</h2>
+<p>Right now the quick-action row under the live block is generic — the same buttons regardless of what the block actually is. That is wrong. The action under <strong>&quot;Bible · text Kells&quot;</strong> should not be the same as the action under <strong>&quot;Block 1 · SANO&quot;</strong> or <strong>&quot;Market close.&quot;</strong></p>
+<p>Every block type needs its <strong>own</strong> small set of actions that are genuinely the right next thing to do — the thing he would otherwise have to go hunting for.</p>
+<h2>Design the action set for every block</h2>
+<p>Read <code>index.html</code> for what exists today (<code>WEEKDAY</code> / <code>SATURDAY</code> arrays, <code>openBlk()</code>, <code>startRun()</code>, <code>logSmoked()</code>, <code>setTrade()</code>, <code>markWait()</code>, <code>markMiss()</code>, <code>tapWin()</code>). Then design and render the action row for <strong>each</strong> of these:</p>
+<div class='tw'><table><tr><th>Block</th><th>What the actions should actually serve</th></tr><tr><td><strong>Wake · pre-market</strong></td><td>he is half-awake, one hand. &quot;I&#x27;m up&quot; is the whole job</td></tr><tr><td><strong>Market open</strong> (6:30–8:30)</td><td>he trades on his phone while moving. Rules kept · no double-back · nothing else</td></tr><tr><td><strong>Write today&#x27;s 3 priorities</strong> (08:30)</td><td>opens the composer — this is the ritual that fills the day</td></tr><tr><td><strong>Block 1–4 · deep work</strong></td><td>start focus run · detail · blocked-on-someone · and the objective is what titles it</td></tr><tr><td><strong>Lunch · walk the dog · gym</strong></td><td>one tap. Gym is a weekly quota (2×), the walk is 3×</td></tr><tr><td><strong>Market close</strong> (13:00)</td><td>rules kept · no double-back. Never P&amp;L, never a dollar figure</td></tr><tr><td><strong>Clean · prep · phone away</strong> (21:00)</td><td>the reset. Possibly the doorway to closing the day</td></tr><tr><td><strong>Bible · text Kells</strong> (21:30)</td><td><strong>his example.</strong> 3×/week. It needs its own timer, and it needs to actually help him text Kells — an <code>sms:</code> action belongs here</td></tr><tr><td><strong>Personal life</strong></td><td>almost nothing. Do not gamify this block</td></tr><tr><td><strong>Saturday&#x27;s shape</strong></td><td>slow start · long hike · one work block · set Monday up</td></tr></table></div>
+<p>For each: <strong>2–3 actions maximum.</strong> If you need four you have not decided. Say what each does and why it beats the alternative you rejected.</p>
+<p><strong>The Bible block deserves particular thought</strong> — he named it. It is 3× a week, it is the only social hook in the whole app (Kells is a real person he texts), and it should get the fullscreen locked timer like a work block does. What are the right two buttons under it?</p>
+<h2>And do it cleanly</h2>
+<blockquote><p>&quot;…making sure that we do it in the <strong>best clean way</strong>, and we aren&#x27;t just trying to put it up quickly </p><p>and get sloppy results.&quot;</p></blockquote>
+<p>That is a direct instruction about craft. Concretely:</p>
+<ul><li><strong>Every touch target ≥44px</strong>, and thumb-reachable — he uses this one-handed at 6 AM</li><li><strong>Consistent spacing scale.</strong> No one-off margins</li><li><strong>Nothing shifts</strong> when a block changes state — no layout jump as actions swap</li><li><strong>Every state of the action row rendered:</strong> not started · live · done · missed · waiting · off-script day</li><li>Actions must be <strong>legible at 390px</strong> without squinting. This app has shipped 6.5px labels before; do not do that here</li></ul>
+<h2>Keep from v3</h2>
+<p>The Line&#x27;s framework, exactly as built and approved: the rail, deep-work-left, the push strip, the make-up banner, NEXT UP never below the fold, and ALWAYS COUNTS. <strong>Do not redesign the region.</strong> Do not substitute your X1 fusion — he chose The Line on its own.</p>
+<h2>Done when</h2>
+<ul><li>The action row designed and rendered for <strong>every block type in the table</strong>, both weekday and Saturday</li><li>≤3 actions each, with a one-line rationale and the alternative you rejected</li><li>All six action-row states rendered</li><li>Touch targets, spacing and legibility verifiably clean at 390px</li><li>Lint clean, <strong>no horizontal overflow</strong>, screenshotted at 390×844, <strong>and you have looked</strong></li><li>Hand-off: the two action sets you are least sure about, and what would settle them</li></ul>
+</div></body></html>

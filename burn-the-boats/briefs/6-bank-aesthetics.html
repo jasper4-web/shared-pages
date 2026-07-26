@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>Bank Aesthetics — Burn the Boats</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{--bg:#07060b;--panel:#0e0c16;--line:#1e1a2b;--line2:#2b2540;--ink:#EDEAE4;
+ --dim:#9a93a8;--faint:#6b6480;--gold:#E0B25E;--ember:#FF6B2C;--phos:#4ADE80;--blood:#FF4D5E}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.62}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px 80px}
+.top{position:sticky;top:0;z-index:9;background:rgba(7,6,11,.95);backdrop-filter:blur(12px);
+ border-bottom:1px solid var(--line);margin:0 -18px 26px;padding:13px 18px;display:flex;
+ align-items:center;gap:12px}
+.top a{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--gold);
+ text-decoration:none;min-height:44px;display:flex;align-items:center}
+.top span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint);
+ margin-left:auto;text-align:right}
+h1,h2,h3,h4{font-family:'Clash Display',sans-serif;letter-spacing:-.02em;line-height:1.15;margin:0}
+h1{font-size:31px;font-weight:700;margin:28px 0 16px}
+h2{font-size:23px;font-weight:600;margin:40px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+h3{font-size:18px;font-weight:600;margin:28px 0 10px;color:var(--gold)}
+h4{font-size:15px;font-weight:600;margin:22px 0 8px;color:var(--dim)}
+p{font-size:16px;color:var(--dim);margin:0 0 16px}
+strong{color:var(--ink);font-weight:600}
+em{color:var(--ink);font-style:italic}
+ul,ol{padding-left:22px;margin:0 0 18px}
+li{font-size:16px;color:var(--dim);margin-bottom:9px}
+li::marker{color:var(--faint)}
+code{font-family:'Geist Mono',monospace;font-size:13.5px;background:var(--panel);
+ border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#c8bfe0}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px;
+ overflow-x:auto;margin:0 0 18px}
+pre code{background:none;border:0;padding:0;font-size:13px;line-height:1.7;color:#bdb5d4}
+blockquote{margin:0 0 18px;padding:12px 0 12px 17px;border-left:3px solid var(--gold);
+ color:#c9bda0;font-size:16px}
+blockquote p{color:inherit;margin:0 0 8px}
+blockquote p:last-child{margin:0}
+hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+a{color:var(--gold)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 20px;
+ border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint);
+ text-transform:uppercase;text-align:left;padding:12px;background:var(--panel);
+ border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:12px;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td strong{color:var(--ink)}
+</style></head><body><div class="wrap">
+<div class="top"><a href="../work.html">&larr; ALL THE WORK</a><span>BURN THE BOATS</span></div>
+<h1>AGENT 5 — THE BANK, PURELY AESTHETIC</h1>
+<p><strong>Mission:</strong> the Bank tab holds the right things and shows them plainly. Make it <strong>beautiful</strong>.</p>
+<p><strong>Turf:</strong> <code>renditions/rend-bank.html</code> <strong>Depends on:</strong> nothing. Start immediately.</p>
+<hr>
+<h2>What he actually said</h2>
+<blockquote><p>&quot;With the bank, I think the best way to do this is really to have an agent look at it from a **pure </p><p>aesthetics way** and think: OK, how do we show all of the things that we&#x27;re trying to show here in a </p><p>much more <strong>aesthetic</strong> way — and then give me another <strong>5 to 10 renditions</strong> to look at. Again, </p><p>obviously not the first ones.&quot;</p></blockquote>
+<p>He likes what the Bank <em>does</em>. This is not a rethink of the mechanics. <strong>Keep every element; change how it looks and how it is arranged.</strong></p>
+<h2>What the Bank holds today</h2>
+<p>Read <code>renderBank()</code> in <code>index.html</code>. It carries:</p>
+<ol><li><strong>XP balance</strong> — the earned currency</li><li><strong>Privileges</strong> — a second currency, <em>earned not bought</em>: held tokens worth &quot;cut a block in half&quot; or &quot;make this block yours&quot;. Earned by an 85%+ week or by logging a boost. He was emphatic that <strong>rewards should be schedule privileges, not points</strong> — so these deserve to feel like objects, not a number in a list.</li><li><strong>Boosts</strong> — occasional real-world events that pay XP and a privilege: networking event, golf day, read tonight, finances hour. Never scored against him.</li><li><strong>Rewards</strong> — real-world things he buys with XP, each carrying <strong>a condition he wrote himself</strong> (&quot;cooked + laundry every night this week → restaurant Saturday&quot;). Currently: restaurant date, golf day, day off, a purchase — plus any he adds. Locked ones can show &quot;~N days away&quot; at his current earn rate.</li></ol>
+<h2>The bar</h2>
+<p>This is the tab that is supposed to be <strong>fun</strong>. It is where he goes to feel that the work bought something. Every other screen in this app is disciplined and austere — the Bank is the one place that is allowed warmth, weight and reward.</p>
+<p>Things worth exploring: privileges as <strong>physical tokens</strong> rather than a count · rewards as <strong>cards you can almost pick up</strong> · a claim that feels like a <strong>ceremony</strong> rather than a toast · the XP balance as something with mass · earned vs locked expressed by material rather than opacity · vaults, coins, stamps, tickets, wax seals — anything that makes a number feel like a thing.</p>
+<p>Restraint still applies: dark, premium, house palette. Warm gold is the earned currency. It should look expensive, not gamified-cheap.</p>
+<h2>Job</h2>
+<p>Build <code>renditions/rend-bank.html</code>: <strong>5–10 genuinely different aesthetic directions</strong> for the full Bank tab, rendered as real phone mock-ups at 390px. All four element types must be present and legible in every direction — this is not an excuse to drop things for prettiness.</p>
+<p>Include at least one direction for <strong>the claim moment</strong> itself (what he sees the instant he spends 2,000 XP on a day off). He called this the emotional peak of the system and it is currently a grey 2.4-second toast.</p>
+<h2>Done when</h2>
+<ul><li>5–10 distinct directions, rendered, all carrying XP + privileges + boosts + rewards</li><li>At least one treatment of the claim ceremony</li><li>Lint clean, screenshotted at 390×844, and you have looked at them</li><li>Hand-off ranks them and says which single detail from each of the top three you would combine</li></ul>
+</div></body></html>
