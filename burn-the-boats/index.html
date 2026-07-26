@@ -162,7 +162,8 @@ button{font-family:inherit}
   box-shadow:0 0 8px var(--gold);border-radius:2px;z-index:2}
 .rail-l{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7.5px;
   letter-spacing:.1em;color:var(--faint);margin-top:6px}
-.timeleft{margin-top:13px;display:flex;align-items:baseline;gap:8px}
+/* deep-work-left now stands on its own below the dials, not inside the rail block */
+.timeleft{margin-top:20px;display:flex;align-items:baseline;gap:8px}
 .timeleft b{font-family:'Clash Display',sans-serif;font-size:27px;letter-spacing:-.035em;line-height:1}
 .timeleft span{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.12em;color:var(--faint)}
 .timeleft .dow{margin-left:auto;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.15em;color:var(--gold)}
@@ -375,231 +376,41 @@ button{font-family:inherit}
 #pushBody .confrow .pips button.on i{background:var(--rune)}
 
 /* =====================================================================
-   THE VAULT — the Bank tab (Agent 6, final build).
-   Every fixture is a part of the vault: the balance is bullion on a shelf,
-   the privileges are keys on a board, each reward is a numbered deposit box
-   with his own terms engraved on the plate beside it, the boosts are the
-   deposit chute, and the history is the register. Locked, unlocked and
-   emptied are three PHYSICAL states of the same box, not three colours.
-   The vault's own scale is scoped to .vt — it must not leak.
+   THE BANK — v4 object 01, "The Vault", the CONGRUENT one.
+   Almost nothing new: it reuses .meter, .gauges/.gg, .glance/.ms/.ovrbox,
+   .blk/.dom/.bn/.bo/.bd/.bc, .wins/.win and h2.sec from the day screen.
+   Only the plate, the token cards and two spacing wrappers live here.
    ===================================================================== */
-.vt{
-  --steel-1:#34373D; --steel-2:#24272C; --steel-3:#16181C; --steel-4:#0D0F12;
-  --brass-1:#EBD4A0; --brass-2:#C2A163; --brass-3:#8A6E33; --brass-4:#54411B;
-  --lit:#FFD98A; --engrave:#3A2E14;
-  --t-fig:40px; --t-h2:20px; --t-h3:16px; --t-body:15px; --t-lab:12px; --t-min:11px;
-  --r1:3px; --r2:6px; --r3:12px;
-  --tap:44px;
-  position:relative}
-.vt{background:
-   repeating-linear-gradient(94deg,rgba(255,255,255,.016) 0 1px,transparent 1px 3px),
-   linear-gradient(180deg,#1B1E22,#121417 60%,#0D0F12);
-  min-height:820px;padding-bottom:var(--s5)}
-.vt::after{content:'';position:absolute;inset:0;pointer-events:none;
-  background-image:url('assets/grain/grain-fine.svg');opacity:.05;mix-blend-mode:overlay}
-/* ---- the inner face of the vault door: the header ---- */
-.vt-head{position:relative;padding:var(--s4) var(--s4) var(--s4);
-  background:
-   repeating-linear-gradient(94deg,rgba(255,255,255,.02) 0 1px,transparent 1px 3px),
-   linear-gradient(180deg,var(--steel-1),var(--steel-2) 62%,var(--steel-3));
-  border-bottom:2px solid var(--steel-4);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 6px 18px -8px #000}
-.vt-rivets{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s2);height:9px;
-  display:flex;justify-content:space-between;pointer-events:none}
-.vt-rivets i{width:9px;height:9px;border-radius:50%;
-  background:radial-gradient(circle at 34% 30%,#5A5E66,#2A2D33 70%);
-  box-shadow:inset 0 -1px 1px rgba(0,0,0,.7),0 1px 0 rgba(255,255,255,.07)}
-.vt-nameplate{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
-  border-radius:var(--r1);padding:var(--s3) var(--s4);
-  background:linear-gradient(180deg,var(--brass-1),var(--brass-2) 52%,var(--brass-3));
-  box-shadow:inset 0 1px 0 rgba(255,248,224,.75),0 3px 8px -4px rgba(0,0,0,.8)}
-.vt-nameplate b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:var(--t-h3);
-  letter-spacing:.09em;color:var(--engrave);text-shadow:0 1px 0 rgba(255,248,224,.5)}
-.vt-nameplate span{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;
-  color:#5E4A1E;text-shadow:0 1px 0 rgba(255,248,224,.45)}
-/* ---- the bullion shelf: XP as mass ---- */
-.vt-shelf{margin:var(--s5) var(--s4) 0;position:relative;padding:var(--s4) var(--s4) 0;
-  border-radius:var(--r2) var(--r2) 0 0;
-  background:linear-gradient(180deg,var(--steel-4),#0A0C0E);
-  box-shadow:inset 0 3px 12px rgba(0,0,0,.9),inset 0 0 0 1px rgba(255,255,255,.05)}
-.vt-rack{display:flex;flex-direction:column;align-items:center;gap:var(--s1);padding-bottom:var(--s4)}
-/* ten bars promote into a crate, so the shelf keeps gaining mass all the way to Dec 1
-   instead of reading "full" from week three onward */
-.vt-crates{display:flex;flex-wrap:wrap;gap:var(--s2);justify-content:center;
-  margin-bottom:var(--s3);padding-bottom:var(--s3);max-width:296px;
-  border-bottom:1px dashed rgba(194,161,99,.22)}
-.vt-crate{width:64px;height:38px;border-radius:2px;position:relative;display:flex;
-  flex-direction:column;justify-content:space-evenly;align-items:center;
-  background:linear-gradient(176deg,var(--brass-1),var(--brass-2) 44%,var(--brass-3) 84%,var(--brass-4));
-  box-shadow:0 3px 5px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,250,228,.7)}
-.vt-crate i{display:block;width:78%;height:2px;border-radius:2px;background:rgba(58,46,20,.5)}
-.vt-crate::after{content:'10';position:absolute;right:4px;bottom:2px;
-  font-family:'Geist Mono',monospace;font-size:8px;color:var(--engrave);opacity:.75}
-.vt-row{display:flex;gap:var(--s1);justify-content:center}
-.vt-bar{width:62px;height:19px;border-radius:2px;
-  clip-path:polygon(7% 0,93% 0,100% 100%,0 100%);
-  background:linear-gradient(178deg,var(--brass-1),var(--brass-2) 46%,var(--brass-3));
-  box-shadow:0 2px 3px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,250,228,.7)}
-.vt-bar.ghost{background:none;box-shadow:none;
-  border:1px dashed rgba(194,161,99,.34);clip-path:none;border-radius:2px}
-.vt-plank{height:11px;margin:0 var(--s4);border-radius:0 0 var(--r1) var(--r1);
-  background:linear-gradient(180deg,#4A4E56,#2A2D33 60%,#1A1C20);
-  box-shadow:0 8px 16px -8px #000,inset 0 1px 0 rgba(255,255,255,.16)}
-.vt-count{margin:var(--s4) var(--s4) 0;border-radius:var(--r1);padding:var(--s3) var(--s4);
-  display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);
-  background:linear-gradient(180deg,var(--brass-1),var(--brass-2) 52%,var(--brass-3));
-  box-shadow:inset 0 1px 0 rgba(255,248,224,.75),0 3px 8px -4px rgba(0,0,0,.8)}
-.vt-count b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:var(--t-fig);
-  letter-spacing:-.045em;line-height:.92;color:var(--engrave);text-shadow:0 1px 0 rgba(255,248,224,.5)}
-.vt-count .cl{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;
-  color:#5E4A1E;text-align:right;line-height:1.7;text-shadow:0 1px 0 rgba(255,248,224,.45)}
-/* ---- engraved fixture label, used for every section ---- */
-.vt-eng{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s2);
-  margin:var(--s5) var(--s4) var(--s3);
-  font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.18em;
-  color:#7E838C;text-transform:uppercase;text-shadow:0 1px 0 rgba(255,255,255,.05)}
-.vt-eng u{text-decoration:none;color:#5A5F68;letter-spacing:.1em}
-.vt-eng span,.vt-eng u{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* ---- the key board: privileges as objects on hooks ---- */
-.vt-board{margin:0 var(--s4);border-radius:var(--r2);padding:var(--s4) var(--s3) var(--s3);
-  background:linear-gradient(180deg,#1E2126,#15171B);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 3px 10px rgba(0,0,0,.7)}
-.vt-hooks{display:flex;flex-wrap:wrap;gap:var(--s3);justify-content:center}
-.vt-hook{position:relative;min-height:86px;width:58px;padding-top:var(--s5);text-align:center}
-.vt-keynote{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.09em;
-  color:#6E747E;line-height:1.7;margin-top:var(--s3);padding-top:var(--s3);text-align:center;
-  border-top:1px solid rgba(255,255,255,.06)}
-.vt-keynote b{color:#B9BEC6;font-weight:400}
-.vt-hook::before{content:'';position:absolute;left:50%;top:0;width:15px;height:17px;margin-left:-7.5px;
-  border:2px solid #6E747E;border-top:0;border-radius:0 0 8px 8px}
-.vt-key{width:26px;height:52px;margin:0 auto var(--s2);position:relative;border-radius:13px 13px var(--r1) var(--r1);
-  background:linear-gradient(148deg,var(--brass-1),var(--brass-2) 48%,var(--brass-3));
-  box-shadow:0 4px 7px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,250,228,.7)}
-.vt-key::after{content:'';position:absolute;left:50%;top:11px;width:8px;height:8px;border-radius:50%;
-  margin-left:-4px;background:var(--steel-4);box-shadow:inset 0 1px 2px rgba(0,0,0,.9)}
-.vt-key::before{content:'';position:absolute;left:50%;bottom:-13px;width:9px;height:15px;margin-left:-4.5px;
-  background:linear-gradient(148deg,var(--brass-2),var(--brass-3));
-  clip-path:polygon(0 0,100% 0,100% 55%,42% 55%,42% 100%,0 100%)}
-.vt-key.bare{background:none;box-shadow:inset 0 0 0 2px rgba(194,161,99,.26)}
-.vt-key.bare::after{background:rgba(0,0,0,.4);box-shadow:none}
-.vt-key.bare::before{background:rgba(194,161,99,.26)}
-.vt-hook .kn{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.09em;
-  color:#B9BEC6;line-height:1.6;margin-top:var(--s3)}
-.vt-hook.empty .kn{color:#6E747E}
-/* ---- the wall of deposit boxes: rewards ---- */
-.vt-wall{margin:0 var(--s4);display:grid;gap:var(--s2)}
-.vt-box{display:grid;grid-template-columns:108px minmax(0,1fr);gap:var(--s3);height:130px;
-  border-radius:var(--r2);padding:var(--s3);align-items:stretch;overflow:hidden;
-  background:linear-gradient(180deg,#1E2126,#15171B);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
-/* the recess + its door */
-.vt-frame{position:relative}
-.vt-cav{position:absolute;inset:0;border-radius:var(--r1);overflow:hidden;
-  background:linear-gradient(180deg,#0A0C0E,#05070A);
-  box-shadow:inset 0 4px 12px rgba(0,0,0,.95),inset 0 0 0 1px rgba(255,255,255,.04);
-  display:grid;place-items:center}
-.vt-cav span{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.13em;color:#4A4F58}
-.vt-door{position:absolute;inset:0;border-radius:var(--r1);transform-origin:left center;
-  transform:perspective(1200px) rotateY(0deg);
-  background:
-   repeating-linear-gradient(96deg,rgba(255,255,255,.05) 0 1px,transparent 1px 4px),
-   linear-gradient(158deg,var(--brass-1),var(--brass-2) 46%,var(--brass-3) 82%,var(--brass-4));
-  box-shadow:inset 0 1px 0 rgba(255,250,228,.6),0 3px 8px -3px rgba(0,0,0,.85)}
-.vt-no{position:absolute;left:var(--s2);top:var(--s2);font-family:'Geist Mono',monospace;
-  font-size:var(--t-lab);font-weight:700;color:var(--engrave);text-shadow:0 1px 0 rgba(255,248,224,.5)}
-.vt-hole{position:absolute;right:var(--s3);top:var(--s3);width:19px;height:19px;border-radius:50%;
-  background:radial-gradient(circle at 50% 40%,#0A0C0E,#000);
-  box-shadow:inset 0 1px 3px rgba(0,0,0,.95),0 1px 0 rgba(255,250,228,.45)}
-.vt-bolt{position:absolute;right:-4px;width:9px;height:13px;border-radius:0 2px 2px 0;
-  background:linear-gradient(180deg,#D8D2C4,#8A8578);box-shadow:0 1px 2px rgba(0,0,0,.7)}
-.vt-bolt.b1{top:38%}.vt-bolt.b2{top:60%}
-.vt-gauge{position:absolute;left:var(--s2);right:var(--s2);bottom:var(--s3);height:10px;border-radius:99px;
-  background:rgba(30,20,4,.55);box-shadow:inset 0 1px 2px rgba(0,0,0,.8)}
-.vt-gauge i{display:block;height:100%;border-radius:99px;
-  background:linear-gradient(90deg,#6E5424,var(--lit));box-shadow:0 0 7px rgba(255,217,138,.6)}
-.vt-gauge u{position:absolute;left:0;right:0;top:-15px;text-decoration:none;text-align:center;
-  font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.08em;color:#5E4A1E}
-/* the plate beside it */
-.vt-plate{display:flex;flex-direction:column;min-width:0}
-.vt-plate b{font-family:'Clash Display',sans-serif;font-weight:600;font-size:var(--t-h2);
-  letter-spacing:-.03em;line-height:1.1;color:var(--ink)}
-.vt-plate em{font-style:normal;font-size:var(--t-body);color:var(--dim);line-height:1.35;
-  margin-top:var(--s1);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.vt-act{margin-top:auto;min-height:var(--tap);display:flex;align-items:center;gap:var(--s2)}
-.vt-turn{min-height:var(--tap);flex:1;border-radius:var(--r2);padding:0 var(--s3);
-  font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.13em;font-weight:700;
-  background:linear-gradient(180deg,var(--brass-1),var(--brass-2) 54%,var(--brass-3));
-  color:var(--engrave);text-shadow:0 1px 0 rgba(255,248,224,.5);
-  box-shadow:inset 0 1px 0 rgba(255,250,228,.7),0 4px 0 var(--brass-4),0 8px 14px -6px rgba(0,0,0,.9)}
-.vt-turn:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,250,228,.7),0 2px 0 var(--brass-4)}
-.vt-wait{min-height:var(--tap);display:flex;flex-direction:column;justify-content:center;
-  font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.1em;color:#8A9099;line-height:1.65}
-.vt-wait b{font-family:'Geist Mono',monospace;font-size:var(--t-lab);color:#B9BEC6;font-weight:400}
-/* THREE PHYSICAL STATES */
-.vt-box.ready .vt-hole{background:radial-gradient(circle at 50% 40%,var(--lit),#8A6E33 70%);
-  box-shadow:0 0 12px rgba(255,217,138,.85),inset 0 1px 2px rgba(0,0,0,.5)}
-.vt-box.ready .vt-bolt{right:6px}
-.vt-box.ready{box-shadow:inset 0 0 0 1px rgba(224,178,94,.4),0 0 24px -10px rgba(224,178,94,.5)}
-.vt-box.open .vt-door{transform:perspective(1200px) rotateY(-64deg)}
-.vt-box.open .vt-bolt{right:6px}
-.vt-box.open .vt-plate b{color:#7E838C}
-.vt-box.open .vt-plate em{color:#5A5F68}
-/* just-became-affordable: the moment */
-.vt-box.fresh{box-shadow:inset 0 0 0 1px rgba(224,178,94,.75),0 0 34px -8px rgba(224,178,94,.75)}
-.vt-box.fresh .vt-hole{animation:vtPulse 1.9s ease-in-out infinite}
-@keyframes vtPulse{0%,100%{box-shadow:0 0 10px rgba(255,217,138,.7),inset 0 1px 2px rgba(0,0,0,.5)}
-  50%{box-shadow:0 0 22px rgba(255,217,138,1),inset 0 1px 2px rgba(0,0,0,.5)}}
-.vt-flag{margin:0 var(--s4) var(--s2);border-radius:var(--r2);padding:0 var(--s4);
-  display:flex;align-items:center;gap:var(--s3);height:46px;overflow:hidden;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
-.vt-flag i{width:11px;height:11px;border-radius:50%;flex:none;background:#3E434B}
-.vt-flag span{font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.11em;
-  color:#8A9099;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.vt-flag.on{background:linear-gradient(180deg,rgba(224,178,94,.16),rgba(224,178,94,.06));
-  box-shadow:inset 0 0 0 1px rgba(224,178,94,.4)}
-.vt-flag.on i{background:var(--lit);box-shadow:0 0 10px var(--lit)}
-.vt-flag.on span{color:#F0D9A6}
-/* ---- the deposit chute: boosts ---- */
-.vt-chute{margin:0 var(--s4);border-radius:var(--r2);padding:var(--s3);
-  background:linear-gradient(180deg,var(--steel-2),var(--steel-3));
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 3px 10px rgba(0,0,0,.7)}
-.vt-mouth{height:15px;border-radius:99px;margin:0 var(--s2) var(--s3);
-  background:linear-gradient(180deg,#05070A,#0D0F12);
-  box-shadow:inset 0 3px 7px rgba(0,0,0,.95),0 1px 0 rgba(255,255,255,.09)}
-.vt-slips{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
-.vt-slip{min-height:var(--tap);display:flex;align-items:center;gap:var(--s2);text-align:left;
-  border-radius:var(--r1);padding:var(--s2) var(--s3);
-  background:linear-gradient(180deg,#EFE6D0,#D9CCAE);
-  box-shadow:inset 0 1px 0 rgba(255,252,240,.9),0 3px 0 #A99A78,0 6px 10px -5px rgba(0,0,0,.8)}
-.vt-slip:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,252,240,.9),0 1px 0 #A99A78}
-.vt-slip .sn{font-size:13px;font-weight:500;color:#2A2214;line-height:1.25;min-width:0}
-.vt-slip .sx{margin-left:auto;font-family:'Geist Mono',monospace;font-size:var(--t-lab);
-  font-weight:700;color:#6E5424;white-space:nowrap}
-/* ---- the register: history ---- */
-.vt-reg{margin:0 var(--s4);border-radius:var(--r2);overflow:hidden;
-  background:linear-gradient(180deg,#1E2126,#15171B);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
-.vt-line{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) var(--s4);
-  border-bottom:1px solid rgba(255,255,255,.05);min-height:var(--tap)}
-.vt-line:last-child{border-bottom:0}
-.vt-line .d{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.1em;color:#6E747E;
-  flex:none;width:56px}
-.vt-line .w{font-size:14px;color:#B9BEC6;min-width:0;flex:1}
-.vt-line .x{font-family:'Geist Mono',monospace;font-size:var(--t-lab);color:#8A9099;flex:none}
-.vt-empty{padding:var(--s4);font-family:'Geist Mono',monospace;font-size:var(--t-min);
-  letter-spacing:.1em;color:#6E747E;line-height:1.9}
-.vt-empty b{color:var(--gold);font-weight:400}
-/* the day-one promise line */
-.vt-promise{margin:var(--s4) var(--s4) 0;border-radius:var(--r2);padding:var(--s4);
-  background:linear-gradient(180deg,rgba(224,178,94,.13),rgba(224,178,94,.04));
-  box-shadow:inset 0 0 0 1px rgba(224,178,94,.3)}
-.vt-promise b{display:block;font-family:'Clash Display',sans-serif;font-weight:600;font-size:var(--t-h3);
-  letter-spacing:-.02em;color:#F0D9A6;line-height:1.25}
-.vt-promise span{display:block;font-family:'Geist Mono',monospace;font-size:var(--t-min);
-  letter-spacing:.1em;color:#B49A6E;line-height:1.8;margin-top:var(--s2)}
-.vt-new{margin:var(--s4) var(--s4) 0;min-height:var(--tap);width:calc(100% - var(--s4)*2);
-  border-radius:var(--r2);font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.13em;
-  color:#8A9099;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.bk-furn{position:relative;margin:0 -13px;padding:18px 13px 16px;overflow:hidden;
+  background:linear-gradient(180deg,#0d0c10,#0a090d);border-bottom:1px solid #1c1a22}
+.bk-furn::before{content:'';position:absolute;left:0;right:0;top:-40%;height:150%;pointer-events:none;
+  background:radial-gradient(62% 46% at 50% 62%,rgba(255,107,44,.2),rgba(179,42,0,.08) 44%,transparent 70%)}
+/* the same struck-metal stamp the day opens with, so the Bank is visibly the same app */
+.bk-stamp{position:relative;z-index:2;text-align:center;font-family:'Clash Display',sans-serif;
+  font-weight:700;font-size:27px;letter-spacing:.035em;line-height:1.1;color:#2a2530;
+  text-shadow:0 1px 0 rgba(255,150,80,.34),0 -1px 0 rgba(0,0,0,.85)}
+.bk-stamp em{font-style:normal;color:#e8a86a;text-shadow:0 0 22px rgba(255,107,44,.62)}
+.bk-app{padding-top:2px}
+/* the Bank's glance card has no radar, so it is one column — and the 104px the radar
+   would have taken goes to the row labels, which is why they need no truncation */
+.bk-glance{grid-template-columns:1fr}
+.bk-glance .ms{grid-template-columns:86px 1fr 26px}
+.toks{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.tok{position:relative;border-radius:11px;padding:11px 12px;overflow:hidden;
+  border:1px solid rgba(224,178,94,.45);background:rgba(224,178,94,.07)}
+.tok i{position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--gold)}
+.tok .k{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.16em;color:var(--gold)}
+.tok b{display:block;font-size:13px;font-weight:500;line-height:1.25;margin-top:5px;color:var(--ink)}
+/* an unearned token is stated plainly, never hidden — a gap you can see is not a failure */
+.tok.mt{border:1px dashed #2f2942;background:transparent}
+.tok.mt i{background:#2f2942}
+.tok.mt .k{color:var(--faint)}
+.tok.mt b{color:#645d7a}
+.bk-note{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;color:var(--faint);
+  line-height:1.8;margin-top:9px}
+.bk-note b{color:var(--gold);font-weight:400}
+#bankBody .blk{cursor:pointer}
+#bankBody .blk.done{opacity:.6}
 
 /* the zoom pill — bottom LEFT, inside the one-handed thumb arc (F3's ergonomics) */
 .zpill{position:fixed;left:11px;bottom:calc(66px + var(--sb));z-index:80;display:flex;align-items:center;
@@ -892,20 +703,22 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
     </div>
   </div>
 
-  <!-- ORDER: what he does RIGHT NOW comes before how he is scoring.
-       The Line's locked constraint is that the live block is never below the fold, and it
-       was: measured at 390x844 the card opened at y=683 with its second row of buttons
-       behind the tab bar. The score card (glance) is 256px and was sitting on top of it.
-       So the day comes first and the scoreboard is what he scrolls to — which is also what
-       the governing law wants: never open on a wall of failure. -->
+  <!-- ORDER (owner's call, 2026-07-25): the radar + OVR card sits directly under the
+       furnace. Then the day rail, the pipeline and the vice dials. Deep-work-left and
+       the live-block card move DOWN, so the top of the screen is never "Done" and
+       "Day complete" — the two lines that read as dead weight on a finished day. -->
+  <div class="glance" id="glance">
+    <svg class="mini" id="miniRadar" width="104" height="104" viewBox="0 0 104 104"></svg>
+    <div class="mini-stats" id="miniStats"></div>
+    <div class="ovrbox" id="ovrBox"></div>
+    <div class="proj" id="proj"></div>
+  </div>
+
   <div class="rail-wrap">
     <div class="rail" id="rail"><div class="now" id="railNow"></div></div>
     <div class="rail-l"><span id="railS">—</span><span id="railE">—</span></div>
-    <div class="timeleft"><b id="tlBig">—</b><span>OF DEEP WORK LEFT</span><span class="dow" id="tlDow">—</span></div>
   </div>
 
-  <div id="penanceBanner"></div>
-  <div class="nextup" id="nextUp"></div>
   <div class="pushstrip" id="pushStrip"></div>
 
   <div class="gauges">
@@ -914,12 +727,9 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
     <div class="gg" id="ggC"></div>
   </div>
 
-  <div class="glance" id="glance">
-    <svg class="mini" id="miniRadar" width="104" height="104" viewBox="0 0 104 104"></svg>
-    <div class="mini-stats" id="miniStats"></div>
-    <div class="ovrbox" id="ovrBox"></div>
-    <div class="proj" id="proj"></div>
-  </div>
+  <div class="timeleft"><b id="tlBig">—</b><span>OF DEEP WORK LEFT</span><span class="dow" id="tlDow">—</span></div>
+  <div id="penanceBanner"></div>
+  <div class="nextup" id="nextUp"></div>
 
   <h2 class="sec">Always counts <u id="winTally"></u></h2>
   <div class="wins" id="wins"></div>
@@ -1143,6 +953,10 @@ function migrate(s){
   else if(Array.isArray(s.rewards))
     s.rewards.forEach(r=>{if(r.claimedOn===undefined)r.claimedOn=null;
       if(r.condition===undefined)r.condition=''});
+  /* the fourth spine thread was BODY before it became PERSONAL — carry its milestones over */
+  if(s.ms&&s.ms.body&&!s.ms.personal){s.ms.personal=s.ms.body;delete s.ms.body}
+  if(s.conf&&s.conf.body!==undefined&&s.conf.personal===undefined){
+    s.conf.personal=s.conf.body;delete s.conf.body}
   s.v=4;
   return s;
 }
@@ -2633,19 +2447,18 @@ function goals(){
     at:p.kitchen||0,target:1,unit:'kitchen',
     ms:[M('edible',0,{t:'Ten kitchens with a name and a number'}),
         M('edible',1),M('edible',2),M('edible',3)]},
-   {id:'body',rank:4,short:'BODY',c:'#FF6B2C',kind:'outcome',
-    title:g.BODY.lag,lead:g.BODY.lead,at:g.BODY.at,target:g.BODY.target,unit:g.BODY.unit,
-    ms:[M('body',0),M('body',1),M('body',2),M('body',3)]},
-   {id:'faith',rank:5,short:'FAITH',c:'#B08CFF',kind:'habit',
-    title:g.FAITH.lag,lead:g.FAITH.lead,ms:[],
-    quotas:[['Bible read',`${weekCount(['bible'])} of 3`],['Texted Kells','—']]},
-   {id:'people',rank:6,short:'PEOPLE',c:'#4ADE80',kind:'habit',
-    title:g.PEOPLE.lag,lead:g.PEOPLE.lead,ms:[],
-    quotas:[['Real time with someone',`${weekWins('present')} of 3`],
-            ['Phone-down evenings',`${weekCount(['reset'])} of 5`]]},
-   {id:'mind',rank:7,short:'MIND',c:'#38E1D8',kind:'habit',parked:(S.parked&&S.parked.mind)||null,
-    title:g.MIND.lag,lead:g.MIND.lead,ms:[],
-    quotas:[['Reading nights',`${weekWins('chores')>0?'—':'—'}`]]},
+   /* THE FOURTH THREAD IS PERSONAL, not BODY. Three business goals and one personal one —
+      that is the whole shape of the run. Body, faith, people and mind are not four separate
+      races he can lose four times; they are one life, and they ride together as its quotas. */
+   {id:'personal',rank:4,short:'PERSONAL',c:'#FF6B2C',kind:'outcome',
+    title:g.BODY.lag,lead:'Body · faith · people · mind',
+    at:g.BODY.at,target:g.BODY.target,unit:g.BODY.unit,
+    ms:[M('personal',0),M('personal',1),M('personal',2),M('personal',3)],
+    quotas:[['Gym',`${weekCount(['gym'])} of 2`],
+            ['Walks',`${weekCount(['walk','hike'])} of 3`],
+            ['Bible + Kells',`${weekCount(['bible'])} of 3`],
+            ['Real time with someone',`${weekWins('present')} of 3`],
+            ['Phone away by 21:00',`${weekCount(['reset'])} of 5`]]},
   ];
 }
 function weekWins(k){
@@ -2867,44 +2680,19 @@ function setTrade(k){
 
 /* ================= THE BANK ================= */
 /* ================= THE VAULT · the Bank tab =================
- * Every fixture is part of the vault. Locked / unlocked / emptied are three
- * PHYSICAL states of the same box, not three colours.
- * Full rationale: agent-briefs/crew-2026-07-25/6f-vault-final-build.md
+ * v4 object 01, the CONGRUENT one: the shipped app's own parts — furnace plate,
+ * gauge strip, glance card, block rows. Not a separate material world; the Bank
+ * is the same app, showing money-shaped facts. Every class here already exists
+ * elsewhere in this file, which is the entire point of the design.
+ * Source: renditions/rend-bank-v4.html §01.
  *
- * THE SHELF SCALES. Agent 6 shipped a ten-bar rack (5,000 XP) and flagged in its
- * own hand-off that it would read "full" late in the run. Costed against the real
- * award table a decent weekday is 350-700 XP, so a flat rack fills around DAY 12
- * OF 91 and never moves again — the one element whose whole job is showing
- * accumulation would go flat in week three. So bars promote into crates:
- * 500 XP = one bar · ten bars = one crate. The pyramid always shows its ten
- * slots with the unfilled ones as ghost outlines, so there is ALWAYS visible
- * headroom and the shelf can never read full. */
-const BAR=500, CRATE_BARS=10, ROWS=[1,2,3,4];
-function rack(xp){
-  const totalBars=Math.floor(xp/BAR);
-  const crates=Math.floor(totalBars/CRATE_BARS);
-  const bars=totalBars%CRATE_BARS;              /* the remainder, always 0-9 */
-  let h='';
-  if(crates){
-    h+=`<div class="vt-crates">`+
-      Array.from({length:crates},()=>`<span class="vt-crate"><i></i><i></i><i></i></span>`).join('')+
-      `</div>`;
-  }
-  ROWS.forEach((cap,ri)=>{
-    const below=ROWS.slice(ri+1).reduce((a,b)=>a+b,0);
-    const inRow=Math.max(0,Math.min(cap,bars-below));
-    let r='';
-    for(let i=0;i<cap;i++)r+=`<span class="vt-bar${i<inRow?'':' ghost'}"></span>`;
-    h+=`<div class="vt-row">${r}</div>`;
-  });
-  return h;
-}
+ * NOTE ON THE NAME: rend-bank-vault.html is a DIFFERENT design also called
+ * "The Vault" (brass, bullion, deposit boxes). It is not this one. This is v4/01. */
 const money=n=>Number(n).toLocaleString();
 
 /* A trailing 7-day mean, not a lifetime average. The lifetime figure drifts
    optimistic as good days accumulate, which quietly makes every "about N days"
-   on a locked box a lie in his favour. Under 7 days of data it says so instead
-   of extrapolating from one good morning. */
+   a lie in his favour. With no history it returns 0 and the UI says so. */
 function dailyXp(){
   const keys=Object.keys(S.days).sort().slice(-7);
   if(!keys.length)return 0;
@@ -2916,109 +2704,127 @@ function dailyXp(){
 }
 function daysAway(short){
   const rate=dailyXp();
-  if(!rate)return null;                       /* no honest estimate yet — say nothing */
+  if(!rate)return null;
   return Math.max(1,Math.ceil(short/rate));
+}
+function xpToday(){
+  const r=S.days[today()];
+  if(!r||!r.credited)return 0;
+  return Object.values(r.credited).reduce((a,v)=>a+(typeof v==='number'?v:0),0);
+}
+/* the gauge arc: r=19 path, so the dasharray is the true arc length */
+function bankDial(pct,color,hot){
+  const LEN=59.7;
+  const off=(LEN*(1-Math.max(0,Math.min(1,pct)))).toFixed(1);
+  return `<div class="gg${hot?' hot':''}">
+    <svg width="46" height="27" viewBox="0 0 46 27">
+      <path d="M4 24 A 19 19 0 0 1 42 24" fill="none" stroke="#1c1a23" stroke-width="3.6" stroke-linecap="round"/>
+      <path d="M4 24 A 19 19 0 0 1 42 24" fill="none" stroke="${color}" stroke-width="3.6"
+        stroke-linecap="round" stroke-dasharray="${LEN}" stroke-dashoffset="${off}"
+        ${hot?`style="filter:drop-shadow(0 0 4px ${color}aa)"`:''}/>
+    </svg>`;
 }
 
 function renderBank(){
   S.privileges=S.privileges||0;
   $('bankXp').textContent=`${money(S.xp)} XP`;
-  const rs=S.rewards,priv=S.privileges;
+  const rs=S.rewards,priv=S.privileges,rate=dailyXp(),gained=xpToday();
+  const open=rs.map((r,i)=>({...r,i})).filter(r=>!r.done);
+  const next=open.filter(r=>r.cost>S.xp).sort((a,b)=>a.cost-b.cost)[0];
+  const nextPct=next?Math.min(1,S.xp/next.cost):1;
   const taken=rs.filter(r=>r.done);
-  const anyReady=rs.some(r=>!r.done&&r.cost<=S.xp);
-  const rate=dailyXp();
+  const readyN=open.filter(r=>r.cost<=S.xp).length;
 
-  const boxes=rs.map((r,i)=>{
-    const no=String(i+1).padStart(2,'0');
-    const ready=!r.done&&r.cost<=S.xp;
-    const pct=Math.min(100,Math.round(S.xp/r.cost*100));
-    const short=r.cost-S.xp;
-    const days=daysAway(short);
-    const cls=r.done?'open':(ready?'ready':'locked');
-    const act=r.done
-      ? `<div class="vt-wait"><b>WITHDRAWN</b>${r.claimedOn?'DAY '+r.claimedOn:''}</div>`
-      : ready
-        ? `<button class="vt-turn" onclick="claim(${i})">TURN THE KEY · ${money(r.cost)}</button>`
-        : `<div class="vt-wait"><b>${money(short)} SHORT</b>${days?`ABOUT ${days} DAY${days>1?'S':''}`:'NO RATE YET'}</div>`;
-    const face=r.done?'':`
-      <span class="vt-bolt b1"></span><span class="vt-bolt b2"></span>
-      <span class="vt-gauge"><u>${money(r.cost)}</u><i style="width:${ready?100:pct}%"></i></span>`;
-    return `<div class="vt-box ${cls}">
-      <div class="vt-frame">
-        <div class="vt-cav"><span>EMPTY</span></div>
-        <div class="vt-door"><span class="vt-no">${no}</span><span class="vt-hole"></span>${face}</div>
+  /* the furnace plate — the same stamped header the day opens with */
+  const head=`<div class="bk-furn">
+    <div class="bk-stamp">THE <em>BANK</em></div>
+    <div class="meter">
+      <div class="n">${money(S.xp)}</div>
+      <div class="r">
+        <div class="t"><i style="width:${Math.round(nextPct*100)}%"></i></div>
+        <div class="lab"><span>${gained?`+${money(gained)} TODAY`:'NOTHING BANKED TODAY'}</span>
+          <span>${next?`NEXT AT ${money(next.cost)}`:readyN?'READY TO CLAIM':'ALL CLAIMED'}</span></div>
       </div>
-      <div class="vt-plate">
-        <b>${esc(r.n)}</b><em>${esc(r.condition||'')}</em>
-        <div class="vt-act">${act}</div>
-      </div></div>`;
-  }).join('');
+    </div></div>`;
 
-  /* Keys, not money — they hang on a board, not on the shelf, and they buy time back.
-     The board grows with him: one hook per key held, always with two bare hooks of
-     headroom, so it can never read "full" any more than the shelf can. */
-  const hooks=Math.max(2,priv+2);
-  const keys=Array.from({length:hooks},(_,i)=>{
-    const held=priv>i;
-    return `<div class="vt-hook${held?'':' empty'}"><div class="vt-key${held?'':' bare'}"></div></div>`;
-  }).join('');
-
-  const slips=BOOSTS.map(b=>`<button class="vt-slip" onclick="logBoost('${b.k}')">
-    <span class="sn">${esc(b.n)}</span><span class="sx">+${b.xp}</span></button>`).join('');
-
-  const register=taken.length
-    ? taken.map(r=>`<div class="vt-line"><span class="d">${r.claimedOn?'DAY '+r.claimedOn:'—'}</span>
-        <span class="w">${esc(r.n)}</span><span class="x">${money(r.cost)}</span></div>`).join('')
-    : `<div class="vt-empty">NO WITHDRAWALS ON THE RECORD.<br>
-        <b>THE FIRST ENTRY IS THE ONE YOU'LL REMEMBER.</b></div>`;
-
-  /* day one: the wall is already engraved and every box already numbered.
-     The shelf is empty because it is day one — not because he has failed. */
-  const cheapest=rs.filter(r=>!r.done).sort((a,b)=>a.cost-b.cost)[0];
-  const firstDays=cheapest?daysAway(cheapest.cost-S.xp):null;
-  const promise=(!S.xp&&cheapest)
-    ? `<div class="vt-promise"><b>Box 01 opens${firstDays?` in about ${firstDays} days`:' once the shelf has weight'}.</b>
-        <span>EVERY BOX IS ALREADY YOURS AND ALREADY ENGRAVED.<br>THE SHELF IS EMPTY BECAUSE IT IS DAY ONE.</span></div>`
-    : '';
-
-  /* always rendered, so a box changing state cannot move the wall */
-  const readyN=rs.filter(r=>!r.done&&r.cost<=S.xp).length;
-  const flag=`<div class="vt-flag${anyReady?' on':''}"><i></i><span>${rs.length} BOXES · ${taken.length} EMPTIED · ${
-    readyN===0?'ALL SHUT':readyN===1?'ONE READY':readyN+' READY'}</span></div>`;
-
-  const totalBars=Math.floor(S.xp/BAR);
-  const crates=Math.floor(totalBars/CRATE_BARS);
-  const rateLine=rate?`+${money(rate)} A DAY · TRAILING 7`:'NO RATE YET';
-
-  $('bankBody').innerHTML=`<div class="vt">
-    <div class="vt-head">
-      <div class="vt-nameplate"><b>THE VAULT</b><span>DAY ${dayNo()} OF ${TOTAL_DAYS}</span></div>
-      <div class="vt-rivets">${'<i></i>'.repeat(9)}</div>
-    </div>
-
-    <div class="vt-eng"><span>On the shelf</span><u>bullion${crates?` · ${crates} crate${crates>1?'s':''}`:''}</u></div>
-    <div class="vt-shelf"><div class="vt-rack">${rack(S.xp)}</div></div>
-    <div class="vt-plank"></div>
-    <div class="vt-count"><b>${money(S.xp)}</b>
-      <span class="cl">${S.xp?'XP IN THE VAULT':'THE SHELF IS EMPTY'}<br>${rateLine}</span></div>
-    ${promise}
-
-    <div class="vt-eng"><span>On the board</span><u>keys · ${priv} held</u></div>
-    <div class="vt-board"><div class="vt-hooks">${keys}</div>
-      <div class="vt-keynote">EACH KEY CUTS A BLOCK IN HALF, OR MAKES ONE YOURS.<br>
-        <b>THEY BUY TIME BACK, NOT THINGS.</b></div></div>
-
-    <div class="vt-eng"><span>The wall</span><u>${rs.length} boxes · your terms</u></div>
-    ${flag}
-    <div class="vt-wall">${boxes}</div>
-    <button class="vt-new" onclick="newReward()">+ CUT A NEW BOX</button>
-
-    <div class="vt-eng"><span>The chute</span><u>never scored against you</u></div>
-    <div class="vt-chute"><div class="vt-mouth"></div><div class="vt-slips">${slips}</div></div>
-
-    <div class="vt-eng"><span>The register</span><u>withdrawals</u></div>
-    <div class="vt-reg">${register}</div>
+  /* the gauge strip — the same three-dial furniture as the day screen */
+  const firstDays=next?daysAway(next.cost-S.xp):null;
+  const dials=`<div class="gauges">
+    ${bankDial(Math.min(1,S.xp/Math.max(1,(next?next.cost:S.xp||1))),'#E0B25E',S.xp>0)}
+      <div class="val">${money(S.xp)}</div><div class="lb">Banked</div></div>
+    ${bankDial(Math.min(1,priv/2),'#38E1D8',priv>0)}
+      <div class="val">${priv}</div><div class="lb">Tokens</div></div>
+    ${bankDial(nextPct,'#4ADE80',false)}
+      <div class="val">${Math.round(nextPct*100)}%</div><div class="lb">Next up</div></div>
   </div>`;
+
+  /* the glance card — one bar per reward, exactly the mini-stats rows from TODAY */
+  const barCol=pct=>pct>=1?'var(--gold)':pct>=.5?'var(--d-cap)':'var(--violet)';
+  /* the row label: drop a leading article, then cut on a WORD boundary.
+     Slicing at a fixed character count gave "NICE RESTAU" and "WEEKEND AWA". */
+  const shortName=n=>{
+    const w=n.replace(/^(a|an|the|that)\s+/i,'').toUpperCase().split(/\s+/);
+    let out=w[0];
+    for(let i=1;i<w.length;i++){ if((out+' '+w[i]).length>16)break; out+=' '+w[i] }
+    return out;
+  };
+  const rows=rs.map(r=>{
+    const pct=r.done?1:Math.min(1,S.xp/r.cost);
+    const label=shortName(r.n);
+    return `<div class="ms"><span class="n">${esc(label)}</span>
+      <span class="t"><i style="width:${Math.round(pct*100)}%;background:${r.done?'#3d5c48':barCol(pct)}"></i></span>
+      <span class="v"${r.done?' style="color:var(--faint)"':''}>${r.done?'—':Math.round(pct*100)}</span></div>`;
+  }).join('');
+  const glance=`<div class="glance bk-glance">
+    <div class="mini-stats">${rows}</div>
+    <div class="ovrbox"><b>${money(S.xp)}</b><span class="l">XP<br>BANKED</span>
+      <span class="gap">${next
+        ? `NEXT REWARD<u>${money(next.cost-S.xp)}</u>`
+        : readyN?`READY<u>${readyN}</u>`:`ALL TAKEN<u>${taken.length}</u>`}</span></div>
+  </div>`;
+
+  /* tokens — privileges as cards, unearned ones stated rather than hidden */
+  const TOKENS=[['Cut a block in half'],['Make a block yours']];
+  const toks=`<div class="toks">${TOKENS.map((t,i)=>{
+    const held=priv>i;
+    return `<div class="tok${held?'':' mt'}"><i></i>
+      <div class="k">${held?'PRIVILEGE':'UNEARNED'}</div><b>${t[0]}</b></div>`}).join('')}</div>
+    ${priv>2?`<div class="bk-note">${priv} HELD · SPEND ONE ON ANY BLOCK</div>`:''}
+    ${priv===0?`<div class="bk-note">ONE 85% WEEK ISSUES THE FIRST ONE.<br>
+      <b>${rate?`AT YOUR RATE THAT IS ABOUT ${daysAway(2000)} DAYS.`:'IT STARTS THE FIRST WEEK YOU LOG.'}</b></div>`:''}`;
+
+  /* rewards — the block rows from the schedule, reused verbatim */
+  const blks=rs.map((r,i)=>{
+    const ready=!r.done&&r.cost<=S.xp;
+    const short=r.cost-S.xp;
+    const d=daysAway(short);
+    const pct=Math.min(1,S.xp/r.cost);
+    const col=r.done?'var(--phos)':ready?'var(--gold)':pct>=.5?'var(--d-cap)':'var(--violet)';
+    const meta=r.done
+      ? `${money(r.cost)} · <b style="color:var(--phos)">TAKEN${r.claimedOn?' · DAY '+r.claimedOn:''}</b>`
+      : ready
+        ? `${money(r.cost)} · <b style="color:var(--gold)">READY TO CLAIM</b>`
+        : `${money(r.cost)} · ${money(short)} SHORT${d?` · ~${d} DAYS`:' · NO RATE YET'}`;
+    return `<div class="blk${r.done?' done':''}${ready?' now':''}" onclick="${r.done?'':`claim(${i})`}">
+      <div class="dom" style="background:${col}"></div>
+      <div style="grid-column:1/3">
+        <div class="bn">${esc(r.n)}</div>
+        ${r.condition?`<div class="bo">${esc(r.condition)}</div>`:''}
+        <div class="bd">${meta}</div></div>
+      <div class="bc"></div></div>`;
+  }).join('');
+
+  $('bankBody').innerHTML=head+dials+
+    `<div class="bk-app">${glance}
+      <h2 class="sec"><span>Tokens held</span><u>${priv}</u></h2>
+      ${toks}
+      <h2 class="sec"><span>Rewards</span><u>you set the terms</u></h2>
+      ${blks}
+      <h2 class="sec"><span>Boosts</span><u>never scored against you</u></h2>
+      <div class="wins">${BOOSTS.map(bo=>`<button class="win" onclick="logBoost('${bo.k}')">
+        <span class="wtop">${esc(bo.n)}<b>+${bo.xp}</b></span></button>`).join('')}</div>
+      <button class="btn gh" style="margin-top:12px" onclick="newReward()">+ New reward</button>
+    </div>`;
 }
 const BOOSTS=[
   {k:'network',n:'Networking event',xp:250},
