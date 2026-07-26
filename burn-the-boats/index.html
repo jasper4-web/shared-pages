@@ -30,31 +30,39 @@ h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-
 .app{max-width:520px;margin:0 auto;padding:calc(6px + var(--st)) 13px calc(34px + var(--sb))}
 button{font-family:inherit}
 
-/* ---------- status ---------- */
-.status{position:sticky;top:0;z-index:60;background:linear-gradient(180deg,var(--bg) 72%,rgba(7,6,11,.9));
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
-  margin:0 -13px;padding:calc(9px + var(--st)) 15px 10px}
-.st-row{display:flex;align-items:center;gap:11px}
-.st-ovr{display:flex;align-items:baseline;gap:5px;flex:none;cursor:pointer}
-.st-ovr b{font-family:'Clash Display',sans-serif;font-size:25px;color:var(--gold);line-height:1;letter-spacing:-.04em}
-.st-ovr span{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.15em;color:#6d5c3c}
-.st-mid{flex:1;min-width:0}
-.st-fuel{height:4px;border-radius:99px;background:#1a1420;overflow:hidden;position:relative}
-.st-fuel i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#7a3a12,var(--ember))}
-.st-lab{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7.5px;
-  letter-spacing:.1em;color:#7a5540;margin-top:5px}
-.st-wk{flex:none;text-align:right}
-.st-wk b{font-family:'Geist Mono',monospace;font-size:14px;font-weight:700;line-height:1;display:block}
-.st-wk span{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.13em;color:var(--faint)}
-/* vices ride in the status bar — hard rule: front and centre */
-.vices{display:flex;gap:7px;margin-top:9px}
-.vice{flex:1;border:1px solid var(--line2);border-radius:9px;padding:6px 8px;background:var(--panel);cursor:pointer}
-.vice .vl{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.13em;color:var(--faint);text-transform:uppercase}
-.vice .vv{font-family:'Geist Mono',monospace;font-size:13px;font-weight:700;letter-spacing:-.02em;margin-top:2px}
-.vice .vs{font-family:'Geist Mono',monospace;font-size:6.5px;color:var(--faint);letter-spacing:.08em}
-.vice.ok{border-color:rgba(74,222,128,.35)} .vice.ok .vv{color:var(--phos)}
-.vice.warn{border-color:rgba(255,179,64,.35)} .vice.warn .vv{color:var(--gold)}
-.vice.bad{border-color:rgba(255,77,94,.4)} .vice.bad .vv{color:var(--blood)}
+/* ---------- THE FURNACE ---------- */
+.furnace{position:relative;margin:0 -13px;padding:calc(20px + var(--st)) 16px 17px;
+  background:linear-gradient(180deg,#0d0c10,#0a090d);overflow:hidden;border-bottom:1px solid #1c1a22}
+.furnace::before{content:'';position:absolute;left:-10%;right:-10%;top:-40%;height:150%;
+  background:radial-gradient(50% 46% at 50% 62%,rgba(255,107,44,.2),rgba(179,42,0,.08) 44%,transparent 70%);
+  animation:furn 5s ease-in-out infinite}
+@keyframes furn{0%,100%{opacity:.62;transform:scale(1)}50%{opacity:1;transform:scale(1.07)}}
+.stamp{position:relative;z-index:2;text-align:center;font-family:'Clash Display',sans-serif;font-weight:700;
+  font-size:22px;letter-spacing:.035em;line-height:1.14;color:#2a2530;
+  text-shadow:0 1px 0 rgba(255,150,80,.34),0 -1px 0 rgba(0,0,0,.85)}
+.stamp em{font-style:normal;color:#e8a86a;text-shadow:0 0 22px rgba(255,107,44,.62)}
+.meter{position:relative;z-index:2;margin-top:15px;display:flex;align-items:center;gap:11px}
+.meter .n{font-family:'Clash Display',sans-serif;font-size:44px;line-height:.85;letter-spacing:-.05em;color:#f2ece4}
+.meter .r{flex:1}
+.meter .t{height:6px;border-radius:99px;background:#191419;overflow:hidden;position:relative}
+.meter .t i{position:absolute;left:0;top:0;bottom:0;
+  background:linear-gradient(90deg,#6b2400,var(--ember),#FFC98A);box-shadow:0 0 12px rgba(255,107,44,.65);
+  transition:width .5s}
+.meter .lab{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7.5px;
+  letter-spacing:.13em;color:#8d6650;margin-top:6px}
+
+/* ---------- GAUGE STRIP — one row, three dials ---------- */
+.gauges{margin:0 -13px;display:grid;grid-template-columns:repeat(3,1fr);
+  background:linear-gradient(180deg,#0b0a0e,#08080b);border-bottom:1px solid var(--line)}
+.gg{padding:9px 4px 9px;text-align:center;position:relative;cursor:pointer;
+  border-right:1px solid #16151b;box-shadow:inset 1px 0 0 rgba(255,150,80,.04)}
+.gg:last-child{border-right:0}
+.gg.hot::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(62% 54% at 50% 100%,rgba(255,107,44,.15),transparent 72%)}
+.gg svg{display:block;margin:0 auto}
+.gg .val{font-family:'Geist Mono',monospace;font-size:12px;font-weight:700;color:#efe6da;line-height:1;margin-top:-7px}
+.gg .lb{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.12em;text-transform:uppercase;
+  color:#514a58;text-shadow:0 1px 0 rgba(255,150,80,.16);margin-top:5px}
 
 /* ---------- glance: mini radar + stats, the top-of-page snapshot ---------- */
 .glance{margin-top:14px;border-radius:15px;padding:13px 14px;border:1px solid var(--line2);
@@ -67,7 +75,14 @@ button{font-family:inherit}
 .ms .t{height:4px;border-radius:99px;background:#221d33;overflow:hidden;position:relative}
 .ms .t i{position:absolute;left:0;top:0;bottom:0;border-radius:99px}
 .ms .v{font-family:'Geist Mono',monospace;font-size:9px;font-weight:700;text-align:right;color:var(--ink)}
-.proj{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.07);padding-top:10px;margin-top:2px;
+.ovrbox{grid-column:1/-1;display:flex;align-items:baseline;gap:8px;padding-top:11px;margin-top:2px;
+  border-top:1px solid rgba(255,255,255,.07);cursor:pointer}
+.ovrbox b{font-family:'Clash Display',sans-serif;font-size:34px;line-height:.85;letter-spacing:-.045em;color:var(--gold)}
+.ovrbox .l{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.16em;color:#6d5c3c;line-height:1.5}
+.ovrbox .gap{margin-left:auto;text-align:right;font-family:'Geist Mono',monospace;font-size:7.5px;
+  letter-spacing:.12em;color:var(--faint);line-height:1.6}
+.ovrbox .gap u{text-decoration:none;color:var(--ghost);font-size:11px;font-weight:700;display:block}
+.proj{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.07);padding-top:10px;margin-top:11px;
   font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:var(--faint);
   display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .proj b{font-size:12px;letter-spacing:-.01em}
@@ -277,24 +292,27 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
 
 <div class="app" id="app">
 
-  <div class="status">
-    <div class="st-row">
-      <div class="st-ovr" id="stOvrBtn"><b id="stOvr">—</b><span>OVR</span></div>
-      <div class="st-mid">
-        <div class="st-fuel"><i id="stFuel" style="width:0%"></i></div>
-        <div class="st-lab"><span id="stDays">—</span><span id="stRun">—</span></div>
+  <div class="furnace">
+    <div class="stamp">THE BOATS HAVE<br><em>BEEN BURNED</em></div>
+    <div class="meter">
+      <div class="n" id="fDays">—</div>
+      <div class="r">
+        <div class="t"><i id="fFuel" style="width:0%"></i></div>
+        <div class="lab"><span>WORKDAYS TO DEC 1</span><span id="fWk">—</span></div>
       </div>
-      <div class="st-wk"><b id="stExec">—</b><span>EXECUTION</span></div>
     </div>
-    <div class="vices">
-      <div class="vice" id="viceA"></div>
-      <div class="vice" id="viceB"></div>
-    </div>
+  </div>
+
+  <div class="gauges">
+    <div class="gg" id="ggA"></div>
+    <div class="gg" id="ggB"></div>
+    <div class="gg" id="ggC"></div>
   </div>
 
   <div class="glance" id="glance">
     <svg class="mini" id="miniRadar" width="104" height="104" viewBox="0 0 104 104"></svg>
     <div class="mini-stats" id="miniStats"></div>
+    <div class="ovrbox" id="ovrBox"></div>
     <div class="proj" id="proj"></div>
   </div>
 
@@ -636,23 +654,6 @@ function rollDishWeek(){
   }
   v.weekKey=mk; v.week=0; save();
 }
-function renderVices(){
-  rollDishWeek();
-  const v=S.vices,vs=viceState();
-  const a=$('viceA'),b=$('viceB');
-  const over=v.dish.week>v.dish.allow;
-  a.className='vice '+(over?'bad':'ok');
-  a.innerHTML=`<div class="vl">${esc(v.dish.label)} · STREAK</div>
-    <div class="vv">${v.dish.streak}w</div>
-    <div class="vs">${v.dish.week} / ${v.dish.allow} THIS WEEK${over?' · OVER':''}</div>`;
-  a.onclick=()=>openVice('dish');
-  const gateLive=vs.beforeNoon;
-  b.className='vice '+(gateLive?(vs.smokeClean?'ok':'bad'):'warn');
-  b.innerHTML=`<div class="vl">SMOKE · CLEAN STREAK</div>
-    <div class="vv">${v.smoke.cleanStreak}d</div>
-    <div class="vs">${gateLive?(vs.smokeClean?'BEFORE NOON · HOLDING':'GATE BROKEN'):'AFTER NOON · OPEN'}</div>`;
-  b.onclick=()=>openVice('smoke');
-}
 function openVice(k){
   const v=S.vices[k];
   const body = k==='dish'
@@ -701,19 +702,51 @@ function render(){
     return;}
   $('sabbath').classList.remove('on');
   autoMark(); recount();
-  renderStatus(); renderVices(); renderGlance(); renderRail();
+  renderStatus(); renderGauges(); renderGlance(); renderRail();
   renderNext(); renderSched(); renderWins(); renderWeek(); renderRun(); renderChar();
   $('foot').innerHTML=`BURN THE BOATS · DAY ${dayNo()} / ${TOTAL_DAYS}<br>WHAT IS THE MILLIONAIRE VERSION OF YOURSELF DOING RIGHT NOW?`;
 }
 function renderStatus(){
-  const o=ovr();$('stOvr').textContent=o;$('cvOvr').textContent=o;
+  $('cvOvr').textContent=ovr();
   const wl=workdaysLeft();
-  $('stDays').textContent=`${wl} WORKDAYS TO DEC 1`;
-  $('stFuel').style.width=(wl/TOTAL_DAYS*100)+'%';
-  $('stRun').textContent=`INCOME NEEDED BY MAR`;
-  const w=week(),p=w.due?Math.round(w.done/w.due*100):0;
-  $('stExec').textContent=p+'%';
-  $('stExec').style.color=p>=85?'var(--phos)':p>=70?'var(--gold)':'var(--blood)';
+  $('fDays').textContent=wl;
+  $('fFuel').style.width=(wl/TOTAL_DAYS*100)+'%';
+  $('fWk').textContent='WK '+pad(weekNo());
+}
+
+/* One row, three dials — the only three things that move daily.
+   The December lags change ~3 times in 91 days; they live with the graph, not here. */
+function dial(el,{pct,val,label,hot,color}){
+  const A=Math.PI*21, off=A*(1-Math.max(0,Math.min(1,pct)));
+  el.className='gg'+(hot?' hot':'');
+  el.innerHTML=`<svg width="46" height="27" viewBox="0 0 46 27">
+      <path d="M4 24 A 19 19 0 0 1 42 24" fill="none" stroke="#1c1a23" stroke-width="3.6" stroke-linecap="round"/>
+      <path d="M4 24 A 19 19 0 0 1 42 24" fill="none" stroke="${color}" stroke-width="3.6" stroke-linecap="round"
+        stroke-dasharray="${A.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"
+        style="${hot?`filter:drop-shadow(0 0 4px ${color}aa)`:''};transition:stroke-dashoffset .5s"/>
+    </svg>
+    <div class="val">${esc(val)}</div><div class="lb">${esc(label)}</div>`;
+}
+function renderGauges(){
+  rollDishWeek();
+  const v=S.vices,vs=viceState(),w=week();
+  /* Arc and number must measure the SAME thing — both are the streak, against an 8-week milestone.
+     A full arc beside a 0w value read as "maxed out" when nothing had been earned yet. */
+  const over=v.dish.week>v.dish.allow;
+  dial($('ggA'),{pct:Math.min(1,v.dish.streak/8),val:v.dish.streak+'w',
+    label:over?'Dish · over':'Dishwasher',hot:v.dish.streak>0&&!over,
+    color:over?'#FF4D5E':'#FF6B2C'});
+  $('ggA').onclick=()=>openVice('dish');
+
+  const gateOK=!vs.beforeNoon||vs.smokeClean;
+  dial($('ggB'),{pct:Math.min(1,v.smoke.cleanStreak/7),val:v.smoke.cleanStreak+'d',
+    label:vs.beforeNoon?'Smoke · gate':'Smoke · open',hot:gateOK,color:gateOK?'#FF6B2C':'#FF4D5E'});
+  $('ggB').onclick=()=>openVice('smoke');
+
+  const p=w.due?w.done/w.due:0;
+  dial($('ggC'),{pct:p,val:w.due?Math.round(p*100)+'%':'—',label:'This week',
+    hot:p>=.85,color:p>=.85?'#4ADE80':p>=.7?'#FFB25E':'#FF4D5E'});
+  $('ggC').onclick=()=>document.querySelector('.wkscore,.card')?.scrollIntoView({behavior:'smooth'});
 }
 /* Top-of-page snapshot: where you are, on one small graph, with the date you hit 99. */
 function renderGlance(){
@@ -733,6 +766,11 @@ function renderGlance(){
     <span class="n">${d.label.replace('THE ','')}</span>
     <span class="t"><i style="width:${s[d.k]}%;background:${d.c}"></i></span>
     <span class="v">${s[d.k]}</span></div>`).join('');
+
+  const o=ovr();
+  $('ovrBox').innerHTML=`<b>${o}</b><span class="l">OVERALL<br>RATING</span>
+    <span class="gap">GAP TO HIM<u>${HIM-o}</u></span>`;
+  $('ovrBox').onclick=()=>{$('charv').classList.add('on');renderChar()};
 
   const pr=projection(),el=$('proj');
   if(!pr.date){el.innerHTML=`<span>NO PACE YET</span><b class="warn">START TODAY</b>`;return}
@@ -1000,7 +1038,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 
 /* ---------- character + veil ---------- */
-$('stOvrBtn').onclick=()=>{$('charv').classList.add('on');renderChar()};
+
 $('cvClose').onclick=()=>{$('charv').classList.remove('on');document.body.dataset.veil='you'};
 function renderChar(){
   const s=domainStats();

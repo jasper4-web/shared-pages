@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Furnace — Five Strips</title>
+<link rel="stylesheet" href="lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --ember:#FF6B2C; --hot:#FFB25E; --warm:#e8a86a; --deep:#B32A00;
+  --steel:#2a2530; --steel2:#191720; --phos:#4ADE80; --blood:#FF4D5E;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99;
+  background-image:url('assets/grain/grain-fine.svg');opacity:.035;mix-blend-mode:overlay}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+.mast{padding:62px 0 32px;border-bottom:1px solid var(--line)}
+.kick{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.26em;color:var(--faint);text-transform:uppercase;margin-bottom:14px}
+.mast h1{font-size:clamp(30px,4.8vw,48px);line-height:1.03;letter-spacing:-.035em;margin-bottom:15px}
+.mast p{max-width:640px;color:var(--dim);font-size:15.4px;margin:0}
+.mast p b{color:var(--ink);font-weight:500}
+
+.dir{padding:50px 0;border-bottom:1px solid var(--line)}
+.dh{display:grid;grid-template-columns:58px 1fr;gap:17px;align-items:start;margin-bottom:22px}
+.dn{font-family:'Clash Display',sans-serif;font-size:44px;line-height:.8;font-weight:700;color:transparent;-webkit-text-stroke:1.2px var(--line2)}
+.dt h2{font-size:26px;letter-spacing:-.03em;margin-bottom:5px}
+.dm{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+.dl{max-width:600px;color:var(--dim);font-size:15px;margin-top:11px}
+.dl b{color:var(--ink);font-weight:500}
+.body{display:grid;grid-template-columns:minmax(0,392px) 1fr;gap:34px;align-items:start}
+@media(max-width:880px){.body{grid-template-columns:1fr}.dh{grid-template-columns:42px 1fr;gap:12px}.dn{font-size:31px}}
+.notes dt{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-top:18px}
+.notes dt:first-child{margin-top:0}
+.notes dd{margin:6px 0 0;font-size:14.5px;color:var(--dim);line-height:1.55}
+.notes dd b{color:var(--ink);font-weight:500}
+.cost{border-left:2px solid var(--line2);padding-left:13px;margin-top:20px;font-size:13.6px;color:var(--faint);font-style:italic}
+
+.phone{border-radius:20px;overflow:hidden;border:1px solid var(--line2);box-shadow:0 28px 70px -28px #000;background:var(--bg)}
+.notch{height:26px;background:#000;display:flex;align-items:center;justify-content:center}
+.notch i{width:56px;height:5px;border-radius:99px;background:#1a1a20}
+.below{padding:11px 13px 15px;border-top:1px solid var(--line)}
+.bl{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.16em;color:#3f3a4d;text-align:center}
+
+/* ===== THE FURNACE HEADER (locked) ===== */
+.furnace{position:relative;padding:22px 16px 18px;background:linear-gradient(180deg,#0d0c10,#0a090d);overflow:hidden}
+.furnace::before{content:'';position:absolute;left:-10%;right:-10%;top:-40%;height:150%;
+  background:radial-gradient(50% 46% at 50% 62%,rgba(255,107,44,.2),rgba(179,42,0,.08) 44%,transparent 70%);
+  animation:furn 5s ease-in-out infinite}
+@keyframes furn{0%,100%{opacity:.62;transform:scale(1)}50%{opacity:1;transform:scale(1.07)}}
+.stamp{position:relative;z-index:2;text-align:center;font-family:'Clash Display',sans-serif;font-weight:700;
+  font-size:22px;letter-spacing:.035em;line-height:1.14;color:var(--steel);
+  text-shadow:0 1px 0 rgba(255,150,80,.34),0 -1px 0 rgba(0,0,0,.85)}
+.stamp em{font-style:normal;color:var(--warm);text-shadow:0 0 22px rgba(255,107,44,.62)}
+.meter{position:relative;z-index:2;margin-top:16px;display:flex;align-items:center;gap:11px}
+.meter .n{font-family:'Clash Display',sans-serif;font-size:44px;line-height:.85;letter-spacing:-.05em;color:#f2ece4}
+.meter .r{flex:1}
+.meter .t{height:6px;border-radius:99px;background:#191419;overflow:hidden;position:relative}
+.meter .t i{position:absolute;left:0;top:0;bottom:0;width:62%;
+  background:linear-gradient(90deg,#6b2400,var(--ember),#FFC98A);box-shadow:0 0 12px rgba(255,107,44,.65)}
+.meter .lab{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7.5px;
+  letter-spacing:.13em;color:#8d6650;margin-top:6px}
+
+/* shared engraved-label type */
+.eng{font-family:'Geist Mono',monospace;letter-spacing:.13em;text-transform:uppercase;
+  color:#514a58;text-shadow:0 1px 0 rgba(255,150,80,.16)}
+
+/* ============ 01 — GAUGE CLUSTER ============ */
+.s1{background:linear-gradient(180deg,#0b0a0e,#08080b);padding:13px 11px;
+  border-top:1px solid rgba(255,150,80,.09);display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.g1{background:radial-gradient(70% 70% at 50% 20%,#15131a,#0d0c11);border:1px solid #1d1b24;
+  border-radius:11px;padding:9px 6px 7px;text-align:center;position:relative;overflow:hidden}
+.g1 .dial{position:relative;width:52px;height:30px;margin:0 auto 4px}
+.g1 svg{display:block}
+.g1 .val{font-family:'Geist Mono',monospace;font-size:13px;font-weight:700;color:#efe6da;line-height:1}
+.g1 .lb{font-size:6.5px;margin-top:4px}
+.g1.hot::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(60% 50% at 50% 100%,rgba(255,107,44,.16),transparent 70%)}
+
+/* ============ 02 — THE STAMPED PLATE ============ */
+.s2{background:linear-gradient(180deg,#100f13,#0b0a0e);border-top:1px solid rgba(255,150,80,.1);
+  display:grid;grid-template-columns:repeat(3,1fr);position:relative}
+.s2::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(80% 120% at 50% 130%,rgba(255,107,44,.13),transparent 62%)}
+.c2{padding:11px 8px 12px;position:relative;border-right:1px solid #17161c;
+  box-shadow:inset 1px 0 0 rgba(255,150,80,.045)}
+.c2:nth-child(3n){border-right:0}
+.c2:nth-child(n+4){border-top:1px solid #17161c;box-shadow:inset 1px 0 0 rgba(255,150,80,.045),inset 0 1px 0 rgba(255,150,80,.05)}
+.c2 .lb{font-size:6.5px}
+.c2 .val{font-family:'Geist Mono',monospace;font-size:15px;font-weight:700;margin-top:5px;line-height:1;
+  color:var(--steel);text-shadow:0 1px 0 rgba(255,150,80,.42),0 -1px 0 rgba(0,0,0,.9)}
+.c2 .val.lit{color:#f0e3d4;text-shadow:0 0 14px rgba(255,150,80,.5)}
+.c2 .sub{font-family:'Geist Mono',monospace;font-size:6px;color:#4c4552;letter-spacing:.1em;margin-top:4px}
+/* rivets */
+.s2 .riv{position:absolute;width:3px;height:3px;border-radius:99px;background:#1f1d26;
+  box-shadow:inset 0 .5px 0 rgba(255,150,80,.3),0 .5px 0 rgba(0,0,0,.7)}
+
+/* ============ 03 — THE THERMOCOUPLES ============ */
+.s3{background:linear-gradient(180deg,#0b0a0e,#080709);padding:12px 13px 13px;
+  border-top:1px solid rgba(255,150,80,.09);display:grid;gap:8px}
+.t3{display:grid;grid-template-columns:74px 1fr 34px;gap:9px;align-items:center}
+.t3 .lb{font-size:6.5px}
+.t3 .slot{height:9px;border-radius:2px;background:#131118;position:relative;overflow:hidden;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.9),inset 0 -1px 0 rgba(255,150,80,.07)}
+.t3 .slot i{position:absolute;left:0;top:0;bottom:0;border-radius:2px}
+.t3 .slot i.molten{background:linear-gradient(90deg,#5c1c00,var(--ember) 62%,#FFD9A0);
+  box-shadow:0 0 10px rgba(255,107,44,.6)}
+.t3 .slot i.cool{background:linear-gradient(90deg,#232030,#3a3448)}
+.t3 .v{font-family:'Geist Mono',monospace;font-size:10.5px;font-weight:700;text-align:right;color:#e9dfd3}
+
+/* ============ 04 — THE CONTROL BOARD ============ */
+.s4{background:linear-gradient(180deg,#0a0a0d,#08080a);border-top:1px solid rgba(255,150,80,.09);padding:10px 12px 11px}
+.hd4{display:flex;justify-content:space-between;font-size:6.5px;padding-bottom:7px;
+  border-bottom:1px solid #16151b;margin-bottom:3px}
+.r4{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:6px 0;
+  border-bottom:1px solid #131218;font-family:'Geist Mono',monospace;font-size:9.5px}
+.r4:last-child{border-bottom:0}
+.r4 .k{color:#6e6678;letter-spacing:.09em}
+.r4 .v{color:#efe6da;font-weight:700;letter-spacing:-.01em}
+.r4 .st{width:7px;height:7px;border-radius:99px;background:#241f2c}
+.r4 .st.on{background:var(--ember);box-shadow:0 0 7px var(--ember)}
+.r4 .st.mid{background:var(--hot);box-shadow:0 0 7px rgba(255,178,94,.7)}
+
+/* ============ 05 — THE FORGE TILES ============ */
+.s5{background:#08080b;padding:11px 10px;border-top:1px solid rgba(255,150,80,.09);
+  display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.f5{position:relative;border-radius:10px;padding:10px 11px;overflow:hidden;
+  background:linear-gradient(158deg,#17151d 0%,#100f14 46%,#0b0a0e 100%);
+  border:1px solid #201d28;
+  box-shadow:inset 0 1px 0 rgba(255,150,80,.13), inset 0 -2px 5px rgba(0,0,0,.75), 0 1px 0 rgba(0,0,0,.6)}
+.f5.lit{border-color:#33261f;box-shadow:inset 0 1px 0 rgba(255,150,80,.28),
+  inset 0 -12px 22px -10px rgba(255,107,44,.34), inset 0 -2px 5px rgba(0,0,0,.7), 0 1px 0 rgba(0,0,0,.6)}
+.f5 .lb{font-size:6.5px}
+.f5 .val{font-family:'Geist Mono',monospace;font-size:19px;font-weight:700;line-height:1;margin-top:6px;color:#f1e7db}
+.f5 .val.warm{color:var(--warm);text-shadow:0 0 16px rgba(255,107,44,.5)}
+.f5 .sub{font-family:'Geist Mono',monospace;font-size:6px;color:#514a58;letter-spacing:.1em;margin-top:5px}
+.f5 .spark{position:absolute;right:9px;top:9px;width:5px;height:5px;border-radius:99px;background:#2a2532}
+.f5.lit .spark{background:var(--ember);box-shadow:0 0 8px var(--ember)}
+.f5.wide{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between}
+.f5.wide .val{margin-top:0}
+
+/* verdict */
+.verdict{padding:54px 0 92px}
+.verdict h2{font-size:25px;margin-bottom:8px}
+.verdict>p{color:var(--dim);max-width:640px;margin:0 0 24px;font-size:15.2px}
+.vr{display:grid;grid-template-columns:30px 1fr;gap:14px;padding:16px 0;border-top:1px solid var(--line);align-items:start}
+.vr .n{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);padding-top:3px}
+.vr h3{font-size:16px;margin-bottom:4px;font-family:'Satoshi';font-weight:700}
+.vr p{margin:0;color:var(--dim);font-size:14.2px;line-height:1.55}
+.vr.pick h3{color:var(--hot)}
+.tag{display:inline-block;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.13em;
+  padding:2.5px 7px;border-radius:4px;border:1px solid var(--line2);color:var(--faint);margin-left:8px;text-transform:uppercase;vertical-align:2px}
+.tag.g{border-color:rgba(255,178,94,.45);color:var(--hot)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="mast">
+    <div class="kick">The Furnace · five strips</div>
+    <h1>What sits under the plate</h1>
+    <p>The Furnace header is locked. What changes is the strip beneath it — currently two half-empty chips. Every version below carries <b>six live readouts</b> instead of two: both vices, the three December results, and the week. All of them are built in the furnace language — <b>stamped metal, heat, no visible flame.</b></p>
+  </div>
+
+  <!-- 01 -->
+  <section class="dir">
+    <div class="dh"><div class="dn">01</div>
+      <div class="dt"><h2>The Gauge Cluster</h2>
+        <div class="dm">Six instrument dials machined into the plate</div>
+        <p class="dl">Each reading becomes a <b>small arc gauge</b> — a needle sweep stamped into its own recess, heat pooling underneath the ones that are running hot. Reads like the instrument panel of something built to work, which is exactly the furnace's argument.</p></div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="notch"><i></i></div>
+        <div class="furnace">
+          <div class="stamp">THE BOATS HAVE<br><em>BEEN BURNED</em></div>
+          <div class="meter"><div class="n">91</div><div class="r">
+            <div class="t"><i></i></div>
+            <div class="lab"><span>WORKDAYS TO DEC 1</span><span>WK 01</span></div></div></div>
+        </div>
+        <div class="s1" id="s1"></div>
+        <div class="below"><div class="bl">↓ THE GRAPH · TODAY · THE WEEK</div></div>
+      </div>
+      <dl class="notes">
+        <dt>The move</dt><dd>A dial is read <b>by its shape, not its number</b> — you know a gauge is low before you've read the digits. Six of them is a cockpit sweep, not six things to parse.</dd>
+        <dt>Why it fits the Furnace</dt><dd>The header argues that this is machinery. Gauges are the only strip here that <b>continue that argument</b> rather than sitting beneath it.</dd>
+        <div class="cost">The cost: an arc at 52px wide can only carry a rough proportion. "3 of 3 clients" and "0 of 3" look more alike than they should, so the digits are doing more work than the dials — which slightly undermines the whole idea.</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="dir">
+    <div class="dh"><div class="dn">02</div>
+      <div class="dt"><h2>The Stamped Plate</h2>
+        <div class="dm">One continuous machined slab · cells cut into it</div>
+        <p class="dl">Not chips at all — <b>one solid plate</b>, divided by engraved seams and pinned with rivets. Dormant values are stamped <b>into</b> the metal in shadow; live ones are lit from within. The header and the strip become a single piece of hardware.</p></div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="notch"><i></i></div>
+        <div class="furnace">
+          <div class="stamp">THE BOATS HAVE<br><em>BEEN BURNED</em></div>
+          <div class="meter"><div class="n">91</div><div class="r">
+            <div class="t"><i></i></div>
+            <div class="lab"><span>WORKDAYS TO DEC 1</span><span>WK 01</span></div></div></div>
+        </div>
+        <div class="s2" id="s2"></div>
+        <div class="below"><div class="bl">↓ THE GRAPH · TODAY · THE WEEK</div></div>
+      </div>
+      <dl class="notes">
+        <dt>The move</dt><dd><b>It removes the chips entirely.</b> Your complaint was half-empty boxes — this deletes the boxes and keeps only engraved seams, so there is no wasted padding anywhere.</dd>
+        <dt>The detail that sells it</dt><dd>Values you haven't earned are <b>stamped in shadow</b>, the same colour as the plate. They only light when they're real. Zero becomes a physical absence rather than a red number.</dd>
+        <div class="cost">The cost: it's the most uniform, so nothing shouts. The vices you said should be front and centre get exactly the same visual weight as the week counter. Coherent, but flat in the hierarchy.</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="dir">
+    <div class="dh"><div class="dn">03</div>
+      <div class="dt"><h2>The Thermocouples</h2>
+        <div class="dm">Molten slots · doing well literally runs hot</div>
+        <p class="dl">Each metric is a slot cut into the plate with <b>molten metal filling it</b>. Progress isn't a bar, it's temperature — the further you are, the brighter and hotter the channel glows. The furnace's own language turned into the data encoding.</p></div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="notch"><i></i></div>
+        <div class="furnace">
+          <div class="stamp">THE BOATS HAVE<br><em>BEEN BURNED</em></div>
+          <div class="meter"><div class="n">91</div><div class="r">
+            <div class="t"><i></i></div>
+            <div class="lab"><span>WORKDAYS TO DEC 1</span><span>WK 01</span></div></div></div>
+        </div>
+        <div class="s3" id="s3"></div>
+        <div class="below"><div class="bl">↓ THE GRAPH · TODAY · THE WEEK</div></div>
+      </div>
+      <dl class="notes">
+        <dt>The move</dt><dd><b>Heat is the metric.</b> The header glows because there's a furnace behind it; here the glow means <em>you</em> are running hot. It's the only version where the aesthetic and the data are the same thing.</dd>
+        <dt>Best at</dt><dd>Proportions. Six horizontal channels is the most honest way to compare "1 of 3 clients" against "0 of 3 accounts" — you see both fills instantly, at a real length.</dd>
+        <div class="cost">The cost, measured: 150px — second-shortest here, so height isn't the problem. The real one is that a cold slot on a bad week reads as dead machinery, which is either honest or bleak depending on the morning.</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="dir">
+    <div class="dh"><div class="dn">04</div>
+      <div class="dt"><h2>The Control Board</h2>
+        <div class="dm">A status readout · densest, most information per pixel</div>
+        <p class="dl">A control-room board. Engraved keys on the left, values right-aligned in mono, and a <b>single status lamp</b> per row — lit, warm, or dark. No decoration at all. This is what the strip looks like if you optimise purely for <b>knowing where you stand in one second</b>.</p></div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="notch"><i></i></div>
+        <div class="furnace">
+          <div class="stamp">THE BOATS HAVE<br><em>BEEN BURNED</em></div>
+          <div class="meter"><div class="n">91</div><div class="r">
+            <div class="t"><i></i></div>
+            <div class="lab"><span>WORKDAYS TO DEC 1</span><span>WK 01</span></div></div></div>
+        </div>
+        <div class="s4" id="s4"></div>
+        <div class="below"><div class="bl">↓ THE GRAPH · TODAY · THE WEEK</div></div>
+      </div>
+      <dl class="notes">
+        <dt>The move</dt><dd>The <b>status lamp</b>. One dot per row carries the entire verdict — lit, warm, dark — so you can read six states without reading a single number.</dd>
+        <dt>Best at</dt><dd>Rows. It carries eight readouts where the others carry six, and adding a ninth costs 22px rather than a redesign.</dd>
+        <div class="cost">The cost, measured: 249px — not the compact option I assumed. And it's a spreadsheet: correct, fast and completely unmoving, when you've said this has to make you feel something at 6 AM.</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="dir">
+    <div class="dh"><div class="dn">05</div>
+      <div class="dt"><h2>The Forge Tiles</h2>
+        <div class="dm">Heavy cast tiles · heat pooling in the recesses</div>
+        <p class="dl">Your chips, but properly <b>forged</b>. Thick bevelled edges, a cut highlight along the top, deep shadow beneath — and on the ones that are live, <b>heat pooling in the bottom of the recess</b> as though the metal hasn't cooled. The two vices get a full-width tile each so they lead.</p></div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="notch"><i></i></div>
+        <div class="furnace">
+          <div class="stamp">THE BOATS HAVE<br><em>BEEN BURNED</em></div>
+          <div class="meter"><div class="n">91</div><div class="r">
+            <div class="t"><i></i></div>
+            <div class="lab"><span>WORKDAYS TO DEC 1</span><span>WK 01</span></div></div></div>
+        </div>
+        <div class="s5" id="s5"></div>
+        <div class="below"><div class="bl">↓ THE GRAPH · TODAY · THE WEEK</div></div>
+      </div>
+      <dl class="notes">
+        <dt>The move</dt><dd><b>Weight.</b> The bevel and the inner shadow make these read as cast objects rather than rounded rectangles — the single biggest difference between the current chips and something that belongs under that header.</dd>
+        <dt>The hierarchy you asked for</dt><dd>The vices take <b>full-width tiles at the top</b> and the four December readings sit in a 2×2 beneath. Front and centre, exactly as specified, without the strip becoming six identical boxes.</dd>
+        <div class="cost">The cost, measured: <b>273px — the tallest here, more than double the Stamped Plate for the same six readouts.</b> On a phone that is a large share of the first screen, and it's the padding problem you flagged reappearing in a better-looking form.</div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="verdict">
+    <h2>My read</h2>
+    <p>All five carry six readouts instead of two and all five speak the furnace's language. I measured each one's height on a phone before ranking them — which changed my answer.</p>
+    <div class="vr pick"><div class="n">01</div>
+      <div><h3>The Stamped Plate <span class="tag g">my pick — after measuring</span></h3>
+        <p>I originally picked the Forge Tiles. Then I measured: this carries the same six readouts in <b>130px against 273px</b> — less than half the height — and it's the most complete answer to your actual complaint, because it deletes the boxes entirely rather than making them prettier. The detail that wins it is that values you haven't earned are <b>stamped into the metal in shadow</b> instead of shown as red zeros. "0 of 3 accounts" becomes a physical absence rather than a failure. Its one weakness is hierarchy — so graft the Forge Tiles' idea onto it and give the two vices a full-width row across the top. That hybrid is what I'd build.</p></div></div>
+    <div class="vr"><div class="n">02</div>
+      <div><h3>The Forge Tiles <span class="tag">best looking, twice the height</span></h3>
+        <p>Visually the strongest — the bevels and the heat pooling in the lit recesses genuinely look cast in the same foundry as the header, and the vices leading full-width is the hierarchy you asked for. It loses on cost: 273px for six numbers is a lot of your first screen, and the header above it is already doing the emotional work.</p></div></div>
+    <div class="vr"><div class="n">03</div>
+      <div><h3>The Thermocouples <span class="tag">smartest idea</span></h3>
+        <p>Making heat the unit of measurement is the cleverest thing on this page — the aesthetic and the data become the same thing, and at 150px it's compact. I'd have picked it if a cold channel on a bad week didn't read quite so much like dead machinery, on the exact mornings that matter most.</p></div></div>
+    <div class="vr"><div class="n">04</div>
+      <div><h3>The Gauge Cluster <span class="tag">most on-theme</span></h3>
+        <p>Dials are the most furnace-native object here. But at 52px an arc can't meaningfully separate 1-of-3 from 0-of-3, so the digits end up doing the work the dials were supposed to do — and it still costs 192px.</p></div></div>
+    <div class="vr"><div class="n">05</div>
+      <div><h3>The Control Board <span class="tag">most rows, least feeling</span></h3>
+        <p>Eight readouts and the status lamps are excellent — one dot carries a whole verdict. Last because it turns the top of your app into admin, which is the opposite of what the furnace header exists to do.</p></div></div>
+    </section>
+</div>
+
+<script>
+/* Real numbers from the profile, so these read as the actual app rather than lorem values. */
+const M=[
+  {k:'DISHWASHER', v:'0w',    sub:'0 / 1 THIS WEEK', pct:1.00, lit:1, vice:1},
+  {k:'SMOKE CLEAN',v:'0d',    sub:'BEFORE NOON',     pct:0.00, lit:0, vice:1},
+  {k:'SANO',       v:'1/3',   sub:'CLIENTS',         pct:0.33, lit:1},
+  {k:'ACCOUNTS',   v:'0/3',   sub:'FUNDED',          pct:0.00, lit:0},
+  {k:'WEIGHT',     v:'177',   sub:'→ 185 LBS',       pct:0.47, lit:1},
+  {k:'THIS WEEK',  v:'—',     sub:'EXECUTION',       pct:0.00, lit:0},
+];
+
+/* 01 — gauge cluster */
+document.getElementById('s1').innerHTML=M.map(m=>{
+  const A=Math.PI*24, off=A*(1-m.pct);
+  return `<div class="g1${m.lit?' hot':''}">
+    <div class="dial"><svg width="52" height="30" viewBox="0 0 52 30">
+      <path d="M5 27 A 21 21 0 0 1 47 27" fill="none" stroke="#1c1a23" stroke-width="4" stroke-linecap="round"/>
+      <path d="M5 27 A 21 21 0 0 1 47 27" fill="none" stroke="${m.lit?'#FF6B2C':'#2c2836'}" stroke-width="4"
+        stroke-linecap="round" stroke-dasharray="${A.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"
+        style="${m.lit?'filter:drop-shadow(0 0 4px rgba(255,107,44,.7))':''}"/>
+    </svg></div>
+    <div class="val">${m.v}</div><div class="lb eng">${m.k}</div></div>`}).join('');
+
+/* 02 — stamped plate */
+document.getElementById('s2').innerHTML=M.map(m=>`<div class="c2">
+  <div class="lb eng">${m.k}</div>
+  <div class="val${m.lit?' lit':''}">${m.v}</div>
+  <div class="sub">${m.sub}</div></div>`).join('')+
+  `<span class="riv" style="left:6px;top:6px"></span><span class="riv" style="right:6px;top:6px"></span>
+   <span class="riv" style="left:6px;bottom:6px"></span><span class="riv" style="right:6px;bottom:6px"></span>`;
+
+/* 03 — thermocouples */
+document.getElementById('s3').innerHTML=M.map(m=>`<div class="t3">
+  <div class="lb eng">${m.k}</div>
+  <div class="slot"><i class="${m.pct>0?'molten':'cool'}" style="width:${Math.max(3,m.pct*100)}%"></i></div>
+  <div class="v">${m.v}</div></div>`).join('');
+
+/* 04 — control board */
+document.getElementById('s4').innerHTML=
+  `<div class="hd4 eng"><span>SYSTEM</span><span>STATUS</span></div>`+
+  M.map(m=>`<div class="r4"><span class="k">${m.k}</span><span class="v">${m.v}</span>
+    <span class="st ${m.pct>=.8?'on':m.pct>0?'mid':''}"></span></div>`).join('')+
+  `<div class="r4"><span class="k">MAKE-UP OWED</span><span class="v">NONE</span><span class="st on"></span></div>
+   <div class="r4"><span class="k">XP BANKED</span><span class="v">0</span><span class="st"></span></div>`;
+
+/* 05 — forge tiles: vices lead full-width, December results in a 2x2 */
+document.getElementById('s5').innerHTML=
+  M.filter(m=>m.vice).map(m=>`<div class="f5 wide${m.lit?' lit':''}">
+    <div><div class="lb eng">${m.k}</div><div class="sub">${m.sub}</div></div>
+    <div class="val${m.lit?' warm':''}">${m.v}</div></div>`).join('')+
+  M.filter(m=>!m.vice).map(m=>`<div class="f5${m.lit?' lit':''}">
+    <span class="spark"></span><div class="lb eng">${m.k}</div>
+    <div class="val${m.lit?' warm':''}">${m.v}</div><div class="sub">${m.sub}</div></div>`).join('');
+</script>
+</body>
+</html>
