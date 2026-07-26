@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>One machine — call ten owners, end to end</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --blue:#7FB4FF;
+  --t-h3:16px; --t-body:15px; --t-lab:12px; --t-min:11px;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+  --r1:6px; --r2:11px; --r3:16px; --tap:44px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#08070c;color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+
+.wrap{max-width:1320px;margin:0 auto;padding:0 22px}
+.mast{padding:44px 0 20px}
+.kick{font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.24em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:var(--s3)}
+.mast h1{font-size:clamp(27px,3.6vw,38px);line-height:1.04;letter-spacing:-.035em;margin-bottom:var(--s3)}
+.mast p{max-width:680px;color:var(--dim);font-size:var(--t-body);margin:0 0 var(--s2)}
+.mast p b{color:var(--ink);font-weight:500}
+.gate{max-width:680px;border-radius:var(--r2);padding:var(--s3) var(--s4);margin-top:var(--s4);
+  box-shadow:inset 0 0 0 1px rgba(74,222,128,.35);background:rgba(74,222,128,.06);
+  font-size:14px;color:#a8dfba;line-height:1.55}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(392px,392px));gap:var(--s6) var(--s5);
+  justify-content:center;padding:var(--s4) 0 var(--s6)}
+.slot{width:392px}
+.sh{margin-bottom:var(--s3);min-height:74px}
+.sh .n{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.2em;color:var(--gold)}
+.sh .n.new{color:var(--phos)}
+.sh h3{font-size:var(--t-h3);margin-top:var(--s1)}
+.sh p{font-size:13px;color:var(--faint);margin:var(--s1) 0 0;line-height:1.45}
+.sh p b{color:#a8dfba;font-weight:500}
+.p{width:390px;border-radius:24px;overflow:hidden;background:#000;
+  box-shadow:0 34px 80px -34px #000,inset 0 0 0 1px var(--line2)}
+.p.key{box-shadow:0 34px 80px -34px #000,inset 0 0 0 2px rgba(74,222,128,.55),0 0 44px -14px rgba(74,222,128,.4)}
+.notch{height:24px;background:#000;display:flex;align-items:center;justify-content:center}
+.notch i{width:54px;height:5px;border-radius:99px;background:#17171d}
+.pv{height:820px;overflow:hidden;position:relative;background:var(--bg)}
+@media(max-width:452px){
+  .wrap{padding:0}.mast{padding:28px 15px 18px}.gate{margin:var(--s4) 15px 0}
+  .grid{grid-template-columns:1fr;gap:var(--s5) 0;padding:0 0 var(--s5)}
+  .slot{width:100%}.sh{padding:0 15px}.p{width:100%;border-radius:0}
+}
+
+/* chain ribbon */
+.chain{display:flex;align-items:center;gap:var(--s1);padding:var(--s2) var(--s4);
+  background:#0a0910;border-bottom:1px solid var(--line)}
+.chain i{flex:1;height:3px;border-radius:99px;background:#221d33}
+.chain i.on{background:var(--gold)}
+.chain i.now{background:var(--phos)}
+.chain span{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.12em;color:var(--faint);
+  flex:none;margin-left:var(--s2)}
+
+/* app surface */
+.vhead{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);
+  padding:var(--s4) var(--s4) var(--s3);border-bottom:1px solid var(--line)}
+.vhead h2{font-size:25px;letter-spacing:-.03em}
+.vhead span{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.13em;color:var(--faint)}
+.sec{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s2);
+  padding:var(--s5) var(--s4) var(--s2);font-family:'Geist Mono',monospace;font-size:var(--t-lab);
+  letter-spacing:.17em;color:var(--faint);text-transform:uppercase}
+.sec b{color:var(--ink);font-weight:400}
+.wrapx{padding:0 var(--s4)}
+.pill{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.09em;padding:5px 8px;
+  border-radius:var(--r1);background:var(--panel2);color:var(--dim);white-space:nowrap;display:inline-block}
+.pill.ar{background:rgba(255,255,255,.04);color:var(--c)}
+.pill.wig{background:rgba(224,178,94,.16);color:var(--gold)}
+.pill.ok{background:rgba(74,222,128,.14);color:var(--phos)}
+.pill.newx{background:rgba(74,222,128,.2);color:var(--phos);box-shadow:inset 0 0 0 1px rgba(74,222,128,.5)}
+
+.gc{position:relative;border-radius:var(--r2);background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);
+  padding:var(--s3) var(--s3) var(--s3) var(--s4);margin-bottom:var(--s2)}
+.gc .rail{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:var(--r2) 0 0 var(--r2);background:var(--c)}
+.gc .ttl{font-family:'Clash Display',sans-serif;font-weight:600;font-size:var(--t-h3);letter-spacing:-.02em;line-height:1.25}
+.gc .meta{display:flex;flex-wrap:wrap;gap:var(--s1);margin-top:var(--s2)}
+.gc .lead{display:flex;align-items:center;gap:var(--s2);margin-top:var(--s3);padding-top:var(--s3);
+  border-top:1px solid var(--line)}
+.gc .lead .n{font-family:'Clash Display',sans-serif;font-weight:700;font-size:23px;letter-spacing:-.03em;line-height:1}
+.gc .lead .n.up{color:var(--phos)}
+.gc .lead .l{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.1em;color:var(--faint);line-height:1.6}
+.gc .lead .bar{margin-left:auto;width:74px;height:6px;border-radius:99px;background:#221d33;overflow:hidden}
+.gc .lead .bar i{display:block;height:100%;border-radius:99px;background:var(--c)}
+
+/* THE BLOCK CARD — the app's real .nextup */
+.furn{position:relative;overflow:hidden;padding:18px 16px 15px;
+  background:linear-gradient(180deg,#0d0c10,#0a090d);border-bottom:1px solid #1c1a22}
+.furn::before{content:'';position:absolute;left:-10%;right:-10%;top:-40%;height:150%;
+  background:radial-gradient(50% 46% at 50% 62%,rgba(255,107,44,.2),rgba(179,42,0,.08) 44%,transparent 70%)}
+.stamp{position:relative;text-align:center;font-family:'Clash Display',sans-serif;font-weight:700;
+  font-size:20px;letter-spacing:.035em;color:#2a2530;text-shadow:0 1px 0 rgba(255,150,80,.34)}
+.stamp em{font-style:normal;color:#e8a86a;text-shadow:0 0 22px rgba(255,107,44,.62)}
+.meter{position:relative;margin-top:13px;display:flex;align-items:center;gap:11px}
+.meter .n{font-family:'Clash Display',sans-serif;font-size:38px;line-height:.85;letter-spacing:-.05em;color:#f2ece4}
+.meter .r{flex:1}
+.meter .t{height:6px;border-radius:99px;background:#191419;overflow:hidden}
+.meter .t i{display:block;height:100%;background:linear-gradient(90deg,#6b2400,var(--ember),#FFC98A)}
+.meter .lab{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:var(--t-min);
+  letter-spacing:.13em;color:#8d6650;margin-top:6px}
+
+.nextup{margin:var(--s4) var(--s4) 0;border-radius:var(--r3);padding:var(--s4);position:relative;overflow:hidden;
+  background:linear-gradient(150deg,#1b1526,#110e1a 60%,#0d0b14);box-shadow:inset 0 0 0 1px var(--line2)}
+.nextup.live{box-shadow:inset 0 0 0 1px rgba(224,178,94,.45),0 8px 36px -18px rgba(224,178,94,.5)}
+.nu-k{display:flex;align-items:center;gap:7px;margin-bottom:var(--s3)}
+.nu-k i{width:6px;height:6px;border-radius:99px;background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.nu-k span{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.19em;color:var(--gold);
+  text-transform:uppercase}
+.nu-k u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:var(--t-min);color:var(--dim);text-decoration:none}
+.nu-t{font-family:'Clash Display',sans-serif;font-weight:600;font-size:21px;letter-spacing:-.025em;
+  line-height:1.14;margin-bottom:var(--s2)}
+.nu-obj{font-size:13.5px;color:var(--dim);line-height:1.4}
+/* the new part: which goal this block is for */
+.nu-goal{margin-top:var(--s3);padding-top:var(--s3);border-top:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;gap:var(--s2)}
+.nu-goal .gl{min-width:0;flex:1}
+.nu-goal .gk{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;color:var(--c)}
+.nu-goal .gt{font-size:13.5px;color:var(--ink);line-height:1.35;margin-top:3px}
+.nu-goal .gn{font-family:'Clash Display',sans-serif;font-weight:700;font-size:19px;letter-spacing:-.03em;
+  color:var(--c);text-align:right;line-height:1}
+.nu-goal .gn s{display:block;text-decoration:none;font-family:'Geist Mono',monospace;font-size:var(--t-min);
+  letter-spacing:.1em;color:var(--faint);margin-top:4px}
+.acts{display:grid;grid-template-columns:1fr auto;gap:var(--s2);margin-top:var(--s4)}
+.act{min-height:var(--tap);border-radius:var(--r2);display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:600;background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204}
+.act.gh{background:none;box-shadow:inset 0 0 0 1px var(--line2);color:var(--dim);font-weight:500;padding:0 var(--s4)}
+
+/* timer */
+.run{position:absolute;inset:0;background:#05070a;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:var(--s5);text-align:center}
+.run-k{font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.24em;color:var(--rune);
+  text-transform:uppercase;margin-bottom:var(--s4)}
+.ring{width:240px;height:240px;border-radius:50%;display:grid;place-items:center;margin-bottom:var(--s4);
+  background:conic-gradient(var(--rune) 0deg 190deg,#12161c 190deg 360deg);position:relative}
+.ring::after{content:'';position:absolute;inset:5px;border-radius:50%;background:#05070a}
+.ring div{position:relative;z-index:2}
+.run-time{font-family:'Geist Mono',monospace;font-size:52px;font-weight:700;letter-spacing:-.05em;line-height:1}
+.run-task{font-size:15px;font-weight:600;margin-top:var(--s3);padding:0 var(--s3)}
+.run-goal{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;color:var(--gold);
+  margin-top:var(--s2)}
+.run-mult{font-family:'Geist Mono',monospace;font-size:var(--t-lab);color:var(--phos);font-weight:700;
+  letter-spacing:.09em;margin:var(--s4) 0 var(--s2)}
+.run-warn{font-size:13px;color:var(--faint);max-width:280px;line-height:1.5}
+
+/* toast + attribution */
+.toast{position:absolute;left:50%;transform:translateX(-50%);top:22px;z-index:20;
+  border-radius:var(--r2);padding:var(--s3) var(--s4);background:var(--panel2);
+  box-shadow:inset 0 0 0 1px rgba(74,222,128,.5),0 12px 30px -10px #000;text-align:center}
+.toast b{display:block;font-size:15px;font-weight:600;color:var(--phos)}
+.toast span{display:block;font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.13em;
+  color:var(--dim);margin-top:5px}
+.attr{border-radius:var(--r2);background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);
+  padding:var(--s3) var(--s4);margin-bottom:var(--s2)}
+.attr .h{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.15em;color:var(--faint);
+  margin-bottom:var(--s3)}
+.ar{display:flex;align-items:center;gap:var(--s3);min-height:32px}
+.ar .nm{flex:1;font-size:14px;color:var(--dim)}
+.ar .t{width:96px;height:6px;border-radius:99px;background:#221d33;overflow:hidden}
+.ar .t i{display:block;height:100%;border-radius:99px;background:var(--c)}
+.ar .v{font-family:'Geist Mono',monospace;font-size:var(--t-min);color:var(--ink);width:44px;text-align:right}
+
+/* vault bits */
+.vt-shelf{margin:var(--s4) var(--s4) 0;padding:var(--s4) var(--s4) 0;border-radius:var(--r1) var(--r1) 0 0;
+  background:linear-gradient(180deg,#0D0F12,#0A0C0E);box-shadow:inset 0 3px 12px rgba(0,0,0,.9)}
+.vt-rack{display:flex;flex-direction:column;align-items:center;gap:var(--s1);padding-bottom:var(--s4)}
+.vt-row{display:flex;gap:var(--s1)}
+.vt-bar{width:56px;height:17px;border-radius:2px;clip-path:polygon(7% 0,93% 0,100% 100%,0 100%);
+  background:linear-gradient(178deg,#EBD4A0,#C2A163 46%,#8A6E33)}
+.vt-bar.ghost{background:none;box-shadow:inset 0 0 0 1px rgba(194,161,99,.34);clip-path:none}
+.vt-plank{height:10px;margin:0 var(--s5);border-radius:0 0 var(--r1) var(--r1);
+  background:linear-gradient(180deg,#4A4E56,#1A1C20)}
+.vt-count{margin:var(--s4) var(--s4) 0;border-radius:var(--r1);padding:var(--s3) var(--s4);
+  display:flex;align-items:baseline;justify-content:space-between;
+  background:linear-gradient(180deg,#EBD4A0,#C2A163 52%,#8A6E33)}
+.vt-count b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:36px;letter-spacing:-.045em;
+  color:#3A2E14;line-height:.92}
+.vt-count .cl{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;color:#5E4A1E;
+  text-align:right;line-height:1.7}
+
+/* friday / month */
+.step{display:flex;gap:var(--s1);padding:var(--s3) var(--s4) 0}
+.step i{flex:1;height:4px;border-radius:99px;background:#221d33}
+.step i.on{background:var(--gold)}
+.rt{padding:var(--s5) var(--s4) 0;text-align:center}
+.rt .k{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.2em;color:var(--gold)}
+.rt h3{font-size:23px;letter-spacing:-.03em;margin-top:var(--s2)}
+.rt p{font-size:14px;color:var(--dim);margin:var(--s2) 0 0;line-height:1.5}
+.cm{position:relative;border-radius:var(--r2);background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);
+  padding:var(--s3) var(--s3) var(--s3) var(--s4);margin:0 var(--s4) var(--s2)}
+.cm .rail{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:var(--r2) 0 0 var(--r2);background:var(--c)}
+.cm .ct{font-size:14.5px;line-height:1.35}
+.cm .cmeta{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s1);margin-top:var(--s2)}
+.box{width:22px;height:22px;border-radius:var(--r1);box-shadow:inset 0 0 0 1.5px #362f47;flex:none}
+.box.on{background:var(--phos);box-shadow:none;position:relative}
+.box.on::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:#04240f;font-size:14px;font-weight:700}
+.conf{display:flex;gap:var(--s2);margin-top:var(--s3)}
+.conf b{flex:1;min-height:var(--tap);border-radius:var(--r1);display:flex;align-items:center;justify-content:center;
+  font-family:'Geist Mono',monospace;font-size:var(--t-body);font-weight:700;background:var(--panel2);
+  color:var(--dim);box-shadow:inset 0 0 0 1px var(--line2)}
+.conf b.on{background:rgba(224,178,94,.18);color:var(--gold);box-shadow:inset 0 0 0 1px rgba(224,178,94,.55)}
+.mig{margin:0 var(--s4);border-radius:var(--r2);padding:var(--s4);background:var(--panel);
+  box-shadow:inset 0 0 0 1px var(--line)}
+.mig .q{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;color:#FF9A5E}
+.mig h4{font-family:'Clash Display',sans-serif;font-weight:600;font-size:19px;letter-spacing:-.025em;
+  margin:var(--s2) 0 0;line-height:1.25}
+.mig .sub{font-size:13.5px;color:var(--dim);margin-top:var(--s2);line-height:1.45}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2);margin-top:var(--s4)}
+.btn{min-height:var(--tap);border-radius:var(--r2);display:flex;align-items:center;justify-content:center;
+  font-size:var(--t-body);font-weight:600;background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204}
+.btn.gh{background:none;box-shadow:inset 0 0 0 1px var(--line2);color:var(--dim);font-weight:500}
+.btn.dz{background:none;box-shadow:inset 0 0 0 1px rgba(255,77,94,.4);color:var(--blood)}
+
+/* challenge */
+.chal{margin:0 var(--s4) var(--s2);border-radius:var(--r2);padding:var(--s3) var(--s4);
+  background:linear-gradient(150deg,rgba(176,140,255,.13),rgba(176,140,255,.04));
+  box-shadow:inset 0 0 0 1px rgba(176,140,255,.35)}
+.chal .ck{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.16em;color:var(--violet)}
+.chal .ct{font-size:15px;color:var(--ink);margin-top:var(--s2);line-height:1.35}
+.chal .cr{display:flex;align-items:center;gap:var(--s2);margin-top:var(--s3)}
+.chal .cx{font-family:'Geist Mono',monospace;font-size:var(--t-lab);color:var(--violet);font-weight:700}
+.chal .cb{margin-left:auto;min-height:38px;padding:0 var(--s4);border-radius:var(--r1);display:flex;
+  align-items:center;font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.13em;
+  font-weight:700;background:rgba(176,140,255,.2);color:#d9c6ff}
+.fld{margin-bottom:var(--s3)}
+.fld label{display:block;font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;
+  color:var(--faint);text-transform:uppercase;margin-bottom:var(--s2)}
+.inp{background:var(--panel2);box-shadow:inset 0 0 0 1px var(--line2);border-radius:var(--r1);
+  padding:var(--s3);min-height:var(--tap);display:flex;align-items:center;font-size:15px}
+.inp.ph{color:#4b4459}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#0c0a13;box-shadow:inset 0 0 0 1px var(--line2);
+  border-radius:var(--r3) var(--r3) 0 0;padding:var(--s2) var(--s4) var(--s5)}
+.dim{position:absolute;inset:0;background:rgba(4,3,7,.7)}
+.grab{width:34px;height:4px;border-radius:99px;background:var(--line2);margin:0 auto var(--s4)}
+.sh-t{font-family:'Clash Display',sans-serif;font-weight:600;font-size:21px;letter-spacing:-.03em;margin-bottom:var(--s1)}
+.sh-s{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.13em;color:var(--faint);margin-bottom:var(--s4)}
+.chips{display:flex;flex-wrap:wrap;gap:var(--s1)}
+.chip{min-height:var(--tap);padding:0 var(--s3);border-radius:var(--r1);display:flex;align-items:center;
+  font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.09em;background:var(--panel2);
+  color:var(--dim);box-shadow:inset 0 0 0 1px var(--line2)}
+.chip.on{background:rgba(176,140,255,.18);color:#d9c6ff;box-shadow:inset 0 0 0 1px rgba(176,140,255,.5)}
+.foot{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.12em;color:#454055;
+  padding:var(--s5) 0 80px;line-height:2;max-width:680px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <div class="kick">Burn the Boats · the mentor's test</div>
+  <h1>One thing, traced end to end.</h1>
+  <p><b>"Call ten owners."</b> Eight screens, from the goal that wants it to the month turn that judges it.
+  If the chain holds, the four tabs are one machine. If it breaks anywhere, the model is wrong and we
+  find out now rather than in October.</p>
+  <div class="gate"><b>Green means new.</b> Screens 3, 5 and 6 are the three connections that don't exist
+  today — the block knowing its goal, the XP being attributed, and the Vault showing what the work bought.
+  Everything else already works.</div>
+</header>
+
+<div class="grid">
+
+<!-- ============ 1 · THE GOAL ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">STEP 1 · GOALS</div><h3>The goal wants conversations</h3>
+    <p>The lead measure is the thing you control. Right now it reads 5 of 12 this week.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="chain"><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><span>1/8</span></div>
+    <div class="vhead"><h2>The Goals</h2><span>BY AREA</span></div>
+    <div class="sec"><span style="color:var(--gold)">SANO</span><b>3 live</b></div>
+    <div class="wrapx">
+      <div class="gc" style="--c:var(--gold)"><span class="rail"></span>
+        <div class="ttl">Three clients signed and paying</div>
+        <div class="meta"><span class="pill ar">SANO</span><span class="pill">DEC 1 · 128d</span>
+          <span class="pill wig">WIG</span></div>
+        <div class="lead"><span class="n">5</span>
+          <span class="l">CONVERSATIONS<br>THIS WEEK · TARGET 12</span>
+          <span class="bar"><i style="width:41%"></i></span></div></div>
+      <div class="gc" style="--c:var(--gold)"><span class="rail"></span>
+        <div class="ttl">The delivery process written down and signed off</div>
+        <div class="meta"><span class="pill ar">SANO</span><span class="pill">AUG 31 · 36d</span></div></div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ============ 2 · FRIDAY ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">STEP 2 · FRIDAY</div><h3>You commit it to a day</h3>
+    <p>A goal, a day and a block. That is what makes it a plan instead of a wish.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="chain"><i class="on"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><span>2/8</span></div>
+    <div class="vhead"><h2>Friday</h2><span>STEP 3 OF 3</span></div>
+    <div class="step"><i class="on"></i><i class="on"></i><i class="on"></i></div>
+    <div class="rt"><div class="k">NEXT WEEK</div><h3>Lock the week</h3>
+      <p>Proposed from what's due. Change anything.</p></div>
+    <div style="height:var(--s4)"></div>
+    <div class="cm" style="--c:var(--gold)"><span class="rail"></span>
+      <div class="ct">Call 10 owners from the list</div>
+      <div class="cmeta"><span class="pill ar">SANO · 3 CLIENTS</span><span class="pill">MON · B1 · 09:00</span>
+        <span class="pill ok">CARRIED</span></div></div>
+    <div class="cm" style="--c:var(--gold)"><span class="rail"></span>
+      <div class="ct">Delivery process, section 2</div>
+      <div class="cmeta"><span class="pill ar">SANO · PROCESS</span><span class="pill">MON · B2 · 10:30</span></div></div>
+    <div class="cm" style="--c:var(--blue)"><span class="rail"></span>
+      <div class="ct">Ring the five shops on the north list</div>
+      <div class="cmeta"><span class="pill ar">FRUITS</span><span class="pill">TUE · B1 · 09:00</span></div></div>
+    <div class="wrapx" style="margin-top:var(--s3)"><div class="btn">LOCK THE WEEK</div></div>
+  </div></div>
+</div>
+
+<!-- ============ 3 · THE GATE ============ -->
+<div class="slot">
+  <div class="sh"><div class="n new">STEP 3 · TODAY · NEW</div><h3>Monday, 09:00 — the block <em>is</em> the commitment</h3>
+    <p><b>This is the screen the mentor asked for.</b> Same words you typed on Friday, now with the goal it serves and the counter it moves.</p></div>
+  <div class="p key"><div class="notch"><i></i></div><div class="pv">
+    <div class="chain"><i class="on"></i><i class="on"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><span>3/8</span></div>
+    <div class="furn">
+      <div class="stamp">THE BOATS HAVE <em>BEEN BURNED</em></div>
+      <div class="meter"><div class="n">86</div>
+        <div class="r"><div class="t"><i style="width:6%"></i></div>
+          <div class="lab"><span>WORKDAYS TO DEC 1</span><span>WK 06</span></div></div></div>
+    </div>
+
+    <div class="nextup live">
+      <div class="nu-k"><i></i><span>Now</span><u>09:00–10:15 · 75m</u></div>
+      <div class="nu-t">Call 10 owners from the list</div>
+      <div class="nu-obj">Deep work 1 · peak hours</div>
+
+      <div class="nu-goal" style="--c:var(--gold)">
+        <div class="gl"><div class="gk">THIS BLOCK IS FOR</div>
+          <div class="gt">Three clients signed and paying</div></div>
+        <div class="gn">5<s>OF 12 THIS WK</s></div>
+      </div>
+
+      <div class="acts"><div class="act">Start the timer</div><div class="act gh">···</div></div>
+    </div>
+
+    <div class="sec"><span>Later today</span><u style="text-decoration:none">3 more blocks</u></div>
+    <div class="cm" style="--c:var(--gold)"><span class="rail"></span>
+      <div class="ct">Delivery process, section 2</div>
+      <div class="cmeta"><span class="pill ar">SANO · PROCESS</span><span class="pill">B2 · 10:30</span></div></div>
+    <div class="cm" style="--c:var(--ember)"><span class="rail"></span>
+      <div class="ct">Gym</div>
+      <div class="cmeta"><span class="pill ar">PERSONAL</span><span class="pill">B3 · 16:00</span></div></div>
+  </div></div>
+</div>
+
+<!-- ============ 4 · THE TIMER ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">STEP 4 · THE RUN</div><h3>The timer carries the goal too</h3>
+    <p>Already exists — one line added so you can see what you're working for while you work.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="run">
+      <div class="run-k">Deep work · locked</div>
+      <div class="ring"><div>
+        <div class="run-time">41:12</div></div></div>
+      <div class="run-task">Call 10 owners from the list</div>
+      <div class="run-goal">SANO · THREE CLIENTS SIGNED</div>
+      <div class="run-mult">CLEAN RUN · +65 XP ON THE BELL</div>
+      <div class="run-warn">4 phone looks left. Leaving the app pauses nothing —
+        the run only breaks if you stop it.</div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ============ 5 · THE PAYOUT ============ -->
+<div class="slot">
+  <div class="sh"><div class="n new">STEP 5 · DONE · NEW</div><h3>The XP is attributed</h3>
+    <p><b>Same 65 XP the app already pays.</b> The only change is that it now knows which goal earned it — and the counter ticks 5 → 6.</p></div>
+  <div class="p key"><div class="notch"><i></i></div><div class="pv">
+    <div class="chain"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="now"></i><i></i><i></i><i></i><span>5/8</span></div>
+    <div class="toast"><b>+65 XP · Clean run</b><span>BANKED TO SANO · THREE CLIENTS</span></div>
+    <div class="furn" style="padding-top:64px">
+      <div class="stamp">THE BOATS HAVE <em>BEEN BURNED</em></div>
+      <div class="meter"><div class="n">86</div>
+        <div class="r"><div class="t"><i style="width:6%"></i></div>
+          <div class="lab"><span>WORKDAYS TO DEC 1</span><span>WK 06</span></div></div></div>
+    </div>
+
+    <div class="sec"><span>Just banked</span><b>09:00 block</b></div>
+    <div class="wrapx">
+      <div class="gc" style="--c:var(--gold)"><span class="rail"></span>
+        <div class="ttl">Three clients signed and paying</div>
+        <div class="meta"><span class="pill ar">SANO</span><span class="pill newx">+65 XP</span>
+          <span class="pill ok">CONVERSATION +1</span></div>
+        <div class="lead"><span class="n up">6</span>
+          <span class="l">CONVERSATIONS<br>THIS WEEK · TARGET 12</span>
+          <span class="bar"><i style="width:50%"></i></span></div></div>
+    </div>
+
+    <div class="sec"><span>Where today's XP went</span><b>210 so far</b></div>
+    <div class="wrapx"><div class="attr">
+      <div class="h">ATTRIBUTED · NOT A NEW SCORE</div>
+      <div class="ar" style="--c:var(--gold)"><span class="nm">SANO</span>
+        <span class="t"><i style="width:81%"></i></span><span class="v">170</span></div>
+      <div class="ar" style="--c:var(--ember)"><span class="nm">Personal</span>
+        <span class="t"><i style="width:19%"></i></span><span class="v">40</span></div>
+      <div class="ar" style="--c:var(--blue)"><span class="nm">Fruits</span>
+        <span class="t"><i style="width:0%"></i></span><span class="v">0</span></div>
+    </div></div>
+  </div></div>
+</div>
+
+<!-- ============ 6 · THE VAULT ============ -->
+<div class="slot">
+  <div class="sh"><div class="n new">STEP 6 · THE BANK · NEW</div><h3>The bullion is made of goal work</h3>
+    <p><b>The Vault stops being a generic score.</b> You can see which business bought the shelf.</p></div>
+  <div class="p key"><div class="notch"><i></i></div><div class="pv">
+    <div class="chain"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="now"></i><i></i><i></i><span>6/8</span></div>
+    <div class="vhead"><h2>The Vault</h2><span>DAY 41 OF 91</span></div>
+
+    <div class="vt-shelf"><div class="vt-rack">
+      <div class="vt-row"><span class="vt-bar ghost"></span></div>
+      <div class="vt-row"><span class="vt-bar ghost"></span><span class="vt-bar ghost"></span></div>
+      <div class="vt-row"><span class="vt-bar"></span><span class="vt-bar ghost"></span><span class="vt-bar ghost"></span></div>
+      <div class="vt-row"><span class="vt-bar"></span><span class="vt-bar"></span><span class="vt-bar"></span><span class="vt-bar"></span></div>
+    </div></div>
+    <div class="vt-plank"></div>
+    <div class="vt-count"><b>2,610</b><span class="cl">XP IN THE VAULT<br>+210 TODAY</span></div>
+
+    <div class="sec"><span>What bought this shelf</span><b>the whole run</b></div>
+    <div class="wrapx"><div class="attr">
+      <div class="h">BULLION BY AREA · DAY 1 TO NOW</div>
+      <div class="ar" style="--c:var(--gold)"><span class="nm">SANO</span>
+        <span class="t"><i style="width:61%"></i></span><span class="v">1,590</span></div>
+      <div class="ar" style="--c:var(--blue)"><span class="nm">Fruits</span>
+        <span class="t"><i style="width:19%"></i></span><span class="v">490</span></div>
+      <div class="ar" style="--c:var(--ember)"><span class="nm">Personal</span>
+        <span class="t"><i style="width:14%"></i></span><span class="v">370</span></div>
+      <div class="ar" style="--c:var(--violet)"><span class="nm">LA Edible</span>
+        <span class="t"><i style="width:6%"></i></span><span class="v">160</span></div>
+    </div>
+    <div class="cm" style="--c:var(--gold);margin:0 0 var(--s2)"><span class="rail"></span>
+      <div class="ct">Box 01 · Nice restaurant date</div>
+      <div class="cmeta"><span class="pill">900</span><span class="pill ok">READY · TURN THE KEY</span></div></div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ============ 7 · FRIDAY CLOSE ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">STEP 7 · FRIDAY</div><h3>Closed out, confidence tapped</h3>
+    <p>What happened, and the one question that drives the month turn.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="chain"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="now"></i><i></i><span>7/8</span></div>
+    <div class="vhead"><h2>Friday</h2><span>90 SECONDS</span></div>
+    <div class="step"><i class="on"></i><i class="on"></i><i></i></div>
+    <div class="rt"><div class="k">STEP 2 OF 3</div><h3>Will it land?</h3>
+      <p>Gut answer. Never scored, never shown to anyone.</p></div>
+    <div style="height:var(--s4)"></div>
+    <div class="cm" style="--c:var(--gold)"><span class="rail"></span>
+      <div class="ct">Call 10 owners from the list</div>
+      <div class="cmeta"><span class="box on"></span><span class="pill ar">SANO</span>
+        <span class="pill">MON · B1</span><span class="pill newx">+65</span></div></div>
+    <div class="wrapx" style="margin-top:var(--s3)">
+      <div class="gc" style="--c:var(--gold)"><span class="rail"></span>
+        <div class="ttl">Three clients signed and paying</div>
+        <div class="meta"><span class="pill">10 OF 12 CONVERSATIONS</span><span class="pill wig">WIG</span></div>
+        <div class="conf"><b>1</b><b>2</b><b>3</b><b class="on">4</b><b>5</b></div></div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ============ 8 · MONTH TURN ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">STEP 8 · MONTH TURN</div><h3>And it gets judged</h3>
+    <p>Every number on this screen came from the chain. Nothing was typed twice.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="chain"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="now"></i><span>8/8</span></div>
+    <div class="vhead"><h2>End of August</h2><span>1 OF 3</span></div>
+    <div class="rt"><div class="k">THE MIGRATION</div><h3>Still open.</h3>
+      <p>It doesn't move by itself. Decide what happens to it.</p></div>
+    <div class="mig" style="margin-top:var(--s5)">
+      <div class="q">DUE AUG 31 · NOT HIT</div>
+      <h4>The delivery process written down and signed off</h4>
+      <div class="sub">11 blocks committed over 5 weeks · <b style="color:var(--gold)">720 XP banked to it</b> ·
+        confidence 4 → 4 → 3</div>
+      <div class="mgrid">
+        <div class="btn">CARRY IT</div><div class="btn gh">CHANGE IT</div>
+        <div class="btn gh">PARK IT</div><div class="btn dz">DROP IT</div>
+      </div>
+    </div>
+    <div class="wrapx" style="margin-top:var(--s4)"><div class="attr">
+      <div class="h">AUGUST · WHERE THE MONTH WENT</div>
+      <div class="ar" style="--c:var(--gold)"><span class="nm">SANO</span>
+        <span class="t"><i style="width:68%"></i></span><span class="v">42 blk</span></div>
+      <div class="ar" style="--c:var(--blue)"><span class="nm">Fruits</span>
+        <span class="t"><i style="width:21%"></i></span><span class="v">13 blk</span></div>
+      <div class="ar" style="--c:var(--violet)"><span class="nm">LA Edible</span>
+        <span class="t"><i style="width:11%"></i></span><span class="v">7 blk</span></div>
+    </div></div>
+  </div></div>
+</div>
+
+<!-- ============ 9 · THE CHALLENGE ============ -->
+<div class="slot">
+  <div class="sh"><div class="n new">EXTRA · NEW</div><h3>Your weekly challenge</h3>
+    <p><b>Not a new object — a boost you wrote.</b> Boosts already pay XP and are never scored. The list just stops being hardcoded.</p></div>
+  <div class="p key"><div class="notch"><i></i></div><div class="pv">
+    <div class="vhead"><h2>The Vault</h2><span>THE CHUTE</span></div>
+    <div class="dim"></div>
+    <div class="sheet"><div class="grab"></div>
+      <div class="sh-t">A challenge for this week</div>
+      <div class="sh-s">OPTIONAL · NEVER SCORED AGAINST YOU</div>
+      <div class="fld"><label>What is it</label>
+        <div class="inp">Buy a meal for someone who needs one</div></div>
+      <div class="fld"><label>Worth</label><div class="chips">
+        <span class="chip">10 XP</span><span class="chip on">20 XP</span><span class="chip">30 XP</span></div></div>
+      <div class="fld"><label>Suggestions <u style="text-decoration:none">tap to take one</u></label><div class="chips">
+        <span class="chip">CALL YOUR MUM</span><span class="chip">NO PHONE AT DINNER</span>
+        <span class="chip">WRITE ONE PAGE</span><span class="chip">↻ MORE</span></div></div>
+      <div class="btn" style="margin-top:var(--s3)">ADD IT</div>
+      <div style="font-size:13px;color:var(--faint);line-height:1.5;margin-top:var(--s3);text-align:center">
+        A strong weekday pays ~445. Challenges stay small on purpose —<br>flavour, never a shortcut to the Vault.</div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ============ 10 · CHALLENGE ON TODAY ============ -->
+<div class="slot">
+  <div class="sh"><div class="n new">EXTRA · NEW</div><h3>Where it shows up</h3>
+    <p>One small card on Today. Never on Goals — a kind act on a Wednesday is not a goal with evidence and a horizon.</p></div>
+  <div class="p key"><div class="notch"><i></i></div><div class="pv">
+    <div class="furn">
+      <div class="stamp">THE BOATS HAVE <em>BEEN BURNED</em></div>
+      <div class="meter"><div class="n">86</div>
+        <div class="r"><div class="t"><i style="width:6%"></i></div>
+          <div class="lab"><span>WORKDAYS TO DEC 1</span><span>WK 06</span></div></div></div>
+    </div>
+    <div class="nextup live" style="margin-bottom:var(--s4)">
+      <div class="nu-k"><i></i><span>Now</span><u>09:00–10:15 · 75m</u></div>
+      <div class="nu-t">Call 10 owners from the list</div>
+      <div class="nu-obj">Deep work 1 · peak hours</div>
+      <div class="nu-goal" style="--c:var(--gold)">
+        <div class="gl"><div class="gk">THIS BLOCK IS FOR</div>
+          <div class="gt">Three clients signed and paying</div></div>
+        <div class="gn">5<s>OF 12 THIS WK</s></div></div>
+    </div>
+
+    <div class="sec"><span>This week's challenge</span><b>optional</b></div>
+    <div class="chal">
+      <div class="ck">YOU SET THIS ONE</div>
+      <div class="ct">Buy a meal for someone who needs one</div>
+      <div class="cr"><span class="cx">+20 XP</span><span class="pill">EXPIRES SUNDAY</span>
+        <span class="cb">DID IT</span></div>
+    </div>
+    <div class="wrapx" style="margin-top:var(--s2)">
+      <div style="font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.12em;
+        color:#454055;line-height:1.9;text-align:center">IGNORING IT COSTS NOTHING, EVER</div>
+    </div>
+  </div></div>
+</div>
+
+</div>
+
+<div class="foot">
+  THE CHAIN HOLDS. THREE NEW CONNECTIONS — THE BLOCK KNOWS ITS GOAL,<br>
+  THE XP IS ATTRIBUTED, AND THE VAULT SHOWS WHAT THE WORK BOUGHT.<br>
+  NOTHING ELSE IN THE APP HAD TO CHANGE.
+</div>
+</div>
+</body>
+</html>
