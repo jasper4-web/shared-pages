@@ -508,7 +508,7 @@
     <p class="edcap" id="edCap">Room at your last reading</p>
     <div class="envchips" id="edEnv"></div>
     <div class="field" id="edPickField"><label id="edPickLabel">Pick one</label><div class="pchips" id="edPick"></div></div>
-    <div class="field" id="edNumField"><label id="edNumLabel">Value</label><div class="numrow"><input type="number" id="edNum" inputmode="decimal" step="any"><span class="unit" id="edNumUnit"></span></div><div class="hint2" id="edNumHint"></div></div>
+    <div id="edNums"></div>
     <div class="field"><label id="edDetailLabel">What / how much <span class="hint">— optional</span></label><input type="text" id="edDetail" placeholder="e.g. neem oil, foliar, lights-off…"></div>
     <input type="file" id="edPhotoInput" accept="image/*" multiple style="display:none">
     <div class="photorow"><button class="btn ghost" id="edPhotoBtn" style="flex:0 0 auto;width:auto;padding:11px 16px"><i data-lucide="camera"></i>Add photos</button><span class="photocount" id="edPhotoCount"></span></div>
@@ -647,12 +647,14 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   }
   /* pick = a required one-tap choice shown in the event sheet (replaces the old which-plants picker) */
   var EVTYPES=[
-    {t:"water",label:"Water",icon:"droplets",hot:true,pick:{label:"How much",opts:["1 cup","2 cups","Half gal","1 gal","Full soak"]}},
+    {t:"water",label:"Water",icon:"droplets",hot:true,
+     pick:{label:"Roughly how much",opts:["1 cup","2 cups","3 cups","4 cups","Half gal","1 gal","Full soak"]},
+     nums:[{key:"cups",label:"Exact cups, if you measured",unit:"cups",hint:"A marked bottle beats an estimate — this is the number that tells us when she's due again."}]},
     {t:"soil",label:"Soil check",icon:"hand",hot:true,pick:{label:"Two knuckles deep it feels",opts:["Dry","Damp","Wet"]},detail:"Where you checked — optional"},
     {t:"photo",label:"Photo",icon:"camera",hot:true},
     {t:"light",label:"Light move",icon:"move-vertical",
-     pick:{label:"New height above her canopy",opts:['60"','54"','48"','42"','36"','30"'],sets:"lightIn"},
-     num:{key:"ppfd",label:"Measured PPFD at canopy",unit:"µmol",hint:"Photone app or a meter. Leave blank if you have no reading.",sets:"ppfd"}},
+     nums:[{key:"in",label:"Height above her canopy",unit:"inches",required:true,hint:"Measure light face → top of her. Type the real number.",sets:"lightIn"},
+           {key:"ppfd",label:"Measured PPFD at canopy",unit:"µmol",hint:"Photone app or a meter. Leave blank if you have no reading.",sets:"ppfd"}]},
     {t:"measure",label:"Measure her",icon:"ruler",
      pick:{label:"What you measured",opts:["Height","Widest span","Node count"]},
      num:{key:"val",label:"Value",unit:"in / nodes",hint:"Height & span in inches; nodes as a count."}},
@@ -1708,13 +1710,13 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       $("edPick").innerHTML=et.pick.opts.map(function(o){return '<button type="button" class="pchip" data-p="'+esc(o)+'" aria-pressed="false">'+esc(o)+'</button>';}).join("");
       $$("#edPick .pchip").forEach(function(b){b.addEventListener("click",function(){setPick(b.getAttribute("data-p"));});});
     } else $("edPickField").style.display="none";
-    if(et.num){
-      $("edNumField").style.display="";
-      $("edNumLabel").textContent=et.num.label;
-      $("edNumUnit").textContent=et.num.unit||"";
-      $("edNumHint").textContent=et.num.hint||"";
-      $("edNum").value="";
-    } else $("edNumField").style.display="none";
+    var NUMS=numFields(et);
+    $("edNums").innerHTML=NUMS.map(function(n){
+      var pre=(evEditing.nums&&evEditing.nums[n.key]!=null)?evEditing.nums[n.key]:(n.key==="ppfd"&&evEditing.num!=null?evEditing.num:"");
+      return '<div class="field"><label>'+esc(n.label)+(n.required?'':' <span class="hint">— optional</span>')+'</label>'+
+        '<div class="numrow"><input type="number" inputmode="decimal" step="any" data-num="'+n.key+'" value="'+(pre===""?"":pre)+'"><span class="unit">'+esc(n.unit||"")+'</span></div>'+
+        (n.hint?'<div class="hint2">'+esc(n.hint)+'</div>':'')+'</div>';
+    }).join("");
     $("edDetailLabel").innerHTML=et.detail?esc(et.detail):'What / how much <span class="hint">— optional</span>';
     $("edDetail").placeholder=et.pick?"anything worth remembering…":"e.g. neem oil, foliar, lights-off…";
     $("edDetail").value=evEditing.detail||"";
@@ -1728,6 +1730,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     if(type==="photo"){$("edPhotoInput").click();} // synchronous: stays inside the tap's user-activation (iOS)
     else if(window.matchMedia&&matchMedia("(hover: hover)").matches){setTimeout(function(){$("edDetail").focus();},60);} // never pop the keyboard on phones
   }
+  function numFields(et){ return et.nums || (et.num?[et.num]:[]); }
   function setPick(v){ setPickExact((evEditing.pick===v)?"":v); }
   function setPickExact(v){
     evEditing.pick=v;
@@ -1806,14 +1809,29 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     var ev=evEditing;
     ev.detail=$("edDetail").value.trim();
     // an event that records a physical change is also the record of the CURRENT state
-    if(et0.num){ var nv=parseFloat($("edNum").value); ev.num=isNaN(nv)?null:nv; }
+    var NF=numFields(et0), vals={};
+    for(var ni=0;ni<NF.length;ni++){
+      var el=document.querySelector('#edNums [data-num="'+NF[ni].key+'"]');
+      var raw=el?el.value:"";
+      var pv=parseFloat(raw);
+      vals[NF[ni].key]=isNaN(pv)?null:pv;
+      if(NF[ni].required&&vals[NF[ni].key]==null){
+        toast("Enter "+NF[ni].label.toLowerCase()+" first",true);evSaving=false;return;
+      }
+    }
+    ev.nums=vals;
+    if(vals.ppfd!==undefined)ev.num=vals.ppfd;      // back-compat with single-num events
     if(et0.pick&&et0.pick.sets==="lightIn"&&ev.pick){
       var inch=parseInt(ev.pick,10);
       if(!isNaN(inch)){CFG.lightIn=inch;}
     }
-    if(et0.num&&et0.num.sets==="ppfd"){
-      if(ev.num!=null){ CFG.ppfd=ev.num; CFG.ppfdAt=CFG.lightIn; }
-      else if(et0.pick&&et0.pick.sets==="lightIn"){
+    NF.forEach(function(n){
+      if(!n.sets)return;
+      if(n.sets==="lightIn"&&vals[n.key]!=null)CFG.lightIn=vals[n.key];
+    });
+    if(vals.ppfd!==undefined){
+      if(vals.ppfd!=null){ CFG.ppfd=vals.ppfd; CFG.ppfdAt=CFG.lightIn; }
+      else if(vals["in"]!=null){
         // moved the light without re-measuring: the old reading describes the OLD height
         CFG.ppfdAt=null;
         toast("Height logged — your PPFD reading is now stale, measure again",true);
