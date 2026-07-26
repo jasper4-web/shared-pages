@@ -814,8 +814,9 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   var STAGE=stageFor(todayDnum), wk=STAGE.row, todayWeek=STAGE.week;
   var hr=now.getHours(), lightsOn=lightsOnAt(hr);
   if(CFG.heaterSet===undefined)CFG.heaterSet=wk.s1;
-  // single-plant migration: domes are retired with #2/#3, so the dome-phase targets can never re-arm
-  if(CFG.domesOn){CFG.domesOn=false;}
+  // single-plant migration: domes are retired with #2/#3, so the dome-phase targets can never
+  // re-arm. Also enforced in save() — a one-shot delete here was silently undone by the very
+  // next config reconciliation off disk, so the key kept coming back.
   delete CFG.domesOn;
   // sanitize: a historical race could leave null events; never let them poison renders
   Object.keys(store.entries).forEach(function(k){var e=store.entries[k];if(e&&e.events)e.events=e.events.filter(Boolean);});
@@ -859,6 +860,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
         });
         var dc=disk.config||{};
         Object.keys(dc).forEach(function(k){ if(!CFGTOUCHED[k]) CFG[k]=dc[k]; });
+        delete CFG.domesOn;   // retired key — never let disk (or an old build) reintroduce it
       }
       localStorage.setItem(KEY,JSON.stringify(store));
       // "touched" means "changed since my last successful write", not "ever" — otherwise this
@@ -901,47 +903,73 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     // dialTemp/dialRh are UI state, but they must survive a reload or a half-entered
     // reading is lost — they are deliberately NOT the same fields as temp/rh
     ["temp","rh","notes","dialTemp","dialRh"].forEach(function(k){ if(mine[k]!==undefined)out[k]=mine[k]; });
-    ["hi","lo"].forEach(function(k){ if(mine[k]&&(mine[k].t!=null||mine[k].r!=null))out[k]=mine[k]; });
+    // same rule as the scalars above: presence is intent. The old "only if it holds a number"
+    // guard meant a high/low could be typed but NEVER cleared — once both fields went null the
+    // disk copy won forever, so the screen said "—" while the export still printed 82°.
+    ["hi","lo"].forEach(function(k){ if(mine[k]!==undefined)out[k]=mine[k]; });
     // merge plants["1"] FIELD BY FIELD — the old guard only carried it forward when a
     // status or note existed, so tells tapped before a status were silently dropped.
     if(mine.plants&&mine.plants["1"]){
       out.plants=out.plants||{};
       var tp=out.plants["1"]||{}, mp=mine.plants["1"];
-      var tl={}; (tp.tells||[]).concat(mp.tells||[]).forEach(function(x){tl[x]=1;});
       // "don't overwrite with undefined" — NOT "don't overwrite with falsy". The old
       // `mp.n||tp.n` meant clearing a note was impossible: the disk copy always won.
+      /* TELLS resolve PER KEY by last-changed stamp (tellsAt), because neither a plain union
+         nor "mine wins" can be right: the union made on->off->on impossible, and mine-wins
+         re-checked a box the OTHER tab had just un-checked and threw away its removal record.
+         Every add and remove now stamps the key, so the newer decision simply wins. */
+      var mAt=mine.tellsAt||{}, tAt=theirs.tellsAt||{};
+      var mHas={}; (mp.tells||[]).forEach(function(x){mHas[x]=1;});
+      var tHas={}; (tp.tells||[]).forEach(function(x){tHas[x]=1;});
+      var mGone={}; (mine.tellsGone||[]).forEach(function(x){mGone[x]=1;});
       var mergedTells;
       if(mp.tells!=null){
-        // MINE is authoritative for this session; theirs only contributes tells I never removed.
-        // The old union-minus-tombstone made on -> off -> on impossible: the tombstone outlived
-        // the re-add and vetoed it forever.
-        var rmv={}; (mine.tellsGone||[]).forEach(function(x){rmv[x]=1;});
-        var u={}; mp.tells.forEach(function(x){u[x]=1;});
-        (tp.tells||[]).forEach(function(x){ if(!rmv[x])u[x]=1; });
-        mergedTells=Object.keys(u);
+        var all={};
+        Object.keys(mHas).concat(Object.keys(tHas))
+          .concat(Object.keys(mAt)).concat(Object.keys(tAt)).forEach(function(x){all[x]=1;});
+        mergedTells=Object.keys(all).filter(function(x){
+          var a=mAt[x], b=tAt[x];
+          if(a!=null&&b!=null)return (a>=b)?!!mHas[x]:!!tHas[x];  // newest decision wins
+          if(a!=null)return !!mHas[x];
+          if(b!=null)return !!tHas[x];
+          // neither side stamped it: pre-upgrade data, so keep the old behaviour exactly
+          return !!(mHas[x]||(tHas[x]&&!mGone[x]));
+        });
       } else mergedTells=(tp.tells||[]);
       out.plants["1"]={
         s: (mp.s!==undefined?mp.s:(tp.s||"")),
         n: (mp.n!==undefined?mp.n:(tp.n||"")),
         tells: mergedTells
       };
-      out.tellsGone=(mine.tellsGone||[]).slice();
+      // keep BOTH sides' stamps and removal records — discarding theirs is what let a stale
+      // tab resurrect a tell and then erase the evidence that it had ever been removed
+      var at={}; Object.keys(tAt).forEach(function(x){at[x]=tAt[x];});
+      Object.keys(mAt).forEach(function(x){ if(at[x]==null||mAt[x]>at[x])at[x]=mAt[x]; });
+      out.tellsAt=at;
+      var tg={}; (mine.tellsGone||[]).concat(theirs.tellsGone||[]).forEach(function(x){tg[x]=1;});
+      out.tellsGone=Object.keys(tg).filter(function(x){return mergedTells.indexOf(x)<0;});
     }
     return out;
   }
   function reloadStore(){
     try{ var raw2=localStorage.getItem(KEY); if(!raw2)return null; var st=JSON.parse(raw2); return (st&&st.entries)?st:null; }catch(e){ return null; }
   }
-  function blankDraft(){return {temp:"",rh:"",watered:"no",hi:{t:null,r:null},lo:{t:null,r:null},plants:{},notes:"",readings:[],events:[]};}
+  /* NO scalars, and no pre-built hi/lo. mergeEntry reads "present in mine" as intent, so a
+     blank draft that carried temp:"" / notes:"" / hi:{t:null,r:null} blanked whatever was on
+     disk: "absent" must never read as "cleared". These fields appear the moment one is set. */
+  function blankDraft(){return {watered:"no",plants:{},readings:[],events:[]};}
   var draft=(!isDemo&&store.entries[todayKey])?JSON.parse(JSON.stringify(store.entries[todayKey])):blankDraft();
   if(!draft.plants)draft.plants={};
   if(!draft.readings)draft.readings=[];
   if(!draft.events)draft.events=[];
-  if(!draft.hi)draft.hi={t:null,r:null};
-  if(!draft.lo)draft.lo={t:null,r:null};
+  // hi/lo are deliberately NOT defaulted here — an untouched draft must stay silent on them
+  // so the disk copy wins, while a draft the user actually cleared beats it. See blankDraft().
   function curEntry(){ return (isDemo && store.entries[todayKey]) ? store.entries[todayKey] : draft; }
   function commitDraft(){
     draft.day=Math.max(0,todayDnum);draft.week=todayWeek;draft.phase=STAGE.phase;
+    // today is about to hold a REAL entry, so it can never be a purged sample day again —
+    // otherwise save() refuses to re-read today from disk for the rest of this tab's life
+    delete PURGED[todayKey];
     // re-read what's on disk first — another tab may have written since we loaded
     var disk=reloadStore();
     if(disk){
@@ -950,9 +978,23 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     } else {
       store.entries[todayKey]=JSON.parse(JSON.stringify(draft));
     }
-    save();
+    // callers gate their "✓ saved" toast on this — returning undefined meant the two most
+    // frequent logging actions (status, event) confirmed nothing at all
+    return save();
   }
-  function exitDemo(){ if(!isDemo)return; demoKeys.forEach(function(k){ PURGED[k]=1; delete store.entries[k]; }); isDemo=false; draft=blankDraft(); dial.temp=null; dial.rh=null; setFoot();
+  /* Test hook. The merge / purge / restore internals produced almost every data bug this app
+     has had, and they were only reachable through six taps of UI — or, for restore, not at all
+     without reloading the page. Exposing them costs nothing at runtime and lets the suite
+     assert on them directly. (parseBackupPaste and applyRestore are hoisted declarations.) */
+  window.__zt={
+    mergeEntry:mergeEntry, blankDraft:blankDraft, commitDraft:commitDraft,
+    parseBackupPaste:parseBackupPaste, applyRestore:applyRestore,
+    purged:function(){return PURGED;}, demo:function(){return isDemo;}, todayKey:todayKey
+  };
+  // todayKey is BOTH a sample day and the one real day this tab will write. Purging it made
+  // save() refuse to re-read today from disk forever, so a second tab still in demo could
+  // erase the entry the first tab had just logged. Delete the sample, never tombstone the key.
+  function exitDemo(){ if(!isDemo)return; demoKeys.forEach(function(k){ if(k!==todayKey)PURGED[k]=1; delete store.entries[k]; }); isDemo=false; draft=blankDraft(); dial.temp=null; dial.rh=null; setFoot();
     // purge must leave NO ghost of the sample data on screen — re-render everything
     renderBoards();renderGauges();renderTrendPeek();renderCaps();renderRibbon();renderDue(); }
   function setFoot(){$("foot1").textContent=(isDemo?"Sample data for preview — your first save replaces it · ":"")+"Day 0 = Jul 17, 2026";}
@@ -1449,8 +1491,13 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     if(!draft.plants["1"])draft.plants["1"]={s:"",n:"",tells:[]};
     var arr=draft.plants["1"].tells||[];
     if(!draft.tellsGone)draft.tellsGone=[];
-    function forget(t){ if(draft.tellsGone.indexOf(t)<0)draft.tellsGone.push(t); }
-    function remember(t){ var j=draft.tellsGone.indexOf(t); if(j>=0)draft.tellsGone.splice(j,1); }
+    // stamp EVERY decision, add or remove. mergeEntry resolves each tell by whichever tab
+    // touched it last, so this stamp is the only thing standing between a removed tell and
+    // a stale sibling tab putting it straight back.
+    if(!draft.tellsAt)draft.tellsAt={};
+    var stampT=Date.now();
+    function forget(t){ if(draft.tellsGone.indexOf(t)<0)draft.tellsGone.push(t); draft.tellsAt[t]=stampT; }
+    function remember(t){ var j=draft.tellsGone.indexOf(t); if(j>=0)draft.tellsGone.splice(j,1); draft.tellsAt[t]=stampT; }
     var i=arr.indexOf(k);
     if(i>=0){ arr.splice(i,1); forget(k); }
     else{
@@ -1645,9 +1692,10 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     if(wasDone){delete CFG.dueDone[id];delete CFG.dueDoneDay[id];}
     else{CFG.dueDone[id]=todayKey;CFG.dueDoneDay[id]=Math.max(0,todayDnum);
          if(id==="minmax")CFG.lastMinMaxReset=todayKey;}
-    save();renderDue();
-    // the row leaves the list when ticked — confirm it so that never reads as a glitch
-    toast(wasDone?"↩ Back on the list — "+m.label:"✓ "+m.label);
+    var okD=save();renderDue();
+    // the row leaves the list when ticked — confirm it so that never reads as a glitch,
+    // but only when it actually reached disk (save() toasts its own failure)
+    if(okD)toast(wasDone?"↩ Back on the list — "+m.label:"✓ "+m.label);
   }
 
   /* ================= LOG MODE ================= */
@@ -1656,16 +1704,17 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   function getField(f){
     if(f==="temp")return dial.temp;
     if(f==="rh")return dial.rh;
-    if(f==="hi.t")return draft.hi.t; if(f==="hi.r")return draft.hi.r;
-    if(f==="lo.t")return draft.lo.t; if(f==="lo.r")return draft.lo.r;
+    if(f==="hi.t")return draft.hi?draft.hi.t:null; if(f==="hi.r")return draft.hi?draft.hi.r:null;
+    if(f==="lo.t")return draft.lo?draft.lo.t:null; if(f==="lo.r")return draft.lo?draft.lo.r:null;
     return null;
   }
   function setField(f,v){
     // dial is UI state only — draft.temp/rh are written ONLY by doCapture()
     if(f==="temp"){dial.temp=v;draft.dialTemp=v;}
     else if(f==="rh"){dial.rh=v;draft.dialRh=v;}
-    else if(f==="hi.t")draft.hi.t=v; else if(f==="hi.r")draft.hi.r=v;
-    else if(f==="lo.t")draft.lo.t=v; else if(f==="lo.r")draft.lo.r=v;
+    // created on first touch — the existence of draft.hi/lo IS this tab's "I set these" flag
+    else if(f==="hi.t"){(draft.hi=draft.hi||{t:null,r:null}).t=v;} else if(f==="hi.r"){(draft.hi=draft.hi||{t:null,r:null}).r=v;}
+    else if(f==="lo.t"){(draft.lo=draft.lo||{t:null,r:null}).t=v;} else if(f==="lo.r"){(draft.lo=draft.lo||{t:null,r:null}).r=v;}
   }
   function maxFor(f){return (f==="rh"||f==="hi.r"||f==="lo.r")?99:110;}
   function pressNum(n){
@@ -1745,7 +1794,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       var b=(r!=null?r+"%":"—")+(rc?'<span class="cx"></span>':'');
       return a+' / '+b;
     }
-    var HH=isDemo?((curEntry().hi)||{t:null,r:null}):draft.hi, LL=isDemo?((curEntry().lo)||{t:null,r:null}):draft.lo;
+    var HH=(isDemo?curEntry().hi:draft.hi)||{t:null,r:null}, LL=(isDemo?curEntry().lo:draft.lo)||{t:null,r:null};
     $("hiV").innerHTML=hvh("hi",HH.t,HH.r);
     $("loV").innerHTML=hvh("lo",LL.t,LL.r);
     $("hiV").parentNode.setAttribute("aria-pressed",(active==="hi.t"||active==="hi.r")?"true":"false");
@@ -1777,9 +1826,11 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     // the CAPTURE is the measurement — this is the only place the day's room number is set
     draft.temp=String(dial.temp);draft.rh=String(dial.rh);
     dialSeeded.temp=false;dialSeeded.rh=false;
-    commitDraft();
+    var okC=commitDraft();
     renderCaps();renderGauges();renderTrendPeek();
-    return t;
+    // three outcomes, not two: the time string = captured, null = nothing dialled,
+    // false = the write failed and save() has already toasted the real reason
+    return okC?t:false;
   }
   var toastT=null;
   var toastAction=null;
@@ -1795,7 +1846,9 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   });
   function captureReading(){ // Log mode button
     var t=doCapture();
-    if(t)toast("✓ Captured "+t); else toast("Dial temp + humidity first",true);
+    if(t)toast("✓ Captured "+t);
+    else if(t===null)toast("Dial temp + humidity first",true);
+    // t===false: save() already toasted the storage warning — do not paper over it
   }
   function captureGlance(){ // mini button in the Room-now bubble
     var t=doCapture(),m=$("capMsgG"),b=$("capBtnG");
@@ -1803,7 +1856,8 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       m.textContent="✓ captured "+t;m.classList.add("show");
       b.innerHTML='<i data-lucide="check"></i>';if(window.lucide)lucide.createIcons({attrs:{'stroke-width':2.2}});
       setTimeout(function(){m.classList.remove("show");b.innerHTML='<i data-lucide="camera"></i>';if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});},1900);
-    } else { m.textContent="dial it first";m.classList.add("show");setTimeout(function(){m.classList.remove("show");},1700); }
+    } else if(t===null){ m.textContent="dial it first";m.classList.add("show");setTimeout(function(){m.classList.remove("show");},1700); }
+    // t===false: the write failed; save()'s warning toast is the honest message, leave it alone
   }
   // readings used to be keyed by time|temp|rh, so deleting one permanently blocked
   // re-capturing the same values that minute while the UI said "✓ Captured"
@@ -1861,7 +1915,10 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       var et=evType(e.type);
       var pk=e.pick?' · <b>'+esc(e.pick)+'</b>':"";
       var pids=evPhotoIds(e);
-      var ths=evThumbs(e), thumb=ths.slice(0,3).map(function(t,ti){return '<img src="'+t+'" alt="photo" data-pid="'+(pids[ti]||"")+'">';}).join("")+(ths.length>3?'<span class="evmore">+'+(ths.length-3)+'</span>':"");
+      // thumbs and photoIds are index-aligned, but a slot can hold an id with no preview.
+      // Pair first, then drop the previewless slots — never render src="null".
+      var pairs=[]; evThumbs(e).forEach(function(t,ti){ if(t)pairs.push({t:t,p:pids[ti]||""}); });
+      var thumb=pairs.slice(0,3).map(function(x){return '<img src="'+x.t+'" alt="photo" data-pid="'+x.p+'">';}).join("")+(pairs.length>3?'<span class="evmore">+'+(pairs.length-3)+'</span>':"");
       var nt=evNumText(e), nv=(nt?' <b>'+esc(nt)+'</b>':'');
       return '<div class="evitem" data-ev-i="'+idx[i]+'" role="button" tabindex="0"><i data-lucide="'+et.icon+'"></i><span class="evt">'+(e.time||"—")+'</span><span class="evd"><b>'+et.label+'</b>'+pk+nv+(e.detail?' — '+esc(e.detail):"")+'</span>'+thumb+'<i class="edit" data-lucide="pencil"></i></div>';
     }).join("");
@@ -1951,7 +2008,12 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     // hydrate through the back-compat accessors, or a legacy single-photo event loses its
     // photo the moment it is edited (photoIds shadows the old singular photoId)
     var exTh=evThumbs(evEditing), exIds=evPhotoIds(evEditing);
-    evPhotos=exTh.map(function(t,i){return {thumb:t,data:null,existingId:exIds[i]||null};});
+    // Build over the LONGER of the two. A restored backup has its thumbs stripped but keeps
+    // its photoIds; mapping over thumbs alone dropped those ids, and the unconditional
+    // photoIds write below then stamped [] back and orphaned the blobs permanently.
+    evPhotos=[];
+    for(var pi=0,pn=Math.max(exTh.length,exIds.length);pi<pn;pi++)
+      evPhotos.push({thumb:exTh[pi]||null,data:null,existingId:exIds[pi]||null});
     renderEdThumbs();
     $("edDelete").style.display=(existing!=null)?"":"none";
     $("evBg").classList.add("open");
@@ -2003,7 +2065,11 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   function renderEdThumbs(){
     var host=$("edThumbs"); if(!host)return;
     host.innerHTML=evPhotos.map(function(ph,i){
-      return '<div class="pth"><img src="'+ph.thumb+'" alt="photo '+(i+1)+'"><span class="ix">'+(i+1)+'</span>'+
+      // a stored photo can have no preview (restored from a thumb-stripped backup) — show the
+      // slot so it survives the save and can still be removed, never render src="null"
+      var face=ph.thumb?('<img src="'+ph.thumb+'" alt="photo '+(i+1)+'">')
+                       :('<div class="pthbusy" title="stored photo, no preview">photo</div>');
+      return '<div class="pth">'+face+'<span class="ix">'+(i+1)+'</span>'+
              '<button type="button" data-rm="'+i+'" aria-label="Remove photo '+(i+1)+'">&times;</button></div>';
     }).join("")+(evPhotoBusy?'<div class="pthbusy">'+evPhotoBusy+'…</div>':"");
     $$("#edThumbs [data-rm]").forEach(function(b){
@@ -2263,8 +2329,8 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     if(!draft.plants["1"])draft.plants["1"]={s:"",n:"",tells:[]};
     if(psSel)draft.plants["1"].s=psSel;
     draft.plants["1"].n=$("psNote").value.trim();
-    commitDraft();renderBoards();renderGauges();renderDue();renderPlant();
-    toast("✓ Note saved");
+    var okN=commitDraft();renderBoards();renderGauges();renderDue();renderPlant();
+    if(okN)toast("✓ Note saved");
   });
 
   /* ---- modes ---- */
@@ -2300,7 +2366,12 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   window.addEventListener("storage",function(e){
     if(e.key!==KEY)return;
     var disk=reloadStore(); if(!disk)return;
-    Object.keys(disk.entries).forEach(function(k){ if(k!==todayKey)store.entries[k]=disk.entries[k]; });
+    // A sibling tab just wrote REAL data — nothing on disk is ever sample data. Staying in demo
+    // mode kept "Sample data for preview" under genuine entries and would have stamped the
+    // export "SAMPLE DATA — preview only" across the grower's actual log.
+    if(isDemo&&Object.keys(disk.entries).length)exitDemo();
+    // and a key that exists on disk is real by definition, so it must not stay tombstoned
+    Object.keys(disk.entries).forEach(function(k){ if(k!==todayKey){delete PURGED[k];store.entries[k]=disk.entries[k];} });
     var merged=mergeEntry(JSON.parse(JSON.stringify(draft)),disk.entries[todayKey]);
     store.entries[todayKey]=merged;
     if(!isDemo){ draft=JSON.parse(JSON.stringify(merged)); }
@@ -2457,12 +2528,23 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     var text=JSON.stringify({v:1,at:new Date().toISOString(),app:"zangria-cockpit",store:store});
     openModal("Backup — copied. Keep it somewhere safe.",text);
   });
-  $("restoreBtn").addEventListener("click",function(){
-    openModal("Restore — paste a backup, then tap Restore now","",{editable:true,onApply:function(txt){
-      try{
-        // the block is labelled "paste into Guide → Restore", so accept the whole paste
-        var raw=String(txt), cut=raw.lastIndexOf('{"');
-        var b=JSON.parse(cut>0?raw.slice(cut):raw);
+  /* Restore is three separate jobs — find the payload, apply it, then navigate. They used to be
+     one tangle inside a click handler, which is why the parse bug that made EVERY backup
+     unrestorable went unnoticed: the only way to exercise it was to reload the page. */
+  function parseBackupPaste(txt){
+    // the block is labelled "paste into Guide → Restore", so accept the whole paste.
+    // lastIndexOf('{"') was ALWAYS wrong — it lands on the last NESTED object, never the
+    // start of the payload, so every backup ever taken failed to parse. Try the paste
+    // whole first, then slice from the FIRST '{"' after the last '--- ' marker line.
+    var raw=String(txt).trim();
+    try{ return JSON.parse(raw); }
+    catch(e0){
+      var mk=raw.lastIndexOf("\n--- "), cut=raw.indexOf('{"',mk>=0?mk:0);
+      if(cut<0)throw e0;
+      return JSON.parse(raw.slice(cut));
+    }
+  }
+  function applyRestore(b){
         exitDemo();
         if(b&&b.app==="zangria-cockpit"&&b.entry&&b.key){ // a single-day DATA v1 block from a Copy-today paste
           // MERGE, don't replace — the block has thumbs stripped, so assigning it wiped
@@ -2483,6 +2565,20 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
         } else {
           var st=(b&&b.store)?b.store:b;
           if(!st||!st.entries)throw new Error("no entries");
+          // The FULL BACKUP block from Copy-full-log runs every entry through stripThumbs, so
+          // restoring your own backup used to land thumbs:0 / photoIds:2 — and the next edit of
+          // that event stamped photoIds:[] back, orphaning the blobs in IndexedDB for good.
+          // Carry the live thumbs across by event id, exactly as the DATA v1 branch does.
+          Object.keys(st.entries).forEach(function(k){
+            var cur=store.entries[k], nu=st.entries[k];
+            if(!cur||!cur.events||!nu||!nu.events)return;
+            var byId={}; cur.events.forEach(function(x){ if(x&&x.id)byId[x.id]=x; });
+            nu.events.forEach(function(x){
+              var old=x&&x.id&&byId[x.id]; if(!old)return;
+              if((!x.thumbs||!x.thumbs.length)&&old.thumbs&&old.thumbs.length)x.thumbs=old.thumbs;
+              if((!x.thumbs||!x.thumbs.length)&&!x.thumb&&old.thumb)x.thumb=old.thumb;
+            });
+          });
           Object.keys(st.entries).forEach(function(k){if(st.entries[k])store.entries[k]=st.entries[k];});
           if(st.config){
             Object.keys(CFG).forEach(function(k){delete CFG[k];});
@@ -2492,7 +2588,13 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
           }
           AUTHORITATIVE=true;   // this write REPLACES — do not merge the old device state back in
         }
-        save(); AUTHORITATIVE=false;
+        var okR=save(); AUTHORITATIVE=false;
+        return okR;
+  }
+  $("restoreBtn").addEventListener("click",function(){
+    openModal("Restore — paste a backup, then tap Restore now","",{editable:true,onApply:function(txt){
+      try{
+        applyRestore(parseBackupPaste(txt));
         location.reload();
       }catch(err){ toast("Couldn't read that backup — paste the whole block",true); }
     }});
@@ -2619,7 +2721,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       lc.textContent='Light · '+CFG.lightIn+'"'+(ds2?' · '+ds2.dli.toFixed(0)+' mol':'');
     }
   }
-  $("tgIhc").addEventListener("click",function(){exitDemo();CFG.ihc=!CFG.ihc;touchCfg("ihc");save();syncChips();renderGauges();renderDue();flashRow(this);toast(CFG.ihc?"✓ Humidity controller ON — humidity now AUTO":"Humidity controller marked not installed");});
+  $("tgIhc").addEventListener("click",function(){exitDemo();CFG.ihc=!CFG.ihc;touchCfg("ihc");var okI=save();syncChips();renderGauges();renderDue();flashRow(this);if(okI)toast(CFG.ihc?"✓ Humidity controller ON — humidity now AUTO":"Humidity controller marked not installed");});
   /* SETTINGS COMMIT MODEL — every row saves the moment you leave it AND confirms.
      Previously only Light height toasted, and the light-cycle fields did a full
      location.reload() on change, which looked like the app throwing your edit away.
