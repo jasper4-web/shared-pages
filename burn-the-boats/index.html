@@ -19,6 +19,10 @@
   --d-work:#E0B25E; --d-cap:#7FB4FF; --d-body:#FF6B2C; --d-faith:#B08CFF; --d-mind:#38E1D8; --d-people:#4ADE80;
   --ghost:#CFE2FF; --ghost-d:#8FB4E8; --ghost-bg:#070C16; --ghost-line:#1c2c47;
   --sb:env(safe-area-inset-bottom,0px); --st:env(safe-area-inset-top,0px);
+  /* THE SPACING SCALE — the only gaps allowed inside the action row */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px;
+  /* THE TOUCH SCALE — nothing tappable is ever smaller than --tap. One-handed at 6 AM. */
+  --tap:48px; --tap-lg:56px;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);overscroll-behavior-y:none}
@@ -72,7 +76,7 @@ body.noTabs .tabs{display:none}
   font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--faint)}
 .runstrip b{color:var(--dim);font-weight:700}
 .runstrip button{margin-left:auto;background:transparent;border:1px solid var(--line2);color:var(--dim);
-  border-radius:8px;padding:8px 11px;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.1em;min-height:36px}
+  border-radius:8px;padding:8px 11px;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.1em;min-height:44px}
 
 /* win chips gain quota pips */
 .win{flex-direction:column;align-items:flex-start;gap:6px}
@@ -90,10 +94,19 @@ button{font-family:inherit}
   background:radial-gradient(50% 46% at 50% 62%,rgba(255,107,44,.2),rgba(179,42,0,.08) 44%,transparent 70%);
   animation:furn 5s ease-in-out infinite}
 @keyframes furn{0%,100%{opacity:.62;transform:scale(1)}50%{opacity:1;transform:scale(1.07)}}
-.stamp{position:relative;z-index:2;text-align:center;font-family:'Clash Display',sans-serif;font-weight:700;
+.burnzone{position:relative;z-index:2;min-height:58px;display:grid;place-items:center}
+.stamp{grid-area:1/1;text-align:center;font-family:'Clash Display',sans-serif;font-weight:700;
   font-size:22px;letter-spacing:.035em;line-height:1.14;color:#2a2530;
   text-shadow:0 1px 0 rgba(255,150,80,.34),0 -1px 0 rgba(0,0,0,.85)}
+.stamp .ln{display:block}
 .stamp em{font-style:normal;color:#e8a86a;text-shadow:0 0 22px rgba(255,107,44,.62)}
+.stamp .chr{display:inline-block;will-change:transform,opacity}
+/* the verse the boats burn away to reveal */
+.verse{grid-area:1/1;text-align:center;visibility:hidden;padding:0 4px}
+.vtext{font-family:'Clash Display',sans-serif;font-size:15px;line-height:1.32;letter-spacing:-.005em;
+  color:#e8d7c2;text-shadow:0 0 18px rgba(255,150,80,.28)}
+.vref{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.2em;color:#8d6650;margin-top:7px;text-transform:uppercase}
+.pfx{position:absolute;inset:-10px -6px;pointer-events:none;z-index:3}
 .meter{position:relative;z-index:2;margin-top:15px;display:flex;align-items:center;gap:11px}
 .meter .n{font-family:'Clash Display',sans-serif;font-size:44px;line-height:.85;letter-spacing:-.05em;color:#f2ece4}
 .meter .r{flex:1}
@@ -165,6 +178,437 @@ button{font-family:inherit}
 .nu-t{font-family:'Clash Display',sans-serif;font-size:20px;letter-spacing:-.025em;line-height:1.12;margin-bottom:5px}
 .nu-obj{font-size:13.5px;color:var(--dim);line-height:1.4;margin-bottom:11px}
 .nu-obj.empty{color:#ff8f70;font-style:italic}
+.nu-em{color:#ff8f70;font-style:italic}
+
+/* =====================================================================
+   THE MASTHEAD — the vice screen (Agent 5, round 3).
+   Six things, in this order, every time: masthead (streak + unit) · the ring ·
+   today's fact in one line · the modules · the graph · one reason.
+   Its own scale, namespaced --v* so it cannot collide with The Line's --s*.
+   A broken rule is stated in plain grey, never shouted — understatement is
+   the mercy, and the consequence belongs in the make-up strip.
+   ===================================================================== */
+.vicev{position:fixed;inset:0;z-index:250;background:var(--bg);display:none;overflow-y:auto;
+  padding:calc(2px + var(--st)) 0 calc(30px + var(--sb))}
+.vicev.on{display:block}
+.vicev{--v1:8px; --v2:16px; --v3:26px;
+  --vt-display:64px; --vt-word:44px; --vt-unit:30px;
+  --vt-mod:14.5px; --vt-body:13.6px; --vt-data:8px; --vt-micro:7px;
+  --hot:#FFB25E; --warm:#e8a86a}
+.m-bar{display:flex;align-items:center;gap:10px;padding:0 12px;height:52px}
+.m-bar .bk{width:44px;height:44px;margin-left:-9px;border-radius:99px;border:0;background:transparent;
+  color:var(--dim);font-size:19px;line-height:1;display:grid;place-items:center;flex:none;cursor:pointer}
+.m-bar .lb{font-family:'Geist Mono',monospace;font-size:var(--vt-data);letter-spacing:.19em;
+  text-transform:uppercase;color:var(--dim);font-weight:700}
+.m-bar .rt{margin-left:auto;font-family:'Geist Mono',monospace;font-size:var(--vt-micro);
+  letter-spacing:.13em;color:#4b4560;text-transform:uppercase}
+.m-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;
+  padding:4px 16px var(--v1)}
+.m-streak{display:flex;align-items:baseline;gap:8px;line-height:1}
+/* two optical sizes on the display step: 64px for figures, 44px for words.
+   "DAY 1" at 64 overflows the masthead column; at 44 it weighs the same as "6" at 64. */
+.m-streak b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:var(--vt-display);
+  letter-spacing:-.055em;color:#f6f1e8;line-height:.84}
+.m-streak b.word{font-size:var(--vt-word);letter-spacing:-.04em}
+.m-streak em{font-style:normal;font-family:'Clash Display',sans-serif;font-weight:600;
+  font-size:var(--vt-unit);letter-spacing:-.03em;color:var(--warm)}
+.m-streak.held b{color:#e6d6c4}
+.m-sub{font-family:'Geist Mono',monospace;font-size:var(--vt-data);letter-spacing:.17em;
+  text-transform:uppercase;color:#6d5c3c;font-weight:700;margin-top:10px;line-height:1.5}
+.m-today{font-family:'Geist Mono',monospace;font-size:var(--vt-micro);letter-spacing:.15em;
+  text-transform:uppercase;margin-top:7px;line-height:1.6}
+.m-today.live{color:var(--ember)}
+.m-today.held{color:var(--phos)}
+.m-today.plain{color:var(--faint)}
+.m-today i{display:inline-block;width:5px;height:5px;border-radius:99px;margin-right:6px;
+  vertical-align:1px;background:currentColor}
+.m-ringwrap{background:none;border:0;padding:6px;display:block;position:relative}
+.m-ring{display:block;position:relative}
+.m-ring svg{display:block}
+.m-makeup{margin:0 16px var(--v1);border:1px solid rgba(255,107,44,.42);background:rgba(255,107,44,.075);
+  border-radius:14px;padding:11px 13px}
+.m-makeup .k{font-family:'Geist Mono',monospace;font-size:var(--vt-micro);letter-spacing:.19em;
+  color:var(--hot);text-transform:uppercase;font-weight:700;display:flex;justify-content:space-between;gap:8px}
+.m-makeup .t{font-size:13px;color:#eccbb1;margin-top:6px;line-height:1.42}
+.m-makeup .t b{color:#ffdcc1;font-weight:500}
+.m-makeup .go{margin-top:10px;width:100%;min-height:44px;border-radius:99px;border:1px solid rgba(255,178,94,.5);
+  background:transparent;color:var(--hot);font-family:'Geist Mono',monospace;font-size:8.5px;
+  letter-spacing:.17em;font-weight:700;cursor:pointer}
+.m-makeup.final{border-color:rgba(255,178,94,.75);background:rgba(255,107,44,.13)}
+/* modules reflow: two-up for two offers, full width for one, one line of type for none.
+   A fixed grid spends most of its life with a hole in it, and an empty card reads as something owed. */
+.m-mods{padding:0 16px;display:grid;gap:var(--v1)}
+.m-mods.two{grid-template-columns:1fr 1fr}
+.m-mod{border:1px solid var(--line2);border-radius:14px;background:var(--panel);padding:11px 12px;position:relative}
+.m-mod .top{display:flex;align-items:baseline;gap:8px}
+.m-mod .stt{font-family:'Geist Mono',monospace;font-size:var(--vt-micro);letter-spacing:.2em;
+  text-transform:uppercase;color:#5f5872;font-weight:700}
+.m-mod .pay{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;font-weight:700;color:var(--gold)}
+.m-mod .ti{font-size:var(--vt-mod);font-weight:500;margin-top:6px;line-height:1.25;color:var(--ink)}
+.m-rail{height:5px;border-radius:99px;background:#191527;overflow:hidden;margin-top:9px;position:relative}
+.m-rail i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;
+  background:linear-gradient(90deg,#6b2400,var(--ember),#FFC98A);box-shadow:0 0 9px rgba(255,107,44,.45)}
+.m-mod .foot{display:flex;justify-content:space-between;gap:6px;font-family:'Geist Mono',monospace;
+  font-size:var(--vt-micro);letter-spacing:.11em;color:#6d5c3c;margin-top:7px;text-transform:uppercase}
+.m-act{margin-top:9px;width:100%;min-height:44px;border:1px solid rgba(224,178,94,.45);background:transparent;
+  color:var(--gold);border-radius:99px;padding:10px;font-family:'Geist Mono',monospace;font-size:8.5px;
+  letter-spacing:.17em;font-weight:700;cursor:pointer}
+.m-mod.live{border-color:rgba(255,107,44,.42);background:linear-gradient(150deg,rgba(255,107,44,.09),rgba(255,107,44,.015))}
+.m-mod.live .stt{color:var(--ember)}
+.m-mod.claim{border-color:rgba(74,222,128,.45);background:linear-gradient(150deg,rgba(74,222,128,.1),rgba(74,222,128,.015))}
+.m-mod.claim .stt,.m-mod.claim .pay{color:var(--phos)}
+.m-mod.claim .m-act{border:0;background:linear-gradient(135deg,var(--phos),#2f9e5c);color:#062010;
+  font-family:'Satoshi',sans-serif;font-size:13.5px;letter-spacing:0;font-weight:700}
+.m-mod.offer .stt{color:var(--gold)}
+.m-mod.lock{opacity:.58;border-style:dashed}
+.m-ladder{display:flex;gap:4px;margin-top:8px}
+.m-ladder i{flex:1;height:3px;border-radius:99px;background:#241f33}
+.m-ladder i.on{background:var(--gold);box-shadow:0 0 7px rgba(224,178,94,.45)}
+/* a lapsed offer and the empty slot are NOT boxes — a box implies something is owed */
+.m-lapsed,.m-none{font-family:'Geist Mono',monospace;font-size:var(--vt-micro);letter-spacing:.14em;
+  text-transform:uppercase;color:#4b4560;padding:13px 2px;line-height:1.7;border-top:1px solid var(--line)}
+.m-lapsed b{color:#6b6480;font-weight:700}
+.m-graph{padding:var(--v1) 16px 0}
+.m-graph .k{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;
+  font-size:var(--vt-micro);letter-spacing:.18em;color:#3b3549;text-transform:uppercase;margin-bottom:9px}
+.m-graph .key{font-family:'Geist Mono',monospace;font-size:var(--vt-micro);letter-spacing:.11em;
+  color:#3b3549;margin-top:8px;line-height:1.7;text-transform:uppercase}
+.m-empty{font-family:'Geist Mono',monospace;font-size:var(--vt-micro);letter-spacing:.15em;
+  color:#3b3549;text-transform:uppercase;text-align:center;padding:22px 0 6px;line-height:1.8}
+.m-why{padding:var(--v1) 16px var(--v2);margin-top:4px}
+.m-why .r{border-top:1px solid var(--line);padding-top:13px;font-size:var(--vt-body);color:var(--dim);line-height:1.5}
+.m-why .r b{color:var(--ink);font-weight:500}
+.m-why .c{font-family:'Geist Mono',monospace;font-size:var(--vt-micro);letter-spacing:.16em;
+  color:#4b4560;text-transform:uppercase;margin-top:7px}
+.m-log{padding:0 16px var(--v1)}
+.m-log button{width:100%;min-height:48px;border-radius:11px;border:1px solid var(--line2);
+  background:transparent;color:var(--dim);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+
+/* =====================================================================
+   THE ONE SPINE — the Push tab (Agent 2, round 2, F1 + F3's pill position).
+   There is only ever ONE screen. The spine, the station dates and their
+   positions are fixed furniture; zooming is a FILTER, not a journey —
+   nothing moves, everything else recedes. That is the whole idea, and it
+   is the only model of the four that keeps the cross-domain spine.
+   All scoped to #pushBody so it cannot touch The Line's .acts.
+   ===================================================================== */
+#pushBody .hz{display:flex;align-items:flex-start;gap:10px;padding:0 0 12px;border-bottom:1px solid var(--line);margin-bottom:14px}
+#pushBody .hz .th{font-family:'Clash Display',sans-serif;font-size:15px;letter-spacing:-.02em}
+#pushBody .hz .ln{font-size:11.5px;color:var(--faint);display:block;margin-top:3px}
+#pushBody .hz .cd{margin-left:auto;text-align:right;font-family:'Geist Mono',monospace;
+  font-size:7px;letter-spacing:.13em;color:#4b445e;line-height:1.7;white-space:nowrap}
+#pushBody .hz .cd b{color:var(--ember);font-size:9px}
+#pushBody .sp{position:relative;padding-left:26px;transition:opacity .3s}
+#pushBody .sp::before{content:'';position:absolute;left:6px;top:2px;bottom:10px;width:2px;border-radius:2px;
+  background:linear-gradient(180deg,var(--phos) 0 var(--burn,20%),var(--gold) var(--burn,20%) calc(var(--burn,20%) + 6%),#241f34 calc(var(--burn,20%) + 6%))}
+#pushBody .stn{position:relative;margin-bottom:13px;transition:opacity .3s,max-height .34s}
+#pushBody .stn .nd{position:absolute;left:-26px;top:2px;width:14px;height:14px;border-radius:99px;
+  background:var(--bg);border:2px solid #3a3350;transition:all .3s}
+#pushBody .stn.now .nd{border-color:var(--rune);background:var(--rune);box-shadow:0 0 12px rgba(56,225,216,.7)}
+#pushBody .stn.end .nd{border-color:var(--ember);box-shadow:0 0 12px rgba(255,107,44,.55)}
+#pushBody .stn.past .nd{border-color:var(--phos);background:#12331f}
+#pushBody .sh{display:flex;align-items:baseline;gap:8px;cursor:pointer;width:100%;background:none;
+  border:0;padding:11px 0;text-align:left;min-height:44px}
+#pushBody .sh b{font-family:'Clash Display',sans-serif;font-size:15px;letter-spacing:-.02em;color:var(--ink)}
+#pushBody .stn.now .sh b{color:var(--rune)}
+#pushBody .stn.end .sh b{color:#f0b48a}
+#pushBody .stn.past .sh b{font-size:12px;color:#4f6b57}
+#pushBody .sh span{margin-left:auto;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;color:#4b445e}
+#pushBody .thrs{margin-top:8px;display:grid;gap:4px}
+#pushBody .thr{display:grid;grid-template-columns:8px 1fr auto;gap:9px;align-items:start;padding:8px 10px;
+  border-radius:9px;background:var(--panel);border:1px solid var(--line);width:100%;text-align:left;
+  color:var(--ink);overflow:hidden;cursor:pointer;
+  transition:opacity .32s,transform .32s,padding .32s,max-height .32s;max-height:140px}
+#pushBody .thr .dot{width:8px;height:8px;border-radius:99px;margin-top:4px}
+#pushBody .thr .tn{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.14em;color:var(--c)}
+#pushBody .thr .tt{font-size:12.2px;line-height:1.28;margin-top:3px}
+#pushBody .thr .tx{font-family:'Geist Mono',monospace;font-size:7px;color:#4f4960;letter-spacing:.1em;
+  white-space:nowrap;padding-top:6px}
+#pushBody .thr .deep{display:none;margin-top:8px}
+#pushBody .thr .dchips{display:flex;gap:5px;flex-wrap:wrap}
+#pushBody .thr.stub{border-style:dashed;border-color:#2f2942;background:transparent}
+#pushBody .thr.stub .tt{color:#645d7a;font-style:italic}
+/* THE ZOOM: nothing moves, everything else recedes */
+#pushBody .sp[data-focus] .thr{opacity:.13}
+/* the focused thread must NOT keep the collapsed cap — it holds the deep panel,
+   and at 140px the SANO gate checklist was being cut off mid-list */
+#pushBody .sp[data-focus] .thr.on{opacity:1;background:var(--panel2);border-color:var(--line2);max-height:none}
+#pushBody .sp[data-focus] .thr.on .deep{display:block}
+#pushBody .sp[data-focus] .thr:not(.on){max-height:16px;padding-top:5px;padding-bottom:5px}
+#pushBody .sp[data-focus] .thr:not(.on) .tt,#pushBody .sp[data-focus] .thr:not(.on) .tx{display:none}
+#pushBody .sp[data-zoom="week"] .stn:not(.now){opacity:.1;max-height:26px;overflow:hidden}
+#pushBody .wkbox{margin-top:9px;border-radius:12px;border:1px solid rgba(56,225,216,.3);
+  background:rgba(56,225,216,.04);padding:11px 12px;overflow:hidden;max-height:150px;transition:max-height .36s}
+#pushBody .sp[data-zoom="week"] .wkbox{max-height:2000px}
+#pushBody .wkbox .full{display:none}
+#pushBody .sp[data-zoom="week"] .wkbox .full{display:block}
+#pushBody .wkbox .peek{display:grid;gap:5px}
+#pushBody .sp[data-zoom="week"] .wkbox .peek{display:none}
+#pushBody .pk{display:grid;grid-template-columns:8px 1fr auto;gap:9px;align-items:center;font-size:12px;color:var(--dim)}
+#pushBody .pk .dot{width:8px;height:8px;border-radius:99px}
+#pushBody .pk b{font-family:'Geist Mono',monospace;font-size:8.5px;color:var(--dim)}
+#pushBody .cmt{display:block;padding:10px 11px;border-radius:11px;background:var(--panel);
+  border:1px solid var(--line);margin-bottom:5px;position:relative;overflow:hidden;width:100%;text-align:left;color:var(--ink)}
+#pushBody .cmt::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--c)}
+#pushBody .cmt .ck{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.15em;color:var(--c)}
+#pushBody .cmt .ct{font-size:13px;line-height:1.28;margin-top:4px;font-weight:500}
+#pushBody .cmt .cw{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.09em;color:#5b5470;margin-top:5px}
+#pushBody .cmt.slack::before{background:#3a3350}
+#pushBody .chip{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.11em;padding:4px 7px;
+  border-radius:5px;border:1px solid var(--line2);color:var(--faint);text-transform:uppercase;
+  background:transparent;min-height:26px;display:inline-flex;align-items:center}
+/* a chip that DOES something gets a real hit box; a chip that is only a label does not */
+#pushBody .chip.tap{min-height:44px;padding:4px 11px;cursor:pointer}
+#pushBody .capline{display:flex;align-items:center;gap:9px;margin-top:11px;padding:10px 12px;border-radius:11px;
+  border:1px solid var(--line2);background:var(--panel)}
+#pushBody .capline .cv{font-family:'Geist Mono',monospace;font-size:14px;font-weight:700;color:var(--ink)}
+#pushBody .capline .cl2{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.12em;color:var(--faint);line-height:1.5}
+#pushBody .capline .cbar{flex:1;height:6px;border-radius:99px;background:#191527;overflow:hidden;position:relative}
+#pushBody .capline .cbar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#8a6224,var(--gold))}
+#pushBody .confrow{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+#pushBody .confrow .cl{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.15em;color:var(--faint)}
+#pushBody .confrow .pips{display:flex;gap:2px;margin-left:auto}
+/* the pip is 9px but the hit box is 44 — visual size may shrink, the target may not */
+#pushBody .confrow .pips button{background:none;border:0;padding:17px 6px;min-height:44px;min-width:22px;
+  display:grid;place-items:center;cursor:pointer}
+#pushBody .confrow .pips i{width:9px;height:9px;border-radius:99px;background:#2a2438;display:block}
+#pushBody .confrow .pips button.on i{background:var(--rune)}
+
+/* =====================================================================
+   THE VAULT — the Bank tab (Agent 6, final build).
+   Every fixture is a part of the vault: the balance is bullion on a shelf,
+   the privileges are keys on a board, each reward is a numbered deposit box
+   with his own terms engraved on the plate beside it, the boosts are the
+   deposit chute, and the history is the register. Locked, unlocked and
+   emptied are three PHYSICAL states of the same box, not three colours.
+   The vault's own scale is scoped to .vt — it must not leak.
+   ===================================================================== */
+.vt{
+  --steel-1:#34373D; --steel-2:#24272C; --steel-3:#16181C; --steel-4:#0D0F12;
+  --brass-1:#EBD4A0; --brass-2:#C2A163; --brass-3:#8A6E33; --brass-4:#54411B;
+  --lit:#FFD98A; --engrave:#3A2E14;
+  --t-fig:40px; --t-h2:20px; --t-h3:16px; --t-body:15px; --t-lab:12px; --t-min:11px;
+  --r1:3px; --r2:6px; --r3:12px;
+  --tap:44px;
+  position:relative}
+.vt{background:
+   repeating-linear-gradient(94deg,rgba(255,255,255,.016) 0 1px,transparent 1px 3px),
+   linear-gradient(180deg,#1B1E22,#121417 60%,#0D0F12);
+  min-height:820px;padding-bottom:var(--s5)}
+.vt::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:url('assets/grain/grain-fine.svg');opacity:.05;mix-blend-mode:overlay}
+/* ---- the inner face of the vault door: the header ---- */
+.vt-head{position:relative;padding:var(--s4) var(--s4) var(--s4);
+  background:
+   repeating-linear-gradient(94deg,rgba(255,255,255,.02) 0 1px,transparent 1px 3px),
+   linear-gradient(180deg,var(--steel-1),var(--steel-2) 62%,var(--steel-3));
+  border-bottom:2px solid var(--steel-4);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 6px 18px -8px #000}
+.vt-rivets{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s2);height:9px;
+  display:flex;justify-content:space-between;pointer-events:none}
+.vt-rivets i{width:9px;height:9px;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#5A5E66,#2A2D33 70%);
+  box-shadow:inset 0 -1px 1px rgba(0,0,0,.7),0 1px 0 rgba(255,255,255,.07)}
+.vt-nameplate{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
+  border-radius:var(--r1);padding:var(--s3) var(--s4);
+  background:linear-gradient(180deg,var(--brass-1),var(--brass-2) 52%,var(--brass-3));
+  box-shadow:inset 0 1px 0 rgba(255,248,224,.75),0 3px 8px -4px rgba(0,0,0,.8)}
+.vt-nameplate b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:var(--t-h3);
+  letter-spacing:.09em;color:var(--engrave);text-shadow:0 1px 0 rgba(255,248,224,.5)}
+.vt-nameplate span{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;
+  color:#5E4A1E;text-shadow:0 1px 0 rgba(255,248,224,.45)}
+/* ---- the bullion shelf: XP as mass ---- */
+.vt-shelf{margin:var(--s5) var(--s4) 0;position:relative;padding:var(--s4) var(--s4) 0;
+  border-radius:var(--r2) var(--r2) 0 0;
+  background:linear-gradient(180deg,var(--steel-4),#0A0C0E);
+  box-shadow:inset 0 3px 12px rgba(0,0,0,.9),inset 0 0 0 1px rgba(255,255,255,.05)}
+.vt-rack{display:flex;flex-direction:column;align-items:center;gap:var(--s1);padding-bottom:var(--s4)}
+/* ten bars promote into a crate, so the shelf keeps gaining mass all the way to Dec 1
+   instead of reading "full" from week three onward */
+.vt-crates{display:flex;flex-wrap:wrap;gap:var(--s2);justify-content:center;
+  margin-bottom:var(--s3);padding-bottom:var(--s3);max-width:296px;
+  border-bottom:1px dashed rgba(194,161,99,.22)}
+.vt-crate{width:64px;height:38px;border-radius:2px;position:relative;display:flex;
+  flex-direction:column;justify-content:space-evenly;align-items:center;
+  background:linear-gradient(176deg,var(--brass-1),var(--brass-2) 44%,var(--brass-3) 84%,var(--brass-4));
+  box-shadow:0 3px 5px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,250,228,.7)}
+.vt-crate i{display:block;width:78%;height:2px;border-radius:2px;background:rgba(58,46,20,.5)}
+.vt-crate::after{content:'10';position:absolute;right:4px;bottom:2px;
+  font-family:'Geist Mono',monospace;font-size:8px;color:var(--engrave);opacity:.75}
+.vt-row{display:flex;gap:var(--s1);justify-content:center}
+.vt-bar{width:62px;height:19px;border-radius:2px;
+  clip-path:polygon(7% 0,93% 0,100% 100%,0 100%);
+  background:linear-gradient(178deg,var(--brass-1),var(--brass-2) 46%,var(--brass-3));
+  box-shadow:0 2px 3px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,250,228,.7)}
+.vt-bar.ghost{background:none;box-shadow:none;
+  border:1px dashed rgba(194,161,99,.34);clip-path:none;border-radius:2px}
+.vt-plank{height:11px;margin:0 var(--s4);border-radius:0 0 var(--r1) var(--r1);
+  background:linear-gradient(180deg,#4A4E56,#2A2D33 60%,#1A1C20);
+  box-shadow:0 8px 16px -8px #000,inset 0 1px 0 rgba(255,255,255,.16)}
+.vt-count{margin:var(--s4) var(--s4) 0;border-radius:var(--r1);padding:var(--s3) var(--s4);
+  display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);
+  background:linear-gradient(180deg,var(--brass-1),var(--brass-2) 52%,var(--brass-3));
+  box-shadow:inset 0 1px 0 rgba(255,248,224,.75),0 3px 8px -4px rgba(0,0,0,.8)}
+.vt-count b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:var(--t-fig);
+  letter-spacing:-.045em;line-height:.92;color:var(--engrave);text-shadow:0 1px 0 rgba(255,248,224,.5)}
+.vt-count .cl{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;
+  color:#5E4A1E;text-align:right;line-height:1.7;text-shadow:0 1px 0 rgba(255,248,224,.45)}
+/* ---- engraved fixture label, used for every section ---- */
+.vt-eng{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s2);
+  margin:var(--s5) var(--s4) var(--s3);
+  font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.18em;
+  color:#7E838C;text-transform:uppercase;text-shadow:0 1px 0 rgba(255,255,255,.05)}
+.vt-eng u{text-decoration:none;color:#5A5F68;letter-spacing:.1em}
+.vt-eng span,.vt-eng u{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ---- the key board: privileges as objects on hooks ---- */
+.vt-board{margin:0 var(--s4);border-radius:var(--r2);padding:var(--s4) var(--s3) var(--s3);
+  background:linear-gradient(180deg,#1E2126,#15171B);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 3px 10px rgba(0,0,0,.7)}
+.vt-hooks{display:flex;flex-wrap:wrap;gap:var(--s3);justify-content:center}
+.vt-hook{position:relative;min-height:86px;width:58px;padding-top:var(--s5);text-align:center}
+.vt-keynote{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.09em;
+  color:#6E747E;line-height:1.7;margin-top:var(--s3);padding-top:var(--s3);text-align:center;
+  border-top:1px solid rgba(255,255,255,.06)}
+.vt-keynote b{color:#B9BEC6;font-weight:400}
+.vt-hook::before{content:'';position:absolute;left:50%;top:0;width:15px;height:17px;margin-left:-7.5px;
+  border:2px solid #6E747E;border-top:0;border-radius:0 0 8px 8px}
+.vt-key{width:26px;height:52px;margin:0 auto var(--s2);position:relative;border-radius:13px 13px var(--r1) var(--r1);
+  background:linear-gradient(148deg,var(--brass-1),var(--brass-2) 48%,var(--brass-3));
+  box-shadow:0 4px 7px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,250,228,.7)}
+.vt-key::after{content:'';position:absolute;left:50%;top:11px;width:8px;height:8px;border-radius:50%;
+  margin-left:-4px;background:var(--steel-4);box-shadow:inset 0 1px 2px rgba(0,0,0,.9)}
+.vt-key::before{content:'';position:absolute;left:50%;bottom:-13px;width:9px;height:15px;margin-left:-4.5px;
+  background:linear-gradient(148deg,var(--brass-2),var(--brass-3));
+  clip-path:polygon(0 0,100% 0,100% 55%,42% 55%,42% 100%,0 100%)}
+.vt-key.bare{background:none;box-shadow:inset 0 0 0 2px rgba(194,161,99,.26)}
+.vt-key.bare::after{background:rgba(0,0,0,.4);box-shadow:none}
+.vt-key.bare::before{background:rgba(194,161,99,.26)}
+.vt-hook .kn{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.09em;
+  color:#B9BEC6;line-height:1.6;margin-top:var(--s3)}
+.vt-hook.empty .kn{color:#6E747E}
+/* ---- the wall of deposit boxes: rewards ---- */
+.vt-wall{margin:0 var(--s4);display:grid;gap:var(--s2)}
+.vt-box{display:grid;grid-template-columns:108px minmax(0,1fr);gap:var(--s3);height:130px;
+  border-radius:var(--r2);padding:var(--s3);align-items:stretch;overflow:hidden;
+  background:linear-gradient(180deg,#1E2126,#15171B);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+/* the recess + its door */
+.vt-frame{position:relative}
+.vt-cav{position:absolute;inset:0;border-radius:var(--r1);overflow:hidden;
+  background:linear-gradient(180deg,#0A0C0E,#05070A);
+  box-shadow:inset 0 4px 12px rgba(0,0,0,.95),inset 0 0 0 1px rgba(255,255,255,.04);
+  display:grid;place-items:center}
+.vt-cav span{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.13em;color:#4A4F58}
+.vt-door{position:absolute;inset:0;border-radius:var(--r1);transform-origin:left center;
+  transform:perspective(1200px) rotateY(0deg);
+  background:
+   repeating-linear-gradient(96deg,rgba(255,255,255,.05) 0 1px,transparent 1px 4px),
+   linear-gradient(158deg,var(--brass-1),var(--brass-2) 46%,var(--brass-3) 82%,var(--brass-4));
+  box-shadow:inset 0 1px 0 rgba(255,250,228,.6),0 3px 8px -3px rgba(0,0,0,.85)}
+.vt-no{position:absolute;left:var(--s2);top:var(--s2);font-family:'Geist Mono',monospace;
+  font-size:var(--t-lab);font-weight:700;color:var(--engrave);text-shadow:0 1px 0 rgba(255,248,224,.5)}
+.vt-hole{position:absolute;right:var(--s3);top:var(--s3);width:19px;height:19px;border-radius:50%;
+  background:radial-gradient(circle at 50% 40%,#0A0C0E,#000);
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.95),0 1px 0 rgba(255,250,228,.45)}
+.vt-bolt{position:absolute;right:-4px;width:9px;height:13px;border-radius:0 2px 2px 0;
+  background:linear-gradient(180deg,#D8D2C4,#8A8578);box-shadow:0 1px 2px rgba(0,0,0,.7)}
+.vt-bolt.b1{top:38%}.vt-bolt.b2{top:60%}
+.vt-gauge{position:absolute;left:var(--s2);right:var(--s2);bottom:var(--s3);height:10px;border-radius:99px;
+  background:rgba(30,20,4,.55);box-shadow:inset 0 1px 2px rgba(0,0,0,.8)}
+.vt-gauge i{display:block;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,#6E5424,var(--lit));box-shadow:0 0 7px rgba(255,217,138,.6)}
+.vt-gauge u{position:absolute;left:0;right:0;top:-15px;text-decoration:none;text-align:center;
+  font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.08em;color:#5E4A1E}
+/* the plate beside it */
+.vt-plate{display:flex;flex-direction:column;min-width:0}
+.vt-plate b{font-family:'Clash Display',sans-serif;font-weight:600;font-size:var(--t-h2);
+  letter-spacing:-.03em;line-height:1.1;color:var(--ink)}
+.vt-plate em{font-style:normal;font-size:var(--t-body);color:var(--dim);line-height:1.35;
+  margin-top:var(--s1);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vt-act{margin-top:auto;min-height:var(--tap);display:flex;align-items:center;gap:var(--s2)}
+.vt-turn{min-height:var(--tap);flex:1;border-radius:var(--r2);padding:0 var(--s3);
+  font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.13em;font-weight:700;
+  background:linear-gradient(180deg,var(--brass-1),var(--brass-2) 54%,var(--brass-3));
+  color:var(--engrave);text-shadow:0 1px 0 rgba(255,248,224,.5);
+  box-shadow:inset 0 1px 0 rgba(255,250,228,.7),0 4px 0 var(--brass-4),0 8px 14px -6px rgba(0,0,0,.9)}
+.vt-turn:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,250,228,.7),0 2px 0 var(--brass-4)}
+.vt-wait{min-height:var(--tap);display:flex;flex-direction:column;justify-content:center;
+  font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.1em;color:#8A9099;line-height:1.65}
+.vt-wait b{font-family:'Geist Mono',monospace;font-size:var(--t-lab);color:#B9BEC6;font-weight:400}
+/* THREE PHYSICAL STATES */
+.vt-box.ready .vt-hole{background:radial-gradient(circle at 50% 40%,var(--lit),#8A6E33 70%);
+  box-shadow:0 0 12px rgba(255,217,138,.85),inset 0 1px 2px rgba(0,0,0,.5)}
+.vt-box.ready .vt-bolt{right:6px}
+.vt-box.ready{box-shadow:inset 0 0 0 1px rgba(224,178,94,.4),0 0 24px -10px rgba(224,178,94,.5)}
+.vt-box.open .vt-door{transform:perspective(1200px) rotateY(-64deg)}
+.vt-box.open .vt-bolt{right:6px}
+.vt-box.open .vt-plate b{color:#7E838C}
+.vt-box.open .vt-plate em{color:#5A5F68}
+/* just-became-affordable: the moment */
+.vt-box.fresh{box-shadow:inset 0 0 0 1px rgba(224,178,94,.75),0 0 34px -8px rgba(224,178,94,.75)}
+.vt-box.fresh .vt-hole{animation:vtPulse 1.9s ease-in-out infinite}
+@keyframes vtPulse{0%,100%{box-shadow:0 0 10px rgba(255,217,138,.7),inset 0 1px 2px rgba(0,0,0,.5)}
+  50%{box-shadow:0 0 22px rgba(255,217,138,1),inset 0 1px 2px rgba(0,0,0,.5)}}
+.vt-flag{margin:0 var(--s4) var(--s2);border-radius:var(--r2);padding:0 var(--s4);
+  display:flex;align-items:center;gap:var(--s3);height:46px;overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+.vt-flag i{width:11px;height:11px;border-radius:50%;flex:none;background:#3E434B}
+.vt-flag span{font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.11em;
+  color:#8A9099;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vt-flag.on{background:linear-gradient(180deg,rgba(224,178,94,.16),rgba(224,178,94,.06));
+  box-shadow:inset 0 0 0 1px rgba(224,178,94,.4)}
+.vt-flag.on i{background:var(--lit);box-shadow:0 0 10px var(--lit)}
+.vt-flag.on span{color:#F0D9A6}
+/* ---- the deposit chute: boosts ---- */
+.vt-chute{margin:0 var(--s4);border-radius:var(--r2);padding:var(--s3);
+  background:linear-gradient(180deg,var(--steel-2),var(--steel-3));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 3px 10px rgba(0,0,0,.7)}
+.vt-mouth{height:15px;border-radius:99px;margin:0 var(--s2) var(--s3);
+  background:linear-gradient(180deg,#05070A,#0D0F12);
+  box-shadow:inset 0 3px 7px rgba(0,0,0,.95),0 1px 0 rgba(255,255,255,.09)}
+.vt-slips{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+.vt-slip{min-height:var(--tap);display:flex;align-items:center;gap:var(--s2);text-align:left;
+  border-radius:var(--r1);padding:var(--s2) var(--s3);
+  background:linear-gradient(180deg,#EFE6D0,#D9CCAE);
+  box-shadow:inset 0 1px 0 rgba(255,252,240,.9),0 3px 0 #A99A78,0 6px 10px -5px rgba(0,0,0,.8)}
+.vt-slip:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,252,240,.9),0 1px 0 #A99A78}
+.vt-slip .sn{font-size:13px;font-weight:500;color:#2A2214;line-height:1.25;min-width:0}
+.vt-slip .sx{margin-left:auto;font-family:'Geist Mono',monospace;font-size:var(--t-lab);
+  font-weight:700;color:#6E5424;white-space:nowrap}
+/* ---- the register: history ---- */
+.vt-reg{margin:0 var(--s4);border-radius:var(--r2);overflow:hidden;
+  background:linear-gradient(180deg,#1E2126,#15171B);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.vt-line{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) var(--s4);
+  border-bottom:1px solid rgba(255,255,255,.05);min-height:var(--tap)}
+.vt-line:last-child{border-bottom:0}
+.vt-line .d{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.1em;color:#6E747E;
+  flex:none;width:56px}
+.vt-line .w{font-size:14px;color:#B9BEC6;min-width:0;flex:1}
+.vt-line .x{font-family:'Geist Mono',monospace;font-size:var(--t-lab);color:#8A9099;flex:none}
+.vt-empty{padding:var(--s4);font-family:'Geist Mono',monospace;font-size:var(--t-min);
+  letter-spacing:.1em;color:#6E747E;line-height:1.9}
+.vt-empty b{color:var(--gold);font-weight:400}
+/* the day-one promise line */
+.vt-promise{margin:var(--s4) var(--s4) 0;border-radius:var(--r2);padding:var(--s4);
+  background:linear-gradient(180deg,rgba(224,178,94,.13),rgba(224,178,94,.04));
+  box-shadow:inset 0 0 0 1px rgba(224,178,94,.3)}
+.vt-promise b{display:block;font-family:'Clash Display',sans-serif;font-weight:600;font-size:var(--t-h3);
+  letter-spacing:-.02em;color:#F0D9A6;line-height:1.25}
+.vt-promise span{display:block;font-family:'Geist Mono',monospace;font-size:var(--t-min);
+  letter-spacing:.1em;color:#B49A6E;line-height:1.8;margin-top:var(--s2)}
+.vt-new{margin:var(--s4) var(--s4) 0;min-height:var(--tap);width:calc(100% - var(--s4)*2);
+  border-radius:var(--r2);font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.13em;
+  color:#8A9099;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+
+/* the zoom pill — bottom LEFT, inside the one-handed thumb arc (F3's ergonomics) */
+.zpill{position:fixed;left:11px;bottom:calc(66px + var(--sb));z-index:80;display:flex;align-items:center;
+  border:1px solid var(--line2);background:rgba(12,10,19,.96);border-radius:11px;overflow:hidden;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 30px -14px #000}
+.zpill button{background:none;border:0;color:var(--faint);padding:9px 11px;min-height:44px;cursor:pointer;
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;border-right:1px solid var(--line)}
+.zpill button:last-child{border-right:0;color:var(--gold)}
+.zpill button.home{color:var(--dim)}
 .chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:11px}
 .chip{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.11em;padding:3px 7px;border-radius:4px;
   border:1px solid var(--line2);color:var(--dim);text-transform:uppercase}
@@ -174,8 +618,50 @@ button{font-family:inherit}
   transition:transform .1s}
 .btn:active{transform:scale(.975)}
 .btn.gh{background:transparent;border:1px solid var(--line2);color:var(--dim)}
-.btn.sm{padding:10px 11px;font-size:12.5px;min-height:40px;border-radius:9px}
+/* even the "small" button clears the 44px floor — this is used one-handed */
+.btn.sm{padding:10px 11px;font-size:12.5px;min-height:44px;border-radius:9px}
 .row2{display:grid;grid-template-columns:1fr auto;gap:7px}
+
+/* ---------- THE LINE · contextual action row (Agent 4 round 4) ----------
+   The row under the live block belongs to THAT block. Rules it obeys:
+   01 three actions max · 02 every target >=48px, primaries 56px · 03 nothing
+   moves when state changes · 04 one spacing scale · 05 nothing under 11px. */
+.acts{display:grid;gap:var(--s2)}
+.act{display:flex;align-items:center;justify-content:center;gap:var(--s2);width:100%;
+  min-height:var(--tap);border-radius:11px;font-family:inherit;font-size:14px;font-weight:600;
+  border:1px solid var(--line2);background:transparent;color:var(--dim);cursor:pointer;
+  padding:0 var(--s3);text-align:center;line-height:1.2;text-decoration:none;
+  transition:transform .1s}
+.act.primary{border:0;background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;min-height:var(--tap-lg)}
+.act.big{min-height:var(--tap-lg);font-size:15px}
+.act.on{border-color:var(--phos);color:var(--phos);background:rgba(74,222,128,.1)}
+.act.warn{border-color:rgba(255,77,94,.35);color:#ff8f80}
+.act:active{transform:scale(.985)}
+.act .ic{font-family:'Geist Mono',monospace;font-size:13px;opacity:.8}
+.act .tick{width:18px;height:18px;border-radius:5px;border:1.5px solid #3a3350;flex:none;display:flex;
+  align-items:center;justify-content:center;font-size:11px;color:transparent}
+.act.on .tick{background:var(--phos);border-color:var(--phos);color:#0b1a10}
+.acts .pair{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+/* a one-row block must stay one row in EVERY state, or the schedule jumps when he taps */
+.acts .split{display:grid;grid-template-columns:1fr auto;gap:var(--s2)}
+.acts .split .act{padding:0 var(--s4)}
+.state{display:flex;align-items:center;justify-content:center;gap:var(--s2);min-height:var(--tap-lg);
+  border-radius:11px;background:rgba(255,255,255,.03);border:1px dashed var(--line2);
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase}
+.state.good{border-color:rgba(74,222,128,.35);color:var(--phos);background:rgba(74,222,128,.06)}
+.state.miss{border-color:rgba(107,58,68,.6);color:#c98d99;background:rgba(107,58,68,.12)}
+.state.wait{border-color:rgba(127,180,255,.35);color:var(--ghost-d);background:rgba(127,180,255,.07)}
+.state.sm{min-height:var(--tap)}
+/* personal life gets no buttons at all — the one block that must not feel measured */
+.nothing{display:flex;align-items:center;justify-content:center;min-height:var(--tap-lg);
+  font-size:12.5px;color:var(--faint);font-style:italic;text-align:center;line-height:1.4}
+/* the quota rides in the kicker line, not a row of its own — a row cost 27px of fold for metadata */
+.quota{display:inline-flex;align-items:center;gap:6px;margin-left:var(--s2);
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--faint)}
+.quota .pips{display:flex;gap:3px}
+.quota .pips i{width:6px;height:6px;border-radius:99px;background:#2a2438;display:block;box-shadow:none}
+.quota .pips i.on{background:var(--phos)}
+.quota b{color:var(--dim);font-weight:400}
 
 h2.sec{font-size:9px;font-family:'Geist Mono',monospace;letter-spacing:.19em;text-transform:uppercase;
   color:var(--faint);margin:22px 0 8px;font-weight:700;display:flex;justify-content:space-between;align-items:baseline}
@@ -296,7 +782,7 @@ body.offday #sched::before{content:"Off-script. Today can't count against you.";
 .cc-row:last-of-type{border-bottom:0}
 .cc-row b{font-size:12px;color:var(--dim);font-weight:500}
 .cc-row button{background:transparent;border:1px solid var(--line2);color:var(--faint);border-radius:7px;
-  padding:7px 9px;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.08em;min-height:34px}
+  padding:7px 9px;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.08em;min-height:44px}
 .cc-row button.on{border-color:var(--phos);color:var(--phos)}
 .cc-row button.miss.on{border-color:var(--blood);color:var(--blood)}
 
@@ -379,6 +865,9 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
 .toast.good{border-color:rgba(74,222,128,.5);color:var(--phos)}
 .toast.bad{border-color:rgba(255,77,94,.5);color:var(--blood)}
 </style>
+<script src="lib/gsap/gsap.min.js"></script>
+<script src="lib/tsparticles/tsparticles.slim.bundle.min.js"></script>
+<script src="data/verses.js"></script>
 </head>
 <body data-veil="you">
 
@@ -386,7 +875,14 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
 
  <section class="view on" data-view="today">
   <div class="furnace">
-    <div class="stamp">THE BOATS HAVE<br><em>BEEN BURNED</em></div>
+    <div class="burnzone" id="burnZone">
+      <div class="stamp" id="stamp"><span class="ln">THE BOATS HAVE</span><span class="ln"><em>BEEN BURNED</em></span></div>
+      <div class="verse" id="verse">
+        <div class="vtext" id="verseText"></div>
+        <div class="vref" id="verseRef"></div>
+      </div>
+      <div class="pfx" id="pfx"></div>
+    </div>
     <div class="meter">
       <div class="n" id="fDays">—</div>
       <div class="r">
@@ -395,6 +891,22 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
       </div>
     </div>
   </div>
+
+  <!-- ORDER: what he does RIGHT NOW comes before how he is scoring.
+       The Line's locked constraint is that the live block is never below the fold, and it
+       was: measured at 390x844 the card opened at y=683 with its second row of buttons
+       behind the tab bar. The score card (glance) is 256px and was sitting on top of it.
+       So the day comes first and the scoreboard is what he scrolls to — which is also what
+       the governing law wants: never open on a wall of failure. -->
+  <div class="rail-wrap">
+    <div class="rail" id="rail"><div class="now" id="railNow"></div></div>
+    <div class="rail-l"><span id="railS">—</span><span id="railE">—</span></div>
+    <div class="timeleft"><b id="tlBig">—</b><span>OF DEEP WORK LEFT</span><span class="dow" id="tlDow">—</span></div>
+  </div>
+
+  <div id="penanceBanner"></div>
+  <div class="nextup" id="nextUp"></div>
+  <div class="pushstrip" id="pushStrip"></div>
 
   <div class="gauges">
     <div class="gg" id="ggA"></div>
@@ -408,16 +920,6 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
     <div class="ovrbox" id="ovrBox"></div>
     <div class="proj" id="proj"></div>
   </div>
-
-  <div class="rail-wrap">
-    <div class="rail" id="rail"><div class="now" id="railNow"></div></div>
-    <div class="rail-l"><span id="railS">—</span><span id="railE">—</span></div>
-    <div class="timeleft"><b id="tlBig">—</b><span>OF DEEP WORK LEFT</span><span class="dow" id="tlDow">—</span></div>
-  </div>
-
-  <div class="pushstrip" id="pushStrip"></div>
-  <div id="penanceBanner"></div>
-  <div class="nextup" id="nextUp"></div>
 
   <h2 class="sec">Always counts <u id="winTally"></u></h2>
   <div class="wins" id="wins"></div>
@@ -491,6 +993,8 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
   <button id="sabLook">LOOK BACK AT THE WEEK</button>
 </div>
 
+<div class="vicev" id="vicev"><div id="viceBody"></div></div>
+
 <div class="charv" id="charv">
   <div style="display:flex"><button class="cv-close" id="cvClose">✕</button></div>
   <div class="hero">
@@ -562,7 +1066,7 @@ const WINS=[
 ];
 
 const DEFAULT={
-  v:3, xp:0,
+  v:4, xp:0,
   december:{
     WORK:   {lag:'3 SANO clients — at least one at full freight', lead:'Outreach conversations', at:1, target:3, unit:'clients'},
     CAPITAL:{lag:'3 live funded accounts',  lead:'Rules followed · no double-back', at:0, target:3, unit:'accounts'},
@@ -573,17 +1077,26 @@ const DEFAULT={
   },
   vices:{
     dish:{label:'THE DISHWASHER', mode:'weekly', allow:1, week:0, weekKey:null,
-          streak:0, streakBest:0, lastSlip:null, slips:0},
-    smoke:{label:'SMOKE',        mode:'gate',   gate:'12:00', cleanStreak:0, bestClean:0, slips:0, lastSlip:null, target24:24},
+          streak:0, streakBest:0, lastSlip:null, slips:0, hist:{}, ch:null, chDone:{}, chLapsed:null},
+    smoke:{label:'SMOKE',        mode:'gate',   gate:'12:00', cleanStreak:0, bestClean:0, slips:0, lastSlip:null, target24:24,
+          ch:null, chDone:{}, chLapsed:null},
   },
   penance:null,
   offScript:{},
+  /* these must exist from the very first load — they were being created lazily by
+     renderPush(), so anything touching them before the Push tab had ever been
+     opened threw on undefined. Build every feature to work from empty. */
+  push:{gate:{},anthonySent:0,kitchen:0,rules:{},focus:null,zoom:null},
+  ms:{}, conf:{}, parked:{},
   week:{}, days:{},
+  /* the costed ladder — priced against a trailing rate of roughly 445 XP on a
+     strong weekday, so the rungs read ~2 · 4 · 5 · 16 · 49 days across a 91-day run */
   rewards:[
-    {n:'Nice restaurant date', cost:1200, done:0},
-    {n:'A golf day',           cost:1500, done:0},
-    {n:'A full day off',       cost:2000, done:0},
-    {n:'That purchase',        cost:2500, done:0},
+    {n:'Nice restaurant date', cost:900,   condition:'Cooked + laundry every night this week', done:0, claimedOn:null},
+    {n:'A golf day',           cost:1600,  condition:'Two SANO push weeks back to back',       done:0, claimedOn:null},
+    {n:'A full day off',       cost:2400,  condition:'85%+ three weeks running',               done:0, claimedOn:null},
+    {n:'That purchase',        cost:7000,  condition:'First client signed and paid',           done:0, claimedOn:null},
+    {n:'A weekend away',       cost:22000, condition:'Anthony signed, and one more behind him', done:0, claimedOn:null},
   ],
 };
 
@@ -619,7 +1132,21 @@ function merge(base,over){
   }
   return out;
 }
-function load(){try{const r=localStorage.getItem('btb3');if(r)return merge(JSON.parse(JSON.stringify(DEFAULT)),JSON.parse(r))}catch(e){}
+/* merge() replaces arrays wholesale, so a save made before the Vault shipped keeps the
+   old four-reward ladder forever. Upgrade it — but only if he never edited it himself. */
+function migrate(s){
+  if(s.v>=4)return s;
+  const OLD=[1200,1500,2000,2500];
+  const untouched=Array.isArray(s.rewards)&&s.rewards.length===OLD.length&&
+    s.rewards.every((r,i)=>r.cost===OLD[i]&&!r.done);
+  if(untouched)s.rewards=JSON.parse(JSON.stringify(DEFAULT.rewards));
+  else if(Array.isArray(s.rewards))
+    s.rewards.forEach(r=>{if(r.claimedOn===undefined)r.claimedOn=null;
+      if(r.condition===undefined)r.condition=''});
+  s.v=4;
+  return s;
+}
+function load(){try{const r=localStorage.getItem('btb3');if(r)return migrate(merge(JSON.parse(JSON.stringify(DEFAULT)),JSON.parse(r)))}catch(e){}
   return JSON.parse(JSON.stringify(DEFAULT))}
 function save(){try{localStorage.setItem('btb3',JSON.stringify(S))}catch(e){}}
 function day(k){k=k||today();if(!S.days[k])S.days[k]={done:{},miss:{},wait:{},produced:{},focus:{},prio:[],wins:{},off:0,credited:{}};
@@ -784,6 +1311,7 @@ function logSmoked(){
   const vs=viceState();
   if(vs.brokeGate){                                     // before noon = the rule broke, not just a use
     S.vices.smoke.cleanStreak=0;
+    lapseCh('smoke');            // a running challenge lapses. Nothing recorded, nothing lost.
     save();closeSheet();render();
     logSlip('smoke');
     return;
@@ -804,8 +1332,10 @@ function rollDishWeek(){
       if(S.days[iso(t)])return true}
     return false;
   };
+  v.hist=v.hist||{};
   while(v.weekKey!==mk && guard++<60){
     // a week he was over breaks it; a week with no record at all neither extends nor breaks
+    if(lived(v.weekKey))v.hist[v.weekKey]=v.week;   // the closing week, for the 12-week graph
     if(v.week>v.allow) v.streak=0;
     else if(lived(v.weekKey)){v.streak++;v.streakBest=Math.max(v.streakBest,v.streak)}
     const n=new Date(v.weekKey+'T00:00:00');n.setDate(n.getDate()+7);
@@ -813,38 +1343,24 @@ function rollDishWeek(){
   }
   save();
 }
-function openVice(k){
-  const v=S.vices[k];
-  const body = k==='dish'
-    ? `<div class="fld"><label>Target</label><div class="val">About once a week. Used <b>${v.week}</b> of ${v.allow} this week.</div></div>
-       <div class="fld"><label>Streak</label><div class="val"><b>${v.streak} weeks</b> at or under the threshold · best ${v.streakBest}.
-       Only a week that goes <b>over</b> breaks it.</div></div>`
-    : `<div class="fld"><label>The rule</label><div class="val">Nothing before <b>12:00</b>. Clean streak: <b>${v.cleanStreak} days</b> · best ${v.bestClean}.</div></div>
-       <div class="fld"><label>Today</label><div class="val">${
-         viceState().smoked ? `Logged at <b>${esc(viceState().smoked.at)}</b>${viceState().brokeGate?' — <span style="color:var(--blood)">before noon, gate broken</span>':' — after noon, gate held'}`
-         : (viceState().beforeNoon?'Nothing logged. <b>Gate is live</b> until 12:00.':'Nothing logged. Gate is open.')}</div></div>
-       <div class="fld"><label>Optional bonus</label><div class="val">A full <b>${v.target24}h clean</b> pays big. Clear it a few times and the bar rises.</div></div>
-       <button class="btn gh" onclick="logSmoked()">Log that I smoked</button><div style="height:8px"></div>`;
-  sheet(`
-    <div class="sh-k">VICE</div>
-    <div class="sh-t">${esc(v.label)}</div>
-    <div class="sh-sub">SLIPS THIS RUN · ${v.slips}</div>
-    ${body}
-    <div class="chain"><div><div class="cl">If you slip</div>
-      <div class="cv">The streak is <b>never wiped</b>. You make up for it, and the price goes up each time.</div></div></div>
-    <button class="btn gh" onclick="logSlip('${k}')">Log a slip</button>
-    <div style="height:8px"></div>
-    <button class="btn" onclick="viceClean('${k}')">Clean day · +40 XP</button>`);
+/* Using one INSIDE the allowance is not a slip — that is the whole point of an
+   allowance. Only going over it breaks the week. */
+function logDish(){
+  const v=S.vices.dish;
+  v.week++;
+  if(v.week>v.allow){save();lapseCh('dish');logSlip('dish',true);return}
+  save();render();
+  toast(`Logged — ${v.week} of ${v.allow} this week`,'good');
 }
 const PENANCE=[
   {t:'Read the Bible 15 minutes · write out 6 passages · photograph them'},
   {t:'A 90-minute workout · 30 minutes of Bible · passages · proof for both'},
   {t:'FINAL WARNING — the next one takes the streak. Something significantly harder.'},
 ];
-function logSlip(k){
+function logSlip(k,noCount){
   const v=S.vices[k];
   v.slips++; v.lastSlip=today();
-  if(k==='dish')v.week++; else {v.cleanStreak=0;}
+  if(k==='dish'){if(!noCount)v.week++} else {v.cleanStreak=0;}
   const lvl=Math.min(PENANCE.length-1,(S.penance?S.penance.level+1:0));
   S.penance={vice:k,level:lvl,text:PENANCE[lvl].t,date:today(),done:0};
   save();closeSheet();render();
@@ -870,6 +1386,300 @@ function streakFrom(map){
   let n=0;const c=new Date();
   for(let i=0;i<400;i++){ if(map[iso(c)])n++; else if(i>0)break; c.setDate(c.getDate()-1) }
   return n;
+}
+
+/* ================= THE MASTHEAD · the vice screen =================
+ * Six things in this order, every time: streak · ring · today's fact ·
+ * the modules · the graph · one reason. The ring reads a day or a week,
+ * the graph plots a time against noon or a count against the allowance,
+ * the streak counts days or weeks. He learns the objects once.
+ * Full rationale: agent-briefs/crew-2026-07-25/5c-vices-masthead.md */
+
+/* ---- the ring. 128px is the smallest size at which every mark survives;
+        at 112 the gate tick and the now-hand rendered under 2px. ---- */
+const VRING=(()=>{
+  const DAY_A=300,DAY_B=1380,SPAN=DAY_B-DAY_A;              /* 05:00 -> 23:00 */
+  const ang=t=>270+((t-720)/SPAN)*270;
+  const pt=(C,r,a)=>{const v=a*Math.PI/180;return[C+r*Math.cos(v),C+r*Math.sin(v)]};
+  function arcD(C,r,a0,a1){
+    const p0=pt(C,r,a0),p1=pt(C,r,a1),big=(a1-a0)>180?1:0;
+    return `M${p0[0].toFixed(2)} ${p0[1].toFixed(2)} A ${r.toFixed(2)} ${r.toFixed(2)} 0 ${big} 1 ${p1[0].toFixed(2)} ${p1[1].toFixed(2)}`;
+  }
+  const stroke=(d,col,w,cap,extra)=>`<path d="${d}" fill="none" stroke="${col}" stroke-width="${w.toFixed(2)}" stroke-linecap="${cap||'round'}"${extra||''}/>`;
+  function tick(C,R,a,len,col,w){
+    const p0=pt(C,R-len/2,a),p1=pt(C,R+len/2,a);
+    return `<line x1="${p0[0].toFixed(1)}" y1="${p0[1].toFixed(1)}" x2="${p1[0].toFixed(1)}" y2="${p1[1].toFixed(1)}" stroke="${col}" stroke-width="${w.toFixed(1)}" stroke-linecap="round"/>`;
+  }
+  function build(SZ,mode,o){
+    o=o||{};const C=SZ/2,R=SZ*0.379,SW=Math.max(7,SZ*0.049);let s='';
+    if(mode==='week'){
+      const held=o.held==null?0:o.held,GAP=3.2;
+      for(let i=0;i<7;i++){
+        const a0=135+i*(270/7)+GAP,a1=135+(i+1)*(270/7)-GAP;
+        s+=stroke(arcD(C,R,a0,a1),i<held?'#FF6B2C':'#231f31',SW,'round',
+          i<held?' style="filter:drop-shadow(0 0 6px rgba(255,107,44,.55))"':'');
+      }
+      /* the rule at the crown: the allowance token, gold when unspent, hollow when used */
+      const tr=Math.max(6.5,SZ*0.055),pc=pt(C,R,270),spent=!!o.used;
+      s+=`<circle cx="${pc[0].toFixed(1)}" cy="${pc[1].toFixed(1)}" r="${tr.toFixed(1)}" fill="#0b0912" stroke="${spent?'#4a4560':'#E0B25E'}" stroke-width="${Math.max(2,SZ*0.017).toFixed(1)}"${spent?'':' style="filter:drop-shadow(0 0 6px rgba(224,178,94,.6))"'}/>`+
+        `<text x="${pc[0].toFixed(1)}" y="${(pc[1]+tr*0.37).toFixed(1)}" fill="${spent?'#4a4560':'#E0B25E'}" font-family="Geist Mono, monospace" font-weight="700" font-size="${(tr*1.06).toFixed(1)}" text-anchor="middle">${spent?'0':'1'}</text>`;
+    }else{
+      const now=o.now==null?582:o.now;
+      s+=stroke(arcD(C,R,ang(DAY_A),ang(DAY_B)),'#171420',SW);
+      [[390,480],[780,870],[1290,1380]].forEach(w=>{      /* his named danger windows */
+        s+=stroke(arcD(C,R,ang(w[0]),ang(w[1])),'#5a2a10',SW,'butt');
+      });
+      s+=stroke(arcD(C,R,ang(DAY_A),ang(Math.max(DAY_A,Math.min(DAY_B,now)))),'#FF6B2C',SW,'round',
+        ' style="filter:drop-shadow(0 0 6px rgba(255,107,44,.7))"');
+      s+=tick(C,R,ang(720),SW*2.3,'#E0B25E',Math.max(2.4,SZ*0.021));           /* the gate */
+      if(o.flag)s+=tick(C,R,ang(o.flag),SW*1.7,'#4ADE80',Math.max(2,SZ*0.017));
+      s+=tick(C,R,ang(Math.max(DAY_A,Math.min(DAY_B,now))),SW*1.6,'#FFF4E2',Math.max(1.9,SZ*0.015));
+      if(o.logAt!=null){                                                        /* what actually happened */
+        const pl=pt(C,R,ang(o.logAt));
+        s+=`<circle cx="${pl[0].toFixed(1)}" cy="${pl[1].toFixed(1)}" r="${Math.max(3.2,SZ*0.030).toFixed(1)}" fill="#FFF4E2" stroke="#7a2c05" stroke-width="1.8"/>`;
+      }
+    }
+    return `<svg width="${SZ}" height="${SZ}" viewBox="0 0 ${SZ} ${SZ}" aria-hidden="true">${s}</svg>`;
+  }
+  return {build};
+})();
+
+/* ---- the graph. Deliberately rudimentary: a DOT placed against a LINE. ---- */
+const VGRAPH=(()=>{
+  const W=300,H=74,PADT=8,PADB=16,IN=H-PADT-PADB;
+  const base=y=>`<line x1="0" y1="${PADT}" x2="${W}" y2="${PADT}" stroke="#1e1a2b" stroke-width="1"/>`+
+    `<line x1="0" y1="${y.toFixed(1)}" x2="${W}" y2="${y.toFixed(1)}" stroke="#3a3350" stroke-width="1" stroke-dasharray="3 4"/>`;
+  const ends=(l,r)=>`<text x="14" y="${H-3}" fill="#3b3549" font-family="Geist Mono, monospace" font-size="7" letter-spacing="1.2">${l}</text>`+
+    `<text x="${W-14}" y="${H-3}" fill="#3b3549" font-family="Geist Mono, monospace" font-size="7" letter-spacing="1.2" text-anchor="end">${r}</text>`;
+  /* today is drawn HOLLOW until it resolves — a filled dot would claim a result the day has not produced */
+  const open=(x,y)=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="none" stroke="#8b8398" stroke-width="1.6" stroke-dasharray="2.4 2.2"/>`;
+  const dot=(x,y,col,ring)=>(ring?`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="7.5" fill="none" stroke="${col}" stroke-opacity=".3"/>`:'')+
+    `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${ring?4:3.6}" fill="${col}"${ring?' style="filter:drop-shadow(0 0 5px rgba(74,222,128,.6))"':''}/>`;
+  const stem=(x,y,col)=>`<line x1="${x.toFixed(1)}" y1="${PADT}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="${col}" stroke-width="1.5"/>`;
+  /* a day he never opened the app: a faint absence, NOT a clean day */
+  const absent=x=>`<circle cx="${x.toFixed(1)}" cy="${PADT}" r="1.5" fill="#2a2438"/>`;
+  const wrap=(s,key)=>`<svg width="100%" viewBox="0 0 ${W} ${H}" aria-hidden="true">${s}</svg><div class="key">${key}</div>`;
+  function day(days){
+    const GATE=720,LO=600,HI=1320;
+    const y=m=>PADT+IN*(1-(Math.max(LO,Math.min(HI,m))-LO)/(HI-LO));
+    let s=base(y(GATE));
+    days.forEach((m,i)=>{
+      const x=14+i*((W-28)/Math.max(1,days.length-1));
+      if(m==='open'){s+=open(x,PADT);return}
+      if(m==='none'){s+=absent(x);return}
+      if(m===null){s+=dot(x,PADT,'#4ADE80',true);return}
+      const yy=y(m),held=m>=GATE;
+      s+=stem(x,yy,held?'#2a2438':'#3a2418')+dot(x,yy,held?'#E0B25E':'#FF6B2C');
+    });
+    return wrap(s+ends('14 DAYS AGO','TODAY'),
+      'GREEN — CLEAN ALL DAY · GOLD — HELD PAST NOON · EMBER — BEFORE NOON · HOLLOW — TODAY, STILL RUNNING<br>THE DOT IS THE TIME. 11:40 IS NOT 7 AM, AND THE CHART SAYS SO.');
+  }
+  function week(weeks){
+    const MAXU=3,y=n=>PADT+IN*(Math.min(MAXU,n)/MAXU);
+    let s=base(y(1));
+    weeks.forEach((n,i)=>{
+      const x=14+i*((W-28)/Math.max(1,weeks.length-1));
+      if(n==='open'){s+=open(x,y(0));return}
+      if(n===0){s+=dot(x,PADT,'#4ADE80',true);return}
+      s+=stem(x,y(n),n>1?'#3a2418':'#2a2438')+dot(x,y(n),n>1?'#FF6B2C':'#E0B25E');
+    });
+    return wrap(s+ends('12 WEEKS AGO','THIS WEEK'),
+      'GREEN — A WEEK AT ZERO · GOLD — INSIDE THE ALLOWANCE · EMBER — OVER IT<br>THE DASHED LINE IS THE ALLOWANCE.');
+  }
+  return {day,week};
+})();
+
+/* ---- the modules are challenges he TAKES. Escalating, optional, and never
+       punitive: a lapsed challenge records nothing and costs nothing. ---- */
+const CHALLENGES={
+  smoke:[
+    {id:'h14',ti:'Hold to 14:00',xp:35, mins:840},
+    {id:'h18',ti:'Hold to 18:00',xp:60, mins:1080},
+    {id:'c24',ti:'24 hours clean',xp:120,hours:24},
+    {id:'c48',ti:'48 hours clean',xp:180,hours:48},
+    {id:'c7', ti:'A week clean',  xp:400,hours:168},
+  ],
+  dish:[
+    {id:'w0',ti:'A week at zero', xp:90, weeks:1},
+    {id:'m0',ti:'A month at zero',xp:250,weeks:4},
+  ],
+};
+function chDef(k,id){return (CHALLENGES[k]||[]).find(c=>c.id===id)}
+function activeCh(k){
+  const v=S.vices[k];if(!v.ch)return null;
+  const def=chDef(k,v.ch.id);if(!def){v.ch=null;return null}
+  return {...v.ch,def};
+}
+function chEndsAt(k,def){
+  if(def.mins!=null){const d=new Date();d.setHours(0,0,0,0);return d.getTime()+def.mins*60000}
+  if(def.hours!=null)return Date.now()+def.hours*3600000;
+  return Date.now()+def.weeks*7*86400000;
+}
+function takeCh(k,id){
+  const def=chDef(k,id);if(!def)return;
+  S.vices[k].ch={id,takenAt:Date.now(),endsAt:chEndsAt(k,def)};
+  save();renderVice(k);toast(`Taken — ${def.ti}`,'good');
+}
+function claimCh(k){
+  const a=activeCh(k);if(!a)return;
+  S.vices[k].chDone=S.vices[k].chDone||{};
+  S.vices[k].chDone[a.id]=(S.vices[k].chDone[a.id]||0)+1;
+  S.vices[k].ch=null;save();
+  award('ch:'+k+':'+a.id+':'+today(),a.def.xp,a.def.ti);
+  renderVice(k);
+}
+/* a broken rule lapses the running challenge. Nothing is recorded, nothing is lost. */
+function lapseCh(k){
+  if(!S.vices[k].ch)return;
+  S.vices[k].chLapsed=today();S.vices[k].ch=null;save();
+}
+
+/* ---- history, read from dated records ---- */
+/* A day with NO record is not a clean day — it is a day he did not run the app.
+   Painting it green would have the chart claim a perfect fortnight he never lived. */
+function smokeDays(n){
+  const out=[];
+  for(let i=n-1;i>=0;i--){
+    const dt=new Date();dt.setDate(dt.getDate()-i);
+    const key=iso(dt),rec=S.days[key];
+    if(i===0&&!(rec&&rec.smoked)){out.push('open');continue}
+    if(!rec){out.push('none');continue}
+    out.push(rec.smoked?mins(rec.smoked.at):null);
+  }
+  return out;
+}
+function dishWeeks(n){
+  const out=[],hist=S.vices.dish.hist||{};
+  for(let i=n-1;i>=0;i--){
+    const dt=new Date();dt.setDate(dt.getDate()-i*7);
+    const key=mondayOf(dt);
+    if(i===0){out.push(S.vices.dish.week||0);continue}
+    out.push(hist[key]==null?0:hist[key]);
+  }
+  return out;
+}
+
+function mod(o){
+  let h=`<div class="m-mod ${o.cls}"><div class="top"><span class="stt">${o.st}</span>`+
+        `<span class="pay">+${o.xp} XP</span></div><div class="ti">${esc(o.ti)}</div>`;
+  if(o.rail!=null)h+=`<div class="m-rail"><i style="width:${Math.max(0,Math.min(100,o.rail))}%"></i></div>`;
+  if(o.ladder)h+=`<div class="m-ladder">${[1,2,3].map(n=>`<i class="${n<=o.ladder?'on':''}"></i>`).join('')}</div>`;
+  if(o.foot)h+=`<div class="foot"><span>${o.foot[0]}</span><span>${o.foot[1]}</span></div>`;
+  if(o.act)h+=`<button class="m-act" onclick="${o.act}">${o.actLabel}</button>`;
+  return h+'</div>';
+}
+
+function openVice(k){
+  renderVice(k);
+  $('vicev').classList.add('on');
+  document.body.classList.add('noTabs');
+}
+function closeVice(){
+  $('vicev').classList.remove('on');
+  document.body.classList.remove('noTabs');
+  render();
+}
+
+function renderVice(k){
+  const v=S.vices[k],vs=viceState(),smoke=k==='smoke';
+  const now=new Date(),hhmm=pad(now.getHours())+':'+pad(now.getMinutes());
+  const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  /* THE MASTHEAD. Day one shows "DAY 1", never "0 days" — a zero in 64px display type
+     on the first morning is precisely the wall of failure, before he has had a chance. */
+  const n=smoke?v.cleanStreak:v.streak;
+  const best=Math.max(n,smoke?v.bestClean:v.streakBest);   // best can never read below the live streak
+  const word=n===0;
+  const big=word?(smoke?'DAY 1':'WEEK 1'):String(n);
+  const unit=word?'':(smoke?(n===1?'day':'days'):(n===1?'week':'weeks'));
+  /* the sub-line labels WHAT THE NUMBER COUNTS. At zero it must not read as a claim
+     about today — "GATE HELD" above a broken gate is the app contradicting itself. */
+  const bestTxt=best>0?` · BEST ${best}`:'';    // there is no "best ever 0" — say nothing instead
+  const sub=word
+    ? (smoke?`GATE STARTS TODAY${bestTxt}`:`WEEK STARTS NOW${bestTxt}`)
+    : (smoke?`DAYS THE GATE HELD${bestTxt}`:`WEEKS AT OR UNDER${bestTxt}`);
+
+  /* TODAY'S LINE — the fact he opens the screen for. Round 2 had no such line. */
+  let today_,todayCls;
+  if(smoke){
+    if(vs.smoked&&vs.brokeGate){today_='Gate broken · logged '+esc(vs.smoked.at);todayCls='plain'}
+    else if(vs.smoked){today_='Gate held · logged '+esc(vs.smoked.at);todayCls='held'}
+    else if(vs.beforeNoon){
+      const left=mins(v.gate)-nowMin();
+      today_=`Gate live · ${Math.floor(left/60)}h ${pad(left%60)}m to noon`;todayCls='live';
+    }else{today_='Gate held · nothing logged';todayCls='held'}
+  }else{
+    today_=v.week>v.allow?`Over the allowance · ${v.week} of ${v.allow}`
+          :v.week>0?`${v.week} of ${v.allow} used this week`:'Week at zero so far';
+    todayCls=v.week>v.allow?'plain':v.week>0?'live':'held';
+  }
+
+  /* THE MODULES — reflow: two-up for two, full width for one, a line of type for none. */
+  const a=activeCh(k),mods=[];
+  if(a){
+    const total=a.endsAt-a.takenAt,gone=Date.now()-a.takenAt;
+    const done=Date.now()>=a.endsAt;
+    const leftMs=Math.max(0,a.endsAt-Date.now());
+    const leftTxt=leftMs>=3600000?`${Math.floor(leftMs/3600000)}h ${pad(Math.floor(leftMs%3600000/60000))}m`
+                 :`${Math.ceil(leftMs/60000)}m`;
+    mods.push({cls:done?'claim':'live',st:done?'Cleared':'Live',xp:a.def.xp,ti:a.def.ti,
+      rail:total>0?gone/total*100:0,
+      foot:done?null:[leftTxt+' left','Taken '+new Date(a.takenAt).toTimeString().slice(0,5)],
+      act:done?`claimCh('${k}')`:null,actLabel:done?`Claim +${a.def.xp} XP`:null});
+  }
+  if(!a){
+    const list=CHALLENGES[k]||[];
+    const avail=list.filter(c=>{
+      if(!smoke)return true;
+      if(c.mins!=null)return nowMin()<c.mins-30&&!vs.smoked;   /* only offer what is still winnable */
+      return !vs.smoked;
+    }).slice(0,2);
+    avail.forEach((c,i)=>mods.push({cls:'offer',st:i===0?'On offer':'Tonight',xp:c.xp,ti:c.ti,
+      ladder:Math.min(3,list.indexOf(c)+1),act:`takeCh('${k}','${c.id}')`,actLabel:'Take it'}));
+  }
+  const lapsed=S.vices[k].chLapsed===today()&&!a;
+
+  /* THE MAKE-UP STRIP — the consequence lives here, never in the colour of a fact. */
+  const owed=S.penance&&!S.penance.done&&S.penance.vice===k?S.penance:null;
+
+  const held=smoke?0:Math.min(7,((new Date().getDay()+6)%7)+1);
+  const ring=smoke
+    ? VRING.build(128,'day',{now:nowMin(),logAt:vs.smoked?mins(vs.smoked.at):null})
+    : VRING.build(128,'week',{held,used:v.week>=v.allow});
+
+  const hist=smoke?smokeDays(14):dishWeeks(12);
+  const hasHist=smoke?hist.some(x=>x!=='open'):Object.keys(S.vices.dish.hist||{}).length>0;
+
+  const why=smoke
+    ? `The gate is <b>noon</b>. Not "less", not "quit" — a time. A rule with a clock is one you can keep or not keep, and you always know which.`
+    : `The allowance is <b>${v.allow} a week</b>. Not zero. A rule you can actually hold beats one you break by Tuesday and then stop counting.`;
+  const cite=smoke?'THE GATE · YOUR RULE, WRITTEN DOWN':'THE ALLOWANCE · YOUR RULE, WRITTEN DOWN';
+
+  $('viceBody').innerHTML=
+    `<div class="m-bar"><button class="bk" onclick="closeVice()" aria-label="Back">‹</button>`+
+      `<span class="lb">${esc(v.label)}</span><span class="rt">${hhmm} · ${dayNames[now.getDay()]}</span></div>`+
+    `<div class="m-head"><div>`+
+      `<div class="m-streak${n>0?' held':''}"><b${word?' class="word"':''}>${big}</b>`+
+      `${unit?`<em>${unit}</em>`:''}</div>`+
+      `<div class="m-sub">${sub}</div>`+
+      `<div class="m-today ${todayCls}"><i></i>${today_}</div>`+
+    `</div><div class="m-ringwrap"><span class="m-ring">${ring}</span></div></div>`+
+    (owed?`<div class="m-makeup${S.penance.level>=3?' final':''}">`+
+      `<div class="k"><span>MAKE IT UP</span><span>Streak intact</span></div>`+
+      `<div class="t">${esc(S.penance.text||PENANCE[0].t)}</div>`+
+      `<button class="go" onclick="closeVice();openPenance()">LOG THE MAKE-UP</button></div>`:'')+
+    (mods.length?`<div class="m-mods${mods.length>1?' two':''}">${mods.map(mod).join('')}</div>`
+      :`<div class="m-mods">${lapsed
+        ?`<div class="m-lapsed"><b>Offer expired. Nothing lost.</b><br>It comes back tomorrow. Nothing was recorded.</div>`
+        :`<div class="m-none">Nothing on offer right now.<br>The next one opens tomorrow.</div>`}</div>`)+
+    `<div class="m-graph"><div class="k"><span>${smoke?'THE LAST 14 DAYS':'THE LAST 12 WEEKS'}</span>`+
+      `<span>${smoke?'AGAINST NOON':'AGAINST THE ALLOWANCE'}</span></div>`+
+      (hasHist?(smoke?VGRAPH.day(hist):VGRAPH.week(hist))
+        :`<div class="m-empty">Nothing recorded yet.<br>This fills in as you go.</div>`)+`</div>`+
+    `<div class="m-log">${smoke
+      ?`<button onclick="closeVice();logSmoked()">Log that I smoked</button>`
+      :`<button onclick="closeVice();logDish()">Log one</button>`}</div>`+
+    `<div class="m-why"><div class="r">${why}</div><div class="c">${cite}</div></div>`;
 }
 
 /* ---------- render ---------- */
@@ -1019,22 +1829,157 @@ function renderRail(){
 }
 const curIdx=()=>{const sh=shape(),m=nowMin();for(let i=0;i<sh.length;i++)if(m>=mins(sh[i].s)&&m<mins(sh[i].e))return i;return -1};
 const nxtIdx=()=>{const sh=shape(),m=nowMin();for(let i=0;i<sh.length;i++)if(mins(sh[i].s)>m)return i;return -1};
+/* ================= THE LINE · CONTEXTUAL ACTIONS =================
+ * The buttons under the live block belong to THAT block. A generic row is the
+ * thing this replaces: the action under "Bible · text Kells" is not the action
+ * under "Block 2". Three actions maximum — if a block needs four, it hasn't
+ * been decided. Two blocks have one. Personal life has none, on purpose.
+ * Full rationale + the alternatives rejected: agent-briefs/crew-2026-07-25/4d. */
+
+/* how many times a block has been closed out this week (for the quota pips) */
+function weekCount(ids){
+  const mon=mondayOf(new Date());let n=0;
+  for(let i=0;i<7;i++){
+    const dt=new Date(mon+'T00:00:00');dt.setDate(dt.getDate()+i);
+    const rec=S.days[iso(dt)];
+    if(rec&&rec.done)ids.forEach(id=>{if(rec.done[id])n++});
+  }
+  return n;
+}
+/* the message to Kells is pre-written, because composing it is where the habit dies */
+function kellsHref(){
+  const v=$('verseRef')?$('verseRef').textContent.trim():'';
+  const body=v?`Read ${v} tonight. What did you make of it?`
+             :`Read tonight — what did you make of it?`;
+  return 'sms:&body='+encodeURIComponent(body);
+}
+
+/* id -> its own actions. 'deep' covers b1–b4. */
+function actsFor(b){
+  const A=(l,fn,k)=>({l,fn,k:k||''});
+  switch(b.id){
+    /* half-awake, one hand. The only fact the app needs is whether he is vertical.
+       Deliberately NO smoke button here: naming the vice at peak craving is a prompt, not a defence. */
+    case 'wake':  return {row:'one', acts:[A("I'm up","markDone('wake')",'primary big')]};
+    /* a won month is rules kept and no double-back. Never a P&L, never a dollar figure. */
+    case 'open':  return {row:'pair', acts:[A('Done for the day',"setTrade('closed')",'primary'),
+                                            A('Broke a rule',"setTrade('broke')",'warn')]};
+    /* the composer IS the action — this block fills the objective line of all four work blocks */
+    case 'prio':  return {row:'pair', acts:[A('Write the three',"openComposer()",'primary'),
+                                            A('Same as yesterday',"openComposer('carry')")]};
+    case 'lunch': return {row:'one', acts:[A('Back at it',"markDone('lunch')",'primary big')]};
+    /* the two measures of a won month, inline, so a 20-second job doesn't need a sheet */
+    case 'close': return {row:'toggles', acts:[A('Followed my rules',"setTrade('rules')",'toggle'),
+                                               A('No double-back',"setTrade('nodb')",'toggle')]};
+    /* "split it" exists because a walk day can legitimately be two shorter walks */
+    case 'walk':  return {row:'pair', quota:{label:'WALKS',have:weekCount(['walk','hike']),need:3},
+                          acts:[A('Walked him',"markDone('walk')",'primary'),
+                                A('Split it — 2nd later',"splitWalk()")]};
+    /* the block is optional, so "rest day" must NOT be a miss */
+    case 'gym':   return {row:'pair', quota:{label:'GYM',have:weekCount(['gym']),need:2},
+                          acts:[A('Trained',"markDone('gym')",'primary'),
+                                A('Rest day',"markRest('gym')")]};
+    /* the one block that must not feel measured. He named personal life a top priority three times. */
+    case 'life':  return {row:'none', acts:[]};
+    /* last scored block before Bible — the natural doorway to the day's verdict */
+    case 'reset': return {row:'pair', acts:[A('Done — phone away',"markDone('reset')",'primary'),
+                                            A('Close the day →',"closeDay()")]};
+    /* the reading is not what he misses — the texting is. sms: is live before the timer too. */
+    case 'bible': return {row:'pair', quota:{label:'THIS WEEK',have:weekCount(['bible']),need:3},
+                          acts:[A('Read · 20 min locked',"startRun('bible')",'primary'),
+                                A('Text Kells',null,'sms')]};
+    /* a long hike overruns — "still out" holds it open instead of failing it at 10:30 */
+    case 'hike':  return {row:'pair', quota:{label:'MOVEMENT',have:weekCount(['walk','hike']),need:3},
+                          acts:[A('Hiked',"markDone('hike')",'primary'),
+                                A('Still out →',"markWait('hike')")]};
+    /* next week is set by tweaking the monthly goal, not starting from a blank page */
+    case 'mon':   return {row:'pair', acts:[A("Set Monday's three","openComposer('monday')",'primary'),
+                                            A('Tweak the monthly goal',"go('push')")]};
+  }
+  /* b1–b4 · deep work. Only the timer completes a work block — there is no "mark complete",
+     because a manual tick would hollow out the one measure the whole score is built on. */
+  if(b.kind==='deep')return {row:'primary-pair',
+    acts:[A(`Start focus run · ${b.focus}m`,`startRun('${b.id}')`,'primary'),
+          A('Waiting on someone',`markWait('${b.id}')`),
+          A('Detail',`openBlk('${b.id}')`)]};
+  return {row:'one', acts:[A('Open',`openBlk('${b.id}')`,'primary')]};
+}
+
+function actBtn(a){
+  if(a.k==='sms')return `<a class="act" href="${kellsHref()}"><span class="ic">✉</span>${esc(a.l)}</a>`;
+  if(a.k.indexOf('toggle')===0){
+    const on=(day().trade||{})[a.fn.match(/'([^']+)'/)[1]];
+    return `<button class="act${on?' on':''}" onclick="${a.fn}"><span class="tick">✓</span>${esc(a.l)}</button>`;
+  }
+  return `<button class="act ${a.k}" onclick="${a.fn}">${esc(a.l)}</button>`;
+}
+
+/* Every state renders at the same height, so nothing shifts under his thumb.
+   Missed is never terminal — it always carries its own way out. */
+function actionRow(b,state){
+  const spec=actsFor(b),a=spec.acts;let h='';
+  /* Personal life is never judged, in any state. It has nothing to say, always. */
+  if(spec.row==='none'){
+    return `<div class="acts"><div class="nothing">Nothing to log here. It is yours.</div></div>`;
+  }
+  /* A block whose live row is ONE row must resolve to one row in every other state too —
+     otherwise tapping "I'm up" grows the card 56px and the schedule jumps under his thumb.
+     Measured, not assumed: this was invisible in the rendition, where every card was a pair. */
+  const oneRow=spec.row==='one', sm=spec.row==='toggles'?' sm':'';
+  const pill=(k,txt)=>`<div class="state ${k}${oneRow?'':sm}">${txt}</div>`;
+  if(state==='done'){
+    const undo=`<button class="act" onclick="unDone('${b.id}')">Undo</button>`;
+    h=oneRow?`<div class="split">${pill('good','✓ done')}${undo}</div>`
+            :pill('good',spec.row==='toggles'?'✓ session logged':'✓ done')+
+             `<div class="pair">${undo}<button class="act" onclick="openBlk('${b.id}')">Detail</button></div>`;
+  }else if(state==='missed'){
+    const tmr=`<button class="act" onclick="pushToTomorrow('${b.id}')">${oneRow?'Tomorrow':'Move to tomorrow'}</button>`;
+    h=oneRow?`<div class="split">${pill('miss','passed')}${tmr}</div>`
+            :pill('miss','passed — not taken')+
+             `<div class="pair">${tmr}<button class="act" onclick="unMiss('${b.id}')">Not missed</button></div>`;
+  }else if(state==='waiting'){
+    const unb=`<button class="act" onclick="unWait('${b.id}')">Unblock</button>`;
+    h=oneRow?`<div class="split">${pill('wait','held')}${unb}</div>`
+            :pill('wait','waiting on someone')+
+             `<div class="pair">${unb}<button class="act" onclick="openBlk('${b.id}')">Detail</button></div>`;
+  }else if(spec.row==='primary-pair'){
+    h=actBtn(a[0])+`<div class="pair">${actBtn(a[1])}${actBtn(a[2])}</div>`;
+  }else{
+    h=a.map(actBtn).join('');
+  }
+  return `<div class="acts">${h}</div>`;
+}
+
+function quotaChip(q){
+  if(!q)return '';
+  let pips='';for(let i=0;i<q.need;i++)pips+=`<i class="${i<q.have?'on':''}"></i>`;
+  return `<span class="quota">${q.label}<span class="pips">${pips}</span><b>${q.have}/${q.need}</b></span>`;
+}
+
 function renderNext(){
   const sh=shape(),ci=curIdx(),ni=nxtIdx(),i=ci>=0?ci:ni,el=$('nextUp');
   if(i<0){el.classList.remove('live');
     el.innerHTML=`<div class="nu-k"><span>Day complete</span></div><div class="nu-t">Nothing left on the board</div>
-      <div class="nu-obj">Close it out and set tomorrow.</div>`;return}
-  const b=sh[i],t=tacticFor(b),biz=bizFor(b),live=ci>=0;
-  el.classList.toggle('live',live);
-  el.innerHTML=`<div class="nu-k">${live?'<i></i>':''}<span>${live?'Now':'Next up'}</span>
+      <div class="nu-obj">Close it out and set tomorrow.</div>
+      <div class="acts"><button class="act primary" onclick="closeDay()">Close the day →</button></div>`;return}
+  const b=sh[i],t=tacticFor(b),biz=bizFor(b),live=ci>=0,d=day();
+  const state=d.done[b.id]?'done':d.wait[b.id]?'waiting':d.miss[b.id]?'missed':live?'live':'notstarted';
+  const spec=actsFor(b);
+  el.classList.toggle('live',live&&state==='live');
+  /* THE TITLE IS THE OBJECTIVE, not the block name — "Send Anthony the AVRS pitch",
+     not "Block 2". The block name drops to the sub-line. */
+  const title=(b.kind==='deep'&&t)?t:esc(b.n)+(biz?' · '+esc(biz):'');
+  const sub=(b.kind==='deep')
+    ? (t?esc(b.n)+(biz?' · '+esc(biz):'')+' · deep work'
+        :'<span class="nu-em">No objective set — write it at 08:30</span>')
+    : esc(b.sub||b.dom.join(' + '));
+  const kick=state==='done'?'Done':state==='missed'?'Passed':state==='waiting'?'Held'
+            :live?'Now':'Next up';
+  el.innerHTML=`<div class="nu-k">${live&&state==='live'?'<i></i>':''}<span>${kick}</span>${quotaChip(spec.quota)}
       <u>${b.s}–${b.e} · ${mins(b.e)-mins(b.s)}m</u></div>
-    <div class="nu-t">${esc(b.n)}${biz?' · '+esc(biz):''}</div>
-    <div class="nu-obj ${t?'':(b.kind==='deep'?'empty':'')}">${t?esc(t):(b.kind==='deep'?'No objective set — write it at 08:30':esc(b.sub||''))}</div>
-    <div class="chips">${b.dom.map(k=>{const d=DOMAINS.find(x=>x.k===k);
-      return `<span class="chip" style="border-color:${d.c}44;color:${d.c}">${d.label}</span>`}).join('')}</div>
-    ${b.focus?`<div class="row2"><button class="btn" onclick="startRun('${b.id}')">Start focus run · ${b.focus}m</button>
-      <button class="btn gh sm" onclick="openBlk('${b.id}')">Detail</button></div>`
-      :`<button class="btn gh" onclick="openBlk('${b.id}')">Open</button>`}`;
+    <div class="nu-t">${b.kind==='deep'&&t?esc(t):title}</div>
+    <div class="nu-obj">${sub}</div>
+    ${actionRow(b,state)}`;
 }
 const ARCS=[['Morning',0,3],['Peak — deep work',3,5],['Midday',5,8],['Afternoon',8,11],['Evening',11,99]];
 function renderSched(){
@@ -1175,7 +2120,9 @@ function openRewards(){
 function claim(i){
   const r=S.rewards[i];
   if(S.xp<r.cost){toast(`${(r.cost-S.xp).toLocaleString()} XP short`,'bad');return}
-  S.xp-=r.cost;r.done=1;save();closeSheet();render();toast(`Earned: ${r.n}`,'good');
+  /* the register cannot exist without the day it was drawn */
+  S.xp-=r.cost;r.done=1;r.claimedOn=dayNo();
+  save();closeSheet();render();toast(`Withdrawn: ${r.n}`,'good');
 }
 function renderRun(){
   const d=day(),m=monthKey(),used=S.offScript[m]||0;
@@ -1218,25 +2165,44 @@ function closeSheet(){$('ovA').classList.remove('on')}
 /* The 08:30 ritual writes the whole day at once. `writes:1` was declared on the block and
    read nowhere, so the one ritual whose job is filling the four "no objective set" holes
    opened a generic sheet with no field to write into. */
-function openComposer(){
-  const d=day(),w=week();
+/* the last day that actually had three written — what "same as yesterday" pulls from */
+function lastPrio(){
+  for(let i=1;i<=14;i++){
+    const dt=new Date();dt.setDate(dt.getDate()-i);
+    const rec=S.days[iso(dt)];
+    if(rec&&rec.prio&&rec.prio.some(x=>x&&x.trim()))return rec.prio;
+  }
+  return null;
+}
+function nextMondayISO(){
+  const dt=new Date();dt.setDate(dt.getDate()+((8-dt.getDay())%7||7));return iso(dt);
+}
+/* mode: undefined = today · 'carry' = pre-filled from the last day that had three
+   · 'monday' = writes into next Monday, because Saturday's job is setting the week up */
+function openComposer(mode){
+  const key=mode==='monday'?nextMondayISO():today();
+  S._composeFor=key;S._composeMode=mode||'';
+  const d=day(key),w=week(),carry=mode==='carry'?lastPrio():null;
   const slots=[['b1','Block 1 · 09:00'],['b2','Block 2 · 10:45'],['b3','Block 3 · 13:20'],['b4','Block 4 · 15:05']];
-  sheet(`<div class="sh-k">08:30 · THE COFFEE SHOP</div>
-    <div class="sh-t">Today's three</div>
-    <div class="sh-sub">WRITE THEM ONCE — THEY FILL THE DAY</div>
+  sheet(`<div class="sh-k">${mode==='monday'?'SATURDAY · SETTING MONDAY UP':'08:30 · THE COFFEE SHOP'}</div>
+    <div class="sh-t">${mode==='monday'?"Monday's three":"Today's three"}</div>
+    <div class="sh-sub">${carry?'PRE-FILLED FROM YOUR LAST SET — EDIT WHAT CHANGED':'WRITE THEM ONCE — THEY FILL THE DAY'}</div>
     ${slots.map(([k,lab],i)=>`<div class="fld"><label>${lab}</label>
-      <input id="cp_${k}" value="${esc((d.prio&&d.prio[i])||w.tactics[k]||'')}" placeholder="The one thing this block produces"></div>`).join('')}
+      <input id="cp_${k}" value="${esc((carry&&carry[i])||(d.prio&&d.prio[i])||w.tactics[k]||'')}" placeholder="The one thing this block produces"></div>`).join('')}
     <div class="chain"><div><div class="cl">Why here</div>
       <div class="cv">These become the objective line inside each block. Until they're written those
       blocks show <b>no objective set</b> — a visible hole at 09:00.</div></div></div>
-    <button class="btn" onclick="saveComposer()">Set the day</button>`);
+    <button class="btn" onclick="saveComposer()">${mode==='monday'?'Set Monday':'Set the day'}</button>`);
 }
 function saveComposer(){
-  const d=day(),w=week();d.prio=d.prio||[];
+  const key=S._composeFor||today(),mode=S._composeMode||'';
+  const d=day(key),w=week();d.prio=d.prio||[];
   ['b1','b2','b3','b4'].forEach((k,i)=>{
     const v=$('cp_'+k).value.trim();
-    d.prio[i]=v; if(v)w.tactics[k]=v;
+    d.prio[i]=v; if(v&&mode!=='monday')w.tactics[k]=v;
   });
+  /* setting Monday up closes Saturday's 'mon' block, not today's 'prio' block */
+  if(mode==='monday'){day().done['mon']=true;save();closeSheet();award('blk:mon',25,'Monday is set');return}
   d.done['prio']=true;
   save();closeSheet();award('blk:prio',25,'the day is set');
 }
@@ -1293,6 +2259,17 @@ function markMiss(id){
     <button class="btn" onclick="closeSheet();render()">Leave it missed</button>`);
 }
 function unMiss(id){const d=day();delete d.miss[id];save();closeSheet();render()}
+function unDone(id){const d=day();delete d.done[id];save();closeSheet();render()}
+function unWait(id){const d=day();delete d.wait[id];save();closeSheet();render();toast('Unblocked','good')}
+/* Gym is optional and 2× a week. A rest day is a legitimate close, NOT a miss —
+   the weekly quota does the judging, not the individual day. */
+function markRest(id){const d=day();d.rest=d.rest||{};d.rest[id]=true;
+  delete d.miss[id];delete d.wait[id];save();closeSheet();render();toast('Rest day — not a miss','good')}
+/* A walk day can honestly be two shorter walks. Without this a 20-minute walk
+   reads as a failed 30. Half now, half later, the block stays open. */
+function splitWalk(){const d=day();d.split=d.split||{};
+  if(d.split.walk){markDone('walk');return}
+  d.split.walk=1;save();render();toast('First half logged — tap again after the second','good')}
 function pushToTomorrow(id){
   const t=tacticFor(shape().find(x=>x.id===id));
   const n=new Date();n.setDate(n.getDate()+1);
@@ -1616,49 +2593,258 @@ const GATE=[
   {k:'quest',  n:'The questionnaire is ready'},
   {k:'talk',   n:'I know what I am going to say'},
 ];
+/* ================= THE ONE SPINE · the Push tab =================
+ * Five altitudes on ONE screen. Zoom is a filter over fixed furniture:
+ * the spine, the landmark dates and their positions never move.
+ * Domain-as-tag, so LA Edible is a real goal — 7 goals, not 6.
+ * Full rationale + the three divergences from the spec:
+ * agent-briefs/crew-2026-07-25/out-1-goals-spec.md and 2b-goals-round2.md */
+
+/* the four landmarks — weeks 6 · 10 · 14 · 18, computed from the run, never hardcoded */
+const LANDMARKS=(()=>{
+  const m0=mondayOf(new Date(RUN_START+'T00:00:00'));
+  return [6,10,14,18].map(w=>{
+    const d=new Date(m0+'T00:00:00');d.setDate(d.getDate()+(w-1)*7);
+    return {week:w,iso:iso(d),
+      label:d.toLocaleDateString('en-US',{month:'short',day:'numeric'}).toUpperCase()};
+  });
+})();
+
+/* The seven goals. Ranked, with a WIG. Habit goals carry no milestones by design
+   (spec §3: 0 milestones for habit goals) — a quota is not a ladder. */
+function goals(){
+  const g=S.december,p=S.push||{},ms=S.ms||{};
+  const M=(id,i,fallback)=>({...(fallback||{}),...((ms[id]||[])[i]||{})});
+  const gateHit=GATE.every(x=>p.gate&&p.gate[x.k]);
+  return [
+   {id:'sano',rank:1,short:'SANO',c:'#E0B25E',kind:'outcome',wig:1,
+    title:g.WORK.lag,lead:g.WORK.lead,at:g.WORK.at,target:g.WORK.target,unit:g.WORK.unit,
+    ms:[M('sano',0,{t:'The six things checked and I signed off on each',learn:1,
+                    hit:gateHit?'HIT':null,checks:GATE.map(x=>x.n)}),
+        M('sano',1),M('sano',2),M('sano',3)]},
+   {id:'trade',rank:2,short:'TRADING',c:'#7FB4FF',kind:'outcome',
+    title:g.CAPITAL.lag,lead:g.CAPITAL.lead,at:g.CAPITAL.at,target:g.CAPITAL.target,unit:g.CAPITAL.unit,
+    ms:[M('trade',0,{t:'Rules written down · 20 sessions logged against them',learn:1}),
+        M('trade',1),M('trade',2),M('trade',3)]},
+   /* the first visible cost of domain-as-tag: SANO and LA Edible are both WORK and
+      therefore both gold. The rank numeral and a dashed rail distinguish them. */
+   {id:'edible',rank:3,short:'LA EDIBLE',c:'#E0B25E',dash:1,kind:'outcome',
+    title:'In talks with a local kitchen',lead:'Kitchens contacted',
+    at:p.kitchen||0,target:1,unit:'kitchen',
+    ms:[M('edible',0,{t:'Ten kitchens with a name and a number'}),
+        M('edible',1),M('edible',2),M('edible',3)]},
+   {id:'body',rank:4,short:'BODY',c:'#FF6B2C',kind:'outcome',
+    title:g.BODY.lag,lead:g.BODY.lead,at:g.BODY.at,target:g.BODY.target,unit:g.BODY.unit,
+    ms:[M('body',0),M('body',1),M('body',2),M('body',3)]},
+   {id:'faith',rank:5,short:'FAITH',c:'#B08CFF',kind:'habit',
+    title:g.FAITH.lag,lead:g.FAITH.lead,ms:[],
+    quotas:[['Bible read',`${weekCount(['bible'])} of 3`],['Texted Kells','—']]},
+   {id:'people',rank:6,short:'PEOPLE',c:'#4ADE80',kind:'habit',
+    title:g.PEOPLE.lag,lead:g.PEOPLE.lead,ms:[],
+    quotas:[['Real time with someone',`${weekWins('present')} of 3`],
+            ['Phone-down evenings',`${weekCount(['reset'])} of 5`]]},
+   {id:'mind',rank:7,short:'MIND',c:'#38E1D8',kind:'habit',parked:(S.parked&&S.parked.mind)||null,
+    title:g.MIND.lag,lead:g.MIND.lead,ms:[],
+    quotas:[['Reading nights',`${weekWins('chores')>0?'—':'—'}`]]},
+  ];
+}
+function weekWins(k){
+  const mon=mondayOf(new Date());let n=0;
+  for(let i=0;i<7;i++){const dt=new Date(mon+'T00:00:00');dt.setDate(dt.getDate()+i);
+    const r=S.days[iso(dt)];if(r&&r.wins&&r.wins[k])n+=r.wins[k]}
+  return n;
+}
+/* A milestone whose date has passed unhit has NO state in the spec. It is rendered
+   PASSED · NOT HIT in gold with a one-tap push, never red and never a miss — this is
+   one of the most emotionally loaded rows in the product. */
+function msState(m,i){
+  if(!m||!m.t)return 'stub';
+  if(m.hit)return 'hit';
+  const lm=LANDMARKS[i];
+  if(lm&&iso(new Date())>lm.iso)return 'passed';
+  const firstOpen=LANDMARKS.findIndex((l,j)=>iso(new Date())<=l.iso);
+  return i===firstOpen?'next':'ahead';
+}
+
 function renderPush(){
   S.push=S.push||{gate:{},anthonySent:0,kitchen:0,rules:{}};
-  const g=S.december,p=S.push,stale=daysSincePitchReady();
-  const ticked=GATE.filter(x=>p.gate[x.k]).length;
+  S.ms=S.ms||{};
+  const p=S.push,G=goals(),focus=p.focus||null,zoom=p.zoom||null;
+  const gf=focus?G.find(x=>x.id===focus):null;
   $('pushHorizon').textContent=`${workdaysLeft()} TO DEC 1 · INCOME BY MAR`;
-  $('pushBody').innerHTML=`
-    <h2 class="sec">SANO <u>${g.WORK.at} of ${g.WORK.target} clients</u></h2>
-    <div class="card">
-      <div class="fld" style="margin:0"><label>The win condition</label>
-        <div class="val">${esc(g.WORK.lag)}</div></div>
-    </div>
 
-    <h2 class="sec">The Anthony gate <u>${ticked} of 6</u></h2>
-    <div class="card">
-      ${GATE.map(x=>`<div class="stat" onclick="tickGate('${x.k}')" style="cursor:pointer">
-        <span style="color:${p.gate[x.k]?'var(--phos)':'var(--ink)'}">${esc(x.n)}</span>
-        <b style="color:${p.gate[x.k]?'var(--phos)':'var(--faint)'}">${p.gate[x.k]?'✓':'—'}</b></div>`).join('')}
-      <div class="stat" style="border-bottom:0">
-        <span style="font-family:'Geist Mono';font-size:8.5px;letter-spacing:.1em;color:${stale>=3?'var(--blood)':'var(--faint)'}">
-          PITCH-READY ${stale} DAYS${p.anthonySent?' · SENT':' · NOT SENT'}</span></div>
-      <div style="padding:11px 0 2px">
-        ${p.anthonySent?'<button class="btn done" disabled style="opacity:.5">Sent</button>'
-        :`<a class="btn" style="display:block;text-align:center;text-decoration:none;line-height:20px"
-            href="sms:&body=${encodeURIComponent('Anthony — got something built for AVRS I want to show you. Free to look this week?')}"
-            onclick="markSent()">Text Anthony now</a>`}
-      </div>
-    </div>
+  const burn=Math.round((1-workdaysLeft()/TOTAL_DAYS)*100);
 
-    <h2 class="sec">Trading <u>${g.CAPITAL.at} of ${g.CAPITAL.target} funded</u></h2>
-    <div class="card">
-      <div class="stat"><span>Followed my rules today</span>
-        <b style="color:${day().trade&&day().trade.rules?'var(--phos)':'var(--faint)'}">${day().trade&&day().trade.rules?'YES':'—'}</b></div>
-      <div class="stat"><span>No double-back</span>
-        <b style="color:${day().trade&&day().trade.nodb?'var(--phos)':'var(--faint)'}">${day().trade&&day().trade.nodb?'YES':'—'}</b></div>
-      <div style="padding:11px 0 2px"><button class="btn gh" onclick="openTrade()">Log the session</button></div>
-    </div>
+  /* T0 · the horizon. Identical at every altitude — it never changes with zoom. */
+  const hz=`<div class="hz"><div><span class="th">BURN THE BOATS</span>
+      <span class="ln">become someone who executes</span></div>
+    <span class="cd"><b>DEC 1 · ${workdaysLeft()}</b><br>INCOME BY MAR 1</span></div>`;
 
-    <h2 class="sec">LA Edible <u>${p.kitchen||0} of 1</u></h2>
-    <div class="card">
-      <div class="fld" style="margin:0"><label>December</label><div class="val">In talks with a local kitchen</div></div>
-      <div style="padding:11px 0 2px"><button class="btn gh" onclick="S.push.kitchen=S.push.kitchen?0:1;save();render()">
-        ${p.kitchen?'In talks ✓':'Mark: in talks'}</button></div>
-    </div>`;
+  /* the week node — always at the top of the spine */
+  const tac=week().tactics||{},committed=['b1','b2','b3','b4'].filter(k=>tac[k]).length;
+  const commits=G.filter(x=>x.kind==='outcome'&&tac['b1']||true).slice(0,4);
+  const peek=['b1','b2','b3','b4'].map(k=>{
+    const t=tac[k];
+    return `<div class="pk"><i class="dot" style="background:${t?'#E0B25E':'#3a3350'}"></i>
+      <span>${t?esc(t):'<span style="color:#4b445e">Nothing set</span>'}</span>
+      <b>${k.toUpperCase()}</b></div>`}).join('');
+  const wk=`<div class="stn now"><div class="nd"></div>
+    <button class="sh" onclick="pushZoom()"><b>This week</b>
+      <span>WEEK ${weekNo()} · ${zoom==='week'?'OPEN':'TAP TO OPEN'}</span></button>
+    <div class="wkbox">
+      <div class="peek">${peek}
+        <div style="font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;color:#4b445e;margin-top:3px">
+          TAP TO OPEN THE WEEK</div></div>
+      <div class="full">${weekFull(G)}</div>
+    </div></div>`;
+
+  /* one station per landmark; the threads are the goals with a milestone there */
+  const stations=LANDMARKS.map((lm,i)=>{
+    const rows=G.filter(x=>x.ms.length).map(x=>{
+      const m=x.ms[i],st=msState(m,i),on=focus===x.id?'on':'';
+      const kick=st==='hit'?'HIT':st==='passed'?'PASSED':st==='next'?'NEXT':st==='stub'?'—':'';
+      return `<div class="thr ${st==='stub'?'stub':''} ${on}" style="--c:${x.c}"
+          role="button" tabindex="0" onclick="pushFocus('${x.id}')">
+        <i class="dot" style="background:${x.c}"></i>
+        <span><span class="tn">${esc(x.short)}</span>
+          <div class="tt">${m&&m.t?esc(m.t):'Nothing set'}</div>
+          <div class="deep"><div class="dchips">
+            ${st==='hit'?`<span class="chip" style="border-color:rgba(74,222,128,.4);color:var(--phos)">HIT</span>`:''}
+            ${st==='passed'?`<span class="chip" style="border-color:rgba(224,178,94,.45);color:var(--gold)">PASSED · NOT HIT</span>
+              <button class="chip tap" onclick="event.stopPropagation();pushMilestone('${x.id}',${i})">PUSH IT →</button>`:''}
+            ${st==='next'?`<span class="chip" style="border-color:rgba(224,178,94,.45);color:var(--gold)">NEXT UP</span>
+              <button class="chip tap" onclick="event.stopPropagation();hitMilestone('${x.id}',${i})">MARK HIT</button>`:''}
+            ${st==='stub'?`<button class="chip tap" onclick="event.stopPropagation();setMilestone('${x.id}',${i})">+ SET ONE</button>`:''}
+            ${m&&m.t&&st!=='stub'?`<button class="chip tap" onclick="event.stopPropagation();setMilestone('${x.id}',${i})">EDIT</button>`:''}
+            ${m&&m.learn?`<span class="chip">LEARNING MILESTONE</span>`:''}
+          </div>${m&&m.checks?gateChecks():''}</div>
+        </span>
+        <span class="tx">${kick}</span></div>`}).join('');
+    const hitN=G.filter(x=>x.ms[i]&&x.ms[i].hit).length;
+    const past=iso(new Date())>lm.iso;
+    return `<div class="stn ${past?'past':''}"><div class="nd"></div>
+      <button class="sh"><b>${lm.label}</b><span>${past?`${hitN} HIT`:`WEEK ${lm.week}`}</span></button>
+      <div class="thrs">${rows}</div></div>`;
+  }).join('');
+
+  /* Dec 1 — the end of the run. Every goal, outcome and habit alike. */
+  const dec=`<div class="stn end"><div class="nd"></div>
+    <button class="sh"><b>Dec 1</b><span>THE END OF THE RUN</span></button>
+    <div class="thrs">${G.map(x=>`
+      <div class="thr ${focus===x.id?'on':''}" style="--c:${x.c}" role="button" tabindex="0" onclick="pushFocus('${x.id}')">
+        <i class="dot" style="background:${x.c};${x.dash?'outline:1px dashed '+x.c+';outline-offset:2px':''}"></i>
+        <span><span class="tn">RANK ${x.rank} · ${esc(x.short)}${x.wig?' · THE WIG':''}</span>
+          <div class="tt">${esc(x.title)}</div>
+          <div class="deep"><div class="dchips">
+            <span class="chip">LEAD — ${esc(x.lead)}</span>
+            ${x.parked?`<span class="chip" style="border-color:rgba(176,140,255,.4);color:var(--violet)">${esc(x.parked)}</span>`:''}
+            ${x.quotas?x.quotas.map(q=>`<span class="chip">${esc(q[0])} ${esc(q[1])}</span>`).join(''):''}
+          </div>
+          <div class="confrow"><span class="cl">CONFIDENCE</span>
+            <span class="pips">${[1,2,3,4,5].map(n=>`<button class="${n<=((S.conf||{})[x.id]||0)?'on':''}"
+              aria-label="Confidence ${n} of 5"
+              onclick="event.stopPropagation();setConf('${x.id}',${n})"><i></i></button>`).join('')}</span></div>
+          </div></span>
+        <span class="tx">${x.kind==='habit'?'QUOTA':x.at+'/'+x.target}</span></div>`).join('')}</div></div>`;
+
+  const crumbs=[['run','THE RUN']];
+  if(gf)crumbs.push(['goal',gf.short]);
+  if(zoom==='week')crumbs.push(['week','THIS WEEK']);
+
+  $('pushBody').innerHTML=hz+
+    `<div class="sp" style="--burn:${burn}%"${focus?` data-focus="${focus}"`:''}${zoom==='week'?' data-zoom="week"':''}>`+
+      wk+stations+dec+`</div>`+
+    `<div class="zpill">${crumbs.map((c,i)=>
+      `<button class="${i===0?'home':''}" onclick="pushCrumb('${c[0]}')">${i?'› ':'⌂ '}${esc(c[1])}</button>`).join('')}</div>`;
+}
+
+/* T3 · the week, opened. Capacity is a FRIDAY-only number (spec §4.3) — it appears
+   on no Tuesday screen, because mid-week it is a stick to beat himself with. */
+function weekFull(G){
+  const tac=week().tactics||{},d=day();
+  const isFri=new Date().getDay()===5;
+  const rows=['b1','b2','b3','b4'].map(k=>{
+    const t=tac[k],g=G[0];
+    return `<div class="cmt" style="--c:${t?'#E0B25E':'#3a3350'}${t?'':';'}">
+      <div class="ck">${k.toUpperCase()} · ${t?'COMMITTED':'OPEN'}</div>
+      <div class="ct">${t?esc(t):'Nothing committed to this block'}</div>
+      <div class="cw">${d.done[k]?'DONE TODAY':d.wait[k]?'WAITING':'NOT YET'}</div></div>`;
+  }).join('');
+  const committed=['b1','b2','b3','b4'].filter(k=>tac[k]).length;
+  /* the orphan check: a ranked goal with nothing on it this week */
+  const orphans=G.filter(x=>x.kind==='outcome'&&!Object.values(tac).some(t=>t&&t.toLowerCase().includes(x.short.toLowerCase().split(' ')[0])));
+  return rows+
+    `<button class="cmt slack" onclick="openComposer()"><div class="ck">EDIT</div>
+      <div class="ct">Set this week's blocks</div></button>`+
+    (orphans.length?`<div class="ask" style="border:1px dashed #3a3350;border-radius:12px;padding:12px;margin-top:6px">
+      <div style="font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.16em;color:var(--gold)">THE ORPHAN CHECK</div>
+      <div style="font-size:13px;color:var(--dim);margin-top:7px;line-height:1.4">Nothing on
+        <b style="color:var(--ink)">${orphans.map(o=>esc(o.short)).join(' · ')}</b> this week. That is allowed —
+        but it should be a decision, not an accident.</div></div>`:'')+
+    (isFri?`<div class="capline"><span class="cv">${committed}</span>
+      <span class="cl2">OF 20 BLOCKS<br>COMMITTED</span>
+      <span class="cbar"><i style="width:${Math.min(100,committed/20*100)}%"></i></span></div>`:'');
+}
+
+/* The Anthony gate IS SANO's first milestone — six checks and the one action that
+   matters most in the app right now. It lives inside that milestone rather than in a
+   card of its own, and the text button is a real sms: deep link. */
+function gateChecks(){
+  const p=S.push,stale=daysSincePitchReady(),ticked=GATE.filter(x=>p.gate[x.k]).length;
+  return `<div style="margin-top:9px;display:grid;gap:5px">
+    ${GATE.map(x=>`<div onclick="event.stopPropagation();tickGate('${x.k}')"
+      style="display:flex;align-items:center;gap:8px;font-size:11.5px;min-height:32px;cursor:pointer;
+             color:${p.gate[x.k]?'var(--phos)':'var(--dim)'}">
+      <i style="width:13px;height:13px;border-radius:4px;flex:none;
+        background:${p.gate[x.k]?'var(--phos)':'transparent'};border:1.5px solid ${p.gate[x.k]?'var(--phos)':'#3a3350'}"></i>
+      ${esc(x.n)}</div>`).join('')}
+    <div style="font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;margin-top:3px;
+      color:${stale>=3&&!p.anthonySent?'var(--blood)':'var(--faint)'}">
+      ${ticked} OF 6 · PITCH-READY ${stale} DAYS${p.anthonySent?' · SENT':' · NOT SENT'}</div>
+    ${p.anthonySent?'':`<a class="chip" style="border-color:rgba(224,178,94,.5);color:var(--gold);justify-content:center;
+      min-height:40px;text-decoration:none;margin-top:4px"
+      href="sms:&body=${encodeURIComponent('Anthony — got something built for AVRS I want to show you. Free to look this week?')}"
+      onclick="event.stopPropagation();markSent()">TEXT ANTHONY NOW →</a>`}
+  </div>`;
+}
+function pushFocus(id){S.push.focus=(S.push.focus===id&&!S.push.zoom)?null:id;S.push.zoom=null;save();renderPush()}
+function pushZoom(){S.push.zoom=S.push.zoom==='week'?null:'week';save();renderPush()}
+function pushCrumb(k){
+  if(k==='run'){S.push.focus=null;S.push.zoom=null}
+  else if(k==='goal'){S.push.zoom=null}
+  save();renderPush();
+}
+function setConf(id,n){S.conf=S.conf||{};S.conf[id]=S.conf[id]===n?0:n;save();renderPush()}
+function hitMilestone(id,i){
+  S.ms[id]=S.ms[id]||[];S.ms[id][i]={...(S.ms[id][i]||{}),hit:today()};
+  save();renderPush();gainXP(150,'landmark hit');
+}
+/* pushing a passed milestone moves it to the next landmark. It is never a miss. */
+function pushMilestone(id,i){
+  const cur=(S.ms[id]&&S.ms[id][i])||{};
+  if(i>=LANDMARKS.length-1){toast('No landmark left to push it to','bad');return}
+  S.ms[id]=S.ms[id]||[];
+  S.ms[id][i+1]={...(S.ms[id][i+1]||{}),t:cur.t};
+  S.ms[id][i]={...cur,t:''};
+  save();renderPush();toast(`Moved to ${LANDMARKS[i+1].label}`,'good');
+}
+function setMilestone(id,i){
+  const cur=((S.ms[id]||[])[i])||{};
+  const g=goals().find(x=>x.id===id);
+  sheet(`<div class="sh-k">${LANDMARKS[i].label} · WEEK ${LANDMARKS[i].week}</div>
+    <div class="sh-t">${esc(g.short)}</div>
+    <div class="sh-sub">ONE THING THAT IS TRUE BY THAT DATE</div>
+    <div class="fld"><label>The milestone</label>
+      <input id="msIn" value="${esc(cur.t||'')}" placeholder="What is true by ${LANDMARKS[i].label}"></div>
+    <div class="chain"><div><div class="cl">Why a date</div>
+      <div class="cv">A milestone without a date is a wish. If it passes unhit it is
+      <b>never a miss</b> — you push it, and the app says so.</div></div></div>
+    <button class="btn" onclick="saveMilestone('${id}',${i})">Set it</button>`);
+}
+function saveMilestone(id,i){
+  const v=$('msIn').value.trim();
+  S.ms[id]=S.ms[id]||[];S.ms[id][i]={...(S.ms[id][i]||{}),t:v};
+  save();closeSheet();renderPush();
 }
 function tickGate(k){S.push.gate[k]=!S.push.gate[k];save();render()}
 function markSent(){S.push.anthonySent=today();save();setTimeout(render,400);gainXP(300,'you sent it')}
@@ -1680,46 +2866,159 @@ function setTrade(k){
 }
 
 /* ================= THE BANK ================= */
+/* ================= THE VAULT · the Bank tab =================
+ * Every fixture is part of the vault. Locked / unlocked / emptied are three
+ * PHYSICAL states of the same box, not three colours.
+ * Full rationale: agent-briefs/crew-2026-07-25/6f-vault-final-build.md
+ *
+ * THE SHELF SCALES. Agent 6 shipped a ten-bar rack (5,000 XP) and flagged in its
+ * own hand-off that it would read "full" late in the run. Costed against the real
+ * award table a decent weekday is 350-700 XP, so a flat rack fills around DAY 12
+ * OF 91 and never moves again — the one element whose whole job is showing
+ * accumulation would go flat in week three. So bars promote into crates:
+ * 500 XP = one bar · ten bars = one crate. The pyramid always shows its ten
+ * slots with the unfilled ones as ghost outlines, so there is ALWAYS visible
+ * headroom and the shelf can never read full. */
+const BAR=500, CRATE_BARS=10, ROWS=[1,2,3,4];
+function rack(xp){
+  const totalBars=Math.floor(xp/BAR);
+  const crates=Math.floor(totalBars/CRATE_BARS);
+  const bars=totalBars%CRATE_BARS;              /* the remainder, always 0-9 */
+  let h='';
+  if(crates){
+    h+=`<div class="vt-crates">`+
+      Array.from({length:crates},()=>`<span class="vt-crate"><i></i><i></i><i></i></span>`).join('')+
+      `</div>`;
+  }
+  ROWS.forEach((cap,ri)=>{
+    const below=ROWS.slice(ri+1).reduce((a,b)=>a+b,0);
+    const inRow=Math.max(0,Math.min(cap,bars-below));
+    let r='';
+    for(let i=0;i<cap;i++)r+=`<span class="vt-bar${i<inRow?'':' ghost'}"></span>`;
+    h+=`<div class="vt-row">${r}</div>`;
+  });
+  return h;
+}
+const money=n=>Number(n).toLocaleString();
+
+/* A trailing 7-day mean, not a lifetime average. The lifetime figure drifts
+   optimistic as good days accumulate, which quietly makes every "about N days"
+   on a locked box a lie in his favour. Under 7 days of data it says so instead
+   of extrapolating from one good morning. */
+function dailyXp(){
+  const keys=Object.keys(S.days).sort().slice(-7);
+  if(!keys.length)return 0;
+  const earned=keys.reduce((a,k)=>{
+    const r=S.days[k];if(!r||!r.credited)return a;
+    return a+Object.values(r.credited).reduce((x,v)=>x+(typeof v==='number'?v:0),0);
+  },0);
+  return earned>0?Math.round(earned/keys.length):0;
+}
+function daysAway(short){
+  const rate=dailyXp();
+  if(!rate)return null;                       /* no honest estimate yet — say nothing */
+  return Math.max(1,Math.ceil(short/rate));
+}
+
 function renderBank(){
   S.privileges=S.privileges||0;
-  $('bankXp').textContent=`${S.xp.toLocaleString()} XP`;
-  const pr=projection();
-  $('bankBody').innerHTML=`
-    <div class="card" style="display:flex;gap:14px;align-items:center">
-      <div><div style="font-family:'Clash Display';font-size:34px;color:var(--gold);line-height:.9">${S.xp.toLocaleString()}</div>
-        <div style="font-family:'Geist Mono';font-size:7.5px;letter-spacing:.15em;color:#6d5c3c;margin-top:4px">XP BANKED</div></div>
-      <div style="margin-left:auto;text-align:right">
-        <div style="font-family:'Clash Display';font-size:34px;color:var(--rune);line-height:.9">${S.privileges}</div>
-        <div style="font-family:'Geist Mono';font-size:7.5px;letter-spacing:.15em;color:#3d7a78;margin-top:4px">PRIVILEGES</div></div>
+  $('bankXp').textContent=`${money(S.xp)} XP`;
+  const rs=S.rewards,priv=S.privileges;
+  const taken=rs.filter(r=>r.done);
+  const anyReady=rs.some(r=>!r.done&&r.cost<=S.xp);
+  const rate=dailyXp();
+
+  const boxes=rs.map((r,i)=>{
+    const no=String(i+1).padStart(2,'0');
+    const ready=!r.done&&r.cost<=S.xp;
+    const pct=Math.min(100,Math.round(S.xp/r.cost*100));
+    const short=r.cost-S.xp;
+    const days=daysAway(short);
+    const cls=r.done?'open':(ready?'ready':'locked');
+    const act=r.done
+      ? `<div class="vt-wait"><b>WITHDRAWN</b>${r.claimedOn?'DAY '+r.claimedOn:''}</div>`
+      : ready
+        ? `<button class="vt-turn" onclick="claim(${i})">TURN THE KEY · ${money(r.cost)}</button>`
+        : `<div class="vt-wait"><b>${money(short)} SHORT</b>${days?`ABOUT ${days} DAY${days>1?'S':''}`:'NO RATE YET'}</div>`;
+    const face=r.done?'':`
+      <span class="vt-bolt b1"></span><span class="vt-bolt b2"></span>
+      <span class="vt-gauge"><u>${money(r.cost)}</u><i style="width:${ready?100:pct}%"></i></span>`;
+    return `<div class="vt-box ${cls}">
+      <div class="vt-frame">
+        <div class="vt-cav"><span>EMPTY</span></div>
+        <div class="vt-door"><span class="vt-no">${no}</span><span class="vt-hole"></span>${face}</div>
+      </div>
+      <div class="vt-plate">
+        <b>${esc(r.n)}</b><em>${esc(r.condition||'')}</em>
+        <div class="vt-act">${act}</div>
+      </div></div>`;
+  }).join('');
+
+  /* Keys, not money — they hang on a board, not on the shelf, and they buy time back.
+     The board grows with him: one hook per key held, always with two bare hooks of
+     headroom, so it can never read "full" any more than the shelf can. */
+  const hooks=Math.max(2,priv+2);
+  const keys=Array.from({length:hooks},(_,i)=>{
+    const held=priv>i;
+    return `<div class="vt-hook${held?'':' empty'}"><div class="vt-key${held?'':' bare'}"></div></div>`;
+  }).join('');
+
+  const slips=BOOSTS.map(b=>`<button class="vt-slip" onclick="logBoost('${b.k}')">
+    <span class="sn">${esc(b.n)}</span><span class="sx">+${b.xp}</span></button>`).join('');
+
+  const register=taken.length
+    ? taken.map(r=>`<div class="vt-line"><span class="d">${r.claimedOn?'DAY '+r.claimedOn:'—'}</span>
+        <span class="w">${esc(r.n)}</span><span class="x">${money(r.cost)}</span></div>`).join('')
+    : `<div class="vt-empty">NO WITHDRAWALS ON THE RECORD.<br>
+        <b>THE FIRST ENTRY IS THE ONE YOU'LL REMEMBER.</b></div>`;
+
+  /* day one: the wall is already engraved and every box already numbered.
+     The shelf is empty because it is day one — not because he has failed. */
+  const cheapest=rs.filter(r=>!r.done).sort((a,b)=>a.cost-b.cost)[0];
+  const firstDays=cheapest?daysAway(cheapest.cost-S.xp):null;
+  const promise=(!S.xp&&cheapest)
+    ? `<div class="vt-promise"><b>Box 01 opens${firstDays?` in about ${firstDays} days`:' once the shelf has weight'}.</b>
+        <span>EVERY BOX IS ALREADY YOURS AND ALREADY ENGRAVED.<br>THE SHELF IS EMPTY BECAUSE IT IS DAY ONE.</span></div>`
+    : '';
+
+  /* always rendered, so a box changing state cannot move the wall */
+  const readyN=rs.filter(r=>!r.done&&r.cost<=S.xp).length;
+  const flag=`<div class="vt-flag${anyReady?' on':''}"><i></i><span>${rs.length} BOXES · ${taken.length} EMPTIED · ${
+    readyN===0?'ALL SHUT':readyN===1?'ONE READY':readyN+' READY'}</span></div>`;
+
+  const totalBars=Math.floor(S.xp/BAR);
+  const crates=Math.floor(totalBars/CRATE_BARS);
+  const rateLine=rate?`+${money(rate)} A DAY · TRAILING 7`:'NO RATE YET';
+
+  $('bankBody').innerHTML=`<div class="vt">
+    <div class="vt-head">
+      <div class="vt-nameplate"><b>THE VAULT</b><span>DAY ${dayNo()} OF ${TOTAL_DAYS}</span></div>
+      <div class="vt-rivets">${'<i></i>'.repeat(9)}</div>
     </div>
 
-    <h2 class="sec">Privileges <u>earned, not bought</u></h2>
-    <div class="card">
-      <div class="stat"><span>Cut a block in half</span><b>${S.privileges?'AVAILABLE':'—'}</b></div>
-      <div class="stat"><span>Make a block yours</span><b>${S.privileges?'AVAILABLE':'—'}</b></div>
-      <div class="stat" style="border-bottom:0"><span style="font-size:12px;color:var(--faint);line-height:1.5">
-        Earned by an 85%+ week, or by logging a boost below.</span></div>
-    </div>
+    <div class="vt-eng"><span>On the shelf</span><u>bullion${crates?` · ${crates} crate${crates>1?'s':''}`:''}</u></div>
+    <div class="vt-shelf"><div class="vt-rack">${rack(S.xp)}</div></div>
+    <div class="vt-plank"></div>
+    <div class="vt-count"><b>${money(S.xp)}</b>
+      <span class="cl">${S.xp?'XP IN THE VAULT':'THE SHELF IS EMPTY'}<br>${rateLine}</span></div>
+    ${promise}
 
-    <h2 class="sec">Boosts <u>never scored against you</u></h2>
-    <div class="wins">
-      ${BOOSTS.map(bo=>`<button class="win" onclick="logBoost('${bo.k}')">
-        <span class="wtop">${esc(bo.n)}<b>+${bo.xp}</b></span></button>`).join('')}
-    </div>
+    <div class="vt-eng"><span>On the board</span><u>keys · ${priv} held</u></div>
+    <div class="vt-board"><div class="vt-hooks">${keys}</div>
+      <div class="vt-keynote">EACH KEY CUTS A BLOCK IN HALF, OR MAKES ONE YOURS.<br>
+        <b>THEY BUY TIME BACK, NOT THINGS.</b></div></div>
 
-    <h2 class="sec">Rewards <u>you set the price</u></h2>
-    <div class="card">
-      ${S.rewards.map((r,i)=>{
-        const can=S.xp>=r.cost, away=pr.rate?Math.ceil((r.cost-S.xp)/Math.max(1,dailyXp())):null;
-        return `<div class="stat"><span>
-          <span style="color:${r.done?'var(--faint)':'var(--ink)'}">${esc(r.n)}</span>
-          ${r.condition?`<br><span style="font-size:11px;color:var(--faint)">${esc(r.condition)}</span>`:''}
-          ${!r.done&&!can&&away>0?`<br><span style="font-family:'Geist Mono';font-size:8px;color:#6d5c3c">~${away} DAYS AWAY</span>`:''}
-        </span>${r.done?'<b style="color:var(--faint)">CLAIMED</b>'
-          :`<button class="btn ${can?'':'gh'} sm" style="width:auto;padding:9px 13px;min-height:38px"
-             onclick="claim(${i})">${can?'CLAIM':r.cost.toLocaleString()}</button>`}</div>`}).join('')}
-      <div style="padding:11px 0 2px"><button class="btn gh" onclick="newReward()">+ New reward</button></div>
-    </div>`;
+    <div class="vt-eng"><span>The wall</span><u>${rs.length} boxes · your terms</u></div>
+    ${flag}
+    <div class="vt-wall">${boxes}</div>
+    <button class="vt-new" onclick="newReward()">+ CUT A NEW BOX</button>
+
+    <div class="vt-eng"><span>The chute</span><u>never scored against you</u></div>
+    <div class="vt-chute"><div class="vt-mouth"></div><div class="vt-slips">${slips}</div></div>
+
+    <div class="vt-eng"><span>The register</span><u>withdrawals</u></div>
+    <div class="vt-reg">${register}</div>
+  </div>`;
 }
 const BOOSTS=[
   {k:'network',n:'Networking event',xp:250},
@@ -1727,10 +3026,6 @@ const BOOSTS=[
   {k:'read',   n:'Read tonight',    xp:60},
   {k:'money',  n:'Finances hour',   xp:90},
 ];
-function dailyXp(){
-  const ks=Object.keys(S.days).length||1;
-  return Math.max(80,Math.round(S.xp/ks));
-}
 function logBoost(k){
   const bo=BOOSTS.find(x=>x.k===k);
   S.boosts=S.boosts||[];S.boosts.push({k,date:today()});
@@ -1820,12 +3115,115 @@ function restoreSave(inp){
   r.readAsText(f);
 }
 
+
+/* ================= THE VEIL OF THE HEADER — "Ashfall" =================
+   The boats line is the identity and holds ~65% of opens. The other ~35% the
+   glyphs burn upward and a verse rises through the embers. Chosen from six
+   transitions; the others were rejected. Verses are ESV, verified, one per day. */
+var HDR = (function () {
+  var stamp=$('stamp'), verse=$('verse'), zone=$('burnZone'), pfx=$('pfx');
+  if(!stamp||!window.gsap) return {show:function(){}};
+  var chars=[], embers=null, showing='stamp', busy=false;
+
+  function splitChars(){
+    var out=[];
+    Array.prototype.forEach.call(stamp.querySelectorAll('.ln'), function(ln){
+      var host=ln.querySelector('em')||ln, txt=host.textContent;
+      host.textContent='';
+      Array.prototype.forEach.call(txt, function(c){
+        var sp=document.createElement('span');
+        sp.className='chr'; sp.textContent = c===' ' ? ' ' : c;
+        host.appendChild(sp);
+        if(c!==' ') out.push(sp);
+      });
+    });
+    return out;
+  }
+  function makeEmbers(){
+    if(!window.tsParticles) return null;
+    pfx.id='hdrEmb';
+    return tsParticles.load({ id:'hdrEmb', options:{
+      fullScreen:{enable:false}, detectRetina:true, fpsLimit:60,
+      pauseOnBlur:false, pauseOnOutsideViewport:true,
+      particles:{
+        number:{value:0},
+        color:{value:['#FFD9A0','#FF8A3C','#FF6B2C','#B33200']},
+        shape:{type:'circle'},
+        opacity:{value:{min:.35,max:1}},
+        size:{value:{min:.6,max:1.9}},
+        life:{duration:{value:1.3,sync:false},count:1},
+        move:{enable:true,direction:'top',speed:{min:.7,max:2.1},
+              outModes:{default:'destroy'},straight:false,random:true,
+              wobble:{enable:true,distance:11,speed:11}},
+      },
+      interactivity:{events:{onHover:{enable:false},onClick:{enable:false}}},
+    }}).catch(function(){return null});
+  }
+  function emit(n){
+    if(!embers||!embers.particles) return;
+    var hb=pfx.getBoundingClientRect();
+    chars.forEach(function(c,i){
+      if(i%2) return;
+      var r=c.getBoundingClientRect();
+      embers.particles.addParticle({x:r.left-hb.left+r.width/2, y:r.top-hb.top+r.height/2});
+    });
+  }
+  function paintVerse(){
+    var api=window.BTB_VERSES; if(!api) return false;
+    var v=api.dayFor(today());
+    if(!v) return false;
+    $('verseText').textContent=v.t||v.text||'';
+    $('verseRef').textContent=v.r||v.ref||'';
+    return true;
+  }
+  function toVerse(){
+    if(busy||showing==='verse'||!paintVerse()) return;
+    busy=true;
+    gsap.timeline({onComplete:function(){showing='verse';busy=false}})
+      .set(verse,{visibility:'visible'})
+      .to(chars,{duration:.60,y:-30,opacity:0,scale:1.16,color:'#FF8A3C',
+        filter:'blur(7px)',ease:'power2.in',
+        stagger:{each:.012,from:'random'},
+        onStart:function(){emit()}})
+      .fromTo(verse,{y:20,opacity:0,filter:'blur(10px)'},
+        {y:0,opacity:1,filter:'blur(0px)',duration:.72,ease:'power2.out'},'-=.34');
+  }
+  function toStamp(){
+    if(busy||showing==='stamp') return;
+    busy=true;
+    gsap.timeline({onComplete:function(){showing='stamp';busy=false}})
+      .to(verse,{y:-14,opacity:0,filter:'blur(8px)',duration:.40,ease:'power2.in'})
+      .set(verse,{visibility:'hidden'})
+      .fromTo(chars,{y:22,opacity:0,scale:.88,filter:'blur(6px)',color:'#FFB877'},
+        {y:0,opacity:1,scale:1,filter:'blur(0px)',color:'',duration:.58,ease:'power3.out',
+         stagger:{each:.011,from:'center'},clearProps:'color,filter'},'-=.10');
+  }
+
+  chars=splitChars();
+  var ep=makeEmbers();                    // was called twice — two particle engines on one canvas
+  if(ep) ep.then(function(e){embers=e});
+
+  /* tap the header to summon the verse deliberately — a 35% roll he cannot
+     control would mean he simply misses it most mornings */
+  zone.style.cursor='pointer';
+  zone.addEventListener('click',function(){ showing==='stamp'?toVerse():toStamp() });
+
+  return {
+    toVerse:toVerse, toStamp:toStamp,
+    show:function(){
+      /* one roll per open, not per render */
+      if(window.BTB_VERSES && BTB_VERSES.rollVerse(0.35)) setTimeout(toVerse,900);
+    }
+  };
+})();
+
 /* ---------- boot ---------- */
 $('sabLook').onclick=()=>{$('sabbath').classList.remove('on');render()};
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 document.addEventListener('click',askNotify,{once:true});
 recount();
-route();        // sets the active view AND lights its tab
+route();
+HDR.show();        // sets the active view AND lights its tab
 resumeRun();    // an interrupted run comes straight back
 setInterval(()=>{if(!run)render()},60000);
 setInterval(nudgeCheck,120000);
