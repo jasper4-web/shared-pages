@@ -27,7 +27,60 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:400;
   background-image:url('assets/grain/grain-fine.svg');opacity:.04;mix-blend-mode:overlay}
 h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
 .mono{font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums}
-.app{max-width:520px;margin:0 auto;padding:calc(6px + var(--st)) 13px calc(34px + var(--sb))}
+.app{max-width:520px;margin:0 auto;padding:calc(6px + var(--st)) 13px calc(96px + var(--sb))}
+.view{display:none}.view.on{display:block}
+.vhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  padding:calc(16px + var(--st)) 0 14px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.vhead h2{font-size:26px;letter-spacing:-.03em}
+.vhead span{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--faint)}
+
+/* bottom tab bar */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:120;display:flex;
+  background:rgba(9,8,13,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-top:1px solid var(--line);padding-bottom:var(--sb)}
+.tabs button{flex:1;background:none;border:0;color:#5f5872;padding:10px 4px 11px;min-height:56px;
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;text-transform:uppercase;
+  display:flex;flex-direction:column;align-items:center;gap:5px;font-weight:700;position:relative;cursor:pointer}
+.tabs button .ti{font-size:15px;line-height:1}
+.tabs button.on{color:var(--gold)}
+.tabs button .badge{position:absolute;top:8px;right:calc(50% - 18px);width:6px;height:6px;border-radius:99px;
+  background:var(--gold);box-shadow:0 0 7px var(--gold)}
+.tabs button .badge.red{background:var(--blood);box-shadow:0 0 7px var(--blood)}
+body.noTabs .tabs{display:none}
+
+/* push strip on Today */
+.pushstrip{margin-top:13px;border:1px solid var(--line2);border-radius:12px;overflow:hidden;
+  background:var(--panel);cursor:pointer}
+.ps-row{display:grid;grid-template-columns:repeat(3,1fr)}
+.ps-c{padding:10px 8px;text-align:center;border-right:1px solid var(--line)}
+.ps-c:last-child{border-right:0}
+.ps-c .k{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.13em;color:var(--faint);text-transform:uppercase}
+.ps-c .v{font-family:'Geist Mono',monospace;font-size:14px;font-weight:700;margin-top:3px;color:var(--ink)}
+.ps-stale{padding:8px 11px;border-top:1px solid rgba(255,77,94,.25);background:rgba(255,77,94,.07);
+  font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.09em;color:#ff8f80}
+
+/* make-up banner */
+.penance{margin-top:12px;border:1px solid rgba(255,77,94,.45);background:rgba(255,77,94,.09);
+  border-radius:12px;padding:12px 13px;cursor:pointer}
+.penance .k{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.17em;color:var(--blood)}
+.penance .t{font-size:13.5px;color:#ffd9d2;margin-top:5px;line-height:1.4}
+.penance .d{font-family:'Geist Mono',monospace;font-size:8px;color:#a8656a;margin-top:5px}
+
+/* one-line run strip */
+.runstrip{margin-top:18px;display:flex;align-items:center;gap:10px;padding:11px 12px;
+  border:1px solid var(--line);border-radius:11px;background:var(--panel);
+  font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--faint)}
+.runstrip b{color:var(--dim);font-weight:700}
+.runstrip button{margin-left:auto;background:transparent;border:1px solid var(--line2);color:var(--dim);
+  border-radius:8px;padding:8px 11px;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.1em;min-height:36px}
+
+/* win chips gain quota pips */
+.win{flex-direction:column;align-items:flex-start;gap:6px}
+.win .wtop{display:flex;align-items:center;gap:7px;width:100%}
+.win .pips{display:flex;gap:3px}
+.win .pips i{width:5px;height:5px;border-radius:99px;background:#2a2438;display:block}
+.win .pips i.on{background:var(--phos)}
+.win .pips i.full{background:var(--gold)}
 button{font-family:inherit}
 
 /* ---------- THE FURNACE ---------- */
@@ -292,6 +345,7 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
 
 <div class="app" id="app">
 
+ <section class="view on" data-view="today">
   <div class="furnace">
     <div class="stamp">THE BOATS HAVE<br><em>BEEN BURNED</em></div>
     <div class="meter">
@@ -322,27 +376,43 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
     <div class="timeleft"><b id="tlBig">—</b><span>OF DEEP WORK LEFT</span><span class="dow" id="tlDow">—</span></div>
   </div>
 
+  <div class="pushstrip" id="pushStrip"></div>
+  <div id="penanceBanner"></div>
   <div class="nextup" id="nextUp"></div>
+
+  <h2 class="sec">Always counts <u id="winTally"></u></h2>
+  <div class="wins" id="wins"></div>
 
   <h2 class="sec">Today <u id="schCount"></u></h2>
   <div id="sched"></div>
 
-  <h2 class="sec">Small wins <u>always counts</u></h2>
-  <div class="wins" id="wins"></div>
-
-  <h2 class="sec">The week</h2>
-  <div class="card">
-    <div class="ws-h"><b id="wsPct">—</b><span id="wsFrac">—</span></div>
-    <div class="ws-t"><i id="wsBar" style="width:0%"></i><u></u></div>
-    <div class="ws-l"><span>WEEKLY EXECUTION</span><span>85% = ROUND WON</span></div>
-    <div class="ws-note" id="wsNote"></div>
-  </div>
-
-  <h2 class="sec">This run</h2>
-  <div class="card" id="runcard"></div>
-
+  <div class="runstrip" id="runStrip"></div>
   <div class="foot" id="foot"></div>
+ </section>
+
+ <section class="view" data-view="push">
+  <div class="vhead"><h2>The Push</h2><span id="pushHorizon"></span></div>
+  <div id="pushBody"></div>
+ </section>
+
+ <section class="view" data-view="bank">
+  <div class="vhead"><h2>The Bank</h2><span id="bankXp"></span></div>
+  <div id="bankBody"></div>
+ </section>
+
+ <section class="view" data-view="record">
+  <div class="vhead"><h2>The Record</h2><span id="recWk"></span></div>
+  <div id="recBody"></div>
+ </section>
+
 </div>
+
+<nav class="tabs" id="tabs">
+  <button data-t="today"><span class="ti">◆</span>Today</button>
+  <button data-t="push"><span class="ti">▲</span>Push</button>
+  <button data-t="bank"><span class="ti">◈</span>Bank</button>
+  <button data-t="record"><span class="ti">▦</span>Record</button>
+</nav>
 
 <div class="ov" id="ovA"><div class="sheet" id="sheetA"></div></div>
 <div class="toast" id="toast"></div>
@@ -438,6 +508,7 @@ const WINS=[
   {k:'said_no',n:'Said no to something',        xp:25, dom:'WORK'},
   {k:'bed',    n:'In bed on time',              xp:20, dom:'BODY'},
   {k:'present',n:'Real time with someone',      xp:25, dom:'PEOPLE'},
+  {k:'convo',  n:'A real conversation (work)',   xp:30, dom:'WORK'},
 ];
 
 const DEFAULT={
@@ -501,7 +572,8 @@ function merge(base,over){
 function load(){try{const r=localStorage.getItem('btb3');if(r)return merge(JSON.parse(JSON.stringify(DEFAULT)),JSON.parse(r))}catch(e){}
   return JSON.parse(JSON.stringify(DEFAULT))}
 function save(){try{localStorage.setItem('btb3',JSON.stringify(S))}catch(e){}}
-function day(k){k=k||today();if(!S.days[k])S.days[k]={done:{},miss:{},wait:{},produced:{},focus:{},prio:[],wins:{},off:0};return S.days[k]}
+function day(k){k=k||today();if(!S.days[k])S.days[k]={done:{},miss:{},wait:{},produced:{},focus:{},prio:[],wins:{},off:0,credited:{}};
+  if(!S.days[k].credited)S.days[k].credited={};return S.days[k]}
 function week(k){k=k||mondayOf(new Date());
   if(!S.week[k])S.week[k]={theme:{b1:'SANO',b2:'SANO',b3:'LA Edible',b4:'Admin + follow-ups'},tactics:{},due:0,done:0};
   return S.week[k]}
@@ -510,6 +582,15 @@ function toast(m,kind){const t=$('toast');t.textContent=m;t.className='toast sho
   clearTimeout(t._h);t._h=setTimeout(()=>t.className='toast',2400);
   if(navigator.vibrate)navigator.vibrate(kind==='bad'?[35,50,35]:16)}
 function gainXP(n,label){S.xp+=n;save();toast(`+${n} XP · ${label}`,'good');render()}
+/* XP buys real-world rewards, so it must be unfakeable and one-directional.
+   Every award is keyed and recorded; a second tap pays nothing. */
+function award(key,n,label){
+  const d=day();
+  if(d.credited[key])return false;
+  d.credited[key]=n;S.xp+=n;save();
+  toast(`+${n} XP · ${label}`,'good');render();
+  return true;
+}
 
 /* ---------- the cascade ---------- */
 function tacticFor(b){
@@ -561,8 +642,7 @@ const QUOTAS=[
   {src:'block', id:'gym',     dom:'BODY',   n:2},   // gym 2x a week
   {src:'win',   id:'present', dom:'PEOPLE', n:3},   // real time with someone, phone down
   {src:'win',   id:'cooked',  dom:'BODY',   n:4},
-  {src:'win',   id:'said_no', dom:'WORK',   n:3},
-  {src:'win',   id:'chores',  dom:'MIND',   n:3},
+  {src:'win',   id:'convo',   dom:'WORK',   n:3},   // real human contact — the only WORK quota
   {src:'win',   id:'bed',     dom:'BODY',   n:4},
 ];
 
@@ -639,9 +719,22 @@ function projection(){
 /* ---------- vices ---------- */
 function viceState(){
   const d=day(),m=nowMin(),v=S.vices;
-  const smokeClean=!d.wins.smoked;
   const beforeNoon=m<mins(v.smoke.gate);
-  return {smokeClean,beforeNoon};
+  const smoked=d.smoked||null;                          // {at:'HH:MM'} written by the sheet
+  const brokeGate=!!(smoked&&mins(smoked.at)<mins(v.smoke.gate));
+  return {smokeClean:!smoked,beforeNoon,brokeGate,smoked};
+}
+function logSmoked(){
+  const d=day(),t=new Date();
+  d.smoked={at:pad(t.getHours())+':'+pad(t.getMinutes())};
+  const vs=viceState();
+  if(vs.brokeGate){                                     // before noon = the rule broke, not just a use
+    S.vices.smoke.cleanStreak=0;
+    save();closeSheet();render();
+    logSlip('smoke');
+    return;
+  }
+  save();closeSheet();render();toast('Logged — after noon, gate held','good');
 }
 /* The dishwasher streak = consecutive weeks kept at or under the threshold.
    Rolls when the week changes; only a week that went OVER breaks it. */
@@ -661,7 +754,11 @@ function openVice(k){
        <div class="fld"><label>Streak</label><div class="val"><b>${v.streak} weeks</b> at or under the threshold · best ${v.streakBest}.
        Only a week that goes <b>over</b> breaks it.</div></div>`
     : `<div class="fld"><label>The rule</label><div class="val">Nothing before <b>12:00</b>. Clean streak: <b>${v.cleanStreak} days</b> · best ${v.bestClean}.</div></div>
-       <div class="fld"><label>Optional bonus</label><div class="val">A full <b>${v.target24}h clean</b> pays big. Clear it a few times and the bar rises.</div></div>`;
+       <div class="fld"><label>Today</label><div class="val">${
+         viceState().smoked ? `Logged at <b>${esc(viceState().smoked.at)}</b>${viceState().brokeGate?' — <span style="color:var(--blood)">before noon, gate broken</span>':' — after noon, gate held'}`
+         : (viceState().beforeNoon?'Nothing logged. <b>Gate is live</b> until 12:00.':'Nothing logged. Gate is open.')}</div></div>
+       <div class="fld"><label>Optional bonus</label><div class="val">A full <b>${v.target24}h clean</b> pays big. Clear it a few times and the bar rises.</div></div>
+       <button class="btn gh" onclick="logSmoked()">Log that I smoked</button><div style="height:8px"></div>`;
   sheet(`
     <div class="sh-k">VICE</div>
     <div class="sh-t">${esc(v.label)}</div>
@@ -688,23 +785,67 @@ function logSlip(k){
   toast('Streak held. You owe a make-up.','bad');
 }
 function viceClean(k){
-  const v=S.vices[k];
-  if(k==='smoke'){v.cleanStreak++;v.bestClean=Math.max(v.bestClean,v.cleanStreak);}
-  save();closeSheet();gainXP(40,'clean day');
+  const v=S.vices[k],d=day();
+  if(d.credited['clean:'+k]){toast('Already logged clean today','bad');return}
+  v.cleanDays=v.cleanDays||{};
+  v.cleanDays[today()]=1;
+  if(k==='smoke'){v.cleanStreak=streakFrom(v.cleanDays);v.bestClean=Math.max(v.bestClean,v.cleanStreak)}
+  save();closeSheet();award('clean:'+k,40,'clean day');
+}
+/* Streak derived from dated records, never from a counter a button can pump. */
+function streakFrom(map){
+  let n=0;const c=new Date();
+  for(let i=0;i<400;i++){ if(map[iso(c)])n++; else if(i>0)break; c.setDate(c.getDate()-1) }
+  return n;
 }
 
 /* ---------- render ---------- */
+/* ---------- ROUTER ----------
+   Four destinations, hash-routed so iOS edge-swipe and Android back work for free.
+   render() only touches the ACTIVE view — renderChar() was rebuilding the radar SVG
+   every 60s against a hidden element. */
+let VIEW='today';
+function route(){
+  const h=(location.hash||'#/today').replace('#/','');
+  VIEW=['today','push','bank','record'].includes(h)?h:'today';
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.dataset.view===VIEW));
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===VIEW));
+  window.scrollTo(0,0);
+  render();
+}
+window.addEventListener('hashchange',route);
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{location.hash='#/'+b.dataset.t});
+function go(v){location.hash='#/'+v}
+
+function badges(){
+  const owed=S.penance&&!S.penance.done;
+  const cheapest=Math.min(...S.rewards.filter(r=>!r.done).map(r=>r.cost).concat([Infinity]));
+  const bank=S.xp>=cheapest||(S.privileges||0)>0;
+  const rec=[5,6].includes(dow());
+  const stale=daysSincePitchReady()>=3;
+  const set=(t,on,red)=>{const b=document.querySelector(`.tabs button[data-t="${t}"]`);if(!b)return;
+    b.querySelector('.badge')?.remove();
+    if(on){const i=document.createElement('span');i.className='badge'+(red?' red':'');b.appendChild(i)}};
+  set('today',owed,true); set('bank',bank); set('record',rec); set('push',stale,true);
+}
+
 function render(){
   if(dow()===0){$('sabbath').classList.add('on');
     const w=week(mondayOf(new Date(Date.now()-864e5)));
     const p=w.due?Math.round(w.done/w.due*100):0;
     $('sabRead').textContent=`LAST WEEK · ${p}% EXECUTION · ${p>=85?'ROUND WON':'ROUND LOST'}`;
     return;}
-  $('sabbath').classList.remove('on');
-  autoMark(); recount();
-  renderStatus(); renderGauges(); renderGlance(); renderRail();
-  renderNext(); renderSched(); renderWins(); renderWeek(); renderRun(); renderChar();
-  $('foot').innerHTML=`BURN THE BOATS · DAY ${dayNo()} / ${TOTAL_DAYS}<br>WHAT IS THE MILLIONAIRE VERSION OF YOURSELF DOING RIGHT NOW?`;
+  $('sabbath').classList.remove('on');document.body.classList.remove('noTabs');
+  autoMark(); recount(); badges();
+  if(VIEW==='today'){
+    renderStatus(); renderGauges(); renderGlance(); renderRail();
+    renderPushStrip(); renderPenance(); renderNext(); renderWins(); renderSched(); renderRunStrip();
+    $('foot').innerHTML=`BURN THE BOATS · DAY ${dayNo()} / ${TOTAL_DAYS}<br>WHAT IS THE MILLIONAIRE VERSION OF YOURSELF DOING RIGHT NOW?`;
+  }
+  else if(VIEW==='push') renderPush();
+  else if(VIEW==='bank') renderBank();
+  else if(VIEW==='record') renderRecord();
+  if($('charv').classList.contains('on')) renderChar();
 }
 function renderStatus(){
   $('cvOvr').textContent=ovr();
@@ -738,15 +879,16 @@ function renderGauges(){
     color:over?'#FF4D5E':'#FF6B2C'});
   $('ggA').onclick=()=>openVice('dish');
 
-  const gateOK=!vs.beforeNoon||vs.smokeClean;
+  const gateOK=!vs.brokeGate;
   dial($('ggB'),{pct:Math.min(1,v.smoke.cleanStreak/7),val:v.smoke.cleanStreak+'d',
-    label:vs.beforeNoon?'Smoke · gate':'Smoke · open',hot:gateOK,color:gateOK?'#FF6B2C':'#FF4D5E'});
+    label:vs.brokeGate?'Smoke · broke':vs.beforeNoon?'Smoke · gate':'Smoke · open',
+    hot:gateOK&&v.smoke.cleanStreak>0,color:gateOK?'#FF6B2C':'#FF4D5E'});
   $('ggB').onclick=()=>openVice('smoke');
 
   const p=w.due?w.done/w.due:0;
   dial($('ggC'),{pct:p,val:w.due?Math.round(p*100)+'%':'—',label:'This week',
     hot:p>=.85,color:p>=.85?'#4ADE80':p>=.7?'#FFB25E':'#FF4D5E'});
-  $('ggC').onclick=()=>document.querySelector('.wkscore,.card')?.scrollIntoView({behavior:'smooth'});
+  $('ggC').onclick=()=>go('record');
 }
 /* Top-of-page snapshot: where you are, on one small graph, with the date you hit 99. */
 function renderGlance(){
@@ -819,7 +961,7 @@ function renderNext(){
 const ARCS=[['Morning',0,3],['Peak — deep work',3,5],['Midday',5,8],['Afternoon',8,11],['Evening',11,99]];
 function renderSched(){
   const sh=shape(),d=day(),ci=curIdx(),host=$('sched');host.innerHTML='';
-  let done=0,total=0;
+  let done=0,total=0,ahead=0;
   const groups=dow()===6?[['Saturday',0,99]]:ARCS;
   groups.forEach(([name,a,z])=>{
     const items=sh.slice(a,z);if(!items.length)return;
@@ -828,7 +970,7 @@ function renderSched(){
     items.forEach(b=>{
       const i=sh.indexOf(b),isDone=d.done[b.id],isMiss=d.miss[b.id],isWait=d.wait[b.id],isNow=i===ci;
       const past=nowMin()>=mins(b.e);
-      if(SCORED(b)&&!b.opt){total++;if(isDone)done++;}
+      if(SCORED(b)&&!b.opt&&!isWait){ if(mins(b.e)<=nowMin()){total++;if(isDone)done++;} else ahead++; }
       const t=tacticFor(b),biz=bizFor(b),dm=DOMAINS.find(x=>x.k===b.dom[0]);
       const el=document.createElement('div');
       el.className='blk'+(b.kind==='deep'?' deep':'')+(isDone?' done':'')+(isMiss?' miss':'')
@@ -845,18 +987,74 @@ function renderSched(){
     });
     host.appendChild(arc);
   });
-  $('schCount').textContent=`${done} of ${total} due`;
+  $('schCount').textContent=total?`${done} of ${total} so far · ${ahead} ahead`:`${ahead} ahead`;
 }
 function renderWins(){
   const d=day(),host=$('wins');
-  host.innerHTML=WINS.map(w=>`<button class="win${d.wins[w.k]?' on':''}" onclick="tapWin('${w.k}')">
-    ${esc(w.n)}<b>+${w.xp}</b></button>`).join('');
+  const mon=mondayOf(new Date());
+  const weekHits=k=>{let n=0;for(let i=0;i<6;i++){const t=new Date(mon+'T00:00:00');t.setDate(t.getDate()+i);
+    const r=S.days[iso(t)];if(r&&r.wins&&r.wins[k])n++}return n};
+  const onToday=WINS.filter(w=>d.wins[w.k]).length;
+  const xpToday=WINS.filter(w=>d.wins[w.k]).reduce((a,w)=>a+w.xp,0);
+  $('winTally').textContent=`${onToday} on the board · +${xpToday} today`;
+  host.innerHTML=WINS.map(w=>{
+    const q=QUOTAS.find(x=>x.src==='win'&&x.id===w.k);
+    const hits=weekHits(w.k),need=q?q.n:0,met=need&&hits>=need;
+    const pips=need?`<span class="pips">${Array.from({length:need},(_,i)=>
+      `<i class="${i<hits?(met?'full':'on'):''}"></i>`).join('')}</span>`:'';
+    return `<button class="win${d.wins[w.k]?' on':''}" onclick="tapWin('${w.k}')">
+      <span class="wtop">${esc(w.n)}<b>+${w.xp}</b></span>
+      ${need?`<span class="wtop" style="gap:6px">${pips}<b style="margin-left:auto;font-size:9px">${hits}/${need}</b></span>`:''}
+    </button>`}).join('');
 }
 function tapWin(k){
   const d=day(),w=WINS.find(x=>x.k===k);
-  if(d.wins[k]){delete d.wins[k];S.xp=Math.max(0,S.xp-w.xp);save();render();return}
-  d.wins[k]=1;save();gainXP(w.xp,w.n);
+  if(d.wins[k]){                      // untap corrects the quota only — XP never goes backwards
+    delete d.wins[k];save();render();toast('Removed — XP kept','bad');return}
+  d.wins[k]=1;save();
+  if(!award('win:'+k,w.xp,w.n))render();
 }
+const PITCH_READY='2026-07-24';
+function daysSincePitchReady(){
+  return Math.max(0,Math.floor((new Date(today())-new Date(PITCH_READY))/864e5));
+}
+function renderPushStrip(){
+  const g=S.december,stale=daysSincePitchReady();
+  const sent=S.push&&S.push.anthonySent;
+  $('pushStrip').innerHTML=`<div class="ps-row">
+      <div class="ps-c"><div class="k">SANO</div><div class="v">${g.WORK.at}/${g.WORK.target}</div></div>
+      <div class="ps-c"><div class="k">Funded</div><div class="v">${g.CAPITAL.at}/${g.CAPITAL.target}</div></div>
+      <div class="ps-c"><div class="k">Kitchen</div><div class="v">${(S.push&&S.push.kitchen)||0}/1</div></div>
+    </div>
+    ${!sent&&stale>=1?`<div class="ps-stale">ANTHONY · PITCH-READY ${stale} DAYS · NOT SENT →</div>`:''}`;
+  $('pushStrip').onclick=()=>go('push');
+}
+function renderPenance(){
+  const el=$('penanceBanner');
+  if(!S.penance||S.penance.done){el.innerHTML='';return}
+  const d=Math.max(0,Math.floor((new Date(today())-new Date(S.penance.date))/864e5));
+  el.innerHTML=`<div class="penance" onclick="openPenance()">
+    <div class="k">MAKE-UP OWED</div><div class="t">${esc(S.penance.text)}</div>
+    ${d>0?`<div class="d">${d} DAY${d>1?'S':''} OUTSTANDING</div>`:''}</div>`;
+}
+function openPenance(){
+  sheet(`<div class="sh-k">MAKE-UP OWED</div>
+    <div class="sh-t">The streak held</div>
+    <div class="sh-sub">LEVEL ${S.penance.level+1} OF 3</div>
+    <div class="fld"><label>What you owe</label><div class="val">${esc(S.penance.text)}</div></div>
+    <div class="fld"><label>Proof</label>
+      <input type="file" accept="image/*" capture="environment" id="proofIn"></div>
+    <div class="chain"><div><div class="cl">Why this exists</div>
+      <div class="cv">Your streak is <b>never wiped</b>. You pay it back instead, and the price goes up
+      each time. One mistake doesn't end the run — but it does cost you.</div></div></div>
+    <button class="btn" onclick="clearPenance()">I did it</button>`);
+}
+function renderRunStrip(){
+  const m=monthKey(),used=S.offScript[m]||0,d=day();
+  $('runStrip').innerHTML=`<span>DAY <b>${dayNo()}</b> / ${TOTAL_DAYS}</span><span>WK <b>${pad(weekNo())}</b></span>
+    <button onclick="offScript()" ${used>=1||d.off?'disabled':''}>${d.off?'OFF-SCRIPT':'OFF-SCRIPT · '+(1-used)}</button>`;
+}
+
 function renderWeek(){
   const w=week(),p=w.due?Math.round(w.done/w.due*100):0;
   $('wsPct').textContent=p+'%';
@@ -958,27 +1156,28 @@ function lastProduced(id){
   for(const k of ks){if(k===today())continue;const p=S.days[k].produced&&S.days[k].produced[id];if(p)return p}
   return null;
 }
-function markDone(id){const d=day();d.done[id]=true;delete d.miss[id];delete d.wait[id];save();closeSheet();gainXP(25,'block done')}
+function markDone(id){const d=day();d.done[id]=true;delete d.miss[id];delete d.wait[id];save();closeSheet();
+  if(!award('blk:'+id,25,'block done'))render();}
 function markMiss(id){const d=day();d.miss[id]=true;delete d.done[id];save();closeSheet();render()}
 function markWait(id){const d=day();d.wait[id]=true;delete d.miss[id];save();closeSheet();render();
   toast("Marked waiting — it won't score against you.",'good')}
 
 /* ---------- FOCUS RUN — 4 phone passes per block, splittable ---------- */
-function startRun(id){
+function startRun(id,resume){
   const b=shape().find(x=>x.id===id);if(!b||!b.focus)return;
-  const half=b.focus>=60;
-  run={b,total:b.focus*60,left:b.focus*60,broken:false,paused:false,pauseLeft:0,passes:4,
-       endAt:Date.now()+b.focus*60000,half};
-  $('run').className='run on';
+  run={b,total:b.focus*60,broken:resume?!!resume.broken:false,paused:false,pauseLeft:0,
+       passes:resume?resume.passes:4,hiddenAt:null,
+       endAt:resume?resume.endAt:Date.now()+b.focus*60000};
+  run.left=Math.max(0,Math.round((run.endAt-Date.now())/1000));
+  $('run').className='run on'+(run.broken?' broke':'');document.body.classList.add('noTabs');
   $('runK').textContent=`Focus run · ${b.focus}m`;
   $('runTask').textContent=b.n+(bizFor(b)?' · '+bizFor(b):'');
   $('runObj').textContent=tacticFor(b)||'';
-  $('runMult').textContent='UNBROKEN · +65 XP ON FINISH';
-  $('runWarn').textContent='Leave without tapping Step away and the run breaks.';
-  $('runStep').textContent=`Step away · 4`;
+  $('runMult').textContent=run.broken?'BROKEN · BONUS LOST':'UNBROKEN · +65 XP ON FINISH';
+  $('runWarn').textContent='Screen off is fine. Using another app for more than 10s without tapping Step away breaks it.';
+  $('runStep').textContent=`Step away · ${run.passes}`;
   tick();run.t=setInterval(tick,500);
-  if(navigator.wakeLock)navigator.wakeLock.request('screen').then(l=>run.lock=l).catch(()=>{});
-  notify('Focus run started', b.n+' · '+(tacticFor(b)||''));
+  reacquireLock();persistRun();
 }
 function tick(){
   if(!run)return;
@@ -999,7 +1198,7 @@ function breakRun(msg){
   run.broken=true;$('run').classList.add('broke');
   $('runMult').textContent='BROKEN · BONUS LOST';
   $('runWarn').textContent=msg||'You picked up the phone. The block still counts — the bonus does not.';
-  day().focus[run.b.id]='broke';save();
+  day().focus[run.b.id]='broke';persistRun();save();
 }
 function finishRun(){
   if(!run)return;clearInterval(run.t);
@@ -1015,7 +1214,7 @@ function finishRun(){
 function closeRun(){
   if(run&&run.t)clearInterval(run.t);
   if(run&&run.lock)try{run.lock.release()}catch(e){}
-  run=null;$('run').className='run';render();
+  run=null;S.activeRun=null;save();$('run').className='run';document.body.classList.remove('noTabs');render();
 }
 $('runEnd').onclick=()=>{if(run&&!run.broken&&run.left>0){day().focus[run.b.id]='quit';save()}closeRun()};
 $('runStep').onclick=()=>{
@@ -1025,17 +1224,60 @@ $('runStep').onclick=()=>{
   run.endAt+=120000;                                  // the pause doesn't eat your block
   $('run').classList.add('paused');
   $('runStep').textContent=`Step away · ${run.passes}`;
-  $('runMult').textContent='PAUSED · 2 MINUTES';
+  $('runMult').textContent='PAUSED · 2 MINUTES';persistRun();
   $('runWarn').textContent='Come back inside the window and nothing is lost.';
 };
+/* A screen that goes to sleep is NOT you picking up your phone.
+   visibilitychange also fires for Control Center, a call banner and an expanded notification.
+   Breaking on all of that is a wall of failure the OS causes and he cannot appeal — so we
+   time the absence and only break past a real grace window. */
+const HIDE_GRACE_MS=10000;
 document.addEventListener('visibilitychange',()=>{
   if(!run){if(!document.hidden)render();return}
-  if(document.hidden&&!run.paused&&!run.broken)breakRun();
-  if(!document.hidden&&run.paused){
+  if(document.hidden){
+    run.hiddenAt=Date.now(); persistRun();
+    return;
+  }
+  // back on screen
+  reacquireLock();                                   // iOS silently drops the wake lock on hide
+  if(run.paused){
     run.paused=false;$('run').classList.remove('paused');
     $('runMult').textContent='RESUMED CLEAN';$('runWarn').textContent='Back inside the window.';
+    run.hiddenAt=null; persistRun(); return;
+  }
+  if(run.hiddenAt && !run.broken){
+    const away=Date.now()-run.hiddenAt;
+    run.hiddenAt=null;
+    if(away>HIDE_GRACE_MS) breakRun(`You were away ${Math.round(away/1000)}s without a pass.`);
+    else persistRun();
   }
 });
+function reacquireLock(){
+  if(!run||!navigator.wakeLock)return;
+  navigator.wakeLock.request('screen').then(l=>{if(run)run.lock=l}).catch(()=>{});
+}
+/* The run must survive the app being evicted — iOS drops backgrounded PWAs routinely,
+   and a call at minute 70 of a 75-minute block would otherwise erase the whole block. */
+function persistRun(){
+  if(!run){S.activeRun=null;save();return}
+  S.activeRun={id:run.b.id,endAt:run.endAt,passes:run.passes,broken:run.broken,
+               paused:run.paused,pauseEnd:run.pauseEnd||null,day:today()};
+  save();
+}
+/* Only ever WRITE on pagehide. persistRun() clears activeRun when run is null, and pagehide
+   fires on reload and on close — so binding it directly wiped the run at exactly the moment
+   this feature exists to survive. Clearing is closeRun()'s job alone. */
+window.addEventListener('pagehide',()=>{ if(run) persistRun(); });
+function resumeRun(){
+  const a=S.activeRun; if(!a||a.day!==today())return false;
+  const b=shape().find(x=>x.id===a.id); if(!b)return false;
+  if(Date.now()<a.endAt+300000){
+    startRun(a.id,{endAt:a.endAt,passes:a.passes,broken:a.broken});
+    return true;
+  }
+  S.activeRun=null;save();
+  return false;
+}
 
 /* ---------- character + veil ---------- */
 
@@ -1151,11 +1393,207 @@ function nudgeCheck(){
   }
 }
 
+/* ================= THE PUSH ================= */
+const GATE=[
+  {k:'pitch',  n:'The pitch page is right'},
+  {k:'offer',  n:'The offer and pricing are right'},
+  {k:'deliver',n:'I know exactly what he gets'},
+  {k:'onboard',n:'The first 30 days are mapped'},
+  {k:'quest',  n:'The questionnaire is ready'},
+  {k:'talk',   n:'I know what I am going to say'},
+];
+function renderPush(){
+  S.push=S.push||{gate:{},anthonySent:0,kitchen:0,rules:{}};
+  const g=S.december,p=S.push,stale=daysSincePitchReady();
+  const ticked=GATE.filter(x=>p.gate[x.k]).length;
+  $('pushHorizon').textContent=`${workdaysLeft()} TO DEC 1 · INCOME BY MAR`;
+  $('pushBody').innerHTML=`
+    <h2 class="sec">SANO <u>${g.WORK.at} of ${g.WORK.target} clients</u></h2>
+    <div class="card">
+      <div class="fld" style="margin:0"><label>The win condition</label>
+        <div class="val">${esc(g.WORK.lag)}</div></div>
+    </div>
+
+    <h2 class="sec">The Anthony gate <u>${ticked} of 6</u></h2>
+    <div class="card">
+      ${GATE.map(x=>`<div class="stat" onclick="tickGate('${x.k}')" style="cursor:pointer">
+        <span style="color:${p.gate[x.k]?'var(--phos)':'var(--ink)'}">${esc(x.n)}</span>
+        <b style="color:${p.gate[x.k]?'var(--phos)':'var(--faint)'}">${p.gate[x.k]?'✓':'—'}</b></div>`).join('')}
+      <div class="stat" style="border-bottom:0">
+        <span style="font-family:'Geist Mono';font-size:8.5px;letter-spacing:.1em;color:${stale>=3?'var(--blood)':'var(--faint)'}">
+          PITCH-READY ${stale} DAYS${p.anthonySent?' · SENT':' · NOT SENT'}</span></div>
+      <div style="padding:11px 0 2px">
+        ${p.anthonySent?'<button class="btn done" disabled style="opacity:.5">Sent</button>'
+        :`<a class="btn" style="display:block;text-align:center;text-decoration:none;line-height:20px"
+            href="sms:&body=${encodeURIComponent('Anthony — got something built for AVRS I want to show you. Free to look this week?')}"
+            onclick="markSent()">Text Anthony now</a>`}
+      </div>
+    </div>
+
+    <h2 class="sec">Trading <u>${g.CAPITAL.at} of ${g.CAPITAL.target} funded</u></h2>
+    <div class="card">
+      <div class="stat"><span>Followed my rules today</span>
+        <b style="color:${day().trade&&day().trade.rules?'var(--phos)':'var(--faint)'}">${day().trade&&day().trade.rules?'YES':'—'}</b></div>
+      <div class="stat"><span>No double-back</span>
+        <b style="color:${day().trade&&day().trade.nodb?'var(--phos)':'var(--faint)'}">${day().trade&&day().trade.nodb?'YES':'—'}</b></div>
+      <div style="padding:11px 0 2px"><button class="btn gh" onclick="openTrade()">Log the session</button></div>
+    </div>
+
+    <h2 class="sec">LA Edible <u>${p.kitchen||0} of 1</u></h2>
+    <div class="card">
+      <div class="fld" style="margin:0"><label>December</label><div class="val">In talks with a local kitchen</div></div>
+      <div style="padding:11px 0 2px"><button class="btn gh" onclick="S.push.kitchen=S.push.kitchen?0:1;save();render()">
+        ${p.kitchen?'In talks ✓':'Mark: in talks'}</button></div>
+    </div>`;
+}
+function tickGate(k){S.push.gate[k]=!S.push.gate[k];save();render()}
+function markSent(){S.push.anthonySent=today();save();setTimeout(render,400);gainXP(300,'you sent it')}
+function openTrade(){
+  const t=day().trade||{};
+  sheet(`<div class="sh-k">13:00 · MARKET CLOSE</div><div class="sh-t">Log the session</div>
+    <div class="sh-sub">RULE-FOLLOWING IS THE MEASURE — NEVER P&L</div>
+    <div class="row2" style="grid-template-columns:1fr 1fr;margin-bottom:10px">
+      <button class="btn ${t.rules?'':'gh'}" onclick="setTrade('rules')">Followed my rules</button>
+      <button class="btn ${t.nodb?'':'gh'}" onclick="setTrade('nodb')">No double-back</button></div>
+    <div class="chain"><div><div class="cl">Why only these two</div>
+      <div class="cv">A won month is <b>rules kept and no double-back trading</b> — winning in the morning
+      then going back greedy. Dollars are not the measure and this app will never ask for them.</div></div></div>`);
+}
+function setTrade(k){
+  const d=day();d.trade=d.trade||{};d.trade[k]=!d.trade[k];
+  if(d.trade.rules&&d.trade.nodb)award('trade:'+today(),35,'clean session');
+  save();closeSheet();render();
+}
+
+/* ================= THE BANK ================= */
+function renderBank(){
+  S.privileges=S.privileges||0;
+  $('bankXp').textContent=`${S.xp.toLocaleString()} XP`;
+  const pr=projection();
+  $('bankBody').innerHTML=`
+    <div class="card" style="display:flex;gap:14px;align-items:center">
+      <div><div style="font-family:'Clash Display';font-size:34px;color:var(--gold);line-height:.9">${S.xp.toLocaleString()}</div>
+        <div style="font-family:'Geist Mono';font-size:7.5px;letter-spacing:.15em;color:#6d5c3c;margin-top:4px">XP BANKED</div></div>
+      <div style="margin-left:auto;text-align:right">
+        <div style="font-family:'Clash Display';font-size:34px;color:var(--rune);line-height:.9">${S.privileges}</div>
+        <div style="font-family:'Geist Mono';font-size:7.5px;letter-spacing:.15em;color:#3d7a78;margin-top:4px">PRIVILEGES</div></div>
+    </div>
+
+    <h2 class="sec">Privileges <u>earned, not bought</u></h2>
+    <div class="card">
+      <div class="stat"><span>Cut a block in half</span><b>${S.privileges?'AVAILABLE':'—'}</b></div>
+      <div class="stat"><span>Make a block yours</span><b>${S.privileges?'AVAILABLE':'—'}</b></div>
+      <div class="stat" style="border-bottom:0"><span style="font-size:12px;color:var(--faint);line-height:1.5">
+        Earned by an 85%+ week, or by logging a boost below.</span></div>
+    </div>
+
+    <h2 class="sec">Boosts <u>never scored against you</u></h2>
+    <div class="wins">
+      ${BOOSTS.map(bo=>`<button class="win" onclick="logBoost('${bo.k}')">
+        <span class="wtop">${esc(bo.n)}<b>+${bo.xp}</b></span></button>`).join('')}
+    </div>
+
+    <h2 class="sec">Rewards <u>you set the price</u></h2>
+    <div class="card">
+      ${S.rewards.map((r,i)=>{
+        const can=S.xp>=r.cost, away=pr.rate?Math.ceil((r.cost-S.xp)/Math.max(1,dailyXp())):null;
+        return `<div class="stat"><span>
+          <span style="color:${r.done?'var(--faint)':'var(--ink)'}">${esc(r.n)}</span>
+          ${r.condition?`<br><span style="font-size:11px;color:var(--faint)">${esc(r.condition)}</span>`:''}
+          ${!r.done&&!can&&away>0?`<br><span style="font-family:'Geist Mono';font-size:8px;color:#6d5c3c">~${away} DAYS AWAY</span>`:''}
+        </span>${r.done?'<b style="color:var(--faint)">CLAIMED</b>'
+          :`<button class="btn ${can?'':'gh'} sm" style="width:auto;padding:9px 13px;min-height:38px"
+             onclick="claim(${i})">${can?'CLAIM':r.cost.toLocaleString()}</button>`}</div>`}).join('')}
+      <div style="padding:11px 0 2px"><button class="btn gh" onclick="newReward()">+ New reward</button></div>
+    </div>`;
+}
+const BOOSTS=[
+  {k:'network',n:'Networking event',xp:250},
+  {k:'golf',   n:'Golf day',        xp:150},
+  {k:'read',   n:'Read tonight',    xp:60},
+  {k:'money',  n:'Finances hour',   xp:90},
+];
+function dailyXp(){
+  const ks=Object.keys(S.days).length||1;
+  return Math.max(80,Math.round(S.xp/ks));
+}
+function logBoost(k){
+  const bo=BOOSTS.find(x=>x.k===k);
+  S.boosts=S.boosts||[];S.boosts.push({k,date:today()});
+  S.privileges=(S.privileges||0)+1;
+  save();award('boost:'+k+':'+today(),bo.xp,bo.n+' · +1 privilege');
+}
+function newReward(){
+  sheet(`<div class="sh-k">EARNED, NOT GIVEN</div><div class="sh-t">New reward</div>
+    <div class="sh-sub">WRITE THE DEAL IN YOUR OWN WORDS</div>
+    <div class="fld"><label>The reward</label><input id="rwN" placeholder="A nice dinner out"></div>
+    <div class="fld"><label>The condition</label><input id="rwC" placeholder="Cooked + laundry every night this week"></div>
+    <div class="fld"><label>Price in XP</label><input id="rwX" type="text" inputmode="numeric" value="800"></div>
+    <button class="btn" onclick="saveReward()">Add it</button>`);
+}
+function saveReward(){
+  const n=$('rwN').value.trim();if(!n)return;
+  S.rewards.push({n,condition:$('rwC').value.trim(),cost:Math.max(50,parseInt($('rwX').value)||800),done:0});
+  save();closeSheet();render();toast('Reward added','good');
+}
+
+/* ================= THE RECORD ================= */
+function renderRecord(){
+  const w=week(),p=w.due?Math.round(w.done/w.due*100):0;
+  $('recWk').textContent=`WK ${pad(weekNo())}`;
+  const mon=mondayOf(new Date());
+  const weekHits=(src,id)=>{let n=0;for(let i=0;i<6;i++){const t=new Date(mon+'T00:00:00');t.setDate(t.getDate()+i);
+    const r=S.days[iso(t)];if(!r)continue;if(src==='win'?(r.wins&&r.wins[id]):r.done[id])n++}return n};
+  const produced=[];
+  Object.keys(S.days).sort().reverse().slice(0,14).forEach(k=>{
+    const r=S.days[k];Object.keys(r.produced||{}).forEach(id=>{if(r.produced[id])produced.push({k,t:r.produced[id]})})});
+  $('recBody').innerHTML=`
+    <div class="card">
+      <div class="ws-h"><b style="color:${p>=85?'var(--phos)':p>=70?'var(--gold)':'var(--blood)'}">${p}%</b>
+        <span>${w.done} / ${w.due} TACTICS</span></div>
+      <div class="ws-t"><i style="width:${Math.min(100,p)}%;background:${p>=85?'var(--phos)':p>=70?'var(--gold)':'var(--blood)'}"></i><u></u></div>
+      <div class="ws-l"><span>WEEKLY EXECUTION</span><span>85% = ROUND WON</span></div>
+    </div>
+
+    <h2 class="sec">Quota board</h2>
+    <div class="card">
+      ${QUOTAS.map(q=>{const h=weekHits(q.src,q.id),met=h>=q.n;
+        return `<div class="stat"><span>${esc(q.id.replace('_',' '))} <span style="color:var(--faint);font-size:11px">· ${q.dom}</span></span>
+          <b style="color:${met?'var(--phos)':'var(--faint)'}">${h} / ${q.n}</b></div>`}).join('')}
+    </div>
+
+    <h2 class="sec">What came out of it <u>last 14 days</u></h2>
+    <div class="card">
+      ${produced.length?produced.slice(0,12).map(x=>`<div class="stat">
+        <span style="font-size:13px">${esc(x.t)}</span>
+        <b style="font-size:9px;color:var(--faint)">${x.k.slice(5)}</b></div>`).join('')
+        :'<div style="padding:14px 0;color:var(--faint);font-size:13px">Nothing logged yet. Finish a focus run and write what came out of it.</div>'}
+    </div>
+
+    <h2 class="sec">Data</h2>
+    <div class="card"><div class="stat" style="border-bottom:0;gap:8px">
+      <button class="btn gh sm" onclick="exportSave()">Backup</button>
+      <button class="btn gh sm" onclick="$('restoreIn').click()">Restore</button>
+      <input type="file" id="restoreIn" accept=".json" style="display:none" onchange="restoreSave(this)">
+    </div></div>`;
+}
+function restoreSave(inp){
+  const f=inp.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const j=JSON.parse(r.result);
+    const days=Object.keys(j.days||{}).length;
+    if(!confirm(`Restore ${days} days and ${(j.xp||0).toLocaleString()} XP? This replaces what is here.`))return;
+    S=merge(JSON.parse(JSON.stringify(DEFAULT)),j);save();render();toast('Restored','good');
+  }catch(e){toast('That file could not be read','bad')}};
+  r.readAsText(f);
+}
+
 /* ---------- boot ---------- */
 $('sabLook').onclick=()=>{$('sabbath').classList.remove('on');render()};
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 document.addEventListener('click',askNotify,{once:true});
-render();
+recount();
+route();        // sets the active view AND lights its tab
+resumeRun();    // an interrupted run comes straight back
 setInterval(()=>{if(!run)render()},60000);
 setInterval(nudgeCheck,120000);
 </script>
