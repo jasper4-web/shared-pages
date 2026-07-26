@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>Goals — audit &amp; proposed structure — Burn the Boats</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{--bg:#07060b;--panel:#0e0c16;--line:#1e1a2b;--line2:#2b2540;--ink:#EDEAE4;
+ --dim:#9a93a8;--faint:#6b6480;--gold:#E0B25E;--ember:#FF6B2C;--phos:#4ADE80;--blood:#FF4D5E}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.62}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px 80px}
+.top{position:sticky;top:0;z-index:9;background:rgba(7,6,11,.95);backdrop-filter:blur(12px);
+ border-bottom:1px solid var(--line);margin:0 -18px 26px;padding:13px 18px;display:flex;
+ align-items:center;gap:12px}
+.top a{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--gold);
+ text-decoration:none;min-height:44px;display:flex;align-items:center}
+.top span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint);
+ margin-left:auto;text-align:right}
+h1,h2,h3,h4{font-family:'Clash Display',sans-serif;letter-spacing:-.02em;line-height:1.15;margin:0}
+h1{font-size:31px;font-weight:700;margin:28px 0 16px}
+h2{font-size:23px;font-weight:600;margin:40px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+h3{font-size:18px;font-weight:600;margin:28px 0 10px;color:var(--gold)}
+h4{font-size:15px;font-weight:600;margin:22px 0 8px;color:var(--dim)}
+p{font-size:16px;color:var(--dim);margin:0 0 16px}
+strong{color:var(--ink);font-weight:600}
+em{color:var(--ink);font-style:italic}
+ul,ol{padding-left:22px;margin:0 0 18px}
+li{font-size:16px;color:var(--dim);margin-bottom:9px}
+li::marker{color:var(--faint)}
+code{font-family:'Geist Mono',monospace;font-size:13.5px;background:var(--panel);
+ border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#c8bfe0}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px;
+ overflow-x:auto;margin:0 0 18px}
+pre code{background:none;border:0;padding:0;font-size:13px;line-height:1.7;color:#bdb5d4}
+blockquote{margin:0 0 18px;padding:12px 0 12px 17px;border-left:3px solid var(--gold);
+ color:#c9bda0;font-size:16px}
+blockquote p{color:inherit;margin:0 0 8px}
+blockquote p:last-child{margin:0}
+hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+a{color:var(--gold)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 20px;
+ border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint);
+ text-transform:uppercase;text-align:left;padding:12px;background:var(--panel);
+ border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:12px;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td strong{color:var(--ink)}
+</style></head><body><div class="wrap">
+<div class="top"><a href="../work.html">&larr; ALL THE WORK</a><span>BURN THE BOATS</span></div>
+<h1>THE GOALS PAGE — AUDIT AND PROPOSED STRUCTURE</h1>
+<p>Read this on the phone. It has three parts: <strong>what is actually broken</strong>, <strong>what the real systems do</strong>, and <strong>the structure I want to build</strong>. The first part is the one that matters, because the page does not have a design problem. It has a wiring problem.</p>
+<hr>
+<h2>PART 1 · THE DIAGNOSIS</h2>
+<h3>The one-sentence version</h3>
+<p><strong>The Goals page is a beautiful map of intention with almost nothing connected underneath it.</strong> It draws four goals across four dated landmarks and a week node, and every one of those elements is display-only. Nothing on this page can currently cause a single hour of your Tuesday to be spent differently.</p>
+<p>I did not conclude that from looking at it. I read the code. Here is the evidence.</p>
+<h3>1 · A weekly commitment has no goal attached to it</h3>
+<p>This is the root cause of almost everything else. A commitment is stored as a bare string:</p>
+<pre><code>
+week.tactics.b1 = &quot;Call 10 owners from the list&quot;
+</code></pre>
+<p>There is no <code>goalId</code>. The app has no idea that block belongs to SANO. It cannot know. So it cannot count toward SANO, cannot warn you when SANO gets nothing for a week, and cannot tell you at the end of the run where your 91 days actually went.</p>
+<h3>2 · Because of that, the orphan check is broken</h3>
+<p>The page has a feature called THE ORPHAN CHECK, and it is the single best idea on the page — flag a ranked goal that got nothing this week, so neglect is a decision rather than an accident. Here is how it decides:</p>
+<pre><code>
+!Object.values(tac).some(t =&gt; t &amp;&amp; t.toLowerCase()
+   .includes(x.short.toLowerCase().split(&#x27; &#x27;)[0]))
+</code></pre>
+<p>It <strong>string-matches the goal&#x27;s name against the text you typed.</strong> In the state I screenshotted, B1 is &quot;Call 10 owners from the list&quot; and B2 is &quot;Anthony follow-up + send the deck&quot; — both unambiguously SANO work. Neither contains the letters &quot;sano&quot;, so the app reports <strong>SANO as orphaned.</strong> The one mechanism designed to catch drift produces a false alarm on the most common possible input, which means within two weeks you will learn to ignore it.</p>
+<h3>3 · There is no <em>when</em>, so these are not plans</h3>
+<p>The strongest finding in the goal literature is implementation intentions — an if-then plan with a specific trigger beats a plain intention by a medium-to-large margin (Gollwitzer &amp; Sheeran, 94 studies). The requirement is a <strong>when</strong>.</p>
+<p>A commitment here is attached to a block <em>slot</em> (b1–b4) at the <em>week</em> level. Not to Tuesday. Not to 09:00. &quot;Call 10 owners&quot; is pinned to &quot;the first deep block&quot;, of every day, indefinitely. That is an intention with a category, not an if-then plan. <code>week.grid</code> does not exist in the codebase. Neither does any day binding.</p>
+<h3>4 · Milestones are decoration</h3>
+<p>Four landmarks × four goals = sixteen milestone slots. In the live state most read <strong>&quot;Nothing set.&quot;</strong> More importantly: <strong>nothing consumes a milestone.</strong> Marking one HIT changes no schedule, no score, no week, no prompt. <code>msState()</code> renders NEXT / PASSED / HIT beautifully and then the value is dropped on the floor.</p>
+<p>A dated picture you can&#x27;t act on is a mood board.</p>
+<h3>5 · There is no cadence, which is the actual engine of every system that works</h3>
+<p>4DX — the framework closest to this app — has four disciplines. The page implements two of them (a WIG, and lead/lag language). It implements <strong>neither</strong> of the two that produce the behaviour: a compelling scoreboard the player owns, and <strong>a weekly cadence of accountability</strong>.</p>
+<p>Searched the codebase: <code>friday</code> → <strong>0 matches</strong>. <code>confidence</code> → <strong>0</strong>. There is no moment where you close last week&#x27;s commitments and make next week&#x27;s. The spec your goals agent wrote designed exactly this — a 90-second Friday ritual — and it was never built.</p>
+<p>Without a cadence, a goal system is a wish with typography.</p>
+<h3>6 · Lead measures are strings, not counters</h3>
+<p>Each goal carries a lead measure. Here is SANO&#x27;s, verbatim from the data:</p>
+<pre><code>
+lead: &#x27;Outreach conversations&#x27;
+</code></pre>
+<p>It is a <strong>label</strong>. Nothing counts outreach conversations. The lag measure (3 clients) is tracked; the lead measure — the thing that is predictive, controllable, and the entire point of the 4DX distinction — is decorative text. You are shown the number you cannot move and told the name of the number you can.</p>
+<h3>7 · There is no capacity model, and the arithmetic already fails</h3>
+<p><code>capacity</code> → <strong>0 matches</strong> in the codebase. A &quot;of 20 blocks&quot; bar appears on Fridays only, and is derived from a count of four slots, so it can never exceed 4/20.</p>
+<p>Meanwhile your own profile flags the real problem: <strong>the schedule assumes zero client delivery load</strong>, and once Anthony signs, that assumption becomes arithmetically impossible around October. Four goals, sixteen milestones, 2–3 working hours a day, and nothing anywhere in the system that says <em>no</em>.</p>
+<h3>8 · Nothing absorbs a bad week</h3>
+<p>The top of the page says BURN THE BOATS / <em>become someone who executes</em>. That is the right idea and it is static text. On a week you lost, it does nothing — and the week you lose is the only week the design has to survive, because your stated failure mode is that you stop opening the app.</p>
+<hr>
+<h2>PART 2 · WHAT THE REAL SYSTEMS DO</h2>
+<p>I looked at what actually has evidence or a long operating record behind it, not one or two. Grouped by what each one is <em>for</em>, because most of these are usually presented as rivals when they are actually solving different layers.</p>
+<h3>Setting the target</h3>
+<div class='tw'><table><tr><th>System</th><th>The mechanic</th><th>Verdict here</th></tr><tr><td><strong>Goal-Setting Theory</strong> (Locke &amp; Latham, 35+ yrs)</td><td>Specific + difficult beats vague + easy, <strong>but only when the task is known</strong>. On novel complex tasks, an outcome goal causes tunnel vision and blocks learning the method.</td><td><strong>Load-bearing.</strong> &quot;3 clients&quot; is an outcome goal on a task you have completed zero times. This is the literature&#x27;s exact signature for needing a <strong>learning goal first</strong>.</td></tr><tr><td><strong>OKR</strong> (Grove → Doerr)</td><td>Objective (qualitative, motivating) is a <em>separate field</em> from Key Result (measurable evidence). Graded by <strong>confidence</strong>, not pass/fail.</td><td>Steal the split and the confidence score. <strong>Reject</strong> cascading and 0.7-is-success — you have an income cliff.</td></tr><tr><td><strong>EOS / Traction</strong> (Wickman)</td><td>The ladder is a series of <strong>dated pictures</strong> (Rocks), max ~7 per horizon. Not a computed tree.</td><td>Steal dated pictures + the cap. Reject quarterly-only re-planning: 18 weeks would give you 4 chances to adapt.</td></tr><tr><td><strong>The One Thing</strong> (Keller)</td><td>The focusing question — what one thing makes everything else easier or unnecessary?</td><td>Steal as the WIG test.</td></tr><tr><td><strong>WOOP</strong> (Oettingen)</td><td>Wish → Outcome → <strong>Obstacle</strong> → Plan. Mental contrasting: naming the obstacle beats positive visualisation, which measurably <em>reduces</em> effort.</td><td>Steal the obstacle field. Nothing in the app currently asks what will stop you.</td></tr></table></div>
+<h3>Running it week to week</h3>
+<div class='tw'><table><tr><th>System</th><th>The mechanic</th><th>Verdict here</th></tr><tr><td><strong>4DX</strong> (McChesney/Covey/Huling)</td><td>≤2 WIGs · lead measures that are predictive <em>and</em> controllable · a scoreboard <strong>the player</strong> owns · a <strong>weekly cadence</strong> where you report and re-commit.</td><td><strong>The closest fit in existence to this app.</strong> Two of four disciplines are missing, and they are the two that create behaviour.</td></tr><tr><td><strong>12 Week Year</strong> (Moran)</td><td>Execution score = tactics done ÷ tactics due. <strong>85% = won.</strong> Score the process, not the result.</td><td>Already in the app and working. Keep. Do not add a second denominator.</td></tr><tr><td><strong>Scrum</strong></td><td>Fixed-length sprint · a <strong>retro</strong> that changes the next sprint · velocity measured, not assumed.</td><td>Steal the retro-changes-next-sprint loop. The Friday ritual is a retro.</td></tr><tr><td><strong>Kanban / WIP limits</strong></td><td>Cap work in progress. Throughput collapses past the cap.</td><td>Steal as the hard block cap. This is the missing &quot;no&quot;.</td></tr><tr><td><strong>Slow Productivity</strong> (Newport)</td><td>Multi-scale planning: the week&#x27;s job is to <strong>interpret</strong> the quarter, not re-derive it.</td><td>Steal. It is why the Friday form must arrive pre-filled, never blank.</td></tr><tr><td><strong>Four Thousand Weeks</strong> (Burkeman)</td><td>Fixed volume. <strong>Pay yourself first</strong> — the best hours go to the goal, not the residue.</td><td>Steal both. Your peak is 9–noon; the WIG should own it by force.</td></tr><tr><td><strong>GTD Horizons</strong> (Allen)</td><td>Different altitudes get <strong>different review cadences</strong>. You do not review your purpose weekly.</td><td>Steal the cadence rule. December goals must <em>not</em> appear in the weekly ritual.</td></tr></table></div>
+<h3>Making it stick when you fall behind</h3>
+<div class='tw'><table><tr><th>System</th><th>The mechanic</th><th>Verdict here</th></tr><tr><td><strong>What-the-hell effect</strong> (abstinence violation)</td><td>After one lapse, all-or-nothing thinkers abandon entirely. The slip is rarely the problem — the response is.</td><td><strong>This is your documented failure mode.</strong> It settles the design: <strong>never miss twice</strong>, not never miss.</td></tr><tr><td><strong>Atomic Habits / Tiny Habits</strong> (Clear, Fogg)</td><td>Cue → routine → reward; identity over outcome; make it small enough to be unmissable.</td><td>Steal identity framing (already present: <em>become someone who executes</em>) and the shrink-don&#x27;t-quit move.</td></tr><tr><td><strong>Fresh-start effect</strong> (Dai, Milkman &amp; Riis, Mgmt Science 2014)</td><td>Motivation genuinely spikes at temporal landmarks — Mondays, month turns. Causal, not just correlational.</td><td>Steal: <strong>Monday morning and month-turn are the app&#x27;s loudest moments.</strong> Landmark dates default to month boundaries.</td></tr><tr><td><strong>Goal-gradient effect</strong> (Kivetz)</td><td>Effort accelerates as a goal gets visibly close.</td><td>Steal: always show the <em>nearest</em> thing, never only December.</td></tr><tr><td><strong>Commitment devices</strong> (Thaler; Ayres/stickK)</td><td>Pre-committing with a stake beats intention. Public commitment beats private.</td><td>Partial steal — you already have the penance mechanic and Kells for faith. Do not add money stakes.</td></tr><tr><td><strong>Don&#x27;t break the chain</strong> (Seinfeld)</td><td>Visible unbroken streak.</td><td>Already in, with the crucial fix that yours is redeemed rather than wiped. Keep.</td></tr><tr><td><strong>Yearly Themes</strong> (Grey/Hurley)</td><td>A layer with <strong>no failure state</strong>, which absorbs what the scored layers cannot.</td><td>Steal as the top layer. This is what shows on a week you lost.</td></tr><tr><td><strong>Implementation intentions</strong> (Gollwitzer)</td><td>If-then with a concrete when. d ≈ 0.65 across 94 studies.</td><td><strong>The single highest-leverage fix available.</strong> A commitment needs a day and a block.</td></tr></table></div>
+<h3>The synthesis</h3>
+<p>Nobody serious uses one of these. What the good operators actually run is a <strong>stack</strong>, where each layer has a different job and a different review cadence, and — the part everyone gets wrong — <strong>the layers are not all scored.</strong> OKR without a cadence is a spreadsheet. 4DX without a scoreboard the player owns is a meeting. 12WY without a theme layer is a machine for quitting in week nine.</p>
+<hr>
+<h2>PART 3 · THE STRUCTURE I WANT TO BUILD</h2>
+<p>Five layers. Each has one job, one review cadence, and an explicit answer to &quot;is this scored?&quot;</p>
+<h3>L1 · THE VOW — never scored, never fails</h3>
+<p><em>Become someone who executes.</em> Two horizons always visible: <strong>Dec 1</strong> (pipeline) and <strong>Mar 1</strong> (income). Reviewed never. Its only job is to be the thing still standing on a week you lost. This is the layer that keeps you opening the app.</p>
+<h3>L2 · DECEMBER — 4 outcomes, 1 WIG, reviewed monthly</h3>
+<p>Ranked, one WIG (3 clients with at least one at full freight). Each carries three fields that do not exist today:</p>
+<ul><li><strong>Objective</strong> — the qualitative sentence (have it)</li><li><strong>Evidence</strong> — what would <em>prove</em> it. Not &quot;in talks with a kitchen&quot; but <em>&quot;a reply from a named kitchen in my inbox.&quot;</em> Derived, never typed twice.</li><li><strong>Obstacle</strong> — the WOOP field. What will actually stop this.</li></ul>
+<p><strong>Does not appear in the weekly ritual.</strong> GTD cadence rule. You touch it at month turns.</p>
+<h3>L3 · THE LANDMARK — a dated picture every 4 weeks</h3>
+<p>What you have (Aug 31 / Sep 28 / Oct 26 / Nov 23), with three changes:</p>
+<ol><li>Every milestone must name its <strong>evidence</strong>, or it can&#x27;t be saved.</li><li><strong>SANO&#x27;s first landmark is a learning milestone</strong> — <em>the delivery process is written down and I have signed off on each of the six things</em> — and SANO shows no client-count target until that is done. This is Locke &amp; Latham applied to the exact thing your profile says you&#x27;re blocked on: process clarity, not assets.</li><li>Dates default to month boundaries (fresh-start effect) but stay freely editable.</li></ol>
+<h3>L4 · THE WEEK — the commitment layer. <strong>This is the missing engine.</strong></h3>
+<p>A commitment stops being a string and becomes a real object:</p>
+<pre><code>
+{ id, goalId, text, day:&#x27;tue&#x27;, block:&#x27;b1&#x27;, done:0, confidence:null }
+</code></pre>
+<p>That one change unlocks everything:</p>
+<ul><li><strong>The orphan check becomes true</strong> instead of a string guess</li><li><strong>Lead measures become countable</strong> — because now the app knows which goal a block served</li><li><strong>It becomes an if-then plan</strong> — a goal, a day, and a block is exactly Gollwitzer&#x27;s form</li><li><strong>The end-of-run answer becomes possible</strong> — where did 91 days actually go</li></ul>
+<p>Plus three mechanics on top:</p>
+<ul><li><strong>Capacity is a hard cap.</strong> 20 deep blocks/week. The composer refuses the 21st. Kanban WIP limit + Burkeman fixed volume. This is the &quot;no&quot; the system currently lacks.</li><li><strong>Pay yourself first.</strong> The WIG gets the 09:00–noon block by default and you have to actively take it away. Your peak brain is a scarce asset being spent on residue.</li><li><strong>The Friday ritual, ≤90 seconds, never blank.</strong> Three taps: close out last week&#x27;s commitments → one confidence tap per goal (1–5, <em>never scored</em>) → accept or edit next week, <strong>pre-filled from the current landmark</strong>. The week interprets the landmark; it does not re-derive it.</li></ul>
+<h3>L5 · THE BLOCK — Tuesday, 09:00</h3>
+<p>The if-then made real. Already works. It just needs to receive a commitment that knows what it&#x27;s for.</p>
+<h3>The three mechanics that make it <em>stick</em></h3>
+<ol><li><strong>Never miss twice.</strong> A missed commitment costs nothing. <strong>Two in a row on the same goal</strong> triggers one prompt with three buttons: <em>shrink it · move it · park it.</em> Never &quot;you failed.&quot; This is the direct countermeasure to the effect that killed v1.</li><li><strong>Confidence, not percentage.</strong> On Friday, one tap per goal: <em>will this land by Dec 1?</em> The trend of that number across 18 weeks is the most useful signal in the whole app, and it is honest in a way a progress bar never is. It is <strong>never scored</strong> and never touches OVR.</li><li><strong>Parking is a first-class state.</strong> A goal can be parked with a date. Parked ≠ failed, and <strong>parking never zeroes a counter</strong> — because a zeroed counter is a manufactured lapse.</li></ol>
+<h3>What the page looks like after this</h3>
+<p>Same spine, four changes:</p>
+<ul><li><strong>The week node moves to the top and gets big.</strong> It is the only layer you act on daily. Right now it&#x27;s a peek box above a wall of things you can&#x27;t do anything about today.</li><li><strong>Each goal shows its lead counter as the hero number</strong>, not its lag. <em>Conversations this week: 4 of 12</em> — because that is the number you control. The lag (1 of 3 clients) goes small.</li><li><strong>Landmarks collapse by default</strong> to one line each, and expand on tap. You are not meant to read sixteen milestones on a Tuesday.</li><li><strong>The orphan check moves into the Friday ritual</strong>, where a &quot;that&#x27;s allowed but decide it&quot; prompt belongs, instead of firing falsely on the daily surface.</li></ul>
+<hr>
+<h2>THE ONE NUMBER THAT NEEDS YOUR ANSWER</h2>
+<p>Your SANO doctrine says <strong>50 calls a day.</strong> This app&#x27;s lead target implies <strong>12 conversations a week.</strong> That is a 20× gap, and it is flagged as unresolved in your own profile.</p>
+<p>I cannot pick for you, because the whole system is built on the lead measure being real. Two hours a day does not support 50 dials plus delivery. Twelve conversations a week may be too slack to produce three clients by December. <strong>Give me the weekly conversation number you actually believe in and I&#x27;ll build the ladder against it.</strong> Everything else above I can build without you.</p>
+<hr>
+<h2>BUILD ORDER</h2>
+<ol><li><strong>Typed commitments</strong> (<code>goalId</code> + <code>day</code>) — nothing else works without it, and it fixes the orphan check for free</li><li><strong>The Friday ritual</strong> — the cadence; this is what turns the page from a map into an engine</li><li><strong>Lead counters</strong> — one per goal, derived from typed commitments</li><li><strong>Capacity cap + pay-yourself-first</strong> — the &quot;no&quot;</li><li><strong>Evidence + obstacle fields</strong> on December goals</li><li><strong>SANO learning milestone</strong> takes precedence over client counts</li><li><strong>Never-miss-twice + parking + confidence</strong></li><li><strong>Page re-layout</strong> — week to the top, landmarks collapsed, lead as hero</li></ol>
+<p>Steps 1 and 2 are about 80% of the value. Everything after is refinement.</p>
+</div></body></html>
