@@ -1526,8 +1526,9 @@ function badges(){
   set('today',owed,true); set('bank',bank); set('record',rec); set('push',stale,true);
 }
 
+let sabOff=false;   /* dismissed for this session only — returns next visit */
 function render(){
-  if(dow()===0){$('sabbath').classList.add('on');
+  if(dow()===0&&!sabOff){$('sabbath').classList.add('on');
     const w=week(mondayOf(new Date(Date.now()-864e5)));
     const p=w.due?Math.round(w.done/w.due*100):0;
     $('sabRead').textContent=`LAST WEEK · ${p}% EXECUTION · ${p>=85?'ROUND WON':'ROUND LOST'}`;
@@ -3024,7 +3025,8 @@ var HDR = (function () {
 })();
 
 /* ---------- boot ---------- */
-$('sabLook').onclick=()=>{$('sabbath').classList.remove('on');render()};
+$('sabLook').onclick=()=>{sabOff=true;$('sabbath').classList.remove('on');
+  document.body.classList.remove('noTabs');render()};
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 document.addEventListener('click',askNotify,{once:true});
 recount();
