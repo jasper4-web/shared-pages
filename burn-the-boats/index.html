@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#07060b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -237,7 +237,9 @@ h2.sec u{text-decoration:none;color:var(--dim)}
 .ov{position:fixed;inset:0;z-index:200;background:rgba(4,3,7,.84);backdrop-filter:blur(6px);
   -webkit-backdrop-filter:blur(6px);display:none;align-items:flex-end;justify-content:center}
 .ov.on{display:flex}
-.sheet{width:100%;max-width:520px;background:#0c0a13;border:1px solid var(--line2);
+.ov.on .sheet{transform:translateY(0)}
+.sh-x{position:absolute;top:6px;right:8px;width:44px;height:44px;background:none;border:0;color:var(--faint);font-size:17px}
+.sheet{width:100%;max-width:520px;transform:translateY(12px);transition:transform .22s cubic-bezier(.2,.9,.3,1);background:#0c0a13;border:1px solid var(--line2);
   border-radius:22px 22px 0 0;padding:8px 16px calc(24px + var(--sb));max-height:92vh;overflow-y:auto}
 .grab{width:34px;height:4px;border-radius:99px;background:var(--line2);margin:0 auto 15px}
 .sh-k{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.19em;color:var(--faint);text-transform:uppercase}
@@ -275,6 +277,43 @@ input:focus,textarea:focus{outline:none;border-color:var(--gold)}
 .run.broke .fgc{stroke:var(--blood)} .run.broke .run-mult{color:var(--blood)}
 .run.paused .fgc{stroke:var(--gold)} .run.paused .run-mult{color:var(--gold)}
 .run-acts{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;max-width:340px}
+
+/* an off-script day stops shouting: the schedule and the push calm down, wins stay live */
+body.offday #sched,body.offday .pushstrip{opacity:.32;pointer-events:none}
+body.offday .nextup{opacity:.5}
+body.offday #sched::before{content:"Off-script. Today can't count against you.";
+  display:block;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.12em;
+  color:var(--gold);padding:0 2px 10px}
+
+/* close the day */
+.closecard{margin-top:16px;border:1px solid var(--line2);border-radius:14px;padding:14px;
+  background:linear-gradient(150deg,#16121f,#0e0c15)}
+.closecard.due{border-color:rgba(224,178,94,.45)}
+.cc-k{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.19em;color:var(--gold);text-transform:uppercase}
+.cc-t{font-family:'Clash Display',sans-serif;font-size:17px;margin-top:6px;letter-spacing:-.02em}
+.cc-row{display:grid;grid-template-columns:1fr auto auto auto;gap:6px;align-items:center;
+  padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12.5px}
+.cc-row:last-of-type{border-bottom:0}
+.cc-row b{font-size:12px;color:var(--dim);font-weight:500}
+.cc-row button{background:transparent;border:1px solid var(--line2);color:var(--faint);border-radius:7px;
+  padding:7px 9px;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.08em;min-height:34px}
+.cc-row button.on{border-color:var(--phos);color:var(--phos)}
+.cc-row button.miss.on{border-color:var(--blood);color:var(--blood)}
+
+/* the verdict takeover */
+.verdict-ov{position:fixed;inset:0;z-index:320;background:#05060a;display:none;
+  align-items:center;justify-content:center;padding:28px;text-align:center}
+.verdict-ov.on{display:flex}
+.vd-inner{max-width:420px}
+.vd-k{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.26em;color:var(--faint);text-transform:uppercase}
+.vd-big{font-family:'Clash Display',sans-serif;font-size:64px;line-height:.9;letter-spacing:-.05em;margin:16px 0 10px}
+.vd-line{font-family:'Clash Display',sans-serif;font-size:19px;line-height:1.3;letter-spacing:-.02em}
+.vd-meta{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--faint);margin-top:18px;line-height:1.9}
+.verdict-ov.him .vd-big{color:var(--ghost);text-shadow:0 0 40px rgba(143,180,232,.5)}
+.verdict-ov.him .vd-line{color:var(--ghost)}
+.verdict-ov.good .vd-big{color:var(--phos)}
+.verdict-ov.short .vd-big{color:var(--ember)}
+.verdict-ov.short .vd-line{color:#e8b79a}
 
 /* ---------- sabbath ---------- */
 .sabbath{position:fixed;inset:0;z-index:260;background:#06070a;display:none;flex-direction:column;
@@ -386,6 +425,7 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
   <h2 class="sec">Today <u id="schCount"></u></h2>
   <div id="sched"></div>
 
+  <div id="closeCard"></div>
   <div class="runstrip" id="runStrip"></div>
   <div class="foot" id="foot"></div>
  </section>
@@ -416,6 +456,16 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
 
 <div class="ov" id="ovA"><div class="sheet" id="sheetA"></div></div>
 <div class="toast" id="toast"></div>
+
+<div class="verdict-ov" id="verdictOv">
+  <div class="vd-inner">
+    <div class="vd-k" id="vdK"></div>
+    <div class="vd-big" id="vdBig"></div>
+    <div class="vd-line" id="vdLine"></div>
+    <div class="vd-meta" id="vdMeta"></div>
+    <button class="btn" id="vdClose" style="max-width:320px;margin-top:26px">Done</button>
+  </div>
+</div>
 
 <div class="run" id="run">
   <div class="run-k" id="runK">Focus run</div>
@@ -671,7 +721,11 @@ function domainProgress(){
         if(b.opt)return;                                   // quota items handled below
         if(k===tk&&mins(b.e)>nm)return;
         if(rec.wait&&rec.wait[b.id])return;
-        b.dom.forEach(dk=>{avail[dk]++; if(rec.done[b.id])earned[dk]++});
+        /* A market block completing only means he sat down. CAPITAL is credited for RULES KEPT —
+           otherwise he could blow an account and watch the stat rise. His own definition of a won
+           month is "stuck to the rules and did not double-back trade", never P&L. */
+        const ruled = b.kind==='market' ? !!(rec.trade&&rec.trade.rules&&rec.trade.nodb) : true;
+        b.dom.forEach(dk=>{avail[dk]++; if(rec.done[b.id]&&ruled)earned[dk]++});
       });
     });
 
@@ -738,14 +792,26 @@ function logSmoked(){
 }
 /* The dishwasher streak = consecutive weeks kept at or under the threshold.
    Rolls when the week changes; only a week that went OVER breaks it. */
+/* Roll forward through EVERY missed week, not just to the current one — reopening the app
+   after a fortnight away used to skip straight to now and silently keep a streak. */
 function rollDishWeek(){
   const v=S.vices.dish,mk=mondayOf(new Date());
   if(v.weekKey===mk)return;
-  if(v.weekKey){                                  // a completed week just ended
-    if(v.week<=v.allow){v.streak++;v.streakBest=Math.max(v.streakBest,v.streak)}
-    else v.streak=0;
+  if(!v.weekKey){v.weekKey=mk;v.week=0;save();return}
+  let guard=0;
+  const lived=wk=>{                      // did he actually use the app that week?
+    for(let i=0;i<6;i++){const t=new Date(wk+'T00:00:00');t.setDate(t.getDate()+i);
+      if(S.days[iso(t)])return true}
+    return false;
+  };
+  while(v.weekKey!==mk && guard++<60){
+    // a week he was over breaks it; a week with no record at all neither extends nor breaks
+    if(v.week>v.allow) v.streak=0;
+    else if(lived(v.weekKey)){v.streak++;v.streakBest=Math.max(v.streakBest,v.streak)}
+    const n=new Date(v.weekKey+'T00:00:00');n.setDate(n.getDate()+7);
+    v.weekKey=iso(n); v.week=0;
   }
-  v.weekKey=mk; v.week=0; save();
+  save();
 }
 function openVice(k){
   const v=S.vices[k];
@@ -838,8 +904,9 @@ function render(){
   $('sabbath').classList.remove('on');document.body.classList.remove('noTabs');
   autoMark(); recount(); badges();
   if(VIEW==='today'){
+    document.body.classList.toggle('offday',!!day().off);
     renderStatus(); renderGauges(); renderGlance(); renderRail();
-    renderPushStrip(); renderPenance(); renderNext(); renderWins(); renderSched(); renderRunStrip();
+    renderPushStrip(); renderPenance(); renderNext(); renderWins(); renderSched(); renderClose(); renderRunStrip();
     $('foot').innerHTML=`BURN THE BOATS · DAY ${dayNo()} / ${TOTAL_DAYS}<br>WHAT IS THE MILLIONAIRE VERSION OF YOURSELF DOING RIGHT NOW?`;
   }
   else if(VIEW==='push') renderPush();
@@ -880,8 +947,10 @@ function renderGauges(){
   $('ggA').onclick=()=>openVice('dish');
 
   const gateOK=!vs.brokeGate;
+  const toNoon=mins(v.smoke.gate)-nowMin();
   dial($('ggB'),{pct:Math.min(1,v.smoke.cleanStreak/7),val:v.smoke.cleanStreak+'d',
-    label:vs.brokeGate?'Smoke · broke':vs.beforeNoon?'Smoke · gate':'Smoke · open',
+    label:vs.brokeGate?'Smoke · broke'
+      :vs.beforeNoon?`Smoke · ${Math.floor(toNoon/60)}h${pad(toNoon%60)}`:'Smoke · open',
     hot:gateOK&&v.smoke.cleanStreak>0,color:gateOK?'#FF6B2C':'#FF4D5E'});
   $('ggB').onclick=()=>openVice('smoke');
 
@@ -966,11 +1035,23 @@ function renderSched(){
   groups.forEach(([name,a,z])=>{
     const items=sh.slice(a,z);if(!items.length)return;
     const arc=document.createElement('div');arc.className='arc';
+    const allPast=items.every(b=>nowMin()>=mins(b.e));
+    const hits=items.filter(b=>SCORED(b)&&!b.opt&&d.done[b.id]).length;
+    const tot=items.filter(b=>SCORED(b)&&!b.opt).length;
+    // count BEFORE any early return — collapsing an arc must not delete it from the day's tally
+    items.forEach(b=>{
+      if(!SCORED(b)||b.opt||d.wait[b.id])return;
+      if(mins(b.e)<=nowMin()){total++;if(d.done[b.id])done++} else ahead++;
+    });
+    if(allPast&&!S._open?.[name]){
+      arc.innerHTML=`<div class="arc-h" style="cursor:pointer;padding:9px 2px" onclick="openArc('${name}')">
+        <span>${name} · ${hits}/${tot}</span><span>${items[items.length-1].e} ▾</span></div>`;
+      host.appendChild(arc);return;
+    }
     arc.innerHTML=`<div class="arc-h"><span>${name}</span><span>${Math.round(items.reduce((x,b)=>x+mins(b.e)-mins(b.s),0)/6)/10}h</span></div>`;
     items.forEach(b=>{
       const i=sh.indexOf(b),isDone=d.done[b.id],isMiss=d.miss[b.id],isWait=d.wait[b.id],isNow=i===ci;
       const past=nowMin()>=mins(b.e);
-      if(SCORED(b)&&!b.opt&&!isWait){ if(mins(b.e)<=nowMin()){total++;if(isDone)done++;} else ahead++; }
       const t=tacticFor(b),biz=bizFor(b),dm=DOMAINS.find(x=>x.k===b.dom[0]);
       const el=document.createElement('div');
       el.className='blk'+(b.kind==='deep'?' deep':'')+(isDone?' done':'')+(isMiss?' miss':'')
@@ -978,8 +1059,9 @@ function renderSched(){
       el.onclick=()=>openBlk(b.id);
       el.innerHTML=`<span class="dom" style="background:${dm.c};opacity:${isDone?.8:.32}"></span>
         <span class="bt">${b.s}</span>
-        <div><div class="bn">${esc(b.n)}${biz?' · '+esc(biz):''}</div>
-        ${b.kind==='deep'?`<div class="bo ${t?'':'empty'}">${t?esc(t):'no objective set'}</div>`
+        <div><div class="bn">${b.kind==='deep'&&t?esc(t):esc(b.n)+(biz?' · '+esc(biz):'')}</div>
+        ${b.kind==='deep'
+          ?`<div class="bo ${t?'':'empty'}">${t?esc(b.n)+(biz?' · '+esc(biz):''):'no objective set'}</div>`
           :(b.sub?`<div class="bo">${esc(b.sub)}</div>`:'')}
         <div class="bd">${mins(b.e)-mins(b.s)}m · ${b.dom.join(' + ')}${b.opt?' · OPTIONAL':''}</div></div>
         <span class="bc"></span>`;
@@ -989,6 +1071,7 @@ function renderSched(){
   });
   $('schCount').textContent=total?`${done} of ${total} so far · ${ahead} ahead`:`${ahead} ahead`;
 }
+function openArc(n){S._open=S._open||{};S._open[n]=1;render()}
 function renderWins(){
   const d=day(),host=$('wins');
   const mon=mondayOf(new Date());
@@ -1116,12 +1199,43 @@ function exportSave(){
 }
 
 /* ---------- block sheet ---------- */
-function sheet(html){$('sheetA').innerHTML='<div class="grab"></div>'+html;$('ovA').classList.add('on')}
+function sheet(html){
+  $('sheetA').style.position='relative';
+  $('sheetA').innerHTML='<div class="grab"></div><button class="sh-x" onclick="closeSheet()">✕</button>'+html;
+  $('ovA').classList.add('on');
+}
 function closeSheet(){$('ovA').classList.remove('on')}
+
+/* The 08:30 ritual writes the whole day at once. `writes:1` was declared on the block and
+   read nowhere, so the one ritual whose job is filling the four "no objective set" holes
+   opened a generic sheet with no field to write into. */
+function openComposer(){
+  const d=day(),w=week();
+  const slots=[['b1','Block 1 · 09:00'],['b2','Block 2 · 10:45'],['b3','Block 3 · 13:20'],['b4','Block 4 · 15:05']];
+  sheet(`<div class="sh-k">08:30 · THE COFFEE SHOP</div>
+    <div class="sh-t">Today's three</div>
+    <div class="sh-sub">WRITE THEM ONCE — THEY FILL THE DAY</div>
+    ${slots.map(([k,lab],i)=>`<div class="fld"><label>${lab}</label>
+      <input id="cp_${k}" value="${esc((d.prio&&d.prio[i])||w.tactics[k]||'')}" placeholder="The one thing this block produces"></div>`).join('')}
+    <div class="chain"><div><div class="cl">Why here</div>
+      <div class="cv">These become the objective line inside each block. Until they're written those
+      blocks show <b>no objective set</b> — a visible hole at 09:00.</div></div></div>
+    <button class="btn" onclick="saveComposer()">Set the day</button>`);
+}
+function saveComposer(){
+  const d=day(),w=week();d.prio=d.prio||[];
+  ['b1','b2','b3','b4'].forEach((k,i)=>{
+    const v=$('cp_'+k).value.trim();
+    d.prio[i]=v; if(v)w.tactics[k]=v;
+  });
+  d.done['prio']=true;
+  save();closeSheet();award('blk:prio',25,'the day is set');
+}
 $('ovA').onclick=e=>{if(e.target.id==='ovA')closeSheet()};
 
 function openBlk(id){
   const b=shape().find(x=>x.id===id);if(!b)return;
+  if(b.writes)return openComposer();
   const d=day(),t=tacticFor(b),biz=bizFor(b),g=S.december[b.dom[0]];
   sheet(`
     <div class="sh-k">${b.s} – ${b.e} · ${mins(b.e)-mins(b.s)} MIN</div>
@@ -1158,7 +1272,25 @@ function lastProduced(id){
 }
 function markDone(id){const d=day();d.done[id]=true;delete d.miss[id];delete d.wait[id];save();closeSheet();
   if(!award('blk:'+id,25,'block done'))render();}
-function markMiss(id){const d=day();d.miss[id]=true;delete d.done[id];save();closeSheet();render()}
+/* A miss must never be a terminal red row with no way out. */
+function markMiss(id){
+  const d=day();d.miss[id]=true;delete d.done[id];save();
+  const b=shape().find(x=>x.id===id);
+  sheet(`<div class="sh-k">MISSED</div><div class="sh-t">${esc(b?b.n:'')}</div>
+    <div class="sh-sub">IT HAPPENS — PICK WHERE IT GOES</div>
+    <button class="btn gh" onclick="pushToTomorrow('${id}')">Move it to tomorrow</button><div style="height:8px"></div>
+    <button class="btn gh" onclick="markWait('${id}')">It was blocked — waiting on someone</button><div style="height:8px"></div>
+    <button class="btn gh" onclick="unMiss('${id}')">Not missed after all</button><div style="height:8px"></div>
+    <button class="btn" onclick="closeSheet();render()">Leave it missed</button>`);
+}
+function unMiss(id){const d=day();delete d.miss[id];save();closeSheet();render()}
+function pushToTomorrow(id){
+  const t=tacticFor(shape().find(x=>x.id===id));
+  const n=new Date();n.setDate(n.getDate()+1);
+  const nd=day(iso(n)),idx={b1:0,b2:1,b3:2,b4:3}[id];
+  if(t&&idx!==undefined){nd.prio=nd.prio||[];nd.prio[idx]=t}
+  save();closeSheet();render();toast('Moved to tomorrow','good');
+}
 function markWait(id){const d=day();d.wait[id]=true;delete d.miss[id];save();closeSheet();render();
   toast("Marked waiting — it won't score against you.",'good')}
 
@@ -1176,6 +1308,7 @@ function startRun(id,resume){
   $('runMult').textContent=run.broken?'BROKEN · BONUS LOST':'UNBROKEN · +65 XP ON FINISH';
   $('runWarn').textContent='Screen off is fine. Using another app for more than 10s without tapping Step away breaks it.';
   $('runStep').textContent=`Step away · ${run.passes}`;
+  $('runStep').onclick=stepAway;$('runEnd').textContent='End';
   tick();run.t=setInterval(tick,500);
   reacquireLock();persistRun();
 }
@@ -1209,7 +1342,16 @@ function finishRun(){
   $('runTime').textContent=run.broken?'TIME':'DONE';
   $('runMult').textContent=run.broken?`BLOCK COUNTED · +${xp} XP`:`CLEAN RUN · +${xp} XP`;
   notify(run.broken?'Block done (bonus lost)':'Clean run', b.n);
-  setTimeout(closeRun,1700);
+  const id=b.id;
+  $('runWarn').innerHTML=`<input id="shipIn" placeholder="What came out of this?"
+      style="margin-bottom:9px" value="${esc(d.produced[id]||'')}">`;
+  $('runStep').textContent='SHIP IT';$('runStep').onclick=()=>shipIt(id);
+  $('runEnd').textContent='Skip';
+}
+function shipIt(id){
+  const v=($('shipIn')||{}).value||'';
+  if(v.trim()){day().produced[id]=v.trim();save();award('ship:'+id,25,'shipped')}
+  closeRun();
 }
 function closeRun(){
   if(run&&run.t)clearInterval(run.t);
@@ -1217,16 +1359,18 @@ function closeRun(){
   run=null;S.activeRun=null;save();$('run').className='run';document.body.classList.remove('noTabs');render();
 }
 $('runEnd').onclick=()=>{if(run&&!run.broken&&run.left>0){day().focus[run.b.id]='quit';save()}closeRun()};
-$('runStep').onclick=()=>{
+function stepAway(){
   if(!run||run.paused)return;
   if(run.passes<=0){toast('No passes left on this block','bad');return}
   run.passes--;run.paused=true;run.pauseEnd=Date.now()+120000;
   run.endAt+=120000;                                  // the pause doesn't eat your block
   $('run').classList.add('paused');
   $('runStep').textContent=`Step away · ${run.passes}`;
+  $('runStep').onclick=stepAway;$('runEnd').textContent='End';
   $('runMult').textContent='PAUSED · 2 MINUTES';persistRun();
   $('runWarn').textContent='Come back inside the window and nothing is lost.';
-};
+}
+$('runStep').onclick=stepAway;
 /* A screen that goes to sleep is NOT you picking up your phone.
    visibilitychange also fires for Control Center, a call banner and an expanded notification.
    Breaking on all of that is a wall of failure the OS causes and he cannot appeal — so we
@@ -1392,6 +1536,67 @@ function nudgeCheck(){
     notify('You burned the boats.', `${b.n} started at ${b.s}. ${tacticFor(b)||''}`);
   }
 }
+
+/* ================= CLOSE THE DAY + THE VERDICT ================= */
+function dueSoFar(){
+  const d=day();
+  return shape().filter(b=>SCORED(b)&&!b.opt&&mins(b.e)<=nowMin()&&!(d.wait&&d.wait[b.id]));
+}
+function renderClose(){
+  const el=$('closeCard'),d=day(),m=nowMin();
+  if(d.closed){el.innerHTML=`<div class="closecard"><div class="cc-k">Day closed</div>
+    <div class="cc-t">Sealed at ${esc(d.closed)}. Nothing else is owed.</div></div>`;return}
+  if(m<mins('20:00')){el.innerHTML='';return}
+  const open=dueSoFar().filter(b=>!d.done[b.id]&&!d.miss[b.id]);
+  const openWins=WINS.filter(w=>!d.wins[w.k]);
+  el.innerHTML=`<div class="closecard due">
+    <div class="cc-k">Close the day</div>
+    <div class="cc-t">${open.length?`${open.length} thing${open.length>1?'s':''} still unmarked`:'Everything is marked'}</div>
+    ${open.map(b=>`<div class="cc-row"><span>${esc(b.n)}</span>
+      <button onclick="ccMark('${b.id}','done')">DID IT</button>
+      <button class="miss" onclick="ccMark('${b.id}','miss')">MISSED</button>
+      <button onclick="ccMark('${b.id}','wait')">WAITING</button></div>`).join('')}
+    ${openWins.length?`<div class="cc-row" style="border-top:1px solid rgba(255,255,255,.06);margin-top:6px">
+      <span style="color:var(--faint);font-size:11.5px">Last chance on ${openWins.length} small win${openWins.length>1?'s':''}</span>
+      <button onclick="go('today');window.scrollTo({top:0})">SHOW</button></div>`:''}
+    <div class="fld" style="margin:12px 0 10px"><label>What came out of today?</label>
+      <input id="dayLine" value="${esc(d.line||'')}" placeholder="One line"></div>
+    <button class="btn" onclick="closeDay()">CLOSE THE DAY</button></div>`;
+  const li=$('dayLine'); if(li) li.onchange=()=>{day().line=li.value;save()};
+}
+function ccMark(id,how){
+  const d=day();
+  delete d.done[id];delete d.miss[id];delete d.wait[id];
+  if(how==='done'){d.done[id]=true;award('blk:'+id,25,'marked done')}
+  else if(how==='miss')d.miss[id]=true; else d.wait[id]={who:'someone',since:today()};
+  save();render();
+}
+function closeDay(){
+  const d=day();
+  d.closed=new Date().toTimeString().slice(0,5);
+  const due=dueSoFar(),hit=due.filter(b=>d.done[b.id]).length;
+  const pct=due.length?hit/due.length:1;
+  award('close:'+today(),50,'day closed');
+  save();showVerdict(pct,hit,due.length);
+}
+/* The rival as a DAILY verdict — winnable today, never a permanent deficit. */
+function showVerdict(pct,hit,total){
+  const ov=$('verdictOv'),d=day();
+  const xp=Object.values(d.credited||{}).reduce((a,b)=>a+b,0);
+  let cls,k,big,line;
+  if(d.off){cls='';k='Off-script';big='—';line="Today didn't count against you. That was the point.";}
+  else if(pct===1){cls='him';k="Today's verdict";big='100%';
+    line='You acted exactly like your millionaire self today. Every single thing due — done.';}
+  else if(pct>=.85){cls='good';k="Today's verdict";big=Math.round(pct*100)+'%';
+    line="He'd recognise this day. That's a win.";}
+  else{cls='short';k="Today's verdict";big=Math.round(pct*100)+'%';
+    line='You fell short today. Tomorrow you act like him from 6:00.';}
+  ov.className='verdict-ov on '+cls;
+  document.body.classList.add('noTabs');
+  $('vdK').textContent=k;$('vdBig').textContent=big;$('vdLine').textContent=line;
+  $('vdMeta').innerHTML=`${hit} OF ${total} DUE · +${xp} XP TODAY<br>DAY ${dayNo()} OF ${TOTAL_DAYS}`;
+}
+$('vdClose').onclick=()=>{$('verdictOv').className='verdict-ov';document.body.classList.remove('noTabs');render()};
 
 /* ================= THE PUSH ================= */
 const GATE=[
@@ -1570,12 +1775,31 @@ function renderRecord(){
         :'<div style="padding:14px 0;color:var(--faint);font-size:13px">Nothing logged yet. Finish a focus run and write what came out of it.</div>'}
     </div>
 
+    ${[5,6].includes(dow())?`
+    <h2 class="sec">Set next week <u>tweak, don't start over</u></h2>
+    <div class="card">
+      ${['b1','b2','b3','b4'].map(k=>`<div class="theme-row" style="display:grid;grid-template-columns:52px 1fr;gap:9px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)">
+        <label style="font-family:'Geist Mono';font-size:9px;color:var(--faint);letter-spacing:.1em">${k.toUpperCase()}</label>
+        <select id="nx_${k}">${['SANO','TRADING','LA Edible','Admin + follow-ups'].map(o=>
+          `<option ${nextWeek().theme[k]===o?'selected':''}>${o}</option>`).join('')}</select></div>`).join('')}
+      <div style="padding:11px 0 2px"><button class="btn" onclick="saveNextWeek()">Lock next week · +75 XP</button></div>
+    </div>`:''}
+
     <h2 class="sec">Data</h2>
     <div class="card"><div class="stat" style="border-bottom:0;gap:8px">
       <button class="btn gh sm" onclick="exportSave()">Backup</button>
       <button class="btn gh sm" onclick="$('restoreIn').click()">Restore</button>
       <input type="file" id="restoreIn" accept=".json" style="display:none" onchange="restoreSave(this)">
     </div></div>`;
+}
+function nextWeek(){
+  const m=new Date(mondayOf(new Date()));m.setDate(m.getDate()+7);
+  return week(iso(m));
+}
+function saveNextWeek(){
+  const w=nextWeek();
+  ['b1','b2','b3','b4'].forEach(k=>{const el=$('nx_'+k);if(el)w.theme[k]=el.value});
+  save();award('setweek:'+mondayOf(new Date()),75,'next week is set');
 }
 function restoreSave(inp){
   const f=inp.files[0];if(!f)return;const r=new FileReader();
