@@ -996,7 +996,18 @@ function week(k){k=k||mondayOf(new Date());
   return S.week[k]}
 /* Which goal a block serves. Day-level override first, then the week's. */
 function goalFor(b){if(!b||!b.id)return null;const w=week(),d=day();
-  return (d.goals&&d.goals[b.id])||w.goals[b.id]||null}
+  const set=(d.goals&&d.goals[b.id])||w.goals[b.id];
+  if(set!==undefined&&set!=='')return set||null;
+  if(set==='')return null;                    /* an explicit "none" is respected */
+  return themeGoal(b);                        /* otherwise fall back to the block's business */
+}
+/* The week already says which business each block serves — use it so the link
+   works on day one without him setting anything. */
+function themeGoal(b){
+  const t=(week().theme||{})[b.id];if(!t)return null;
+  const g=goals().find(x=>x.short.toLowerCase()===String(t).toLowerCase());
+  return g?g.id:null;
+}
 function goalById(id){return goals().find(g=>g.id===id)||null}
 
 function toast(m,kind){const t=$('toast');t.textContent=m;t.className='toast show '+(kind||'');
