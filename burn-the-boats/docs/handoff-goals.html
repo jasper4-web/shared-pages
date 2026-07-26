@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>Handoff — the goal system — Burn the Boats</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{--bg:#07060b;--panel:#0e0c16;--line:#1e1a2b;--line2:#2b2540;--ink:#EDEAE4;
+ --dim:#9a93a8;--faint:#6b6480;--gold:#E0B25E;--ember:#FF6B2C;--phos:#4ADE80;--blood:#FF4D5E}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.62}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px 80px}
+.top{position:sticky;top:0;z-index:9;background:rgba(7,6,11,.95);backdrop-filter:blur(12px);
+ border-bottom:1px solid var(--line);margin:0 -18px 26px;padding:13px 18px;display:flex;
+ align-items:center;gap:12px}
+.top a{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--gold);
+ text-decoration:none;min-height:44px;display:flex;align-items:center}
+.top span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint);
+ margin-left:auto;text-align:right}
+h1,h2,h3,h4{font-family:'Clash Display',sans-serif;letter-spacing:-.02em;line-height:1.15;margin:0}
+h1{font-size:31px;font-weight:700;margin:28px 0 16px}
+h2{font-size:23px;font-weight:600;margin:40px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+h3{font-size:18px;font-weight:600;margin:28px 0 10px;color:var(--gold)}
+h4{font-size:15px;font-weight:600;margin:22px 0 8px;color:var(--dim)}
+p{font-size:16px;color:var(--dim);margin:0 0 16px}
+strong{color:var(--ink);font-weight:600}
+em{color:var(--ink);font-style:italic}
+ul,ol{padding-left:22px;margin:0 0 18px}
+li{font-size:16px;color:var(--dim);margin-bottom:9px}
+li::marker{color:var(--faint)}
+code{font-family:'Geist Mono',monospace;font-size:13.5px;background:var(--panel);
+ border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#c8bfe0}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px;
+ overflow-x:auto;margin:0 0 18px}
+pre code{background:none;border:0;padding:0;font-size:13px;line-height:1.7;color:#bdb5d4}
+blockquote{margin:0 0 18px;padding:12px 0 12px 17px;border-left:3px solid var(--gold);
+ color:#c9bda0;font-size:16px}
+blockquote p{color:inherit;margin:0 0 8px}
+blockquote p:last-child{margin:0}
+hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+a{color:var(--gold)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 20px;
+ border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint);
+ text-transform:uppercase;text-align:left;padding:12px;background:var(--panel);
+ border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:12px;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td strong{color:var(--ink)}
+</style></head><body><div class="wrap">
+<div class="top"><a href="../work.html">&larr; ALL THE WORK</a><span>BURN THE BOATS</span></div>
+<h1>HANDOFF — BURN THE BOATS · THE GOAL SYSTEM</h1>
+<p><strong>Written 2026-07-26, end of session.</strong> Read this top to bottom before touching anything. It is the single place that knows where we are.</p>
+<hr>
+<h2>0 · SAY THIS TO PICK UP</h2>
+<blockquote><p><strong>&quot;Continue the Burn the Boats goal system — read HANDOFF-GOALS.md first.&quot;</strong></p></blockquote>
+<hr>
+<h2>1 · WHAT THIS PROJECT IS</h2>
+<p>A single-file PWA that is Jasper&#x27;s daily operating system for a <strong>91-weekday run, Mon 2026-07-27 → Tue 2026-12-01.</strong> Installed on his iPhone home screen. Four tabs: <strong>Today · Goals · Bank · Record.</strong></p>
+<ul><li><strong>Live:</strong> https://jasper4-web.github.io/shared-pages/burn-the-boats/</li><li><strong>Everything we&#x27;ve built (index):</strong> https://jasper4-web.github.io/shared-pages/burn-the-boats/work.html</li><li><strong>Source:</strong> <code>~/Documents/burn-the-boats/index.html</code> (single file, ~180KB)</li><li><strong>Deploy target:</strong> the <code>jasper4-web/shared-pages</code> repo, folder <code>burn-the-boats/</code></li><li><strong>Who he is:</strong> <code>PROFILE.md</code> — read it, it is the source of truth for anything about him</li></ul>
+<hr>
+<h2>2 · THE RULES THAT ARE NOT NEGOTIABLE</h2>
+<ol><li><strong>A change is not done until it is LIVE and verified.</strong> Never ask &quot;want me to deploy?&quot; He reviews on his phone; a local edit is an invisible edit. He has told me this angrily. See <code>~/.claude/.../memory/deploy_every_change.md</code>.</li><li><strong>Bump <code>const CACHE</code> in <code>sw.js</code> every single deploy.</strong> Currently <strong>btb-v8</strong>. Miss it and his installed app serves the old copy and the fix looks like it did nothing.</li><li><strong>Verify the LIVE url, not the local file.</strong> Poll it — GitHub Pages takes ~30–40s. Then actually run the page and look at a screenshot.</li><li><strong>Never render a wall of failure.</strong> His stated failure mode: when behind, he stops opening the app. Every design decision is subordinate to this.</li><li><strong>He plugs in his own goals.</strong> Do not author his content. Build the machine.</li><li><strong>Craft floor:</strong> no text under 11px · every tap target ≥44px · no horizontal overflow at 390px · nothing shifts between states.</li></ol>
+<hr>
+<h2>3 · WHERE WE ARE RIGHT NOW</h2>
+<h3>Shipped and live in the app</h3>
+<div class='tw'><table><tr><th></th><th>Status</th></tr><tr><td>Sabbath screen can be dismissed</td><td><strong>live</strong> — the button was a no-op; <code>render()</code> re-added it in the same tick</td></tr><tr><td>&quot;Push&quot; tab renamed <strong>Goals</strong></td><td><strong>live</strong> (route id is still <code>push</code> internally, on purpose)</td></tr><tr><td><strong>Block knows its goal</strong> — <code>THIS BLOCK IS FOR</code> on the live block card</td><td><strong>live</strong></td></tr><tr><td><strong>XP attributed</strong> — <code>award(key,n,label,goalId)</code> → <code>S.xpByGoal</code></td><td><strong>live</strong></td></tr><tr><td><strong>Vault shows &quot;What bought this shelf&quot;</strong> by area</td><td><strong>live</strong></td></tr><tr><td>Goal defaults from the week&#x27;s business theme (so it works with zero setup)</td><td><strong>live</strong></td></tr><tr><td>Goals page: crumb bar no longer covers content; 0 sub-11px; all taps ≥44</td><td><strong>live</strong></td></tr></table></div>
+<p><strong>Stress tested:</strong> 6 phone widths (375→440) × 5 day/time states × 4 views × 3 Goals states × top and bottom scroll = <strong>360 checks, 0 failures.</strong> Harness: <code>scratchpad/stress.js</code>.</p>
+<h3>Built, published as design, NOT in the app</h3>
+<p>All on <code>work.html</code>:</p>
+<ul><li><strong><code>rend-goal-builder.html</code></strong> — a <em>working</em> prototype of user-authored areas/dates/goals/commitments, saves to localStorage. <strong>He has been asked to put his real goals in it and has not reported back.</strong></li><li><strong><code>rend-goals-system.html</code></strong> — 12 screens of the proposed system</li><li><strong><code>rend-one-machine.html</code></strong> — &quot;call ten owners&quot; traced end to end, 8 steps + the weekly challenge</li><li><strong><code>docs/goals-audit.html</code></strong> · <strong><code>docs/goals-structure-plan.html</code></strong> · <strong><code>docs/goals-mentor-review.html</code></strong></li></ul>
+<hr>
+<h2>4 · WHAT WE ARE ACTUALLY TRYING TO BUILD</h2>
+<p>The app&#x27;s goal model is <strong>hardcoded</strong> and that is the whole problem:</p>
+<pre><code>
+S.december = { WORK:{...}, CAPITAL:{...}, BODY:{...}, FAITH:{...}, MIND:{...}, PEOPLE:{...} }
+LANDMARKS  = computed in code from weeks 6/10/14/18
+goals()    = returns a fixed array with id:&#x27;sano&#x27;, id:&#x27;trade&#x27;, id:&#x27;edible&#x27;, id:&#x27;personal&#x27;
+</code></pre>
+<p>He cannot add a fifth business. He cannot add a two-month horizon. Every change is a code change. <strong>He wants to plug his own goals in and add/change/edit freely.</strong></p>
+<h3>The target model</h3>
+<pre><code>
+areas      id · name · colour · rank · quotas[] · archived      (never end)
+horizons   id · label · date                                    (just named dates)
+goals      id · areaId · horizonId? · parentId?
+           title · kind(outcome|learning|habit)
+           evidence? · obstacle? · lead{name,target}?
+           wig · rank · state(active|parked|done|dropped) · history[]
+commits    id · goalId · text · day · block · done
+</code></pre>
+<p><strong>The decision the whole thing turns on:</strong> a horizon is an <strong>attribute (a date)</strong>, not a level in a hierarchy. That is what makes &quot;monthly, two-month, December, anything&quot; data instead of code. (Linear does exactly this — cycles cross the hierarchy rather than being part of it.)</p>
+<h3>Other decisions already made</h3>
+<ul><li><strong>Three levels max</strong> — Area → Goal → Commitment, plus an <em>optional</em> <code>parentId</code> for laddering that is <strong>navigational only, never computed.</strong> (Notion caps rollups at one hop; EOS says dated pictures.)</li><li><strong>Areas ≠ Goals.</strong> Areas never end and carry ongoing weekly standards. Goals end and carry evidence.</li><li><strong>Editing stays free, but easing is recorded.</strong> Harden = silent and instant. Ease (lower a target, push a date, park) = instant but leaves a one-line trail on the goal: <em>&quot;target 12 → 8 · day 34&quot;</em>. Adapted from Beeminder&#x27;s akrasia horizon. <strong>Nothing ever zeroes a counter.</strong></li><li><strong>Goals do NOT auto-roll.</strong> At each horizon turn: <strong>carry / change / park / drop</strong>, one at a time. Friction is the feature (bullet-journal migration).</li><li><strong>Per-altitude cadence.</strong> December goals are touched <em>monthly</em>, never in the weekly ritual. The Goals tab is <strong>not a daily surface</strong> — the block on Today is.</li></ul>
+<hr>
+<h2>5 · THE MENTOR&#x27;S SEVEN OBJECTIONS — how many are fixed</h2>
+<p>He read these and said &quot;I agree with the mentor let&#x27;s do it.&quot;</p>
+<div class='tw'><table><tr><th>#</th><th>Objection</th><th>Status</th></tr><tr><td>1</td><td>Two machines bolted together — nothing paid XP for goal progress</td><td><strong>FIXED &amp; LIVE</strong></td></tr><tr><td>2</td><td>The commitment and the block are the same object drawn twice</td><td><strong>FIXED &amp; LIVE</strong> (the block card now shows its goal)</td></tr><tr><td>3</td><td>Capped the wrong unit — 20 blocks capped, 9 live goals uncapped</td><td><strong>open</strong></td></tr><tr><td>4</td><td>Confidence collected and never used</td><td><strong>open</strong></td></tr><tr><td>5</td><td>Three mechanisms for recurring behaviour (habits / standards / vices)</td><td><strong>open</strong></td></tr><tr><td>6</td><td>Nothing says what dies when the week is short</td><td><strong>open</strong></td></tr><tr><td>7</td><td>The month turn is the best screen and it&#x27;s buried</td><td><strong>open</strong></td></tr></table></div>
+<hr>
+<h2>6 · NEXT STEPS, IN ORDER</h2>
+<ol><li><strong>Make boosts user-authored + a suggestion pool.</strong> This is his own idea and he is excited about it: <em>&quot;a little weekly goal of buy a meal for a homeless person, +10 XP.&quot;</em> It is <strong>not a new object — it is a boost he wrote.</strong> <code>BOOSTS[]</code> is hardcoded; that is the only thing wrong with it.</li><li>Lives in the <strong>Bank</strong> (the chute), surfaces as one small card on <strong>Today</strong>, never on Goals</li><li><strong>10–30 XP, hard ceiling.</strong> A strong weekday pays ~445; at 100+ a challenge becomes a cheaper route to the Vault than working and the economy rots</li><li>Never scored. Ignoring one costs nothing.</li><li>~a day&#x27;s work, high delight, low risk. <strong>Do this first.</strong></li><li><strong>Migrate the goal model</strong> — areas/horizons/goals as data. Write to a <strong>new storage key</strong>, keep the old one untouched, one-tap revert. Nothing destroyed until he says the shape is right.</li><li><strong>Typed commitments + the Friday ritual</strong> (close out → confidence → next week pre-filled).</li><li>Collapse habits/standards/vices into one (recommend: <strong>standards on an Area</strong>, vices are standards with an inverted target).</li><li>Cap goals, not just blocks. Give confidence one job (two drops → early migration prompt).</li><li>Surface the month turn properly.</li></ol>
+<hr>
+<h2>7 · OPEN QUESTIONS HE HAS NOT ANSWERED</h2>
+<p>Do not guess these. They change the build.</p>
+<ol><li><strong>Easing: the visible trail, or Beeminder&#x27;s hard 7-day delay?</strong> (I recommended the trail.)</li><li><strong>Do horizons run past Dec 1?</strong> His profile says the real income cliff is <strong>February–March</strong>; December is the pipeline checkpoint. I think yes.</li><li><strong>How many areas — four, or closer to eight?</strong> Changes whether &quot;By Area&quot; needs collapsing.</li><li><strong>Should an Area carry a weekly standard</strong> (gym 2×, walks 3×)? I recommended yes.</li><li><strong>The lead-measure number.</strong> His SANO doctrine says <strong>50 calls/day</strong>; the app implies <strong>12 conversations/week</strong>. A 20× gap, flagged unresolved in his own profile. The ladder cannot be costed properly until he picks one.</li><li><strong>Has he tried <code>rend-goal-builder.html</code> with his real goals?</strong> The whole model rests on that test.</li></ol>
+<hr>
+<h2>8 · KNOWN PROBLEMS AND TRAPS</h2>
+<ul><li><strong>The Bank tab is the round-4 concept</strong>, not the finished <code>rend-bank-vault.html</code> build. The bullion shelf, key board, deposit boxes and register are <strong>not</strong> merged.</li><li><strong><code>claim()</code> deletes a reward instead of recording it</strong> — <code>r.done=1</code> and nothing else. No history is possible until <code>r.claimedOn = dayNo()</code> exists. Every design depends on this.</li><li><strong>Rewards are one-shot</strong> for all 91 days. Almost certainly not what he meant.</li><li><strong><code>S.privileges</code> is a bare integer</strong> with no way to spend one.</li><li><strong><code>dailyXp()</code> uses a lifetime average</strong>, so every &quot;~N days away&quot; drifts optimistic. Wants a trailing 7-day mean.</li><li><strong>The Vault&#x27;s bullion rack tops out at 10 bars = 5,000 XP.</strong> By November he will carry 4–5× that and the shelf will read &quot;full&quot; for two months. Needs a second unit (ten bars → one crate).</li><li><strong>The XP ladder in <code>S.rewards</code> is still the old costs</strong> (1200/1500/2000/2500). The costed ladder is 900 / 1,600 / 2,400 / 7,000 / 22,000 — see <code>docs/goals-structure-plan.html</code>.</li><li><strong><code>index.html</code> is nominally the GM&#x27;s file</strong> per the crew brief. He has asked me directly to edit it, which overrides that. Snapshots exist: <code>index.html.bak-*</code>.</li><li><strong>Only <code>.tap</code> chips get a 44px box</strong> in <code>#pushBody</code>. Any new chip that <em>does</em> something must get <code>class=&quot;chip tap&quot;</code> or it ships at 26px.</li></ul>
+<hr>
+<h2>9 · HOW TO VERIFY ANYTHING (the ritual that caught the real bugs)</h2>
+<pre><code>
+# 1 · lint
+node ~/build-arsenal/bin/arsenal-lint.js index.html
+
+# 2 · the stress harness — 360 checks
+cd &lt;scratchpad&gt;; node stress.js                       # local
+node stress.js &quot;https://jasper4-web.github.io/shared-pages/burn-the-boats/index.html&quot;
+</code></pre>
+<p><code>stress.js</code> sweeps <strong>6 phone widths × 5 clocks × 4 views × 3 Goals states × top/bottom scroll</strong> and flags: horizontal overflow · content left unreachable under a bottom-anchored overlay · text under 11px · tap targets under 44px · JS errors. It fakes the clock with <code>evaluateOnNewDocument</code> so a Monday morning can be tested on a Sunday, and clears localStorage so every run is a virgin install.</p>
+<p><strong>Two lessons it taught, the hard way:</strong></p>
+<ul><li><strong>Test at 430 and 440.</strong> His phone is ~440 CSS px. I had only ever tested 390 and missed the bug he screenshotted.</li><li><strong>A feature with no default is invisible.</strong> I shipped the goal↔block link with <code>week.goals</code> empty, so it rendered nothing and he correctly said &quot;it looks the same.&quot; Anything new needs a sensible default or it does not exist.</li></ul>
+<hr>
+<h2>10 · WHAT I GOT WRONG THIS SESSION</h2>
+<p>Worth reading so it isn&#x27;t repeated.</p>
+<ol><li><strong>Said &quot;verified&quot; when I had only verified the code was on GitHub</strong>, not that he would see anything. Two different claims. Only the second one matters to him.</li><li><strong>Shipped a feature with no visible entry point</strong> (see above).</li><li><strong>Authored his goals for four rounds</strong> before he corrected me: build the machine, not the content.</li><li><strong>Drifted into refining my own test harness</strong> instead of shipping the fixes it had already found — which is why this handoff exists. The fixes sat un-deployed while I polished the detector.</li></ol>
+</div></body></html>
