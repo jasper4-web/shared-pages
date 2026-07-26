@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#07060b">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -361,6 +360,9 @@ button{font-family:inherit}
   border-radius:5px;border:1px solid var(--line2);color:var(--faint);text-transform:uppercase;
   background:transparent;min-height:26px;display:inline-flex;align-items:center}
 /* a chip that DOES something gets a real hit box; a chip that is only a label does not */
+/* a chip that DOES something has to clear the touch floor wherever it lives — this was
+   scoped to #pushBody and every chip built anywhere else silently shipped at 26px */
+.chip.tap{min-height:44px;padding:4px 11px;cursor:pointer;display:inline-flex;align-items:center}
 #pushBody .chip.tap{min-height:44px;padding:4px 11px;cursor:pointer}
 #pushBody .capline{display:flex;align-items:center;gap:9px;margin-top:11px;padding:10px 12px;border-radius:11px;
   border:1px solid var(--line2);background:var(--panel)}
@@ -437,8 +439,11 @@ button{font-family:inherit}
   letter-spacing:-.03em;color:var(--gc,var(--gold));text-align:right;line-height:1}
 .nu-goal .gn s{display:block;text-decoration:none;font-family:'Geist Mono',monospace;font-size:11px;
   letter-spacing:.08em;color:var(--faint);margin-top:5px;line-height:1.4}
+/* a <button class="chip"> was inheriting the UA's ButtonFace — white boxes on a black app.
+   .chip never set a background because it began life as a <span>. */
 .chip{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.11em;padding:3px 7px;border-radius:4px;
-  border:1px solid var(--line2);color:var(--dim);text-transform:uppercase}
+  border:1px solid var(--line2);color:var(--dim);text-transform:uppercase;
+  background:transparent;appearance:none;-webkit-appearance:none}
 
 .btn{border:0;border-radius:11px;padding:14px 12px;font-size:14px;font-weight:600;min-height:46px;
   background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;cursor:pointer;width:100%;
@@ -528,6 +533,40 @@ h2.sec u{text-decoration:none;color:var(--dim)}
 .win b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint)}
 .win.on{border-color:rgba(74,222,128,.45);color:var(--phos);background:rgba(74,222,128,.07)}
 .win.on b{color:var(--phos)}
+
+/* ---------- boosts ----------
+   Deliberately quieter than .nextup: a boost is an offer, not an obligation. Violet,
+   never gold and never red — nothing on this card is ever allowed to read as a debt. */
+.bcard{display:flex;flex-direction:column;gap:5px;width:100%;text-align:left;cursor:pointer;
+  margin-top:10px;padding:13px 14px;border-radius:14px;min-height:var(--tap);
+  border:1px solid rgba(176,140,255,.28);background:linear-gradient(140deg,#16122210,#0e0c16);
+  transition:transform .1s}
+.bcard:active{transform:scale(.99)}
+.bcard .bk{display:flex;align-items:center;font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.19em;color:var(--violet)}
+.bcard .bk u{margin-left:auto;text-decoration:none;color:var(--violet)}
+.bcard .bt{font-size:15px;color:var(--ink);line-height:1.3}
+.bcard .bs{font-size:11.5px;color:var(--faint);line-height:1.35}
+.bcard.invite{border-style:dashed}
+.bcard.done{border-color:rgba(74,222,128,.3);cursor:default}
+.bcard.done .bk,.bcard.done .bt{color:var(--phos)}
+
+.bst{display:flex;flex-direction:column;gap:6px}
+.bst-r{display:flex;align-items:center;gap:9px;border:1px solid var(--line2);background:var(--panel);
+  border-radius:10px;padding:0 10px 0 0;min-height:var(--tap)}
+.bst-r.on{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.06)}
+.bst-go{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left;cursor:pointer;
+  background:none;border:0;padding:8px 0 8px 11px;min-height:var(--tap);justify-content:center}
+.bst-go .bn{font-size:13.5px;color:var(--dim);line-height:1.3}
+.bst-r.on .bst-go .bn{color:var(--phos)}
+.bst-go .bm{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--faint)}
+.bst-x{flex:none;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint)}
+.bst-r.on .bst-x{color:var(--phos)}
+.bst-e{flex:none;min-width:52px;min-height:var(--tap);border:0;background:none;cursor:pointer;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--violet)}
+.bst-f{margin-top:9px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
+.chip.seg.on{border-color:var(--violet);color:var(--violet);background:rgba(176,140,255,.1)}
+.hintline{margin-top:7px;font-size:11.5px;line-height:1.4;color:var(--faint)}
 
 /* ---------- score ---------- */
 .card{border-radius:14px;border:1px solid var(--line);background:var(--panel);padding:13px 14px}
@@ -727,7 +766,7 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
       <div class="n" id="fDays">—</div>
       <div class="r">
         <div class="t"><i id="fFuel" style="width:0%"></i></div>
-        <div class="lab"><span>WORKDAYS TO DEC 1</span><span id="fWk">—</span></div>
+        <div class="lab"><span id="fTo">WORKDAYS LEFT</span><span id="fWk">—</span></div>
       </div>
     </div>
   </div>
@@ -759,6 +798,7 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
   <div class="timeleft"><b id="tlBig">—</b><span>OF DEEP WORK LEFT</span><span class="dow" id="tlDow">—</span></div>
   <div id="penanceBanner"></div>
   <div class="nextup" id="nextUp"></div>
+  <div id="boostCard"></div>
 
   <h2 class="sec">Always counts <u id="winTally"></u></h2>
   <div class="wins" id="wins"></div>
@@ -855,9 +895,14 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
 <script>
 /* ==================================================================
    BURN THE BOATS — v3
-   Jul 27 → Dec 1 2026 · built from PROFILE.md
+   Jul 27 → Dec 25 2026 · built from PROFILE.md
    ================================================================== */
-const RUN_START='2026-07-27', RUN_END='2026-12-01', HIM=99;
+/* RUN_END is EXCLUSIVE — every counter loops `while(day < RUN_END)`.
+   Owner's call 2026-07-26: the run goes to Christmas, not Dec 1. Set 12-26 so the
+   last counted weekday is Fri Dec 25. Nothing else is hardcoded to a date: the
+   label, the landmarks and the OVR curve are all derived from these two lines,
+   so the next time he moves the finish line it is a one-character edit. */
+const RUN_START='2026-07-27', RUN_END='2026-12-26', HIM=99;
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const DOMAINS=[
@@ -928,6 +973,16 @@ const DEFAULT={
   push:{gate:{},anthonySent:0,kitchen:0,rules:{},focus:null,zoom:null},
   ms:{}, conf:{}, parked:{},
   week:{}, days:{},
+  /* BOOSTS ARE HIS, NOT MINE. This is the seed, not the list — every one of these can be
+     renamed, re-priced, re-timed or deleted, and he can write his own. merge() lets a saved
+     array win wholesale, so the moment he touches this it stops being ours. */
+  boostDefs:[
+    {id:'network',n:'Networking event', xp:250,size:'event',  repeat:'any'},
+    {id:'golf',   n:'Golf day',         xp:150,size:'event',  repeat:'any'},
+    {id:'read',   n:'Read tonight',     xp:60, size:'session',repeat:'day'},
+    {id:'money',  n:'Finances hour',    xp:90, size:'session',repeat:'day'},
+  ],
+  boostLog:[],
   /* the costed ladder — priced against a trailing rate of roughly 445 XP on a
      strong weekday, so the rungs read ~2 · 4 · 5 · 16 · 49 days across a 91-day run */
   rewards:[
@@ -961,6 +1016,14 @@ const TOTAL_DAYS=(()=>{let n=0;const c=new Date(RUN_START+'T00:00:00'),b=new Dat
 function dayNo(){return Math.max(1,Math.min(TOTAL_DAYS,TOTAL_DAYS-workdaysLeft()+1))}
 function weekNo(){const a=new Date(mondayOf(new Date(RUN_START+'T00:00:00'))),b=new Date(mondayOf(new Date()));
   return Math.max(1,Math.round((b-a)/6048e5)+1)}
+/* The last weekday actually counted, and its label. Everything that used to say a
+   literal "Dec 1" now reads this, so moving RUN_END moves the whole app. */
+const RUN_LAST=(()=>{const d=new Date(RUN_END+'T00:00:00');
+  do{d.setDate(d.getDate()-1)}while(d.getDay()===0||d.getDay()===6);return d})();
+const END_LABEL=RUN_LAST.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+const END_LABEL_U=END_LABEL.toUpperCase();
+const TOTAL_WEEKS=(()=>{const a=new Date(mondayOf(new Date(RUN_START+'T00:00:00'))),
+  b=new Date(mondayOf(RUN_LAST));return Math.max(1,Math.round((b-a)/6048e5)+1)})();
 
 /* deep-merge so a schema change reaches an existing save instead of being silently dropped */
 function merge(base,over){
@@ -974,7 +1037,8 @@ function merge(base,over){
 /* merge() replaces arrays wholesale, so a save made before the Vault shipped keeps the
    old four-reward ladder forever. Upgrade it — but only if he never edited it himself. */
 function migrate(s){
-  if(s.v>=4)return s;
+  if(s.v>=5)return s;
+  if(s.v>=4){migrateBoosts(s);s.v=5;return s}
   const OLD=[1200,1500,2000,2500];
   const untouched=Array.isArray(s.rewards)&&s.rewards.length===OLD.length&&
     s.rewards.every((r,i)=>r.cost===OLD[i]&&!r.done);
@@ -986,8 +1050,23 @@ function migrate(s){
   if(s.ms&&s.ms.body&&!s.ms.personal){s.ms.personal=s.ms.body;delete s.ms.body}
   if(s.conf&&s.conf.body!==undefined&&s.conf.personal===undefined){
     s.conf.personal=s.conf.body;delete s.conf.body}
-  s.v=4;
+  migrateBoosts(s);
+  s.v=5;
   return s;
+}
+/* the old boosts were a hardcoded const and a bare {k,date} log — carry the history
+   forward onto the new defs rather than dropping it on the floor */
+function migrateBoosts(s){
+  if(!Array.isArray(s.boostDefs)||!s.boostDefs.length)
+    s.boostDefs=JSON.parse(JSON.stringify(DEFAULT.boostDefs));
+  s.boostLog=Array.isArray(s.boostLog)?s.boostLog:[];
+  if(Array.isArray(s.boosts)&&s.boosts.length){
+    s.boosts.forEach(o=>{
+      const d=s.boostDefs.find(x=>x.id===o.k);
+      s.boostLog.push({id:o.k,date:o.date,xp:d?d.xp:0});
+    });
+    delete s.boosts;
+  }
 }
 function load(){try{const r=localStorage.getItem('btb3');if(r)return migrate(merge(JSON.parse(JSON.stringify(DEFAULT)),JSON.parse(r)))}catch(e){}
   return JSON.parse(JSON.stringify(DEFAULT))}
@@ -1068,8 +1147,10 @@ function recount(){
 }
 
 /* ================= THE PROGRESSION CURVE =================
-   Tuned so PERFECT execution reaches 99 OVR on Dec 1 exactly.
-   Verified: 100% -> Dec 1 · 95% -> Dec 8 · 90% -> Dec 16 · 85% -> Dec 24 · 80% -> Jan 1 (misses).
+   Perfect execution reaches 99 OVR on the LAST DAY OF THE RUN, whenever that is —
+   progress is divided by TOTAL_DAYS, so the curve re-tunes itself when RUN_END moves.
+   Extending Dec 1 -> Dec 25 stretched it over 110 weekdays instead of 91: the same
+   work now climbs ~17% slower per day, and 99 lands on the finish line, not before it.
    Every domain earns its own progress from the blocks that credit it, so the radar shows
    WHICH parts of the life you're actually feeding. OVR is the average — earned, never typed. */
 const START_OVR=50, TARGET_OVR=99;
@@ -1587,7 +1668,8 @@ function render(){
   if(VIEW==='today'){
     document.body.classList.toggle('offday',!!day().off);
     renderStatus(); renderGauges(); renderGlance(); renderRail();
-    renderPushStrip(); renderPenance(); renderNext(); renderWins(); renderSched(); renderClose(); renderRunStrip();
+    renderPushStrip(); renderPenance(); renderNext(); renderBoostCard();
+    renderWins(); renderSched(); renderClose(); renderRunStrip();
     $('foot').innerHTML=`BURN THE BOATS · DAY ${dayNo()} / ${TOTAL_DAYS}<br>WHAT IS THE MILLIONAIRE VERSION OF YOURSELF DOING RIGHT NOW?`;
   }
   else if(VIEW==='push') renderPush();
@@ -1600,6 +1682,7 @@ function renderStatus(){
   const wl=workdaysLeft();
   $('fDays').textContent=wl;
   $('fFuel').style.width=(wl/TOTAL_DAYS*100)+'%';
+  $('fTo').textContent='WORKDAYS TO '+END_LABEL_U;
   $('fWk').textContent='WK '+pad(weekNo());
 }
 
@@ -1913,6 +1996,35 @@ function renderSched(){
   $('schCount').textContent=total?`${done} of ${total} so far · ${ahead} ahead`:`${ahead} ahead`;
 }
 function openArc(n){S._open=S._open||{};S._open[n]=1;render()}
+/* ONE card, and only the small ones. The Goals tab is not a daily surface and neither is
+   the Bank — but a gesture he wrote is worth a nudge where he already looks.
+   Three states, none of which is failure: an open offer, a done tick, or — if he has
+   written none — an invitation. A feature with no default is an invisible feature. */
+function renderBoostCard(){
+  const host=$('boostCard');
+  const small=boostDefs().filter(b=>b.size==='gesture');
+  if(!small.length){
+    host.innerHTML=`<button class="bcard invite" onclick="editBoost(null)">
+      <span class="bk">SOMETHING EXTRA</span>
+      <span class="bt">Add one small good thing that pays</span>
+      <span class="bs">10–30 XP · never scored against you · takes a minute to write</span></button>`;
+    return;
+  }
+  const open=small.filter(b=>!boostDone(b));
+  if(!open.length){
+    host.innerHTML=`<div class="bcard done">
+      <span class="bk">SOMETHING EXTRA</span>
+      <span class="bt">Done. All of it.</span>
+      <span class="bs">Nothing owed here.</span></div>`;
+    return;
+  }
+  /* rotates by day so one boost never squats on the card, stable within a day */
+  const b=open[dayNo()%open.length];
+  host.innerHTML=`<button class="bcard" onclick="logBoost('${b.id}')">
+    <span class="bk">SOMETHING EXTRA<u>+${b.xp}</u></span>
+    <span class="bt">${esc(b.n)}</span>
+    <span class="bs">${BOOST_REPEAT[b.repeat]} · tap when it is done${open.length>1?` · ${open.length-1} more in the Bank`:''}</span></button>`;
+}
 function renderWins(){
   const d=day(),host=$('wins');
   const mon=mondayOf(new Date());
@@ -2505,9 +2617,13 @@ const GATE=[
  * agent-briefs/crew-2026-07-25/out-1-goals-spec.md and 2b-goals-round2.md */
 
 /* the four landmarks — weeks 6 · 10 · 14 · 18, computed from the run, never hardcoded */
+/* Four checkpoints, SPREAD ACROSS WHATEVER THE RUN IS — they used to be the literal
+   weeks 6/10/14/18, which only made sense while the run ended Dec 1. Stretching to
+   Christmas would have left the last checkpoint six weeks from the finish with
+   nothing in between. The indices stay 0..3 so stored milestones are untouched. */
 const LANDMARKS=(()=>{
   const m0=mondayOf(new Date(RUN_START+'T00:00:00'));
-  return [6,10,14,18].map(w=>{
+  return [.27,.45,.64,.82].map(f=>Math.max(2,Math.ceil(TOTAL_WEEKS*f))).map(w=>{
     const d=new Date(m0+'T00:00:00');d.setDate(d.getDate()+(w-1)*7);
     return {week:w,iso:iso(d),
       label:d.toLocaleDateString('en-US',{month:'short',day:'numeric'}).toUpperCase()};
@@ -2574,14 +2690,14 @@ function renderPush(){
   S.ms=S.ms||{};
   const p=S.push,G=goals(),focus=p.focus||null,zoom=p.zoom||null;
   const gf=focus?G.find(x=>x.id===focus):null;
-  $('pushHorizon').textContent=`${workdaysLeft()} TO DEC 1 · INCOME BY MAR`;
+  $('pushHorizon').textContent=`${workdaysLeft()} TO ${END_LABEL_U} · INCOME BY MAR`;
 
   const burn=Math.round((1-workdaysLeft()/TOTAL_DAYS)*100);
 
   /* T0 · the horizon. Identical at every altitude — it never changes with zoom. */
   const hz=`<div class="hz"><div><span class="th">BURN THE BOATS</span>
       <span class="ln">become someone who executes</span></div>
-    <span class="cd"><b>DEC 1 · ${workdaysLeft()}</b><br>INCOME BY MAR 1</span></div>`;
+    <span class="cd"><b>${END_LABEL_U} · ${workdaysLeft()}</b><br>INCOME BY MAR 1</span></div>`;
 
   /* the week node — always at the top of the spine */
   const tac=week().tactics||{},committed=['b1','b2','b3','b4'].filter(k=>tac[k]).length;
@@ -2630,9 +2746,9 @@ function renderPush(){
       <div class="thrs">${rows}</div></div>`;
   }).join('');
 
-  /* Dec 1 — the end of the run. Every goal, outcome and habit alike. */
+  /* the finish line — every goal, outcome and habit alike */
   const dec=`<div class="stn end"><div class="nd"></div>
-    <button class="sh"><b>Dec 1</b><span>THE END OF THE RUN</span></button>
+    <button class="sh"><b>${END_LABEL}</b><span>THE END OF THE RUN</span></button>
     <div class="thrs">${G.map(x=>`
       <div class="thr ${focus===x.id?'on':''}" style="--c:${x.c}" role="button" tabindex="0" onclick="pushFocus('${x.id}')">
         <i class="dot" style="background:${x.c};${x.dash?'outline:1px dashed '+x.c+';outline-offset:2px':''}"></i>
@@ -2915,9 +3031,9 @@ function renderBank(){
       ${blks}
       ${xpAttribution()}
       <h2 class="sec"><span>Boosts</span><u>never scored against you</u></h2>
-      <div class="wins">${BOOSTS.map(bo=>`<button class="win" onclick="logBoost('${bo.k}')">
-        <span class="wtop">${esc(bo.n)}<b>+${bo.xp}</b></span></button>`).join('')}</div>
-      <button class="btn gh" style="margin-top:12px" onclick="newReward()">+ New reward</button>
+      ${boostList()}
+      <button class="btn gh" style="margin-top:12px" onclick="editBoost(null)">+ Write a boost</button>
+      <button class="btn gh" style="margin-top:8px" onclick="newReward()">+ New reward</button>
     </div>`;
 }
 /* WHAT BOUGHT THE SHELF — the bullion stops being a generic score.
@@ -2933,17 +3049,159 @@ function xpAttribution(){
       <span class="at"><i style="width:${Math.round(r.n/top*100)}%;background:${r.g.c}"></i></span>
       <span class="av">${r.n.toLocaleString()}</span></div>`).join('')}</div>`;
 }
-const BOOSTS=[
-  {k:'network',n:'Networking event',xp:250},
-  {k:'golf',   n:'Golf day',        xp:150},
-  {k:'read',   n:'Read tonight',    xp:60},
-  {k:'money',  n:'Finances hour',   xp:90},
+/* Log-tap and edit-tap are two different intents on one row, so they are two real
+   buttons — a long-press would have hidden editing from him entirely. */
+function boostList(){
+  const L=boostDefs();
+  if(!L.length)return `<div class="card" style="color:var(--dim);font-size:13.5px">
+    No boosts yet. Write one — a small good thing that pays, that nothing ever penalises you for.</div>`;
+  const wkXp=boostLog().filter(e=>mondayOf(new Date(e.date+'T00:00:00'))===mondayOf(new Date()))
+    .reduce((a,e)=>a+(e.xp||0),0);
+  return `<div class="bst">${L.map(b=>{
+    const done=boostDone(b),hits=boostHits(b);
+    return `<div class="bst-r${done?' on':''}">
+      <button class="bst-go" onclick="${done?`undoBoost('${b.id}')`:`logBoost('${b.id}')`}">
+        <span class="bn">${esc(b.n)}</span>
+        <span class="bm">${BOOST_SIZE[b.size].label} · ${BOOST_REPEAT[b.repeat]}${
+          hits?` · ${done?'logged':hits+'×'} ${b.repeat==='week'?'this week':'today'}`:''}</span>
+      </button>
+      <span class="bst-x">+${b.xp}</span>
+      <button class="bst-e" onclick="editBoost('${b.id}')" aria-label="Edit ${esc(b.n)}">EDIT</button>
+    </div>`}).join('')}</div>
+    <div class="bst-f">${wkXp?`+${wkXp} XP from boosts this week`:'Nothing logged this week — that costs you nothing'}</div>`;
+}
+
+/* ================= BOOSTS =================
+   A boost is a good thing that pays XP and is NEVER scored against him. Ignoring one
+   costs nothing; there is no streak, no red, no debt. The only thing that was ever
+   wrong with them was that I wrote the list. Now he does.
+
+   THE ONE GUARDRAIL: a self-set number with no ceiling is a hole in the economy. A
+   strong weekday pays about 445 XP, and the cheapest reward is 900. If he could write
+   "+500 · thought about it" the Vault stops meaning anything and the whole app rots
+   from the inside. So the size he picks sets the ceiling, and the ceiling is real. */
+const BOOST_SIZE={
+  gesture:{label:'Small act', min:5,  max:30,  lead:'Minutes. Costs attention, not time.',
+           eg:'Buy someone a meal · send the message you keep not sending'},
+  session:{label:'A session', min:40, max:120, lead:'An hour or two of your evening.',
+           eg:'Read tonight · an hour on the books'},
+  event:  {label:'A real day', min:130,max:250, lead:'Half a day or more. Pays a privilege token too.',
+           eg:'Networking event · golf day'},
+};
+const BOOST_REPEAT={day:'Once a day',week:'Once a week',any:'As often as it happens'};
+/* Suggestions, not goals. He taps one to PREFILL the composer, then edits it or throws it
+   away. Kept deliberately generic — the content is still his. */
+const BOOST_POOL=[
+  {n:'Buy a meal for someone who needs one', xp:10,size:'gesture',repeat:'week'},
+  {n:'Make the call you keep putting off',   xp:15,size:'gesture',repeat:'week'},
+  {n:'Say the thank-you out loud',           xp:10,size:'gesture',repeat:'week'},
+  {n:'Give away something you do not use',   xp:15,size:'gesture',repeat:'week'},
+  {n:'Fix the small thing you walk past',    xp:10,size:'gesture',repeat:'week'},
+  {n:'Twenty minutes, phone in another room',xp:20,size:'gesture',repeat:'day'},
+  {n:'Learn one thing and write it down',    xp:15,size:'gesture',repeat:'day'},
+  {n:'Serve somewhere for an afternoon',     xp:150,size:'event', repeat:'any'},
 ];
-function logBoost(k){
-  const bo=BOOSTS.find(x=>x.k===k);
-  S.boosts=S.boosts||[];S.boosts.push({k,date:today()});
-  S.privileges=(S.privileges||0)+1;
-  save();award('boost:'+k+':'+today(),bo.xp,bo.n+' · +1 privilege');
+function boostDefs(all){
+  if(!Array.isArray(S.boostDefs))S.boostDefs=JSON.parse(JSON.stringify(DEFAULT.boostDefs));
+  return all?S.boostDefs:S.boostDefs.filter(b=>!b.archived);
+}
+function boostById(id){return boostDefs(1).find(b=>b.id===id)||null}
+const boostLog=()=>Array.isArray(S.boostLog)?S.boostLog:(S.boostLog=[]);
+function boostHits(b){
+  const L=boostLog();
+  if(b.repeat==='day')  return L.filter(e=>e.id===b.id&&e.date===today()).length;
+  if(b.repeat==='week'){const m=mondayOf(new Date());
+    return L.filter(e=>e.id===b.id&&mondayOf(new Date(e.date+'T00:00:00'))===m).length}
+  return L.filter(e=>e.id===b.id&&e.date===today()).length;   /* 'any' — today's count, never a lock */
+}
+const boostDone=b=>b.repeat!=='any'&&boostHits(b)>0;
+/* clamp lives in ONE place — the composer, the pool and any future import all pass through it */
+function boostClamp(xp,size){const s=BOOST_SIZE[size]||BOOST_SIZE.gesture;
+  return Math.max(s.min,Math.min(s.max,Math.round(Number(xp)||s.min)))}
+function logBoost(id){
+  const b=boostById(id);if(!b)return;
+  if(boostDone(b)){toast(`Already logged ${b.repeat==='week'?'this week':'today'}`,'bad');return}
+  const xp=boostClamp(b.xp,b.size);
+  const n=boostLog().filter(e=>e.id===id&&e.date===today()).length;   /* 'any' can pay twice in a day */
+  boostLog().push({id,date:today(),xp,day:dayNo()});
+  const priv=b.size==='event';
+  if(priv)S.privileges=(S.privileges||0)+1;
+  save();
+  if(!award('boost:'+id+':'+today()+':'+n,xp,b.n+(priv?' · +1 privilege':'')))render();
+}
+function undoBoost(id){
+  const L=boostLog();
+  for(let i=L.length-1;i>=0;i--)if(L[i].id===id&&L[i].date===today()){L.splice(i,1);break}
+  save();render();toast('Removed — XP kept','bad');   /* XP never goes backwards. Same law as tapWin. */
+}
+
+/* ---- the composer: one sheet for new and for edit ---- */
+function editBoost(id){
+  const b=id?boostById(id):null;
+  const size=b?b.size:'gesture';
+  const sizeChips=Object.keys(BOOST_SIZE).map(k=>
+    `<button class="chip tap seg${k===size?' on':''}" data-size="${k}" onclick="boostSize('${k}')">${BOOST_SIZE[k].label}</button>`).join('');
+  const repChips=Object.keys(BOOST_REPEAT).map(k=>
+    `<button class="chip tap seg${(b?b.repeat:'week')===k?' on':''}" data-rep="${k}" onclick="boostRep('${k}')">${BOOST_REPEAT[k]}</button>`).join('');
+  /* the pool is eight full sentences — expanded it buries the actual form. Show it open
+     the first time (he has nothing to copy from), folded once he has his own. */
+  const open=!b&&!boostDefs().some(x=>x.size==='gesture');
+  const pool=b?'':`<div class="fld">
+    <button class="btn gh sm" onclick="boostPoolToggle()" id="boPoolT">${open?'Hide suggestions':'Start from a suggestion'}</button>
+    <div class="chips" id="boPool" style="margin-top:9px;${open?'':'display:none'}">${BOOST_POOL.map((p,i)=>
+      `<button class="chip tap" onclick="boostPool(${i})">${esc(p.n)} · +${p.xp}</button>`).join('')}</div></div>`;
+  sheet(`<div class="sh-k">NEVER SCORED AGAINST YOU</div>
+    <div class="sh-t">${b?'Edit boost':'A boost you wrote'}</div>
+    <div class="sh-sub">A GOOD THING THAT PAYS. IGNORING IT COSTS NOTHING.</div>
+    ${pool}
+    <div class="fld"><label>What it is</label>
+      <input id="boN" maxlength="60" placeholder="Buy a meal for someone who needs one" value="${b?esc(b.n):''}"></div>
+    <div class="fld"><label>How big</label><div class="chips" id="boSize">${sizeChips}</div>
+      <div class="hintline" id="boHint"></div></div>
+    <div class="fld"><label>Worth</label>
+      <div class="row2"><input id="boX" type="text" inputmode="numeric" value="${b?b.xp:10}">
+        <button class="btn gh sm" style="width:auto;padding:0 14px" onclick="boostFix()">Set</button></div>
+      <div class="hintline" id="boCap"></div></div>
+    <div class="fld"><label>How often</label><div class="chips" id="boRep">${repChips}</div></div>
+    <button class="btn" onclick="saveBoost(${b?`'${b.id}'`:'null'})">${b?'Save it':'Add it'}</button>
+    ${b?`<button class="btn gh" style="margin-top:8px" onclick="dropBoost('${b.id}')">Remove this boost</button>`:''}`);
+  BO={size,repeat:b?b.repeat:'week'};
+  boostHint();
+}
+let BO={size:'gesture',repeat:'week'};
+function boostSize(k){BO.size=k;
+  $('boSize').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',e.dataset.size===k));
+  $('boX').value=boostClamp($('boX').value,k);boostHint()}
+function boostRep(k){BO.repeat=k;
+  $('boRep').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',e.dataset.rep===k))}
+function boostFix(){$('boX').value=boostClamp($('boX').value,BO.size);boostHint()}
+function boostHint(){const s=BOOST_SIZE[BO.size];
+  $('boHint').textContent=s.lead+'  e.g. '+s.eg;
+  $('boCap').textContent=`${s.min}–${s.max} XP. A strong weekday pays about 445 — a boost is a bonus, never a shortcut.`}
+function boostPoolToggle(){const e=$('boPool'),on=e.style.display==='none';
+  e.style.display=on?'flex':'none';$('boPoolT').textContent=on?'Hide suggestions':'Start from a suggestion'}
+function boostPool(i){const p=BOOST_POOL[i];
+  $('boN').value=p.n;BO.size=p.size;BO.repeat=p.repeat;$('boX').value=p.xp;
+  $('boSize').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',e.dataset.size===p.size));
+  $('boRep').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',e.dataset.rep===p.repeat));
+  boostHint();
+}
+function saveBoost(id){
+  const n=$('boN').value.trim();if(!n){toast('Give it a name','bad');return}
+  const raw=Math.round(Number($('boX').value)||0),xp=boostClamp(raw,BO.size);
+  /* never silently rewrite his number — say what happened and why */
+  if(raw!==xp){$('boX').value=xp;boostHint();
+    toast(`A ${BOOST_SIZE[BO.size].label.toLowerCase()} tops out at ${BOOST_SIZE[BO.size].max} XP — set to ${xp}`,'bad');
+    return;}
+  const defs=boostDefs(1),cur=id?defs.find(b=>b.id===id):null;
+  if(cur)Object.assign(cur,{n,xp,size:BO.size,repeat:BO.repeat});
+  else defs.push({id:'b'+Date.now().toString(36),n,xp,size:BO.size,repeat:BO.repeat,archived:0});
+  save();closeSheet();render();toast(id?'Boost saved':'Boost added','good');
+}
+function dropBoost(id){
+  const b=boostById(id);if(!b)return;
+  b.archived=1;                       /* archived, never deleted — the log still points at it */
+  save();closeSheet();render();toast('Removed','bad');
 }
 function newReward(){
   sheet(`<div class="sh-k">EARNED, NOT GIVEN</div><div class="sh-t">New reward</div>
