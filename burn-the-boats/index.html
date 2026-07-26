@@ -853,6 +853,13 @@ function logSlip(k){
 function viceClean(k){
   const v=S.vices[k],d=day();
   if(d.credited['clean:'+k]){toast('Already logged clean today','bad');return}
+  /* The smoke gate runs until noon. Banking a clean day at 9 AM and breaking it at 11
+     was a free +40 XP and a fraudulent streak day — the claim has to wait for the gate. */
+  if(k==='smoke'){
+    const vs=viceState();
+    if(vs.brokeGate){toast('The gate broke today','bad');return}
+    if(vs.beforeNoon){toast(`Not yet — the gate holds until ${S.vices.smoke.gate}`,'bad');return}
+  }
   v.cleanDays=v.cleanDays||{};
   v.cleanDays[today()]=1;
   if(k==='smoke'){v.cleanStreak=streakFrom(v.cleanDays);v.bestClean=Math.max(v.bestClean,v.cleanStreak)}
@@ -925,7 +932,9 @@ function renderStatus(){
 /* One row, three dials — the only three things that move daily.
    The December lags change ~3 times in 91 days; they live with the graph, not here. */
 function dial(el,{pct,val,label,hot,color}){
-  const A=Math.PI*21, off=A*(1-Math.max(0,Math.min(1,pct)));
+  /* The arc is drawn on r=19, so its length is pi*19. Using pi*21 made every dial read
+     ~10% fuller than the number beside it — at 50% it rendered 55%. */
+  const A=Math.PI*19, off=A*(1-Math.max(0,Math.min(1,pct)));
   el.className='gg'+(hot?' hot':'');
   el.innerHTML=`<svg width="46" height="27" viewBox="0 0 46 27">
       <path d="M4 24 A 19 19 0 0 1 42 24" fill="none" stroke="#1c1a23" stroke-width="3.6" stroke-linecap="round"/>
