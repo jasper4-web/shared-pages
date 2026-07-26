@@ -597,7 +597,7 @@
 
 <!-- copy modal -->
 <div class="modal-bg center" id="modalBg" role="dialog" aria-modal="true" aria-label="Copy">
-  <div class="modal center"><h3 id="modalTitle">Copy &amp; send</h3><p>Copied to your clipboard — paste it to me. Attach the day's photos too if you took any.</p>
+  <div class="modal center"><h3 id="modalTitle">Copy &amp; send</h3><p id="modalNote">Copied to your clipboard — paste it to me. Attach the day's photos too if you took any.</p>
   <textarea id="modalText" class="big" readonly></textarea><div class="mrowb"><button class="btn primary" id="modalCopy">Copy again</button><button class="btn primary" id="modalApply" style="display:none">Restore now</button><button class="btn ghost hold" id="modalClose" style="flex:0 0 auto;padding:13px 18px">Close</button></div></div>
 </div>
 
@@ -707,11 +707,14 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   }
   /* The master log's own escalation tell, verbatim: mid-canopy yellowing over ~5 days. */
   function midYellowRun(){
+    // the rule is "3 of the last 5 DAYS" — taking the newest 5 keys let a logging gap
+    // stretch that window across weeks
     var n=0;
-    keysSorted().slice(0,5).forEach(function(k){
-      var pl=(store.entries[k].plants||{})["1"];
+    for(var d=Math.max(0,todayDnum-4); d<=todayDnum; d++){
+      var kk=keyOf(new Date(DAY0.getFullYear(),DAY0.getMonth(),DAY0.getDate()+d));
+      var pl=(store.entries[kk]&&store.entries[kk].plants||{})["1"];
       if(pl&&pl.tells&&pl.tells.indexOf("ymid")>=0)n++;
-    });
+    }
     return n;
   }
   /* pick = a required one-tap choice shown in the event sheet (replaces the old which-plants picker) */
@@ -760,8 +763,8 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
      veg bands while the masthead froze at "Wk 10". `stale` makes running off the end honest. */
   function stageFor(n){
     var d=Math.max(0,n);
-    if(CFG&&CFG.flipDay!=null&&d>CFG.flipDay){
-      var fw=Math.ceil((d-CFG.flipDay)/7)||1;
+    if(CFG&&CFG.flipDay!=null&&d>=CFG.flipDay){
+      var fw=Math.ceil((d-CFG.flipDay+1)/7)||1;
       var stale=fw>MAXFW;
       return {phase:"flower",week:Math.min(fw,MAXFW),shown:fw,row:FLOWER[Math.min(fw,MAXFW)-1],stale:stale};
     }
@@ -833,13 +836,35 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   /* The old save() swallowed every error, so a full quota looked exactly like success.
      On a phone used 3x/day for five months, silent write failure is data loss. */
   var storageBroken=false;
+  /* Keys THIS tab has deliberately changed. Anything not in here loses to disk on merge,
+     so a stale tab can never revert a sibling's settings. */
+  var CFGTOUCHED={};
+  function touchCfg(){ for(var i=0;i<arguments.length;i++)CFGTOUCHED[arguments[i]]=1; }
+  /* save() is the ONLY writer, and it RECONCILES. It used to blind-write the whole
+     in-memory store, so any write from a tab with a stale copy silently destroyed
+     whatever the other tab had written — past days included. It is called bare from
+     several places (settings, due ticks, config writes), so the reconciliation has to
+     live here rather than only in commitDraft(). */
   function save(){
-    try{ localStorage.setItem(KEY,JSON.stringify(store)); storageBroken=false; return true; }
-    catch(e){
-      if(!storageBroken){
-        storageBroken=true;
-        toast("⚠ Couldn't save — storage is full. Guide → Copy backup NOW.",true);
+    try{
+      var disk=reloadStore();
+      if(disk){
+        // entries: never drop a day we don't have; merge days we both have
+        Object.keys(disk.entries).forEach(function(k){
+          if(!store.entries[k]) store.entries[k]=disk.entries[k];
+          else if(k!==todayKey) store.entries[k]=mergeEntry(store.entries[k],disk.entries[k]);
+        });
+        // config: disk wins for every key this tab hasn't touched
+        var dc=disk.config||{};
+        Object.keys(dc).forEach(function(k){ if(!CFGTOUCHED[k]) CFG[k]=dc[k]; });
       }
+      localStorage.setItem(KEY,JSON.stringify(store));
+      storageBroken=false; return true;
+    }
+    catch(e){
+      storageBroken=true;
+      // must warn EVERY time — latching it once meant the app confirmed saves it wasn't making
+      toast("⚠ Couldn't save — storage is full. Guide → Copy backup NOW.",true);
       return false;
     }
   }
@@ -863,14 +888,14 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     }
     // MINE first: this tab's edit of an event must beat the older copy on disk,
     // otherwise unite() keeps the stale one and the edit silently vanishes.
-    out.readings=unite(mine.readings,theirs.readings,function(r){return r.time+"|"+r.temp+"|"+r.rh;});
+    out.readings=unite(mine.readings,theirs.readings,readingKey);
     out.events  =unite(mine.events,  theirs.events,  function(e){return e.id||(e.time+"|"+e.type+"|"+(e.pick||"")+"|"+(e.detail||""));});
     out.readings.sort(function(a,b){return parseTime(a.time)-parseTime(b.time);});
     out.events.sort(function(a,b){return parseTime(a.time)-parseTime(b.time);});
     // scalars: last writer wins, but never overwrite a real value with a blank
     // dialTemp/dialRh are UI state, but they must survive a reload or a half-entered
     // reading is lost — they are deliberately NOT the same fields as temp/rh
-    ["temp","rh","notes","dialTemp","dialRh"].forEach(function(k){ if(mine[k]!==""&&mine[k]!=null)out[k]=mine[k]; });
+    ["temp","rh","notes","dialTemp","dialRh"].forEach(function(k){ if(mine[k]!==undefined)out[k]=mine[k]; });
     ["hi","lo"].forEach(function(k){ if(mine[k]&&(mine[k].t!=null||mine[k].r!=null))out[k]=mine[k]; });
     // merge plants["1"] FIELD BY FIELD — the old guard only carried it forward when a
     // status or note existed, so tells tapped before a status were silently dropped.
@@ -878,7 +903,21 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       out.plants=out.plants||{};
       var tp=out.plants["1"]||{}, mp=mine.plants["1"];
       var tl={}; (tp.tells||[]).concat(mp.tells||[]).forEach(function(x){tl[x]=1;});
-      out.plants["1"]={ s: (mp.s||tp.s||""), n: (mp.n||tp.n||""), tells: (mp.tells!=null?mp.tells:Object.keys(tl)) };
+      // "don't overwrite with undefined" — NOT "don't overwrite with falsy". The old
+      // `mp.n||tp.n` meant clearing a note was impossible: the disk copy always won.
+      var mergedTells;
+      if(mp.tells!=null&&tp.tells!=null){
+        // a sibling's tells must not be discarded wholesale; union them, minus explicit removals
+        var rm={}; (mine.tellsGone||[]).concat(theirs.tellsGone||[]).forEach(function(x){rm[x]=1;});
+        var u={}; tp.tells.concat(mp.tells).forEach(function(x){ if(!rm[x])u[x]=1; });
+        mergedTells=Object.keys(u);
+      } else mergedTells = (mp.tells!=null?mp.tells:(tp.tells||[]));
+      out.plants["1"]={
+        s: (mp.s!==undefined?mp.s:(tp.s||"")),
+        n: (mp.n!==undefined?mp.n:(tp.n||"")),
+        tells: mergedTells
+      };
+      out.tellsGone=(mine.tellsGone||[]).concat((theirs.tellsGone||[]).filter(function(x){return (mine.tellsGone||[]).indexOf(x)<0;}));
     }
     return out;
   }
@@ -964,9 +1003,17 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   function photoperiodHrs(){ var on=CFG.onHour,off=CFG.offHour; return on>off ? (24-on+off) : (off-on); }
   function dliFrom(ppfd){ return ppfd==null?null:(ppfd*photoperiodHrs()*3600/1e6); }
   var DLI_VEG_CEILING=35;   // ~540 µmol at 18/6 — above this on an under-rooted plant is damage
-  function dliTarget(){
+  function lightAtDay(d){
+    var best=null,h=null;
+    keysSorted().forEach(function(k){var dd=dnum(dtOf(k)); if(dd>d)return;
+      (store.entries[k].events||[]).forEach(function(e){
+        if(e&&e.type==="light"){var v=evNums(e)["in"]; if(v!=null&&(best===null||dd>=best)){best=dd;h=v;}}
+      });});
+    return h;
+  }
+  function dliTarget(asOf){
     if(STAGE.phase==="flower") return {lo:35,hi:45,note:"flower"};
-    var d=Math.max(0,todayDnum);
+    var d=Math.max(0,asOf==null?todayDnum:asOf);
     if(d<=21) return {lo:18,hi:22,note:"establishing"};
     if(d<=35) return {lo:24,hi:28,note:"veg"};
     if(d<=60) return {lo:28,hi:33,note:"late veg"};
@@ -992,7 +1039,9 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       dLo: dark?wk.nLo:wk.dLo, dHi: dark?wk.nHi:wk.dHi,
       rLo: wk.rLo,
       // a little more RH slack in the dark during veg; NONE in flower — that's how bud rot starts
-      rHi: dark ? (wk.phase==="flower" ? wk.rHi : wk.rHi+6) : wk.rHi,
+      // clamp the top of the band below the damp red line — in flower the two were derived
+      // independently and overlapped, so 24 RH values graded GREEN while firing "STOP — bud rot"
+      rHi: Math.min(dark ? (wk.phase==="flower" ? wk.rHi : wk.rHi+6) : wk.rHi, redLines().rhHi-1),
       vLo: wk.vLo, vHi: wk.vHi,
       gradeVpd: !dark,
       rhLbl:"Humidity %", roomLbl: dark?"dark window":"room climate"
@@ -1218,9 +1267,6 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       } else if(pl.s==="bad"){
         cls="warn";icon="alert-triangle";head="She's in bad droop";
         sub=droopCoach();
-      } else if(soilD===null||soilD>2){
-        cls="warn";icon="hand";head="Put a finger in that pot";
-        sub="Two knuckles deep, next to the rootball — not the edge. "+(soilD===null?"You haven't checked yet.":"Last check was "+soilD+" days ago.");
       } else if(soilWas==="Wet"){
         cls="warn";icon="hand";head="Soil is still wet";
         sub="Nothing to do but wait. The surface being dry means nothing in a 30-gal.";
@@ -1230,6 +1276,11 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       } else if(lightsOn&&vs==="low"){
         cls="warn";icon="alert-triangle";head="Air is too still and wet for her to drink";
         sub="Nutrients move with the water. More air across the canopy.";
+      } else if(soilD===null||soilD>2){
+        // demoted BELOW the climate branches: this routine chore used to hide "she's
+        // transpiring faster than her roots can supply" — one step from the water reflex.
+        cls="warn";icon="hand";head="Put a finger in that pot";
+        sub="Two knuckles deep, next to the rootball — not the edge. "+(soilD===null?"You haven't checked yet.":"Last check was "+soilD+" days ago.");
       } else if(envIssues.length){
         cls="warn";icon="alert-triangle";
         head=envIssues.length>1?"2 things to fix":"1 thing to fix";
@@ -1260,7 +1311,12 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
            "Then: (1) soil check two knuckles deep, (2) is a fan hitting her, (3) is the room hot or the air dry?";
   }
   function openPestAlert(){
-    var found=null,treated=null;
+    var found=null,treated=null,viaTell=false;
+    // the "Bugs seen" TELL carried flag:"pest" and nothing ever read it
+    keysSorted().forEach(function(k){
+      var d=dnum(dtOf(k)),pl=(store.entries[k].plants||{})["1"];
+      if(pl&&pl.tells&&pl.tells.indexOf("bugs")>=0){ if(found===null||d>found){found=d;viaTell=true;} }
+    });
     keysSorted().forEach(function(k){
       var d=dnum(dtOf(k)), evs=store.entries[k].events||[];
       evs.forEach(function(e){
@@ -1272,7 +1328,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     if(found===null)return null;
     if(todayDnum-found>7)return null;
     if(treated!==null&&treated>=found)return null;
-    return {when:(todayDnum-found===0?"today":(todayDnum-found)+"d ago")};
+    return {when:(todayDnum-found===0?"today":(todayDnum-found)+"d ago"),viaTell:viaTell};
   }
   /* only scold when there are genuinely TWO waters close together — the age of a single
      well-spaced watering is not a problem and shouldn't sit at the top of the screen */
@@ -1331,7 +1387,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     return '<div class="solo '+k+'">'+
       '<div class="top"><div class="art">'+plantArt(k,46)+'</div><div class="who">'+
         '<div class="nm">'+PLANT.name+'</div>'+
-        '<div class="sub">'+strainName()+' · day '+plantAge()+' · '+esc(stage)+'</div>'+
+        '<div class="sub">'+esc(strainName())+' · day '+plantAge()+' · '+esc(stage)+'</div>'+
       '</div>'+statusPill(k,st?st.t:"Not set today")+'</div>'+
       (pl.n?'<div class="nte"><b>Today:</b> '+esc(pl.n)+'</div>':'')+
       '<div class="setter"><div class="sq">How does she look?</div>'+seg+tells+
@@ -1354,18 +1410,23 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     exitDemo();
     if(!draft.plants["1"])draft.plants["1"]={s:"",n:"",tells:[]};
     var arr=draft.plants["1"].tells||[];
+    if(!draft.tellsGone)draft.tellsGone=[];
+    function forget(t){ if(draft.tellsGone.indexOf(t)<0)draft.tellsGone.push(t); }
+    function remember(t){ var j=draft.tellsGone.indexOf(t); if(j>=0)draft.tellsGone.splice(j,1); }
     var i=arr.indexOf(k);
-    if(i>=0)arr.splice(i,1);
+    if(i>=0){ arr.splice(i,1); forget(k); }
     else{
-      // "Nothing new" is exclusive — it can't coexist with an observation
-      if(k==="none")arr=[];
-      else arr=arr.filter(function(x){return x!=="none";});
-      arr.push(k);
+      // "Nothing new" is exclusive — it can't coexist with an observation. Deselecting is an
+      // intentional act, so it must be tombstoned or the sibling-tab union resurrects it.
+      if(k==="none"){ arr.forEach(forget); arr=[]; }
+      else{ arr.filter(function(x){return x==="none";}).forEach(forget); arr=arr.filter(function(x){return x!=="none";}); }
+      arr.push(k); remember(k);
     }
     draft.plants["1"].tells=arr;
     commitDraft();renderBoards();renderGauges();renderDue();renderPlantIfVisible();
     var T=null;TELLS.forEach(function(t){if(t.k===k)T=t;});
-    if(i<0&&T&&T.flag==="light")toast("Noted — if this followed a light move, raise it 6\"",true);
+    if(i<0&&T&&T.flag==="pest")toast("Noted — scout the undersides and new growth, then log an IPM",true);
+    else if(i<0&&T&&T.flag==="light")toast("Noted — if this followed a light move, raise it 6\"",true);
     else if(i<0&&T&&T.flag==="topdress"&&midYellowRun()>=3)toast("3 of the last 5 days — time to top-dress",true);
   }
   function setPlantStatus(s){
@@ -1404,6 +1465,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     var first=null;
     Object.keys(have).forEach(function(d){d=Number(d);if(first===null||d<first)first=d;});
     if(first===null)return [];
+    if(first<0)first=0;
     for(var d=first;d<todayDnum;d++) if(!have[d]) out.push(d);
     return out;
   }
@@ -1421,14 +1483,18 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     });
     return found;
   }
-  function lastMeasure(kind){
+  function lastMeasureAt(kind){
     var best=null,val=null;
     keysSorted().forEach(function(k){var d=dnum(dtOf(k));
       (store.entries[k].events||[]).forEach(function(e){
-        if(e&&e.type==="measure"&&e.pick===kind&&e.num!=null){ if(best===null||d>=best){best=d;val=e.num;} }
+        if(e&&e.type==="measure"&&e.pick===kind){
+          var v=evNums(e).val;
+          if(v!=null&&(best===null||d>=best)){best=d;val=v;}
+        }
       });});
-    return val;
+    return best===null?null:{val:val,day:best};
   }
+  function lastMeasure(kind){ var m=lastMeasureAt(kind); return m?m.val:null; }
   /* pri 1 = the decision of the moment, 3 = keep-in-mind.
      kind:"plant" = gated on the plant, NOT the calendar — these get a gate line instead of
      a time badge, because a red LATE badge on "Top her" applies calendar pressure to a
@@ -1454,7 +1520,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       hint:"Then LST to the pot rim to open her up wide.", done:function(){return hasEvent("training","Top");}},
     {id:"topdress",pri:2, from:18, to:9999,kind:"plant",label:"First top-dress",     gate:"Gate: yellowing reaching mid-canopy on 3 of 5 days, or clearly hungry new growth.",
       hint:"The Light Recipe runs lean. Castings + a craft blend, watered in.", done:function(){return hasEvent("topdress");}},
-    {id:"width",   pri:2, from:20, to:9999,repeat:14,label:"Measure her widest span",hint:"One plant filling a 1700e footprint IS the strategy — this is how you know it's working.", done:function(){return lastMeasure("Widest span")!=null&&hasEvent("measure",null,14);}},
+    {id:"width",   pri:2, from:20, to:9999,repeat:14,label:"Measure her widest span",hint:"One plant filling a 1700e footprint IS the strategy — this is how you know it's working.", done:function(){var m=lastMeasureAt("Widest span");return !!m&&(todayDnum-m.day)<14;}},
     {id:"filter",  pri:1, from:38, to:9999,kind:"plant",label:"Hang the carbon filter", gate:"Gate: before you flip. Flower smell in a house is a different animal.", hint:"You already own it."},
     {id:"flip",    pri:1, from:45, to:9999,kind:"plant",label:"Flip to 12/12",       gate:"Gate: canopy is about half the final size you want. Not a date.",
       hint:"Log it with the Flip event — that starts the flower clock and switches every target.", done:function(){return CFG.flipDay!=null;}}
@@ -1529,8 +1595,15 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       toast(m.hint,true);return;
     }
     exitDemo();
-    var wasDone=!!CFG.dueDone[id];
+    // must match dueList()'s repeat-aware view, or an expired repeating item un-ticks on tap 1
+    var wasDone=(function(){
+      if(!CFG.dueDone[id])return false;
+      if(!m.repeat)return true;
+      var dd=(CFG.dueDoneDay&&CFG.dueDoneDay[id]!=null)?CFG.dueDoneDay[id]:-9999;
+      return (Math.max(0,todayDnum)-dd)<m.repeat;
+    })();
     if(!CFG.dueDoneDay)CFG.dueDoneDay={};
+    touchCfg("dueDone","dueDoneDay","lastMinMaxReset");
     if(wasDone){delete CFG.dueDone[id];delete CFG.dueDoneDay[id];}
     else{CFG.dueDone[id]=todayKey;CFG.dueDoneDay[id]=Math.max(0,todayDnum);
          if(id==="minmax")CFG.lastMinMaxReset=todayKey;}
@@ -1662,7 +1735,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     exitDemo();
     if(dial.temp==null||dial.rh==null)return null;
     var t=nowClock();
-    draft.readings.push({time:t,temp:dial.temp,rh:dial.rh,vpd:rvpd(dial.temp,dial.rh,lightsOn),lights:lightsOn,leafOff:leafOff(lightsOn)});
+    draft.readings.push({rid:"r"+Date.now()+"_"+(++evSeq),time:t,temp:dial.temp,rh:dial.rh,vpd:rvpd(dial.temp,dial.rh,lightsOn),lights:lightsOn,leafOff:leafOff(lightsOn)});
     // the CAPTURE is the measurement — this is the only place the day's room number is set
     draft.temp=String(dial.temp);draft.rh=String(dial.rh);
     dialSeeded.temp=false;dialSeeded.rh=false;
@@ -1694,7 +1767,9 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       setTimeout(function(){m.classList.remove("show");b.innerHTML='<i data-lucide="camera"></i>';if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});},1900);
     } else { m.textContent="dial it first";m.classList.add("show");setTimeout(function(){m.classList.remove("show");},1700); }
   }
-  function readingKey(r){return r.time+"|"+r.temp+"|"+r.rh;}
+  // readings used to be keyed by time|temp|rh, so deleting one permanently blocked
+  // re-capturing the same values that minute while the UI said "✓ Captured"
+  function readingKey(r){return r.rid||(r.time+"|"+r.temp+"|"+r.rh);}
   function tomb(k){ if(!draft.gone)draft.gone=[]; if(draft.gone.indexOf(k)<0)draft.gone.push(k); }
   function untomb(k){
     if(draft.gone){var i=draft.gone.indexOf(k); if(i>=0)draft.gone.splice(i,1);}
@@ -1749,7 +1824,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       var pk=e.pick?' · <b>'+esc(e.pick)+'</b>':"";
       var pids=evPhotoIds(e);
       var ths=evThumbs(e), thumb=ths.slice(0,3).map(function(t,ti){return '<img src="'+t+'" alt="photo" data-pid="'+(pids[ti]||"")+'">';}).join("")+(ths.length>3?'<span class="evmore">+'+(ths.length-3)+'</span>':"");
-      var nv=(e.num!=null?' <b>'+e.num+'</b>':'');
+      var nt=evNumText(e), nv=(nt?' <b>'+esc(nt)+'</b>':'');
       return '<div class="evitem" data-ev-i="'+idx[i]+'" role="button" tabindex="0"><i data-lucide="'+et.icon+'"></i><span class="evt">'+(e.time||"—")+'</span><span class="evd"><b>'+et.label+'</b>'+pk+nv+(e.detail?' — '+esc(e.detail):"")+'</span>'+thumb+'<i class="edit" data-lucide="pencil"></i></div>';
     }).join("");
     wirePhotoTaps("#evRibbon");
@@ -1800,7 +1875,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     $("edTitle").textContent=et.label;
     $("edTime").textContent=(existing!=null?"editing ":"logging ")+evEditing.time;
     // env chips
-    var e=evEditing.env, chips=[];
+    var e=evEditing.env||{day:Math.max(0,todayDnum),week:todayWeek,phase:STAGE.phase,temp:null,rh:null,vpd:null,lights:lightsOn,src:"none"}, chips=[];
     chips.push('<span class="ec">Day <b>'+e.day+'</b> · Wk '+e.week+'</span>');
     if(e.temp!=null)chips.push('<span class="ec t"><span class="k">temp</span> <b>'+e.temp+'°F</b></span>');
     if(e.rh!=null)chips.push('<span class="ec h"><span class="k">RH</span> <b>'+e.rh+'%</b></span>');
@@ -1831,8 +1906,10 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     $("edDetail").placeholder=et.pick?"anything worth remembering…":"e.g. neem oil, foliar, lights-off…";
     $("edDetail").value=evEditing.detail||"";
     if(et.pick&&evEditing.pick){ setPickExact(evEditing.pick); }
-    if(et.num&&evEditing.num!=null){ $("edNum").value=evEditing.num; }
-    evPhotos=(evEditing.thumbs||[]).map(function(t,i){return {thumb:t,data:null,existingId:(evEditing.photoIds||[])[i]||null};});
+    // hydrate through the back-compat accessors, or a legacy single-photo event loses its
+    // photo the moment it is edited (photoIds shadows the old singular photoId)
+    var exTh=evThumbs(evEditing), exIds=evPhotoIds(evEditing);
+    evPhotos=exTh.map(function(t,i){return {thumb:t,data:null,existingId:exIds[i]||null};});
     renderEdThumbs();
     $("edDelete").style.display=(existing!=null)?"":"none";
     $("evBg").classList.add("open");
@@ -1841,6 +1918,24 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     else if(window.matchMedia&&matchMedia("(hover: hover)").matches){setTimeout(function(){$("edDetail").focus();},60);} // never pop the keyboard on phones
   }
   function numFields(et){ return et.nums || (et.num?[et.num]:[]); }
+  /* Numbers he types were stored on ev.nums and read by nothing — not the ribbon, the
+     timeline, the Log tab, the export, or lastMeasure(). So the exact-cups value, the
+     node count and the widest span were invisible everywhere, and the nodes/width
+     milestones (derived, un-tickable) could never be satisfied. */
+  function evNums(e){
+    if(!e)return {};
+    var o={};
+    if(e.nums)for(var k in e.nums){ if(e.nums[k]!=null)o[k]=e.nums[k]; }
+    if(e.num!=null&&o.ppfd==null&&!(e.nums&&"ppfd" in e.nums))o.ppfd=e.num;
+    if(e.num!=null&&e.type==="measure"&&o.val==null)o.val=e.num;   // legacy single-num measures
+    return o;
+  }
+  function evNumText(e){
+    var et=evType(e.type), nf=numFields(et), got=evNums(e), parts=[];
+    nf.forEach(function(n){ if(got[n.key]!=null)parts.push(got[n.key]+(n.unit?" "+n.unit:"")); });
+    if(!parts.length){ for(var k in got)parts.push(String(got[k])); }
+    return parts.join(" · ");
+  }
   function setPick(v){ setPickExact((evEditing.pick===v)?"":v); }
   function setPickExact(v){
     evEditing.pick=v;
@@ -1890,7 +1985,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       });
     })();
   });
-  $("edCancel").addEventListener("click",function(){$("evBg").classList.remove("open");evEditingIdx=-1;});
+  $("edCancel").addEventListener("click",function(){$("evBg").classList.remove("open");evEditingIdx=-1;evSaving=false;});
   $("edDelete").addEventListener("click",function(){
     if(evEditingIdx<0)return;
     var gone=draft.events[evEditingIdx];
@@ -1913,6 +2008,16 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   $("edSave").addEventListener("click",function(){
     if(!evEditing||evSaving)return; // guard: a second tap while photos are writing must be a no-op
     if(evPhotoBusy){toast("Still adding photos — one sec",true);return;}
+    try{ edSaveInner(); }
+    catch(err){
+      // A throw here used to leave evSaving latched true, silently killing EVERY future
+      // save for the rest of the session with no toast and no error.
+      evSaving=false;
+      toast("Couldn't save that — nothing was lost, try again",true);
+      if(window.console&&console.error)console.error(err);
+    }
+  });
+  function edSaveInner(){
     var et0=evType(evEditing.type);
     if(et0.pick&&!evEditing.pick){toast("Pick one first — "+et0.pick.label.toLowerCase(),true);return;}
     evSaving=true;
@@ -1931,36 +2036,41 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     }
     ev.nums=vals;
     if(vals.ppfd!==undefined)ev.num=vals.ppfd;      // back-compat with single-num events
+    if(et0.num&&vals[et0.num.key]!=null)ev.num=vals[et0.num.key];
     if(et0.pick&&et0.pick.sets==="lightIn"&&ev.pick){
       var inch=parseInt(ev.pick,10);
-      if(!isNaN(inch)){CFG.lightIn=inch;}
+      if(!isNaN(inch)){CFG.lightIn=inch;touchCfg("lightIn");}
     }
     NF.forEach(function(n){
       if(!n.sets)return;
-      if(n.sets==="lightIn"&&vals[n.key]!=null)CFG.lightIn=vals[n.key];
+      if(n.sets==="lightIn"&&vals[n.key]!=null){CFG.lightIn=vals[n.key];touchCfg("lightIn");}
     });
     if(vals.ppfd!==undefined){
-      if(vals.ppfd!=null){ CFG.ppfd=vals.ppfd; CFG.ppfdAt=CFG.lightIn; }
+      if(vals.ppfd!=null){ CFG.ppfd=vals.ppfd; CFG.ppfdAt=CFG.lightIn; touchCfg("ppfd","ppfdAt"); }
       else if(vals["in"]!=null){
         // moved the light without re-measuring: the old reading describes the OLD height
-        CFG.ppfdAt=null;
-        toast("Height logged — your PPFD reading is now stale, measure again",true);
+        // only warn if there WAS a reading to invalidate
+        if(CFG.ppfd!=null){ CFG.ppfdAt=null; touchCfg("ppfdAt"); toast("Height logged — your PPFD reading is now stale, measure again",true); }
       }
     }
     if(et0.sets==="flipDay"&&ev.pick){
-      if(evEditingIdx>=0&&src&&src.flipDay!=null){ ev.flipDay=src.flipDay; }   // editing must not move the flip
+      var orig=(evEditingIdx>=0)?draft.events[evEditingIdx]:null;
+      if(orig&&orig.flipDay!=null){ ev.flipDay=orig.flipDay; }   // editing must not move the flip
       else{
         var onH=parseInt(prompt("Flipping to 12/12.\n\nWhat hour do the lights come ON now? (0–23)",String(CFG.onHour)),10);
         if(isNaN(onH)||onH<0||onH>23){ toast("Flip cancelled — need a valid lights-on hour",true); evSaving=false; return; }
         var offH=(onH+12)%24;
         CFG.onHour=onH; CFG.offHour=offH; CFG.flipDay=Math.max(0,todayDnum);
+        touchCfg("onHour","offHour","flipDay");
         ev.flipDay=CFG.flipDay;
-        save();
+        // WRITE THE EVENT FIRST — the old code reloaded before doSave() ever ran, so the
+        // single most important milestone of the grow left no entry anywhere.
+        draft.events.push(ev); commitDraft(); save();
+        evEditing=null; evEditingIdx=-1; evSaving=false;
         alert("Flipped to 12/12.\nLights ON "+onH+":00 → OFF "+offH+":00.\n\nEvery target switches to the flower table now.");
         location.reload(); return;
       }
     }
-    save();
     var doSave=function(){
       if(evEditingIdx>=0)draft.events[evEditingIdx]=ev; else draft.events.push(ev);
       commitDraft();
@@ -1973,27 +2083,40 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     if(evPhotos.length){
       var stamp=Date.now(), shots=evPhotos.slice();
       ev.thumbs=shots.map(function(x){return x.thumb;});
-      ev.photoIds=shots.map(function(x,i){return x.existingId||("p"+stamp+"_"+(++evSeq)+"_"+i);});
+      delete ev.thumb; delete ev.photoId;   // arrays are authoritative once written
+      ev.photoIds=shots.map(function(x,i){var id=x.existingId||("p"+stamp+"_"+(++evSeq)+"_"+i);x.newId=id;return id;});
       shots=shots.filter(function(x){return !x.existingId&&x.data;});
       // Save the ENTRY FIRST, then write full-res photos in the background.
       // IndexedDB can be slow, evicted, or (on some origins) never settle at all —
       // losing the log entry to protect a photo is exactly the wrong trade.
       doSave();
-      Promise.all(shots.map(function(x){return IDB.put(x._id||(x._id=ev.photoIds[ev.thumbs.indexOf(x.thumb)]),x.data);}))
+      // index-based, NOT thumb-lookup: two identical images produce identical thumbs, so
+      // indexOf returned the same index twice and one blob was written to the wrong key.
+      Promise.all(shots.map(function(x){return IDB.put(x.newId,x.data);}))
         .catch(function(){ toast("Photos saved small-size only — full-res didn't store",true); });
     } else doSave();
-  });
+  }
 
   /* ---- the plant's full record (Plant tab — vitals + health trend + timeline) ---- */
   var psSel="";
   // legacy 'other' rows return null and are EXCLUDED from the trend rather than scored zero
   function statusScore(s){return s==="perky"?3:s==="slight"?2:s==="bad"?1:null;}
   function dtOf(k){return new Date(k.split("-")[0],k.split("-")[1]-1,k.split("-")[2]);}
-  function plantHistory(){var arr=[];keysSorted().slice().reverse().forEach(function(k){var pl=store.entries[k].plants&&store.entries[k].plants["1"];if(pl&&pl.s&&STATUS[pl.s]){arr.push({key:k,dt:dtOf(k),s:pl.s,n:pl.n||"",tells:pl.tells||[]});}});return arr;} // chronological
+  function plantHistory(){var arr=[];keysSorted().slice().reverse().forEach(function(k){var pl=store.entries[k].plants&&store.entries[k].plants["1"];if(pl&&((pl.s&&STATUS[pl.s])||(pl.tells&&pl.tells.length))){arr.push({key:k,dt:dtOf(k),s:pl.s,n:pl.n||"",tells:pl.tells||[]});}});return arr;} // chronological
   function plantEventsAll(){var arr=[];keysSorted().forEach(function(k){var evs=store.entries[k].events;if(evs)evs.forEach(function(e){if(e)arr.push({dt:dtOf(k),e:e});});});return arr;} // newest-first
-  function daysSinceEvent(type){var best=null;keysSorted().forEach(function(k){var evs=store.entries[k].events;if(evs)evs.forEach(function(e){if(e&&e.type===type){var d=dnum(dtOf(k));if(best===null||d>best)best=d;}});});return best===null?null:(todayDnum-best);}
+  function daysSinceEvent(type,asOf){
+    var ref=(asOf==null?todayDnum:asOf), best=null;
+    keysSorted().forEach(function(k){var d=dnum(dtOf(k)); if(d>ref)return;
+      var evs=store.entries[k].events; if(evs)evs.forEach(function(e){if(e&&e.type===type){if(best===null||d>best)best=d;}});});
+    return best===null?null:(ref-best);
+  }
   // pick only — detail is free text and would overflow the vitals tile
-  function lastEventPick(type){var best=null,pick=null;keysSorted().forEach(function(k){var evs=store.entries[k].events;if(evs)evs.forEach(function(e){if(e&&e.type===type&&e.pick){var d=dnum(dtOf(k));if(best===null||d>=best){best=d;pick=e.pick;}}});});return pick;}
+  function lastEventPick(type,asOf){
+    var ref=(asOf==null?todayDnum:asOf), best=null,pick=null;
+    keysSorted().forEach(function(k){var d=dnum(dtOf(k)); if(d>ref)return;
+      var evs=store.entries[k].events; if(evs)evs.forEach(function(e){if(e&&e.type===type&&e.pick){if(best===null||d>=best){best=d;pick=e.pick;}}});});
+    return pick;
+  }
   function healthTrend(hist0){
     var hist=(hist0||[]).filter(function(h){return statusScore(h.s)!=null;});
     if(!hist.length)return{label:"No data",cls:""};
@@ -2020,8 +2143,10 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       if(it.kind==="status"){var kk=STATUS[it.s]?STATUS[it.s].k:"none";
         var tl=(it.tells||[]).map(function(x){var f=null;TELLS.forEach(function(t){if(t.k===x)f=t.t;});return f||x;});
         return '<div class="tli '+kk+'"><span class="dot"><i data-lucide="'+(kk==="ok"?"trending-up":kk==="bad"?"trending-down":"minus")+'"></i></span><div class="dd">'+dd+'</div><div class="tt">'+(STATUS[it.s]?STATUS[it.s].t:it.s)+(tl.length?' <span class="q">· '+esc(tl.join(" · "))+'</span>':'')+(it.n?' <span class="q">— "'+esc(it.n)+'"</span>':'')+'</div></div>';}
-      var et=evType(it.e.type),env=it.e.env,envs=(env&&env.temp!=null)?(' <span class="q">@ '+env.temp+'°/'+env.rh+'%</span>'):'';
+      var et=evType(it.e.type),env=it.e.env,envs='';
+      if(env&&(env.temp!=null||env.rh!=null)){var eb=[];if(env.temp!=null)eb.push(env.temp+'°');if(env.rh!=null)eb.push(env.rh+'%');envs=' <span class="q">@ '+eb.join('/')+'</span>';}
       var pk=it.e.pick?' <b>'+esc(it.e.pick)+'</b>':'';
+      var nt2=evNumText(it.e); if(nt2)pk+=' <b>'+esc(nt2)+'</b>';
       var np=evPhotoCount(it.e), ph=np?' <span class="q">📷'+(np>1?" "+np:"")+'</span>':'';
       return '<div class="tli evrow"><span class="dot"><i data-lucide="'+et.icon+'"></i></span><div class="dd">'+dd+'</div><div class="tt">'+et.label+pk+(it.e.detail?' <span class="q">— '+esc(it.e.detail)+'</span>':'')+ph+envs+'</div></div>';
     }).join('')+'</div>'+more;
@@ -2154,26 +2279,35 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       var vv=lastR.vpd!=null?Number(lastR.vpd):vpd(lastR.temp,lastR.rh,lastR.lights!==false);
       L.push("  Room (last capture "+lastR.time+"): "+lastR.temp+"°F / "+lastR.rh+"%"+
              (lastR.lights===false?"  — dark window, VPD n/a":"  — VPD "+vv.toFixed(2)+" (leaf = air −"+(lastR.leafOff!=null?lastR.leafOff:1)+"°C, lights on)"));
-      L.push("  Target this week: "+tw.dLo+"–"+tw.dHi+"°F day / "+tw.nLo+"–"+tw.nHi+"°F dark · RH "+tw.rLo+"–"+tw.rHi+"% · VPD "+tw.vLo.toFixed(2)+"–"+tw.vHi.toFixed(2));
+      var darkR=(tw.phase==="flower"?tw.rHi:tw.rHi+6);
+      L.push("  Target this week: "+tw.dLo+"–"+tw.dHi+"°F day / "+tw.nLo+"–"+tw.nHi+"°F dark · RH "+tw.rLo+"–"+tw.rHi+"% (dark ceiling "+darkR+"%) · VPD "+tw.vLo.toFixed(2)+"–"+tw.vHi.toFixed(2));
     } else {
       L.push("  Room: NOT CAPTURED TODAY");
     }
     if(e.hi&&(e.hi.t!=null||e.hi.r!=null)||e.lo&&(e.lo.t!=null||e.lo.r!=null)){
-      L.push("  High/low since last reset"+(CFG.lastMinMaxReset?" ("+CFG.lastMinMaxReset+")":" (reset date UNKNOWN)")+": "+
+      L.push("  High/low"+(isToday?(CFG.lastMinMaxReset?" since reset "+fmtKey(CFG.lastMinMaxReset):" since an UNKNOWN reset date"):" as logged")+": "+
              (e.hi&&e.hi.t!=null?e.hi.t+"°":"—")+"/"+(e.lo&&e.lo.t!=null?e.lo.t+"°":"—")+" temp · "+
              (e.hi&&e.hi.r!=null?e.hi.r+"%":"—")+"/"+(e.lo&&e.lo.r!=null?e.lo.r+"%":"—")+" RH");
     }
     if(rds){L.push("  Captures ("+rds.length+"):");rds.forEach(function(r){
       L.push("    "+(r.time&&r.time!=="—"?r.time:"—")+" · "+r.temp+"°F / "+r.rh+"%"+(r.lights===false?"  (dark)":"  · VPD "+(r.vpd!=null?Number(r.vpd).toFixed(2):vpd(r.temp,r.rh,true).toFixed(2))));});}
     // the three questions a remote diagnosis always opens with
-    var wd=daysSinceEvent("water"), sd=daysSinceEvent("soil"), soilWas=lastEventPick("soil");
+    var dayN=(e.day!=null?e.day:dnum(dt)), isToday=(k===todayKey);
+    var wd=daysSinceEvent("water",dayN), sd=daysSinceEvent("soil",dayN), soilWas=lastEventPick("soil",dayN);
     var wev=(e.events||[]).filter(function(x){return x&&x.type==="water";});
-    L.push("  Water: "+(wev.length?("TODAY — "+wev.map(function(x){return (x.time||"")+(x.pick?" "+x.pick:"")+(x.detail?" ("+x.detail+")":"");}).join(", ").trim())
-                                  :(wd==null?"never logged":wd+" days ago")));
-    L.push("  Soil: "+(soilWas?soilWas:"never checked")+(sd==null?"":(sd===0?" (checked today)":" (checked "+sd+"d ago)")));
-    var ds=dliState();
-    L.push("  Light: "+(CFG.lightIn?CFG.lightIn+'" above canopy':"height not set")+
-           (CFG.ppfd!=null?" · "+CFG.ppfd+" µmol → "+dliFrom(CFG.ppfd).toFixed(0)+" mol/day (want "+dliTarget().lo+"–"+dliTarget().hi+")":" · NO PPFD MEASUREMENT"));
+    L.push("  Water: "+(wev.length?("logged this day — "+wev.map(function(x){var n=evNumText(x);return (x.time||"")+(x.pick?" "+x.pick:"")+(n?" ("+n+")":"")+(x.detail?" ("+x.detail+")":"");}).join(", ").trim())
+                                  :(wd==null?"never logged":wd+" days before this day")));
+    L.push("  Soil: "+(soilWas?soilWas:"never checked")+(sd==null?"":(sd===0?" (checked this day)":" (checked "+sd+"d before)")));
+    // light height comes from the LOG as of this day, not from today's config
+    var lh=lightAtDay(dayN); if(lh==null&&isToday)lh=CFG.lightIn;
+    var lightLine="  Light: "+(lh!=null?lh+'" above canopy':"height not known for this day");
+    if(isToday){
+      var ds=dliState();               // null when the reading is stale for the current height
+      if(ds)lightLine+=" · "+CFG.ppfd+" µmol → "+ds.dli.toFixed(0)+" mol/day (want "+ds.lo+"–"+ds.hi+")"+(ds.state==="over"?"  ⚠ ABOVE THE VEG CEILING OF "+DLI_VEG_CEILING:"");
+      else if(CFG.ppfd!=null)lightLine+=" · "+CFG.ppfd+" µmol measured at "+(CFG.ppfdAt!=null?CFG.ppfdAt+'"':"an unknown height")+" — STALE, not re-measured since the light moved";
+      else lightLine+=" · NO PPFD MEASUREMENT";
+    }
+    L.push(lightLine);
     Object.keys(e.plants||{}).sort().forEach(function(pid){var pl=e.plants[pid]||{};
       if(pl.s||pl.n||(pl.tells&&pl.tells.length)){
         var nm=pid==="1"?"Her":("Plant #"+pid+" (retired)");
@@ -2183,13 +2317,27 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     var evs=(e.events&&e.events.length)?e.events.filter(Boolean):null;
     if(evs&&evs.length){L.push("  Events ("+evs.length+"):");evs.forEach(function(ev){
       var et=evType(ev.type),env=ev.env;
-      var envs=env&&env.temp!=null?("  @ "+env.temp+"°F/"+env.rh+"%"+(env.vpd!=null?" VPD "+Number(env.vpd).toFixed(2):"")+(env.lights===false?" dark":"")+(env.src==="dial"?" [dial, not a capture]":"")):"";
-      L.push("    "+(ev.time||"—")+" · "+et.label+(ev.pick?" · "+ev.pick:"")+(ev.num!=null?" · "+ev.num:"")+(ev.detail?': "'+ev.detail+'"':"")+envs+(evPhotoCount(ev)?"  ["+evPhotoCount(ev)+" photo"+(evPhotoCount(ev)>1?"s":"")+"]":""));
+      var envs="";
+      if(env&&(env.temp!=null||env.rh!=null)){
+        var bits=[]; if(env.temp!=null)bits.push(env.temp+"°F"); if(env.rh!=null)bits.push(env.rh+"%");
+        envs="  @ "+bits.join("/")+(env.vpd!=null?" VPD "+Number(env.vpd).toFixed(2):"")+(env.lights===false?" dark":"")+(env.src==="dial"?" [dial, not a capture]":"");
+      }
+      var ent=evNumText(ev);
+      L.push("    "+(ev.time||"—")+" · "+et.label+(ev.pick?" · "+ev.pick:"")+(ent?" · "+ent:"")+(ev.detail?': "'+ev.detail+'"':"")+envs+(evPhotoCount(ev)?"  ["+evPhotoCount(ev)+" photo"+(evPhotoCount(ev)>1?"s":"")+"]":""));
     });}
     if(e.notes)L.push("  Notes: "+e.notes);
     return L.join("\n");
   }
-  function tryCopy(t){try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t);}catch(e){}}
+  function fmtKey(k){ try{var d=dtOf(k);return MONTHS[d.getMonth()]+" "+d.getDate();}catch(e){return k;} }
+  function tryCopy(t,onResult){
+    var ta=$("modalText");
+    function fallback(){ try{ta.focus();ta.setSelectionRange(0,t.length);}catch(e){} if(onResult)onResult(false); }
+    try{
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(t).then(function(){ if(onResult)onResult(true); },fallback);
+      } else fallback();
+    }catch(e){ fallback(); }
+  }
   var modalOnApply=null;
   function openModal(title,text,opts){
     opts=opts||{};
@@ -2199,7 +2347,15 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     $("modalApply").style.display=modalOnApply?"":"none";
     $("modalCopy").style.display=modalOnApply?"none":"";
     $("modalBg").classList.add("open");
-    if(!opts.editable)tryCopy(text);
+    if(!opts.editable){
+      var note=$("modalNote");
+      if(note)note.textContent="Copying…";
+      tryCopy(text,function(ok){
+        if(!note)return;
+        note.textContent = ok ? "Copied to your clipboard — paste it to me. Attach the day's photos too if you took any."
+                              : "Couldn't reach the clipboard — the text is selected above, copy it by hand.";
+      });
+    }
     if(window.matchMedia&&matchMedia("(hover: hover)").matches&&!opts.editable){setTimeout(function(){ta.focus();ta.setSelectionRange(0,text.length);},50);} // no auto-zoom/scroll on phones
     if(opts.editable){setTimeout(function(){ta.focus();},50);}
   }
@@ -2218,9 +2374,9 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     return L;
   }
   function photoCue(e){
-    var ph=(e.events||[]).filter(function(x){return x&&(evPhotoCount(x)||x.type==="photo");});
+    var ph=(e.events||[]).filter(function(x){return x&&evPhotoCount(x)>0;});
     if(!ph.length)return "";
-    var total=0; ph.forEach(function(x){total+=Math.max(1,evPhotoCount(x));});
+    var total=0; ph.forEach(function(x){total+=evPhotoCount(x);});
     var p=todayKey.split("-"),folder="photo-log/"+p[0]+"-"+("0"+p[1]).slice(-2)+"-"+("0"+p[2]).slice(-2)+"-day"+Math.max(0,todayDnum)+"/";
     return "\nPhotos today: "+total+" across "+ph.length+" event"+(ph.length>1?"s":"")+" ("+ph.map(function(x){var n=evPhotoCount(x);return (x.time||"—")+" "+evType(x.type).label+(n>1?" ×"+n:"");}).join(", ")+") — I'm attaching them; file into "+folder;
   }
@@ -2239,8 +2395,10 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     openModal("Copy today to send me","ZANGRIA GROW — daily update\n"+cfgLine()+"\n"+report(todayKey,e)+photoCue(e)+dataTail(e));
   });
   function keysSorted(){return Object.keys(store.entries).sort(function(a,b){return dnum(new Date(b.split("-")[0],b.split("-")[1]-1,b.split("-")[2]))-dnum(new Date(a.split("-")[0],a.split("-")[1]-1,a.split("-")[2]));});}
-  $("copyAllBtn").addEventListener("click",function(){var ks=keysSorted();if(!ks.length){openModal("Full log","No entries yet.");return;}var pre=isDemo?"SAMPLE DATA — preview only, not your real log.\n\n":"";openModal(isDemo?"Copy full log (sample)":"Copy full log to send me",pre+"ZANGRIA GROW — full log ("+ks.length+" day"+(ks.length>1?"s":"")+")\n"+cfgLine()+"\n\n"+ks.map(function(k){return report(k,store.entries[k]);}).join("\n\n"));});
-  $("modalCopy").addEventListener("click",function(){tryCopy($("modalText").value);});
+  $("copyAllBtn").addEventListener("click",function(){var ks=keysSorted();if(!ks.length){openModal("Full log","No entries yet.");return;}var pre=isDemo?"SAMPLE DATA — preview only, not your real log.\n\n":"";var body=pre+"ZANGRIA GROW — full log ("+ks.length+" day"+(ks.length>1?"s":"")+")\n"+cfgLine()+"\n\n"+ks.map(function(k){return report(k,store.entries[k]);}).join("\n\n");
+    if(!isDemo){try{body+="\n\n--- FULL BACKUP v1 (paste into Guide → Restore) ---\n"+JSON.stringify({v:1,app:"zangria-cockpit",store:{entries:(function(){var o={};Object.keys(store.entries).forEach(function(k){o[k]=stripThumbs(store.entries[k]);});return o;})(),config:CFG}});}catch(err){}}
+    openModal(isDemo?"Copy full log (sample)":"Copy full log to send me",body);});
+  $("modalCopy").addEventListener("click",function(){tryCopy($("modalText").value,function(ok){toast(ok?"✓ Copied":"Couldn't copy — select the text above",!ok);});});
   $("modalApply").addEventListener("click",function(){if(modalOnApply)modalOnApply($("modalText").value);});
   /* ---- backup / restore (Guide → Data safety) ---- */
   $("backupBtn").addEventListener("click",function(){
@@ -2255,13 +2413,21 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
         var b=JSON.parse(txt);
         exitDemo();
         if(b&&b.app==="zangria-cockpit"&&b.entry&&b.key){ // a single-day DATA v1 block from a Copy-today paste
-          store.entries[b.key]=b.entry;
-          if(b.config)Object.assign(CFG,b.config);
+          // MERGE, don't replace — the block has thumbs stripped, so assigning it wiped
+          // every thumbnail for that day and made the stored photos unreachable
+          store.entries[b.key]=mergeEntry(b.entry,store.entries[b.key]);
+          // a single day's config snapshot must not silently roll the whole app back
         } else {
           var st=(b&&b.store)?b.store:b;
           if(!st||!st.entries)throw new Error("no entries");
           Object.keys(st.entries).forEach(function(k){if(st.entries[k])store.entries[k]=st.entries[k];});
-          if(st.config)Object.assign(CFG,st.config);
+          if(st.config){
+            // full restore replaces config wholesale, then re-applies defaults, so a backup
+            // predating a key can't leave a stale value behind
+            Object.keys(CFG).forEach(function(k){delete CFG[k];});
+            Object.keys(st.config).forEach(function(k){CFG[k]=st.config[k];});
+            store.config=CFG;
+          }
         }
         save();
         location.reload();
@@ -2296,9 +2462,9 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       var dr=dayRoom(e);
       h+='<div class="le-row"><b>Room:</b> '+(dr.t!=null?dr.t+"°F / "+dr.r+"% <span class=\"q\">("+dr.n+" capture"+(dr.n>1?"s":"")+")</span>":"<span class=\"q\">not captured</span>")+'</div>';
       // render whatever plant keys the entry actually has — pre-switch days recorded #2/#3 and that record stays honest
-      Object.keys(e.plants||{}).sort().forEach(function(pid){var q=e.plants[pid];if(q&&(q.s||q.n)){var dk=STATUS[q.s]?STATUS[q.s].k:"none",col=dk==="ok"?cvar("--ok"):dk==="bad"?cvar("--bad"):dk==="warn"?cvar("--warn"):cvar("--ink3");var nm=pid==="1"?"She":("#"+pid);h+='<div class="le-row"><span class="pdot" style="background:'+col+'"></span><b>'+nm+':</b> '+statusText(q.s)+(q.n?' — '+esc(q.n):"")+'</div>';}});
+      Object.keys(e.plants||{}).sort().forEach(function(pid){var q=e.plants[pid];if(q&&(q.s||q.n||(q.tells&&q.tells.length))){var dk=STATUS[q.s]?STATUS[q.s].k:"none",col=dk==="ok"?cvar("--ok"):dk==="bad"?cvar("--bad"):dk==="warn"?cvar("--warn"):cvar("--ink3");var nm=pid==="1"?"She":("#"+pid);h+='<div class="le-row"><span class="pdot" style="background:'+col+'"></span><b>'+nm+':</b> '+statusText(q.s)+(q.n?' — '+esc(q.n):"")+'</div>';}});
       var evs=(e.events&&e.events.length)?e.events.filter(Boolean):null;
-      if(evs&&evs.length){evs.forEach(function(ev){var et=evType(ev.type);h+='<div class="evl"><i data-lucide="'+et.icon+'"></i><span class="et2">'+(ev.time||"—")+'</span> <b>'+et.label+'</b>'+(ev.pick?" · "+esc(ev.pick):"")+(ev.detail?" — "+esc(ev.detail):"")+(evPhotoCount(ev)?' 📷'+(evPhotoCount(ev)>1?evPhotoCount(ev):""):"")+'</div>';});}
+      if(evs&&evs.length){evs.forEach(function(ev){var et=evType(ev.type);var lnt=evNumText(ev);h+='<div class="evl"><i data-lucide="'+et.icon+'"></i><span class="et2">'+(ev.time||"—")+'</span> <b>'+et.label+'</b>'+(ev.pick?" · "+esc(ev.pick):"")+(lnt?" · "+esc(lnt):"")+(ev.detail?" — "+esc(ev.detail):"")+(evPhotoCount(ev)?' 📷'+(evPhotoCount(ev)>1?evPhotoCount(ev):""):"")+'</div>';});}
       if(e.notes)h+='<div class="le-row"><b>Notes:</b> '+esc(e.notes)+'</div>';
       return h+'</div>';}).join("");
     if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});
@@ -2388,7 +2554,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       lc.textContent='Light · '+CFG.lightIn+'"'+(ds2?' · '+ds2.dli.toFixed(0)+' mol':'');
     }
   }
-  $("tgIhc").addEventListener("click",function(){CFG.ihc=!CFG.ihc;save();syncChips();renderGauges();renderDue();flashRow(this);toast(CFG.ihc?"✓ Humidity controller ON — humidity now AUTO":"Humidity controller marked not installed");});
+  $("tgIhc").addEventListener("click",function(){CFG.ihc=!CFG.ihc;touchCfg("ihc");save();syncChips();renderGauges();renderDue();flashRow(this);toast(CFG.ihc?"✓ Humidity controller ON — humidity now AUTO":"Humidity controller marked not installed");});
   /* SETTINGS COMMIT MODEL — every row saves the moment you leave it AND confirms.
      Previously only Light height toasted, and the light-cycle fields did a full
      location.reload() on change, which looked like the app throwing your edit away.
@@ -2415,17 +2581,21 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     el.addEventListener("change",function(){clearTimeout(setT[id]);commit(false);});
   }
 
-  onSetting("setStrain","Strain saved",function(el){CFG.strain=el.value.trim();return true;},
+  onSetting("setStrain","Strain saved",function(el){CFG.strain=el.value.trim();touchCfg("strain");return true;},
     function(){syncChips();renderBoards();renderDue();renderPlantIfVisible();});
 
   onSetting("setLight","Light height saved",function(el){
-    var v=parseInt(el.value,10); CFG.lightIn=isNaN(v)?null:v;
+    var v=parseInt(el.value,10);
+    if(!isNaN(v)&&(v<6||v>96)){toast("Light height should be 6–96 inches",true);return false;}
+    CFG.lightIn=isNaN(v)?null:v; touchCfg("lightIn");
     if(CFG.ppfd!=null&&CFG.ppfdAt!==CFG.lightIn)CFG.ppfdAt=null;   // reading belonged to the old height
     return true;
   },function(){syncChips();renderGauges();renderDue();});
 
   onSetting("setPpfd","PPFD saved",function(el){
-    var v=parseFloat(el.value); CFG.ppfd=isNaN(v)?null:v; CFG.ppfdAt=isNaN(v)?null:CFG.lightIn; return true;
+    var v=parseFloat(el.value);
+    if(!isNaN(v)&&(v<0||v>2000)){toast("PPFD should be 0–2000 µmol",true);return false;}
+    CFG.ppfd=isNaN(v)?null:v; CFG.ppfdAt=isNaN(v)?null:CFG.lightIn; touchCfg("ppfd","ppfdAt"); return true;
   },function(){syncChips();renderGauges();renderDue();});
 
   function applyCycle(){
@@ -2436,26 +2606,30 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   }
   onSetting("setOn","Lights-on hour saved",function(el){
     var v=parseInt(el.value,10); if(isNaN(v)||v<0||v>23){toast("Hour must be 0–23",true);return false;}
-    CFG.onHour=v; return true;
+    if(v===CFG.offHour){toast("Lights-on and lights-off can't be the same hour",true);return false;}
+    CFG.onHour=v; touchCfg("onHour"); return true;
   },applyCycle);
   onSetting("setOff","Lights-off hour saved",function(el){
     var v=parseInt(el.value,10); if(isNaN(v)||v<0||v>23){toast("Hour must be 0–23",true);return false;}
-    CFG.offHour=v; return true;
+    if(v===CFG.onHour){toast("Lights-on and lights-off can't be the same hour",true);return false;}
+    CFG.offHour=v; touchCfg("offHour"); return true;
   },applyCycle);
 
   onSetting("setLeaf","VPD leaf offset saved",function(el){
-    var v=parseFloat(el.value); if(isNaN(v)||v<0||v>4){toast("Offset must be 0–4 °C",true);return false;}
-    CFG.leafOffsetC=v; return true;
+    var v=parseFloat(el.value);
+    if(isNaN(v)||v<0.5||v>1.5){toast("Offset must be 0.5–1.5 °C — outside that the whole target table stops matching",true);return false;}
+    CFG.leafOffsetC=v; touchCfg("leafOffsetC"); return true;
   },function(){renderGauges();renderRedRef();});
 
   onSetting("setHeat","Heater set-point saved",function(el){
-    var v=parseInt(el.value,10); if(isNaN(v))return false;
-    CFG.heaterSet=v; return true;
+    var v=parseInt(el.value,10);
+    if(isNaN(v)||v<50||v>90){toast("Heater set-point should be 50–90 °F",true);return false;}
+    CFG.heaterSet=v; touchCfg("heaterSet"); return true;
   },function(){renderGauges();renderDue();});
 
   $("clearFlip").addEventListener("click",function(){
     if(CFG.flipDay==null)return;
-    CFG.flipDay=null;save();location.reload();
+    CFG.flipDay=null;touchCfg("flipDay");save();location.reload();
   });
 
   /* ---- one canonical home for the data ---- */
