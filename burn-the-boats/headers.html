@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Boats Have Been Burned — Five Headers</title>
+<link rel="stylesheet" href="lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --flame:#FF9A3C; --deep:#B32A00;
+  --phos:#4ADE80; --blood:#FF4D5E;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99;
+  background-image:url('assets/grain/grain-fine.svg');opacity:.035;mix-blend-mode:overlay}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+.mono{font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+
+.mast{padding:66px 0 34px;border-bottom:1px solid var(--line)}
+.kick{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.27em;color:var(--faint);text-transform:uppercase;margin-bottom:15px}
+.mast h1{font-size:clamp(31px,5vw,52px);line-height:1.02;letter-spacing:-.035em;margin-bottom:16px}
+.mast p{max-width:640px;color:var(--dim);font-size:15.5px;margin:0}
+.mast p b{color:var(--ink);font-weight:500}
+
+.dir{padding:52px 0;border-bottom:1px solid var(--line)}
+.dh{display:grid;grid-template-columns:62px 1fr;gap:18px;align-items:start;margin-bottom:24px}
+.dn{font-family:'Clash Display',sans-serif;font-size:46px;line-height:.8;font-weight:700;color:transparent;-webkit-text-stroke:1.2px var(--line2)}
+.dt h2{font-size:27px;letter-spacing:-.03em;margin-bottom:5px}
+.dm{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+.dl{max-width:600px;color:var(--dim);font-size:15px;margin-top:11px}
+.dl b{color:var(--ink);font-weight:500}
+.body{display:grid;grid-template-columns:minmax(0,392px) 1fr;gap:34px;align-items:start}
+@media(max-width:880px){.body{grid-template-columns:1fr}.dh{grid-template-columns:44px 1fr;gap:12px}.dn{font-size:32px}}
+.notes dt{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-top:18px}
+.notes dt:first-child{margin-top:0}
+.notes dd{margin:6px 0 0;font-size:14.5px;color:var(--dim);line-height:1.55}
+.notes dd b{color:var(--ink);font-weight:500}
+.cost{border-left:2px solid var(--line2);padding-left:13px;margin-top:20px;font-size:13.6px;color:var(--faint);font-style:italic}
+
+/* phone frame */
+.phone{border-radius:20px;overflow:hidden;border:1px solid var(--line2);background:var(--bg);
+  box-shadow:0 28px 70px -28px #000}
+.notch{height:26px;background:#000;display:flex;align-items:center;justify-content:center}
+.notch i{width:56px;height:5px;border-radius:99px;background:#1a1a20}
+.below{padding:12px 13px 16px;border-top:1px solid var(--line)}
+.bl{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.16em;color:#3f3a4d;text-align:center}
+
+/* ---- shared sub-parts ---- */
+.vicerow{display:flex;gap:7px;padding:10px 13px 12px}
+.vice{flex:1;border:1px solid var(--line2);border-radius:9px;padding:6px 8px;background:rgba(14,12,22,.7)}
+.vice .vl{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase}
+.vice .vv{font-family:'Geist Mono',monospace;font-size:13px;font-weight:700;color:var(--phos);margin-top:2px}
+.vice .vs{font-family:'Geist Mono',monospace;font-size:6.5px;color:var(--faint)}
+
+/* ============ 01 — TYPE ON FIRE ============ */
+.h1x{position:relative;padding:26px 16px 16px;text-align:center;overflow:hidden;background:#08060a}
+.h1x .heat{position:absolute;left:50%;bottom:-60px;transform:translateX(-50%);width:130%;height:190px;
+  background:radial-gradient(60% 100% at 50% 100%,rgba(255,107,44,.5),rgba(179,42,0,.24) 42%,transparent 72%);
+  filter:blur(16px);animation:heat1 3.6s ease-in-out infinite}
+@keyframes heat1{0%,100%{opacity:.75;transform:translateX(-50%) scaleY(1)}50%{opacity:1;transform:translateX(-50%) scaleY(1.13)}}
+.burnt{font-family:'Clash Display',sans-serif;font-weight:700;font-size:29px;line-height:1.04;letter-spacing:.01em;
+  position:relative;z-index:2;background:linear-gradient(180deg,#FFE9C9 6%,#FFB25E 38%,#FF6B2C 68%,#B32A00 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 16px rgba(255,107,44,.5))}
+.burnt span{display:block}
+#emb1{position:absolute;inset:0;z-index:1;pointer-events:none}
+.h1x .daysrow{position:relative;z-index:2;margin-top:14px;display:flex;align-items:flex-end;justify-content:center;gap:9px}
+.h1x .big{font-family:'Clash Display',sans-serif;font-size:60px;line-height:.82;letter-spacing:-.055em;color:#fff;
+  text-shadow:0 0 30px rgba(255,154,60,.45)}
+.h1x .cap{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.17em;color:#b98a63;padding-bottom:7px;text-align:left;line-height:1.5}
+
+/* ============ 02 — THE EMBER LINE ============ */
+.h2x{position:relative;padding:24px 16px 0;background:linear-gradient(180deg,#07060b,#0c0708)}
+.h2x .lead{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:.02em;line-height:1.15;color:#f0e2d2}
+.h2x .lead em{font-style:normal;color:var(--ember)}
+.h2x .num{display:flex;align-items:baseline;gap:10px;margin-top:14px}
+.h2x .num b{font-family:'Clash Display',sans-serif;font-size:52px;line-height:.85;letter-spacing:-.05em;color:#fff}
+.h2x .num span{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.15em;color:#a8785a;line-height:1.5}
+.emberline{position:relative;height:38px;margin:14px -16px 0}
+.emberline .bar{position:absolute;left:0;right:0;bottom:12px;height:3px;background:#241612;overflow:hidden}
+.emberline .bar i{position:absolute;left:0;top:0;bottom:0;width:62%;
+  background:linear-gradient(90deg,#5c1c00,var(--ember) 70%,#FFD9A0)}
+.emberline .lick{position:absolute;bottom:14px;left:0;width:62%;height:26px;pointer-events:none;
+  background:repeating-linear-gradient(90deg,transparent 0 7px,rgba(255,154,60,.55) 7px 9px,transparent 9px 15px);
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 78%);mask-image:linear-gradient(180deg,transparent,#000 78%);
+  filter:blur(2.5px);animation:lick 1.5s ease-in-out infinite alternate}
+@keyframes lick{from{opacity:.5;transform:scaleY(.72)}to{opacity:1;transform:scaleY(1.25)}}
+.emberline .glow{position:absolute;left:0;width:62%;bottom:2px;height:34px;
+  background:radial-gradient(70% 100% at 50% 100%,rgba(255,107,44,.45),transparent 70%);filter:blur(9px)}
+.emberline .tip{position:absolute;bottom:8px;left:62%;width:8px;height:11px;border-radius:50%;
+  background:#FFE0AE;filter:blur(2.5px);animation:tip 1.1s ease-in-out infinite alternate}
+@keyframes tip{from{opacity:.6;transform:translateY(1px) scale(.85)}to{opacity:1;transform:translateY(-2px) scale(1.15)}}
+
+/* ============ 03 — THE PYRE ============ */
+.h3x{position:relative;height:224px;overflow:hidden;background:linear-gradient(180deg,#05040a 0%,#0b0710 52%,#160a08 100%)}
+.h3x .sea{position:absolute;left:0;right:0;bottom:0;height:56px;
+  background:linear-gradient(180deg,#180b0a,#0a0608);border-top:1px solid rgba(255,107,44,.22)}
+.h3x .refl{position:absolute;left:50%;transform:translateX(-50%);bottom:0;width:130px;height:56px;
+  background:linear-gradient(180deg,rgba(255,107,44,.42),transparent 85%);filter:blur(7px);animation:refl 3s ease-in-out infinite}
+@keyframes refl{0%,100%{opacity:.55;width:110px}50%{opacity:.95;width:150px}}
+.h3x svg.ship{position:absolute;left:50%;transform:translateX(-50%);bottom:30px;z-index:3}
+.h3x .plume{position:absolute;left:50%;transform:translateX(-50%);bottom:62px;width:82px;height:126px;z-index:4;
+  background:radial-gradient(42% 58% at 50% 100%,rgba(255,236,200,.95),rgba(255,154,60,.62) 30%,rgba(255,107,44,.3) 52%,transparent 74%);
+  filter:blur(8px);mix-blend-mode:screen;animation:plume 2.4s ease-in-out infinite}
+@keyframes plume{0%,100%{transform:translateX(-50%) scaleY(1) scaleX(1);opacity:.88}
+  50%{transform:translateX(-50%) scaleY(1.18) scaleX(.92);opacity:1}}
+.h3x .txt{position:absolute;left:0;right:0;top:16px;text-align:center;z-index:4}
+.h3x .txt b{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:.07em;color:#f4e6d6;display:block;
+  text-shadow:0 2px 24px rgba(255,107,44,.5)}
+.h3x .txt span{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.24em;color:#96705a;display:block;margin-top:7px}
+.h3x .cnt{position:absolute;right:14px;bottom:10px;z-index:4;text-align:right}
+.h3x .cnt b{font-family:'Clash Display',sans-serif;font-size:38px;line-height:.85;color:#fff;letter-spacing:-.05em;display:block}
+.h3x .cnt span{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.14em;color:#a8785a}
+#emb3{position:absolute;inset:0;z-index:3;pointer-events:none}
+
+/* ============ 04 — THE FURNACE ============ */
+.h4x{position:relative;padding:22px 16px 18px;background:
+  linear-gradient(180deg,#0d0c10,#0a090d);border-bottom:1px solid #1c1a22;overflow:hidden}
+.h4x::before{content:'';position:absolute;left:-10%;right:-10%;top:-40%;height:150%;
+  background:radial-gradient(50% 46% at 50% 62%,rgba(255,107,44,.2),rgba(179,42,0,.08) 44%,transparent 70%);
+  animation:furnace 5s ease-in-out infinite}
+@keyframes furnace{0%,100%{opacity:.62;transform:scale(1)}50%{opacity:1;transform:scale(1.07)}}
+.h4x .plate{position:relative;z-index:2;text-align:center}
+.h4x .stamp{font-family:'Clash Display',sans-serif;font-weight:700;font-size:22px;letter-spacing:.035em;line-height:1.14;
+  color:#2a2530;text-shadow:0 1px 0 rgba(255,150,80,.34), 0 -1px 0 rgba(0,0,0,.85);}
+.h4x .stamp em{font-style:normal;color:#e8a86a;text-shadow:0 0 22px rgba(255,107,44,.62)}
+.h4x .meter{position:relative;z-index:2;margin-top:16px;display:flex;align-items:center;gap:11px}
+.h4x .meter .n{font-family:'Clash Display',sans-serif;font-size:44px;line-height:.85;letter-spacing:-.05em;color:#f2ece4}
+.h4x .meter .r{flex:1}
+.h4x .meter .r .t{height:6px;border-radius:99px;background:#191419;overflow:hidden;position:relative}
+.h4x .meter .r .t i{position:absolute;left:0;top:0;bottom:0;width:62%;
+  background:linear-gradient(90deg,#6b2400,var(--ember),#FFC98A);box-shadow:0 0 12px rgba(255,107,44,.65)}
+.h4x .meter .r .lab{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7.5px;
+  letter-spacing:.13em;color:#8d6650;margin-top:6px}
+
+/* ============ 05 — THE NUMBER ============ */
+.h5x{position:relative;padding:20px 16px 14px;background:#08070c;overflow:hidden}
+.h5x .kicker{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.26em;color:var(--ember);
+  text-transform:uppercase;text-align:center;margin-bottom:4px}
+.h5x .numwrap{position:relative;text-align:center;line-height:1}
+.h5x .n{font-family:'Clash Display',sans-serif;font-weight:700;font-size:112px;letter-spacing:-.07em;
+  line-height:.82;color:#f6f1ea;position:relative;z-index:2;display:inline-block;
+  text-shadow:0 6px 40px rgba(255,107,44,.35)}
+.h5x .base{position:absolute;left:50%;transform:translateX(-50%);bottom:6px;width:180px;height:34px;z-index:1;
+  background:radial-gradient(50% 100% at 50% 100%,rgba(255,201,138,.9),rgba(255,107,44,.55) 34%,transparent 72%);
+  filter:blur(6px);animation:base5 2s ease-in-out infinite}
+@keyframes base5{0%,100%{opacity:.7;transform:translateX(-50%) scaleY(.85)}50%{opacity:1;transform:translateX(-50%) scaleY(1.2)}}
+.h5x .flick{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;width:160px;height:26px;z-index:3;
+  background:repeating-linear-gradient(90deg,transparent 0 9px,rgba(255,224,174,.75) 9px 12px,transparent 12px 21px);
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 80%);mask-image:linear-gradient(180deg,transparent,#000 80%);
+  filter:blur(2px);animation:lick 1.3s ease-in-out infinite alternate}
+.h5x .sub{text-align:center;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.2em;
+  color:#a8785a;margin-top:8px}
+.h5x .line{text-align:center;font-family:'Clash Display',sans-serif;font-size:14px;letter-spacing:.04em;
+  color:#e8d9c8;margin-top:11px;padding-top:11px;border-top:1px solid #1c1620}
+
+/* verdict */
+.verdict{padding:56px 0 96px}
+.verdict h2{font-size:25px;margin-bottom:8px}
+.verdict>p{color:var(--dim);max-width:640px;margin:0 0 24px;font-size:15.2px}
+.vr{display:grid;grid-template-columns:30px 1fr;gap:14px;padding:16px 0;border-top:1px solid var(--line);align-items:start}
+.vr .n{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);padding-top:3px}
+.vr h3{font-size:16px;margin-bottom:4px;font-family:'Satoshi';font-weight:700}
+.vr p{margin:0;color:var(--dim);font-size:14.2px;line-height:1.55}
+.vr.pick h3{color:var(--gold)}
+.tag{display:inline-block;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.13em;
+  padding:2.5px 7px;border-radius:4px;border:1px solid var(--line2);color:var(--faint);margin-left:8px;text-transform:uppercase;vertical-align:2px}
+.tag.g{border-color:rgba(224,178,94,.45);color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="mast">
+    <div class="kick">Header · five renditions</div>
+    <h1>“The boats have been burned”</h1>
+    <p>Five treatments of the top of the app. In every one the <b>OVR is gone</b> (it moves down to the graph where it means something), the <b>days counter is the hero</b>, and the two vices sit underneath. All five are <b>animating live</b> — watch each for a few seconds.</p>
+  </div>
+
+  <!-- 01 -->
+  <section class="dir">
+    <div class="dh"><div class="dn">01</div>
+      <div class="dt"><h2>Type on Fire</h2>
+        <div class="dm">The words themselves burn · embers rising through</div>
+        <p class="dl">The line <b>is</b> the fire. Letters filled with a heat gradient from white-hot at the top to charred at the base, real ember particles drifting up through them, and a slow heat bloom breathing underneath. The number sits directly below at 60px.</p></div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="notch"><i></i></div>
+        <div class="h1x">
+          <div class="heat"></div>
+          <div id="emb1"></div>
+          <div class="burnt"><span>THE BOATS HAVE</span><span>BEEN BURNED</span></div>
+          <div class="daysrow">
+            <div class="big">91</div>
+            <div class="cap">WORKDAYS<br>TO DEC 1</div>
+          </div>
+        </div>
+        <div class="vicerow">
+          <div class="vice"><div class="vl">Dishwasher · streak</div><div class="vv">0w</div><div class="vs">0 / 1 THIS WEEK</div></div>
+          <div class="vice"><div class="vl">Smoke · clean</div><div class="vv">0d</div><div class="vs">BEFORE NOON · HOLDING</div></div>
+        </div>
+        <div class="below"><div class="bl">↓ THE GRAPH · TODAY · THE WEEK</div></div>
+      </div>
+      <dl class="notes">
+        <dt>The move</dt><dd>Heat gradient <b>inside</b> the letterforms plus real particles. It's the most literal reading and the most immediately striking thing on the page.</dd>
+        <dt>Why it works at 6 AM</dt><dd>You open it half-awake and the first thing you see is <b>your own declaration on fire</b>. No interpretation required.</dd>
+        <div class="cost">The cost: burning text is the easiest thing here to make look cheap. It only stays premium because the palette is restrained and the flame never leaves the letters — one extra effect and it's a heavy-metal album cover.</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="dir">
+    <div class="dh"><div class="dn">02</div>
+      <div class="dt"><h2>The Ember Line</h2>
+        <div class="dm">The fuel gauge became a burning fuse</div>
+        <p class="dl">The most <b>functional</b> of the five. The days bar is now a literal <b>fuse burning down</b> — a hot tip at the boundary, flames licking along the spent portion, glow bleeding beneath. Restrained type, and the one animated element is the thing that's actually running out.</p></div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="notch"><i></i></div>
+        <div class="h2x">
+          <div class="lead">The boats have<br><em>been burned.</em></div>
+          <div class="num"><b>91</b><span>WORKDAYS<br>TO DEC 1</span></div>
+          <div class="emberline">
+            <div class="glow"></div>
+            <div class="bar"><i></i></div>
+            <div class="lick"></div>
+            <div class="tip"></div>
+          </div>
+        </div>
+        <div class="vicerow">
+          <div class="vice"><div class="vl">Dishwasher · streak</div><div class="vv">0w</div><div class="vs">0 / 1 THIS WEEK</div></div>
+          <div class="vice"><div class="vl">Smoke · clean</div><div class="vv">0d</div><div class="vs">BEFORE NOON · HOLDING</div></div>
+        </div>
+        <div class="below"><div class="bl">↓ THE GRAPH · TODAY · THE WEEK</div></div>
+      </div>
+      <dl class="notes">
+        <dt>The move</dt><dd>The metaphor and the data are <b>the same object</b>. The fuse is your fuel gauge; watching it shorten week over week is the entire point, and no other direction fuses meaning and function this tightly.</dd>
+        <dt>Why it lasts</dt><dd>The quietest of the five, which means it's the one least likely to irritate you in November. The flame is a detail, not a spectacle.</dd>
+        <div class="cost">The cost: it's the least <em>loud</em>. You asked for large letters and flame; this deliberately makes the type smaller and gives the drama to a 3px line. If you want to be hit in the face at 6 AM, this isn't it.</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="dir">
+    <div class="dh"><div class="dn">03</div>
+      <div class="dt"><h2>The Pyre</h2>
+        <div class="dm">An actual burning ship on the horizon</div>
+        <p class="dl">Not a graphic — <b>a scene</b>. A ship silhouette on a dark sea, burning, its reflection guttering on the water, embers lifting off it. The line sits above like a title card. This is the only rendition that renders the <b>story</b> rather than the words.</p></div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="notch"><i></i></div>
+        <div class="h3x">
+          <div class="txt"><b>THE BOATS HAVE BEEN BURNED</b><span>NO WAY BACK</span></div>
+          <div class="plume"></div>
+          <!-- tall ship: curved hull, mast well above the sails, stacked square sails, bowsprit -->
+          <svg class="ship" width="196" height="118" viewBox="0 0 196 118">
+            <g fill="#160d0f" stroke="rgba(255,150,80,.30)" stroke-width="0.7">
+              <rect x="95" y="6" width="3.6" height="82"/>
+              <path d="M96.8 6 L118 12 L96.8 18 Z"/>
+              <path d="M72 24 L121 24 L117 43 L76 43 Z"/>
+              <path d="M66 49 L127 49 L122 71 L71 71 Z"/>
+              <rect x="70" y="22" width="53" height="2.6"/>
+              <rect x="64" y="47" width="65" height="2.6"/>
+              <path d="M26 84 C40 102 156 102 170 84 L162 78 L34 78 Z"/>
+              <path d="M168 82 L192 70 L193 74 L170 86 Z"/>
+              <rect x="82" y="70" width="30" height="9"/>
+            </g>
+          </svg>
+          <div id="emb3"></div>
+          <div class="sea"></div>
+          <div class="refl"></div>
+          <div class="cnt"><b>91</b><span>DAYS TO DEC 1</span></div>
+        </div>
+        <div class="vicerow">
+          <div class="vice"><div class="vl">Dishwasher · streak</div><div class="vv">0w</div><div class="vs">0 / 1 THIS WEEK</div></div>
+          <div class="vice"><div class="vl">Smoke · clean</div><div class="vv">0d</div><div class="vs">BEFORE NOON · HOLDING</div></div>
+        </div>
+        <div class="below"><div class="bl">↓ THE GRAPH · TODAY · THE WEEK</div></div>
+      </div>
+      <dl class="notes">
+        <dt>The move</dt><dd><b>It shows the thing instead of saying it.</b> Cortés burned his ships so nobody could sail home. Every other direction writes the sentence; this one puts the ship on the water and lets it burn.</dd>
+        <dt>Emotional register</dt><dd>Cinematic and still. The most memorable header of the five and the one most likely to make you stop for a second on day 60.</dd>
+        <div class="cost">The cost: it's the <b>tallest</b> — 212px before you reach any information — and a scene is the hardest thing to keep looking expensive. Done at 80% it's a clip-art boat. It also risks feeling theatrical when you're just trying to check what block is next.</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="dir">
+    <div class="dh"><div class="dn">04</div>
+      <div class="dt"><h2>The Furnace</h2>
+        <div class="dm">Stamped into metal · heat implied, never drawn</div>
+        <p class="dl">The restrained one. The line is <b>embossed into a dark plate</b> — cut shadow above, hot rim light below — with a slow furnace glow breathing behind it. <b>There is no visible flame anywhere.</b> Only heat. The discipline is the aesthetic.</p></div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="notch"><i></i></div>
+        <div class="h4x">
+          <div class="plate">
+            <div class="stamp">THE BOATS HAVE<br><em>BEEN BURNED</em></div>
+          </div>
+          <div class="meter">
+            <div class="n">91</div>
+            <div class="r">
+              <div class="t"><i></i></div>
+              <div class="lab"><span>WORKDAYS TO DEC 1</span><span>WK 01</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="vicerow">
+          <div class="vice"><div class="vl">Dishwasher · streak</div><div class="vv">0w</div><div class="vs">0 / 1 THIS WEEK</div></div>
+          <div class="vice"><div class="vl">Smoke · clean</div><div class="vv">0d</div><div class="vs">BEFORE NOON · HOLDING</div></div>
+        </div>
+        <div class="below"><div class="bl">↓ THE GRAPH · TODAY · THE WEEK</div></div>
+      </div>
+      <dl class="notes">
+        <dt>The move</dt><dd><b>Withholding.</b> Every other direction shows you fire; this one shows you the heat coming off something you can't see. Restraint is what separates premium from decorated, and this is the only one that trusts it.</dd>
+        <dt>Why it might win</dt><dd>It's the one that still looks expensive on day 91. Spectacle fatigues; a well-set embossed plate doesn't.</dd>
+        <div class="cost">The cost: you specifically asked for <b>flame animation</b>, and this deliberately gives you almost none. If what you want is to feel the fire, this will read as the safe option — because it is.</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="dir">
+    <div class="dh"><div class="dn">05</div>
+      <div class="dt"><h2>The Number</h2>
+        <div class="dm">91 is the hero · flame licks its baseline</div>
+        <p class="dl">You said the days counter needs more emphasis — this takes that to its conclusion. <b>112px of numeral</b> dominating the screen, fire licking along its base like it's sitting on coals, and the line demoted to a single quiet rule underneath. The countdown <b>is</b> the identity.</p></div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="notch"><i></i></div>
+        <div class="h5x">
+          <div class="kicker">Workdays remaining</div>
+          <div class="numwrap">
+            <div class="base"></div>
+            <div class="n">91</div>
+            <div class="flick"></div>
+          </div>
+          <div class="sub">UNTIL DECEMBER 1</div>
+          <div class="line">The boats have been burned.</div>
+        </div>
+        <div class="vicerow">
+          <div class="vice"><div class="vl">Dishwasher · streak</div><div class="vv">0w</div><div class="vs">0 / 1 THIS WEEK</div></div>
+          <div class="vice"><div class="vl">Smoke · clean</div><div class="vv">0d</div><div class="vs">BEFORE NOON · HOLDING</div></div>
+        </div>
+        <div class="below"><div class="bl">↓ THE GRAPH · TODAY · THE WEEK</div></div>
+      </div>
+      <dl class="notes">
+        <dt>The move</dt><dd>The number you asked to emphasise becomes <b>the largest thing in the app</b>, and the flame is contained to a burning baseline — which is exactly enough fire to feel it without a spectacle.</dd>
+        <dt>The daily effect</dt><dd>Watching 91 → 90 → 89 at this scale is genuinely different from watching a small counter tick. It will feel like something is being spent.</dd>
+        <div class="cost">The cost: it inverts your instruction. You asked for the LINE in large letters; here the line is the smallest element and the number takes the drama. Also, a huge number that only ever goes down is a doom clock — powerful in August, potentially oppressive in late November.</div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="verdict">
+    <h2>My read</h2>
+    <p>All five drop the OVR, promote the counter and keep the vices in place. They differ in where the drama sits.</p>
+    <div class="vr pick"><div class="n">01</div>
+      <div><h3>The Ember Line <span class="tag g">my pick</span></h3>
+        <p>It's the only one where the metaphor and the data are the same object — your fuel gauge is literally a fuse burning toward December, with a hot tip at the boundary. You'll see that shorten every single week, and it does the emotional work without spending 200px or risking looking cheap. If it reads too quiet for you, take its ember line and put it under direction 01's burning type; those two combine cleanly.</p></div></div>
+    <div class="vr"><div class="n">02</div>
+      <div><h3>Type on Fire <span class="tag">closest to what you asked for</span></h3>
+        <p>Large letters, real flame, embers rising through the words. If you want to be hit in the face at 6 AM this is the answer, and it's the most faithful reading of your brief. Ranked second only because burning text is the highest-risk thing here to keep looking premium for four months.</p></div></div>
+    <div class="vr"><div class="n">03</div>
+      <div><h3>The Pyre <span class="tag">most memorable, most expensive</span></h3>
+        <p>Shows the story instead of stating it, which is a better idea than any typographic treatment. But it's 212px tall before you reach any information, and atmosphere at 80% quality is just a dark box with a boat in it. Highest ceiling, highest risk.</p></div></div>
+    <div class="vr"><div class="n">04</div>
+      <div><h3>The Furnace <span class="tag">ages best</span></h3>
+        <p>The one still looking expensive on day 91, because it never spends anything. It's also the one that most ignores what you actually asked for — you wanted flame and this gives you heat. Right answer if you trust restraint more than impact.</p></div></div>
+    <div class="vr"><div class="n">05</div>
+      <div><h3>The Number <span class="tag">boldest, riskiest psychologically</span></h3>
+        <p>Maximum emphasis on the counter, exactly as requested. My hesitation isn't aesthetic — it's that a 112px number counting down and nothing else is a doom clock, and you've told me the thing that kills these for you is feeling behind. Pair it with something that goes UP and it's the strongest of the five.</p></div></div>
+  </section>
+</div>
+
+<script src="lib/tsparticles/tsparticles.slim.bundle.min.js"></script>
+<script>
+/* Real ember particles (tsParticles) rather than a hand-rolled canvas loop. */
+const ember=(id,count,area)=>({
+  fullScreen:{enable:false},
+  detectRetina:true,
+  fpsLimit:60,
+  particles:{
+    number:{value:count,density:{enable:true,area:area}},
+    color:{value:['#FFD9A0','#FF9A3C','#FF6B2C']},
+    shape:{type:'circle'},
+    opacity:{value:{min:.15,max:.85},animation:{enable:true,speed:.9,minimumValue:.05,sync:false}},
+    size:{value:{min:.6,max:2.1}},
+    links:{enable:false},
+    move:{
+      enable:true,direction:'top',speed:{min:.35,max:1.15},outModes:{default:'out'},
+      straight:false,random:true,
+      wobble:{enable:true,distance:9,speed:9},
+    },
+  },
+  interactivity:{events:{onHover:{enable:false},onClick:{enable:false}}},
+});
+if(window.tsParticles){
+  tsParticles.load({id:'emb1',options:ember('emb1',34,700)});
+  tsParticles.load({id:'emb3',options:ember('emb3',26,600)});
+}
+</script>
+</body>
+</html>
