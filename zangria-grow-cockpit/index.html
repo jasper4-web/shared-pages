@@ -32,7 +32,7 @@
     --ink:#2B3623; --ink2:#5C6650; --ink3:#8B927C; --line:#E2DAC7; --line2:#D8CEB6;
     --gold:#B0842F; --green:#3C7A4E; --green2:#2B5C3B; --green-w:#E4EEE0;
     --temp:#C1663A; --temp-w:#F5E5D8; --hum:#28788F; --hum-w:#DCEAEC; --vpd:#7867A6; --vpd-w:#EAE4F1;
-    --bad:#B5433A; --bad-w:#F6E2DE; --warn:#B0842F; --warn-w:#F5EBD5; --ok:#3C7A4E;
+    --bad:#B5433A; --bad-w:#F6E2DE; --warn:#C4791F; --warn-w:#F7E9D0; --ok:#3C7A4E;
     --display:"Clash Display","Satoshi",sans-serif; --body:"Satoshi",system-ui,sans-serif; --mono:"Geist Mono",ui-monospace,monospace;
     --shadow:0 2px 5px rgba(43,54,35,.05),0 14px 34px rgba(43,54,35,.09);
     --shadow-sm:0 1px 2px rgba(43,54,35,.06);
@@ -82,6 +82,31 @@
   .glabel{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-top:-2px;}
 
   /* plant chips row */
+  /* ROOM CARD — the gauges and the verdict on them fused into one object.
+     They were two bordered boxes saying one thing, with the instrument BELOW its own verdict. */
+  .roomcard{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:12px;}
+  .roomcard .instr{background:none;border:0;border-radius:0;padding:10px 8px 0;margin:0;}
+  .roomcard .instr .grow{padding-bottom:10px;}
+  /* renderAttn() rewrites .attn's className wholesale — scope through the parent, never add a class */
+  .roomcard .attn{border:0;border-radius:0;border-top:1px solid var(--line);margin:0;padding:11px 13px;}
+  .roomcard .instr{position:relative;}
+  .roomfoot{display:flex;align-items:center;gap:10px;padding:9px 11px 10px;border-top:1px solid var(--line);}
+  .roomfoot #roomFoot{flex:1;min-width:0;font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;color:var(--ink3);}
+  .roomfoot #roomFoot.stale{color:var(--warn);font-weight:700;}
+  .cappill{appearance:none;flex:0 0 auto;min-height:40px;display:inline-flex;align-items:center;gap:7px;
+           padding:0 15px;border-radius:999px;border:0;background:var(--green);color:#fff;
+           font-family:var(--body);font-size:12.5px;font-weight:700;cursor:pointer;}
+  .cappill i{width:15px;height:15px;}
+  .cappill:disabled{background:var(--line2);color:var(--ink3);}
+  .roomtrend{display:flex;gap:14px;padding:10px 13px 12px;border-top:1px solid var(--line);}
+  .roomtrend .tb{flex:1;min-width:0;background:none;border:0;border-radius:0;padding:0;}
+  .roomtrend .tb .now{display:none;}
+  .roomtrend .tb svg{height:22px;width:100%;}
+  /* the three he logs most, on the landing screen */
+  .egrid.hot3{grid-template-columns:repeat(3,1fr);gap:7px;margin-top:11px;}
+  .egrid.hot3 .et{padding:11px 4px;gap:5px;border-radius:13px;min-height:64px;}
+  .egrid.hot3 .et i{width:19px;height:19px;}
+  .egrid.hot3 .et .el{font-size:11px;}
   /* solo plant card — one plant, so it gets the room and the status setter inline */
   .solo{background:var(--card);border:1px solid var(--line);border-left-width:4px;border-left-color:var(--ink3);border-radius:16px;padding:13px 14px 14px;box-shadow:var(--shadow-sm);}
   .solo.ok{border-left-color:var(--ok);} .solo.bad{border-left-color:var(--bad);background:#FCF3F0;} .solo.warn{border-left-color:var(--warn);background:#FBF5E7;}
@@ -93,27 +118,56 @@
   .solo .nte{font-size:12px;color:var(--ink2);margin-top:9px;line-height:1.4;}
   .solo .nte b{color:var(--ink);font-weight:600;}
   .gapwarn{background:var(--warn-w);border:1px solid #E8D5A8;border-radius:12px;padding:10px 12px;font-size:12px;color:#6d5210;line-height:1.45;margin:14px 0 0;}
-  .tells{display:flex;flex-wrap:wrap;gap:6px;}
-  .tell{appearance:none;font-family:var(--body);font-size:11.5px;font-weight:600;padding:7px 10px;border-radius:999px;border:1.5px solid var(--line2);background:var(--paper);color:var(--ink2);cursor:pointer;}
+  /* A CHECKLIST, not a tag cloud. These nine are also the Guide's watch-list rendered on the
+     daily surface, so they stay VISIBLE — collapsing them would hide the prompt. The sloppiness
+     was ragged wrap and zero alignment, not the count. */
+  .tells{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .tell{appearance:none;font-family:var(--body);font-size:11.5px;font-weight:600;
+        min-height:44px;display:flex;align-items:center;gap:8px;text-align:left;
+        padding:0 10px;border-radius:12px;border:1.5px solid var(--line2);
+        background:var(--paper);color:var(--ink2);cursor:pointer;line-height:1.2;}
+  .tell::before{content:"";flex:0 0 auto;width:17px;height:17px;border-radius:5px;
+        border:1.5px solid var(--line2);background:var(--card);}
+  .tell[aria-pressed=true]::before{background:var(--green);border-color:var(--green);
+        box-shadow:inset 0 0 0 2px var(--card);}
+  .tell.f[aria-pressed=true]::before{background:var(--bad);border-color:var(--bad);}
+  .tell[data-t=none]{grid-column:1 / -1;}
   .tell[aria-pressed=true]{border-color:var(--green);background:var(--green-w);color:var(--green2);}
   .tell.f[aria-pressed=true]{border-color:var(--bad);background:var(--bad-w);color:var(--bad);}
   .tell.g[aria-pressed=true]{border-color:var(--ok);background:var(--green-w);color:var(--green2);}
   .envchips.stale{opacity:.62;}
+  .solo .seg.st,#psSeg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+  .seg.st button{min-height:44px;padding:0 4px;font-size:12.5px;border-radius:11px;line-height:1.2;}
   .solo .setter{margin-top:11px;padding-top:11px;border-top:1px solid var(--line);}
   .solo .sq{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:700;margin-bottom:7px;}
-  .full{appearance:none;background:none;border:0;padding:8px 0 0;margin:0;font-family:var(--body);font-size:12px;font-weight:700;color:var(--green2);cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
+  .full{appearance:none;background:none;border:0;padding:12px 0 4px;min-height:44px;margin:0;font-family:var(--body);font-size:12px;font-weight:700;color:var(--green2);cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
   .full svg{width:13px;height:13px;}
   /* due strip — what the day actually asks of him */
   .due{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:2px 13px;}
   .duer{display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-top:1px solid var(--line);} .duer:first-child{border-top:0;}
-  .dueck{appearance:none;flex:0 0 auto;width:23px;height:23px;border-radius:7px;border:1.5px solid var(--line2);background:var(--paper);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;margin-top:1px;}
+  .dueck{position:relative;appearance:none;flex:0 0 auto;width:23px;height:23px;border-radius:7px;border:1.5px solid var(--line2);background:var(--paper);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;margin-top:1px;}
   .dueck[aria-pressed=true]{background:var(--green);border-color:var(--green);}
   .dueck svg{width:13px;height:13px;color:#fff;opacity:0;stroke-width:3;} .dueck[aria-pressed=true] svg{opacity:1;}
+  .dueck::after{content:"";position:absolute;inset:-11px;}
+  .duer .full{width:100%;padding:12px 0;justify-content:flex-start;}
   .dueb{min-width:0;flex:1;} .dueb .dl{font-size:13px;font-weight:600;line-height:1.3;} .dueb .dh{font-size:11.5px;color:var(--ink3);margin-top:3px;line-height:1.35;}
   .dueb .dg{font-size:11.5px;color:var(--green2);font-weight:600;margin-top:3px;line-height:1.35;}
   .dueck[aria-pressed=true]+.dueb .dl{text-decoration:line-through;color:var(--ink3);font-weight:500;}
+  .dueauto{flex:0 0 auto;width:23px;height:23px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin-top:1px;color:var(--ink3);}
+  .dueauto i{width:15px;height:15px;}
+  .dueauto.on{color:var(--ok);}
+  .duer.autorow .dl{color:var(--ink2);}
   .duetag{flex:0 0 auto;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:4px 8px;border-radius:999px;margin-top:1px;}
   .duetag.now{background:var(--warn-w);color:#8a6412;} .duetag.soon{background:var(--card2);color:var(--ink3);} .duetag.late{background:var(--bad-w);color:var(--bad);}
+  .duefoot{display:flex;align-items:center;justify-content:center;gap:10px;
+           border-top:1px solid var(--line);padding:2px 0;}
+  .duefoot button{appearance:none;background:none;border:0;padding:13px 6px;margin:0;cursor:pointer;
+           font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+           font-weight:700;color:var(--green2);}
+  .duefoot .dot{color:var(--ink3);}
+  /* one line by default so every row is the same height; tap a row to read the rest */
+  .dueb .dh{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .duer.open .dh{-webkit-line-clamp:unset;}
   .dueempty{font-size:12.5px;color:var(--ink3);padding:13px 0;}
   .plantart{display:block;overflow:visible;}
 
@@ -216,8 +270,8 @@
   .envchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
   .ec{font-family:var(--mono);font-size:11px;font-weight:700;padding:6px 10px;border-radius:999px;background:var(--card2);color:var(--ink2);border:1px solid var(--line);}
   .ec .k{color:var(--ink3);font-weight:400;} .ec.t b{color:var(--temp);} .ec.h b{color:var(--hum);} .ec.v b{color:var(--vpd);}
-  .pchips{display:flex;gap:7px;margin:2px 0 4px;}
-  .pchip{appearance:none;flex:1;text-align:center;font-family:var(--body);font-weight:700;font-size:12.5px;padding:9px 0;border-radius:11px;border:1.5px solid var(--line2);background:var(--paper);color:var(--ink3);cursor:pointer;}
+  .pchips{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 4px;}
+  .pchip{appearance:none;flex:1 1 calc(33.333% - 4px);min-height:44px;text-align:center;font-family:var(--body);font-weight:700;font-size:12.5px;padding:9px 4px;border-radius:11px;border:1.5px solid var(--line2);background:var(--paper);color:var(--ink3);cursor:pointer;}
   .pchip[aria-pressed=true]{border-color:var(--green);background:var(--green-w);color:var(--green2);}
   .photorow{display:flex;align-items:center;gap:10px;margin-top:4px;}
   .photothumb{width:52px;height:52px;border-radius:11px;object-fit:cover;border:1px solid var(--line2);}
@@ -227,7 +281,8 @@
   .evitem .edit{width:13px;height:13px;color:var(--ink3);flex:0 0 auto;opacity:.55;}
   .evitem[data-ev-i]{cursor:pointer;}
   .crow{position:relative;}
-  .capx{appearance:none;border:0;background:none;color:var(--ink3);font-size:16px;line-height:1;padding:2px 4px;margin-left:auto;cursor:pointer;flex:0 0 auto;}
+  .capx{position:relative;appearance:none;border:0;background:none;color:var(--ink3);font-size:16px;line-height:1;padding:2px 4px;margin-left:auto;cursor:pointer;flex:0 0 auto;}
+  .capx::after{content:"";position:absolute;inset:-12px;}
   .toast.tappable{cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
   .photoview{width:100%;max-width:520px;background:var(--card);border-radius:16px;overflow:hidden;}
   .photoview img{width:100%;display:block;max-height:72vh;object-fit:contain;background:#0d0d0d;}
@@ -248,6 +303,7 @@
   .photostrip:empty{margin-top:0;}
   .pth{position:relative;width:60px;height:60px;}
   .pth img{width:100%;height:100%;border-radius:11px;object-fit:cover;border:1px solid var(--line2);display:block;}
+  .pth button::after{content:"";position:absolute;inset:-11px;}
   .pth button{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--paper);background:var(--bad);color:#fff;font-size:13px;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;font-family:var(--body);}
   .pth .ix{position:absolute;bottom:3px;left:4px;font-family:var(--mono);font-size:8px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8);}
   .pthbusy{width:60px;height:60px;border-radius:11px;border:1px dashed var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--ink3);}
@@ -370,27 +426,38 @@
 
     <!-- GLANCE -->
     <div id="glanceMode">
-      <div class="attn none" id="attn"><i data-lucide="leaf"></i><div><div class="at" id="attnT">—</div><div class="as" id="attnS"></div></div></div>
+
+      <!-- 1. THE ROOM — the instrument and the verdict on it, one object -->
+      <div class="roomcard">
+        <div class="instr"><div class="grow" id="gauges"></div><span class="capmsg" id="capMsgG"></span></div>
+        <div class="attn none" id="attn"><i data-lucide="leaf"></i><div><div class="at" id="attnT">—</div><div class="as" id="attnS"></div></div></div>
+        <div class="roomtrend" id="trendPeek"></div>
+        <div class="roomfoot"><span id="roomFoot"></span><button type="button" class="cappill" id="capBtnG"><i data-lucide="clipboard-check"></i>Capture</button></div>
+      </div>
+
+      <!-- 2. the three things he logs most, straight from the landing screen -->
+      <div class="egrid hot3" id="egridHot"></div>
+
+      <!-- 3. THE PLANT — the card carries her name, it needs no header -->
+      <div id="board"></div>
+
+      <!-- 4. WHAT THE DAY ASKS -->
       <div class="sec"><span class="e">Due</span><span class="sx" id="dueCount"></span></div>
       <div class="due" id="dueStrip"></div>
-      <div class="sec"><span class="e">Room now · <span id="roomLbl">climate</span></span><span class="sx">drag a dial</span></div>
-      <div class="instr"><div class="grow" id="gauges"></div><span class="capmsg" id="capMsgG"></span><button type="button" class="minicap" id="capBtnG" aria-label="Capture this reading"><i data-lucide="camera"></i></button></div>
-      <div class="sec"><span class="e">The plant</span></div>
-      <div id="board"></div>
-      <div class="sec"><span class="e">Today so far</span></div>
-      <div class="trend" id="trendPeek"></div>
+
+      <!-- 5. GEAR -->
       <div class="sec"><span class="e">Climate gear</span><span class="sx" id="gearWk"></span></div>
       <div class="gear" id="gear"></div>
     </div>
 
     <!-- LOG -->
     <div id="logMode" style="display:none">
-      <div class="sec"><span class="e">Room now — drag a dial to set it, or − / + to nudge</span></div>
+      <div class="sec"><span class="e">Room now</span><span class="sx">drag the arc · − / + to nudge</span></div>
       <div class="cap">
         <div class="grow gslider" id="gaugesLog"></div>
         <div class="hl">
-          <button type="button" class="hlbox up" data-k="hi" aria-pressed="false"><span class="hk">▲ high since reset</span><span class="hv" id="hiV">— <span class="sub">tap</span></span></button>
-          <button type="button" class="hlbox dn" data-k="lo" aria-pressed="false"><span class="hk">▼ low since reset</span><span class="hv" id="loV">— <span class="sub">tap</span></span></button>
+          <button type="button" class="hlbox up" data-k="hi" aria-pressed="false"><span class="hk" id="hiK">▲ high since reset</span><span class="hv" id="hiV">— <span class="sub">tap</span></span></button>
+          <button type="button" class="hlbox dn" data-k="lo" aria-pressed="false"><span class="hk" id="loK">▼ low since reset</span><span class="hv" id="loV">— <span class="sub">tap</span></span></button>
         </div>
         <div class="kpwrap" id="kpwrap">
           <div class="kphint" id="kphint">Type a value</div>
@@ -405,15 +472,15 @@
         <div class="caplog" id="caps"></div>
       </div>
 
-      <div class="sec"><span class="e">Log an event — one tap</span></div>
+      <div class="sec"><span class="e">Log an event</span><span class="sx">one tap</span></div>
       <div class="egrid" id="egrid"></div>
       <p class="callout">every event auto-stamps the time + this room reading</p>
 
-      <div class="sec"><span class="e">The plant — how does she look?</span></div>
-      <div id="boardLog"></div>
-
-      <div class="sec"><span class="e">Today's events</span></div>
+      <div class="sec"><span class="e">Today's events</span><span class="sx">tap one to edit</span></div>
       <div class="cap evrib" id="evRibbon"></div>
+
+      <div class="sec"><span class="e">The plant</span><span class="sx">how does she look?</span></div>
+      <div id="boardLog"></div>
 
       <div class="btnrow"><button class="btn ghost" id="copyTodayBtn"><i data-lucide="send"></i>Copy today to send me</button></div>
     </div>
@@ -428,7 +495,7 @@
     <div class="slabel">What else do you see?</div>
     <div class="tells" id="psTells"></div>
     <div class="field" style="margin-top:10px"><input type="text" id="psNote" placeholder="note for today (optional)"></div>
-    <div class="btnrow"><button class="btn primary" id="psSave"><i data-lucide="check"></i>Save status</button></div>
+    <div class="btnrow"><button class="btn primary" id="psSave"><i data-lucide="check"></i>Save note</button></div>
     <div class="slabel">What changed it</div>
     <div id="pdTimeline"></div>
     <div class="foot" style="margin-bottom:8px">Day 0 = Jul 17, 2026 · potted from the flower bed</div>
@@ -605,8 +672,8 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
      for the first three; the app previously had nowhere to put them. */
   var TELLS=[
     {k:"push",  t:"New growth pushing", good:true},
-    {k:"ylow",  t:"Yellowing — lower only"},
-    {k:"ymid",  t:"Yellowing into mid-canopy", flag:"topdress"},
+    {k:"ylow",  t:"Lower yellowing"},
+    {k:"ymid",  t:"Mid-canopy yellow", flag:"topdress"},
     {k:"cup",   t:"Cupping / taco UP",   flag:"light"},
     {k:"bleach",t:"Tips bleached",       flag:"light"},
     {k:"claw",  t:"Clawing down",        flag:"light"},
@@ -1078,9 +1145,14 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       {label:"VPD",val:vv,disp:vv!=null?vv.toFixed(2):"—",sub:T.gradeVpd?(T.vLo+"–"+T.vHi):"dark",min:sV.min,max:sV.max,tLo:T.vLo,tHi:T.vHi,color:cvar("--vpd"),state:vs,muted:!T.gradeVpd,reds:T.gradeVpd?[RL.vpdLow,RL.vpdHigh]:[]}
     ];
     var gg=$("gauges");
-    gg.innerHTML=G.map(function(g,i){return '<div class="gau'+(i<2?' slider':'')+'">'+gauge(g)+'</div>';}).join("");
+    // the arc's drag node sits high and is a stretch one-handed; -/+ lands in the easy thumb band
+    gg.innerHTML=G.map(function(g,i){var k=i===0?"temp":(i===1?"rh":null);return '<div class="gau'+(k?' slider':'')+'">'+gauge(g,k)+'</div>';}).join("");
     wireSlider(gg.children[0],"temp",sT.min,sT.max,gg);
     wireSlider(gg.children[1],"rh",sR.min,sR.max,gg);
+    [].forEach.call(gg.querySelectorAll(".gpm"),function(b){
+      b.addEventListener("pointerdown",function(ev){ev.stopPropagation();});
+      b.addEventListener("click",function(){stepDial(b.getAttribute("data-gk"),parseInt(b.getAttribute("data-d"),10));});
+    });
     var gl=$("gaugesLog");
     if(gl){
       gl.innerHTML=G.map(function(g,i){
@@ -1094,7 +1166,17 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
         b.addEventListener("click",function(){stepDial(b.getAttribute("data-gk"),parseInt(b.getAttribute("data-d"),10));});
       });
     }
-    $("roomLbl").textContent=T.roomLbl;
+    var rf=$("roomFoot");
+    if(rf){
+      var lr=lastCapture();
+      if(!lr){ rf.textContent="No reading captured today"; rf.className="stale"; }
+      else{
+        var nowM=new Date().getHours()*60+new Date().getMinutes(), age=nowM-parseTime(lr.time);
+        var ageTxt=age<60?(Math.max(0,age)+" min ago"):(Math.round(age/60)+"h ago");
+        rf.textContent="Last captured "+lr.time+" · "+ageTxt;
+        rf.className=(age>240?"stale":"");
+      }
+    }
     renderGear(tv,rv);
     renderAttn(tv,rv,ts,rs,vs);
   }
@@ -1389,7 +1471,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       if(!checked){
         if(m.kind==="plant")tag=null;                       // plant calls never get a clock badge
         else if(d>m.to)tag="overdue";
-        else tag=(m.pri===1?"now":"soon");
+        else tag=(m.pri===1?"now":null);
       }
       out.push({id:m.id,label:m.label,hint:m.hint,gate:m.gate||null,checked:checked,pri:m.pri,
                 over:(m.kind!=="plant"&&d>m.to),tag:tag,auto:!!m.done,kind:m.kind||"date"});
@@ -1400,7 +1482,12 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   function dueRow(x){
     var tagCls=x.over?"late":(x.tag||"");
     var tagTxt=x.over?"overdue":(x.tag||"");
-    return '<div class="duer"><button type="button" class="dueck" data-due="'+x.id+'" aria-pressed="'+(x.checked?"true":"false")+'" aria-label="'+esc(x.label)+'"><i data-lucide="check"></i></button>'+
+    // A milestone with done() is DERIVED from real data — it can't be hand-ticked. Rendering it
+    // as a checkbox that refuses and fires a red toast taught "the checkbox sometimes doesn't work".
+    var mark = x.auto
+      ? '<span class="dueauto'+(x.checked?" on":"")+'" aria-hidden="true"><i data-lucide="'+(x.checked?"check":"circle-dashed")+'"></i></span>'
+      : '<button type="button" class="dueck" data-due="'+x.id+'" aria-pressed="'+(x.checked?"true":"false")+'" aria-label="'+esc(x.label)+'"><i data-lucide="check"></i></button>';
+    return '<div class="duer'+(x.auto?" autorow":"")+'" data-duehint="'+x.id+'">'+mark+
       '<div class="dueb"><div class="dl">'+esc(x.label)+'</div>'+
         (x.gate?'<div class="dg">'+esc(x.gate)+'</div>':'')+
         '<div class="dh">'+esc(x.hint)+'</div></div>'+
@@ -1417,15 +1504,18 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     var h=shown.map(dueRow).join("");
     if(!open.length)h+='<div class="dueempty">Everything due is done. Nice.</div>';
     // these are due TODAY — the old copy said "further out", which was simply false
-    if(hidden>0)h+='<div class="duer"><button type="button" class="full" id="dueMore" style="padding:0">Show '+hidden+' more due today</button></div>';
-    else if(dueShowAll&&open.length>3)h+='<div class="duer"><button type="button" class="full" id="dueMore" style="padding:0">Show fewer</button></div>';
+    var foot=[];
+    if(hidden>0)foot.push('<button type="button" id="dueMore">'+hidden+' more due</button>');
+    else if(dueShowAll&&open.length>3)foot.push('<button type="button" id="dueMore">show fewer</button>');
     // ticked items must stay reachable, otherwise a mis-tap is unrecoverable
-    if(done.length){
-      h+='<div class="duer"><button type="button" class="full" id="dueToggle" style="padding:0">'+(dueShowDone?"Hide":"Show")+' '+done.length+' done</button></div>';
-      if(dueShowDone)h+=done.map(dueRow).join("");
-    }
+    if(done.length)foot.push('<button type="button" id="dueToggle">'+(dueShowDone?"hide":"show")+' '+done.length+' done</button>');
+    if(foot.length)h+='<div class="duefoot">'+foot.join('<span class="dot">·</span>')+'</div>';
+    if(done.length&&dueShowDone)h+=done.map(dueRow).join("");
     host.innerHTML=h;
-    $$("[data-due]").forEach(function(b){b.addEventListener("click",function(){toggleDue(b.getAttribute("data-due"));});});
+    $$("[data-due]").forEach(function(b){b.addEventListener("click",function(e){e.stopPropagation();toggleDue(b.getAttribute("data-due"));});});
+    $$("#dueStrip .dueb").forEach(function(el){
+      el.addEventListener("click",function(){ el.parentNode.classList.toggle("open"); });
+    });
     var dt=$("dueToggle");if(dt)dt.addEventListener("click",function(){dueShowDone=!dueShowDone;renderDue();});
     var dm=$("dueMore");if(dm)dm.addEventListener("click",function(){dueShowAll=!dueShowAll;renderDue();});
     if(window.lucide)lucide.createIcons({attrs:{'stroke-width':3}});
@@ -1548,6 +1638,16 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     $("hiV").parentNode.setAttribute("aria-pressed",(active==="hi.t"||active==="hi.r")?"true":"false");
     $("loV").parentNode.setAttribute("aria-pressed",(active==="lo.t"||active==="lo.r")?"true":"false");
     $("kphint").textContent=active.indexOf("hi")===0?("Typing today high — "+(active==="hi.t"?"temp °F":rl)+"  ·  tap the chip again to swap"):active.indexOf("lo")===0?("Typing today low — "+(active==="lo.t"?"temp °F":rl)+"  ·  tap the chip again to swap"):"Type a value";
+    (function(){
+      var since=CFG.lastMinMaxReset, lbl="since reset";
+      if(since){
+        var d0=dnum(dtOf(since)), ago=todayDnum-d0;
+        lbl="since "+MONTHS[dtOf(since).getMonth()]+" "+dtOf(since).getDate()+(ago>0?" · "+ago+"d":" · today");
+      } else lbl="since ? — reset it";
+      var hk=$("hiK"),lk=$("loK");
+      if(hk)hk.textContent="▲ high "+lbl;
+      if(lk)lk.textContent="▼ low "+lbl;
+    })();
     $("capClock").textContent=nowClock();
     renderGauges();renderTrendPeek();
     // dialed/typed values must survive a closed tab — persist the draft, debounced
@@ -1624,6 +1724,14 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   }
 
   /* event grid */
+  function renderHot(){
+    var host=$("egridHot"); if(!host)return;
+    host.innerHTML=EVTYPES.filter(function(e){return e.hot;}).map(function(e){
+      return '<button type="button" class="et hot" data-hot="'+e.t+'"><i data-lucide="'+e.icon+'"></i><span class="el">'+e.label+'</span></button>';
+    }).join("");
+    $$("#egridHot [data-hot]").forEach(function(b){b.addEventListener("click",function(){openEvent(b.getAttribute("data-hot"));});});
+    if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});
+  }
   function renderEgrid(){
     $("egrid").innerHTML=EVTYPES.map(function(e){return '<button type="button" class="et'+(e.hot?" hot":"")+'" data-ev="'+e.t+'"><i data-lucide="'+e.icon+'"></i><span class="el">'+e.label+'</span></button>';}).join("");
     $$(".et[data-ev]").forEach(function(b){b.addEventListener("click",function(){openEvent(b.getAttribute("data-ev"));});});
@@ -1966,14 +2074,20 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     $("pdTimeline").innerHTML=pdTimelineHTML(hist);
     if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});
   }
-  $$("#psSeg button").forEach(function(b){b.addEventListener("click",function(){psSel=b.getAttribute("data-s");$$("#psSeg button").forEach(function(x){x.setAttribute("aria-pressed",x.getAttribute("data-s")===psSel?"true":"false");});});});
+  // Same control, same two fields, two different commit models — a tap on "Perky" here looked
+  // identical to a tap on "Perky" on Today, and only one of them saved. Commit instantly, like Today.
+  $$("#psSeg button").forEach(function(b){b.addEventListener("click",function(){
+    psSel=b.getAttribute("data-s");
+    $$("#psSeg button").forEach(function(x){x.setAttribute("aria-pressed",x.getAttribute("data-s")===psSel?"true":"false");});
+    setPlantStatus(psSel);
+  });});
   $("psSave").addEventListener("click",function(){
     exitDemo();
-    if(!psSel){toast("Pick how she looks first",true);return;}
-    if(!draft.plants["1"])draft.plants["1"]={s:"",n:""};
-    draft.plants["1"].s=psSel;draft.plants["1"].n=$("psNote").value.trim();
+    if(!draft.plants["1"])draft.plants["1"]={s:"",n:"",tells:[]};
+    if(psSel)draft.plants["1"].s=psSel;
+    draft.plants["1"].n=$("psNote").value.trim();
     commitDraft();renderBoards();renderGauges();renderDue();renderPlant();
-    toast("✓ "+(STATUS[psSel]?STATUS[psSel].t:"Status")+" saved");
+    toast("✓ Note saved");
   });
 
   /* ---- modes ---- */
@@ -2289,7 +2403,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   })();
 
   /* ---- init ---- */
-  renderBoards();renderGauges();renderTrendPeek();renderEgrid();renderCaps();renderRibbon();renderDue();syncLog();syncSettings();
+  renderBoards();renderGauges();renderTrendPeek();renderEgrid();renderHot();renderCaps();renderRibbon();renderDue();syncLog();syncSettings();
   if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.7}});
   if(location.hash==="#log")setMode("log"); else if(location.hash==="#guide"){document.querySelector('.tab[data-pane=guide]').click();} else if(location.hash==="#plant"){document.querySelector('.tab[data-pane=plants]').click();}
 })();
