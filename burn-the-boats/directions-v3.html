@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Burn the Boats — Round 3: The Veil</title>
+<link rel="stylesheet" href="lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#070709; --ink:#EDEAE4; --dim:#8b8b96; --faint:#565663;
+  --line:#1c1c22; --line2:#2a2a33;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --ice:#7FB4FF;
+  --rune:#38E1D8; --blood:#FF4D5E; --violet:#B08CFF; --ghost:#9FC4FF;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink)}
+body{font-family:'Satoshi',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99;
+  background-image:url('assets/grain/grain-fine.svg');opacity:.035;mix-blend-mode:overlay}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+.wrap{max-width:1200px;margin:0 auto;padding:0 26px}
+.mono{font-family:'Geist Mono',monospace}
+
+.mast{padding:72px 0 40px;border-bottom:1px solid var(--line)}
+.kick{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.28em;color:var(--faint);text-transform:uppercase;margin-bottom:16px}
+.mast h1{font-size:clamp(34px,5.4vw,58px);line-height:1;letter-spacing:-.035em;margin-bottom:18px}
+.mast h1 em{font-style:normal;color:var(--faint)}
+.mast p{max-width:690px;color:var(--dim);font-size:16px;margin:0 0 12px}
+.mast p b{color:var(--ink);font-weight:500}
+
+/* ---- shared mechanics ---- */
+.mech{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:34px}
+@media(max-width:880px){.mech{grid-template-columns:1fr}}
+.mcard{background:#0b0c11;border:1px solid var(--line2);border-radius:15px;padding:20px 21px}
+.mcard h3{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.19em;color:var(--rune);text-transform:uppercase;margin-bottom:12px}
+.mcard p{font-size:14.3px;color:var(--dim);margin:0 0 9px;line-height:1.6}
+.mcard p:last-child{margin:0}
+.mcard b{color:var(--ink);font-weight:500}
+.mcard .warn{color:var(--gold)}
+.steps{list-style:none;padding:0;margin:12px 0 0;counter-reset:s}
+.steps li{position:relative;padding-left:26px;margin-bottom:8px;font-size:13.6px;color:var(--dim);counter-increment:s;line-height:1.5}
+.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:17px;height:17px;border-radius:5px;
+  background:#171a23;border:1px solid var(--line2);font-family:'Geist Mono',monospace;font-size:9px;
+  display:grid;place-items:center;color:var(--rune)}
+.steps li b{color:var(--ink);font-weight:500}
+
+.dir{padding:58px 0;border-bottom:1px solid var(--line)}
+.dhead{display:grid;grid-template-columns:70px 1fr;gap:20px;align-items:start;margin-bottom:26px}
+.dnum{font-family:'Clash Display',sans-serif;font-size:50px;line-height:.8;font-weight:700;color:transparent;-webkit-text-stroke:1.2px var(--line2)}
+.dtitle h2{font-size:30px;letter-spacing:-.03em;margin-bottom:5px}
+.dmeta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+.dlede{max-width:650px;color:var(--dim);font-size:15.4px;margin-top:12px}
+.dlede b{color:var(--ink);font-weight:500}
+.dbody{display:grid;grid-template-columns:minmax(0,452px) 1fr;gap:36px;align-items:start}
+@media(max-width:900px){.dbody{grid-template-columns:1fr}.dhead{grid-template-columns:48px 1fr;gap:12px}.dnum{font-size:34px}}
+.notes dt{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.17em;text-transform:uppercase;color:var(--faint);margin-top:20px}
+.notes dt:first-child{margin-top:0}
+.notes dd{margin:6px 0 0;font-size:14.7px;color:var(--dim);line-height:1.58}
+.notes dd b{color:var(--ink);font-weight:500}
+.cost{border-left:2px solid var(--line2);padding-left:14px;margin-top:22px;font-size:13.8px;color:var(--faint);font-style:italic}
+.veiltag{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font-size:13.6px;color:var(--dim)}
+.veiltag b{color:var(--rune);font-weight:500}
+
+.mock{border-radius:18px;overflow:hidden;border:1px solid var(--line2);box-shadow:0 30px 80px -30px #000}
+.mock .bar{height:29px;display:flex;align-items:center;padding:0 12px;gap:6px;border-bottom:1px solid var(--line)}
+.mock .bar i{width:8px;height:8px;border-radius:99px;background:var(--line2);display:block}
+.mock .bar span{font-family:'Geist Mono',monospace;font-size:9.5px;color:var(--faint);margin-left:8px;letter-spacing:.1em}
+.pane{padding:15px;min-height:498px;position:relative}
+
+/* ============ THE VEIL ENGINE (shared) ============ */
+/* two stacked layers; the rival phases through on a slow cycle */
+.veil{position:relative}
+.veil .you,.veil .him{transition:none}
+.veil .him{position:absolute;inset:0;opacity:0;animation:veilcycle 9s infinite}
+.veil .scan{position:absolute;left:0;right:0;height:38%;pointer-events:none;opacity:0;
+  background:linear-gradient(180deg,transparent,rgba(159,196,255,.16),transparent);
+  animation:scancycle 9s infinite}
+@keyframes veilcycle{
+  0%,52%{opacity:0} 55%{opacity:.28} 57%{opacity:.06} 59%{opacity:.92}
+  70%{opacity:.92} 72%{opacity:.14} 74%{opacity:.7} 77%{opacity:0} 100%{opacity:0}
+}
+@keyframes scancycle{
+  0%,50%{opacity:0;transform:translateY(-40%)} 54%{opacity:1}
+  76%{opacity:1;transform:translateY(190%)} 80%{opacity:0} 100%{opacity:0}
+}
+.veil-lab{position:absolute;bottom:5px;left:0;right:0;text-align:center;font-family:'Geist Mono',monospace;
+  font-size:8px;letter-spacing:.2em;color:var(--ghost);opacity:0;animation:veilcycle 9s infinite}
+
+/* ---- shared little parts ---- */
+.hdr{display:flex;align-items:center;gap:9px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--line)}
+.hdr .ovr{font-family:'Clash Display',sans-serif;font-size:28px;color:var(--gold);line-height:.85;letter-spacing:-.04em}
+.hdr .ov-l{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.16em;color:#6d5c3c;display:block;margin-top:3px}
+.hdr .fuel{flex:1;margin-left:6px}
+.fuel-t{height:6px;border-radius:2px;background:#161217;overflow:hidden;position:relative}
+.fuel-t i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#7a3a12,var(--ember))}
+.fuel-l{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7.5px;
+  letter-spacing:.12em;color:#6b4530;margin-top:4px}
+.rounds{display:flex;gap:3px}
+.pip{width:15px;height:15px;border-radius:4px;display:grid;place-items:center;font-family:'Geist Mono',monospace;
+  font-size:7.5px;font-weight:700;border:1px solid #2a2028;color:#4d3f45}
+.pip.w{background:rgba(224,178,94,.16);border-color:rgba(224,178,94,.5);color:var(--gold)}
+.pip.l{background:rgba(255,77,94,.1);border-color:rgba(255,77,94,.3);color:var(--blood)}
+.pip.now{border-color:var(--gold);box-shadow:0 0 9px -2px var(--gold);color:var(--gold)}
+
+.statrow{display:grid;grid-template-columns:38px 1fr 26px;gap:7px;align-items:center;margin-bottom:5px}
+.statrow span{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:#6c6380}
+.statrow .t{height:5px;background:#191527;border-radius:99px;overflow:hidden;position:relative}
+.statrow .t i{position:absolute;left:0;top:0;bottom:0;border-radius:99px}
+.statrow .t u{position:absolute;top:-2px;bottom:-2px;left:99%;width:1.5px;background:#4a5670}
+.statrow b{font-family:'Geist Mono',monospace;font-size:9.5px;text-align:right;font-weight:500}
+
+.sched{display:grid;gap:3px}
+.sblk{display:grid;grid-template-columns:32px 1fr 15px;gap:7px;align-items:center;padding:4.5px 6px;border-radius:5px;
+  font-family:'Geist Mono',monospace;font-size:9px}
+.sblk .tm{color:#4a4553;letter-spacing:-.02em}
+.sblk .nm{color:#8b8b96;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9.5px}
+.sblk .ck{width:12px;height:12px;border-radius:3px;border:1px solid #2a2a33}
+.sblk.done .ck{background:var(--phos);border-color:var(--phos)}
+.sblk.done .nm{color:#4f5a52}
+.sblk.now{background:rgba(224,178,94,.1);border:1px solid rgba(224,178,94,.28)}
+.sblk.now .nm{color:var(--gold)}
+.sblk.miss .ck{border-color:rgba(255,77,94,.5);background:rgba(255,77,94,.12)}
+
+.btn{border:0;border-radius:8px;padding:9px 12px;font-family:'Satoshi',sans-serif;font-size:12.5px;font-weight:600;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;width:100%;cursor:pointer}
+.btn.gh{background:transparent;border:1px solid var(--line2);color:var(--dim)}
+
+/* ============ 11 THE VEIL (single screen) ============ */
+.m-veil{background:radial-gradient(120% 85% at 50% 42%,#12101c,#08070c 62%,#060509)}
+.m-veil .bar{background:#0b0a11}
+.orb{position:relative;height:262px;margin:6px 0 10px}
+.orb svg{position:absolute;inset:0;margin:auto}
+.orbcore{position:absolute;inset:0;display:grid;place-items:center}
+.orb-ovr{font-family:'Clash Display',sans-serif;font-size:52px;line-height:.8;letter-spacing:-.05em;color:var(--gold)}
+.orb-lab{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.24em;color:#6d5c3c;text-align:center;margin-top:5px}
+.veil .him .orb-ovr{color:var(--ghost)}
+.veil .him .orb-lab{color:#6b82a8}
+.orb-now{position:absolute;left:0;right:0;bottom:-2px;text-align:center}
+.orb-now b{font-family:'Clash Display',sans-serif;font-size:13px;color:var(--gold);display:block;letter-spacing:-.01em}
+.orb-now span{font-family:'Geist Mono',monospace;font-size:8px;color:#5a5162;letter-spacing:.14em}
+
+/* ============ 12 COMMAND DECK ============ */
+.m-deck{background:#08080b}
+.m-deck .bar{background:#0a0a0e}
+.deck{display:grid;grid-template-columns:1.15fr 1fr;gap:8px}
+.dp{background:#0c0d12;border:1px solid #191a22;border-radius:10px;padding:10px}
+.dp h4{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.19em;color:#4d525f;margin:0 0 8px;text-transform:uppercase}
+.dp.span2{grid-column:1/-1}
+
+/* ============ 13 THE SANCTUM ============ */
+.m-sanc{background:linear-gradient(180deg,#100e18,#0a0810 40%,#070609)}
+.m-sanc .bar{background:#0c0a12}
+.hero{text-align:center;padding:4px 0 12px;border-bottom:1px solid #1a1626;margin-bottom:12px;position:relative}
+.hero-ovr{font-family:'Clash Display',sans-serif;font-size:60px;line-height:.8;letter-spacing:-.05em;color:var(--gold)}
+.veil .him .hero-ovr{color:var(--ghost)}
+.hero-nm{font-family:'Clash Display',sans-serif;font-size:14px;letter-spacing:.2em;color:#8c7346;margin-top:6px}
+.veil .him .hero-nm{color:#6b82a8}
+.room{background:#0e0c16;border:1px solid #1c1828;border-radius:10px;padding:11px 12px;margin-bottom:7px}
+.room h4{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.18em;color:#5b5270;margin:0 0 9px;
+  display:flex;justify-content:space-between;text-transform:uppercase}
+.room h4 u{text-decoration:none;color:var(--gold)}
+
+/* ============ 14 THE MIRROR ============ */
+.m-mir{background:linear-gradient(100deg,#0d0b07 0%,#08080b 50%,#080b12 100%)}
+.m-mir .bar{background:#0a0a0d}
+.mirror{position:relative;border-radius:10px;overflow:hidden;border:1px solid #1c1c24;margin-bottom:11px;height:212px}
+.mside{position:absolute;top:0;bottom:0;width:100%;padding:13px 14px}
+.mside.you{background:linear-gradient(160deg,#2a1f08,#14100a);clip-path:inset(0 42% 0 0)}
+.mside.him{background:linear-gradient(160deg,#101828,#0a0e16);left:0;clip-path:inset(0 0 0 58%)}
+.mseam{position:absolute;top:0;bottom:0;left:58%;width:1px;background:linear-gradient(180deg,transparent,var(--ghost),transparent);
+  box-shadow:0 0 14px var(--ghost);animation:seam 9s infinite}
+@keyframes seam{0%,50%{left:58%}62%{left:8%}76%{left:8%}88%{left:58%}100%{left:58%}}
+.mhandle{position:absolute;top:50%;left:58%;transform:translate(-50%,-50%);width:19px;height:19px;border-radius:99px;
+  background:#0d1018;border:1px solid var(--ghost);display:grid;place-items:center;font-size:8px;color:var(--ghost);
+  animation:seamh 9s infinite}
+@keyframes seamh{0%,50%{left:58%}62%{left:8%}76%{left:8%}88%{left:58%}100%{left:58%}}
+.mtitle{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.17em;margin-bottom:9px}
+.mside.you .mtitle{color:#a5885a} .mside.him .mtitle{color:#6b82a8;text-align:right}
+.mbig{font-family:'Clash Display',sans-serif;font-size:40px;line-height:.82;letter-spacing:-.045em}
+.mside.you .mbig{color:var(--gold)} .mside.him .mbig{color:var(--ghost);text-align:right}
+.mst{margin-top:11px;display:grid;gap:4px}
+.mst div{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:9px}
+.mside.you .mst div{color:#8c7346} .mside.him .mst div{color:#546a8c;flex-direction:row-reverse}
+.mside .mst b{font-weight:500}
+.mside.you .mst b{color:#f0dcb4} .mside.him .mst b{color:#9fb6d6}
+
+/* ============ 15 THE CHAMBER ============ */
+.m-cham{background:radial-gradient(75% 60% at 50% 58%,#161320,#0a0810 55%,#040406 100%)}
+.m-cham .bar{background:#08070c}
+.chamber{position:relative;height:290px;margin-bottom:10px;perspective:600px}
+.figs{position:absolute;inset:0;display:grid;place-items:center}
+.fig-him{position:absolute;opacity:.13;transform:scale(1.19) translateY(-9px);animation:step 9s infinite}
+@keyframes step{0%,50%{opacity:.11;transform:scale(1.19) translateY(-9px)}
+  60%{opacity:.82;transform:scale(1.07) translateY(-4px)}
+  74%{opacity:.82;transform:scale(1.07) translateY(-4px)}
+  84%{opacity:.11;transform:scale(1.19) translateY(-9px)}100%{opacity:.11;transform:scale(1.19) translateY(-9px)}}
+.fig-you{position:relative;z-index:2}
+.floor{position:absolute;left:12%;right:12%;bottom:26px;height:1px;
+  background:linear-gradient(90deg,transparent,#2c2740,transparent)}
+.glass{position:absolute;background:rgba(16,14,24,.72);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+  border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:8px 10px}
+.glass h5{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.18em;color:#5b5270;margin:0 0 5px;text-transform:uppercase}
+.glass .v{font-family:'Clash Display',sans-serif;font-size:17px;color:var(--gold);line-height:1;letter-spacing:-.03em}
+.glass .s{font-family:'Geist Mono',monospace;font-size:7.5px;color:#5b5270;margin-top:3px;letter-spacing:.1em}
+
+/* verdict */
+.verdict{padding:60px 0 100px}
+.verdict h2{font-size:26px;margin-bottom:8px}
+.verdict>p{color:var(--dim);max-width:670px;margin:0 0 26px;font-size:15.4px}
+.vrow{display:grid;grid-template-columns:32px 1fr;gap:15px;padding:17px 0;border-top:1px solid var(--line);align-items:start}
+.vrow .n{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);padding-top:3px;letter-spacing:.1em}
+.vrow h3{font-size:16.5px;margin-bottom:4px;font-family:'Satoshi';font-weight:700;letter-spacing:-.01em}
+.vrow p{margin:0;color:var(--dim);font-size:14.4px;line-height:1.55}
+.vrow.pick h3{color:var(--gold)}
+.tagp{display:inline-block;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.14em;
+  padding:2.5px 7px;border-radius:4px;border:1px solid var(--line2);color:var(--faint);margin-left:8px;text-transform:uppercase;vertical-align:2px}
+.tagp.g{border-color:rgba(224,178,94,.45);color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="mast">
+    <div class="kick">Round 3 · The Veil</div>
+    <h1>The character sheet,<br><em>five ways to build a world around it</em></h1>
+    <p>The character sheet is the core in all five — that's settled. What changes is <b>what the rest of the page is</b>, and <b>how the veil tears</b>. Every mockup below is <b>running the flicker live right now</b> on a 9-second cycle. Watch one for a few seconds before you read anything.</p>
+    <p style="color:var(--faint);font-size:14px">Both new mechanics — the veil and the phone pass — are specified once here and carry into whichever direction you pick.</p>
+
+    <div class="mech">
+      <div class="mcard">
+        <h3>◈ The Veil — piercing it</h3>
+        <p>Your sheet is what's real. Every <b>9 seconds</b> a scanline sweeps and <b>he bleeds through</b> — same layout, same positions, his numbers. It holds for about a second and a half, stutters, and collapses back to you.</p>
+        <p>The rule that makes it work: <b>it is never a clean fade.</b> It stutters, drops a frame, comes back wrong. A smooth crossfade reads as a UI transition. A broken one reads as <b>something showing through that isn't supposed to be visible yet</b>.</p>
+        <p class="warn">Two guardrails I'd insist on: a <b>hold-to-pierce</b> gesture so you can summon it deliberately instead of only waiting, and an <b>off switch</b>. A thing that flickers at you every nine seconds for four months is either haunting or maddening, and which one it is will depend on the day.</p>
+      </div>
+      <div class="mcard">
+        <h3>◈ The Phone Pass — Forest, fixed</h3>
+        <p>Forest's rule is absolute: leave, tree dies. That's too rigid for real work — sometimes the phone <b>is</b> the job. So the run gets <b>two passes a day</b>.</p>
+        <ol class="steps">
+          <li>Tap <b>STEP AWAY</b> before you leave. The run <b>pauses</b>, a 2:00 countdown starts.</li>
+          <li>Come back inside the window → <b>resumes clean.</b> No penalty, no lost bonus.</li>
+          <li>Blow the window → the run breaks like normal. The block still counts, the bonus doesn't.</li>
+          <li>Leave <b>without tapping</b> → instant break. No grace.</li>
+        </ol>
+        <p style="margin-top:11px">That last rule is the whole design. The pass costs you <b>one deliberate tap</b>, which is exactly the friction that separates <em>I need to check something</em> from <em>I drifted onto my phone</em>. Two per day keeps it honest.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 11 THE VEIL ===== -->
+  <section class="dir">
+    <div class="dhead">
+      <div class="dnum">11</div>
+      <div class="dtitle">
+        <h2>The Veil</h2>
+        <div class="dmeta">One screen · no scrolling · the character is the entire interface</div>
+        <p class="dlede">Everything on one screen. Your rating lives at the centre of a ring, and <b>the day's blocks are the ring itself</b> — a clock face made of your schedule. Completed blocks light the arc. Nothing scrolls, nothing is behind a tab. You open it and <b>the whole state of your life is one glance</b>.</p>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="mock m-veil">
+        <div class="bar"><i></i><i></i><i></i><span>THE VEIL — 10:14 PT</span></div>
+        <div class="pane">
+          <div class="hdr">
+            <div><div class="ovr">74</div><span class="ov-l">OVERALL</span></div>
+            <div class="fuel">
+              <div class="fuel-t"><i style="width:62%"></i></div>
+              <div class="fuel-l"><span>57 DAYS OF FUEL</span><span>WK 7</span></div>
+            </div>
+            <div class="rounds"><div class="pip w">W</div><div class="pip l">L</div><div class="pip w">W</div><div class="pip now">7</div></div>
+          </div>
+
+          <div class="orb veil">
+            <svg viewBox="0 0 260 260" width="260" height="260" id="orbRing"></svg>
+            <div class="orbcore">
+              <div style="text-align:center">
+                <div class="you">
+                  <div class="orb-ovr">74</div>
+                  <div class="orb-lab">JASPER · GOLD</div>
+                </div>
+                <div class="him">
+                  <div class="orb-ovr">99</div>
+                  <div class="orb-lab">THE MILLIONAIRE</div>
+                </div>
+              </div>
+            </div>
+            <div class="scan"></div>
+            <div class="orb-now"><b>Block 2 · SANO</b><span>10:00 – 11:15 · RUN CLEAN 14:22</span></div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px">
+            <button class="btn">Focus run</button>
+            <button class="btn gh">Step away · 2 left</button>
+          </div>
+        </div>
+      </div>
+      <dl class="notes">
+        <dt>The signature move</dt>
+        <dd><b>The schedule became the ring.</b> Your day isn't a list under the character — it's the circle the character sits inside. Each block is an arc that lights when you finish it, so a good day literally <b>closes a halo</b> around you.</dd>
+        <dt>Why this one is different</dt>
+        <dd>It's the only direction with <b>no scrolling and no navigation.</b> Everything is one composition. That's the highest possible bar for a daily driver — you open it at 6 AM half-awake and there is nothing to find.</dd>
+        <dt>How the veil reads here</dt>
+        <dd>He bleeds through the <b>centre of the ring</b> — the 74 becomes a 99 inside your own halo. Most concentrated version of the effect, because there's nowhere else on screen for your eye to go.</dd>
+        <div class="cost">The cost: one screen means <b>hard limits on detail.</b> Trade log, weekly review, history — none of it fits without a second view, which undercuts the "one screen" purity that makes it good. You'd be choosing elegance over capacity, and you said you want room to do a lot in there.</div>
+      </dl>
+      <div class="veiltag" style="grid-column:1/-1"><b>Veil treatment ·</b> centred, unavoidable — the number you're staring at becomes his number.</div>
+    </div>
+  </section>
+
+  <!-- ===== 12 COMMAND DECK ===== -->
+  <section class="dir">
+    <div class="dhead">
+      <div class="dnum">12</div>
+      <div class="dtitle">
+        <h2>The Command Deck</h2>
+        <div class="dmeta">Dense multi-panel · everything visible at once · maximum capacity</div>
+        <p class="dlede">A real operating surface. Character panel, live schedule, duel record, focus control, fuel, and the running ledger — <b>all on screen simultaneously</b>. This is the direction that actually answers "I want to be able to do a lot in there." Nothing is one tap away because <b>nothing is hidden</b>.</p>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="mock m-deck">
+        <div class="bar"><i></i><i></i><i></i><span>COMMAND DECK — WK 07 D34</span></div>
+        <div class="pane">
+          <div class="deck">
+            <div class="dp veil" style="position:relative">
+              <h4>Character</h4>
+              <div class="you">
+                <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:9px">
+                  <div><div class="ovr" style="font-family:'Clash Display';font-size:30px;color:var(--gold);line-height:.85">74</div>
+                    <span class="ov-l">JASPER · GOLD</span></div>
+                  <div style="margin-left:auto;text-align:right"><div style="font-family:'Geist Mono';font-size:10px;color:var(--phos)">+3</div>
+                    <div style="font-family:'Geist Mono';font-size:7px;color:#4d525f;letter-spacing:.12em">THIS WK</div></div>
+                </div>
+                <div id="deckStats"></div>
+              </div>
+              <div class="him">
+                <h4 style="color:#4d6a90">Character · pierced</h4>
+                <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:9px">
+                  <div><div style="font-family:'Clash Display';font-size:30px;color:var(--ghost);line-height:.85">99</div>
+                    <span class="ov-l" style="color:#4d6a90">THE MILLIONAIRE</span></div>
+                </div>
+                <div id="deckStatsHim"></div>
+              </div>
+              <div class="scan"></div>
+            </div>
+
+            <div class="dp">
+              <h4>Today · 8 of 12</h4>
+              <div class="sched" id="deckSched"></div>
+            </div>
+
+            <div class="dp">
+              <h4>Focus control</h4>
+              <div style="font-family:'Clash Display';font-size:26px;color:var(--rune);letter-spacing:-.03em;line-height:1">14:22</div>
+              <div style="font-family:'Geist Mono';font-size:7.5px;color:#4d525f;letter-spacing:.12em;margin:3px 0 9px">BLOCK 2 · CLEAN · UNBROKEN</div>
+              <button class="btn gh" style="font-size:11px;padding:7px">Step away · 2 left</button>
+            </div>
+
+            <div class="dp">
+              <h4>The duel · round 7</h4>
+              <div class="rounds" style="margin-bottom:8px">
+                <div class="pip w">W</div><div class="pip l">L</div><div class="pip w">W</div>
+                <div class="pip w">W</div><div class="pip l">L</div><div class="pip now">7</div>
+              </div>
+              <div style="font-family:'Geist Mono';font-size:8.5px;color:#4d525f;letter-spacing:.09em;line-height:1.6">
+                YOU 78 · HIM 100<br><span style="color:var(--gold)">UP ON THE MONTH</span></div>
+            </div>
+
+            <div class="dp span2">
+              <h4>Ledger</h4>
+              <div id="deckLedger"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="notes">
+        <dt>The signature move</dt>
+        <dd><b>Zero navigation.</b> Six live panels, one surface. This is the only direction where you can log a block, start a run, check the duel and read the record <b>without a single tap that changes the screen.</b></dd>
+        <dt>Why it may be the right answer</dt>
+        <dd>You said the page shouldn't be <em>only</em> the character sheet and you want room to work. This is the direct answer — the character is the <b>largest panel, not the whole world</b>, and everything else you need is beside it rather than behind it.</dd>
+        <dt>How the veil reads here</dt>
+        <dd>Only the <b>character panel</b> tears. The rest of the deck stays solid, which makes the flicker feel <b>localised and eerie</b> — like one instrument on the dash is picking up something the others can't.</dd>
+        <div class="cost">The cost: density is the enemy of feeling. This is the most capable direction and the least <b>moving</b> — six panels of information is a tool, not an experience, and you asked for something that makes you feel like you're upgrading. It's also the hardest of the five to make work on a phone.</div>
+      </dl>
+      <div class="veiltag" style="grid-column:1/-1"><b>Veil treatment ·</b> localised to one panel — quieter, stranger, easier to live with long-term.</div>
+    </div>
+  </section>
+
+  <!-- ===== 13 THE SANCTUM ===== -->
+  <section class="dir">
+    <div class="dhead">
+      <div class="dnum">13</div>
+      <div class="dtitle">
+        <h2>The Sanctum</h2>
+        <div class="dmeta">Vertical hub · character is the entrance, rooms below</div>
+        <p class="dlede">The character sheet is the <b>hero at the top</b> — big, ceremonial, the first thing you see. Beneath it the page opens into <b>rooms</b>: Today, The Duel, The Record, The Vault. You always enter through <b>who you are</b>, then descend into the work. Room to grow without ever cluttering the entrance.</p>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="mock m-sanc">
+        <div class="bar"><i></i><i></i><i></i><span>SANCTUM — SCROLL</span></div>
+        <div class="pane">
+          <div class="hero veil">
+            <div class="you">
+              <div class="hero-ovr">74</div>
+              <div class="hero-nm">JASPER · GOLD · WK 07</div>
+            </div>
+            <div class="him">
+              <div class="hero-ovr">99</div>
+              <div class="hero-nm">THE MILLIONAIRE</div>
+            </div>
+            <div class="scan"></div>
+            <div style="display:flex;gap:11px;justify-content:center;margin-top:11px" id="sancStats"></div>
+          </div>
+
+          <div class="room">
+            <h4>Today <u>8 / 12</u></h4>
+            <div class="sched" id="sancSched"></div>
+          </div>
+          <div class="room">
+            <h4>The Duel <u>ROUND 7</u></h4>
+            <div class="rounds"><div class="pip w">W</div><div class="pip l">L</div><div class="pip w">W</div>
+              <div class="pip w">W</div><div class="pip l">L</div><div class="pip w">W</div><div class="pip now">7</div></div>
+          </div>
+          <div class="room" style="display:flex;align-items:center;gap:10px">
+            <div style="flex:1"><h4 style="margin:0">Fuel <u>57 LEFT</u></h4></div>
+            <div style="flex:2"><div class="fuel-t"><i style="width:62%"></i></div></div>
+          </div>
+          <div style="text-align:center;font-family:'Geist Mono';font-size:8px;color:#4a4553;letter-spacing:.18em;padding-top:6px">↓ THE RECORD · THE VAULT</div>
+        </div>
+      </div>
+      <dl class="notes">
+        <dt>The signature move</dt>
+        <dd><b>You always enter through yourself.</b> The character is a doorway, not a dashboard widget. Every session starts with your rating filling the top of the screen before you get to any work — a small ceremony, repeated 91 times.</dd>
+        <dt>Why it scales best</dt>
+        <dd>Rooms are <b>infinitely extensible</b>. Want a trade journal in October? New room. Want the Ledger back? New room. The entrance never gets more crowded, which is the failure mode that eventually ruins every dashboard.</dd>
+        <dt>How the veil reads here</dt>
+        <dd>He takes the <b>hero slot</b> — the largest, most ceremonial real estate on the page. Highest-drama version, because it happens in the spot your eye lands first every single time you open it.</dd>
+        <div class="cost">The cost: <b>scrolling.</b> It's the only direction where part of your day is below the fold, and things below the fold get skipped on the mornings you're in a hurry — which are exactly the mornings that matter most.</div>
+      </dl>
+      <div class="veiltag" style="grid-column:1/-1"><b>Veil treatment ·</b> ceremonial — full hero takeover, the most dramatic of the five.</div>
+    </div>
+  </section>
+
+  <!-- ===== 14 THE MIRROR ===== -->
+  <section class="dir">
+    <div class="dhead">
+      <div class="dnum">14</div>
+      <div class="dtitle">
+        <h2>The Mirror</h2>
+        <div class="dmeta">Split seam · the veil isn't a fade, it's a wipe you can drag</div>
+        <p class="dlede">The most literal reading of <b>piercing the veil</b>. One character sheet, split by a <b>seam you can drag with your thumb</b>. Pull it left and more of him is revealed; let go and it snaps back to you. The flicker still happens on its own — but here <b>you can also tear it open yourself, and hold it there.</b></p>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="mock m-mir">
+        <div class="bar"><i></i><i></i><i></i><span>THE MIRROR — DRAG THE SEAM</span></div>
+        <div class="pane">
+          <div class="hdr">
+            <div><div class="ovr">74</div><span class="ov-l">OVERALL · GOLD</span></div>
+            <div class="fuel"><div class="fuel-t"><i style="width:62%"></i></div>
+              <div class="fuel-l"><span>57 DAYS</span><span>WK 7</span></div></div>
+          </div>
+
+          <div class="mirror">
+            <div class="mside him">
+              <div class="mtitle">THE MILLIONAIRE</div>
+              <div class="mbig">99</div>
+              <div class="mst">
+                <div><span>FOC</span><b>99</b></div><div><span>DIS</span><b>99</b></div>
+                <div><span>BOD</span><b>99</b></div><div><span>EXE</span><b>99</b></div>
+                <div><span>FTH</span><b>99</b></div><div><span>CAP</span><b>99</b></div>
+              </div>
+            </div>
+            <div class="mside you">
+              <div class="mtitle">JASPER · WEEK 07</div>
+              <div class="mbig">74</div>
+              <div class="mst">
+                <div><span>FOC</span><b>91</b></div><div><span>DIS</span><b>82</b></div>
+                <div><span>BOD</span><b style="color:var(--blood)">44</b></div><div><span>EXE</span><b>71</b></div>
+                <div><span>FTH</span><b>68</b></div><div><span>CAP</span><b>57</b></div>
+              </div>
+            </div>
+            <div class="mseam"></div>
+            <div class="mhandle">⇔</div>
+          </div>
+
+          <div class="sched" id="mirSched"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px">
+            <button class="btn">Focus run</button>
+            <button class="btn gh">Step away · 2 left</button>
+          </div>
+        </div>
+      </div>
+      <dl class="notes">
+        <dt>The signature move</dt>
+        <dd><b>You control the veil.</b> Every other direction shows him to you on a timer. Here it's a physical gesture — drag to reveal, release to snap back. Piercing the veil becomes <b>something you do</b>, not something that happens to you.</dd>
+        <dt>Why the gesture matters</dt>
+        <dd>An automatic flicker gets tuned out — anything on a 9-second loop becomes wallpaper by week three. A gesture <b>never</b> becomes wallpaper, because it only fires when you choose it. This is the version most likely to still be affecting you in November.</dd>
+        <dt>How the veil reads here</dt>
+        <dd>Both: it sweeps on its own <b>and</b> responds to your thumb. The auto-sweep reminds you it's there; the drag is what you'll actually use.</dd>
+        <div class="cost">The cost: a permanent split means <b>everything is half-width.</b> Six stats in half a screen is cramped, and the schedule gets pushed into a thin strip underneath. It's the most conceptually elegant direction and the most spatially constrained.</div>
+      </dl>
+      <div class="veiltag" style="grid-column:1/-1"><b>Veil treatment ·</b> a draggable seam — the only version you control with your hands.</div>
+    </div>
+  </section>
+
+  <!-- ===== 15 THE CHAMBER ===== -->
+  <section class="dir">
+    <div class="dhead">
+      <div class="dnum">15</div>
+      <div class="dtitle">
+        <h2>The Chamber</h2>
+        <div class="dmeta">Cinematic depth · he is standing behind you in the dark</div>
+        <p class="dlede">Not a sheet — <b>a room</b>. Your figure stands lit in the centre. Behind you, barely visible in the dark, <b>he is already there</b>. When the veil tears he <b>steps forward</b> and briefly occupies your position, then recedes. Your stats float as glass panels around the figure. This is the one that isn't a UI. It's a place.</p>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="mock m-cham">
+        <div class="bar"><i></i><i></i><i></i><span>THE CHAMBER — 06:04 PT</span></div>
+        <div class="pane">
+          <div class="chamber">
+            <div class="floor"></div>
+            <div class="figs">
+              <svg class="fig-him" id="figHim" width="118" height="182" viewBox="0 0 100 155"></svg>
+              <svg class="fig-you" id="figYou" width="118" height="182" viewBox="0 0 100 155"></svg>
+            </div>
+            <div class="glass" style="top:12px;left:8px;width:96px">
+              <h5>Overall</h5><div class="v">74</div><div class="s">GOLD · +3 WK</div>
+            </div>
+            <div class="glass" style="top:12px;right:8px;width:96px;text-align:right">
+              <h5>Fuel</h5><div class="v" style="color:var(--ember)">57</div><div class="s">DAYS LEFT</div>
+            </div>
+            <div class="glass" style="bottom:12px;left:8px;width:104px">
+              <h5>Weakest</h5><div class="v" style="color:var(--blood)">BODY 44</div><div class="s">2 SESSIONS / 9D</div>
+            </div>
+            <div class="glass" style="bottom:12px;right:8px;width:104px;text-align:right">
+              <h5>Round 7</h5><div class="v">W L W W</div><div class="s">UP ON MONTH</div>
+            </div>
+          </div>
+          <div class="sched" id="chamSched"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px">
+            <button class="btn">Focus run</button>
+            <button class="btn gh">Step away · 2 left</button>
+          </div>
+        </div>
+      </div>
+      <dl class="notes">
+        <dt>The signature move</dt>
+        <dd><b>He was always there.</b> He isn't summoned by a flicker — he's <b>standing behind you the entire time</b>, faint, at the edge of visible. The veil tearing just means he steps into the light for a second. That's a fundamentally more unsettling idea than a crossfade.</dd>
+        <dt>Why it's the most memorable</dt>
+        <dd>Every other direction is a screen you read. This is <b>a space you're inside</b>. You said you want to feel like you're upgrading yourself — watching your own figure get brighter over 91 days while the one behind you stops being so far ahead is the most visceral version of that on offer.</dd>
+        <dt>How the veil reads here</dt>
+        <dd>Spatial rather than graphical. <b>He steps forward and you step back.</b> No scanline, no glitch — just presence and distance.</dd>
+        <div class="cost">The cost: <b>the most expensive to build well and the easiest to get wrong.</b> Atmosphere is unforgiving — done right it's the best thing here, done at 80% it's a dark page with two grey blobs. It's also the least information-dense, so the schedule and stats have to fight the mood for space.</div>
+      </dl>
+      <div class="veiltag" style="grid-column:1/-1"><b>Veil treatment ·</b> he steps out of the dark — presence, not a graphic effect.</div>
+    </div>
+  </section>
+
+  <!-- ===== VERDICT ===== -->
+  <section class="verdict">
+    <h2>My read</h2>
+    <p>All five keep the character sheet as the core, run the veil, hold the schedule, and take the phone pass. The real decision is <b>capacity versus feeling</b> — and they're genuinely opposed here.</p>
+
+    <div class="vrow pick">
+      <div class="n">01</div>
+      <div><h3>The Sanctum <span class="tagp g">my pick</span></h3>
+        <p>It's the only direction that gets both. The character sheet stays ceremonial and full-size at the entrance — you meet yourself before you meet the work — and the rooms below give you unlimited space to grow without ever crowding that entrance. It takes the veil's most dramatic treatment and it's the one I'd bet on still being good in November. The scroll is a real cost, solved by making Today the first room so it's always half-visible.</p></div>
+    </div>
+    <div class="vrow">
+      <div class="n">02</div>
+      <div><h3>The Mirror <span class="tagp">best single idea</span></h3>
+        <p>The draggable seam is the strongest mechanic in this round, because it's the only one that <em>can't</em> become wallpaper. An automatic flicker is tuned out by week three; a gesture is not. <b>I want the drag-to-pierce in whatever we build</b>, even if you don't pick this. Loses only because a permanent half-screen split starves everything else.</p></div>
+    </div>
+    <div class="vrow">
+      <div class="n">03</div>
+      <div><h3>The Chamber <span class="tagp">highest ceiling, highest risk</span></h3>
+        <p>If it lands, it's the best thing on this page by a distance — "he was always standing behind you" is a genuinely better idea than any flicker. But atmosphere at 80% quality is just a dark screen, and it's the least room for a schedule. Pick this if you want to gamble on feeling over function.</p></div>
+    </div>
+    <div class="vrow">
+      <div class="n">04</div>
+      <div><h3>The Command Deck <span class="tagp">most capable</span></h3>
+        <p>Genuinely the best answer to "I want to do a lot in there" — six live panels, zero navigation. I've ranked it fourth only because you keep telling me the thing you want is to <em>feel</em> the progress, and density is the enemy of that. Worth reconsidering if what you actually want is a cockpit you sit in all day.</p></div>
+    </div>
+    <div class="vrow">
+      <div class="n">05</div>
+      <div><h3>The Veil <span class="tagp">most elegant, least room</span></h3>
+        <p>The schedule-as-halo is a beautiful idea and the single-screen discipline is the right instinct for 6 AM. It's last because you explicitly said you want room to do a lot, and this is the direction with the least. The closing-halo mechanic deserves to survive into the Sanctum's Today room.</p></div>
+    </div>
+  </section>
+</div>
+
+<script src="lib/gsap/gsap.min.js"></script>
+<script>
+const STATS=[['FOC',91,'#38E1D8'],['DIS',82,'#4ADE80'],['EXE',71,'#E0B25E'],
+             ['FTH',68,'#B08CFF'],['CAP',57,'#7FB4FF'],['BOD',44,'#FF6B2C']];
+const DAY=[['06:00','Wake',1],['06:30','Market open',1],['07:45','3 priorities',1],
+           ['08:15','Block 1 · SANO',1],['10:00','Block 2 · SANO',2],['11:15','Workout',0],
+           ['12:45','Market close',0],['13:05','Block 3 · Fruits',0],['14:50','Block 4 · admin',0],
+           ['21:00','Reset · phone away',0]];
+
+function statRows(el,him){
+  if(!el) return;
+  el.innerHTML=STATS.map(([n,v,c])=>{
+    const val=him?99:v, col=him?'#9FC4FF':c;
+    return `<div class="statrow"><span style="${him?'color:#4d6a90':''}">${n}</span>
+      <div class="t"><i style="width:${val}%;background:${col}"></i><u></u></div>
+      <b style="color:${him?'#9FC4FF':(v<50?'#FF6B2C':'#EDEAE4')}">${val}</b></div>`;
+  }).join('');
+}
+statRows(document.getElementById('deckStats'),false);
+statRows(document.getElementById('deckStatsHim'),true);
+
+function sched(el,n){
+  if(!el) return;
+  el.innerHTML=DAY.slice(0,n).map(([t,nm,st])=>
+    `<div class="sblk ${st===1?'done':st===2?'now':''}">
+      <span class="tm">${t}</span><span class="nm">${nm}</span><span class="ck"></span></div>`).join('');
+}
+sched(document.getElementById('deckSched'),8);
+sched(document.getElementById('sancSched'),6);
+sched(document.getElementById('mirSched'),4);
+sched(document.getElementById('chamSched'),4);
+
+/* ledger feed */
+(function(){
+  const el=document.getElementById('deckLedger'); if(!el) return;
+  const L=[['09:45','BLOCK 1 · clean · 90m','+65'],['10:00','BLOCK 2 · run start','——'],
+           ['10:14','STEP AWAY used · 1:12 · resumed clean','0'],['07:45','PRIORITIES · 3 written','+10']];
+  el.innerHTML=L.map(([t,d,v])=>`<div style="display:grid;grid-template-columns:38px 1fr auto;gap:8px;
+    font-family:'Geist Mono';font-size:8.5px;padding:3.5px 0;border-bottom:1px solid #101116">
+    <span style="color:#3a3f47">${t}</span><span style="color:#6a707a">${d}</span>
+    <span style="color:${v==='——'||v==='0'?'#4a4f57':'#4ADE80'}">${v}</span></div>`).join('');
+})();
+
+/* sanctum mini stats */
+(function(){
+  const el=document.getElementById('sancStats'); if(!el) return;
+  el.innerHTML=STATS.map(([n,v,c])=>`<div style="text-align:center">
+    <div style="font-family:'Geist Mono';font-size:11px;color:${v<50?'#FF6B2C':'#EDEAE4'};font-weight:600">${v}</div>
+    <div style="font-family:'Geist Mono';font-size:6.5px;color:#5b5270;letter-spacing:.13em;margin-top:2px">${n}</div>
+    <div style="height:2px;width:16px;margin:4px auto 0;background:${c};opacity:${(.25+v/160).toFixed(2)};border-radius:99px"></div>
+  </div>`).join('');
+})();
+
+/* 11 — the ring: schedule as a clock face */
+(function(){
+  const svg=document.getElementById('orbRing'); if(!svg) return;
+  const cx=130,cy=130,R=112, N=DAY.length, gap=3.4;
+  const seg=360/N;
+  let h='';
+  h+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#16131f" stroke-width="9"/>`;
+  DAY.forEach(([,,st],i)=>{
+    const a0=(-90+i*seg+gap/2)*Math.PI/180, a1=(-90+(i+1)*seg-gap/2)*Math.PI/180;
+    const x0=cx+Math.cos(a0)*R, y0=cy+Math.sin(a0)*R, x1=cx+Math.cos(a1)*R, y1=cy+Math.sin(a1)*R;
+    const col=st===1?'#E0B25E':st===2?'#38E1D8':'#221d2e';
+    const w=st===2?11:9;
+    h+=`<path d="M ${x0.toFixed(1)} ${y0.toFixed(1)} A ${R} ${R} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)}"
+         fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round"
+         ${st===2?'style="filter:drop-shadow(0 0 6px #38E1D8)"':''}/>`;
+  });
+  h+=`<circle cx="${cx}" cy="${cy}" r="${R-22}" fill="none" stroke="#141120" stroke-width="1"/>`;
+  svg.innerHTML=h;
+})();
+
+/* 15 — chamber figures */
+(function(){
+  const REG={head:'<circle cx="50" cy="16" r="11"/>',
+    chest:'<rect x="35" y="30" width="30" height="22" rx="7"/>',
+    core:'<rect x="38" y="53" width="24" height="20" rx="6"/>',
+    arms:'<rect x="21" y="31" width="11" height="34" rx="5.5"/><rect x="68" y="31" width="11" height="34" rx="5.5"/>',
+    hands:'<circle cx="26.5" cy="71" r="6"/><circle cx="73.5" cy="71" r="6"/>',
+    legs:'<rect x="38" y="75" width="10.5" height="52" rx="5"/><rect x="51.5" y="75" width="10.5" height="52" rx="5"/>'};
+  const V={head:.91,chest:.68,core:.82,arms:.71,hands:.57,legs:.44};
+  const C={head:'#38E1D8',chest:'#B08CFF',core:'#4ADE80',arms:'#E0B25E',hands:'#7FB4FF',legs:'#FF6B2C'};
+  function draw(id,lit){
+    const s=document.getElementById(id); if(!s) return;
+    s.innerHTML=Object.keys(REG).map(r=>{
+      const v=lit?1:V[r], c=lit?'#9FC4FF':C[r];
+      return `<g fill="${c}" opacity="${lit?.95:(.14+v*.86).toFixed(2)}"
+        style="filter:drop-shadow(0 0 ${(v*8).toFixed(1)}px ${c})">${REG[r]}</g>`;
+    }).join('');
+  }
+  draw('figYou',false); draw('figHim',true);
+})();
+</script>
+</body>
+</html>

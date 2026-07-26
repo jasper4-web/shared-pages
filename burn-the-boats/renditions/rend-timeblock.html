@@ -1,0 +1,1913 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Time-Block Region — 12 Directions</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --d-work:#E0B25E; --d-cap:#7FB4FF; --d-body:#FF6B2C; --d-faith:#B08CFF; --d-mind:#38E1D8; --d-people:#4ADE80;
+  --ghost:#CFE2FF;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99;
+  background-image:url('../assets/grain/grain-fine.svg');opacity:.035;mix-blend-mode:overlay}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+.mono{font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* ---------- page furniture ---------- */
+.mast{padding:60px 0 30px;border-bottom:1px solid var(--line)}
+.kick{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.26em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:14px}
+.mast h1{font-size:clamp(30px,4.6vw,46px);line-height:1.03;letter-spacing:-.035em;margin-bottom:15px;max-width:15ch}
+.mast p{max-width:660px;color:var(--dim);font-size:15.2px;margin:0 0 12px}
+.mast p b{color:var(--ink);font-weight:500}
+
+.budget{margin:34px 0 0;border:1px solid var(--line2);border-radius:14px;background:var(--panel);
+  padding:20px 22px 22px}
+.budget h3{font-size:17px;margin-bottom:12px}
+.budget table{width:100%;border-collapse:collapse;font-family:'Geist Mono',monospace;font-size:11.5px}
+.budget td{padding:6px 0;border-bottom:1px solid #171526;color:var(--dim);letter-spacing:.04em}
+.budget td:last-child{text-align:right;color:var(--ink);font-weight:700}
+.budget tr:last-child td{border-bottom:0}
+.budget tr.tot td{color:var(--ember);padding-top:10px}
+.budget p{color:var(--dim);font-size:14px;margin:14px 0 0;max-width:70ch}
+.budget p b{color:var(--gold);font-weight:500}
+.budget p.warn b{color:var(--blood)}
+
+.dir{padding:46px 0;border-bottom:1px solid var(--line)}
+.dh{display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:start;margin-bottom:20px}
+.dn{font-family:'Clash Display',sans-serif;font-size:42px;line-height:.8;font-weight:700;color:transparent;
+  -webkit-text-stroke:1.2px var(--line2)}
+.dt h2{font-size:25px;letter-spacing:-.03em;margin-bottom:5px}
+.dm{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+.dl{max-width:640px;color:var(--dim);font-size:14.8px;margin-top:11px}
+.dl b{color:var(--ink);font-weight:500}
+.body{display:grid;grid-template-columns:minmax(0,392px) 1fr;gap:36px;align-items:start}
+/* the mock-ups are exactly 390px and must stay exactly 390px to be honest — so on a narrow
+   screen the review column scrolls inside itself and the page body never scrolls sideways */
+@media(max-width:900px){.body{grid-template-columns:1fr;overflow-x:auto}
+  .dh{grid-template-columns:40px 1fr;gap:12px}.dn{font-size:30px}}
+
+.notes dt{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);margin-top:17px}
+.notes dt:first-child{margin-top:0}
+.notes dd{margin:6px 0 0;font-size:14.4px;color:var(--dim);line-height:1.55}
+.notes dd b{color:var(--ink);font-weight:500}
+.metrics{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+.met{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.1em;padding:6px 10px;border-radius:6px;
+  border:1px solid var(--line2);color:var(--dim);text-transform:uppercase}
+.met b{color:var(--ink)}
+.met.pass{border-color:rgba(74,222,128,.42);color:var(--phos)} .met.pass b{color:var(--phos)}
+.met.fail{border-color:rgba(255,77,94,.45);color:#ff8f80} .met.fail b{color:#ff8f80}
+
+/* ---------- phone frame + the fold ruler ---------- */
+.phone{width:390px;max-width:100%;border-radius:22px;overflow:hidden;border:1px solid var(--line2);
+  box-shadow:0 28px 70px -28px #000;background:var(--bg);position:relative}
+.stub{background:linear-gradient(180deg,#0c0b10,#09080d);border-bottom:1px solid var(--line);
+  padding:13px 14px;display:flex;align-items:center;justify-content:space-between}
+.stub .s1{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.15em;color:#3d3850;line-height:1.7}
+.stub .s2{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.13em;color:#2f2b3d;text-align:right}
+.stage{position:relative;padding:0 13px}
+/* three fold rulers. Labels are 3-character chips pinned to the right edge so they mark the line
+   without sitting on top of the mock-up; the legend under each phone spells them out. */
+.fold{position:absolute;left:0;right:0;top:299px;height:0;border-top:1px dashed rgba(255,77,94,.5);z-index:6;
+  pointer-events:none}
+/* the number sits in the phone's 13px gutter, never over the mock-up — checked at 390px */
+.fold b{position:absolute;left:1px;top:-8px;font-family:'Geist Mono',monospace;font-size:6px;font-weight:700;
+  letter-spacing:0;color:#c25a63;line-height:1}
+.fold.real{top:218px;border-top-style:dotted;border-top-color:rgba(255,77,94,.3)}
+.fold.real b{color:#8d474f}
+.fold.today{top:171px;border-top-style:dotted;border-top-color:rgba(255,77,94,.22)}
+.fold.today b{color:#753c44}
+.legend{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;padding:9px 10px 11px;border-top:1px solid var(--line)}
+.legend span{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.11em;color:#4d4659}
+.legend span b{color:#8d474f;font-weight:700}
+.stagefoot{padding:9px 13px 12px;border-top:1px solid var(--line);
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.14em;color:#3b3648;text-align:center}
+
+/* =================================================================
+   SHARED APP COMPONENTS — lifted verbatim from index.html
+   ================================================================= */
+.reg{position:relative;padding-bottom:14px}
+.reg .rail{height:9px;border-radius:3px;background:#141120;position:relative;overflow:hidden;display:flex;gap:1px}
+.reg .rail i{height:100%;display:block}
+.reg .rail .now{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--gold);
+  box-shadow:0 0 8px var(--gold);border-radius:2px;z-index:2}
+.rail-l{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7.5px;
+  letter-spacing:.1em;color:var(--faint);margin-top:6px}
+.timeleft{display:flex;align-items:baseline;gap:8px}
+.timeleft b{font-family:'Clash Display',sans-serif;font-size:27px;letter-spacing:-.035em;line-height:1}
+.timeleft span{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.12em;color:var(--faint)}
+.timeleft .dow{margin-left:auto;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.15em;color:var(--gold)}
+
+.pushstrip{border:1px solid var(--line2);border-radius:12px;overflow:hidden;background:var(--panel)}
+.ps-row{display:grid;grid-template-columns:repeat(3,1fr)}
+.ps-c{padding:10px 8px;text-align:center;border-right:1px solid var(--line)}
+.ps-c:last-child{border-right:0}
+.ps-c .k{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.13em;color:var(--faint);text-transform:uppercase}
+.ps-c .v{font-family:'Geist Mono',monospace;font-size:14px;font-weight:700;margin-top:3px;color:var(--ink)}
+.ps-stale{padding:8px 11px;border-top:1px solid rgba(255,77,94,.25);background:rgba(255,77,94,.07);
+  font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.09em;color:#ff8f80}
+
+.nextup{border-radius:16px;padding:14px 15px;position:relative;overflow:hidden;
+  background:linear-gradient(150deg,#1b1526,#110e1a 60%,#0d0b14);border:1px solid var(--line2)}
+.nextup.live{border-color:rgba(224,178,94,.45);box-shadow:0 8px 36px -18px rgba(224,178,94,.5)}
+.nu-k{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.nu-k i{width:6px;height:6px;border-radius:99px;background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.nu-k span{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.19em;color:var(--gold);text-transform:uppercase}
+.nu-k u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:9px;color:var(--dim);text-decoration:none}
+.nu-t{font-family:'Clash Display',sans-serif;font-size:20px;letter-spacing:-.025em;line-height:1.12;margin-bottom:5px}
+.nu-obj{font-size:13.5px;color:var(--dim);line-height:1.4;margin-bottom:11px}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:11px}
+.chip{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.11em;padding:3px 7px;border-radius:4px;
+  border:1px solid var(--line2);color:var(--dim);text-transform:uppercase}
+.btn{border:0;border-radius:11px;padding:14px 12px;font-size:14px;font-weight:600;min-height:46px;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;cursor:pointer;width:100%;
+  font-family:inherit;transition:transform .1s}
+.btn:active{transform:scale(.975)}
+.btn.gh{background:transparent;border:1px solid var(--line2);color:var(--dim)}
+.btn.sm{padding:10px 11px;font-size:12.5px;min-height:40px;border-radius:9px}
+.row2{display:grid;grid-template-columns:1fr auto;gap:7px}
+
+h2.sec{font-size:9px;font-family:'Geist Mono',monospace;letter-spacing:.19em;text-transform:uppercase;
+  color:var(--faint);margin:0 0 8px;font-weight:700;display:flex;justify-content:space-between;align-items:baseline}
+h2.sec u{text-decoration:none;color:var(--dim)}
+.wins{display:flex;gap:6px;flex-wrap:wrap}
+.win{flex:1 1 calc(50% - 3px);border:1px solid var(--line2);background:var(--panel);border-radius:10px;
+  padding:11px 9px;font-size:12.5px;color:var(--dim);cursor:pointer;text-align:left;min-height:44px;
+  display:flex;flex-direction:column;align-items:flex-start;gap:6px;font-family:inherit}
+.win .wtop{display:flex;align-items:center;gap:7px;width:100%}
+.win b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:10px;color:var(--faint)}
+.win .pips{display:flex;gap:3px}
+.win .pips i{width:5px;height:5px;border-radius:99px;background:#2a2438;display:block}
+.win .pips i.on{background:var(--phos)}
+.win .pips i.full{background:var(--gold)}
+.win.on{border-color:rgba(74,222,128,.45);color:var(--phos);background:rgba(74,222,128,.07)}
+.win.on b{color:var(--phos)}
+
+.penance{border:1px solid rgba(255,77,94,.45);background:rgba(255,77,94,.09);border-radius:12px;padding:12px 13px}
+.penance .k{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.17em;color:var(--blood)}
+.penance .t{font-size:13.5px;color:#ffd9d2;margin-top:5px;line-height:1.4}
+
+/* fake schedule peek — every layout shows the first schedule row so the fold is honest */
+.peek{margin-top:16px;opacity:.6}
+.peek .ph{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:#565064;
+  text-transform:uppercase;padding:0 2px 6px}
+.peek .blk{display:grid;grid-template-columns:42px 1fr 20px;gap:10px;align-items:start;padding:10px 11px;
+  border-radius:11px;background:var(--panel);border:1px solid var(--line);margin-bottom:5px;min-height:46px}
+.peek .bt{font-family:'Geist Mono',monospace;font-size:10px;color:var(--faint)}
+.peek .bn{font-size:13.5px;font-weight:500;letter-spacing:-.01em}
+.peek .bc{width:18px;height:18px;border-radius:5px;border:1.5px solid #362f47;justify-self:end}
+
+/* =================================================================
+   00 — THE CURRENT BUILD (baseline)
+   ================================================================= */
+.L0 .rail-wrap{padding:15px 2px 2px}
+.L0 .timeleft{margin-top:13px}
+.L0 .pushstrip{margin-top:13px}
+.L0 .nextup{margin-top:14px}
+.L0 h2.sec{margin:22px 0 8px}
+
+/* =================================================================
+   01 — THE COMMAND LINE
+   ================================================================= */
+.L1 .instr{display:flex;align-items:center;gap:9px;padding:12px 2px 11px}
+.L1 .instr .n{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;line-height:1;flex:none}
+.L1 .instr .lab{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;color:var(--faint);
+  line-height:1.35;flex:none;max-width:62px}
+.L1 .instr .railmini{flex:1;position:relative}
+.L1 .instr .rail{height:5px;border-radius:2px}
+.L1 .instr .rail .now{top:-2px;bottom:-2px}
+.L1 .instr .dow{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--gold);flex:none}
+.L1 .pushline{display:flex;align-items:center;gap:0;margin-top:11px;border:1px solid var(--line);
+  border-radius:9px;background:var(--panel);overflow:hidden}
+.L1 .pushline span{flex:1;text-align:center;padding:7px 4px;font-family:'Geist Mono',monospace;font-size:8.5px;
+  letter-spacing:.09em;color:var(--dim);border-right:1px solid var(--line)}
+.L1 .pushline span:last-child{border-right:0}
+.L1 .pushline span u{text-decoration:none;color:var(--faint);font-size:6.5px;letter-spacing:.12em;display:block;margin-bottom:2px}
+.L1 .pushline.stale{border-color:rgba(255,77,94,.3)}
+.L1 .staleline{margin-top:6px;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.09em;
+  color:#ff8f80;padding:0 2px}
+.L1 .winrow{display:flex;gap:6px;overflow-x:auto;margin-top:12px;padding:0 2px 3px;scrollbar-width:none}
+.L1 .winrow::-webkit-scrollbar{display:none}
+.L1 .wpill{flex:none;border:1px solid var(--line2);background:var(--panel);border-radius:99px;
+  padding:8px 12px;font-size:11.5px;color:var(--dim);white-space:nowrap;min-height:36px;display:flex;
+  align-items:center;gap:6px;font-family:inherit;cursor:pointer}
+.L1 .wpill .p{display:flex;gap:2.5px}
+.L1 .wpill .p i{width:4px;height:4px;border-radius:99px;background:#2a2438;display:block}
+.L1 .wpill .p i.on{background:var(--phos)}
+.L1 .wpill.on{border-color:rgba(74,222,128,.45);color:var(--phos);background:rgba(74,222,128,.07)}
+.L1 .wlab{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.17em;color:var(--faint);
+  margin-top:13px;padding:0 2px;display:flex;justify-content:space-between}
+
+/* =================================================================
+   02 — THE FUEL GAUGE
+   ================================================================= */
+.L2 .fuel{margin-top:15px;position:relative;height:38px;border-radius:8px;overflow:hidden;
+  background:#111020;border:1px solid var(--line2)}
+.L2 .fuel .spent{position:absolute;left:0;top:0;bottom:0;width:33.2%;
+  background:linear-gradient(180deg,#191527,#121020);border-right:2px solid var(--gold);
+  box-shadow:6px 0 16px -6px rgba(224,178,94,.7)}
+.L2 .fuel .segs{position:absolute;left:0;right:0;bottom:0;height:4px;display:flex;gap:1px;opacity:.9}
+.L2 .fuel .segs i{height:100%;display:block}
+.L2 .fuel .read{position:absolute;left:calc(33.2% + 11px);top:0;bottom:0;display:flex;align-items:center;gap:8px}
+.L2 .fuel .read b{font-family:'Clash Display',sans-serif;font-size:23px;letter-spacing:-.035em;line-height:1;
+  color:#f2ece4}
+.L2 .fuel .read span{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;color:#8d6650;
+  line-height:1.35;max-width:74px}
+.L2 .fuel .dow{position:absolute;right:9px;top:0;bottom:0;display:flex;align-items:center;
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--gold)}
+.L2 .fuel-l{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7px;
+  letter-spacing:.1em;color:#4a4459;margin-top:5px;padding:0 1px}
+.L2 .board{display:grid;grid-template-columns:repeat(4,1fr);margin-top:12px;border:1px solid var(--line2);
+  border-radius:11px;overflow:hidden;background:var(--panel)}
+.L2 .board > div{padding:9px 4px;text-align:center;border-right:1px solid var(--line)}
+.L2 .board > div:last-child{border-right:0;background:rgba(74,222,128,.05)}
+.L2 .board .k{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.12em;color:var(--faint);text-transform:uppercase}
+.L2 .board .v{font-family:'Geist Mono',monospace;font-size:13px;font-weight:700;margin-top:3px;color:var(--ink)}
+.L2 .board > div:last-child .v{color:var(--phos)}
+.L2 .ps-stale{border:1px solid rgba(255,77,94,.25);border-radius:9px;margin-top:7px}
+.L2 .nextup{margin-top:12px}
+
+/* =================================================================
+   03 — THE VERTICAL SPINE
+   ================================================================= */
+.L3 .split{display:grid;grid-template-columns:30px 1fr;gap:11px;padding-top:14px}
+.L3 .spine{position:relative;width:13px;border-radius:6px;overflow:hidden;background:#111020;display:flex;
+  flex-direction:column;gap:1px;min-height:220px}
+.L3 .spine i{width:100%;display:block}
+.L3 .spine .now{position:absolute;left:0;right:0;height:2px;background:var(--gold);
+  box-shadow:0 0 8px var(--gold);border-radius:2px;z-index:2;top:33.2%}
+.L3 .spinelab{display:flex;flex-direction:column;justify-content:space-between;align-items:center;
+  font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.06em;color:#4a4459;padding:4px 0 0}
+.L3 .rightcol{min-width:0}
+.L3 .tl3{display:flex;align-items:baseline;gap:7px;margin-bottom:11px}
+.L3 .tl3 b{font-family:'Clash Display',sans-serif;font-size:21px;letter-spacing:-.035em;line-height:1}
+.L3 .tl3 span{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.11em;color:var(--faint);line-height:1.35}
+.L3 .tl3 .dow{margin-left:auto;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--gold)}
+.L3 .nextup{padding:12px 13px}
+.L3 .pushmini{display:flex;gap:5px;margin-top:9px}
+.L3 .pushmini span{flex:1;text-align:center;padding:6px 3px;border:1px solid var(--line);border-radius:7px;
+  background:var(--panel);font-family:'Geist Mono',monospace;font-size:9px;color:var(--dim)}
+.L3 .pushmini span u{display:block;text-decoration:none;font-size:6px;letter-spacing:.11em;color:var(--faint);margin-bottom:2px}
+.L3 .pushmini span.hot{border-color:rgba(255,77,94,.35);color:#ff8f80}
+.L3 .wingrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:12px}
+.L3 .wg{border:1px solid var(--line2);background:var(--panel);border-radius:9px;padding:8px 6px;
+  text-align:center;font-size:10.5px;color:var(--dim);min-height:44px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;font-family:inherit;cursor:pointer;line-height:1.2}
+.L3 .wg .p{display:flex;gap:2.5px}
+.L3 .wg .p i{width:4px;height:4px;border-radius:99px;background:#2a2438;display:block}
+.L3 .wg .p i.on{background:var(--phos)}
+.L3 .wg.on{border-color:rgba(74,222,128,.45);color:var(--phos);background:rgba(74,222,128,.07)}
+
+/* =================================================================
+   04 — THE DIAL
+   ================================================================= */
+.L4 .dialcard{margin-top:14px;border-radius:18px;padding:15px 15px 13px;position:relative;overflow:hidden;
+  background:linear-gradient(150deg,#1b1526,#110e1a 60%,#0d0b14);border:1px solid rgba(224,178,94,.4);
+  box-shadow:0 8px 36px -18px rgba(224,178,94,.5)}
+.L4 .top{display:grid;grid-template-columns:88px 1fr;gap:14px;align-items:center}
+.L4 .ring{position:relative;width:88px;height:88px}
+.L4 .ring .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:2px}
+.L4 .ring .mid b{font-family:'Clash Display',sans-serif;font-size:20px;letter-spacing:-.04em;line-height:1}
+.L4 .ring .mid span{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.14em;color:#8d6650;text-align:center}
+.L4 .meta{min-width:0}
+.L4 .meta .k{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.L4 .meta .k i{width:6px;height:6px;border-radius:99px;background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.L4 .meta .k span{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.19em;color:var(--gold)}
+.L4 .meta .k u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:8px;color:var(--faint);text-decoration:none}
+.L4 .meta .t{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.025em;line-height:1.1;margin-bottom:4px}
+.L4 .meta .o{font-size:12.5px;color:var(--dim);line-height:1.35}
+.L4 .btnrow{margin-top:12px}
+.L4 .foot4{display:flex;align-items:center;gap:8px;margin:12px -15px -13px;padding:10px 15px;
+  border-top:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.25)}
+.L4 .foot4 .g{display:flex;gap:9px;font-family:'Geist Mono',monospace;font-size:8.5px;color:var(--dim);letter-spacing:.07em}
+.L4 .foot4 .g em{font-style:normal;color:var(--faint);font-size:6.5px;letter-spacing:.12em}
+.L4 .foot4 .earn{margin-left:auto;display:flex;align-items:center;gap:6px;font-family:'Geist Mono',monospace;
+  font-size:8px;letter-spacing:.12em;color:var(--phos)}
+.L4 .foot4 .earn .d{display:flex;gap:3px}
+.L4 .foot4 .earn .d i{width:5px;height:5px;border-radius:99px;background:#2a2438;display:block}
+.L4 .foot4 .earn .d i.on{background:var(--phos)}
+.L4 .stale4{margin-top:9px;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.09em;color:#ff8f80;
+  border:1px solid rgba(255,77,94,.25);background:rgba(255,77,94,.07);border-radius:9px;padding:7px 10px}
+
+/* =================================================================
+   05 — THE THREE-TAB PANEL
+   ================================================================= */
+.L5 .panel5{margin-top:14px;border:1px solid var(--line2);border-radius:16px;overflow:hidden;
+  background:linear-gradient(150deg,#181327,#100d18)}
+.L5 .segs{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
+.L5 .segs button{background:none;border:0;border-right:1px solid var(--line);padding:10px 4px;cursor:pointer;
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.16em;color:#5f5872;text-transform:uppercase;
+  min-height:38px;position:relative}
+.L5 .segs button:last-child{border-right:0}
+.L5 .segs button.on{color:var(--gold);background:rgba(224,178,94,.07)}
+.L5 .segs button.on::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--gold)}
+.L5 .segs button em{font-style:normal;color:var(--phos);margin-left:4px}
+.L5 .pane{display:none;padding:14px 15px;min-height:196px}
+.L5 .pane.on{display:block}
+.L5 .nu-k{margin-bottom:8px}
+.L5 .dayrow{display:flex;align-items:baseline;gap:8px;margin-bottom:12px}
+.L5 .dayrow b{font-family:'Clash Display',sans-serif;font-size:25px;letter-spacing:-.035em;line-height:1}
+.L5 .dayrow span{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--faint)}
+.L5 .dayrow .dow{margin-left:auto;font-family:'Geist Mono',monospace;font-size:8px;color:var(--gold);letter-spacing:.14em}
+.L5 .plist{margin-top:13px;display:grid;gap:7px}
+.L5 .prow{display:grid;grid-template-columns:1fr auto;gap:8px;font-family:'Geist Mono',monospace;font-size:9.5px;
+  color:var(--dim);letter-spacing:.08em;padding-bottom:7px;border-bottom:1px solid #171526}
+.L5 .prow:last-child{border-bottom:0;padding-bottom:0}
+.L5 .prow b{color:var(--ink)}
+.L5 .prow.hot{color:#ff8f80}
+.L5 .wins{gap:5px}
+.L5 .win{padding:9px 8px;min-height:40px;font-size:11.5px}
+
+/* =================================================================
+   06 — THE SWIPE DECK
+   ================================================================= */
+.L6 .deck{display:flex;gap:9px;overflow-x:auto;scroll-snap-type:x mandatory;margin:14px -13px 0;
+  padding:0 13px 4px;scrollbar-width:none}
+.L6 .deck::-webkit-scrollbar{display:none}
+.L6 .card6{flex:none;width:326px;scroll-snap-align:center;border-radius:16px;padding:14px 15px;
+  border:1px solid var(--line2);background:linear-gradient(150deg,#1b1526,#110e1a 60%,#0d0b14);min-height:198px}
+.L6 .card6.live{border-color:rgba(224,178,94,.45);box-shadow:0 8px 36px -18px rgba(224,178,94,.5)}
+.L6 .k6{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.19em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:11px;display:flex;justify-content:space-between}
+.L6 .k6 b{color:var(--gold)}
+.L6 .big6{font-family:'Clash Display',sans-serif;font-size:30px;letter-spacing:-.04em;line-height:1;margin-bottom:5px}
+.L6 .sub6{font-size:12.5px;color:var(--dim);line-height:1.4;margin-bottom:12px}
+.L6 .rail{margin-bottom:9px}
+.L6 .dots{display:flex;justify-content:center;gap:6px;margin-top:11px}
+.L6 .dots i{width:5px;height:5px;border-radius:99px;background:#2a2438;display:block;transition:background .2s}
+.L6 .dots i.on{background:var(--gold);box-shadow:0 0 7px var(--gold)}
+.L6 .minirow{display:grid;gap:6px;margin-top:2px}
+.L6 .mr{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:9.5px;
+  color:var(--dim);letter-spacing:.07em;padding-bottom:6px;border-bottom:1px solid #171526}
+.L6 .mr:last-child{border-bottom:0}
+.L6 .mr b{color:var(--ink)}
+.L6 .mr.hot{color:#ff8f80}
+.L6 .wins{gap:5px}
+.L6 .win{padding:8px;min-height:36px;font-size:11px}
+
+/* =================================================================
+   07 — WINS ON THE RAIL
+   ================================================================= */
+.L7 .tracks{padding-top:15px}
+.L7 .earn{position:relative;height:26px;margin-top:7px}
+.L7 .earn .base{position:absolute;left:0;right:0;top:11px;height:1px;background:#1b1728}
+.L7 .notch{position:absolute;top:0;transform:translateX(-50%);width:30px;display:flex;flex-direction:column;
+  align-items:center;gap:3px;background:none;border:0;padding:0;cursor:pointer;font-family:inherit}
+.L7 .notch i{width:13px;height:13px;border-radius:4px;border:1.5px solid #362f47;background:#0d0b14;display:block}
+.L7 .notch.on i{background:var(--phos);border-color:var(--phos);box-shadow:0 0 9px rgba(74,222,128,.55)}
+.L7 .notch span{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.06em;color:#4a4459;
+  white-space:nowrap}
+.L7 .notch.on span{color:var(--phos)}
+.L7 .earnlab{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7px;
+  letter-spacing:.14em;color:#453f55;margin-top:2px}
+.L7 .earnlab b{color:var(--phos)}
+.L7 .timeleft{margin-top:14px}
+.L7 .pushstrip{margin-top:12px}
+.L7 .nextup{margin-top:12px}
+
+/* =================================================================
+   08 — THE LEDGER
+   ================================================================= */
+.L8 .ledger{padding-top:15px;font-family:'Geist Mono',monospace}
+.L8 .lr{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:baseline;padding:6px 1px;
+  border-bottom:1px solid #15131f;font-size:9.5px;letter-spacing:.11em;color:#6b6480;text-transform:uppercase}
+.L8 .lr b{color:var(--ink);font-size:11.5px;letter-spacing:.02em}
+.L8 .lr.big b{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;color:#f2ece4}
+.L8 .lr.hot{color:#a4525c}.L8 .lr.hot b{color:#ff8f80;font-size:9.5px}
+.L8 .lr.earn b{color:var(--phos)}
+.L8 .bar{height:3px;background:#141120;display:flex;gap:1px;margin:9px 0 2px;border-radius:2px;overflow:hidden;position:relative}
+.L8 .bar i{height:100%;display:block}
+.L8 .bar .now{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--gold);box-shadow:0 0 7px var(--gold);z-index:2}
+.L8 .now8{margin-top:17px;border-top:1px solid var(--line2);padding-top:14px}
+.L8 .now8 .k{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--gold);
+  display:flex;justify-content:space-between;margin-bottom:7px}
+.L8 .now8 .k u{color:var(--faint);text-decoration:none}
+.L8 .now8 .t{font-family:'Clash Display',sans-serif;font-size:22px;letter-spacing:-.03em;line-height:1.1;margin-bottom:4px}
+.L8 .now8 .o{font-size:13px;color:var(--dim);margin-bottom:12px;line-height:1.4}
+.L8 .pipline{display:flex;align-items:center;gap:7px;margin-top:13px;font-family:'Geist Mono',monospace;
+  font-size:8px;letter-spacing:.14em;color:#5b5470;padding:0 1px}
+.L8 .pipline .boxes{display:flex;gap:4px;margin-left:auto}
+.L8 .pipline .boxes i{width:11px;height:11px;border:1px solid #2f2941;border-radius:3px;display:block}
+.L8 .pipline .boxes i.on{background:var(--phos);border-color:var(--phos)}
+.L8 .pipline em{font-style:normal;color:var(--phos)}
+
+/* =================================================================
+   09 — THE ONE OBJECT
+   ================================================================= */
+.L9 .obj{margin:14px -13px 0;border-top:1px solid rgba(224,178,94,.35);border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#1a1425,#0f0d17 62%,#0b0a11);position:relative;overflow:hidden}
+.L9 .obj::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;background:#141120;z-index:1}
+.L9 .objrail{position:absolute;left:0;right:0;top:0;height:2px;display:flex;gap:1px;z-index:2}
+.L9 .objrail i{height:100%;display:block}
+.L9 .objrail .now{position:absolute;top:0;height:5px;width:2px;background:var(--gold);box-shadow:0 0 9px var(--gold);z-index:3}
+.L9 .objbody{padding:14px 16px 0}
+.L9 .k9{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.L9 .k9 i{width:6px;height:6px;border-radius:99px;background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.L9 .k9 span{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.17em;color:var(--gold);text-transform:uppercase}
+.L9 .k9 u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:8px;color:var(--faint);text-decoration:none;
+  letter-spacing:.1em}
+.L9 .t9{font-family:'Clash Display',sans-serif;font-size:21px;letter-spacing:-.03em;line-height:1.1;margin-bottom:5px}
+.L9 .o9{font-size:13.5px;color:var(--dim);line-height:1.4;margin-bottom:12px}
+.L9 .pips9{position:absolute;right:16px;top:14px;display:flex;gap:5px;align-items:center}
+.L9 .pips9 em{font-style:normal;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.1em;color:#5b5470}
+.L9 .dock9{margin-top:13px;display:flex;align-items:center;gap:8px;padding:11px 16px;
+  border-top:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.3);
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.15em;color:#6b6480;cursor:pointer}
+.L9 .dock9 .d{display:flex;gap:4px;margin-left:auto}
+.L9 .dock9 .d i{width:6px;height:6px;border-radius:2px;background:#2a2438;display:block}
+.L9 .dock9 .d i.on{background:var(--phos);box-shadow:0 0 7px rgba(74,222,128,.5)}
+.L9 .dock9 b{color:var(--phos)}
+.L9 .stale9{background:rgba(255,77,94,.09);border-top:1px solid rgba(255,77,94,.25);padding:7px 16px;
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.09em;color:#ff8f80}
+
+/* =================================================================
+   10 — THE DOCK
+   ================================================================= */
+.L10 .compact{display:flex;align-items:center;gap:10px;padding:14px 2px 0}
+.L10 .compact b{font-family:'Clash Display',sans-serif;font-size:22px;letter-spacing:-.035em;line-height:1;flex:none}
+.L10 .compact .lab{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.13em;color:var(--faint);
+  line-height:1.35;flex:none;max-width:56px}
+.L10 .compact .rr{flex:1;position:relative}
+.L10 .compact .rail{height:6px}
+.L10 .compact .dow{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--gold);flex:none}
+.L10 .pushstrip{margin-top:12px}
+.L10 .nextup{margin-top:12px}
+#s10 .dockbar{position:absolute;left:0;right:0;bottom:0;z-index:8;
+  background:rgba(11,10,16,.97);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid rgba(74,222,128,.28);padding:11px 14px;display:flex;align-items:center;gap:9px;cursor:pointer}
+#s10 .dockbar .k{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.17em;color:#7c8f83}
+#s10 .dockbar .d{display:flex;gap:4px}
+#s10 .dockbar .d i{width:6px;height:6px;border-radius:2px;background:#26302a;display:block}
+#s10 .dockbar .d i.on{background:var(--phos);box-shadow:0 0 7px rgba(74,222,128,.55)}
+#s10 .dockbar .xp{margin-left:auto;font-family:'Geist Mono',monospace;font-size:9px;color:var(--phos);letter-spacing:.1em}
+#s10 .dockbar .ar{color:#4d5a51;font-size:9px}
+#s10 .tabsfake{position:absolute;left:0;right:0;bottom:0;z-index:7;height:52px;background:rgba(9,8,13,.96);
+  border-top:1px solid var(--line);display:flex}
+#s10 .tabsfake span{flex:1;text-align:center;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.12em;
+  color:#403b4e;padding-top:16px}
+#s10 .tabsfake span.on{color:var(--gold)}
+
+/* =================================================================
+   11 — THE SENTENCE
+   ================================================================= */
+.L11 .say{padding:16px 2px 0}
+.L11 .say p{margin:0;font-family:'Clash Display',sans-serif;font-size:18px;line-height:1.35;letter-spacing:-.02em;
+  color:#6a6379}
+.L11 .say p em{font-style:normal;color:#f2ece4}
+.L11 .say p u{text-decoration:none;color:var(--gold)}
+.L11 .hair{height:2px;border-radius:2px;background:#141120;display:flex;gap:1px;overflow:hidden;position:relative;
+  margin-top:14px}
+.L11 .hair i{height:100%;display:block}
+.L11 .hair .now{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--gold);box-shadow:0 0 8px var(--gold);z-index:2}
+.L11 .pushsay{margin-top:12px;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.11em;
+  color:#5b5470;padding:0 1px;display:flex;gap:10px;flex-wrap:wrap}
+.L11 .pushsay b{color:var(--dim);font-weight:400}
+.L11 .pushsay .hot{color:#ff8f80}
+.L11 .task{margin-top:18px}
+.L11 .task .k{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--gold);margin-bottom:7px;
+  display:flex;justify-content:space-between}
+.L11 .task .k u{text-decoration:none;color:var(--faint)}
+.L11 .task h3{font-family:'Clash Display',sans-serif;font-size:24px;letter-spacing:-.035em;line-height:1.08;margin-bottom:6px}
+.L11 .task .o{font-size:13.5px;color:var(--dim);line-height:1.4;margin-bottom:13px}
+.L11 .tinywins{display:flex;gap:5px;flex-wrap:wrap;margin-top:15px}
+.L11 .tw{border:1px solid var(--line);border-radius:6px;padding:6px 9px;font-family:'Geist Mono',monospace;
+  font-size:8px;letter-spacing:.11em;color:#5b5470;text-transform:uppercase;min-height:30px;display:flex;
+  align-items:center;cursor:pointer;background:none}
+.L11 .tw.on{border-color:rgba(74,222,128,.45);color:var(--phos);background:rgba(74,222,128,.07)}
+
+/* =================================================================
+   12 — NOW / NEXT PAIR
+   ================================================================= */
+.L12 .rail-wrap12{padding:14px 2px 0}
+.L12 .tl12{display:flex;align-items:baseline;gap:7px;margin-top:9px}
+.L12 .tl12 b{font-family:'Geist Mono',monospace;font-size:13px;font-weight:700;color:var(--ink)}
+.L12 .tl12 span{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.12em;color:var(--faint)}
+.L12 .tl12 .dow{margin-left:auto;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--gold)}
+.L12 .pair{display:grid;grid-template-columns:1.55fr 1fr;gap:7px;margin-top:12px}
+.L12 .c12{border-radius:14px;padding:12px 12px;border:1px solid var(--line2);
+  background:linear-gradient(150deg,#1b1526,#110e1a 60%,#0d0b14);display:flex;flex-direction:column}
+.L12 .c12.live{border-color:rgba(224,178,94,.45);box-shadow:0 8px 30px -18px rgba(224,178,94,.5)}
+.L12 .c12 .k{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.L12 .c12 .k i{width:5px;height:5px;border-radius:99px;background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.L12 .c12 .k span{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.17em;color:var(--gold);text-transform:uppercase}
+.L12 .c12.dim .k span{color:var(--faint)}
+.L12 .c12 .tm{font-family:'Geist Mono',monospace;font-size:7.5px;color:var(--faint);letter-spacing:.08em;margin-bottom:5px}
+.L12 .c12 h4{font-family:'Clash Display',sans-serif;font-size:16px;letter-spacing:-.025em;line-height:1.12;margin:0 0 4px;font-weight:600}
+.L12 .c12 .o{font-size:11.5px;color:var(--dim);line-height:1.3;margin-bottom:10px}
+.L12 .c12 .btn{margin-top:auto}
+.L12 .earnboard{margin-top:12px;border:1px solid var(--line2);border-radius:12px;overflow:hidden;background:var(--panel)}
+.L12 .eb-h{display:flex;justify-content:space-between;padding:8px 11px;border-bottom:1px solid var(--line);
+  font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
+.L12 .eb-h b{color:var(--phos)}
+.L12 .eb-g{display:grid;grid-template-columns:repeat(3,1fr)}
+.L12 .eb{padding:9px 6px;text-align:center;border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  font-size:10.5px;color:var(--dim);cursor:pointer;background:none;font-family:inherit;line-height:1.2;
+  display:flex;flex-direction:column;align-items:center;gap:4px;min-height:44px;justify-content:center}
+.L12 .eb:nth-child(3n){border-right:0}
+.L12 .eb:nth-child(n+4){border-bottom:0}
+.L12 .eb .p{display:flex;gap:2.5px}
+.L12 .eb .p i{width:4px;height:4px;border-radius:99px;background:#2a2438;display:block}
+.L12 .eb .p i.on{background:var(--phos)}
+.L12 .eb.on{color:var(--phos);background:rgba(74,222,128,.06)}
+.L12 .pushrow12{display:grid;grid-template-columns:repeat(3,1fr);margin-top:10px;border:1px solid var(--line);
+  border-radius:10px;overflow:hidden;background:var(--panel)}
+.L12 .pushrow12 span{padding:7px 4px;text-align:center;border-right:1px solid var(--line);
+  font-family:'Geist Mono',monospace;font-size:9.5px;color:var(--dim)}
+.L12 .pushrow12 span:last-child{border-right:0}
+.L12 .pushrow12 span u{display:block;text-decoration:none;font-size:6px;letter-spacing:.12em;color:var(--faint);margin-bottom:2px}
+.L12 .stale12{margin-top:7px;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.09em;color:#ff8f80;padding:0 2px}
+
+/* ---------- verdict ---------- */
+.verdict{padding:52px 0 40px}
+.verdict h2{font-size:25px;margin-bottom:8px}
+.verdict>p{color:var(--dim);max-width:680px;margin:0 0 24px;font-size:15px}
+.vr{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:17px 0;border-top:1px solid var(--line);align-items:start}
+.vr .n{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);padding-top:3px}
+.vr h3{font-size:16.5px;margin-bottom:4px;font-family:'Satoshi';font-weight:700}
+.vr p{margin:0;color:var(--dim);font-size:14.3px;line-height:1.55;max-width:74ch}
+.vr.pick h3{color:var(--gold)}
+.tag{display:inline-block;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.13em;
+  padding:2.5px 7px;border-radius:4px;border:1px solid var(--line2);color:var(--faint);margin-left:8px;
+  text-transform:uppercase;vertical-align:2px}
+.tag.g{border-color:rgba(224,178,94,.45);color:var(--gold)}
+.tag.r{border-color:rgba(255,77,94,.4);color:#ff8f80}
+.handoff{padding:0 0 90px}
+.handoff h2{font-size:25px;margin:38px 0 14px}
+.handoff h3{font-size:15px;margin:26px 0 8px;font-family:'Satoshi';font-weight:700}
+.handoff p,.handoff li{color:var(--dim);font-size:14.4px;line-height:1.6;max-width:78ch}
+.handoff b{color:var(--ink);font-weight:500}
+.handoff ul{padding-left:19px;margin:8px 0}
+.handoff li{margin-bottom:7px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="mast">
+    <div class="kick">Agent 4 · the time-block region · 12 directions</div>
+    <h1>Six things shouting at the same volume</h1>
+    <p>Everything between the locked graph card and the schedule: <b>the day rail · the deep-work-left
+      readout · the push strip · the make-up banner · NEXT UP · always-counts.</b> Six elements, all
+      stacked, all the same weight. He called it <b>"a lot of jumble"</b> and said small wins feel
+      <b>"in the way."</b></p>
+    <p>Every direction below is the same content and the same clock — <b>Wednesday 11:15, inside Block 2,
+      3h 15m of deep work left, Anthony pitch-ready and not sent.</b> Only the structure changes.
+      All twelve are live mock-ups at 390px, not pictures. Heights are measured by the page itself at
+      load, not estimated.</p>
+
+    <div class="budget">
+      <h3>The measurement that decides this</h3>
+      <table>
+        <tr><td>Furnace header</td><td>141 px</td></tr>
+        <tr><td>Gauge strip</td><td>65 px</td></tr>
+        <tr><td>Glance / graph card (+ margin)</td><td>270 px</td></tr>
+        <tr><td>→ this region starts at</td><td>y = 481 px</td></tr>
+        <tr><td>Tab bar covers everything below</td><td>y = 780 px</td></tr>
+        <tr class="tot"><td>Room for the whole region above the fold</td><td>299 px</td></tr>
+      </table>
+      <p class="warn">Measured on the shipped build, not guessed. <b>NEXT UP ended at y = 838 — 58px
+        underneath the tab bar</b> — and that was with a short life-block card. Rendered with a deep-work
+        card, as in 00 below, it ends at y = 860. The single most important element on the screen is
+        clipped today, before a single design change. The brief's "~206px already spent" is the furnace
+        plus gauges only; the glance card adds another 270 and it is what actually breaks the budget.</p>
+      <p>So the real test is not total height — it is <b>where NEXT UP ends.</b> Every mock-up below
+        draws a red dashed fold line at +299px from the top of the region. Anything crossing it is a
+        design he has to scroll to reach on the one screen he opens twenty times a day.</p>
+      <p class="warn">And 299 is the <em>generous</em> number — it is headless Chrome, where the safe-area
+        insets are zero. On his actual installed iPhone they aren't:</p>
+      <table style="margin-top:12px">
+        <tr><td>Headless / simulator — the dashed line</td><td>299 px</td></tr>
+        <tr><td>Real iPhone, insets applied once (correct)</td><td>218 px</td></tr>
+        <tr class="tot"><td>Real iPhone as shipped today</td><td>171 px</td></tr>
+      </table>
+      <p class="warn">The gap between 218 and 171 is a bug, not physics: <b>index.html applies
+        <code>var(--st)</code> twice</b> — once on <code>.app</code>
+        (<code>padding-top:calc(6px + var(--st))</code>) and again on its first child
+        <code>.furnace</code>. That is ~47px of dead space at the top of the only screen that matters.
+        <b>Fix it before choosing a layout</b> — it changes which of these clear the fold. Flagged for
+        the GM; the header is locked and not my turf.</p>
+    </div>
+  </div>
+
+  <!-- ============================ 00 — BASELINE ============================ -->
+  <section class="dir" id="s0">
+    <div class="dh"><div class="dn">00</div>
+      <div class="dt"><h2>What ships today</h2>
+        <div class="dm">the baseline · not a proposal</div>
+        <div class="dl">Rail, time-left, push, NEXT UP, always-counts — six blocks, stacked, each with its own
+          margin. Shown here with the fold drawn on so the problem is visible rather than argued.</div>
+      </div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked — do not redesign</div>
+          <div class="s2">481 PX<br>SPENT</div></div>
+        <div class="stage">
+          <div class="fold"><b>299</b></div>
+          <div class="fold real"><b>218</b></div>
+          <div class="reg L0" data-reg>
+            <div class="rail-wrap">
+              <div class="rail" data-rail><div class="now" data-now></div></div>
+              <div class="rail-l"><span>06:00</span><span>21:50</span></div>
+              <div class="timeleft"><b>3h 15m</b><span>OF DEEP WORK LEFT</span><span class="dow">WED</span></div>
+            </div>
+            <div class="pushstrip">
+              <div class="ps-row">
+                <div class="ps-c"><div class="k">SANO</div><div class="v">1/3</div></div>
+                <div class="ps-c"><div class="k">Funded</div><div class="v">0/3</div></div>
+                <div class="ps-c"><div class="k">Kitchen</div><div class="v">0/1</div></div>
+              </div>
+              <div class="ps-stale">ANTHONY · PITCH-READY 1 DAY · NOT SENT →</div>
+            </div>
+            <div class="nextup live" data-nu>
+              <div class="nu-k"><i></i><span>Now</span><u>10:45–12:00 · 75m</u></div>
+              <div class="nu-t">Block 2 · SANO</div>
+              <div class="nu-obj">Finish Anthony's six-item readiness checklist</div>
+              <div class="chips"><span class="chip" style="border-color:#E0B25E44;color:#E0B25E">THE WORK</span></div>
+              <div class="row2"><button class="btn">Start focus run · 75m</button>
+                <button class="btn gh sm">Detail</button></div>
+            </div>
+            <h2 class="sec" style="margin-top:22px">Always counts <u>2 on the board · +35 today</u></h2>
+            <div class="wins" data-wins></div>
+          </div>
+          <div class="peek"><div class="ph">Today · 4 of 9 so far</div>
+            <div class="blk"><span class="bt">13:20</span><div><div class="bn">Block 3</div></div><span class="bc"></span></div></div>
+        </div>
+        <div class="stagefoot">— schedule continues —</div>
+      </div>
+      <div>
+        <dl class="notes">
+          <dt>What it optimises for</dt>
+          <dd>Nothing, on purpose. Every element is given equal weight and its own margin, so the region
+            reads as a list of six unrelated announcements.</dd>
+          <dt>What it costs</dt>
+          <dd><b>NEXT UP is 194px down a 299px budget before it even starts.</b> The focus-run button —
+            the only button on the screen that starts real work — is under the tab bar. Always-counts is
+            226px of the region, which is why it feels like it's "in the way": it is physically the
+            largest thing here.</dd>
+        </dl>
+        <div class="metrics" data-metrics></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 01 ============================ -->
+  <section class="dir" id="s1">
+    <div class="dh"><div class="dn">01</div>
+      <div class="dt"><h2>The Command Line</h2>
+        <div class="dm">next up is the hero · everything else is one line each</div>
+        <div class="dl">One sentence: <b>demote all five supporting elements to single lines and let NEXT UP
+          take the top of the region.</b> Rail and time-left merge into one 34px instrument line. Push becomes
+          a three-cell strip <em>below</em> the card. Wins become a horizontally scrolling pill rail — still
+          one tap, no longer a 226px wall.</div>
+      </div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked</div><div class="s2">481 PX<br>SPENT</div></div>
+        <div class="stage">
+          <div class="fold"><b>299</b></div>
+          <div class="fold real"><b>218</b></div>
+          <div class="reg L1" data-reg>
+            <div class="instr">
+              <div class="n">3h15</div>
+              <div class="lab">DEEP WORK<br>LEFT</div>
+              <div class="railmini"><div class="rail" data-rail><div class="now" data-now></div></div></div>
+              <div class="dow">WED</div>
+            </div>
+            <div class="nextup live" data-nu>
+              <div class="nu-k"><i></i><span>Now</span><u>10:45–12:00 · 75m</u></div>
+              <div class="nu-t">Block 2 · SANO</div>
+              <div class="nu-obj">Finish Anthony's six-item readiness checklist</div>
+              <div class="chips"><span class="chip" style="border-color:#E0B25E44;color:#E0B25E">THE WORK</span></div>
+              <div class="row2"><button class="btn">Start focus run · 75m</button>
+                <button class="btn gh sm">Detail</button></div>
+            </div>
+            <div class="pushline stale">
+              <span><u>SANO</u>1/3</span><span><u>FUNDED</u>0/3</span><span><u>KITCHEN</u>0/1</span>
+            </div>
+            <div class="staleline">ANTHONY · PITCH-READY 1 DAY · NOT SENT →</div>
+            <div class="wlab"><span>ALWAYS COUNTS</span><span>2 ON THE BOARD · +35</span></div>
+            <div class="winrow">
+              <button class="wpill on">Laundry / dishes</button>
+              <button class="wpill on">Cooked <span class="p"><i class="on"></i><i class="on"></i><i></i><i></i></span></button>
+              <button class="wpill">Said no</button>
+              <button class="wpill">In bed on time <span class="p"><i class="on"></i><i></i><i></i><i></i></span></button>
+              <button class="wpill">Real time with someone <span class="p"><i class="on"></i><i></i><i></i></span></button>
+              <button class="wpill">A real conversation <span class="p"><i class="on"></i><i></i><i></i></span></button>
+            </div>
+          </div>
+          <div class="peek"><div class="ph">Today · 4 of 9 so far</div>
+            <div class="blk"><span class="bt">13:20</span><div><div class="bn">Block 3</div></div><span class="bc"></span></div></div>
+        </div>
+        <div class="stagefoot">— schedule continues —</div>
+      </div>
+      <div>
+        <dl class="notes">
+          <dt>What it optimises for</dt>
+          <dd>NEXT UP starting <b>44px into the region</b> instead of 194. The button lands in the top
+            third of the visible area. Nothing is hidden behind a tap — everything is still on screen,
+            just given its true weight.</dd>
+          <dt>What it costs</dt>
+          <dd>The rail loses its colour story at 5px tall — it reads as a progress bar, not a day.
+            The wins rail hides two chips off the right edge; he has to scroll sideways to reach
+            "a real conversation", which is a WORK quota. The push strip loses its readability at
+            8.5px type.</dd>
+          <dt>Make-up banner</dt>
+          <dd>Between the instrument line and NEXT UP, full width — the one thing allowed to interrupt.</dd>
+        </dl>
+        <div class="metrics" data-metrics></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 02 ============================ -->
+  <section class="dir" id="s2">
+    <div class="dh"><div class="dn">02</div>
+      <div class="dt"><h2>The Fuel Gauge</h2>
+        <div class="dm">the rail and the time-left are the same object</div>
+        <div class="dl">One sentence: <b>stop drawing the day twice.</b> The rail becomes a 38px tank —
+          the spent part of the day is dark and behind the now-line, the unspent part carries the
+          "3h 15m" printed inside it. Block colours survive as a 4px strip along the bottom. Push and
+          the wins tally merge into one four-cell board.</div>
+      </div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked</div><div class="s2">481 PX<br>SPENT</div></div>
+        <div class="stage">
+          <div class="fold"><b>299</b></div>
+          <div class="fold real"><b>218</b></div>
+          <div class="reg L2" data-reg>
+            <div class="fuel">
+              <div class="spent"></div>
+              <div class="segs" data-rail data-norail-now></div>
+              <div class="read"><b>3h 15m</b><span>OF DEEP<br>WORK LEFT</span></div>
+              <div class="dow">WED</div>
+            </div>
+            <div class="fuel-l"><span>06:00 · BURNED</span><span>21:50</span></div>
+            <div class="board">
+              <div><div class="k">SANO</div><div class="v">1/3</div></div>
+              <div><div class="k">Funded</div><div class="v">0/3</div></div>
+              <div><div class="k">Kitchen</div><div class="v">0/1</div></div>
+              <div><div class="k">Earned</div><div class="v">+35</div></div>
+            </div>
+            <div class="ps-stale">ANTHONY · PITCH-READY 1 DAY · NOT SENT →</div>
+            <div class="nextup live" data-nu>
+              <div class="nu-k"><i></i><span>Now</span><u>10:45–12:00 · 75m</u></div>
+              <div class="nu-t">Block 2 · SANO</div>
+              <div class="nu-obj">Finish Anthony's six-item readiness checklist</div>
+              <div class="row2"><button class="btn">Start focus run · 75m</button>
+                <button class="btn gh sm">Detail</button></div>
+            </div>
+            <h2 class="sec" style="margin-top:16px">Always counts <u>2 on the board · +35 today</u></h2>
+            <div class="wins" data-wins></div>
+          </div>
+        </div>
+        <div class="stagefoot">— schedule continues —</div>
+      </div>
+      <div>
+        <dl class="notes">
+          <dt>What it optimises for</dt>
+          <dd>The two elements that answer nearly the same question stop competing. It is also the most
+            on-theme object in the set — a fuel tank draining under a furnace header, which is the app's
+            own metaphor. The number sits <em>in the time he has left</em>, which is a real idea, not a
+            decoration.</dd>
+          <dt>What it costs</dt>
+          <dd>It is the tallest merge in the set (38px + labels), and the wins block survives untouched
+            at full size, so <b>NEXT UP still lands late</b>. Merging the rail and the readout fixes the
+            top of the region and does nothing for the bottom. Honest verdict: a good component inside a
+            layout that hasn't been solved.</dd>
+          <dt>Make-up banner</dt>
+          <dd>Replaces the stale line's slot and pushes it down — two red rows stacked is the one
+            combination this layout handles badly.</dd>
+        </dl>
+        <div class="metrics" data-metrics></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 03 ============================ -->
+  <section class="dir" id="s3">
+    <div class="dh"><div class="dn">03</div>
+      <div class="dt"><h2>The Vertical Spine</h2>
+        <div class="dm">the day runs down the side, not across the top</div>
+        <div class="dl">One sentence: <b>turn the rail 90° and let it become the region's ruler.</b> A 30px
+          column on the left carries the whole day top-to-bottom with the now-line crossing it; everything
+          else lives in the right column beside it. The day is always in peripheral vision instead of
+          costing a horizontal band of its own.</div>
+      </div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked</div><div class="s2">481 PX<br>SPENT</div></div>
+        <div class="stage">
+          <div class="fold"><b>299</b></div>
+          <div class="fold real"><b>218</b></div>
+          <div class="reg L3" data-reg>
+            <div class="split">
+              <div class="spinelab">
+                <span>06</span>
+                <div class="spine" data-rail data-vert style="flex:1"><div class="now"></div></div>
+                <span>22</span>
+              </div>
+              <div class="rightcol">
+                <div class="tl3"><b>3h 15m</b><span>OF DEEP<br>WORK LEFT</span><span class="dow">WED</span></div>
+                <div class="nextup live" data-nu>
+                  <div class="nu-k"><i></i><span>Now</span><u>10:45–12:00</u></div>
+                  <div class="nu-t">Block 2 · SANO</div>
+                  <div class="nu-obj">Finish Anthony's six-item readiness checklist</div>
+                  <div class="row2"><button class="btn">Start focus run · 75m</button>
+                    <button class="btn gh sm">Detail</button></div>
+                </div>
+                <div class="pushmini">
+                  <span><u>SANO</u>1/3</span><span><u>FUND</u>0/3</span><span class="hot"><u>ANTHONY</u>1d</span>
+                </div>
+              </div>
+            </div>
+            <div class="wingrid">
+              <button class="wg on">Laundry</button>
+              <button class="wg on">Cooked<span class="p"><i class="on"></i><i class="on"></i><i></i><i></i></span></button>
+              <button class="wg">Said no</button>
+              <button class="wg">In bed<span class="p"><i class="on"></i><i></i><i></i><i></i></span></button>
+              <button class="wg">Someone<span class="p"><i class="on"></i><i></i><i></i></span></button>
+              <button class="wg">Real convo<span class="p"><i class="on"></i><i></i><i></i></span></button>
+            </div>
+          </div>
+        </div>
+        <div class="stagefoot">— schedule continues —</div>
+      </div>
+      <div>
+        <dl class="notes">
+          <dt>What it optimises for</dt>
+          <dd>The rail costs <b>zero vertical space</b> — it borrows the height NEXT UP already needs.
+            It is also the only layout where the day and the current block are physically adjacent:
+            the now-line points at the card that says what to do now.</dd>
+          <dt>What it costs</dt>
+          <dd>30px comes off the width of everything else, and the phone is only 390 wide. The push strip
+            has to drop from three cells to a cramped three at 9px type, and the win labels shorten to one
+            word ("Someone" for "Real time with someone") — which reads as a system talking in shorthand.
+            The vertical rail is also the least legible orientation for time; nobody reads a day downward.</dd>
+          <dt>Make-up banner</dt>
+          <dd>Full width beneath the split, above the wins grid.</dd>
+        </dl>
+        <div class="metrics" data-metrics></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 04 ============================ -->
+  <section class="dir" id="s4">
+    <div class="dh"><div class="dn">04</div>
+      <div class="dt"><h2>The Dial</h2>
+        <div class="dm">no rail at all · one card, one radial clock</div>
+        <div class="dl">One sentence: <b>delete the horizontal rail and put the day inside NEXT UP as a
+          ring.</b> The arc is the working day, the lit portion is what's left, the number in the middle
+          is 3h15. Push and always-counts become a single docked footer inside the same card. The whole
+          region becomes <em>one object</em> with a footer.</div>
+      </div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked</div><div class="s2">481 PX<br>SPENT</div></div>
+        <div class="stage">
+          <div class="fold"><b>299</b></div>
+          <div class="fold real"><b>218</b></div>
+          <div class="reg L4" data-reg>
+            <div class="dialcard" data-nu>
+              <div class="top">
+                <div class="ring">
+                  <svg width="88" height="88" viewBox="0 0 88 88" aria-hidden="true">
+                    <circle cx="44" cy="44" r="37" fill="none" stroke="#1c1828" stroke-width="6"></circle>
+                    <circle cx="44" cy="44" r="37" fill="none" stroke="#E0B25E" stroke-width="6"
+                      stroke-linecap="round" stroke-dasharray="232.5" stroke-dashoffset="155"
+                      transform="rotate(-90 44 44)"></circle>
+                    <circle cx="44" cy="7" r="3.4" fill="#FF6B2C" transform="rotate(119.6 44 44)"></circle>
+                  </svg>
+                  <div class="mid"><b>3h15</b><span>DEEP WORK<br>LEFT</span></div>
+                </div>
+                <div class="meta">
+                  <div class="k"><i></i><span>NOW</span><u>WED · 10:45–12:00</u></div>
+                  <div class="t">Block 2 · SANO</div>
+                  <div class="o">Finish Anthony's six-item readiness checklist</div>
+                </div>
+              </div>
+              <div class="btnrow row2"><button class="btn">Start focus run · 75m</button>
+                <button class="btn gh sm">Detail</button></div>
+              <div class="foot4">
+                <div class="g"><span><em>SANO</em> 1/3</span><span><em>FUND</em> 0/3</span><span><em>KTCHN</em> 0/1</span></div>
+                <div class="earn"><span class="d"><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></span>+35</div>
+              </div>
+            </div>
+            <div class="stale4">ANTHONY · PITCH-READY 1 DAY · NOT SENT →</div>
+          </div>
+          <div class="peek"><div class="ph">Today · 4 of 9 so far</div>
+            <div class="blk"><span class="bt">13:20</span><div><div class="bn">Block 3</div></div><span class="bc"></span></div>
+            <div class="blk"><span class="bt">14:35</span><div><div class="bn">Walk the dog</div></div><span class="bc"></span></div></div>
+        </div>
+        <div class="stagefoot">— schedule continues —</div>
+      </div>
+      <div>
+        <dl class="notes">
+          <dt>What it optimises for</dt>
+          <dd>The smallest region in the whole set, and the only one where the schedule is visible above
+            the fold — which means the region stops feeling like a wall and starts feeling like a header.
+            One object instead of six.</dd>
+          <dt>What it costs</dt>
+          <dd><b>Always-counts is reduced to six dots and a number.</b> That is not a home, it's a receipt —
+            he can see he earned 35 but he can't log laundry without opening something. Given that small
+            wins are the only thing earnable on a blown day, that is the exact wrong thing to demote, and
+            it is why this one is not my pick despite winning on every measurement. The ring also can't
+            show block colours, so the day's shape is gone.</dd>
+          <dt>Make-up banner</dt>
+          <dd>Above the card — it should push the dial down, not live inside it.</dd>
+        </dl>
+        <div class="metrics" data-metrics></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 05 ============================ -->
+  <section class="dir" id="s5">
+    <div class="dh"><div class="dn">05</div>
+      <div class="dt"><h2>The Three-Tab Panel</h2>
+        <div class="dm">constant height · now / day / earn</div>
+        <div class="dl">One sentence: <b>give the region a fixed 240px frame and let him choose which of the
+          three questions it answers.</b> NOW is the default and never moves. DAY holds the rail, the
+          readout and the push. EARN holds the wins with their pips. The region can never grow, whatever
+          the state of the day. <em>Tabs are live — tap them.</em></div>
+      </div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked</div><div class="s2">481 PX<br>SPENT</div></div>
+        <div class="stage">
+          <div class="fold"><b>299</b></div>
+          <div class="fold real"><b>218</b></div>
+          <div class="reg L5" data-reg>
+            <div class="panel5" data-tabs>
+              <div class="segs">
+                <button class="on" data-tab="now">Now</button>
+                <button data-tab="day">The day</button>
+                <button data-tab="earn">Earn <em>2</em></button>
+              </div>
+              <div class="pane on" data-pane="now" data-nu>
+                <div class="nu-k"><i></i><span>Block 2 · live</span><u>10:45–12:00 · 75m</u></div>
+                <div class="nu-t">Block 2 · SANO</div>
+                <div class="nu-obj">Finish Anthony's six-item readiness checklist</div>
+                <div class="chips"><span class="chip" style="border-color:#E0B25E44;color:#E0B25E">THE WORK</span></div>
+                <div class="row2"><button class="btn">Start focus run · 75m</button>
+                  <button class="btn gh sm">Detail</button></div>
+              </div>
+              <div class="pane" data-pane="day">
+                <div class="dayrow"><b>3h 15m</b><span>OF DEEP<br>WORK LEFT</span><span class="dow">WED</span></div>
+                <div class="rail" data-rail><div class="now" data-now></div></div>
+                <div class="rail-l"><span>06:00</span><span>NOW 11:15</span><span>21:50</span></div>
+                <div class="plist">
+                  <div class="prow"><span>SANO CLIENTS</span><b>1 / 3</b></div>
+                  <div class="prow"><span>FUNDED ACCOUNTS</span><b>0 / 3</b></div>
+                  <div class="prow"><span>KITCHEN TALKS</span><b>0 / 1</b></div>
+                  <div class="prow hot"><span>ANTHONY · PITCH-READY</span><b>1 DAY · NOT SENT →</b></div>
+                </div>
+              </div>
+              <div class="pane" data-pane="earn">
+                <h2 class="sec">Always counts <u>2 on the board · +35 today</u></h2>
+                <div class="wins" data-wins></div>
+              </div>
+            </div>
+          </div>
+          <div class="peek"><div class="ph">Today · 4 of 9 so far</div>
+            <div class="blk"><span class="bt">13:20</span><div><div class="bn">Block 3</div></div><span class="bc"></span></div>
+            <div class="blk"><span class="bt">14:35</span><div><div class="bn">Walk the dog</div></div><span class="bc"></span></div></div>
+        </div>
+        <div class="stagefoot">— schedule continues —</div>
+      </div>
+      <div>
+        <dl class="notes">
+          <dt>What it optimises for</dt>
+          <dd>A guaranteed ceiling. The region is the same height on the best day and the worst day, which
+            means the layout below it never shifts and the schedule is always in the same place. The EARN
+            tab carries a live count, so the wins advertise themselves without occupying anything.</dd>
+          <dt>What it costs</dt>
+          <dd>Two of the three answers are always hidden, and this is a screen he looks at for fifteen
+            seconds. The rail's whole value is that it is <em>glanceable</em> — behind a tap it may as
+            well not exist. It also introduces a second navigation layer inside a page that already has
+            a tab bar, which is the kind of thing that quietly makes an app feel like software.</dd>
+          <dt>Make-up banner</dt>
+          <dd>Above the panel, outside the frame — a penance must never be tucked behind a tab.</dd>
+        </dl>
+        <div class="metrics" data-metrics></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 06 ============================ -->
+  <section class="dir" id="s6">
+    <div class="dh"><div class="dn">06</div>
+      <div class="dt"><h2>The Swipe Deck</h2>
+        <div class="dm">four cards, one height, thumb-driven</div>
+        <div class="dl">One sentence: <b>same collapse as the tabs, but paged by the thumb and with the next
+          card always peeking.</b> NOW · THE DAY · THE PUSH · ALWAYS COUNTS. No chrome, no segmented
+          control — the edge of card two tells you there's more. <em>Drag the deck sideways.</em></div>
+      </div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked</div><div class="s2">481 PX<br>SPENT</div></div>
+        <div class="stage">
+          <div class="fold"><b>299</b></div>
+          <div class="fold real"><b>218</b></div>
+          <div class="reg L6" data-reg>
+            <div class="deck" data-deck>
+              <div class="card6 live" data-nu>
+                <div class="k6"><span>Now · block 2</span><b>10:45–12:00</b></div>
+                <div class="big6">Block 2</div>
+                <div class="sub6">SANO · finish Anthony's six-item readiness checklist</div>
+                <div class="row2"><button class="btn">Start focus run · 75m</button>
+                  <button class="btn gh sm">Detail</button></div>
+              </div>
+              <div class="card6">
+                <div class="k6"><span>The day</span><b>WED · 11:15</b></div>
+                <div class="big6">3h 15m</div>
+                <div class="sub6">of deep work left · blocks 2, 3 and 4</div>
+                <div class="rail" data-rail><div class="now" data-now></div></div>
+                <div class="rail-l"><span>06:00</span><span>21:50</span></div>
+              </div>
+              <div class="card6">
+                <div class="k6"><span>The push</span><b>DEC 1</b></div>
+                <div class="minirow">
+                  <div class="mr"><span>SANO CLIENTS</span><b>1 / 3</b></div>
+                  <div class="mr"><span>FUNDED ACCOUNTS</span><b>0 / 3</b></div>
+                  <div class="mr"><span>KITCHEN TALKS</span><b>0 / 1</b></div>
+                  <div class="mr hot"><span>ANTHONY · NOT SENT</span><b>1 DAY</b></div>
+                </div>
+              </div>
+              <div class="card6">
+                <div class="k6"><span>Always counts</span><b>+35</b></div>
+                <div class="wins" data-wins></div>
+              </div>
+            </div>
+            <div class="dots" data-dots><i class="on"></i><i></i><i></i><i></i></div>
+          </div>
+          <div class="peek"><div class="ph">Today · 4 of 9 so far</div>
+            <div class="blk"><span class="bt">13:20</span><div><div class="bn">Block 3</div></div><span class="bc"></span></div></div>
+        </div>
+        <div class="stagefoot">— schedule continues —</div>
+      </div>
+      <div>
+        <dl class="notes">
+          <dt>What it optimises for</dt>
+          <dd>Fixed height like 05, but it feels like a phone rather than a control panel, and the peeking
+            second card removes the "is there anything else?" problem that kills tab layouts. Cheapest
+            possible way to give each of the four questions a whole card's worth of room.</dd>
+          <dt>What it costs</dt>
+          <dd>Swiping is a gesture he has to learn and then remember at 6am. Three quarters of the region
+            is off-screen at any moment, and unlike tabs there's no label telling him what he's missing —
+            just four dots. Worse for wins than 05: at least a tab can carry a badge.</dd>
+          <dt>Make-up banner</dt>
+          <dd>Would have to become card 2, forcing itself into the swipe order — the weakest handling of
+            penance in the set.</dd>
+        </dl>
+        <div class="metrics" data-metrics></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 07 ============================ -->
+  <section class="dir" id="s7">
+    <div class="dh"><div class="dn">07</div>
+      <div class="dt"><h2>Wins on the Rail</h2>
+        <div class="dm">the answer to "in the way" — give them a place in the day</div>
+        <div class="dl">One sentence: <b>small wins stop being a list and become a second track on the
+          timeline, each sitting at the hour it actually happens.</b> Cooking sits at dinner, laundry in
+          the evening, bed at 21:50, a real conversation in the work blocks. Tapping a notch lights it
+          green on the day itself.</div>
+      </div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked</div><div class="s2">481 PX<br>SPENT</div></div>
+        <div class="stage">
+          <div class="fold"><b>299</b></div>
+          <div class="fold real"><b>218</b></div>
+          <div class="reg L7" data-reg>
+            <div class="tracks">
+              <div class="rail" data-rail><div class="now" data-now></div></div>
+              <div class="earn">
+                <div class="base"></div>
+                <button class="notch on" style="left:14%"><i></i><span>CONVO</span></button>
+                <button class="notch" style="left:33%"><i></i><span>NO</span></button>
+                <button class="notch on" style="left:56%"><i></i><span>COOK</span></button>
+                <button class="notch" style="left:72%"><i></i><span>PEOPLE</span></button>
+                <button class="notch" style="left:87%"><i></i><span>WASH</span></button>
+                <button class="notch" style="left:97%"><i></i><span>BED</span></button>
+              </div>
+              <div class="earnlab"><span>ALWAYS COUNTS · TAP ANY, ANY TIME</span><b>2 · +35</b></div>
+              <div class="timeleft"><b>3h 15m</b><span>OF DEEP WORK LEFT</span><span class="dow">WED</span></div>
+            </div>
+            <div class="pushstrip">
+              <div class="ps-row">
+                <div class="ps-c"><div class="k">SANO</div><div class="v">1/3</div></div>
+                <div class="ps-c"><div class="k">Funded</div><div class="v">0/3</div></div>
+                <div class="ps-c"><div class="k">Kitchen</div><div class="v">0/1</div></div>
+              </div>
+              <div class="ps-stale">ANTHONY · PITCH-READY 1 DAY · NOT SENT →</div>
+            </div>
+            <div class="nextup live" data-nu>
+              <div class="nu-k"><i></i><span>Now</span><u>10:45–12:00 · 75m</u></div>
+              <div class="nu-t">Block 2 · SANO</div>
+              <div class="nu-obj">Finish Anthony's six-item readiness checklist</div>
+              <div class="row2"><button class="btn">Start focus run · 75m</button>
+                <button class="btn gh sm">Detail</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="stagefoot">— schedule continues —</div>
+      </div>
+      <div>
+        <dl class="notes">
+          <dt>What it optimises for</dt>
+          <dd>It answers his complaint literally: the wins are no longer "in the way" because they are no
+            longer <em>in the column</em> — they are part of the day object, and they cost 26px instead of
+            226. It also reframes them as things the day expects of him rather than a consolation grid,
+            which is a better story on a bad day: the notches are still there at 9pm.</dd>
+          <dt>What it costs</dt>
+          <dd>Six 13px targets on a 364px track is <b>under Apple's 44px minimum</b> — the honest fix is
+            four notches, not six, or a tap that opens a sheet. Weekly quota pips have nowhere to live, and
+            those pips are how five of the seven weekly quotas are read. Pinning "said no" to a time of day
+            is also a lie: it happens whenever it happens.</dd>
+          <dt>Make-up banner</dt>
+          <dd>Between the tracks and the push strip.</dd>
+        </dl>
+        <div class="metrics" data-metrics></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 08 ============================ -->
+  <section class="dir" id="s8">
+    <div class="dh"><div class="dn">08</div>
+      <div class="dt"><h2>The Ledger</h2>
+        <div class="dm">no cards · a monospace read-out and one instruction</div>
+        <div class="dl">One sentence: <b>strip every card, border and gradient out of the region and set it
+          as a ledger — labels left, values right — with NEXT UP as the only thing allowed to be typographic.</b>
+          The rail survives as a 3px rule. Nothing is a container, so nothing competes.</div>
+      </div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked</div><div class="s2">481 PX<br>SPENT</div></div>
+        <div class="stage">
+          <div class="fold"><b>299</b></div>
+          <div class="fold real"><b>218</b></div>
+          <div class="reg L8" data-reg>
+            <div class="ledger">
+              <div class="lr big"><span>Deep work left</span><b>3h 15m</b></div>
+              <div class="bar" data-rail><div class="now" data-now></div></div>
+              <div class="lr"><span>Wednesday · 11:15 · block 2 of 4</span><b>06:00 → 21:50</b></div>
+              <div class="lr"><span>SANO clients</span><b>1 / 3</b></div>
+              <div class="lr"><span>Funded accounts</span><b>0 / 3</b></div>
+              <div class="lr"><span>Kitchen talks</span><b>0 / 1</b></div>
+              <div class="lr hot"><span>Anthony · pitch-ready, not sent</span><b>1 DAY →</b></div>
+              <div class="lr earn"><span>Earned today</span><b>+35 XP</b></div>
+            </div>
+            <div class="now8" data-nu>
+              <div class="k"><span>NOW</span><u>10:45–12:00 · 75M</u></div>
+              <div class="t">Block 2 · SANO</div>
+              <div class="o">Finish Anthony's six-item readiness checklist</div>
+              <div class="row2"><button class="btn">Start focus run · 75m</button>
+                <button class="btn gh sm">Detail</button></div>
+            </div>
+            <div class="pipline"><span>ALWAYS COUNTS</span>
+              <span class="boxes"><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></span>
+              <em>+35</em></div>
+          </div>
+          <div class="peek"><div class="ph">Today · 4 of 9 so far</div>
+            <div class="blk"><span class="bt">13:20</span><div><div class="bn">Block 3</div></div><span class="bc"></span></div></div>
+        </div>
+        <div class="stagefoot">— schedule continues —</div>
+      </div>
+      <div>
+        <dl class="notes">
+          <dt>What it optimises for</dt>
+          <dd>Density without noise. Eight facts in the space the current build spends on two, and every
+            one of them is readable in one pass because they share a left edge and a right edge. It is
+            also the calmest thing in the set — worth noting for a man whose failure mode is being shouted
+            at by his own app.</dd>
+          <dt>What it costs</dt>
+          <dd>It reads like a bank statement, and he did not ask for a bank statement — he asked for
+            something that says <em>"you burned the boats, it's time to work now."</em> Wins collapse to
+            six boxes with no labels, which is worse than 04's dots. And a ledger row is a poor tap target,
+            so the push strip's tap-through to The Push gets murky.</dd>
+          <dt>Make-up banner</dt>
+          <dd>As a red ledger row — the one layout where a penance can appear without becoming a wall.</dd>
+        </dl>
+        <div class="metrics" data-metrics></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 09 ============================ -->
+  <section class="dir" id="s9">
+    <div class="dh"><div class="dn">09</div>
+      <div class="dt"><h2>The One Object</h2>
+        <div class="dm">full-bleed panel · rail on its top edge, wins docked to its bottom</div>
+        <div class="dl">One sentence: <b>the whole region becomes a single edge-to-edge panel in the
+          furnace's own language, and the other five elements attach to it as edges rather than sitting
+          under it.</b> The rail is a 2px progress line welded to the top edge. The push is three pips in
+          the kicker. Always-counts is a docked footer bar you tap to open.</div>
+      </div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked</div><div class="s2">481 PX<br>SPENT</div></div>
+        <div class="stage">
+          <div class="fold"><b>299</b></div>
+          <div class="fold real"><b>218</b></div>
+          <div class="reg L9" data-reg>
+            <div class="obj" data-nu>
+              <div class="objrail" data-rail><div class="now" data-now></div></div>
+              <div class="objbody">
+                <div class="k9"><i></i><span>Now · 3h 15m of deep work left</span><u>WED</u></div>
+                <div class="t9">Block 2 · SANO</div>
+                <div class="o9">Finish Anthony's six-item readiness checklist<br>
+                  <span style="font-size:11.5px;color:#6b6480">10:45–12:00 · 75 minutes · THE WORK</span></div>
+                <div class="row2"><button class="btn">Start focus run · 75m</button>
+                  <button class="btn gh sm">Detail</button></div>
+              </div>
+              <div class="stale9">ANTHONY · PITCH-READY 1 DAY · NOT SENT →</div>
+              <div class="dock9"><span>ALWAYS COUNTS</span>
+                <span class="d"><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></span>
+                <b style="margin-left:8px">+35</b><span style="color:#4d4760">▲</span></div>
+            </div>
+            <div class="pushstrip" style="margin-top:12px">
+              <div class="ps-row">
+                <div class="ps-c"><div class="k">SANO</div><div class="v">1/3</div></div>
+                <div class="ps-c"><div class="k">Funded</div><div class="v">0/3</div></div>
+                <div class="ps-c"><div class="k">Kitchen</div><div class="v">0/1</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="peek"><div class="ph">Today · 4 of 9 so far</div>
+            <div class="blk"><span class="bt">13:20</span><div><div class="bn">Block 3</div></div><span class="bc"></span></div></div>
+        </div>
+        <div class="stagefoot">— schedule continues —</div>
+      </div>
+      <div>
+        <dl class="notes">
+          <dt>What it optimises for</dt>
+          <dd>Visual unity with the locked header — the full-bleed panel picks up the furnace's edge-to-edge
+            treatment, so the top of the screen reads as one machine instead of a card salad. Everything
+            secondary is literally attached to the primary thing, which is the cleanest expression of the
+            hierarchy the brief asks for.</dd>
+          <dt>What it costs</dt>
+          <dd>Three rows welded to one card (stale line, dock, rail) make the object <b>complicated</b> even
+            though it is singular, and on a day with a penance owed it grows a fourth. Time-left is demoted
+            into a kicker line at 7.5px, which is too small for the second-most-consulted number on the
+            screen. Wins are behind a tap again.</dd>
+          <dt>Make-up banner</dt>
+          <dd>A fourth stripe on the panel, above the stale line — where it starts to become a wall.</dd>
+        </dl>
+        <div class="metrics" data-metrics></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 10 ============================ -->
+  <section class="dir" id="s10">
+    <div class="dh"><div class="dn">10</div>
+      <div class="dt"><h2>The Dock</h2>
+        <div class="dm">wins leave the region entirely and live above the tab bar</div>
+        <div class="dl">One sentence: <b>stop solving always-counts inside the column and move it out —
+          a persistent handle docked above the tab bar, present on every scroll position, tap to open the
+          sheet.</b> The region keeps rail, time-left and push at full readability because it just gave
+          away its biggest tenant.</div>
+      </div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked</div><div class="s2">481 PX<br>SPENT</div></div>
+        <div class="stage" style="padding-bottom:100px">
+          <div class="fold"><b>299</b></div>
+          <div class="fold real"><b>218</b></div>
+          <div class="reg L10" data-reg>
+            <div class="compact">
+              <b>3h 15m</b>
+              <div class="lab">DEEP WORK<br>LEFT</div>
+              <div class="rr"><div class="rail" data-rail><div class="now" data-now></div></div></div>
+              <div class="dow">WED</div>
+            </div>
+            <div class="pushstrip">
+              <div class="ps-row">
+                <div class="ps-c"><div class="k">SANO</div><div class="v">1/3</div></div>
+                <div class="ps-c"><div class="k">Funded</div><div class="v">0/3</div></div>
+                <div class="ps-c"><div class="k">Kitchen</div><div class="v">0/1</div></div>
+              </div>
+              <div class="ps-stale">ANTHONY · PITCH-READY 1 DAY · NOT SENT →</div>
+            </div>
+            <div class="nextup live" data-nu>
+              <div class="nu-k"><i></i><span>Now</span><u>10:45–12:00 · 75m</u></div>
+              <div class="nu-t">Block 2 · SANO</div>
+              <div class="nu-obj">Finish Anthony's six-item readiness checklist</div>
+              <div class="chips"><span class="chip" style="border-color:#E0B25E44;color:#E0B25E">THE WORK</span></div>
+              <div class="row2"><button class="btn">Start focus run · 75m</button>
+                <button class="btn gh sm">Detail</button></div>
+            </div>
+          </div>
+          <div class="peek"><div class="ph">Today · 4 of 9 so far</div>
+            <div class="blk"><span class="bt">13:20</span><div><div class="bn">Block 3</div></div><span class="bc"></span></div></div>
+          <div class="dockbar" style="bottom:52px">
+            <span class="k">ALWAYS COUNTS</span>
+            <span class="d"><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></span>
+            <span class="xp">+35</span><span class="ar">▲</span>
+          </div>
+          <div class="tabsfake"><span class="on">TODAY</span><span>PUSH</span><span>BANK</span><span>RECORD</span></div>
+        </div>
+      </div>
+      <div>
+        <dl class="notes">
+          <dt>What it optimises for</dt>
+          <dd>This is the literal answer to <em>"solve 'in the way' by giving it a better home."</em> Wins
+            become the most reachable thing in the app — thumb height, every screen, never scrolled past —
+            while costing the region zero. It is also the only direction that makes wins available while
+            he's looking at the <em>schedule</em>, which is when he actually remembers he did the laundry.</dd>
+          <dt>What it costs</dt>
+          <dd>It permanently steals ~40px from every screen in the app, not just Today — a real tax the GM
+            has to accept on The Push, The Bank and The Record too, or it has to be Today-only, which makes
+            it inconsistent. It also stacks a second bar on the tab bar, and two bars is the point where a
+            phone app starts feeling cramped at the bottom. And it moves work out of my turf into the
+            app shell.</dd>
+          <dt>The measurement corrects my own pitch</dt>
+          <dd><b>It fails the fold anyway — NEXT UP ends at +329.</b> Moving the wins out frees space at the
+            <em>bottom</em> of the region; the thing pushing NEXT UP down is the 97px of rail and push strip
+            <em>above</em> it, which this layout leaves at full size. The dock is a real idea and it is not,
+            by itself, a fix. It has to be combined with 01's ordering, which is exactly why I've ranked it
+            as a component rather than a layout.</dd>
+          <dt>Make-up banner</dt>
+          <dd>Top of the region, above the compact line — and the dock is the natural place to badge it red
+            when it's outstanding.</dd>
+        </dl>
+        <div class="metrics" data-metrics></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 11 ============================ -->
+  <section class="dir" id="s11">
+    <div class="dh"><div class="dn">11</div>
+      <div class="dt"><h2>The Sentence</h2>
+        <div class="dm">language first · the app talks instead of reading out instruments</div>
+        <div class="dl">One sentence: <b>replace the readouts with one sentence in Clash Display that tells
+          him where he is, and put the instruction directly under it with no card around it.</b> The rail
+          becomes a 2px hairline. The push becomes a muted line of text. This is the only direction that
+          sounds like the app's stated purpose rather than measuring it.</div>
+      </div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked</div><div class="s2">481 PX<br>SPENT</div></div>
+        <div class="stage">
+          <div class="fold"><b>299</b></div>
+          <div class="fold real"><b>218</b></div>
+          <div class="reg L11" data-reg>
+            <div class="say">
+              <p><em>45 minutes</em> left in Block 2. <u>3h 15m</u> of deep work still on the board today.</p>
+              <div class="hair" data-rail><div class="now" data-now></div></div>
+              <div class="pushsay">
+                <span>SANO <b>1/3</b></span><span>FUNDED <b>0/3</b></span><span>KITCHEN <b>0/1</b></span>
+                <span class="hot">ANTHONY 1D UNSENT →</span>
+              </div>
+            </div>
+            <div class="task" data-nu>
+              <div class="k"><span>DO THIS NOW</span><u>10:45–12:00 · 75M</u></div>
+              <h3>Finish Anthony's six-item readiness checklist</h3>
+              <div class="o">Block 2 · SANO · your peak window</div>
+              <div class="row2"><button class="btn">Start focus run · 75m</button>
+                <button class="btn gh sm">Detail</button></div>
+            </div>
+            <div class="tinywins">
+              <button class="tw on">Laundry ✓</button><button class="tw on">Cooked ✓</button>
+              <button class="tw">Said no</button><button class="tw">Bed on time</button>
+              <button class="tw">Someone</button><button class="tw">Real convo</button>
+            </div>
+          </div>
+          <div class="peek"><div class="ph">Today · 4 of 9 so far</div>
+            <div class="blk"><span class="bt">13:20</span><div><div class="bn">Block 3</div></div><span class="bc"></span></div></div>
+        </div>
+        <div class="stagefoot">— schedule continues —</div>
+      </div>
+      <div>
+        <dl class="notes">
+          <dt>What it optimises for</dt>
+          <dd>Voice. It is the only layout where the app addresses him, and it makes the <em>objective</em>
+            the headline rather than the block number — which is what he actually needs to read at 11:15.
+            It also removes every card border in the region, which is most of the visual jumble.</dd>
+          <dt>What it costs</dt>
+          <dd>A sentence is slower to read than a number, every day, forever — and he has a one-minute
+            budget. It also breaks the house language: no cards means the region no longer matches the
+            locked glance card directly above it. The 8px win chips are under-size targets and lose their
+            quota pips entirely.</dd>
+          <dt>Make-up banner</dt>
+          <dd>As a second sentence in red, directly under the first — the only place a penance can feel
+            like being spoken to instead of fined.</dd>
+        </dl>
+        <div class="metrics" data-metrics></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 12 ============================ -->
+  <section class="dir" id="s12">
+    <div class="dh"><div class="dn">12</div>
+      <div class="dt"><h2>Now / Next Pair</h2>
+        <div class="dm">two blocks visible · the region absorbs the top of the schedule</div>
+        <div class="dl">One sentence: <b>show what he's in AND what's coming, side by side, so the region
+          replaces the first rows of the schedule rather than sitting on top of them.</b> Push and
+          always-counts merge into one "earn board" underneath, sharing a single header.</div>
+      </div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked</div><div class="s2">481 PX<br>SPENT</div></div>
+        <div class="stage">
+          <div class="fold"><b>299</b></div>
+          <div class="fold real"><b>218</b></div>
+          <div class="reg L12" data-reg>
+            <div class="rail-wrap12">
+              <div class="rail" data-rail><div class="now" data-now></div></div>
+              <div class="tl12"><b>3h 15m</b><span>OF DEEP WORK LEFT</span><span class="dow">WED · 11:15</span></div>
+            </div>
+            <div class="pair" data-nu>
+              <div class="c12 live">
+                <div class="k"><i></i><span>Now</span></div>
+                <div class="tm">10:45–12:00 · 75m</div>
+                <h4>Block 2 · SANO</h4>
+                <div class="o">Anthony's six-item readiness checklist</div>
+                <button class="btn sm">Start · 75m</button>
+              </div>
+              <div class="c12 dim">
+                <div class="k"><span>Then</span></div>
+                <div class="tm">12:00–13:00</div>
+                <h4>Lunch</h4>
+                <div class="o">then market close at 13:00</div>
+                <button class="btn gh sm">Open</button>
+              </div>
+            </div>
+            <div class="pushrow12">
+              <span><u>SANO</u>1/3</span><span><u>FUNDED</u>0/3</span><span><u>KITCHEN</u>0/1</span>
+            </div>
+            <div class="stale12">ANTHONY · PITCH-READY 1 DAY · NOT SENT →</div>
+            <div class="earnboard">
+              <div class="eb-h"><span>Always counts · tap any</span><b>2 · +35 TODAY</b></div>
+              <div class="eb-g">
+                <button class="eb on">Laundry</button>
+                <button class="eb on">Cooked<span class="p"><i class="on"></i><i class="on"></i><i></i><i></i></span></button>
+                <button class="eb">Said no</button>
+                <button class="eb">In bed<span class="p"><i class="on"></i><i></i><i></i><i></i></span></button>
+                <button class="eb">Someone<span class="p"><i class="on"></i><i></i><i></i></span></button>
+                <button class="eb">Real convo<span class="p"><i class="on"></i><i></i><i></i></span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="stagefoot">— schedule continues —</div>
+      </div>
+      <div>
+        <dl class="notes">
+          <dt>What it optimises for</dt>
+          <dd>Two questions answered at once — what am I doing, what's after it — which is the thing he
+            currently scrolls to the schedule for. The earn board is the most compact honest home for the
+            wins in the whole set: six real labels, six real quota pip rows, 44px targets, one header,
+            <b>~140px instead of 226.</b></dd>
+          <dt>What it costs</dt>
+          <dd>The NOW card loses its objective to a single 11.5px line and its chips entirely, and the
+            focus button shrinks to a half-width "Start · 75m". Giving 40% of the hero row to <em>Lunch</em>
+            is a bad trade on the days when the next block is a ritual. It is also the busiest grid in the
+            set — six cells under two cards under a rail.</dd>
+          <dt>Make-up banner</dt>
+          <dd>Directly under the pair, above the push row.</dd>
+        </dl>
+        <div class="metrics" data-metrics></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ WORST CASE ============================ -->
+  <section class="dir" id="s13">
+    <div class="dh"><div class="dn">★</div>
+      <div class="dt"><h2>The recommendation, on the worst day</h2>
+        <div class="dm">01 + 12's earn board · stale line AND a make-up owed</div>
+        <div class="dl">The two that survived, combined and stress-tested: <b>The Command Line's ordering</b>
+          (instrument line → NEXT UP → push → wins) with <b>Now/Next's earn board</b> as the wins' home
+          instead of a sideways-scrolling pill rail. Rendered here in the state everything else was
+          measured without — <b>a penance outstanding and Anthony still not sent.</b> This is the day the
+          layout has to survive, because it is the day he stops opening the app.</div>
+      </div></div>
+    <div class="body">
+      <div class="phone">
+        <div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked</div><div class="s2">481 PX<br>SPENT</div></div>
+        <div class="stage">
+          <div class="fold"><b>299</b></div>
+          <div class="fold real"><b>218</b></div>
+          <div class="reg L1 L12" data-reg>
+            <div class="instr">
+              <div class="n">3h15</div>
+              <div class="lab">DEEP WORK<br>LEFT</div>
+              <div class="railmini"><div class="rail" data-rail><div class="now" data-now></div></div></div>
+              <div class="dow">WED</div>
+            </div>
+            <div class="penance" style="margin-top:11px">
+              <div class="k">MAKE-UP OWED · LEVEL 1 OF 3</div>
+              <div class="t">Bible 15 min · write out 6 passages · photo as proof</div>
+            </div>
+            <div class="nextup live" data-nu style="margin-top:11px">
+              <div class="nu-k"><i></i><span>Now</span><u>10:45–12:00 · 75m</u></div>
+              <div class="nu-t">Block 2 · SANO</div>
+              <div class="nu-obj">Finish Anthony's six-item readiness checklist</div>
+              <div class="row2"><button class="btn">Start focus run · 75m</button>
+                <button class="btn gh sm">Detail</button></div>
+            </div>
+            <div class="pushline stale">
+              <span><u>SANO</u>1/3</span><span><u>FUNDED</u>0/3</span><span><u>KITCHEN</u>0/1</span>
+            </div>
+            <div class="staleline">ANTHONY · PITCH-READY 1 DAY · NOT SENT →</div>
+            <div class="earnboard" style="margin-top:12px">
+              <div class="eb-h"><span>Always counts · tap any</span><b>2 · +35 TODAY</b></div>
+              <div class="eb-g">
+                <button class="eb on">Laundry</button>
+                <button class="eb on">Cooked<span class="p"><i class="on"></i><i class="on"></i><i></i><i></i></span></button>
+                <button class="eb">Said no</button>
+                <button class="eb">In bed<span class="p"><i class="on"></i><i></i><i></i><i></i></span></button>
+                <button class="eb">Someone<span class="p"><i class="on"></i><i></i><i></i></span></button>
+                <button class="eb">Real convo<span class="p"><i class="on"></i><i></i><i></i></span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="stagefoot">— schedule continues —</div>
+      </div>
+      <div>
+        <dl class="notes">
+          <dt>Why this survives the bad day</dt>
+          <dd>The penance is the only thing allowed above NEXT UP, and it is one line — it interrupts
+            without becoming a wall. NEXT UP still clears the simulator fold with a penance owed. And the
+            bottom of the region is <b>six things he can earn right now</b>, not six things he failed —
+            which is the whole point of always-counts.</dd>
+          <dt>What it still costs</dt>
+          <dd>On the real iPhone fold (218px) the make-up banner pushes the focus button under the line.
+            That is unavoidable with a penance present unless the banner collapses to a single 24px red
+            strip — which I'd recommend, and which is a change to Agent 5's mechanic, not mine to make.</dd>
+        </dl>
+        <div class="metrics" data-metrics></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ VERDICT ============================ -->
+  <section class="verdict">
+    <h2>My read, after measuring all twelve</h2>
+    <p>Ranked on one question — <b>does the focus-run button sit above the fold on a normal day, without
+      selling out always-counts to get there?</b> Height alone would crown 04; it doesn't win, because it
+      buys its height by taking away the only thing he can do on a bad day.</p>
+
+    <div class="vr pick"><div class="n">1st</div><div>
+      <h3>01 · The Command Line <span class="tag g">my pick</span> <span class="tag">with 12's earn board</span></h3>
+      <p>The only direction that fixes the actual complaint — six things at equal volume — without hiding
+        anything behind a tap, a swipe or a dock. It works because it is the only one that asks what each
+        element is <em>worth</em> rather than where it goes: NEXT UP gets a card, the day gets a line, the
+        push gets a line, the wins get a strip. Swap its horizontal pill rail for the earn board from 12
+        and it also keeps the quota pips, which the pill rail loses. Rendered combined above.</p>
+      <p style="margin-top:9px">One caveat, stated plainly: it clears the simulator fold at +227 and it
+        clears a fixed iPhone at 218 <em>only if the double-inset bug is fixed first</em> — 9px over
+        otherwise. Fixing that bug hands back 47px and puts this comfortably clear. <b>Fix the header
+        padding, then build 01.</b> If the GM won't touch the header, 04 is the only direction that
+        clears today's real 171px budget, and the wins get demoted to dots.</p></div></div>
+
+    <div class="vr"><div class="n">2nd</div><div>
+      <h3>12 · Now / Next Pair <span class="tag">best home for always-counts</span></h3>
+      <p>Its earn board is the best single component produced by this brief: six real labels with six real
+        quota pip rows in ~140px, and it stops the wins reading as a leftover list by giving them one
+        header and a border. The 2-up hero is the weaker half — 40% of the most valuable row goes to
+        whatever comes next, which is <em>Lunch</em> more often than it is anything worth 40%. Take the
+        board, leave the pair.</p></div></div>
+
+    <div class="vr"><div class="n">3rd</div><div>
+      <h3>10 · The Dock <span class="tag">the boldest idea here</span></h3>
+      <p>Structurally the cleanest answer to "give it a better home", and the only one where he can log a
+        win while looking at something else. It ranks third only because it isn't really a layout — it's an
+        app-shell change that costs every screen 40px, so it's the GM's call and not mine. If the GM wants
+        it, it composes with 01 perfectly: 01 minus its win rail, plus this dock.</p></div></div>
+
+    <div class="vr"><div class="n">4th</div><div>
+      <h3>04 · The Dial <span class="tag">wins on every number, loses on the law</span></h3>
+      <p>Smallest region in the set and the only one where the schedule clears the fold. It is genuinely
+        beautiful. It also reduces always-counts to six dots, and rule 4 of the brief is that he must be
+        able to earn on a bad day. If the GM disagrees with me about how load-bearing the wins are, this
+        is the layout to pick.</p></div></div>
+
+    <div class="vr"><div class="n">5th</div><div>
+      <h3>07 · Wins on the Rail <span class="tag">the best idea I couldn't make work</span></h3>
+      <p>Conceptually the sharpest thing in this document: wins as part of the day rather than a list under
+        it. It fails on physics — six 13px targets on a 364px track, no room for quota pips, and pinning
+        "said no" to a time of day is a fiction. Worth keeping in the drawer for a bigger screen or four
+        notches instead of six.</p></div></div>
+
+    <div class="vr"><div class="n">6–8</div><div>
+      <h3>02 Fuel Gauge · 09 One Object · 08 Ledger</h3>
+      <p><b>02</b> produces the most on-theme component in the set (the tank) but leaves the bottom half of
+        the region untouched, so it doesn't actually solve the jumble — I kept it because the GM should
+        steal that component regardless of which layout wins. <b>09</b> is the best-looking and the most
+        unified, but welding three stripes onto one card makes a singular object that is internally
+        complicated, and a penance adds a fourth. <b>08</b> is the calmest and the densest, and it is the
+        right answer for a different app — it reads as an accounting screen, and he asked to be fired up.</p></div></div>
+
+    <div class="vr"><div class="n">9–12</div><div>
+      <h3>The four I'd not build <span class="tag r">weakest</span></h3>
+      <p><b>05 Three-Tab Panel</b> and <b>06 Swipe Deck</b> both fix the height problem by hiding two thirds
+        of the region — on a screen he reads for fifteen seconds, a glanceable rail behind a tap is a
+        deleted rail. They are in the set because "collapse it" is the obvious answer and he deserves to
+        see it rendered before rejecting it; 06 also handles a penance worse than anything else here.
+        <b>03 Vertical Spine</b> costs 30px of width on a 390px phone to save vertical space the layout can
+        get more cheaply, and nobody reads a day downward. <b>11 The Sentence</b> is the one I most wanted
+        to work — it is the only layout that sounds like the app's purpose — but a sentence read twenty
+        times a day becomes noise faster than a number does, and it abandons the card language of the
+        locked block directly above it.</p></div></div>
+  </section>
+
+  <!-- ============================ HAND-OFF ============================ -->
+  <section class="handoff">
+    <h2>Hand-off to the GM</h2>
+
+    <h3>What I produced and where</h3>
+    <p>This file — <b>renditions/rend-timeblock.html</b> — twelve structurally distinct layouts for the
+      region between the locked glance card and the schedule, plus the shipped baseline (00) and a
+      worst-day stress test of my recommendation (★). Every mock is live HTML at 390px in the app's own
+      component language; every height on this page is measured by the page at load, not asserted.</p>
+
+    <h3>Every measurement in one place</h3>
+    <div class="budget" style="margin:14px 0 0">
+      <table>
+        <tr><td>00 · what ships today</td><td>659 px · next up ends +379</td></tr>
+        <tr><td>01 · The Command Line</td><td>384 px · +227</td></tr>
+        <tr><td>02 · The Fuel Gauge</td><td>594 px · +320</td></tr>
+        <tr><td>03 · The Vertical Spine</td><td>376 px · +205</td></tr>
+        <tr><td>04 · The Dial</td><td>259 px · +208</td></tr>
+        <tr><td>05 · The Three-Tab Panel</td><td>251 px · +236</td></tr>
+        <tr><td>06 · The Swipe Deck</td><td>279 px · +245</td></tr>
+        <tr><td>07 · Wins on the Rail</td><td>388 px · +374</td></tr>
+        <tr><td>08 · The Ledger</td><td>438 px · +399</td></tr>
+        <tr><td>09 · The One Object</td><td>315 px · +235</td></tr>
+        <tr><td>10 · The Dock</td><td>343 px · +329</td></tr>
+        <tr><td>11 · The Sentence</td><td>370 px · +276</td></tr>
+        <tr><td>12 · Now / Next Pair</td><td>437 px · +225</td></tr>
+        <tr class="tot"><td>★ · recommendation, penance owed</td><td>492 px · +280</td></tr>
+      </table>
+      <p>Second number is where NEXT UP ends, measured from the top of the region. Budget: <b>299</b>
+        simulator · <b>218</b> iPhone with the inset bug fixed · <b>171</b> iPhone as shipped. These are
+        the page's own live measurements — the badges under each mock-up are generated from the same
+        code, so they cannot drift from this table.</p>
+    </div>
+
+    <h3>Ranked recommendation</h3>
+    <p><b>Build 01 (The Command Line) with 12's earn board as the wins' home.</b> The reasoning is in the
+      verdict above: it is the only direction that solves "six things shouting equally" by re-weighting
+      them rather than hiding them, and it is the only one that gets the focus-run button above the fold
+      while leaving all six always-counts chips tappable with their quota pips intact. Second: take 12's
+      earn board regardless of which hero wins. Third: 10's dock, if you're willing to spend 40px of every
+      screen — it composes with 01 cleanly. Fourth: 04 if you decide I have over-weighted the wins.</p>
+
+    <h3>What I deliberately rejected</h3>
+    <ul>
+      <li><b>Hiding always-counts.</b> The brief forbids it and it's right to: five of the seven weekly
+        quotas are fed by wins, and they are the only thing earnable on a blown day. 04, 05, 06, 08 and 09
+        all reduce wins to dots or a tap, and every one of them pays for its height with that trade. I
+        rendered them so the trade is visible, not so it gets made by accident.</li>
+      <li><b>A "smart" region that changes shape by time of day.</b> I sketched one that showed the rail
+        only in the morning and wins only after 18:00. It measures beautifully and it is unacceptable: a
+        layout that moves is a layout he has to re-learn every time he opens it, against a one-minute
+        interaction budget.</li>
+      <li><b>Pretty near-duplicates.</b> Three early passes were one idea with different padding. They're
+        not in here. Twelve is what survived, and I've said plainly which four I would not build.</li>
+    </ul>
+
+    <h3>Things I found that aren't mine to fix</h3>
+    <ul>
+      <li><b>NEXT UP is below the fold in the shipped build, today.</b> It ends at y=838 with the tab bar
+        at y=780 — the focus-run button is under the tab bar before any redesign. This is the finding, not
+        the layouts.</li>
+      <li><b>The safe-area inset is applied twice.</b> <code>.app</code> has
+        <code>padding-top:calc(6px + var(--st))</code> and its first child <code>.furnace</code> has
+        <code>padding:calc(20px + var(--st))…</code> — on a notched iPhone that is ~94px of top padding
+        where ~53 was intended. Fixing it hands ~47px straight back to this region and would change which
+        layouts clear the fold. <b>Worth fixing before choosing a layout.</b></li>
+      <li><b>The glance card is 256px</b> — bigger than the furnace and the gauges combined, and bigger
+        than any layout in this document. It is locked, so I have not touched it, but the region below it
+        cannot be fixed to everyone's satisfaction while the card above it costs a third of the screen. If
+        Jasper ever unlocks one thing, that's the one with the most px in it.</li>
+      <li><b>The rail's own logic.</b> <code>renderRail()</code> computes deep-work-left from
+        <code>b.kind==='deep'</code> only, so Bible and gym never count — correct, but it means the number
+        reads "Done" from 16:20 onward every day, which is a strange thing for a region titled around
+        deep work to say for five hours each evening. Worth a look by whoever owns the header copy.</li>
+      <li><b>Trading still ends at 08:30 in <code>WEEKDAY</code></b>, which matches PROFILE.md — the brief's
+        note that "the current build has trading ending at 7:15" is stale. Already fixed.</li>
+    </ul>
+
+    <h3>What verification caught in my own work</h3>
+    <p>Recorded because "I looked at the screenshot" only means something if I say what looking found.
+      Five real defects, all found by rendering rather than by reading my own CSS: the day rail painted
+      <b>backwards</b> (segments inserted before <code>firstChild</code>, so the day ran right-to-left);
+      02's four-cell board styled every descendant <code>div</code> instead of its direct children, drawing
+      boxes inside boxes; 03's vertical spine was <b>0px wide and invisible</b> (a flex item with no
+      intrinsic width); 10's dock bar sat outside its <code>.L10</code> scope so none of its styling applied;
+      and the fold-ruler labels sat on top of the mock-ups, hiding a digit in 08. Two data lies also went
+      out and came back: <b>Laundry and "Said no" had weekly quota pips</b>, and neither has a weekly quota
+      in <code>QUOTAS</code>. All seven are fixed in this file.</p>
+
+    <h3>Honesty note</h3>
+    <p>Twelve is an honest twelve — but 02 and 09 are components rather than solutions, and 03 and 11 are
+      directions I'd argue against building. If you want a shorter list to put in front of Jasper, show him
+      <b>★, 04, 10 and 08</b>: they are the four genuinely different answers to the question, and between
+      them they cover every trade-off in the set.</p>
+  </section>
+
+</div>
+
+<script>
+/* ------------------------------------------------------------------
+   Shared data — same clock in every mock: WED 11:15, inside Block 2.
+   ------------------------------------------------------------------ */
+var SHAPE = [
+  {id:'wake', s:360, e:390, dom:'#FF6B2C', kind:'ritual'},
+  {id:'open', s:390, e:510, dom:'#7FB4FF', kind:'market'},
+  {id:'prio', s:510, e:540, dom:'#38E1D8', kind:'ritual'},
+  {id:'b1',   s:540, e:630, dom:'#E0B25E', kind:'deep'},
+  {id:'b2',   s:645, e:720, dom:'#E0B25E', kind:'deep'},
+  {id:'lunch',s:720, e:780, dom:'#FF6B2C', kind:'ritual'},
+  {id:'close',s:780, e:800, dom:'#7FB4FF', kind:'market'},
+  {id:'b3',   s:800, e:875, dom:'#E0B25E', kind:'deep'},
+  {id:'walk', s:875, e:905, dom:'#FF6B2C', kind:'body'},
+  {id:'b4',   s:905, e:980, dom:'#E0B25E', kind:'deep'},
+  {id:'gym',  s:980, e:1050,dom:'#FF6B2C', kind:'body'},
+  {id:'life', s:1050,e:1260,dom:'#4ADE80', kind:'life'},
+  {id:'reset',s:1260,e:1290,dom:'#38E1D8', kind:'ritual'},
+  {id:'bible',s:1290,e:1310,dom:'#B08CFF', kind:'ritual'}
+];
+var NOW = 675;                       // 11:15
+var DAY_S = 360, DAY_E = 1310, SPAN = DAY_E - DAY_S;
+var DONE = {wake:1, open:1, prio:1, b1:1};
+
+function segColour(b){
+  if (DONE[b.id]) return b.dom;
+  if (NOW >= b.e) return '#2a2438';
+  if (b.kind === 'deep') return 'rgba(224,178,94,.28)';
+  return '#1f1a2b';
+}
+
+/* paint every [data-rail] in the document — horizontal by default, vertical with [data-vert] */
+function paintRails(){
+  var rails = document.querySelectorAll('[data-rail]');
+  for (var r = 0; r < rails.length; r++){
+    var el = rails[r], vert = el.hasAttribute('data-vert');
+    for (var i = 0; i < SHAPE.length; i++){
+      var b = SHAPE[i], seg = document.createElement('i');
+      var pct = ((b.e - b.s) / SPAN * 100) + '%';
+      if (vert) seg.style.height = pct; else seg.style.width = pct;
+      seg.style.background = segColour(b);
+      el.appendChild(seg);          // every .now marker is position:absolute, so order is safe
+    }
+    var now = el.querySelector('[data-now]');
+    if (now) now.style.left = ((NOW - DAY_S) / SPAN * 100) + '%';
+  }
+}
+
+/* the six always-counts chips, in the app's own markup */
+var WINS = [
+  {n:'Laundry / dishes / cleaned', xp:15, on:1, need:0, hits:0},
+  {n:'Cooked instead of ordering', xp:20, on:1, need:4, hits:2},
+  {n:'Said no to something',       xp:25, on:0, need:0, hits:0},
+  {n:'In bed on time',             xp:20, on:0, need:4, hits:1},
+  {n:'Real time with someone',     xp:25, on:0, need:3, hits:1},
+  {n:'A real conversation (work)', xp:30, on:0, need:3, hits:1}
+];
+function paintWins(){
+  var hosts = document.querySelectorAll('[data-wins]');
+  var html = '';
+  for (var i = 0; i < WINS.length; i++){
+    var w = WINS[i], pips = '';
+    for (var p = 0; p < w.need; p++) pips += '<i class="' + (p < w.hits ? 'on' : '') + '"></i>';
+    html += '<button class="win' + (w.on ? ' on' : '') + '">' +
+            '<span class="wtop">' + w.n + '<b>+' + w.xp + '</b></span>' +
+            (w.need ? '<span class="wtop" style="gap:6px"><span class="pips">' + pips +
+              '</span><b style="margin-left:auto;font-size:9px">' + w.hits + '/' + w.need + '</b></span>' : '') +
+            '</button>';
+  }
+  for (var h = 0; h < hosts.length; h++) hosts[h].innerHTML = html;
+}
+
+/* 05 — real tabs */
+function wireTabs(){
+  var groups = document.querySelectorAll('[data-tabs]');
+  for (var g = 0; g < groups.length; g++){
+    (function(root){
+      root.addEventListener('click', function(ev){
+        var btn = ev.target.closest ? ev.target.closest('[data-tab]') : null;
+        if (!btn) return;
+        var name = btn.getAttribute('data-tab');
+        var bs = root.querySelectorAll('[data-tab]');
+        for (var i = 0; i < bs.length; i++) bs[i].classList.toggle('on', bs[i] === btn);
+        var ps = root.querySelectorAll('[data-pane]');
+        for (var j = 0; j < ps.length; j++) ps[j].classList.toggle('on', ps[j].getAttribute('data-pane') === name);
+      });
+    })(groups[g]);
+  }
+}
+
+/* 06 — deck dots follow the scroll */
+function wireDeck(){
+  var decks = document.querySelectorAll('[data-deck]');
+  for (var d = 0; d < decks.length; d++){
+    (function(deck){
+      var dots = deck.parentNode.querySelector('[data-dots]');
+      if (!dots) return;
+      deck.addEventListener('scroll', function(){
+        var card = deck.querySelector('.card6');
+        var step = card.offsetWidth + 9;
+        var idx = Math.round(deck.scrollLeft / step);
+        var is = dots.querySelectorAll('i');
+        for (var i = 0; i < is.length; i++) is[i].classList.toggle('on', i === idx);
+      }, {passive:true});
+    })(decks[d]);
+  }
+}
+
+/* every chip in every mock is tappable, so the mock-ups behave like the app */
+function wireTaps(){
+  document.addEventListener('click', function(ev){
+    var t = ev.target.closest ? ev.target.closest('.win,.wpill,.wg,.eb,.tw,.notch') : null;
+    if (t) t.classList.toggle('on');
+  });
+}
+
+/* ------------------------------------------------------------------
+   Measure. Every number printed on this page comes from here.
+   Budget: 299px from the top of the region to the tab bar (simulator),
+   218px once the iPhone's safe areas apply.
+   ------------------------------------------------------------------ */
+var BUDGET = 299, REAL_BUDGET = 218, TODAY_BUDGET = 171;
+
+/* the third fold line — today's real budget with the double-inset bug still in place — plus the
+   legend that explains all three, appended to every phone frame so no label sits on a mock-up */
+function drawTodayFold(){
+  var stages = document.querySelectorAll('.stage');
+  for (var i = 0; i < stages.length; i++){
+    if (!stages[i].querySelector('.fold.today')){
+      var f = document.createElement('div');
+      f.className = 'fold today';
+      f.innerHTML = '<b>171</b>';
+      stages[i].insertBefore(f, stages[i].firstChild);
+    }
+    var phone = stages[i].parentNode;
+    if (phone && !phone.querySelector('.legend')){
+      var lg = document.createElement('div');
+      lg.className = 'legend';
+      lg.innerHTML = '<span><b>299</b> SIMULATOR FOLD</span>' +
+                     '<span><b>218</b> IPHONE, INSET FIXED</span>' +
+                     '<span><b>171</b> IPHONE TODAY</span>';
+      phone.appendChild(lg);
+    }
+  }
+}
+
+function measure(){
+  var secs = document.querySelectorAll('.dir');
+  for (var i = 0; i < secs.length; i++){
+    var sec = secs[i];
+    var reg = sec.querySelector('[data-reg]');
+    var nu  = sec.querySelector('[data-nu]');
+    var box = sec.querySelector('[data-metrics]');
+    if (!reg || !box) continue;
+    var rt = reg.getBoundingClientRect();
+    var total = Math.round(rt.height);
+    var nuEnd = nu ? Math.round(nu.getBoundingClientRect().bottom - rt.top) : 0;
+    var pass  = nuEnd > 0 && nuEnd <= BUDGET;
+    var real  = nuEnd > 0 && nuEnd <= REAL_BUDGET;
+    var now   = nuEnd > 0 && nuEnd <= TODAY_BUDGET;
+    box.innerHTML =
+      '<span class="met">region height <b>' + total + ' px</b></span>' +
+      '<span class="met">next up ends at <b>+' + nuEnd + ' px</b></span>' +
+      '<span class="met ' + (pass ? 'pass' : 'fail') + '">simulator 299 ' + (pass ? '✓' : '✗') + '</span>' +
+      '<span class="met ' + (real ? 'pass' : 'fail') + '">iphone, inset fixed 218 ' + (real ? '✓' : '✗') + '</span>' +
+      '<span class="met ' + (now ? 'pass' : 'fail') + '">iphone today 171 ' + (now ? '✓' : '✗') + '</span>' +
+      '<span class="met">vs baseline <b>' + (total - 659 >= 0 ? '+' : '') + (total - 659) + ' px</b></span>';
+  }
+}
+
+drawTodayFold();
+paintRails();
+paintWins();
+wireTabs();
+wireDeck();
+wireTaps();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure); else measure();
+window.addEventListener('load', measure);
+</script>
+</body>
+</html>

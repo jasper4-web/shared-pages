@@ -1,0 +1,1807 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Bank v4 — Ten Built Objects</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  /* the shipped app's palette, verbatim from index.html */
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --d-work:#E0B25E; --d-cap:#7FB4FF; --d-body:#FF6B2C; --d-faith:#B08CFF; --d-mind:#38E1D8; --d-people:#4ADE80;
+  --hand:'Marker Felt','Chalkboard SE','Comic Sans MS',cursive;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#08070c;color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+button{font-family:inherit;cursor:pointer}
+
+/* day-one state machine — hide only, never set a display for the shown state */
+body:not(.d1) .v0,body:not(.d1) .b0{display:none !important}
+body.d1 .v41,body.d1 .b41{display:none !important}
+.fl{height:var(--f,0%)} .fw{width:var(--f,0%)}
+body.d1 .fl{height:0} body.d1 .fw{width:0}
+
+/* ---------------- page chrome (deliberately quiet) ---------------- */
+.bar{position:sticky;top:0;z-index:80;background:rgba(8,7,12,.94);backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1300px;margin:0 auto;padding:10px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bar .lb{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase}
+.seg{display:flex;border:1px solid var(--line2);border-radius:8px;overflow:hidden;margin-left:auto}
+.seg button{background:none;border:0;padding:8px 13px;color:var(--dim);font-family:'Geist Mono',monospace;
+  font-size:8px;letter-spacing:.14em}
+.seg button.on{background:var(--gold);color:#1C1305;font-weight:700}
+.wrap{max-width:1300px;margin:0 auto;padding:0 22px}
+.mast{padding:44px 0 26px}
+.kick{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.26em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:12px}
+.mast h1{font-size:clamp(26px,3.8vw,38px);line-height:1.04;letter-spacing:-.035em;margin-bottom:12px}
+.mast p{max-width:640px;color:var(--dim);font-size:14.6px;margin:0}
+.mast p b{color:var(--ink);font-weight:500}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(390px,392px));gap:44px 34px;
+  justify-content:center;padding:14px 0 40px}
+.slot{width:392px}
+.sh{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;min-height:46px}
+.sn{font-family:'Geist Mono',monospace;font-size:10px;color:#4a4459;flex:none;padding-top:3px}
+.sh h3{font-size:19px;letter-spacing:-.03em}
+.sh .two{font-size:12.6px;color:var(--faint);line-height:1.45;margin-top:4px}
+.sh .two b{color:#9a8a63;font-weight:400}
+.badge{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;
+  background:rgba(224,178,94,.16);color:var(--gold);white-space:nowrap;margin-left:auto;flex:none}
+
+.p{width:390px;border-radius:24px;overflow:hidden;border:1px solid var(--line2);
+  box-shadow:0 34px 80px -34px #000;background:#000}
+.notch{height:24px;background:#000;display:flex;align-items:center;justify-content:center;flex:none}
+.notch i{width:54px;height:5px;border-radius:99px;background:#17171d}
+.pv{height:820px;overflow-y:auto;overflow-x:hidden;position:relative}
+.pv::-webkit-scrollbar{width:0}
+@media(max-width:452px){
+  .wrap{padding:0}
+  .bar-in{padding:10px 15px}
+  .mast{padding:32px 15px 20px}
+  .grid{grid-template-columns:1fr;gap:34px 0;padding:0 0 30px}
+  .slot{width:100%}
+  .sh{padding:0 15px}
+  .p{width:100%;border-radius:0;border-left:0;border-right:0}
+}
+
+/* =====================================================================
+   01 · THE VAULT — congruent with the shipped app
+   Furnace-language header · the real 3-dial gauge strip · glance card ·
+   .blk reward rows · .win boost chips. Same fonts, same palette, same parts.
+   ===================================================================== */
+.a1{background:var(--bg);padding:0 0 26px}
+.a1 .furn{position:relative;padding:20px 16px 17px;overflow:hidden;
+  background:linear-gradient(180deg,#0d0c10,#0a090d);border-bottom:1px solid #1c1a22}
+.a1 .furn::before{content:'';position:absolute;left:-10%;right:-10%;top:-40%;height:150%;
+  background:radial-gradient(50% 46% at 50% 62%,rgba(224,178,94,.22),rgba(150,110,40,.08) 44%,transparent 70%);
+  animation:a1glow 5s ease-in-out infinite}
+@keyframes a1glow{0%,100%{opacity:.62;transform:scale(1)}50%{opacity:1;transform:scale(1.07)}}
+.a1 .stamp{position:relative;z-index:2;text-align:center;font-family:'Clash Display',sans-serif;font-weight:700;
+  font-size:22px;letter-spacing:.035em;line-height:1.14;color:#2a2530;
+  text-shadow:0 1px 0 rgba(255,214,150,.34),0 -1px 0 rgba(0,0,0,.85)}
+.a1 .stamp em{font-style:normal;color:#e8c98a;text-shadow:0 0 22px rgba(224,178,94,.62)}
+.a1 .meter{position:relative;z-index:2;margin-top:15px;display:flex;align-items:center;gap:11px}
+.a1 .meter .n{font-family:'Clash Display',sans-serif;font-size:44px;line-height:.85;letter-spacing:-.05em;color:#f2ece4}
+.a1 .meter .r{flex:1}
+.a1 .meter .t{height:6px;border-radius:99px;background:#191419;overflow:hidden;position:relative}
+.a1 .meter .t i{position:absolute;left:0;top:0;bottom:0;
+  background:linear-gradient(90deg,#6b4a00,var(--gold),#FFE2AE);box-shadow:0 0 12px rgba(224,178,94,.65)}
+.a1 .meter .lab{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7.5px;
+  letter-spacing:.13em;color:#8d7a50;margin-top:6px}
+/* the real gauge strip */
+.a1 .gauges{display:grid;grid-template-columns:repeat(3,1fr);
+  background:linear-gradient(180deg,#0b0a0e,#08080b);border-bottom:1px solid var(--line)}
+.a1 .gg{padding:9px 4px;text-align:center;position:relative;
+  border-right:1px solid #16151b;box-shadow:inset 1px 0 0 rgba(224,178,94,.04)}
+.a1 .gg:last-child{border-right:0}
+.a1 .gg.hot::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(62% 54% at 50% 100%,rgba(224,178,94,.15),transparent 72%)}
+.a1 .gg svg{display:block;margin:0 auto}
+.a1 .gg .val{font-family:'Geist Mono',monospace;font-size:12px;font-weight:700;color:#efe6da;line-height:1;margin-top:-7px}
+.a1 .gg .lb{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.12em;text-transform:uppercase;
+  color:#514a58;text-shadow:0 1px 0 rgba(224,178,94,.16);margin-top:5px}
+.a1 .app{padding:0 13px}
+/* glance card */
+.a1 .glance{margin-top:14px;border-radius:15px;padding:13px 14px;border:1px solid var(--line2);
+  background:linear-gradient(150deg,#181327,#100d18)}
+.a1 .ms{display:grid;grid-template-columns:60px 1fr 30px;gap:7px;align-items:center;padding:3px 0}
+.a1 .ms .n{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.08em;color:#8b83a0}
+.a1 .ms .t{height:4px;border-radius:99px;background:#221d33;overflow:hidden;position:relative}
+.a1 .ms .t i{position:absolute;left:0;top:0;bottom:0;border-radius:99px}
+.a1 .ms .v{font-family:'Geist Mono',monospace;font-size:9px;font-weight:700;text-align:right;color:var(--ink)}
+.a1 .ovrbox{display:flex;align-items:baseline;gap:8px;padding-top:11px;margin-top:8px;
+  border-top:1px solid rgba(255,255,255,.07)}
+.a1 .ovrbox b{font-family:'Clash Display',sans-serif;font-size:34px;line-height:.85;letter-spacing:-.045em;color:var(--gold)}
+.a1 .ovrbox .l{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.16em;color:#6d5c3c;line-height:1.5}
+.a1 .ovrbox .gap{margin-left:auto;text-align:right;font-family:'Geist Mono',monospace;font-size:7.5px;
+  letter-spacing:.12em;color:var(--faint);line-height:1.6}
+.a1 .ovrbox .gap u{text-decoration:none;color:var(--gold);font-size:11px;font-weight:700;display:block}
+.a1 h2.sec{font-size:9px;font-family:'Geist Mono',monospace;letter-spacing:.19em;text-transform:uppercase;
+  color:var(--faint);margin:22px 0 8px;font-weight:700;display:flex;justify-content:space-between;align-items:baseline}
+.a1 h2.sec u{text-decoration:none;color:var(--dim)}
+/* reward rows in the schedule-block language */
+.a1 .blk{display:grid;grid-template-columns:1fr 20px;gap:10px;align-items:start;padding:11px 12px;
+  border-radius:11px;background:var(--panel);border:1px solid var(--line);margin-bottom:5px;
+  position:relative;overflow:hidden;min-height:46px}
+.a1 .blk .dom{position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--gold)}
+.a1 .blk.rdy{border-color:rgba(224,178,94,.5);background:rgba(224,178,94,.07)}
+.a1 .blk.gone{opacity:.5}.a1 .blk.gone .dom{background:var(--phos)}
+.a1 .blk .bn{font-size:13.5px;font-weight:500;letter-spacing:-.01em;line-height:1.25;padding-left:6px}
+.a1 .blk .bo{font-size:11.5px;color:var(--dim);margin-top:3px;line-height:1.35;padding-left:6px}
+.a1 .blk .bd{font-family:'Geist Mono',monospace;font-size:8px;color:#565064;letter-spacing:.08em;
+  margin-top:5px;padding-left:6px}
+.a1 .blk .bd b{color:var(--gold);font-weight:400}
+.a1 .blk .bc{width:18px;height:18px;border-radius:5px;border:1.5px solid #362f47;justify-self:end;margin-top:2px}
+.a1 .blk.rdy .bc{border-color:var(--gold);background:rgba(224,178,94,.2)}
+.a1 .blk.gone .bc{background:var(--phos);border-color:var(--phos)}
+/* privilege tokens, held */
+.a1 .toks{display:flex;gap:7px}
+.a1 .tok{flex:1;border-radius:11px;padding:12px 10px;text-align:center;position:relative;overflow:hidden;
+  background:linear-gradient(150deg,#1b1526,#110e1a 60%,#0d0b14);border:1px solid rgba(224,178,94,.45);
+  box-shadow:0 8px 36px -18px rgba(224,178,94,.5)}
+.a1 .tok i{position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--gold)}
+.a1 .tok .k{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.19em;color:var(--gold)}
+.a1 .tok b{display:block;font-size:12.5px;font-weight:500;color:var(--ink);margin-top:6px;line-height:1.25}
+.a1 .tok.mt{border-color:var(--line2);box-shadow:none;background:var(--panel)}
+.a1 .tok.mt i{background:#2a2438}
+.a1 .tok.mt .k{color:var(--faint)}
+.a1 .tok.mt b{color:#6b6480}
+/* boosts as win chips */
+.a1 .wins{display:flex;gap:6px;flex-wrap:wrap}
+.a1 .win{flex:1 1 calc(50% - 3px);border:1px solid var(--line2);background:var(--panel);border-radius:10px;
+  padding:11px 9px;font-size:12.5px;color:var(--dim);text-align:left;min-height:44px;
+  display:flex;align-items:center;gap:7px}
+.a1 .win b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:10px;color:var(--faint)}
+.a1 .btn{border:0;border-radius:11px;padding:14px 12px;font-size:14px;font-weight:600;min-height:46px;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;width:100%;margin-top:12px}
+.a1 .note{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:var(--faint);
+  line-height:1.9;padding:10px 2px 0}
+.a1 .note b{color:var(--gold);font-weight:400}
+
+/* =====================================================================
+   02 · THE ENVELOPES — a drawer of paper. Thickness = what's in it.
+   ===================================================================== */
+.a2{background:linear-gradient(180deg,#2A2118,#1E1710);padding:0 0 22px}
+.a2-drw{position:relative;margin:0 0 14px;padding:15px 16px 18px;
+  background:linear-gradient(180deg,#4A3826,#33261A);
+  box-shadow:inset 0 -4px 10px -4px rgba(0,0,0,.7),0 6px 16px -8px #000}
+.a2-drw::after{content:'';position:absolute;left:50%;bottom:-5px;width:74px;height:9px;border-radius:0 0 5px 5px;
+  transform:translateX(-50%);background:linear-gradient(180deg,#C9A961,#7E6229);
+  box-shadow:0 3px 5px rgba(0,0,0,.6)}
+.a2-drw .k{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.22em;color:#B49A72}
+.a2-drw .n{font-family:var(--hand);font-size:40px;color:#F4E9D2;line-height:.92;margin-top:4px}
+.a2-drw .s{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.14em;color:#9C8460;margin-top:5px}
+.a2-stack{padding:26px 16px 0;perspective:900px}
+/* one envelope */
+.a2-env{position:relative;margin-bottom:-46px;border-radius:3px;padding:15px 15px 62px;
+  transform-style:preserve-3d;
+  background:
+    repeating-linear-gradient(92deg,rgba(120,96,54,.05) 0 2px,transparent 2px 5px),
+    linear-gradient(172deg,#E9DDBE,#D8C9A2 58%,#CEBE95);
+  box-shadow:0 14px 24px -14px rgba(0,0,0,.9),0 2px 0 rgba(255,250,232,.5) inset}
+.a2-env:last-of-type{margin-bottom:0}
+.a2-env:nth-of-type(odd){transform:rotate(-.7deg)}
+.a2-env:nth-of-type(even){transform:rotate(.6deg)}
+/* the wad of notes sticking out of the top — this is the balance, physically */
+.a2-wad{position:absolute;left:16px;right:16px;top:-13px;height:15px}
+.a2-wad i{position:absolute;left:0;right:0;height:13px;border-radius:2px 2px 0 0;
+  background:linear-gradient(180deg,#F6EFD8,#E2D5B2);box-shadow:0 -1px 0 rgba(0,0,0,.14)}
+.a2-wad i:nth-child(1){top:0;left:2%;right:3%}
+.a2-wad i:nth-child(2){top:3px;left:5%;right:1%;transform:rotate(-.6deg)}
+.a2-wad i:nth-child(3){top:6px;left:1%;right:6%;transform:rotate(.7deg)}
+.a2-wad i:nth-child(4){top:9px;left:4%;right:2%}
+.a2-wad i:nth-child(5){top:12px;left:0;right:0}
+/* the flap, folded down the back and visible as a V at the top */
+.a2-env::before{content:'';position:absolute;left:0;right:0;top:0;height:34px;pointer-events:none;
+  background:linear-gradient(174deg,rgba(255,250,232,.5),rgba(160,134,86,.18));
+  clip-path:polygon(0 0,100% 0,50% 100%);opacity:.9;z-index:0}
+.a2-env b{position:relative;z-index:2;display:block;font-family:var(--hand);font-size:23px;color:#231B0C;
+  line-height:1.04;margin-top:14px;padding-right:104px}
+.a2-env em{position:relative;z-index:2;display:block;font-style:normal;font-family:var(--hand);font-size:14.5px;
+  color:#33518A;margin-top:7px;line-height:1.25;padding-right:104px;min-height:36px}
+.a2-env .r{position:absolute;z-index:4;right:15px;top:22px;display:flex;flex-direction:column;
+  align-items:flex-end;gap:8px;text-align:right}
+.a2-env .amt{font-family:var(--hand);font-size:20px;color:#231B0C;line-height:1}
+.a2-env .amt s{display:block;text-decoration:none;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.14em;color:#8A7550;margin-top:5px}
+.a2-open{border:0;border-radius:2px;padding:10px 13px;background:#8E3B22;color:#F8F0DE;
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.14em;font-weight:700;
+  box-shadow:0 3px 0 #5E2413}
+.a2-short{font-family:var(--hand);font-size:15px;color:#8E3B22;white-space:nowrap}
+/* a thin envelope: fewer notes, flatter, duller paper */
+.a2-env.thin{background:
+    repeating-linear-gradient(92deg,rgba(120,96,54,.05) 0 2px,transparent 2px 5px),
+    linear-gradient(172deg,#D9CDAC,#C6B692 58%,#BCAC88);
+  box-shadow:0 9px 16px -12px rgba(0,0,0,.85),0 1px 0 rgba(255,250,232,.35) inset}
+.a2-env.thin b{color:#3E3320}
+/* the vouchers tucked in, sticking out at an angle */
+.a2-vouch{position:relative;z-index:3;display:flex;gap:8px;margin:0 16px 8px}
+.a2-v{flex:1;background:linear-gradient(172deg,#F2E7C6,#DFD0A6);border-radius:2px;padding:9px 10px;
+  box-shadow:0 5px 11px -6px rgba(0,0,0,.8);transform:rotate(-1.4deg)}
+.a2-v:last-child{transform:rotate(1.2deg)}
+.a2-v .k{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.19em;color:#8A7550}
+.a2-v b{display:block;font-family:var(--hand);font-size:15px;color:#231B0C;line-height:1.08;margin-top:4px}
+.a2-v.mt{background:none;box-shadow:inset 0 0 0 1.5px rgba(180,154,114,.4)}
+.a2-v.mt .k,.a2-v.mt b{color:#9C8460}
+.a2-flat{position:relative;margin:0 16px 8px;border-radius:2px;padding:9px 13px;
+  background:linear-gradient(172deg,#5A4B34,#463A28);box-shadow:inset 0 0 0 1px #6B5B40}
+.a2-flat b{display:block;font-family:var(--hand);font-size:16px;color:#C4B392;line-height:1.1}
+.a2-flat>span{display:block;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.13em;
+  color:#9C8460;margin-top:5px}
+.a2-lab{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.22em;color:#9C8460;padding:16px 16px 9px}
+.a2-pay{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 16px}
+.a2-slip{border:0;background:linear-gradient(172deg,#F2E7C6,#E0D2AA);border-radius:2px;padding:10px 11px;
+  text-align:left;box-shadow:0 4px 9px -6px #000}
+.a2-slip b{display:block;font-family:var(--hand);font-size:15px;color:#231B0C;line-height:1.1}
+.a2-slip>span{display:block;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.12em;
+  color:#8A7550;margin-top:4px}
+.a2-note{font-family:var(--hand);font-size:15px;color:#B49A72;line-height:1.35;padding:14px 17px 0}
+
+/* =====================================================================
+   03 · THE JARS — glass, on two shelves. The level IS the answer.
+   ===================================================================== */
+.a3{background:linear-gradient(180deg,#241F19,#1A1611);padding:0 0 20px}
+.a3-hd{padding:15px 16px 4px;display:flex;justify-content:space-between;align-items:flex-end}
+.a3-hd .k{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.22em;color:#9A8A6E}
+.a3-hd .n{font-family:var(--hand);font-size:38px;color:#F2E8D2;line-height:.94;margin-top:3px}
+.a3-hd .s{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.14em;color:#9A8A6E;text-align:right;line-height:1.9}
+.a3-shelf{position:relative;margin-top:22px;padding:0 20px}
+.a3-jars{display:flex;gap:24px;align-items:flex-end;justify-content:center;position:relative;z-index:2}
+/* the jar */
+.a3-jar{width:150px;flex:none;position:relative}
+.a3-glass{position:relative;height:186px;border-radius:11px 11px 20px 20px;overflow:hidden;
+  background:linear-gradient(101deg,rgba(226,238,228,.16) 0 8%,rgba(226,238,228,.04) 26%,
+    rgba(226,238,228,.02) 62%,rgba(226,238,228,.13) 88%,rgba(226,238,228,.05));
+  box-shadow:inset 0 0 0 2px rgba(228,240,230,.26),inset 0 -14px 22px -14px rgba(0,0,0,.6),
+    0 16px 22px -16px rgba(0,0,0,.95)}
+/* lid */
+.a3-lid{position:absolute;left:-4px;right:-4px;top:0;height:22px;z-index:5;border-radius:5px 5px 3px 3px;
+  background:linear-gradient(180deg,#D8C08A,#A78A4E 46%,#7C6432);
+  box-shadow:0 2px 4px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,246,214,.6)}
+.a3-lid::after{content:'';position:absolute;left:0;right:0;top:9px;height:5px;
+  background:repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 2px,transparent 2px 5px)}
+/* the coins inside */
+.a3-fill{position:absolute;left:0;right:0;bottom:0;z-index:1;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(255,246,214,.9) 0 5.5px,rgba(0,0,0,.12) 6px,transparent 6.6px) 0 0/16px 12px,
+    radial-gradient(circle at 50% 50%,rgba(236,206,142,.85) 0 5.5px,rgba(0,0,0,.12) 6px,transparent 6.6px) 8px 6px/16px 12px,
+    radial-gradient(circle at 50% 50%,rgba(206,170,96,.7) 0 5px,transparent 5.6px) 4px 3px/16px 12px,
+    linear-gradient(180deg,#DFC382,#B8964E 58%,#8E7133)}
+.a3-fill::before{content:'';position:absolute;left:0;right:0;top:-5px;height:11px;border-radius:50%;
+  background:linear-gradient(180deg,#F4E2AE,#D3B368);box-shadow:0 -2px 7px rgba(255,220,150,.35)}
+/* glass highlights, over the coins */
+.a3-glass u{position:absolute;left:11px;top:30px;bottom:16px;width:9px;border-radius:6px;z-index:3;
+  background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.03));pointer-events:none}
+.a3-glass s{position:absolute;right:9px;top:36px;bottom:24px;width:4px;border-radius:4px;z-index:3;
+  background:linear-gradient(180deg,rgba(255,255,255,.14),transparent);pointer-events:none}
+/* the tied kraft label */
+.a3-lbl{position:absolute;left:11px;right:11px;top:74px;z-index:4;background:#E4D3AC;border-radius:2px;
+  padding:8px 9px 9px;box-shadow:0 3px 7px rgba(0,0,0,.5);transform:rotate(-.8deg)}
+.a3-lbl::before{content:'';position:absolute;left:-11px;right:-11px;top:-5px;height:3px;
+  background:linear-gradient(90deg,#8A7550,#B49A72 40%,#8A7550);border-radius:2px}
+.a3-lbl b{display:block;font-family:var(--hand);font-size:15px;color:#241C0C;line-height:1.04}
+.a3-lbl em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:5.5px;
+  letter-spacing:.06em;color:#7A6845;margin-top:5px;text-transform:uppercase;line-height:1.55}
+.a3-lbl .pz{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px}
+.a3-lbl .pz span{font-family:'Geist Mono',monospace;font-size:7.5px;color:#5E4E30}
+.a3-lbl .pz i{font-style:normal;font-family:var(--hand);font-size:12px;color:#8E3B22}
+.a3-take{border:0;border-radius:2px;padding:6px 8px;background:#3E5A34;color:#EFF6E8;
+  font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.12em;font-weight:700}
+/* an empty, upturned jar */
+.a3-jar.gone .a3-glass{transform:rotate(180deg)}
+.a3-jar.gone .a3-lbl{transform:rotate(179.2deg)}
+.a3-jar.gone .a3-glass u,.a3-jar.gone .a3-glass s{display:none}
+/* the plank */
+.a3-plank{position:relative;z-index:1;height:17px;margin:0 6px;border-radius:2px;
+  background:linear-gradient(180deg,#7C5F3E,#5A452C 46%,#3E2E1C);
+  box-shadow:0 12px 20px -12px rgba(0,0,0,.95),inset 0 1px 0 rgba(255,222,170,.28)}
+.a3-plank::after{content:'';position:absolute;left:0;right:0;top:0;height:100%;opacity:.35;
+  background:repeating-linear-gradient(90deg,transparent 0 17px,rgba(0,0,0,.18) 17px 19px)}
+.a3-lab{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.22em;color:#9A8A6E;padding:22px 16px 9px}
+.a3-saucer{margin:0 16px;border-radius:38px 38px 10px 10px;padding:13px 12px;
+  background:radial-gradient(ellipse at 50% 8%,#3A322A,#251F19 72%);
+  box-shadow:inset 0 4px 11px rgba(0,0,0,.75),0 5px 12px -7px #000}
+.a3-toks{display:flex;gap:9px}
+.a3-tok{flex:1;border-radius:50px;padding:12px 8px;text-align:center;
+  background:radial-gradient(circle at 38% 26%,#F8E9BE,#CFAA5E 54%,#94743A);
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.04em;color:#3A2C08;line-height:1.5;
+  box-shadow:0 4px 8px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,250,230,.75)}
+.a3-tok.mt{background:none;box-shadow:inset 0 0 0 1.5px rgba(207,170,94,.36);color:#8A7A5E}
+.a3-pay{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 16px}
+.a3-slip{border:0;background:#E4D3AC;border-radius:2px;padding:10px 11px;text-align:left;
+  box-shadow:0 4px 9px -6px #000}
+.a3-slip b{display:block;font-family:var(--hand);font-size:15px;color:#241C0C;line-height:1.1}
+.a3-slip>span{display:block;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.12em;
+  color:#7A6845;margin-top:4px}
+.a3-note{font-family:var(--hand);font-size:15px;color:#B49A72;line-height:1.35;padding:14px 17px 0}
+
+/* =====================================================================
+   04 · THE TYPE CASE — a divided wooden tray, seen from above
+   ===================================================================== */
+.a4{background:linear-gradient(180deg,#3A2A1C,#2A1D13);padding:14px 12px 20px}
+.a4-tray{border-radius:5px;padding:9px;
+  background:linear-gradient(168deg,#6B4E30,#4E3821 60%,#3E2B18);
+  box-shadow:inset 0 0 0 3px #2A1C0F,0 12px 24px -12px #000}
+.a4-grid{display:grid;gap:7px;
+  grid-template-columns:1fr 1fr 1fr;
+  grid-template-areas:
+    "xp xp p1"
+    "xp xp p2"
+    "r1 r1 r2"
+    "r3 r3 r4"
+    "r5 r5 r6";}
+.a4-c{position:relative;border-radius:2px;padding:9px 9px 8px;min-height:82px;
+  background:linear-gradient(178deg,#241809,#1A1006);
+  box-shadow:inset 0 3px 7px rgba(0,0,0,.85),inset 0 0 0 1px #120B04,0 1px 0 rgba(214,178,120,.22)}
+.a4-c .k{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.18em;color:#7E6440}
+.a4-xp{grid-area:xp;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.a4-plate{border-radius:2px;padding:11px 13px;margin-top:7px;width:100%;
+  background:linear-gradient(178deg,#DCC085,#A5854A 52%,#7C6230);
+  box-shadow:inset 0 1px 0 rgba(255,246,214,.65),0 3px 6px rgba(0,0,0,.6)}
+.a4-plate b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:36px;
+  letter-spacing:-.05em;color:#33240A;line-height:.9;text-shadow:0 1px 0 rgba(255,246,214,.45)}
+.a4-plate>span{display:block;font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.18em;
+  color:#5A4318;margin-top:6px}
+.a4-p1{grid-area:p1}.a4-p2{grid-area:p2}
+.a4-tok{display:grid;place-items:center;text-align:center}
+.a4-disc{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;margin-top:5px;
+  background:radial-gradient(circle at 36% 26%,#F8E9BE,#CFAA5E 52%,#8E7134);
+  font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.02em;color:#3A2C08;line-height:1.25;
+  box-shadow:0 3px 6px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,250,230,.75)}
+.a4-disc.mt{background:none;box-shadow:inset 0 0 0 1.5px rgba(207,170,94,.3);color:#7E6440}
+.a4-r1{grid-area:r1}.a4-r2{grid-area:r2}.a4-r3{grid-area:r3}
+.a4-r4{grid-area:r4}.a4-r5{grid-area:r5}.a4-r6{grid-area:r6}
+.a4-sl{border-radius:2px;padding:8px 9px;margin-top:5px;
+  background:linear-gradient(178deg,#C9AE76,#9C8046);
+  box-shadow:inset 0 1px 0 rgba(255,246,214,.5),0 2px 4px rgba(0,0,0,.55)}
+.a4-sl b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:13px;
+  letter-spacing:-.025em;color:#2E2008;line-height:1.04}
+.a4-sl em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:5.5px;
+  letter-spacing:.05em;color:#5A4318;margin-top:5px;text-transform:uppercase;line-height:1.5}
+.a4-sl .pz{display:flex;justify-content:space-between;align-items:center;margin-top:7px}
+.a4-sl .pz span{font-family:'Geist Mono',monospace;font-size:7.5px;color:#4A3610}
+.a4-sl .pz i{font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.08em;color:#7A3C18}
+.a4-sl.dull{background:linear-gradient(178deg,#6E6250,#544A3A);box-shadow:inset 0 1px 0 rgba(255,246,214,.18)}
+.a4-sl.dull b{color:#C6BAA2}
+.a4-sl.dull em{color:#9C917C}
+.a4-sl.dull .pz span{color:#B4A98E}
+.a4-sl.dull .pz i{color:#C89A6A}
+.a4-tk{border:0;border-radius:2px;padding:6px 9px;background:#3E2B18;color:#E8D2A6;
+  font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.12em;font-weight:700}
+.a4-r6 .tagp{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.1em;color:#8A6E48;
+  line-height:1.7;margin-top:6px}
+.a4-bo{grid-area:bo}
+.a4-boosts{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:9px}
+.a4-b{border:0;border-radius:2px;padding:9px 4px;text-align:center;
+  background:linear-gradient(178deg,#241809,#1A1006);
+  box-shadow:inset 0 3px 7px rgba(0,0,0,.85),0 1px 0 rgba(214,178,120,.2)}
+.a4-b i{display:block;width:19px;height:19px;border-radius:50%;margin:0 auto 6px;
+  background:radial-gradient(circle at 36% 26%,#F0DCA8,#B4924C 56%,#7C6230);box-shadow:0 2px 3px rgba(0,0,0,.7)}
+.a4-b>span{display:block;font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.05em;
+  color:#B49A72;line-height:1.4}
+.a4-b b{display:block;font-family:'Geist Mono',monospace;font-size:8px;color:#E8C98A;margin-top:4px}
+.a4-note{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;color:#9C8460;
+  line-height:1.9;padding:12px 4px 0}
+.a4-note b{color:#E8C98A;font-weight:400}
+
+/* =====================================================================
+   05 · THE LEDGER — an open book, ruled in double entry
+   ===================================================================== */
+.a5{background:linear-gradient(180deg,#241A16,#1A1310);padding:16px 0 22px;position:relative}
+.a5-book{position:relative;margin:0 10px 0 37px;min-height:772px;border-radius:2px 6px 6px 2px;overflow:hidden;
+  background:linear-gradient(96deg,#DCCEAA 0 3%,#F2E8CE 10%,#F6EEDA 60%,#EFE4C8);
+  box-shadow:0 18px 34px -16px rgba(0,0,0,.95)}
+/* the block of page edges on the left, and the gutter shadow */
+.a5-edges{position:absolute;left:-27px;top:5px;bottom:5px;width:27px;border-radius:4px 0 0 4px;
+  background:repeating-linear-gradient(180deg,#EFE4C8 0 2px,#BCA97F 2px 3.4px);
+  box-shadow:inset -6px 0 10px rgba(0,0,0,.34),-3px 4px 12px -4px rgba(0,0,0,.7)}
+.a5-gut{position:absolute;left:0;top:0;bottom:0;width:22px;pointer-events:none;z-index:3;
+  background:linear-gradient(90deg,rgba(80,58,30,.42),rgba(80,58,30,.05) 60%,transparent)}
+.a5-rib{position:absolute;right:26px;top:-16px;width:14px;height:78px;z-index:5;
+  background:linear-gradient(180deg,#8E2F2A,#6B211D);border-radius:0 0 2px 2px;
+  box-shadow:0 3px 6px rgba(0,0,0,.55)}
+.a5-rib::after{content:'';position:absolute;left:0;right:0;bottom:-8px;height:9px;background:inherit;
+  clip-path:polygon(0 0,100% 0,100% 100%,50% 55%,0 100%)}
+.a5-pg{position:relative;z-index:2;padding:16px 15px 16px 30px}
+.a5-hd{border-bottom:2px solid #8E2F2A;padding-bottom:9px;display:flex;justify-content:space-between;
+  align-items:flex-end}
+.a5-hd .t{font-family:'Clash Display',sans-serif;font-weight:700;font-size:15px;letter-spacing:.01em;color:#241A0C}
+.a5-hd .t>span{display:block;font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.2em;
+  color:#8A7550;margin-top:5px;font-weight:400}
+.a5-hd .n{text-align:right;padding-right:30px}
+.a5-hd .n b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:30px;letter-spacing:-.045em;
+  color:#241A0C;line-height:.94}
+.a5-hd .n>span{display:block;font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.15em;
+  color:#8A7550;margin-top:4px}
+/* the ruled ledger grid — double entry, not a card list */
+.a5-tab{margin-top:11px;border-top:1px solid #B9A87E}
+.a5-cols{display:grid;grid-template-columns:1fr 54px 58px;position:relative}
+.a5-cols::before,.a5-cols::after{content:'';position:absolute;top:0;bottom:0;width:1px;background:#B9A87E}
+.a5-cols::before{right:112px}.a5-cols::after{right:58px}
+.a5-cols>span{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.15em;color:#8A7550;
+  padding:6px 7px;border-bottom:1px solid #B9A87E}
+.a5-cols>span:nth-child(2),.a5-cols>span:nth-child(3){text-align:right}
+.a5-e{display:grid;grid-template-columns:1fr 54px 58px;position:relative;
+  border-bottom:1px solid #D8C8A2;min-height:46px}
+.a5-e::before,.a5-e::after{content:'';position:absolute;top:0;bottom:0;width:1px;background:#B9A87E}
+.a5-e::before{right:112px}.a5-e::after{right:58px}
+.a5-e .pa{padding:8px 7px}
+.a5-e .pa b{display:block;font-family:'Clash Display',sans-serif;font-weight:600;font-size:14px;
+  letter-spacing:-.025em;color:#241A0C;line-height:1.06}
+.a5-e .pa em{display:block;font-style:normal;font-family:var(--hand);font-size:12.5px;color:#33518A;
+  margin-top:4px;line-height:1.2}
+.a5-e .du,.a5-e .st{padding:8px 7px;display:flex;align-items:center;justify-content:flex-end;
+  font-family:'Geist Mono',monospace;font-size:10px;color:#241A0C}
+.a5-e .st{font-size:6.5px;letter-spacing:.08em;color:#7A6845;text-align:right;line-height:1.5}
+.a5-e.ok .st{color:#2E6B3A;font-weight:700}
+.a5-e.settled{background:rgba(140,120,80,.14)}
+.a5-e.settled .pa b{color:#7A6845}
+.a5-e .sg{font-family:var(--hand);font-size:15px;color:#8E2F2A;transform:rotate(-2deg)}
+/* privileges tipped into the page with photo corners */
+.a5-tip{display:flex;gap:9px;margin-top:13px}
+.a5-t{flex:1;position:relative;background:#EDE0BE;border-radius:1px;padding:9px 10px;
+  box-shadow:0 3px 7px rgba(0,0,0,.28);transform:rotate(-.8deg)}
+.a5-t:last-child{transform:rotate(.7deg)}
+.a5-t::before,.a5-t::after{content:'';position:absolute;width:13px;height:13px;background:#C9B893;
+  box-shadow:inset -1px -1px 2px rgba(0,0,0,.2)}
+.a5-t::before{left:0;top:0;clip-path:polygon(0 0,100% 0,0 100%)}
+.a5-t::after{right:0;bottom:0;clip-path:polygon(100% 0,100% 100%,0 100%)}
+.a5-t .k{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.18em;color:#8A7550}
+.a5-t b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:12.5px;
+  letter-spacing:-.02em;color:#241A0C;line-height:1.08;margin-top:5px}
+.a5-t.mt{background:none;box-shadow:inset 0 0 0 1px #C9B893}
+.a5-t.mt .k,.a5-t.mt b{color:#9C8C68}
+.a5-lab{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.2em;color:#8A7550;margin:14px 0 7px}
+.a5-cr{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.a5-c{border:0;background:none;box-shadow:inset 0 0 0 1px #C9B893;border-radius:1px;padding:8px 9px;
+  text-align:left}
+.a5-c b{display:block;font-family:'Geist Mono',monospace;font-size:7.5px;color:#241A0C;letter-spacing:.03em}
+.a5-c>span{display:block;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.1em;
+  color:#7A6845;margin-top:4px}
+.a5-note{font-family:var(--hand);font-size:14px;color:#8E2F2A;line-height:1.35;margin-top:12px}
+
+/* =====================================================================
+   06 · THE CORKBOARD — pinned, overlapping, at angles
+   ===================================================================== */
+.a6{padding:0;position:relative;
+  background:
+    radial-gradient(circle at 12% 22%,rgba(120,80,40,.5) 1.6px,transparent 2px) 0 0/13px 11px,
+    radial-gradient(circle at 62% 68%,rgba(90,58,26,.45) 1.9px,transparent 2.3px) 5px 4px/17px 15px,
+    radial-gradient(circle at 38% 44%,rgba(160,116,62,.35) 1.4px,transparent 1.8px) 9px 7px/11px 13px,
+    linear-gradient(172deg,#B98A4E,#A2753E 52%,#8E6534)}
+.a6-frame{position:relative;height:1010px;
+  box-shadow:inset 0 0 0 9px #5E3E1E,inset 0 0 26px rgba(60,36,12,.55)}
+.a6-pin{position:absolute;width:17px;height:17px;border-radius:50%;top:-8px;left:50%;
+  transform:translateX(-50%);z-index:6;
+  box-shadow:0 3px 5px rgba(0,0,0,.55),inset -2px -2px 4px rgba(0,0,0,.35),inset 2px 2px 3px rgba(255,255,255,.5)}
+.a6-card{position:absolute;background:#F6EFDC;padding:11px 12px 12px;
+  box-shadow:0 9px 16px -7px rgba(0,0,0,.6),0 2px 3px rgba(0,0,0,.25)}
+.a6-card b{display:block;font-family:var(--hand);font-size:19px;color:#231B0C;line-height:1.06}
+.a6-card em{display:block;font-style:normal;font-family:var(--hand);font-size:13px;color:#33518A;
+  margin-top:6px;line-height:1.25}
+.a6-card .pz{display:flex;align-items:center;gap:8px;margin-top:9px}
+.a6-card .pz span{font-family:'Geist Mono',monospace;font-size:8.5px;color:#5E4E30}
+.a6-go{margin-left:auto;border:0;border-radius:2px;padding:7px 10px;background:#3E5A34;color:#EFF6E8;
+  font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.12em;font-weight:700}
+.a6-soon{margin-left:auto;font-family:var(--hand);font-size:13.5px;color:#8E3B22;white-space:nowrap}
+.a6-card.ruled{background:
+  repeating-linear-gradient(180deg,transparent 0 17px,rgba(80,110,160,.22) 17px 18px),#F6EFDC}
+/* the balance, written on a big pinned sheet */
+.a6-sheet{position:absolute;background:#FFF8E4;padding:13px 14px 14px;
+  box-shadow:0 11px 20px -8px rgba(0,0,0,.65)}
+.a6-sheet .k{font-family:var(--hand);font-size:14px;color:#6B5A34}
+.a6-sheet .n{font-family:var(--hand);font-size:50px;color:#8E3B22;line-height:.88;margin-top:2px}
+.a6-sheet .s{font-family:var(--hand);font-size:13px;color:#3E3320;margin-top:5px}
+/* keys pinned by their rings */
+.a6-key{position:absolute;background:#EFE3C6;padding:9px 10px 10px;
+  box-shadow:0 8px 14px -7px rgba(0,0,0,.6)}
+.a6-key .kk{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.17em;color:#8A7550}
+.a6-key b{display:block;font-family:var(--hand);font-size:15px;color:#231B0C;line-height:1.08;margin-top:4px;padding-right:26px}
+.a6-key i{position:absolute;right:9px;bottom:9px;width:13px;height:26px;border-radius:7px 7px 2px 2px;
+  background:linear-gradient(150deg,#E2C888,#A5854A);box-shadow:0 2px 4px rgba(0,0,0,.5)}
+.a6-key i::after{content:'';position:absolute;left:50%;top:6px;width:4px;height:4px;border-radius:50%;
+  background:#2A2010;transform:translateX(-50%)}
+.a6-key.mt i{background:none;box-shadow:inset 0 0 0 1.5px #B49A72}
+/* a photograph — the claimed one */
+.a6-photo{position:absolute;background:#FFFDF6;padding:8px 8px 26px;
+  box-shadow:0 11px 18px -7px rgba(0,0,0,.7)}
+.a6-photo .im{height:74px;background:
+  linear-gradient(178deg,#5E7A6E,#3E5A50 60%,#2E463E);position:relative;overflow:hidden}
+.a6-photo .im::after{content:'';position:absolute;left:-20%;top:-40%;width:60%;height:180%;transform:rotate(18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.13),transparent)}
+.a6-photo span{position:absolute;left:9px;right:9px;bottom:7px;font-family:var(--hand);font-size:12.5px;
+  color:#3E3320;text-align:center}
+/* boosts on a pinned receipt strip */
+.a6-strip{position:absolute;background:#FBF3DE;padding:9px 10px 11px;
+  box-shadow:0 8px 15px -7px rgba(0,0,0,.6)}
+.a6-strip .k{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.16em;color:#8A7550;
+  border-bottom:1px dashed #C9B893;padding-bottom:6px;margin-bottom:7px}
+.a6-strip button{display:flex;width:100%;border:0;background:none;padding:5px 0;text-align:left;
+  font-family:'Geist Mono',monospace;font-size:8px;color:#3E3320;letter-spacing:.03em;
+  border-bottom:1px dotted #D8C8A2}
+.a6-strip button:last-child{border-bottom:0}
+.a6-strip button b{margin-left:auto;color:#8E3B22}
+
+/* =====================================================================
+   07 · THE DIAL — one brass instrument
+   ===================================================================== */
+.a7{background:radial-gradient(120% 80% at 50% 8%,#2A2620,#171410 70%);padding:14px 12px 20px}
+.a7-inst{border-radius:16px;padding:14px;position:relative;
+  background:linear-gradient(172deg,#3E3830,#282218);
+  box-shadow:inset 0 1px 0 rgba(255,230,180,.2),0 14px 28px -14px #000}
+.a7-scr{position:absolute;width:8px;height:8px;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#C9B48A,#7E6A48);box-shadow:inset 0 -1px 1px rgba(0,0,0,.6)}
+.a7-scr::after{content:'';position:absolute;left:1.5px;right:1.5px;top:3px;height:1.5px;background:#4E4230}
+.a7-face{position:relative;border-radius:50%;overflow:hidden}
+.a7-face svg{display:block;width:100%;height:auto}
+.a7-face::after{content:'';position:absolute;left:0;right:0;top:0;height:52%;pointer-events:none;
+  border-radius:50% 50% 46% 46%;
+  background:linear-gradient(178deg,rgba(255,255,255,.16),rgba(255,255,255,.02) 70%,transparent)}
+.a7-win{margin-top:12px;border-radius:3px;padding:10px 12px;
+  background:linear-gradient(178deg,#1A1610,#120F0A);box-shadow:inset 0 2px 7px rgba(0,0,0,.85)}
+.a7-win .k{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.2em;color:#8A7042;margin-bottom:8px}
+.a7-lg{display:flex;align-items:baseline;gap:8px;padding:5px 0;border-bottom:1px solid rgba(201,169,97,.14)}
+.a7-lg:last-child{border-bottom:0}
+.a7-lg i{font-style:normal;font-family:'Geist Mono',monospace;font-size:8px;color:#3A2C08;flex:none;
+  width:14px;height:14px;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 36% 28%,#F0DCA8,#B4924C)}
+.a7-lg b{font-family:'Clash Display',sans-serif;font-weight:600;font-size:12.5px;letter-spacing:-.02em;
+  color:#EBDDBE;flex:none}
+.a7-lg em{font-style:normal;font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.06em;
+  color:#9C8460;text-transform:uppercase;line-height:1.5}
+.a7-lg s{margin-left:auto;text-decoration:none;font-family:'Geist Mono',monospace;font-size:7px;
+  letter-spacing:.08em;color:#C9A961;white-space:nowrap;flex:none}
+.a7-lg.rdy s{color:#7ADFA0}
+.a7-lg.gone b{color:#7E7256}.a7-lg.gone em{color:#6E644C}
+.a7-toks{display:flex;gap:9px;margin-top:12px}
+.a7-tk{flex:1;border-radius:4px;padding:10px 9px;text-align:center;
+  background:linear-gradient(178deg,#1A1610,#120F0A);box-shadow:inset 0 2px 7px rgba(0,0,0,.85)}
+.a7-tk .d{width:34px;height:34px;border-radius:50%;margin:0 auto 7px;display:grid;place-items:center;
+  background:radial-gradient(circle at 36% 28%,#F8E9BE,#CFAA5E 52%,#8E7134);
+  font-family:'Geist Mono',monospace;font-size:5.5px;color:#3A2C08;line-height:1.2;
+  box-shadow:0 3px 6px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,250,230,.7)}
+.a7-tk .d.mt{background:none;box-shadow:inset 0 0 0 1.5px rgba(207,170,94,.3);color:#7E6440}
+.a7-tk span{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.07em;color:#B49A72;line-height:1.5}
+.a7-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
+.a7-btn{border:0;border-radius:5px;padding:10px 4px;text-align:center;
+  background:linear-gradient(178deg,#4A4238,#2E2820);
+  box-shadow:0 3px 0 #1A1610,inset 0 1px 0 rgba(255,230,180,.2)}
+.a7-btn>span{display:block;font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.05em;
+  color:#B49A72;line-height:1.4}
+.a7-btn b{display:block;font-family:'Geist Mono',monospace;font-size:8px;color:#E8C98A;margin-top:4px}
+.a7-note{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;color:#9C8460;
+  line-height:1.9;padding:12px 4px 0}
+.a7-note b{color:#E8C98A;font-weight:400}
+
+/* =====================================================================
+   08 · THE BALANCE — a beam over a fitted weight case
+   ===================================================================== */
+.a8{background:linear-gradient(180deg,#22232A,#15161B);padding:14px 12px 20px}
+.a8-scale{position:relative;height:250px;margin-bottom:6px}
+.a8-beam{position:absolute;left:50%;top:52px;width:280px;height:7px;margin-left:-140px;border-radius:4px;
+  transform-origin:50% 50%;
+  background:linear-gradient(180deg,#E4CE96,#A5854A 52%,#6E5424);
+  box-shadow:0 3px 6px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,246,214,.7)}
+.a8-beam::before,.a8-beam::after{content:'';position:absolute;top:6px;width:1.5px;height:56px;
+  background:linear-gradient(180deg,#B49A6A,#7E6A44)}
+.a8-beam::before{left:14px}.a8-beam::after{right:14px}
+.a8-pan{position:absolute;top:60px;width:120px;height:74px;text-align:center}
+.a8-pan .dish{position:absolute;left:0;right:0;top:0;height:15px;border-radius:0 0 60px 60px;
+  background:linear-gradient(180deg,#C9B48A,#8A7248);box-shadow:0 4px 7px rgba(0,0,0,.55)}
+.a8-pan .load{position:absolute;left:22px;right:22px;top:-13px;height:15px;border-radius:8px 8px 3px 3px;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(255,246,214,.9) 0 4px,rgba(0,0,0,.1) 4.4px,transparent 5px) 0 0/11px 8px,
+    linear-gradient(180deg,#DFC382,#A5854A)}
+.a8-pan .lb{position:absolute;left:-6px;right:-6px;top:22px;font-family:'Geist Mono',monospace;
+  font-size:6.5px;letter-spacing:.13em;color:#9AA0AC;line-height:1.7}
+.a8-pan .lb b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:20px;
+  letter-spacing:-.035em;color:#EDE7DD;margin-bottom:3px}
+.a8-l{left:50%;margin-left:-186px}
+.a8-r{left:50%;margin-left:66px}
+.a8-col{position:absolute;left:50%;top:52px;width:15px;height:150px;margin-left:-7.5px;border-radius:3px;
+  background:linear-gradient(96deg,#7E6A48,#C9B48A 40%,#6E5A38)}
+.a8-base{position:absolute;left:50%;bottom:22px;width:168px;height:15px;margin-left:-84px;border-radius:5px;
+  background:linear-gradient(180deg,#C9B48A,#6E5A38);box-shadow:0 7px 14px -6px rgba(0,0,0,.9)}
+.a8-ptr{position:absolute;left:50%;top:24px;transform:translateX(-50%);text-align:center;
+  font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.16em;color:#7E8694}
+.a8-lab{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.2em;color:#7E8694;padding:14px 2px 9px}
+/* the fitted case */
+.a8-case{border-radius:6px;padding:11px;
+  background:linear-gradient(172deg,#2E3038,#1E2027);box-shadow:inset 0 0 0 2px #3A3D46,0 10px 20px -12px #000}
+.a8-cells{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.a8-cell{border-radius:5px;padding:11px 10px 10px;text-align:center;position:relative;
+  background:radial-gradient(ellipse at 50% 26%,#3E2226,#241416 72%);
+  box-shadow:inset 0 3px 9px rgba(0,0,0,.85)}
+.a8-w{width:62px;height:62px;border-radius:50%;margin:0 auto;display:grid;place-items:center;
+  background:radial-gradient(circle at 36% 26%,#F0DCA8,#B4924C 48%,#7E6229 78%,#5E4720);
+  box-shadow:0 5px 9px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,250,230,.7)}
+.a8-w span{font-family:'Geist Mono',monospace;font-size:9px;font-weight:700;color:#3A2C08;
+  text-shadow:0 1px 0 rgba(255,246,214,.4)}
+.a8-w.sm{width:52px;height:52px}
+.a8-w.lg{width:72px;height:72px}
+.a8-w.mt{background:none;box-shadow:inset 0 0 0 2px rgba(180,146,76,.3)}
+.a8-w.mt span{color:#7E6A44;text-shadow:none}
+.a8-cell b{display:block;font-family:'Clash Display',sans-serif;font-weight:600;font-size:13px;
+  letter-spacing:-.025em;color:#E6EAF0;line-height:1.06;margin-top:9px}
+.a8-cell em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6px;
+  letter-spacing:.06em;color:#8A93A2;margin-top:5px;text-transform:uppercase;line-height:1.55}
+.a8-cell .st{display:block;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.1em;
+  color:#C9A961;margin-top:7px}
+.a8-cell .st.ok{color:#7ADFA0}
+.a8-cell.gone b{color:#6E7684}.a8-cell.gone em{color:#5A626E}
+.a8-toks{display:flex;gap:9px;margin-top:11px}
+.a8-tk{flex:1;border-radius:5px;padding:10px 9px;text-align:center;
+  background:radial-gradient(ellipse at 50% 20%,#2E3038,#1A1C22 74%);box-shadow:inset 0 3px 9px rgba(0,0,0,.8)}
+.a8-tk i{display:block;width:15px;height:30px;border-radius:8px 8px 3px 3px;margin:0 auto 7px;
+  background:linear-gradient(150deg,#E2C888,#A5854A);box-shadow:0 2px 5px rgba(0,0,0,.7)}
+.a8-tk i.mt{background:none;box-shadow:inset 0 0 0 1.5px rgba(180,146,76,.34)}
+.a8-tk span{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.06em;color:#9AA0AC;line-height:1.5}
+.a8-bo{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:11px}
+.a8-b{border:0;border-radius:5px;padding:10px 4px;text-align:center;
+  background:linear-gradient(178deg,#3A3D46,#24262C);box-shadow:0 3px 0 #15161B}
+.a8-b span{display:block;font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.05em;color:#9AA0AC;line-height:1.4}
+.a8-b b{display:block;font-family:'Geist Mono',monospace;font-size:8px;color:#E2C888;margin-top:4px}
+.a8-note{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;color:#7E8694;
+  line-height:1.9;padding:12px 2px 0}
+.a8-note b{color:#E2C888;font-weight:400}
+
+/* =====================================================================
+   09 · THE COIN STACK — a column against a graduated rule
+   ===================================================================== */
+.a9{background:linear-gradient(180deg,#1E1B16,#141210);padding:16px 14px 20px}
+.a9-wrap{position:relative;height:626px;display:flex;align-items:flex-end;gap:14px}
+.a9-plinth{position:absolute;left:0;right:0;bottom:0;height:13px;border-radius:3px;
+  background:linear-gradient(180deg,#6E5A38,#3E3220);box-shadow:0 9px 16px -8px #000}
+/* the stack itself: coin edges, tiled */
+.a9-col{position:relative;width:104px;height:580px;flex:none;margin-bottom:13px}
+.a9-stack{position:absolute;left:0;right:0;bottom:0;border-radius:7px 7px 3px 3px;
+  background:repeating-linear-gradient(180deg,#F0DCA8 0 2px,#C9A961 2px 5px,#8E7134 5px 6.5px);
+  box-shadow:0 0 0 1px rgba(60,42,14,.5),inset -9px 0 14px -8px rgba(0,0,0,.6),
+    inset 9px 0 12px -8px rgba(255,246,214,.4),0 10px 18px -10px #000}
+.a9-stack::before{content:'';position:absolute;left:0;right:0;top:-5px;height:11px;border-radius:50%;
+  background:radial-gradient(ellipse at 40% 30%,#FBEFC8,#CFAA5E 60%,#A5854A)}
+.a9-cap{position:absolute;left:0;right:0;bottom:100%;margin-bottom:14px;text-align:center}
+.a9-cap b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:30px;letter-spacing:-.045em;
+  color:#F2E6C8;line-height:.94;display:block}
+.a9-cap span{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.18em;color:#9C8460;
+  display:block;margin-top:5px}
+/* the graduated rule */
+.a9-rule{position:relative;flex:1;height:100%;margin-bottom:13px;
+  border-left:2px solid rgba(201,169,97,.34)}
+.a9-rule::before{content:'';position:absolute;left:0;width:7px;top:0;bottom:0;pointer-events:none;
+  background:repeating-linear-gradient(to top,rgba(201,169,97,.34) 0 1.5px,transparent 1.5px 36.25px)}
+.a9-m{position:absolute;left:0;right:0;height:0}
+.a9-m i{position:absolute;left:0;width:15px;height:2px;background:#C9A961;top:-1px}
+.a9-m .tx{position:absolute;left:21px;right:0;top:-19px}
+.a9-m b{display:block;font-family:'Clash Display',sans-serif;font-weight:600;font-size:13.5px;
+  letter-spacing:-.025em;color:#EFE2C2;line-height:1.05}
+.a9-m em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6px;
+  letter-spacing:.06em;color:#9C8460;margin-top:4px;text-transform:uppercase;line-height:1.5}
+.a9-m s{display:inline-block;text-decoration:none;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.09em;color:#C9A961;margin-top:5px}
+.a9-m.rdy i{background:#7ADFA0;width:22px;height:3px}
+.a9-m.rdy s{color:#7ADFA0}
+.a9-m.gone b{color:#7E7256}.a9-m.gone em,.a9-m.gone s{color:#6E644C}
+/* the level line at the balance */
+.a9-lv{position:absolute;left:-118px;right:0;height:0;z-index:4}
+.a9-lv i{position:absolute;left:0;right:0;top:0;border-top:2px dashed #E2C888;opacity:.85}
+.a9-lv span{position:absolute;right:0;top:-16px;background:#E2C888;color:#241C08;border-radius:3px;
+  padding:3px 7px;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.11em;font-weight:700;
+  white-space:nowrap}
+.a9-lab{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.2em;color:#9C8460;padding:18px 2px 9px}
+.a9-edge{display:flex;gap:9px}
+.a9-e{flex:1;border-radius:5px;padding:11px 9px;text-align:center;
+  background:linear-gradient(178deg,#2A2418,#1A1610);box-shadow:inset 0 0 0 1px #3A3120}
+.a9-e i{display:block;width:44px;height:12px;border-radius:50%;margin:0 auto 8px;
+  background:linear-gradient(180deg,#F0DCA8,#A5854A);box-shadow:0 3px 5px rgba(0,0,0,.7)}
+.a9-e i.mt{background:none;box-shadow:inset 0 0 0 1.5px rgba(201,169,97,.3)}
+.a9-e span{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.06em;color:#B49A72;line-height:1.5}
+.a9-bo{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:11px}
+.a9-b{border:0;border-radius:5px;padding:10px 4px;text-align:center;
+  background:linear-gradient(178deg,#2A2418,#1A1610);box-shadow:0 3px 0 #100E0A,inset 0 0 0 1px #3A3120}
+.a9-b span{display:block;font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.05em;color:#B49A72;line-height:1.4}
+.a9-b b{display:block;font-family:'Geist Mono',monospace;font-size:8px;color:#E2C888;margin-top:4px}
+.a9-note{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;color:#9C8460;line-height:1.9;padding:12px 2px 0}
+.a9-note b{color:#E2C888;font-weight:400}
+
+/* =====================================================================
+   10 · THE KEY CABINET — brass tags hanging from hooks
+   ===================================================================== */
+.a10{padding:0;background:
+  repeating-linear-gradient(92deg,rgba(0,0,0,.05) 0 3px,transparent 3px 9px),
+  linear-gradient(172deg,#5E4126,#4A321C 56%,#3A2716)}
+.a10-in{padding:16px 14px 22px;min-height:820px;box-shadow:inset 0 0 0 8px #33220F,inset 0 0 30px rgba(30,18,6,.6)}
+.a10-hd{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:14px}
+.a10-hd .t{font-family:'Clash Display',sans-serif;font-weight:700;font-size:15px;letter-spacing:.03em;
+  color:#EBD9B4;text-transform:uppercase}
+.a10-hd .t>span{display:block;font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.2em;
+  color:#B49A72;margin-top:5px;font-weight:400;text-transform:none}
+.a10-hd .n{text-align:right}
+.a10-hd .n b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:28px;letter-spacing:-.04em;
+  color:#E2C888;line-height:1}
+.a10-hd .n>span{display:block;font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.15em;
+  color:#B49A72;margin-top:4px}
+/* the rail of hooks */
+.a10-rail{position:relative;margin-top:6px;padding-top:20px}
+.a10-rail::before{content:'';position:absolute;left:0;right:0;top:6px;height:5px;border-radius:3px;
+  background:linear-gradient(180deg,#C9B48A,#6E5A38);box-shadow:0 3px 6px rgba(0,0,0,.6)}
+.a10-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:26px;position:relative}
+.a10-row::before{content:'';position:absolute;left:0;right:0;bottom:-16px;height:5px;border-radius:3px;
+  background:linear-gradient(180deg,#C9B48A,#6E5A38);box-shadow:0 3px 6px rgba(0,0,0,.6)}
+.a10-row:last-child::before{display:none}
+.a10-h{position:relative;display:flex;justify-content:center}
+.a10-hook{position:absolute;top:-19px;left:50%;margin-left:-6px;width:12px;height:20px;z-index:3;
+  border:2.5px solid #B49A6A;border-top:0;border-radius:0 0 8px 8px;box-shadow:0 2px 3px rgba(0,0,0,.5)}
+.a10-tag{position:relative;width:100%;border-radius:5px 5px 3px 3px;padding:15px 11px 11px;
+  transform-origin:50% -14px;
+  background:linear-gradient(168deg,#E0C58C,#B4924C 52%,#8A6E33);
+  box-shadow:0 8px 15px -7px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,246,214,.65)}
+.a10-tag::before{content:'';position:absolute;left:50%;top:6px;width:9px;height:9px;border-radius:50%;
+  margin-left:-4.5px;background:#3A2716;box-shadow:inset 0 1px 2px rgba(0,0,0,.9)}
+.a10-tag b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:14px;
+  letter-spacing:-.025em;color:#2E2208;line-height:1.05;text-shadow:0 1px 0 rgba(255,246,214,.4)}
+.a10-tag em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6px;
+  letter-spacing:.05em;color:#5E4718;margin-top:6px;text-transform:uppercase;line-height:1.55}
+.a10-tag .pz{display:flex;justify-content:space-between;align-items:center;margin-top:9px}
+.a10-tag .pz span{font-family:'Geist Mono',monospace;font-size:8px;color:#3E2E0A}
+.a10-tag .pz i{font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.08em;color:#6E3A12}
+.a10-tk{border:0;border-radius:2px;padding:6px 8px;background:#33220F;color:#E8D2A6;
+  font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.11em;font-weight:700}
+.a10-tag.dull{background:linear-gradient(168deg,#7A7160,#5E5648 52%,#463F33)}
+.a10-tag.dull b{color:#D6CDB6;text-shadow:none}
+.a10-tag.dull em{color:#A79E88}
+.a10-tag.dull .pz span{color:#C6BDA6}
+.a10-tag.dull .pz i{color:#D8A870}
+.a10-empty{position:relative;width:100%;border-radius:5px;padding:15px 11px;min-height:96px;
+  display:grid;place-items:center;text-align:center;
+  box-shadow:inset 0 0 0 2px rgba(201,169,97,.22)}
+.a10-empty span{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.13em;color:#A08A62;line-height:1.8}
+/* the ring of keys */
+.a10-ring{display:flex;gap:9px;margin-top:6px}
+.a10-k{flex:1;border-radius:5px;padding:11px 10px;display:flex;align-items:center;gap:9px;
+  background:rgba(0,0,0,.24);box-shadow:inset 0 0 0 1px rgba(201,169,97,.24)}
+.a10-kb{width:17px;height:34px;flex:none;border-radius:9px 9px 3px 3px;position:relative;
+  background:linear-gradient(150deg,#E2C888,#A5854A 46%,#7E6229);box-shadow:0 3px 5px rgba(0,0,0,.7)}
+.a10-kb::after{content:'';position:absolute;left:50%;top:7px;width:5px;height:5px;border-radius:50%;
+  background:#2A2010;transform:translateX(-50%)}
+.a10-kb.mt{background:none;box-shadow:inset 0 0 0 1.5px rgba(201,169,97,.34)}
+.a10-k span{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.05em;color:#E0CBA6;line-height:1.5}
+.a10-lab{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.2em;color:#B49A72;padding:20px 0 9px}
+.a10-bo{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.a10-b{border:0;border-radius:4px;padding:11px 10px;text-align:left;background:rgba(0,0,0,.24);
+  box-shadow:inset 0 0 0 1px rgba(201,169,97,.2)}
+.a10-b b{display:block;font-family:'Geist Mono',monospace;font-size:8.5px;color:#EBD9B4;letter-spacing:.04em}
+.a10-b span{display:block;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.11em;color:#E2C888;margin-top:5px}
+.a10-note{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;color:#B49A72;line-height:1.9;padding:14px 0 0}
+.a10-note b{color:#E2C888;font-weight:400}
+
+/* =====================================================================
+   11 · THE CLAIM — in the app's own language
+   ===================================================================== */
+.cm{position:relative;height:820px;overflow:hidden;background:#07060b;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;text-align:center}
+.cm-glow{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(64% 42% at 50% 46%,rgba(224,178,94,.3),rgba(150,110,40,.08) 46%,transparent 74%);
+  opacity:0}
+.cm-k{position:absolute;top:56px;left:0;right:0;font-family:'Geist Mono',monospace;font-size:8px;
+  letter-spacing:.3em;color:#6d5c3c;text-transform:uppercase}
+.cm-bal{position:absolute;top:82px;left:0;right:0;font-family:'Geist Mono',monospace;font-size:15px;
+  letter-spacing:.06em;color:#8d7a50}
+.cm-plate{position:relative;width:250px;border-radius:14px;padding:26px 20px 22px;
+  background:linear-gradient(150deg,#1b1526,#110e1a 60%,#0d0b14);border:1px solid rgba(224,178,94,.45);
+  box-shadow:0 8px 46px -18px rgba(224,178,94,.6)}
+.cm-plate .k{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.24em;color:var(--gold)}
+.cm-plate .t{font-family:'Clash Display',sans-serif;font-weight:700;font-size:31px;letter-spacing:-.04em;
+  color:#f2ece4;margin-top:13px;line-height:1.02}
+.cm-plate .c{font-size:12.5px;color:var(--dim);margin-top:15px;line-height:1.45}
+.cm-plate .c b{color:var(--gold);font-weight:500}
+.cm-rule{height:1px;margin-top:18px;transform:scaleX(0);
+  background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.cm-stamp{position:absolute;right:-16px;bottom:-22px;opacity:0;
+  border:2.5px solid var(--gold);border-radius:6px;padding:9px 13px;
+  font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.19em;color:var(--gold);font-weight:700;
+  background:rgba(10,8,6,.72);transform:rotate(-13deg)}
+.cm-dust{position:absolute;inset:0;pointer-events:none}
+.cm-say{position:absolute;left:26px;right:26px;bottom:118px;opacity:0}
+.cm-say .l{font-family:'Clash Display',sans-serif;font-size:20px;letter-spacing:-.03em;color:#f2ece4;line-height:1.25}
+.cm-say .s{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.2em;color:#6d5c3c;margin-top:11px}
+.cm-done{position:absolute;left:26px;right:26px;bottom:44px;opacity:0;border:0;border-radius:11px;padding:15px;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;
+  font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.2em;font-weight:700}
+.replay{width:100%;max-width:390px;background:none;border:1px solid var(--line2);color:var(--dim);
+  border-radius:9px;padding:11px;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.19em;margin-top:10px}
+.replay:hover{border-color:var(--gold);color:var(--gold)}
+
+/* hand-off */
+.ho{padding:20px 0 90px;max-width:820px}
+.ho h2{font-size:25px;letter-spacing:-.03em;margin-bottom:6px}
+.ho h3{font-size:15px;margin:30px 0 8px;color:var(--gold)}
+.ho p,.ho li{color:var(--dim);font-size:14.6px;line-height:1.62}
+.ho b{color:var(--ink);font-weight:500}
+.ho ol,.ho ul{padding-left:19px;margin:8px 0}
+.ho li{margin-bottom:9px}
+.ho .rank{border-left:2px solid var(--gold);padding-left:15px;margin:12px 0 20px}
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="bar-in">
+  <span class="lb">The Bank · v4 · ten built objects</span>
+  <div class="seg">
+    <button id="sgA" class="on" onclick="setDay(41)">DAY 41 · 1,530 XP</button>
+    <button id="sgB" onclick="setDay(1)">DAY ONE · 0 XP</button>
+  </div>
+</div></div>
+
+<div class="wrap">
+<header class="mast">
+  <div class="kick">Burn the Boats · Agent 6 · Final round</div>
+  <h1>Ten objects, built.</h1>
+  <p>Cover every caption on this page. You should still be able to tell these ten apart and say what each
+  one is. <b>01 is the congruent one</b> — it is made from the shipped app's own parts and is the safe pick.
+  Reasoning is at the bottom, once.</p>
+</header>
+
+<div class="grid">
+
+<!-- ============ 01 · THE VAULT ============ -->
+<div class="slot">
+  <div class="sh"><span class="sn">01</span>
+    <div><h3>The Vault</h3>
+      <div class="two">The shipped app's own parts — furnace plate, gauge strip, glance card, block rows.</div></div>
+    <span class="badge">CONGRUENT</span></div>
+  <div class="p"><div class="notch"><i></i></div>
+    <div class="pv a1">
+      <div class="furn">
+        <div class="stamp">THE <em>BANK</em></div>
+        <div class="meter">
+          <div class="n"><span class="v41">1,530</span><span class="v0">0</span></div>
+          <div class="r">
+            <div class="t"><i class="fw" style="--f:76%"></i></div>
+            <div class="lab"><span class="v41">+118 TODAY</span><span class="v0">DAY ONE</span>
+              <span class="v41">NEXT AT 2,000</span><span class="v0">FIRST TOKEN IN 5 DAYS</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gauges">
+        <div class="gg hot">
+          <svg width="46" height="27" viewBox="0 0 46 27">
+            <path d="M4 24 A 19 19 0 0 1 42 24" fill="none" stroke="#1c1a23" stroke-width="3.6" stroke-linecap="round"/>
+            <path class="arc" d="M4 24 A 19 19 0 0 1 42 24" fill="none" stroke="#E0B25E" stroke-width="3.6"
+              stroke-linecap="round" stroke-dasharray="59.7" stroke-dashoffset="36.4"
+              style="filter:drop-shadow(0 0 4px #E0B25Eaa)"/>
+          </svg>
+          <div class="val"><span class="v41">1530</span><span class="v0">0</span></div><div class="lb">Banked</div></div>
+        <div class="gg hot">
+          <svg width="46" height="27" viewBox="0 0 46 27">
+            <path d="M4 24 A 19 19 0 0 1 42 24" fill="none" stroke="#1c1a23" stroke-width="3.6" stroke-linecap="round"/>
+            <path class="arc" d="M4 24 A 19 19 0 0 1 42 24" fill="none" stroke="#38E1D8" stroke-width="3.6"
+              stroke-linecap="round" stroke-dasharray="59.7" stroke-dashoffset="29.9"
+              style="filter:drop-shadow(0 0 4px #38E1D8aa)"/>
+          </svg>
+          <div class="val"><span class="v41">2</span><span class="v0">0</span></div><div class="lb">Tokens</div></div>
+        <div class="gg">
+          <svg width="46" height="27" viewBox="0 0 46 27">
+            <path d="M4 24 A 19 19 0 0 1 42 24" fill="none" stroke="#1c1a23" stroke-width="3.6" stroke-linecap="round"/>
+            <path class="arc" d="M4 24 A 19 19 0 0 1 42 24" fill="none" stroke="#4ADE80" stroke-width="3.6"
+              stroke-linecap="round" stroke-dasharray="59.7" stroke-dashoffset="14.3"/>
+          </svg>
+          <div class="val"><span class="v41">76%</span><span class="v0">0%</span></div><div class="lb">Next up</div></div>
+      </div>
+
+      <div class="app">
+        <div class="glance">
+          <div class="ms"><span class="n">RESTAURANT</span><span class="t"><i class="fw" style="--f:100%;background:var(--gold)"></i></span><span class="v"><span class="v41">100</span><span class="v0">0</span></span></div>
+          <div class="ms"><span class="n">GOLF DAY</span><span class="t"><i class="fw" style="--f:100%;background:var(--gold)"></i></span><span class="v"><span class="v41">100</span><span class="v0">0</span></span></div>
+          <div class="ms"><span class="n">DAY OFF</span><span class="t"><i class="fw" style="--f:76%;background:var(--d-cap)"></i></span><span class="v"><span class="v41">76</span><span class="v0">0</span></span></div>
+          <div class="ms"><span class="n">PURCHASE</span><span class="t"><i class="fw" style="--f:61%;background:var(--d-cap)"></i></span><span class="v"><span class="v41">61</span><span class="v0">0</span></span></div>
+          <div class="ms"><span class="n">WEEKEND</span><span class="t"><i class="fw" style="--f:38%;background:var(--violet)"></i></span><span class="v"><span class="v41">38</span><span class="v0">0</span></span></div>
+          <div class="ovrbox"><b><span class="v41">1,530</span><span class="v0">0</span></b>
+            <span class="l">XP<br>BANKED</span>
+            <span class="gap"><span class="v41">NEXT REWARD<u>470</u></span><span class="v0">FIRST TOKEN<u>5d</u></span></span></div>
+        </div>
+
+        <h2 class="sec"><span>Tokens held</span><u class="v41">2</u><u class="v0">0</u></h2>
+        <div class="toks b41">
+          <div class="tok"><i></i><div class="k">PRIVILEGE</div><b>Cut a block in half</b></div>
+          <div class="tok"><i></i><div class="k">PRIVILEGE</div><b>Make a block yours</b></div>
+        </div>
+        <div class="toks b0">
+          <div class="tok mt"><i></i><div class="k">UNEARNED</div><b>Cut a block in half</b></div>
+          <div class="tok mt"><i></i><div class="k">UNEARNED</div><b>Make a block yours</b></div>
+        </div>
+        <div class="note b0">ONE 85% WEEK ISSUES THE FIRST ONE.<br><b>THAT IS FIVE DAYS AWAY, NOT ELEVEN.</b></div>
+
+        <h2 class="sec"><span>Rewards</span><u>you set the terms</u></h2>
+        <div class="blk rdy"><div class="dom"></div>
+          <div><div class="bn">Nice restaurant date</div>
+            <div class="bo">Cooked + laundry every night this week</div>
+            <div class="bd"><span class="v41">1,200 · <b>READY TO CLAIM</b></span><span class="v0">1,200 · NOT FUNDED YET</span></div></div>
+          <div class="bc"></div></div>
+        <div class="blk rdy"><div class="dom"></div>
+          <div><div class="bn">A golf day</div>
+            <div class="bo">Two SANO push weeks back to back</div>
+            <div class="bd"><span class="v41">1,500 · <b>READY TO CLAIM</b></span><span class="v0">1,500 · NOT FUNDED YET</span></div></div>
+          <div class="bc"></div></div>
+        <div class="blk"><div class="dom" style="background:var(--d-cap)"></div>
+          <div><div class="bn">A full day off</div>
+            <div class="bo">85%+ three weeks running</div>
+            <div class="bd"><span class="v41">2,000 · 470 SHORT · ~4 DAYS</span><span class="v0">2,000 · NOT FUNDED YET</span></div></div>
+          <div class="bc"></div></div>
+        <div class="blk"><div class="dom" style="background:var(--d-cap)"></div>
+          <div><div class="bn">That purchase</div>
+            <div class="bo">First client signed and paid</div>
+            <div class="bd"><span class="v41">2,500 · 970 SHORT · ~9 DAYS</span><span class="v0">2,500 · NOT FUNDED YET</span></div></div>
+          <div class="bc"></div></div>
+        <div class="blk"><div class="dom" style="background:var(--violet)"></div>
+          <div><div class="bn">A weekend away</div>
+            <div class="bo">Anthony signed, and one more behind him</div>
+            <div class="bd"><span class="v41">4,000 · 2,470 SHORT · ~21 DAYS</span><span class="v0">4,000 · NOT FUNDED YET</span></div></div>
+          <div class="bc"></div></div>
+        <div class="blk gone b41"><div class="dom"></div>
+          <div><div class="bn">A long lunch</div>
+            <div class="bo">Claimed on day 26</div>
+            <div class="bd">800 · <b style="color:var(--phos)">TAKEN</b></div></div>
+          <div class="bc"></div></div>
+
+        <h2 class="sec"><span>Boosts</span><u>never scored against you</u></h2>
+        <div class="wins">
+          <button class="win">Networking event<b>+250</b></button>
+          <button class="win">Golf day<b>+150</b></button>
+          <button class="win">Finances hour<b>+90</b></button>
+          <button class="win">Read tonight<b>+60</b></button>
+        </div>
+        <button class="btn">+ New reward</button>
+      </div>
+    </div></div>
+</div>
+
+<!-- ============ 02 · THE ENVELOPES ============ -->
+<div class="slot">
+  <div class="sh"><span class="sn">02</span>
+    <div><h3>The Envelopes</h3>
+      <div class="two">A drawer of paper. The wad standing out of the top <b>is</b> the balance.</div></div></div>
+  <div class="p"><div class="notch"><i></i></div>
+    <div class="pv a2">
+      <div class="a2-drw">
+        <div class="k">IN THE DRAWER</div>
+        <div class="n"><span class="v41">1,530</span><span class="v0">0</span></div>
+        <div class="s"><span class="v41">+118 IN TODAY · ABOUT 118 A DAY</span><span class="v0">OPENED TODAY</span></div>
+      </div>
+
+      <div class="a2-lab">TUCKED IN THE FRONT · PRIVILEGES</div>
+      <div class="a2-vouch b41">
+        <div class="a2-v"><div class="k">VOUCHER 07</div><b>Cut a block in half</b></div>
+        <div class="a2-v"><div class="k">VOUCHER 08</div><b>Make a block yours</b></div>
+      </div>
+      <div class="a2-vouch b0">
+        <div class="a2-v mt"><div class="k">VOUCHER 07</div><b>One 85% week</b></div>
+        <div class="a2-v mt"><div class="k">VOUCHER 08</div><b>Or any boost</b></div>
+      </div>
+
+      <div class="a2-stack">
+        <div class="a2-env">
+          <div class="a2-wad b41"><i></i><i></i><i></i><i></i><i></i></div>
+          <b>Restaurant date</b><em>cooked + laundry every night this week</em>
+          <div class="r"><span class="amt">1,200<s>FULL</s></span>
+            <button class="a2-open v41">OPEN IT</button><span class="a2-short v0">empty</span></div></div>
+
+        <div class="a2-env">
+          <div class="a2-wad b41"><i></i><i></i><i></i><i></i><i></i></div>
+          <b>A golf day</b><em>two SANO push weeks back to back</em>
+          <div class="r"><span class="amt">1,500<s>FULL</s></span>
+            <button class="a2-open v41">OPEN IT</button><span class="a2-short v0">empty</span></div></div>
+
+        <div class="a2-env thin">
+          <div class="a2-wad b41"><i></i><i></i><i></i></div>
+          <b>A full day off</b><em>85%+ three weeks running</em>
+          <div class="r"><span class="amt">2,000<s>1,530 IN</s></span>
+            <span class="a2-short v41">470 to go</span><span class="a2-short v0">empty</span></div></div>
+
+        <div class="a2-env thin">
+          <div class="a2-wad b41"><i></i><i></i></div>
+          <b>That purchase</b><em>first client signed and paid</em>
+          <div class="r"><span class="amt">2,500<s>1,530 IN</s></span>
+            <span class="a2-short v41">970 to go</span><span class="a2-short v0">empty</span></div></div>
+
+        <div class="a2-env thin">
+          <div class="a2-wad b41"><i></i></div>
+          <b>A weekend away</b><em>Anthony signed, and one more</em>
+          <div class="r"><span class="amt">4,000<s>1,530 IN</s></span>
+            <span class="a2-short v41">2,470 to go</span><span class="a2-short v0">empty</span></div></div>
+      </div>
+
+      <div class="a2-lab">AT THE BACK OF THE DRAWER</div>
+      <div class="a2-flat b41"><b>A long lunch</b><span>OPENED DAY 26 · 800 · KEPT FLAT</span></div>
+      <div class="a2-note b0">Five envelopes, all addressed, all empty.<br>The writing on them is already true.</div>
+
+      <div class="a2-lab">PAYING IN · NEVER SCORED AGAINST YOU</div>
+      <div class="a2-pay">
+        <button class="a2-slip"><b>Networking</b><span>+250 &amp; A VOUCHER</span></button>
+        <button class="a2-slip"><b>Golf day</b><span>+150</span></button>
+        <button class="a2-slip"><b>Finances hr</b><span>+90</span></button>
+        <button class="a2-slip"><b>Read tonight</b><span>+60</span></button>
+      </div>
+    </div></div>
+</div>
+
+<!-- ============ 03 · THE JARS ============ -->
+<div class="slot">
+  <div class="sh"><span class="sn">03</span>
+    <div><h3>The Jars</h3>
+      <div class="two">Six jars on two planks. Which is nearly full is understood before a word is read.</div></div></div>
+  <div class="p"><div class="notch"><i></i></div>
+    <div class="pv a3">
+      <div class="a3-hd">
+        <div><div class="k">ON THE SHELF</div>
+          <div class="n"><span class="v41">1,530</span><span class="v0">0</span></div></div>
+        <div class="s"><span class="v41">+118 TODAY<br>ABOUT 118 A DAY</span><span class="v0">DAY ONE<br>NOTHING IN YET</span></div>
+      </div>
+
+      <div class="a3-shelf">
+        <div class="a3-jars">
+          <div class="a3-jar"><div class="a3-glass"><div class="a3-lid"></div>
+              <div class="a3-fill fl" style="--f:100%"></div><u></u><s></s>
+              <div class="a3-lbl"><b>Restaurant date</b><em>cooked + laundry every night</em>
+                <div class="pz"><span>1,200</span>
+                  <button class="a3-take v41">TAKE IT</button><i class="v0">not yet</i></div></div>
+            </div></div>
+          <div class="a3-jar"><div class="a3-glass"><div class="a3-lid"></div>
+              <div class="a3-fill fl" style="--f:100%"></div><u></u><s></s>
+              <div class="a3-lbl"><b>A golf day</b><em>two SANO push weeks</em>
+                <div class="pz"><span>1,500</span>
+                  <button class="a3-take v41">TAKE IT</button><i class="v0">not yet</i></div></div>
+            </div></div>
+        </div>
+        <div class="a3-plank"></div>
+      </div>
+
+      <div class="a3-shelf">
+        <div class="a3-jars">
+          <div class="a3-jar"><div class="a3-glass"><div class="a3-lid"></div>
+              <div class="a3-fill fl" style="--f:76%"></div><u></u><s></s>
+              <div class="a3-lbl"><b>A full day off</b><em>85%+ three weeks running</em>
+                <div class="pz"><span>2,000</span><i class="v41">470 more</i><i class="v0">not yet</i></div></div>
+            </div></div>
+          <div class="a3-jar"><div class="a3-glass"><div class="a3-lid"></div>
+              <div class="a3-fill fl" style="--f:61%"></div><u></u><s></s>
+              <div class="a3-lbl"><b>That purchase</b><em>first client signed and paid</em>
+                <div class="pz"><span>2,500</span><i class="v41">970 more</i><i class="v0">not yet</i></div></div>
+            </div></div>
+        </div>
+        <div class="a3-plank"></div>
+      </div>
+
+      <div class="a3-shelf">
+        <div class="a3-jars">
+          <div class="a3-jar"><div class="a3-glass"><div class="a3-lid"></div>
+              <div class="a3-fill fl" style="--f:38%"></div><u></u><s></s>
+              <div class="a3-lbl"><b>A weekend away</b><em>Anthony signed, and one more</em>
+                <div class="pz"><span>4,000</span><i class="v41">2,470 more</i><i class="v0">not yet</i></div></div>
+            </div></div>
+          <div class="a3-jar gone b41"><div class="a3-glass"><div class="a3-lid"></div>
+              <div class="a3-lbl"><b>A long lunch</b><em>drunk day 26 · jar kept</em>
+                <div class="pz"><span>800</span><i>spent</i></div></div>
+            </div></div>
+          <div class="a3-jar b0"><div class="a3-glass"><div class="a3-lid"></div><u></u><s></s>
+              <div class="a3-lbl"><b>Yours to name</b><em>write the sixth whenever you like</em>
+                <div class="pz"><span>—</span><i>empty</i></div></div>
+            </div></div>
+        </div>
+        <div class="a3-plank"></div>
+      </div>
+
+      <div class="a3-lab">ON THE SAUCER · PRIVILEGES</div>
+      <div class="a3-saucer">
+        <div class="a3-toks b41">
+          <div class="a3-tok">CUT A BLOCK<br>IN HALF</div>
+          <div class="a3-tok">MAKE A BLOCK<br>YOURS</div>
+        </div>
+        <div class="a3-toks b0">
+          <div class="a3-tok mt">ONE 85% WEEK<br>PUTS ONE HERE</div>
+          <div class="a3-tok mt">OR LOG ANY<br>BOOST BELOW</div>
+        </div>
+      </div>
+      <div class="a3-note b0">Six jars, empty, every label already written.<br>The labels are the part he did first.</div>
+
+      <div class="a3-lab">DROP SOMETHING IN · NEVER SCORED</div>
+      <div class="a3-pay">
+        <button class="a3-slip"><b>Networking</b><span>+250 &amp; A TOKEN</span></button>
+        <button class="a3-slip"><b>Golf day</b><span>+150</span></button>
+        <button class="a3-slip"><b>Finances hr</b><span>+90</span></button>
+        <button class="a3-slip"><b>Read tonight</b><span>+60</span></button>
+      </div>
+    </div></div>
+</div>
+
+<!-- ============ 04 · THE TYPE CASE ============ -->
+<div class="slot">
+  <div class="sh"><span class="sn">04</span>
+    <div><h3>The Type Case</h3>
+      <div class="two">A divided tray from above. Big compartments, small compartments, one empty.</div></div></div>
+  <div class="p"><div class="notch"><i></i></div>
+    <div class="pv a4">
+      <div class="a4-tray">
+        <div class="a4-grid">
+          <div class="a4-c a4-xp"><div class="k">ON DEPOSIT</div>
+            <div class="a4-plate"><b><span class="v41">1,530</span><span class="v0">0</span></b>
+              <span><span class="v41">+118 TODAY</span><span class="v0">DAY ONE</span></span></div></div>
+
+          <div class="a4-c a4-p1 a4-tok"><div class="k">TOKEN I</div>
+            <div class="a4-disc b41">CUT A<br>BLOCK</div>
+            <div class="a4-disc mt b0">EMPTY</div></div>
+          <div class="a4-c a4-p2 a4-tok"><div class="k">TOKEN II</div>
+            <div class="a4-disc b41">MAKE IT<br>YOURS</div>
+            <div class="a4-disc mt b0">EMPTY</div></div>
+
+          <div class="a4-c a4-r1"><div class="k">01</div>
+            <div class="a4-sl"><b>Nice restaurant date</b><em>Cooked + laundry every night this week</em>
+              <div class="pz"><span>1,200</span>
+                <button class="a4-tk v41">TAKE IT</button><i class="v0">NOT FUNDED</i></div></div></div>
+
+          <div class="a4-c a4-r2"><div class="k">02</div>
+            <div class="a4-sl"><b>A golf day</b><em>Two SANO push weeks</em>
+              <div class="pz"><span>1,500</span>
+                <button class="a4-tk v41">TAKE</button><i class="v0">—</i></div></div></div>
+
+          <div class="a4-c a4-r3"><div class="k">03</div>
+            <div class="a4-sl dull"><b>A full day off</b><em>85%+ three weeks running</em>
+              <div class="pz"><span>2,000</span><i class="v41">470 SHORT · ~4d</i><i class="v0">—</i></div></div></div>
+
+          <div class="a4-c a4-r4"><div class="k">04</div>
+            <div class="a4-sl dull"><b>That purchase</b><em>First client paid</em>
+              <div class="pz"><span>2,500</span><i class="v41">~9d</i><i class="v0">NOT FUNDED</i></div></div></div>
+
+          <div class="a4-c a4-r5"><div class="k">05</div>
+            <div class="a4-sl dull"><b>A weekend away</b><em>Anthony signed, and one more behind him</em>
+              <div class="pz"><span>4,000</span><i class="v41">2,470 SHORT · ~21d</i><i class="v0">NOT FUNDED</i></div></div></div>
+
+          <div class="a4-c a4-r6"><div class="k">06</div>
+            <div class="tagp b41">A LONG<br>LUNCH<br>DAY 26<br><b>TAKEN</b></div>
+            <div class="tagp b0">EMPTY<br>COMPARTMENT<br>YOURS TO<br>NAME</div></div>
+        </div>
+
+        <div class="a4-boosts">
+          <button class="a4-b"><i></i><span>NETWORK<br>EVENT</span><b>250</b></button>
+          <button class="a4-b"><i></i><span>GOLF<br>DAY</span><b>150</b></button>
+          <button class="a4-b"><i></i><span>FINANCES<br>HOUR</span><b>90</b></button>
+          <button class="a4-b"><i></i><span>READ<br>TONIGHT</span><b>60</b></button>
+        </div>
+      </div>
+      <div class="a4-note b0">EVERY COMPARTMENT CUT, LABELLED AND EMPTY.<br>
+        <b>THE FIRST TOKEN LANDS IN FIVE DAYS.</b></div>
+      <div class="a4-note b41">SIX COMPARTMENTS · <b>ONE ALREADY EMPTIED</b></div>
+    </div></div>
+</div>
+
+<!-- ============ 05 · THE LEDGER ============ -->
+<div class="slot">
+  <div class="sh"><span class="sn">05</span>
+    <div><h3>The Ledger</h3>
+      <div class="two">An open book, ruled in double entry, with the terms in his own hand.</div></div></div>
+  <div class="p"><div class="notch"><i></i></div>
+    <div class="pv a5">
+      <div class="a5-book">
+        <div class="a5-edges"></div><div class="a5-gut"></div><div class="a5-rib"></div>
+        <div class="a5-pg">
+          <div class="a5-hd">
+            <div class="t">ACCOUNT OF J.<span>FOLIO <span class="v41">41</span><span class="v0">01</span> · BURN THE BOATS</span></div>
+            <div class="n"><b><span class="v41">1,530</span><span class="v0">0</span></b>
+              <span><span class="v41">CARRIED FORWARD</span><span class="v0">OPENED TODAY</span></span></div>
+          </div>
+
+          <div class="a5-tab">
+            <div class="a5-cols"><span>PARTICULARS &amp; TERMS</span><span>DUE</span><span>STATE</span></div>
+
+            <div class="a5-e ok"><div class="pa"><b>Nice restaurant date</b>
+              <em>cooked + laundry every night this week</em></div>
+              <div class="du">1,200</div><div class="st"><span class="v41">MET</span><span class="v0">OPEN</span></div></div>
+
+            <div class="a5-e ok"><div class="pa"><b>A golf day</b>
+              <em>two SANO push weeks back to back</em></div>
+              <div class="du">1,500</div><div class="st"><span class="v41">MET</span><span class="v0">OPEN</span></div></div>
+
+            <div class="a5-e"><div class="pa"><b>A full day off</b>
+              <em>85%+ three weeks running</em></div>
+              <div class="du">2,000</div><div class="st"><span class="v41">470<br>SHORT</span><span class="v0">OPEN</span></div></div>
+
+            <div class="a5-e"><div class="pa"><b>That purchase</b>
+              <em>first client signed and paid</em></div>
+              <div class="du">2,500</div><div class="st"><span class="v41">970<br>SHORT</span><span class="v0">OPEN</span></div></div>
+
+            <div class="a5-e"><div class="pa"><b>A weekend away</b>
+              <em>Anthony signed, and one more behind him</em></div>
+              <div class="du">4,000</div><div class="st"><span class="v41">2,470<br>SHORT</span><span class="v0">OPEN</span></div></div>
+
+            <div class="a5-e settled b41"><div class="pa"><b>A long lunch</b>
+              <em>settled day 26</em></div>
+              <div class="du">800</div><div class="st"><span class="sg">paid</span></div></div>
+          </div>
+
+          <div class="a5-lab">TIPPED IN · PRIVILEGES, SIGNED OVER TO THE BEARER</div>
+          <div class="a5-tip b41">
+            <div class="a5-t"><div class="k">GRANT 07</div><b>Cut a block in half</b></div>
+            <div class="a5-t"><div class="k">GRANT 08</div><b>Make a block yours</b></div>
+          </div>
+          <div class="a5-tip b0">
+            <div class="a5-t mt"><div class="k">GRANT 07</div><b>One 85% week</b></div>
+            <div class="a5-t mt"><div class="k">GRANT 08</div><b>Or any boost</b></div>
+          </div>
+
+          <div class="a5-lab">CREDITS · NEVER SCORED AGAINST YOU</div>
+          <div class="a5-cr">
+            <button class="a5-c"><b>Networking event</b><span>+250 &amp; A GRANT</span></button>
+            <button class="a5-c"><b>Golf day</b><span>+150</span></button>
+            <button class="a5-c"><b>Finances hour</b><span>+90</span></button>
+            <button class="a5-c"><b>Read tonight</b><span>+60</span></button>
+          </div>
+          <div class="a5-note b0">Every term entered, nothing yet drawn.<br>The book is open at page one.</div>
+        </div>
+      </div>
+    </div></div>
+</div>
+
+<!-- ============ 06 · THE CORKBOARD ============ -->
+<div class="slot">
+  <div class="sh"><span class="sn">06</span>
+    <div><h3>The Corkboard</h3>
+      <div class="two">Pinned, overlapping, at angles. The one that already happened is a photograph.</div></div></div>
+  <div class="p"><div class="notch"><i></i></div>
+    <div class="pv a6">
+      <div class="a6-frame">
+        <div class="a6-sheet" style="top:22px;left:16px;width:186px;transform:rotate(-2.5deg)">
+          <div class="a6-pin" style="background:radial-gradient(circle at 34% 28%,#FF8FA6,#C4212C)"></div>
+          <div class="k">banked</div>
+          <div class="n"><span class="v41">1,530</span><span class="v0">0</span></div>
+          <div class="s"><span class="v41">+118 today</span><span class="v0">day one</span></div>
+        </div>
+
+        <div class="a6-key" style="top:24px;left:228px;width:146px;transform:rotate(4deg)">
+          <div class="a6-pin" style="background:radial-gradient(circle at 34% 28%,#FFE07A,#C99A0A)"></div>
+          <div class="kk">PRIVILEGE</div><b>Cut a block in half</b><i class="b41"></i><i class="b0 mt"></i></div>
+
+        <div class="a6-key" style="top:120px;left:218px;width:152px;transform:rotate(-3.5deg)">
+          <div class="a6-pin" style="background:radial-gradient(circle at 34% 28%,#9AF08A,#2E9E22)"></div>
+          <div class="kk">PRIVILEGE</div><b>Make a block yours</b><i class="b41"></i><i class="b0 mt"></i></div>
+
+        <div class="a6-card ruled" style="top:204px;left:14px;width:216px;transform:rotate(-2.5deg)">
+          <div class="a6-pin" style="background:radial-gradient(circle at 34% 28%,#8FD4FF,#1E7ACC)"></div>
+          <b>Restaurant date</b><em>cooked + laundry every night this week</em>
+          <div class="pz"><span>1,200</span>
+            <button class="a6-go v41">TAKE IT</button><span class="a6-soon v0">not yet</span></div></div>
+
+        <div class="a6-card ruled" style="top:348px;left:146px;width:224px;transform:rotate(2deg)">
+          <div class="a6-pin" style="background:radial-gradient(circle at 34% 28%,#FFB0DA,#C4218E)"></div>
+          <b>A golf day</b><em>two SANO push weeks back to back</em>
+          <div class="pz"><span>1,500</span>
+            <button class="a6-go v41">TAKE IT</button><span class="a6-soon v0">not yet</span></div></div>
+
+        <div class="a6-card ruled" style="top:496px;left:16px;width:226px;transform:rotate(-1.6deg)">
+          <div class="a6-pin" style="background:radial-gradient(circle at 34% 28%,#C7B0FF,#6A3FE0)"></div>
+          <b>A full day off</b><em>85%+ three weeks running</em>
+          <div class="pz"><span>2,000</span>
+            <span class="a6-soon v41">470 more</span><span class="a6-soon v0">not yet</span></div></div>
+
+        <div class="a6-card ruled" style="top:638px;left:140px;width:228px;transform:rotate(2.6deg)">
+          <div class="a6-pin" style="background:radial-gradient(circle at 34% 28%,#FFD08F,#E07A05)"></div>
+          <b>That purchase</b><em>first client signed and paid</em>
+          <div class="pz"><span>2,500</span>
+            <span class="a6-soon v41">970 more</span><span class="a6-soon v0">not yet</span></div></div>
+
+        <div class="a6-card ruled" style="top:784px;left:14px;width:232px;transform:rotate(-1.4deg)">
+          <div class="a6-pin" style="background:radial-gradient(circle at 34% 28%,#9AF0E0,#12A08A)"></div>
+          <b>A weekend away</b><em>Anthony signed, and one more behind him</em>
+          <div class="pz"><span>4,000</span>
+            <span class="a6-soon v41">2,470 more</span><span class="a6-soon v0">not yet</span></div></div>
+
+        <div class="a6-photo b41" style="top:930px;left:20px;width:150px;transform:rotate(-3deg)">
+          <div class="a6-pin" style="background:radial-gradient(circle at 34% 28%,#FF8FA6,#C4212C)"></div>
+          <div class="im"></div><span>a long lunch · day 26</span></div>
+        <div class="a6-card b0" style="top:930px;left:20px;width:150px;transform:rotate(-3deg)">
+          <div class="a6-pin" style="background:radial-gradient(circle at 34% 28%,#FF8FA6,#C4212C)"></div>
+          <b>Nothing pinned here yet</b><em>the first photo goes here</em></div>
+
+        <div class="a6-strip" style="top:942px;left:190px;width:178px;transform:rotate(1.6deg)">
+          <div class="a6-pin" style="background:radial-gradient(circle at 34% 28%,#FFE07A,#C99A0A)"></div>
+          <div class="k">PIN ONE WHEN YOU DID IT</div>
+          <button>Networking<b>+250</b></button>
+          <button>Golf day<b>+150</b></button>
+          <button>Finances hr<b>+90</b></button>
+          <button>Read tonight<b>+60</b></button>
+        </div>
+      </div>
+    </div></div>
+</div>
+
+<!-- ============ 07 · THE DIAL ============ -->
+<div class="slot">
+  <div class="sh"><span class="sn">07</span>
+    <div><h3>The Dial</h3>
+      <div class="two">One brass instrument. The needle is the balance; the marks are the rewards.</div></div></div>
+  <div class="p"><div class="notch"><i></i></div>
+    <div class="pv a7">
+      <div class="a7-inst">
+        <span class="a7-scr" style="left:9px;top:9px"></span><span class="a7-scr" style="right:9px;top:9px"></span>
+        <span class="a7-scr" style="left:9px;bottom:9px"></span><span class="a7-scr" style="right:9px;bottom:9px"></span>
+        <div class="a7-face">
+          <svg id="dialSvg" viewBox="0 0 340 340" aria-hidden="true">
+            <defs>
+              <radialGradient id="dgFace" cx="36%" cy="26%">
+                <stop offset="0%" stop-color="#4A4234"/><stop offset="55%" stop-color="#2E2820"/>
+                <stop offset="100%" stop-color="#1A1610"/>
+              </radialGradient>
+              <linearGradient id="dgBez" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#E4CE96"/><stop offset="48%" stop-color="#A5854A"/>
+                <stop offset="100%" stop-color="#6E5424"/>
+              </linearGradient>
+            </defs>
+            <circle cx="170" cy="170" r="168" fill="url(#dgBez)"/>
+            <circle cx="170" cy="170" r="154" fill="url(#dgFace)"/>
+            <circle cx="170" cy="170" r="152" fill="none" stroke="rgba(201,169,97,.2)" stroke-width="1"/>
+            <g id="dialTicks"></g>
+            <path id="dialTrack" fill="none" stroke="#171310" stroke-width="9" stroke-linecap="round"/>
+            <path id="dialArc" fill="none" stroke="#C9A961" stroke-width="9" stroke-linecap="round"
+              style="filter:drop-shadow(0 0 6px rgba(201,169,97,.55))"/>
+            <g id="dialMarks"></g>
+            <text x="170" y="228" text-anchor="middle" font-family="'Geist Mono',monospace" font-size="9"
+              letter-spacing="3" fill="#8A7042">XP BANKED</text>
+            <text id="dialNum" x="170" y="266" text-anchor="middle" font-family="'Clash Display',sans-serif"
+              font-weight="700" font-size="40" letter-spacing="-1.6" fill="#EFE2C2">1,530</text>
+            <g id="dialNeedle">
+              <line x1="170" y1="170" x2="170" y2="58" stroke="#E8DCC0" stroke-width="3.4" stroke-linecap="round"/>
+              <line x1="170" y1="170" x2="170" y2="192" stroke="#8A7042" stroke-width="3.4" stroke-linecap="round"/>
+            </g>
+            <circle cx="170" cy="170" r="13" fill="url(#dgBez)"/>
+            <circle cx="170" cy="170" r="5" fill="#2A2418"/>
+          </svg>
+        </div>
+
+        <div class="a7-win">
+          <div class="k">ENGRAVED LEGEND · YOU SET THE TERMS</div>
+          <div class="a7-lg rdy"><i>1</i><b>Restaurant date</b><em>cooked + laundry every night</em>
+            <s><span class="v41">1,200 · READY</span><span class="v0">1,200</span></s></div>
+          <div class="a7-lg rdy"><i>2</i><b>A golf day</b><em>two SANO push weeks</em>
+            <s><span class="v41">1,500 · READY</span><span class="v0">1,500</span></s></div>
+          <div class="a7-lg"><i>3</i><b>A full day off</b><em>85%+ three weeks running</em>
+            <s><span class="v41">2,000 · ~4d</span><span class="v0">2,000</span></s></div>
+          <div class="a7-lg"><i>4</i><b>That purchase</b><em>first client signed and paid</em>
+            <s><span class="v41">2,500 · ~9d</span><span class="v0">2,500</span></s></div>
+          <div class="a7-lg"><i>5</i><b>A weekend away</b><em>Anthony signed, and one more</em>
+            <s><span class="v41">4,000 · ~21d</span><span class="v0">4,000</span></s></div>
+          <div class="a7-lg gone b41"><i>6</i><b>A long lunch</b><em>drawn day 26</em><s>800 · TAKEN</s></div>
+        </div>
+
+        <div class="a7-toks">
+          <div class="a7-tk"><div class="d b41">CUT A<br>BLOCK</div><div class="d mt b0">—</div>
+            <span>CUT A BLOCK<br>IN HALF</span></div>
+          <div class="a7-tk"><div class="d b41">MAKE IT<br>YOURS</div><div class="d mt b0">—</div>
+            <span>MAKE A BLOCK<br>YOURS</span></div>
+        </div>
+
+        <div class="a7-btns">
+          <button class="a7-btn"><span>NETWORK</span><b>250</b></button>
+          <button class="a7-btn"><span>GOLF</span><b>150</b></button>
+          <button class="a7-btn"><span>FINANCE</span><b>90</b></button>
+          <button class="a7-btn"><span>READ</span><b>60</b></button>
+        </div>
+      </div>
+      <div class="a7-note b0">NEEDLE AT ZERO, ALL SIX MARKS ALREADY ENGRAVED.<br>
+        <b>FIRST TOKEN IN FIVE DAYS.</b></div>
+    </div></div>
+</div>
+
+<!-- ============ 08 · THE BALANCE ============ -->
+<div class="slot">
+  <div class="sh"><span class="sn">08</span>
+    <div><h3>The Balance</h3>
+      <div class="two">What you have, weighed against the next thing. Weights sit in a fitted case.</div></div></div>
+  <div class="p"><div class="notch"><i></i></div>
+    <div class="pv a8">
+      <div class="a8-scale">
+        <div class="a8-ptr">WEIGHED AGAINST THE NEXT ONE</div>
+        <div class="a8-col"></div>
+        <div class="a8-beam"></div>
+        <div class="a8-pan a8-l"><div class="load"></div><div class="dish"></div>
+          <div class="lb"><b><span class="v41">1,530</span><span class="v0">0</span></b>BANKED</div></div>
+        <div class="a8-pan a8-r"><div class="load" style="left:30px;right:30px"></div><div class="dish"></div>
+          <div class="lb"><b>2,000</b>A FULL DAY OFF</div></div>
+        <div class="a8-base"></div>
+      </div>
+
+      <div class="a8-lab">THE WEIGHT SET · YOU CAST THE TERMS</div>
+      <div class="a8-case">
+        <div class="a8-cells">
+          <div class="a8-cell"><div class="a8-w sm"><span>1,200</span></div>
+            <b>Restaurant date</b><em>cooked + laundry every night</em>
+            <span class="st ok v41">BALANCES · TAKE IT</span><span class="st v0">NOT CAST YET</span></div>
+          <div class="a8-cell"><div class="a8-w sm"><span>1,500</span></div>
+            <b>A golf day</b><em>two SANO push weeks</em>
+            <span class="st ok v41">BALANCES · TAKE IT</span><span class="st v0">NOT CAST YET</span></div>
+          <div class="a8-cell"><div class="a8-w"><span>2,000</span></div>
+            <b>A full day off</b><em>85%+ three weeks running</em>
+            <span class="st v41">470 SHORT · ~4 DAYS</span><span class="st v0">NOT CAST YET</span></div>
+          <div class="a8-cell"><div class="a8-w"><span>2,500</span></div>
+            <b>That purchase</b><em>first client signed and paid</em>
+            <span class="st v41">970 SHORT · ~9 DAYS</span><span class="st v0">NOT CAST YET</span></div>
+          <div class="a8-cell"><div class="a8-w lg"><span>4,000</span></div>
+            <b>A weekend away</b><em>Anthony signed, and one more</em>
+            <span class="st v41">2,470 SHORT · ~21 DAYS</span><span class="st v0">NOT CAST YET</span></div>
+          <div class="a8-cell gone b41"><div class="a8-w mt"><span>800</span></div>
+            <b>A long lunch</b><em>lifted out day 26</em><span class="st">RECESS EMPTY</span></div>
+          <div class="a8-cell b0"><div class="a8-w mt"><span>—</span></div>
+            <b>Yours to name</b><em>cast a sixth whenever you like</em><span class="st">RECESS EMPTY</span></div>
+        </div>
+
+        <div class="a8-toks">
+          <div class="a8-tk"><i class="b41"></i><i class="mt b0"></i><span>CUT A BLOCK<br>IN HALF</span></div>
+          <div class="a8-tk"><i class="b41"></i><i class="mt b0"></i><span>MAKE A BLOCK<br>YOURS</span></div>
+        </div>
+
+        <div class="a8-bo">
+          <button class="a8-b"><span>NETWORK</span><b>250</b></button>
+          <button class="a8-b"><span>GOLF</span><b>150</b></button>
+          <button class="a8-b"><span>FINANCE</span><b>90</b></button>
+          <button class="a8-b"><span>READ</span><b>60</b></button>
+        </div>
+      </div>
+      <div class="a8-note b0">BOTH PANS EMPTY, EVERY WEIGHT ALREADY CAST.<br>
+        <b>THE FIRST TOKEN IN FIVE DAYS.</b></div>
+    </div></div>
+</div>
+
+<!-- ============ 09 · THE COIN STACK ============ -->
+<div class="slot">
+  <div class="sh"><span class="sn">09</span>
+    <div><h3>The Stack</h3>
+      <div class="two">A column of coins against a graduated rule. How far is a height, not a number.</div></div></div>
+  <div class="p"><div class="notch"><i></i></div>
+    <div class="pv a9">
+      <div class="a9-wrap">
+        <div class="a9-col">
+          <div class="a9-stack fl" style="--f:38.25%">
+            <div class="a9-cap"><b><span class="v41">1,530</span><span class="v0">0</span></b>
+              <span><span class="v41">+118 TODAY</span><span class="v0">DAY ONE</span></span></div>
+          </div>
+        </div>
+
+        <div class="a9-rule">
+          <div class="a9-m rdy" style="bottom:174px"><i></i><div class="tx">
+            <b>Restaurant date</b><em>cooked + laundry every night this week</em>
+            <s><span class="v41">1,200 · REACHED</span><span class="v0">1,200</span></s></div></div>
+
+          <div class="a9-m rdy" style="bottom:218px"><i></i><div class="tx">
+            <b>A golf day</b><em>two SANO push weeks back to back</em>
+            <s><span class="v41">1,500 · REACHED</span><span class="v0">1,500</span></s></div></div>
+
+          <div class="a9-m" style="bottom:290px"><i></i><div class="tx">
+            <b>A full day off</b><em>85%+ three weeks running</em>
+            <s><span class="v41">2,000 · 470 TO GO</span><span class="v0">2,000</span></s></div></div>
+
+          <div class="a9-m" style="bottom:363px"><i></i><div class="tx">
+            <b>That purchase</b><em>first client signed and paid</em>
+            <s><span class="v41">2,500 · 970 TO GO</span><span class="v0">2,500</span></s></div></div>
+
+          <div class="a9-m" style="bottom:580px"><i></i><div class="tx">
+            <b>A weekend away</b><em>Anthony signed, and one more behind him</em>
+            <s><span class="v41">4,000 · 2,470 TO GO</span><span class="v0">4,000</span></s></div></div>
+
+          <div class="a9-m gone b41" style="bottom:116px"><i></i><div class="tx">
+            <b>A long lunch</b><em>drawn day 26</em><s>800 · TAKEN</s></div></div>
+
+          <div class="a9-lv b41" style="bottom:222px"><i></i><span>1,530</span></div>
+        </div>
+        <div class="a9-plinth"></div>
+      </div>
+
+      <div class="a9-lab">SET ON EDGE BESIDE THE STACK · PRIVILEGES</div>
+      <div class="a9-edge">
+        <div class="a9-e"><i class="b41"></i><i class="mt b0"></i><span>CUT A BLOCK<br>IN HALF</span></div>
+        <div class="a9-e"><i class="b41"></i><i class="mt b0"></i><span>MAKE A BLOCK<br>YOURS</span></div>
+      </div>
+      <div class="a9-lab">ADD TO THE STACK · NEVER SCORED AGAINST YOU</div>
+      <div class="a9-bo">
+        <button class="a9-b"><span>NETWORK</span><b>250</b></button>
+        <button class="a9-b"><span>GOLF</span><b>150</b></button>
+        <button class="a9-b"><span>FINANCE</span><b>90</b></button>
+        <button class="a9-b"><span>READ</span><b>60</b></button>
+      </div>
+      <div class="a9-note b0">NOTHING STACKED, EVERY MARK ALREADY CUT INTO THE RULE.<br>
+        <b>THE FIRST TOKEN IS FIVE DAYS UP, NOT ELEVEN.</b></div>
+    </div></div>
+</div>
+
+<!-- ============ 10 · THE KEY CABINET ============ -->
+<div class="slot">
+  <div class="sh"><span class="sn">10</span>
+    <div><h3>The Key Cabinet</h3>
+      <div class="two">Brass tags on hooks. The one you took left its hook bare.</div></div></div>
+  <div class="p"><div class="notch"><i></i></div>
+    <div class="pv a10">
+      <div class="a10-in">
+        <div class="a10-hd">
+          <div class="t">THE CABINET<span>day <span class="v41">41</span><span class="v0">1</span> of 91</span></div>
+          <div class="n"><b><span class="v41">1,530</span><span class="v0">0</span></b>
+            <span><span class="v41">+118 TODAY</span><span class="v0">DAY ONE</span></span></div>
+        </div>
+
+        <div class="a10-rail">
+          <div class="a10-row">
+            <div class="a10-h"><span class="a10-hook"></span>
+              <div class="a10-tag"><b>Restaurant date</b><em>cooked + laundry every night</em>
+                <div class="pz"><span>1,200</span>
+                  <button class="a10-tk v41">TAKE IT</button><i class="v0">not yet</i></div></div></div>
+            <div class="a10-h"><span class="a10-hook"></span>
+              <div class="a10-tag"><b>A golf day</b><em>two SANO push weeks</em>
+                <div class="pz"><span>1,500</span>
+                  <button class="a10-tk v41">TAKE IT</button><i class="v0">not yet</i></div></div></div>
+          </div>
+
+          <div class="a10-row">
+            <div class="a10-h"><span class="a10-hook"></span>
+              <div class="a10-tag dull"><b>A full day off</b><em>85%+ three weeks running</em>
+                <div class="pz"><span>2,000</span><i class="v41">470 · ~4d</i><i class="v0">not yet</i></div></div></div>
+            <div class="a10-h"><span class="a10-hook"></span>
+              <div class="a10-tag dull"><b>That purchase</b><em>first client signed and paid</em>
+                <div class="pz"><span>2,500</span><i class="v41">970 · ~9d</i><i class="v0">not yet</i></div></div></div>
+          </div>
+
+          <div class="a10-row">
+            <div class="a10-h"><span class="a10-hook"></span>
+              <div class="a10-tag dull"><b>A weekend away</b><em>Anthony signed, and one more</em>
+                <div class="pz"><span>4,000</span><i class="v41">2,470 · ~21d</i><i class="v0">not yet</i></div></div></div>
+            <div class="a10-h"><span class="a10-hook"></span>
+              <div class="a10-empty b41"><span>HOOK BARE<br>A LONG LUNCH<br>TAKEN DAY 26</span></div>
+              <div class="a10-empty b0"><span>HOOK BARE<br>YOURS TO<br>NAME</span></div></div>
+          </div>
+        </div>
+
+        <div class="a10-lab">ON THE RING · PRIVILEGES</div>
+        <div class="a10-ring">
+          <div class="a10-k"><span class="a10-kb b41"></span><span class="a10-kb mt b0"></span>
+            <span>CUT A BLOCK<br>IN HALF</span></div>
+          <div class="a10-k"><span class="a10-kb b41"></span><span class="a10-kb mt b0"></span>
+            <span>MAKE A BLOCK<br>YOURS</span></div>
+        </div>
+
+        <div class="a10-lab">CUT A NEW KEY · NEVER SCORED AGAINST YOU</div>
+        <div class="a10-bo">
+          <button class="a10-b"><b>Networking event</b><span>+250 &amp; A KEY</span></button>
+          <button class="a10-b"><b>Golf day</b><span>+150</span></button>
+          <button class="a10-b"><b>Finances hour</b><span>+90</span></button>
+          <button class="a10-b"><b>Read tonight</b><span>+60</span></button>
+        </div>
+        <div class="a10-note b0">EVERY TAG HUNG AND ENGRAVED, NONE OF THEM TAKEN.<br>
+          <b>THE FIRST KEY IS FIVE DAYS OFF.</b></div>
+      </div>
+    </div></div>
+</div>
+
+<!-- ============ 11 · THE CLAIM ============ -->
+<div class="slot">
+  <div class="sh"><span class="sn">11</span>
+    <div><h3>The Claim</h3>
+      <div class="two">Spending 2,000 on a day off, in the app's own language. Tap replay.</div></div>
+    <span class="badge">MOMENT</span></div>
+  <div class="p"><div class="notch"><i></i></div>
+    <div class="cm" id="cm">
+      <div class="cm-glow"></div>
+      <div class="cm-k">Drawing on the account</div>
+      <div class="cm-bal"><span id="cmn">2,060</span> XP</div>
+      <div class="cm-plate">
+        <div class="k">PAID FOR IN FULL</div>
+        <div class="t">A full day<br>off.</div>
+        <div class="c">You said: 85%+ three weeks running.<br><b>You did it three weeks running.</b></div>
+        <div class="cm-rule"></div>
+        <div class="cm-stamp">PAID</div>
+      </div>
+      <div class="cm-dust" id="cmd"></div>
+      <div class="cm-say"><div class="l">Two thousand, earned and spent.</div>
+        <div class="s">TAKE IT WITHOUT GUILT</div></div>
+      <button class="cm-done">TAKE SATURDAY</button>
+    </div></div>
+  <button class="replay" onclick="playClaim()">▶ REPLAY THE CLAIM</button>
+</div>
+
+</div>
+
+<section class="ho">
+  <div class="kick">Hand-off · Agent 6 · Final round</div>
+  <h2>What changed, what I'd ship, what is still wrong</h2>
+
+  <h3>The diagnosis was right</h3>
+  <p>Three rounds failed because I was theming with <b>words</b>. Last round I wrote that "The Envelopes"
+  had thickness carrying the balance — and rendered a brown rectangle with a number in it. The Cellar, the
+  Counting House and the Logbook were the same row-list with a different noun on top. This round the object
+  had to exist in pixels before a single caption was written: the envelopes have <b>wads of paper standing
+  out of them</b>, the jars have <b>coin fills at five different levels</b>, the stack is <b>580px of coin
+  edges against a graduated rule</b>, and the dial is drawn from real gauge geometry rather than eyeballed.</p>
+
+  <h3>Ranked</h3>
+  <div class="rank">
+    <p><b>1 · 01 The Vault — the safe pick, and the one I would ship.</b> Built from the shipped app's own
+    parts: the furnace plate (gold instead of ember, because gold is what "earned" already means in this
+    app), the <b>real three-dial gauge strip</b> using the same 46×27 SVG arc as <code>renderGauges()</code>,
+    the glance card with <code>.ms</code> stat bars, and reward rows in the <code>.blk</code> schedule-block
+    language with domain colour bars. It sits beside the Today tab without a seam. It is also the only one
+    of the ten that needs no new design system to build.</p>
+    <p><b>2 · 09 The Stack.</b> The best object in the set. Distance stops being arithmetic and becomes a
+    height you read in one glance, and the graduated rule means every reward is marked on the same scale.
+    It is the only direction where <b>the balance and the whole reward list are a single drawing</b>. Coin
+    edges are a repeating gradient, so it costs almost nothing to build.</p>
+    <p><b>3 · 07 The Dial.</b> The most finished single object here and the one with real craft in it —
+    ticks, labels, needle and arc are all computed from <code>ang(v) = 135 + (v/4000)·270</code>, then swept
+    into place with GSAP. Its weakness is honest: the face cannot hold five conditions, so they live on an
+    engraved legend beneath it. That is an instrument convention, but it is still a second surface.</p>
+  </div>
+
+  <h3>Honest notes</h3>
+  <ul>
+    <li><b>05 The Ledger is the one that most nearly repeated the old mistake.</b> A ruled table in a book
+    is still rows. It earns its place on the book itself — page-edge block, gutter shadow, ribbon, red
+    margin rule, double-entry columns — but if you read it as "a list with paper behind it", cut it.</li>
+    <li><b>10 The Key Cabinet is the weakest.</b> The tags are handsome but a hanging tag is a card with a
+    hole in it, and at 390px the hanging never fully convinces.</li>
+    <li><b>03's jars slightly lie</b>, as they did last round: five jars filling separately implies five
+    pots when there is one balance. The fills are true ratios of balance-to-price, and the labels state the
+    real figures, but the object still implies something the data does not do.</li>
+    <li><b>Two of the ten use a numbered legend</b> (07 and, in spirit, 04). That is one more than I would
+    like; if both survive, give one of them a different way to carry its conditions.</li>
+  </ul>
+
+  <h3>Verification</h3>
+  <p><code>arsenal-lint</code>: <b>clean ✓</b>. Eleven screens rendered headlessly and screenshotted at
+  <b>390×844 in both states</b>, and I looked at every one and ran the caption test on it. No console
+  errors, no failed requests, <b>no horizontal overflow</b> — every phone 388/388, and the gallery tested at
+  a real 390px viewport <b>with <code>overflow-x:hidden</code> disabled</b> so nothing could be masked.
+  GSAP and tsParticles are both actually used: the dial needle sweeps, jar fills rise, tags settle on an
+  elastic ease, the beam tips, and the claim throws real gold dust.</p>
+  <p>Defects found by looking, not by reading CSS: <b>the coin stack collapsed to a sliver</b> because its
+  column had no height for the percentage fill to resolve against; <b>the balance beam tipped the wrong
+  way</b>, showing 2,000 as lighter than 1,530; the envelope amounts sat in the overlapped zone and were
+  unreadable; the jar fill read as <b>wicker</b> rather than coins until the banding became tiled discs;
+  dial marker 5 collided with the readout; the ledger ribbon hung over the balance; and the
+  <code>span{display:block}</code> scoping bug from last round reappeared in nine new selectors.</p>
+
+  <h3>For the GM</h3>
+  <ul>
+    <li><b>01 is buildable now.</b> It reuses <code>.furnace</code>, <code>.gauges</code>/<code>dial()</code>,
+    <code>.glance</code>/<code>.ms</code>, <code>.blk</code>, <code>.win</code> and <code>.btn</code> as they
+    already exist. Nothing new but a third gauge label and the token cards.</li>
+    <li><b>The blockers are unchanged and none are visual:</b> <code>claim()</code> deletes a reward instead
+    of recording it, so no direction here can show history; rewards are one-shot for all 91 days;
+    <code>S.privileges</code> is a bare integer with no way to spend one; and <code>dailyXp()</code> uses a
+    lifetime average, so every "~N days" on this page drifts optimistic.</li>
+    <li><b>Day one still leads with the privilege</b>, not the cheapest reward — five days rather than
+    eleven. That finding survives whichever object wins.</li>
+  </ul>
+</section>
+
+<div style="display:none"></div>
+
+</div>
+</div>
+
+<script src="../lib/gsap/gsap.min.js"></script>
+<script src="../lib/tsparticles/tsparticles.slim.bundle.min.js"></script>
+<script>
+function setDay(d){
+  document.body.classList.toggle('d1', d===1);
+  document.getElementById('sgA').classList.toggle('on', d!==1);
+  document.getElementById('sgB').classList.toggle('on', d===1);
+}
+/* ---- 07 · the dial is drawn from real geometry, not eyeballed ---- */
+var DIAL_MAX=4000, A0=135, SWEEP=270, CX=170, CY=170;
+var ang=v=>A0+(v/DIAL_MAX)*SWEEP;
+var pt=(a,r)=>[CX+r*Math.cos(a*Math.PI/180), CY+r*Math.sin(a*Math.PI/180)];
+var arc=(v0,v1,r)=>{
+  var a0=ang(v0),a1=ang(v1),[x0,y0]=pt(a0,r),[x1,y1]=pt(a1,r);
+  return `M ${x0.toFixed(1)} ${y0.toFixed(1)} A ${r} ${r} 0 ${(a1-a0)>180?1:0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+};
+var MARKS=[{v:1200,n:'1'},{v:1500,n:'2'},{v:2000,n:'3'},{v:2500,n:'4'},{v:4000,n:'5'}];
+function buildDial(){
+  var svg=document.getElementById('dialSvg'); if(!svg)return;
+  document.getElementById('dialTrack').setAttribute('d',arc(0,DIAL_MAX,132));
+  var t='';
+  for(var v=0;v<=DIAL_MAX;v+=250){
+    var a=ang(v),major=v%1000===0,r1=major?146:149,r2=major?136:142;
+    var[x1,y1]=pt(a,r1),[x2,y2]=pt(a,r2);
+    t+=`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"
+      stroke="${major?'#C9A961':'#6E5E3E'}" stroke-width="${major?2:1.2}" stroke-linecap="round"/>`;
+    if(major&&v>0&&v<DIAL_MAX){var[lx,ly]=pt(a,124);
+      t+=`<text x="${lx.toFixed(1)}" y="${(ly+3).toFixed(1)}" text-anchor="middle"
+        font-family="'Geist Mono',monospace" font-size="9" fill="#8A7042">${v/1000}k</text>`;}
+  }
+  document.getElementById('dialTicks').innerHTML=t;
+  var m='';
+  MARKS.forEach(function(k){
+    var a=ang(k.v),[x,y]=pt(a,119);
+    m+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="10.5" fill="#C9A961"/>
+        <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="10.5" fill="none" stroke="#F0DCA8" stroke-width="1"/>
+        <text x="${x.toFixed(1)}" y="${(y+3.4).toFixed(1)}" text-anchor="middle"
+          font-family="'Geist Mono',monospace" font-weight="700" font-size="10" fill="#33240A">${k.n}</text>`;
+  });
+  document.getElementById('dialMarks').innerHTML=m;
+}
+/* ---- GSAP: the needle sweeps to the balance, fills rise, tags settle ---- */
+function animateDial(to){
+  var needle=document.getElementById('dialNeedle'),
+      arcEl=document.getElementById('dialArc'),
+      num=document.getElementById('dialNum');
+  if(!needle)return;
+  var obj={v:0};
+  if(typeof gsap==='undefined'){
+    needle.setAttribute('transform','rotate('+(ang(to)-270)+' 170 170)');
+    arcEl.setAttribute('d',arc(0,Math.max(to,1),132)); num.textContent=to.toLocaleString(); return;
+  }
+  gsap.to(obj,{v:to,duration:1.6,ease:'power3.out',onUpdate:function(){
+    needle.setAttribute('transform','rotate('+(ang(obj.v)-270)+' 170 170)');
+    arcEl.setAttribute('d',arc(0,Math.max(obj.v,1),132));
+    num.textContent=Math.round(obj.v).toLocaleString();
+  }});
+}
+function runMotion(){
+  var d1=document.body.classList.contains('d1');
+  animateDial(d1?0:1530);
+  if(typeof gsap==='undefined')return;
+  gsap.fromTo('.a3-fill',{scaleY:0,transformOrigin:'50% 100%'},
+    {scaleY:1,duration:1.1,ease:'power2.out',stagger:.06});
+  gsap.fromTo('.a10-tag',{rotate:function(i){return i%2?7:-7},y:-8},
+    {rotate:function(i){return i%2?1.4:-1.6},y:0,duration:1.5,ease:'elastic.out(1,.45)',stagger:.07});
+  gsap.fromTo('.a9-stack',{scaleY:0,transformOrigin:'50% 100%'},{scaleY:1,duration:1.3,ease:'power3.out'});
+  gsap.fromTo('.a8-beam',{rotate:0},{rotate:9,duration:1.4,ease:'elastic.out(1,.5)',delay:.3});
+}
+/* ---- 11 · the claim, choreographed with GSAP + a real particle burst ---- */
+var dustReady=false;
+function goldDust(){
+  if(dustReady||typeof tsParticles==='undefined')return;
+  dustReady=true;
+  tsParticles.load({id:'cmd',options:{
+    fullScreen:{enable:false},detectRetina:true,fpsLimit:60,
+    particles:{
+      number:{value:0},color:{value:['#E0B25E','#F2ECE4','#B8873A']},shape:{type:'circle'},
+      opacity:{value:{min:.12,max:.75},animation:{enable:true,speed:.8,startValue:'max',destroy:'min'}},
+      size:{value:{min:.6,max:2}},
+      move:{enable:true,direction:'top',speed:{min:.4,max:1.5},straight:false,
+        outModes:{default:'destroy'},drift:{min:-.4,max:.4}}
+    },
+    emitters:{position:{x:50,y:56},size:{width:42,height:6},
+      rate:{delay:.1,quantity:3},life:{duration:2.2,count:1}}
+  }});
+}
+function playClaim(){
+  var st=document.getElementById('cm'); if(!st)return;
+  var num=document.getElementById('cmn');
+  if(typeof gsap==='undefined'){num.textContent='60';return}
+  gsap.killTweensOf(['#cm .cm-glow','#cm .cm-plate','#cm .cm-rule','#cm .cm-stamp','#cm .cm-say','#cm .cm-done']);
+  gsap.set('#cm .cm-glow',{opacity:0});
+  gsap.set('#cm .cm-plate',{scale:.94,opacity:0,y:14});
+  gsap.set('#cm .cm-rule',{scaleX:0});
+  gsap.set('#cm .cm-stamp',{opacity:0,scale:2.3,rotate:-13});
+  gsap.set(['#cm .cm-say','#cm .cm-done'],{opacity:0,y:12});
+  num.textContent='2,060';
+
+  var tl=gsap.timeline();
+  tl.to('#cm .cm-glow',{opacity:1,duration:.9,ease:'power2.out'},0)
+    .to('#cm .cm-plate',{scale:1,opacity:1,y:0,duration:.75,ease:'back.out(1.5)'},.15)
+    .to({v:2060},{v:60,duration:1.25,ease:'power3.out',onUpdate:function(){
+        num.textContent=Math.round(this.targets()[0].v).toLocaleString()}},.35)
+    .to('#cm .cm-rule',{scaleX:1,duration:.8,ease:'power3.out'},1.2)
+    .to('#cm .cm-stamp',{opacity:1,scale:1,duration:.42,ease:'back.out(2.2)'},1.5)
+    .to('#cm .cm-glow',{opacity:.55,duration:.5},1.9)
+    .to('#cm .cm-say',{opacity:1,y:0,duration:.7,ease:'power2.out'},2.0)
+    .to('#cm .cm-done',{opacity:1,y:0,duration:.6,ease:'power2.out'},2.45);
+  setTimeout(goldDust,1450);
+}
+var _sd=setDay;
+setDay=function(d){_sd(d);runMotion()};
+window.addEventListener('load',function(){buildDial();runMotion();setTimeout(playClaim,500)});
+</script>
+</body>
+</html>

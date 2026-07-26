@@ -1,0 +1,1728 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Bank v2 — Ten Worlds</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E;
+  --hand:'Marker Felt','Chalkboard SE','Comic Sans MS',cursive;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+button{font-family:inherit;cursor:pointer}
+
+/* ---------------- gallery chrome (responsive to 390) ---------------- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.mast{padding:58px 0 28px;border-bottom:1px solid var(--line)}
+.kick{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.26em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:14px}
+.mast h1{font-size:clamp(28px,4.6vw,46px);line-height:1.02;letter-spacing:-.035em;margin-bottom:15px}
+.mast p{max-width:680px;color:var(--dim);font-size:15px;margin:0 0 11px}
+.mast p b{color:var(--ink);font-weight:500}
+
+.protocol{border:1px solid var(--line2);border-radius:14px;padding:20px 20px 6px;margin:26px 0 0;
+  background:#0c0a12}
+.protocol h3{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.24em;color:var(--gold);
+  text-transform:uppercase;font-weight:700;margin-bottom:12px}
+.banned{list-style:none;padding:0;margin:0 0 18px}
+.banned li{font-size:14.4px;color:#7d7590;padding:7px 0 7px 26px;position:relative;text-decoration:line-through}
+.banned li::before{content:'✕';position:absolute;left:0;color:var(--blood);text-decoration:none;
+  font-family:'Geist Mono',monospace;font-size:11px}
+.ptab{width:100%;border-collapse:collapse;font-size:13.4px}
+.ptab th{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.17em;color:var(--faint);
+  text-transform:uppercase;text-align:left;padding:0 8px 9px 0;font-weight:700;border-bottom:1px solid var(--line)}
+.ptab td{padding:9px 8px 9px 0;border-bottom:1px solid #141220;color:var(--dim);vertical-align:top}
+.ptab td:first-child{font-family:'Geist Mono',monospace;font-size:10px;color:#4b4459;width:26px}
+.ptab td b{color:var(--ink);font-weight:500}
+.ptab .lo{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.12em;padding:3px 6px;border-radius:4px;
+  white-space:nowrap;background:rgba(255,107,44,.16);color:#FF9A5E}
+.ptab .pl{background:rgba(255,255,255,.07);color:#a9a2b8}
+.idx{display:flex;flex-wrap:wrap;gap:6px;margin-top:24px}
+.idx a{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--dim);border:1px solid var(--line2);border-radius:7px;padding:8px 9px;text-decoration:none}
+.idx a:hover{border-color:var(--gold);color:var(--gold)}
+
+.dir{padding:50px 0;border-bottom:1px solid var(--line)}
+.dh{display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:start;margin-bottom:20px}
+.dn{font-family:'Clash Display',sans-serif;font-size:42px;line-height:.8;font-weight:700;
+  color:transparent;-webkit-text-stroke:1.2px var(--line2)}
+.dt h2{font-size:25px;letter-spacing:-.03em;margin-bottom:7px}
+.dm{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--faint);line-height:1.8}
+.dm b{color:#9a8a63;font-weight:400}
+.notx{margin:12px 0 0;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.06em;
+  color:#c9bda0;border-left:2px solid var(--gold);padding:4px 0 4px 12px}
+.dl{max-width:620px;color:var(--dim);font-size:14.6px;margin-top:12px}
+.dl b{color:var(--ink);font-weight:500}
+.body{display:grid;grid-template-columns:392px minmax(0,1fr);gap:34px;align-items:start}
+.body>*{min-width:0}
+.notes dt{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);margin-top:18px}
+.notes dt:first-child{margin-top:0}
+.notes dd{margin:6px 0 0;font-size:14.2px;color:var(--dim);line-height:1.55}
+.notes dd b{color:var(--ink);font-weight:500}
+.risk{border-left:2px solid #3a2030;padding-left:13px;margin-top:19px;font-size:13.3px;color:var(--faint)}
+
+.p{width:390px;border-radius:22px;overflow:hidden;border:1px solid var(--line2);
+  box-shadow:0 30px 74px -30px #000;background:#000}
+.notch{height:26px;background:#000;display:flex;align-items:center;justify-content:center;flex:none}
+.notch i{width:56px;height:5px;border-radius:99px;background:#1a1a20}
+.pv{height:818px;overflow-y:auto;overflow-x:hidden;position:relative}
+.pv::-webkit-scrollbar{width:0}
+.cap{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.16em;color:#3f3a4d;
+  text-align:center;padding:9px 0 0;width:100%;max-width:390px}
+
+@media(max-width:900px){.body{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:452px){
+  .wrap{padding:0}
+  .mast,.dh,.protocol,.ho,.cehead{margin-left:15px;margin-right:15px}
+  .dir{padding:34px 0}
+  .notes{padding:0 15px}
+  .p{width:100%;border-radius:0;border-left:0;border-right:0}
+  .body{gap:22px}
+  .ptab{font-size:12.4px}
+}
+
+/* =======================================================================
+   01 · THE PRIZE COUNTER — world: seaside arcade
+   primitive: a ticket strip running down the page with prizes hung off it
+   ======================================================================= */
+.w1{background:
+   repeating-conic-gradient(from 30deg at 50% 50%,#1B0636 0 90deg,#26094A 90deg 180deg) 0 0/46px 46px,
+   #17053a;padding:0 0 26px}
+.w1-led{margin:13px 11px 0;background:#07030c;border:3px solid #FF2E88;border-radius:9px;padding:13px 10px 11px;
+  text-align:center;box-shadow:0 0 0 3px #00E5FF,0 0 30px rgba(255,46,136,.55)}
+.w1-n{font-family:'Geist Mono',monospace;font-size:47px;font-weight:700;letter-spacing:.03em;color:#FFD400;
+  line-height:.9;text-shadow:0 0 14px #FF8A00,0 0 38px rgba(255,138,0,.55)}
+.w1-l{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.2em;color:#00E5FF;margin-top:9px}
+.w1-topl{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.18em;color:#FFD400;
+  text-align:center;padding:20px 0 10px;text-shadow:0 0 12px rgba(255,212,0,.7)}
+.w1-top{display:flex;gap:10px;padding:0 12px}
+.w1-plush{flex:1;border-radius:38% 38% 44% 44%/48% 48% 38% 38%;padding:16px 10px 14px;text-align:center;
+  background:radial-gradient(circle at 40% 28%,#FF7FC4,#FF2E88 58%,#B10C57);
+  box-shadow:0 8px 0 #8C0642,0 12px 22px -8px rgba(255,46,136,.7);position:relative}
+.w1-plush:last-child{background:radial-gradient(circle at 40% 28%,#8CF6FF,#00E5FF 58%,#0090B5);
+  box-shadow:0 8px 0 #00728F,0 12px 22px -8px rgba(0,229,255,.6)}
+.w1-plush b{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.06em;color:#fff;
+  text-shadow:0 2px 0 rgba(0,0,0,.35);line-height:1.5;display:block}
+.w1-plush i{position:absolute;top:-9px;left:50%;transform:translateX(-50%) rotate(-8deg);
+  background:#FFD400;color:#3A2400;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.12em;
+  padding:3px 7px;border-radius:3px;font-style:normal;box-shadow:0 2px 0 #B58F00}
+.w1-rail{position:relative;margin-top:22px;padding:0 12px 0 62px}
+.w1-strip{position:absolute;left:14px;top:0;bottom:0;width:34px;overflow:hidden;
+  background:repeating-linear-gradient(180deg,#FFF6D9 0 26px,#F3E4B4 26px 28px);
+  box-shadow:0 0 16px rgba(255,212,0,.35)}
+.w1-strip::before,.w1-strip::after{content:'';position:absolute;top:0;bottom:0;width:6px;
+  background-image:radial-gradient(circle at 3px 6px,#17053a 2.4px,transparent 2.6px);background-size:6px 13px}
+.w1-strip::before{left:0}.w1-strip::after{right:0}
+.w1-strip span{position:absolute;top:14px;left:50%;transform:translateX(-50%);writing-mode:vertical-rl;
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.28em;color:#C29A1E}
+.w1-prize{position:relative;margin-bottom:16px;border-radius:10px;padding:13px 13px 12px;
+  background:#fff;box-shadow:0 7px 0 rgba(0,0,0,.32);transform:rotate(-1.4deg)}
+.w1-prize:nth-child(even){transform:rotate(1.6deg)}
+.w1-prize::before{content:'';position:absolute;left:-40px;top:26px;width:40px;height:3px;
+  background:repeating-linear-gradient(90deg,#FFD400 0 5px,transparent 5px 9px)}
+.w1-prize b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:17px;
+  letter-spacing:-.02em;color:#17053a;line-height:1.06;padding-right:66px}
+.w1-prize em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:7px;
+  letter-spacing:.08em;color:#7A6FA0;margin-top:7px;text-transform:uppercase;line-height:1.6;padding-right:66px}
+.w1-tag{position:absolute;top:10px;right:11px;background:#FFD400;border-radius:4px;padding:6px 8px;
+  text-align:center;transform:rotate(4deg);box-shadow:0 3px 0 #B58F00}
+.w1-tag b{font-family:'Geist Mono',monospace;font-size:12px;font-weight:700;color:#3A2400;padding:0;letter-spacing:0}
+.w1-tag span{display:block;font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.13em;color:#6B4B00}
+.w1-grab{margin-top:11px;width:100%;border:0;border-radius:7px;padding:12px;background:#FF2E88;color:#fff;
+  font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;font-weight:700;box-shadow:0 4px 0 #A60B54}
+.w1-prize.soon{background:#2B1256;box-shadow:0 7px 0 rgba(0,0,0,.4)}
+.w1-prize.soon b{color:#B9A8E8}
+.w1-prize.soon em{color:#7F6FB5}
+.w1-prize.soon .w1-tag{background:#5B3F9E;box-shadow:0 3px 0 #3B2470}
+.w1-prize.soon .w1-tag b{color:#E6DBFF}
+.w1-prize.soon .w1-tag span{color:#B9A8E8}
+.w1-wait{margin-top:10px;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.15em;color:#00E5FF;
+  border-top:1px dashed #4B2E86;padding-top:9px}
+.w1-btns{display:flex;flex-wrap:wrap;gap:9px;padding:8px 12px 0}
+.w1-btn{width:calc(50% - 4.5px);border:0;border-radius:50px;padding:15px 8px;text-align:center;
+  background:radial-gradient(circle at 44% 30%,#7CFF9E,#22C55E 62%,#12833C);color:#04240F;
+  font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.09em;font-weight:700;
+  box-shadow:0 6px 0 #0B5C29;line-height:1.5}
+.w1-btn:nth-child(2){background:radial-gradient(circle at 44% 30%,#FFC46B,#FF8A00 62%,#C05C00);
+  box-shadow:0 6px 0 #8A4100;color:#2E1400}
+.w1-btn:nth-child(3){background:radial-gradient(circle at 44% 30%,#8CF6FF,#00E5FF 62%,#0090B5);
+  box-shadow:0 6px 0 #00637C;color:#01262E}
+.w1-btn:nth-child(4){background:radial-gradient(circle at 44% 30%,#FF9ED0,#FF2E88 62%,#B10C57);
+  box-shadow:0 6px 0 #7D0439;color:#33021A}
+.w1-btn b{display:block;font-size:12px;margin-top:3px}
+
+/* =======================================================================
+   02 · MACHINE No.7 — world: a vending machine
+   primitive: a machine faceplate — window, keypad, coin column, dispense tray
+   ======================================================================= */
+.w2{background:#0d0d10;padding:0}
+.w2-hd{background:linear-gradient(180deg,#E8232A,#B0161C);padding:11px 14px;display:flex;
+  justify-content:space-between;align-items:center;box-shadow:inset 0 -3px 0 rgba(0,0,0,.28)}
+.w2-hd b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:16px;letter-spacing:.02em;color:#fff}
+.w2-hd span{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.16em;color:#FFD9DA}
+.w2-glass{margin:9px;border-radius:5px;padding:9px;position:relative;overflow:hidden;
+  background:linear-gradient(178deg,#1D1F26,#101216);
+  box-shadow:inset 0 0 0 3px #2C2F38,inset 0 12px 34px -10px rgba(255,220,160,.22)}
+.w2-glass::after{content:'';position:absolute;left:-30%;top:-60%;width:52%;height:230%;transform:rotate(17deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);pointer-events:none}
+.w2-slot{position:relative;display:grid;grid-template-columns:34px 1fr auto;gap:9px;align-items:center;
+  padding:9px 8px;border-bottom:2px solid #24262E}
+.w2-slot:last-child{border-bottom:0}
+.w2-code{font-family:'Geist Mono',monospace;font-size:12px;font-weight:700;color:#0d0d10;background:#C9CDD6;
+  border-radius:3px;padding:6px 0;text-align:center;letter-spacing:.04em}
+.w2-slot b{display:block;font-family:'Clash Display',sans-serif;font-weight:600;font-size:14.5px;
+  letter-spacing:-.02em;color:#F2F4F8;line-height:1.1}
+.w2-slot em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.09em;color:#8B93A6;margin-top:5px;text-transform:uppercase;line-height:1.6}
+.w2-pr{font-family:'Geist Mono',monospace;font-size:13px;font-weight:700;color:#4ADE80;text-align:right;
+  line-height:1.2}
+.w2-pr small{display:block;font-size:6.5px;letter-spacing:.14em;color:#3C7F55;margin-top:3px}
+.w2-slot.out .w2-code{background:#3A3D46;color:#7C838F}
+.w2-slot.out b{color:#7C838F}
+.w2-slot.out em{color:#565C69}
+.w2-slot.out .w2-pr{color:#E8232A}
+.w2-slot.out .w2-pr small{color:#8E2A2E}
+.w2-panel{margin:0 9px;background:#17181C;border-radius:5px;padding:11px;box-shadow:inset 0 0 0 2px #262930}
+.w2-cred{display:flex;align-items:center;gap:10px;background:#04120A;border-radius:3px;padding:9px 11px;
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.8)}
+.w2-cred span{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.2em;color:#2C7048}
+.w2-cred b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:26px;font-weight:700;color:#4ADE80;
+  letter-spacing:.08em;text-shadow:0 0 14px rgba(74,222,128,.75)}
+.w2-read{margin-top:8px;background:#04120A;border-radius:3px;padding:9px 11px;
+  font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.11em;color:#4ADE80;line-height:1.7;
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.8)}
+.w2-keys{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px}
+.w2-keys button{border:0;border-radius:4px;padding:12px 0;background:linear-gradient(180deg,#3A3E48,#22252C);
+  color:#C9CDD6;font-family:'Geist Mono',monospace;font-size:11px;font-weight:700;
+  box-shadow:0 3px 0 #101216,inset 0 1px 0 rgba(255,255,255,.1)}
+.w2-keys button.hot{background:linear-gradient(180deg,#FF4D5E,#C2151F);color:#fff;box-shadow:0 3px 0 #7C0A11}
+.w2-coins{margin:9px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.w2-coin{border:0;border-radius:4px;padding:10px 5px;text-align:center;
+  background:linear-gradient(180deg,#2A2D35,#191B21);box-shadow:inset 0 0 0 1px #383C46}
+.w2-coin i{display:block;width:24px;height:24px;border-radius:50%;margin:0 auto 7px;
+  background:radial-gradient(circle at 36% 28%,#F2E2B4,#C9A75E 58%,#8A6E2C);
+  box-shadow:0 2px 4px rgba(0,0,0,.6)}
+.w2-coin span{display:block;font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.08em;color:#9BA3B4;line-height:1.5}
+.w2-coin b{display:block;font-family:'Geist Mono',monospace;font-size:9px;color:#4ADE80;margin-top:4px}
+.w2-trayl{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.2em;color:#5B616E;padding:4px 12px 7px}
+.w2-tray{margin:0 9px 12px;background:#06070A;border-radius:5px;padding:12px 11px;
+  box-shadow:inset 0 5px 14px rgba(0,0,0,.9),inset 0 0 0 2px #22252C}
+.w2-out2{display:flex;gap:8px}
+.w2-token{flex:1;border-radius:4px;padding:12px 9px;text-align:center;
+  background:linear-gradient(180deg,#F2E2B4,#C9A75E 55%,#96773A);
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.05em;color:#3A2C08;line-height:1.5;
+  box-shadow:0 3px 7px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,250,225,.6)}
+
+/* =======================================================================
+   03 · DEPARTURES — world: an airport split-flap board
+   primitive: fixed-width character-cell rows (the only table in the set)
+   ======================================================================= */
+.w3{background:#08080A;padding:0 0 24px}
+.w3-hd{display:flex;justify-content:space-between;align-items:center;padding:14px 12px 12px;
+  border-bottom:2px solid #17171B}
+.w3-hd .k{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.24em;color:#4E4E58;line-height:1.9}
+.w3-hd .k b{display:block;font-size:22px;letter-spacing:.06em;color:#FFB020;font-weight:700;
+  text-shadow:0 0 16px rgba(255,176,32,.5)}
+.w3-passes{display:flex;gap:8px;padding:12px 12px 4px}
+.w3-pass{flex:1;position:relative;background:#EFE9DC;border-radius:3px;padding:9px 10px;overflow:hidden}
+.w3-pass::after{content:'';position:absolute;right:34px;top:0;bottom:0;border-left:1.5px dashed #B6AC95}
+.w3-pass .t{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.18em;color:#8A8069}
+.w3-pass .n{font-family:'Clash Display',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:-.02em;
+  color:#17171B;line-height:1.1;margin-top:5px;padding-right:30px}
+.w3-pass .s{position:absolute;right:0;top:0;bottom:0;width:34px;display:grid;place-items:center;
+  font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.1em;color:#8A8069;
+  writing-mode:vertical-rl;transform:rotate(180deg)}
+.w3-lab{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.22em;color:#4E4E58;padding:12px 12px 8px}
+.w3-board{margin:0 8px;background:#0B0B0D;border-radius:3px;padding:4px;box-shadow:inset 0 0 0 2px #17171B}
+.w3-row{display:grid;grid-template-columns:1fr 52px 60px;gap:7px;align-items:center;padding:9px 8px;
+  border-bottom:1px solid #141418;perspective:400px}
+.w3-row:last-child{border-bottom:0}
+.w3-row .d{position:relative;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.05em;
+  color:#FFB020;line-height:1.25;text-transform:uppercase}
+.w3-row .c{display:block;font-size:6.5px;letter-spacing:.11em;color:#7A6234;margin-top:6px;line-height:1.6}
+.w3-row .c::after{display:none}
+.w3-row .f{font-family:'Geist Mono',monospace;font-size:11px;color:#D9D2C2;text-align:right;letter-spacing:.03em}
+.w3-row .s{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.09em;text-align:right;
+  color:#5E5E6A;line-height:1.5}
+.w3-row.go .s{color:#22E06B;text-shadow:0 0 12px rgba(34,224,107,.6)}
+.w3-row.head{border-bottom:2px solid #22222A;padding:7px 8px}
+.w3-row.head span{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.18em;color:#4E4E58}
+.w3-row.head span:nth-child(2),.w3-row.head span:nth-child(3){text-align:right}
+.flap{animation:flapin .5s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes flapin{0%{transform:rotateX(-88deg);opacity:0}100%{transform:rotateX(0);opacity:1}}
+.w3-miles{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:0 12px}
+.w3-mile{border:0;background:#0B0B0D;box-shadow:inset 0 0 0 2px #17171B;border-radius:3px;padding:11px 10px;
+  text-align:left;position:relative}
+.w3-mile::after{content:'';position:absolute;left:10px;right:10px;top:50%;height:1px;background:rgba(0,0,0,.6)}
+.w3-mile b{display:block;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.09em;color:#FFB020}
+.w3-mile span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;color:#5E5E6A;margin-top:5px}
+
+/* =======================================================================
+   04 · TILT — world: a pinball machine
+   primitive: an illuminated backglass over a raked field of lanes and target banks
+   ======================================================================= */
+.w4{background:linear-gradient(180deg,#0A1230,#0B1024 40%,#070A18);padding:0 0 20px}
+.w4-glass{position:relative;overflow:hidden;padding:15px 13px 14px;
+  background:linear-gradient(180deg,#1A2A6B,#0E1642 62%,#0A0F30);border-bottom:4px solid #FF7A18}
+.w4-glass::before{content:'';position:absolute;left:-20%;right:-20%;top:-60%;height:180%;
+  background:radial-gradient(46% 44% at 50% 62%,rgba(255,122,24,.32),transparent 68%)}
+.w4-title{position:relative;text-align:center;font-family:'Clash Display',sans-serif;font-weight:700;
+  font-size:30px;letter-spacing:.04em;color:#FFD400;line-height:.94;
+  text-shadow:3px 3px 0 #E8232A,6px 6px 0 rgba(0,0,0,.45)}
+.w4-sub{position:relative;text-align:center;font-family:'Geist Mono',monospace;font-size:7px;
+  letter-spacing:.28em;color:#8FA6FF;margin-top:8px}
+.w4-score{position:relative;margin-top:12px;background:#040713;border-radius:4px;padding:10px 12px;
+  display:flex;align-items:baseline;justify-content:space-between;box-shadow:inset 0 0 0 2px #23306B}
+.w4-score b{font-family:'Geist Mono',monospace;font-size:34px;font-weight:700;letter-spacing:.02em;color:#FF7A18;
+  text-shadow:0 0 18px rgba(255,122,24,.8)}
+.w4-score span{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.16em;color:#5C6BA8;
+  text-align:right;line-height:1.9}
+.w4-field{position:relative;padding:16px 12px 0;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 40%)}
+.w4-cap{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.22em;color:#5C6BA8;
+  text-align:center;padding:0 0 12px}
+.w4-bumps{display:flex;justify-content:center;gap:14px;margin-bottom:20px}
+.w4-bump{width:104px;height:104px;border-radius:50%;display:grid;place-items:center;text-align:center;padding:0 9px;
+  background:radial-gradient(circle at 44% 34%,#FFF6D0,#FFD400 40%,#E8A100 66%,#9A6A00);
+  box-shadow:0 0 0 5px #E8232A,0 0 26px rgba(255,212,0,.55),0 7px 0 rgba(0,0,0,.35)}
+.w4-bump:nth-child(2){background:radial-gradient(circle at 44% 34%,#D8FFF2,#38E1D8 40%,#12A79E 66%,#0A6B65);
+  box-shadow:0 0 0 5px #E8232A,0 0 26px rgba(56,225,216,.5),0 7px 0 rgba(0,0,0,.35)}
+.w4-bump b{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.03em;color:#3A2400;line-height:1.4}
+.w4-bump b i{display:block;font-style:normal;font-size:6px;letter-spacing:.14em;color:#7A5200;margin-bottom:4px}
+.w4-bank{position:relative;padding-bottom:6px}
+.w4-tgt{position:relative;margin-bottom:9px;border-radius:3px;padding:11px 12px 10px;
+  background:linear-gradient(180deg,#FFFFFF,#DCE3F5);box-shadow:0 5px 0 #6E7BAE;transform:rotate(-1.2deg)}
+.w4-tgt:nth-child(even){transform:rotate(1.4deg)}
+.w4-tgt b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:16px;
+  letter-spacing:-.02em;color:#0E1642;line-height:1.05;padding-right:74px}
+.w4-tgt em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.08em;color:#5C6BA8;margin-top:6px;text-transform:uppercase;line-height:1.6;padding-right:74px}
+.w4-hit{position:absolute;right:10px;top:11px;background:#E8232A;color:#fff;border:0;border-radius:3px;
+  padding:9px 10px;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.1em;font-weight:700;
+  text-align:center;line-height:1.5;box-shadow:0 3px 0 #8E0F14}
+.w4-tgt.down{background:linear-gradient(180deg,#1A2450,#131B3C);box-shadow:0 3px 0 #0A0F2A;transform:rotate(.5deg)}
+.w4-tgt.down b{color:#5C6BA8}
+.w4-tgt.down em{color:#3E4A80}
+.w4-tgt.down .w4-hit{background:#0A0F30;color:#8FA6FF;box-shadow:0 3px 0 #050818}
+.w4-lanes{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:14px}
+.w4-lane{border:0;border-radius:20px 20px 4px 4px;padding:13px 4px 10px;text-align:center;
+  background:linear-gradient(180deg,#141C42,#0B1130);box-shadow:inset 0 0 0 2px #FF7A18}
+.w4-lane i{display:block;width:15px;height:15px;border-radius:50%;margin:0 auto 8px;background:#FFD400;
+  box-shadow:0 0 12px #FFD400,0 0 24px rgba(255,212,0,.5)}
+.w4-lane span{display:block;font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.08em;color:#8FA6FF;line-height:1.5}
+.w4-lane b{display:block;font-family:'Geist Mono',monospace;font-size:9px;color:#FFD400;margin-top:5px}
+.w4-apron{margin:16px 12px 0;border-radius:3px;padding:10px 12px;background:#0A0F30;
+  box-shadow:inset 0 0 0 1px #23306B;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;
+  color:#5C6BA8;line-height:1.9}
+.w4-apron b{color:#FFD400;font-weight:400}
+
+/* =======================================================================
+   05 · STATEMENT OF ACCOUNT — world: a 1974 bank passbook
+   primitive: a typewritten prose page — no rows, no boxes, no layout at all
+   AGGRESSIVELY PLAIN ON PURPOSE
+   ======================================================================= */
+.w5{background:#FBFAF6;padding:0 0 34px}
+.w5-pg{padding:30px 26px 0;font-family:'Geist Mono',monospace;font-size:10.5px;line-height:2;color:#141414}
+.w5-pg .co{font-size:10.5px;letter-spacing:.16em}
+.w5-pg .hd{letter-spacing:.1em;margin-top:2px}
+.w5-pg .rule{border-top:1px solid #141414;margin:16px 0 20px}
+.w5-pg p{margin:0 0 19px}
+.w5-pg .ind{padding-left:22px}
+.w5-pg u{text-decoration:none;border-bottom:1px solid #141414}
+.w5-pg .yes{letter-spacing:.14em}
+.w5-stamp{margin:26px 26px 0;display:inline-block;transform:rotate(-6deg);border:2.5px solid #B3241C;
+  border-radius:4px;padding:9px 14px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;
+  color:#B3241C;font-weight:700;line-height:1.5;text-align:center;opacity:.82}
+.w5-foot{padding:26px 26px 0;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.1em;
+  color:#6B6B6B;line-height:2}
+
+/* =======================================================================
+   06 · THE ALBUM — world: a sticker album
+   primitive: die-cut silhouette slots waiting to be filled
+   ======================================================================= */
+.w6{background:
+   repeating-linear-gradient(94deg,rgba(0,0,0,.018) 0 2px,transparent 2px 5px),
+   #E9DEC4;padding:0 0 26px}
+.w6-hd{padding:20px 16px 4px;display:flex;align-items:flex-end;gap:12px}
+.w6-hd .t{font-family:var(--hand);font-size:30px;color:#16306B;line-height:.95;letter-spacing:.01em}
+.w6-hd .n{margin-left:auto;text-align:right;font-family:var(--hand);font-size:26px;color:#16306B;line-height:1}
+.w6-hd .n span{display:block;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.16em;color:#8A7C5A;margin-top:3px}
+.w6-ul{margin:2px 16px 0;height:3px;border-radius:9px;background:#16306B;opacity:.55;
+  transform:rotate(-.5deg);width:150px}
+.w6-lab{font-family:var(--hand);font-size:14px;color:#8A7C5A;padding:20px 16px 9px;letter-spacing:.02em}
+.w6-loose{display:flex;gap:9px;padding:0 16px}
+.w6-st{flex:1;position:relative;border-radius:12px;padding:14px 10px;text-align:center;
+  border:4px solid #fff;box-shadow:0 5px 12px -4px rgba(60,40,10,.5);transform:rotate(-2.4deg);
+  background:linear-gradient(150deg,#FFE45C,#FF9D00 62%,#F26A00)}
+.w6-st:last-child{transform:rotate(2.6deg);background:linear-gradient(150deg,#7CF3D8,#22C3D6 62%,#0E86C4)}
+.w6-st b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:13px;letter-spacing:-.02em;
+  color:#3A2200;line-height:1.08;display:block}
+.w6-st:last-child b{color:#02323F}
+.w6-st i{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:5.5px;
+  letter-spacing:.18em;color:rgba(0,0,0,.45);margin-bottom:6px}
+.w6-slots{padding:0 14px}
+.w6-slot{position:relative;margin-bottom:13px;min-height:76px;padding:13px 14px;border-radius:14px}
+.w6-slot.got{border:5px solid #fff;box-shadow:0 8px 16px -6px rgba(60,40,10,.55);
+  background:linear-gradient(148deg,#FF8FBF,#F4256E 60%,#B70746)}
+.w6-slot.got:nth-of-type(2){background:linear-gradient(148deg,#A6F07A,#3FBF2E 60%,#17801A);transform:rotate(1.4deg)}
+.w6-slot.got{transform:rotate(-1.6deg)}
+.w6-slot.got b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:20px;letter-spacing:-.03em;
+  color:#fff;line-height:1.02;display:block;text-shadow:0 2px 0 rgba(0,0,0,.22)}
+.w6-slot.got em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.09em;color:rgba(255,255,255,.85);margin-top:8px;text-transform:uppercase;line-height:1.6}
+.w6-peel{position:absolute;right:-4px;top:-10px;transform:rotate(9deg);background:#16306B;color:#fff;
+  border:0;border-radius:5px;padding:7px 10px;font-family:'Geist Mono',monospace;font-size:8px;
+  letter-spacing:.14em;font-weight:700;box-shadow:0 3px 0 #0B1B44}
+.w6-slot.gap{border:3px dashed #B3A17A;background:rgba(255,255,255,.28)}
+.w6-slot.gap b{font-family:'Clash Display',sans-serif;font-weight:600;font-size:18px;letter-spacing:-.03em;
+  color:#B3A17A;line-height:1.04;display:block}
+.w6-slot.gap em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.09em;color:#B3A17A;margin-top:7px;text-transform:uppercase;line-height:1.6}
+.w6-pen{position:absolute;right:12px;bottom:9px;font-family:var(--hand);font-size:13px;color:#16306B;
+  transform:rotate(-3deg)}
+.w6-sheet{margin:8px 14px 0;background:#fff;border-radius:9px;padding:11px 10px;
+  box-shadow:0 6px 14px -6px rgba(60,40,10,.45);display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.w6-mini{border:0;border-radius:9px;padding:11px 8px;text-align:center;background:#FFD84D;color:#3A2200;
+  font-family:'Clash Display',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:-.01em;line-height:1.15;
+  box-shadow:inset 0 0 0 3px #fff,0 3px 7px -2px rgba(60,40,10,.4)}
+.w6-mini:nth-child(2){background:#8BE86A}.w6-mini:nth-child(3){background:#6FD8F5}.w6-mini:nth-child(4){background:#FF9CC4}
+.w6-mini span{display:block;font-family:'Geist Mono',monospace;font-size:8.5px;margin-top:5px;opacity:.68}
+
+/* =======================================================================
+   07 · THE MOUNTAIN — world: a mountain
+   primitive: an elevation profile; the snow line is your balance
+   ======================================================================= */
+.w7{background:linear-gradient(180deg,#39C6FF,#8FE2FF 34%,#DDF4FF 62%,#F4FBFF);padding:0 0 22px;position:relative}
+.w7-hd{padding:16px 15px 12px;display:flex;justify-content:space-between;align-items:flex-start}
+.w7-hd .t{font-family:'Clash Display',sans-serif;font-weight:700;font-size:19px;letter-spacing:-.03em;color:#06344F}
+.w7-hd .t span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.18em;
+  color:#3E7E9E;margin-top:5px;font-weight:400}
+.w7-hd .a{text-align:right}
+.w7-hd .a b{font-family:'Geist Mono',monospace;font-size:26px;font-weight:700;color:#06344F;letter-spacing:-.02em}
+.w7-hd .a span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.16em;color:#3E7E9E;margin-top:3px}
+.w7-mtn{position:relative;padding:0 0 6px}
+.w7-band{margin:0 auto;position:relative;padding:12px 14px 13px;text-align:left}
+.w7-band .alt{position:absolute;left:9px;top:9px;font-family:'Geist Mono',monospace;font-size:7px;
+  letter-spacing:.1em;color:rgba(255,255,255,.62)}
+.w7-band b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:16px;
+  letter-spacing:-.025em;line-height:1.05;margin-top:11px}
+.w7-band em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.08em;margin-top:6px;text-transform:uppercase;line-height:1.6}
+.w7-band .go{margin-top:10px;border:0;border-radius:6px;padding:10px 12px;background:#06344F;color:#DDF4FF;
+  font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.15em;font-weight:700}
+.w7-band .up{margin-top:9px;display:inline-block;border-radius:5px;padding:7px 9px;
+  background:rgba(255,255,255,.14);font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.11em}
+/* above the snow line — rock and shadow */
+.w7-rock{background:linear-gradient(178deg,#4A5568,#2F3949);color:#C9D2E0;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
+.w7-rock b{color:#EAF0F8}
+.w7-rock em{color:#93A0B5}
+.w7-rock .up{color:#EAF0F8}
+/* below the snow line — sunlit and reachable */
+.w7-snow{background:linear-gradient(178deg,#FFFFFF,#DCEEF9);color:#06344F;
+  box-shadow:inset 0 1px 0 #fff,0 -1px 0 rgba(6,52,79,.08)}
+.w7-snow .alt{color:#7FA3B8}
+.w7-snow b{color:#06344F}
+.w7-snow em{color:#4C7E97}
+.w7-line{position:relative;height:0;margin:0;z-index:5}
+.w7-line i{position:absolute;left:0;right:0;top:0;border-top:3px dashed #E8232A}
+.w7-line span{position:absolute;right:12px;top:-11px;background:#E8232A;color:#fff;border-radius:4px;
+  padding:5px 9px;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;font-weight:700;
+  box-shadow:0 3px 8px -2px rgba(232,35,42,.7);white-space:nowrap}
+.w7-base{height:26px;background:linear-gradient(178deg,#DCEEF9,#B9DFF2)}
+.w7-lift{margin:16px 14px 0;background:#06344F;border-radius:11px;padding:12px 12px 13px}
+.w7-lift .l{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.2em;color:#6FB8D8;margin-bottom:10px}
+.w7-chairs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.w7-chair{border:0;background:#0A4A6E;border-radius:7px;padding:10px 5px 9px;text-align:center;position:relative}
+.w7-chair::before{content:'';position:absolute;left:50%;top:-6px;width:2px;height:6px;background:#6FB8D8;transform:translateX(-50%)}
+.w7-chair span{display:block;font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.06em;color:#9FD4EA;line-height:1.5}
+.w7-chair b{display:block;font-family:'Geist Mono',monospace;font-size:9.5px;color:#FFD84D;margin-top:5px}
+.w7-pass{margin:12px 14px 0;display:flex;gap:8px}
+.w7-tik{flex:1;background:#FFD84D;border-radius:8px;padding:10px 11px;position:relative;
+  box-shadow:0 4px 10px -4px rgba(6,52,79,.5)}
+.w7-tik .k{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.2em;color:#8A6A00}
+.w7-tik .v{font-family:'Clash Display',sans-serif;font-weight:700;font-size:13px;letter-spacing:-.025em;
+  color:#3A2A00;line-height:1.08;margin-top:5px}
+.w7-passl{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.2em;color:#3E7E9E;padding:16px 15px 0}
+
+/* =======================================================================
+   08 · THE FRIDGE — world: a fridge door
+   primitive: overlapping paper held on with magnets
+   ======================================================================= */
+.w8{background:
+   repeating-linear-gradient(90deg,rgba(0,0,0,.028) 0 1px,transparent 1px 4px),
+   linear-gradient(100deg,#C9CDD2,#E4E7EA 30%,#CFD3D8 62%,#DFE2E6);padding:0}
+.w8-board{position:relative;height:1030px}
+.w8-note{position:absolute;background:#fff;padding:12px 13px 13px;
+  box-shadow:0 7px 15px -6px rgba(0,0,0,.42),0 2px 3px rgba(0,0,0,.14)}
+.w8-note b{display:block;font-family:var(--hand);font-size:20px;color:#111;line-height:1.06;letter-spacing:.01em}
+.w8-note em{display:block;font-style:normal;font-family:var(--hand);font-size:13px;color:#4A6BB5;
+  margin-top:8px;line-height:1.35}
+.w8-note .pr{display:inline-block;margin-top:10px;font-family:var(--hand);font-size:15px;color:#111;
+  border-bottom:2px solid #E8232A}
+.w8-mag{position:absolute;width:26px;height:26px;border-radius:50%;top:-11px;left:50%;
+  transform:translateX(-50%);box-shadow:0 3px 5px rgba(0,0,0,.4),inset 0 -3px 5px rgba(0,0,0,.24)}
+.w8-tick{position:absolute;right:-13px;bottom:-13px;width:46px;height:46px;border-radius:50%;
+  background:#3FBF2E;display:grid;place-items:center;color:#fff;font-size:24px;line-height:1;
+  box-shadow:0 4px 9px -2px rgba(0,0,0,.4);transform:rotate(-9deg)}
+.w8-soon{display:inline-block;margin-top:9px;font-family:var(--hand);font-size:14px;color:#E8232A;
+  transform:rotate(-2deg)}
+.w8-chart{position:absolute;background:#FFF8D6;padding:14px 15px 15px;
+  box-shadow:0 8px 18px -6px rgba(0,0,0,.45)}
+.w8-chart .k{font-family:var(--hand);font-size:16px;color:#4A6BB5}
+.w8-chart .n{font-family:var(--hand);font-size:52px;color:#E8232A;line-height:.9;margin-top:4px}
+.w8-chart .s{font-family:var(--hand);font-size:13px;color:#111;margin-top:6px}
+.w8-stars{margin-top:9px;font-size:15px;letter-spacing:2px;color:#F2B705}
+.w8-priv{position:absolute;background:#4A6BB5;padding:19px 12px 13px;border-radius:3px;
+  box-shadow:0 6px 13px -5px rgba(0,0,0,.5)}
+.w8-priv .k{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.2em;color:#D8E4FF}
+.w8-priv b{display:block;font-family:var(--hand);font-size:16px;color:#fff;line-height:1.2;margin-top:9px}
+.w8-sheet{position:absolute;background:#fff;padding:12px 12px 13px;
+  box-shadow:0 7px 15px -6px rgba(0,0,0,.42)}
+.w8-sheet .k{font-family:var(--hand);font-size:15px;color:#111;margin-bottom:10px}
+.w8-sk{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.w8-star{border:0;border-radius:50px;padding:11px 8px;text-align:center;background:#F2B705;color:#3A2A00;
+  font-family:var(--hand);font-size:13px;line-height:1.2;box-shadow:0 3px 0 #B98C00}
+.w8-star:nth-child(2){background:#3FBF2E;color:#04240F;box-shadow:0 3px 0 #227A16}
+.w8-star:nth-child(3){background:#4A6BB5;color:#fff;box-shadow:0 3px 0 #2E4680}
+.w8-star:nth-child(4){background:#E8232A;color:#fff;box-shadow:0 3px 0 #9E1015}
+.w8-star b{display:block;font-family:'Geist Mono',monospace;font-size:9px;margin-top:4px}
+
+/* =======================================================================
+   09 · CARD No.0041 — world: a loyalty punch card, taken absurdly seriously
+   primitive: ONE enormous object filling the entire screen
+   ======================================================================= */
+.w9{background:#111;padding:0}
+.w9-card{min-height:818px;background:#FF6B00;padding:20px 18px 22px;position:relative;
+  background-image:radial-gradient(circle at 100% 0,rgba(0,0,0,.09),transparent 55%)}
+.w9-hd{display:flex;justify-content:space-between;align-items:flex-start;
+  border-bottom:3px solid #111;padding-bottom:11px}
+.w9-hd .t{font-family:'Clash Display',sans-serif;font-weight:700;font-size:22px;letter-spacing:-.02em;color:#111;line-height:1}
+.w9-hd .t span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.2em;
+  margin-top:6px;font-weight:400;color:#7A3600}
+.w9-hd .no{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.14em;color:#111;text-align:right;line-height:1.9}
+.w9-bal{display:flex;align-items:flex-end;justify-content:space-between;padding:15px 0 14px;
+  border-bottom:3px solid #111}
+.w9-bal b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:56px;letter-spacing:-.055em;
+  color:#111;line-height:.8;text-shadow:2px 2px 0 rgba(255,255,255,.22)}
+.w9-bal span{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.17em;color:#7A3600;text-align:right;line-height:2}
+.w9-r{padding:13px 0 12px;border-bottom:1.5px dashed rgba(17,17,17,.35)}
+.w9-r .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.w9-r b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:15.5px;letter-spacing:-.025em;color:#111;line-height:1.05}
+.w9-r .px{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.1em;color:#7A3600;white-space:nowrap}
+.w9-r em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.08em;color:#8E4000;margin-top:6px;text-transform:uppercase;line-height:1.6}
+.w9-holes{display:flex;gap:5px;margin-top:10px;align-items:center}
+.w9-holes i{flex:1;height:15px;border-radius:99px;display:block;border:1.5px solid rgba(17,17,17,.45)}
+.w9-holes i.p{background:#111;border-color:#111;box-shadow:inset 0 1px 2px rgba(0,0,0,.8)}
+.w9-r .full{margin-left:8px;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.12em;
+  color:#FF6B00;background:#111;border:0;border-radius:3px;padding:8px 9px;font-weight:700;white-space:nowrap}
+.w9-r .left{margin-left:8px;font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;
+  color:#7A3600;white-space:nowrap}
+.w9-boost{margin-top:14px;border-top:3px solid #111;padding-top:11px;
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.11em;color:#111;line-height:2.1}
+.w9-boost b{color:#7A3600;font-weight:400}
+.w9-tabs{display:flex;gap:9px;margin-top:15px}
+.w9-tab{flex:1;position:relative;background:#111;color:#FF6B00;border:0;border-radius:4px 4px 0 0;
+  padding:13px 10px 15px;text-align:left}
+.w9-tab::before{content:'';position:absolute;left:9px;right:9px;top:0;border-top:2px dotted #FF6B00}
+.w9-tab .k{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.2em;color:#B04C00}
+.w9-tab b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:13px;
+  letter-spacing:-.025em;line-height:1.08;margin-top:6px;color:#FFB380}
+.w9-tab i{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6px;
+  letter-spacing:.15em;color:#B04C00;margin-top:7px}
+
+/* =======================================================================
+   10 · THE BANK, TEXTING — world: a text thread
+   primitive: a conversation with quick-reply chips
+   ======================================================================= */
+.w10{background:#0C100E;padding:0;display:flex;flex-direction:column;min-height:818px}
+.w10>*{min-width:0}
+.w10-hd{display:flex;align-items:center;gap:10px;padding:13px 14px;border-bottom:1px solid #1B221E;
+  background:#0F1512;position:sticky;top:0;z-index:5}
+.w10-av{width:38px;height:38px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:radial-gradient(circle at 36% 30%,#F2E2B4,#C9A75E 56%,#8A6E2C);
+  font-family:'Geist Mono',monospace;font-size:13px;font-weight:700;color:#3A2C08}
+.w10-hd .n{font-family:'Clash Display',sans-serif;font-weight:600;font-size:16px;letter-spacing:-.02em;color:#EAF2EC}
+.w10-hd .s{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.11em;color:#C6FF3D;margin-top:3px}
+.w10-thread{flex:1;padding:16px 12px 8px}
+.w10-b{max-width:82%;border-radius:16px 16px 16px 4px;padding:11px 13px;margin-bottom:9px;
+  background:#1A231D;color:#D7E4DA;font-size:14px;line-height:1.42}
+.w10-b.me{margin-left:auto;border-radius:16px 16px 4px 16px;background:#C6FF3D;color:#132000;font-weight:500}
+.w10-t{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.16em;color:#4B584F;
+  text-align:center;padding:6px 0 12px}
+.w10-att{display:flex;gap:8px;margin:2px 0 12px}
+.w10-card{flex:1;border-radius:13px;padding:12px 11px;background:#132A1E;border:1px solid #2C6B47}
+.w10-card .k{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.2em;color:#4ADE80}
+.w10-card b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:14px;
+  letter-spacing:-.025em;color:#EAF2EC;line-height:1.06;margin-top:7px}
+.w10-card button{margin-top:10px;width:100%;border:0;border-radius:7px;padding:9px;background:#4ADE80;
+  color:#04240F;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.14em;font-weight:700}
+.w10-of{border-radius:16px;padding:14px 14px 13px;margin-bottom:9px;max-width:88%;
+  background:linear-gradient(160deg,#22301F,#16201A);border:1px solid #3A4A33}
+.w10-of b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:19px;
+  letter-spacing:-.03em;color:#EAF2EC;line-height:1.04}
+.w10-of .said{font-size:12.5px;color:#8FA396;margin-top:9px;line-height:1.45;font-style:italic}
+.w10-of .did{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.13em;color:#C6FF3D;margin-top:8px}
+.w10-of .row{display:flex;align-items:center;gap:10px;margin-top:12px}
+.w10-of .row span{font-family:'Geist Mono',monospace;font-size:12px;color:#8FA396}
+.w10-of .row button{margin-left:auto;border:0;border-radius:9px;padding:11px 16px;background:#C6FF3D;
+  color:#132000;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.15em;font-weight:700}
+.w10-soon{display:flex;gap:6px;margin:2px 0 10px}
+.w10-soon div{flex:1;border-radius:10px;padding:9px 8px;background:#141A16;text-align:center;
+  font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.08em;color:#7C8C81;line-height:1.6}
+.w10-soon div b{display:block;color:#B9C8BE;font-size:8.5px;margin-bottom:4px;font-weight:400}
+.w10-qr{border-top:1px solid #1B221E;background:#0F1512;padding:11px 12px 13px;position:sticky;bottom:0}
+.w10-qrl{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.19em;color:#4B584F;margin-bottom:9px}
+.w10-chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px}
+.w10-chips::-webkit-scrollbar{display:none}
+.w10-chip{flex:none;border:1px solid #2E3A32;background:#182018;border-radius:50px;padding:10px 14px;
+  color:#C6FF3D;font-size:12.5px;white-space:nowrap}
+.w10-chip b{font-family:'Geist Mono',monospace;font-size:10px;margin-left:6px;color:#7FB02A}
+
+/* =======================================================================
+   11 · THE CEREMONY (carried forward and improved)
+   ======================================================================= */
+.cehead{margin-bottom:22px}
+.ce-grid{display:grid;grid-template-columns:392px minmax(0,1fr);gap:34px;align-items:start}
+.ce-grid>*{min-width:0}
+@media(max-width:900px){.ce-grid{grid-template-columns:minmax(0,1fr)}}
+.replay{width:100%;max-width:390px;background:none;border:1px solid var(--line2);color:var(--dim);
+  border-radius:9px;padding:12px;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.19em;margin-top:11px}
+.replay:hover{border-color:var(--gold);color:var(--gold)}
+.stage{height:818px;position:relative;overflow:hidden;background:#08070A;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center}
+.cm .pre{position:absolute;top:50px;left:0;right:0;font-family:'Geist Mono',monospace;font-size:8px;
+  letter-spacing:.3em;color:#5B4A38;text-transform:uppercase}
+.cm .bal{position:absolute;top:76px;left:0;right:0;font-family:'Geist Mono',monospace;font-size:15px;
+  letter-spacing:.06em;color:#8A7C5D}
+.cm .card{position:relative;width:284px;border:1px solid #2E231A;border-radius:3px;padding:24px 20px 20px;
+  background:linear-gradient(172deg,#171210,#0C0909 72%);transform-origin:top center}
+.cm.go .card{animation:cmUnfold .8s cubic-bezier(.2,.9,.3,1) 1.25s both}
+@keyframes cmUnfold{0%{transform:perspective(700px) rotateX(-74deg);opacity:.3}100%{transform:perspective(700px) rotateX(0);opacity:1}}
+.cm .card .k{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.3em;color:#6D5136;text-transform:uppercase}
+.cm .card .t{font-family:'Clash Display',sans-serif;font-weight:700;font-size:30px;letter-spacing:-.04em;
+  color:#F5EAD6;margin-top:13px;line-height:1.01}
+.cm .card .cl{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.24em;color:#6D5136;margin:20px 0 7px}
+.cm .card .cv{font-size:13px;color:#BCAC95;line-height:1.5}
+.cm .card .cv b{color:#F5EAD6;font-weight:500}
+.cm .rule{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:20px 0 0;
+  transform:scaleX(0);transform-origin:center}
+.cm.go .rule{animation:cmRule .9s cubic-bezier(.2,.9,.3,1) 2.05s forwards}
+@keyframes cmRule{to{transform:scaleX(1)}}
+.cm .grant{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.24em;color:var(--gold);
+  margin-top:17px;opacity:0}
+.cm.go .grant{animation:cmUp .7s ease-out 2.35s forwards}
+@keyframes cmUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.cm .stamp{position:absolute;right:4px;bottom:-20px;transform-origin:right bottom;
+  transform:rotate(-14deg) scale(2.2);opacity:0;
+  border:2.5px solid var(--gold);border-radius:5px;padding:8px 12px;font-family:'Geist Mono',monospace;
+  font-size:11px;letter-spacing:.18em;color:var(--gold);font-weight:700;background:rgba(10,8,6,.7)}
+.cm.go .stamp{animation:cmStamp .5s cubic-bezier(.2,1.5,.4,1) 2.7s forwards}
+@keyframes cmStamp{0%{opacity:0;transform:rotate(-14deg) scale(2.2)}
+  60%{opacity:1}100%{opacity:1;transform:rotate(-14deg) scale(1)}}
+.cm .sealwrap{position:absolute;left:50%;top:-36px;transform:translateX(-50%);width:72px;height:72px;z-index:4}
+.cm .half{position:absolute;top:0;width:36px;height:72px;overflow:hidden}
+.cm .half i{position:absolute;top:0;width:72px;height:72px;border-radius:47% 53% 51% 49%/53% 48% 52% 47%;
+  background:radial-gradient(circle at 38% 30%,#7E222B,#5A141B 54%,#38090E);
+  box-shadow:0 6px 15px -7px rgba(0,0,0,.9),inset 0 0 0 3px rgba(255,150,150,.06),
+    inset 0 1px 0 rgba(255,160,160,.14)}
+.cm .half.l{left:0}.cm .half.l i{left:0}
+.cm .half.r{right:0}.cm .half.r i{right:0}
+.cm .sealtxt{position:absolute;inset:0;display:grid;place-items:center;z-index:3;
+  font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.12em;color:#E8C489;text-align:center;
+  line-height:1.4;text-shadow:0 1px 1px rgba(0,0,0,.5)}
+.cm.go .sealtxt{animation:cmOut .25s ease-out .66s forwards}
+@keyframes cmOut{to{opacity:0}}
+.cm.go .half.l{animation:cmCrackL 1.1s cubic-bezier(.4,0,.7,1) .74s forwards}
+.cm.go .half.r{animation:cmCrackR 1.1s cubic-bezier(.4,0,.7,1) .74s forwards}
+@keyframes cmCrackL{0%{transform:none;opacity:1}22%{transform:translate(-5px,0) rotate(-6deg)}
+  100%{transform:translate(-34px,300px) rotate(-70deg);opacity:0}}
+@keyframes cmCrackR{0%{transform:none;opacity:1}22%{transform:translate(5px,0) rotate(6deg)}
+  100%{transform:translate(34px,300px) rotate(70deg);opacity:0}}
+.cm .crack{position:absolute;left:50%;top:3px;width:2px;height:0;background:#240407;z-index:5;transform:translateX(-50%)}
+.cm.go .crack{animation:cmSplit 1.1s ease-out .6s forwards}
+@keyframes cmSplit{0%{height:0;opacity:1}20%{height:66px;opacity:1}60%{opacity:1}100%{height:66px;opacity:0}}
+.cm .dust{position:absolute;inset:0;pointer-events:none;opacity:0}
+.cm.go .dust{animation:cmIn .7s ease-out 1.5s forwards}
+@keyframes cmIn{to{opacity:1}}
+.cm .debris{position:absolute;left:0;right:0;bottom:104px;height:26px;opacity:0;pointer-events:none}
+.cm .debris i{position:absolute;bottom:0;width:9px;height:6px;border-radius:40% 60% 50% 45%;
+  background:linear-gradient(180deg,#6E1E26,#3A0A10)}
+.cm.go .debris{animation:cmIn .5s ease-out 1.85s forwards}
+.cm .say{position:absolute;left:28px;right:28px;bottom:120px;opacity:0}
+.cm .say .l{font-family:'Clash Display',sans-serif;font-size:21px;letter-spacing:-.03em;color:#F5EAD6;line-height:1.22}
+.cm .say .s{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.2em;color:#7A6B4D;margin-top:11px}
+.cm.go .say{animation:cmUp .8s ease-out 3.15s forwards}
+.cm .close{position:absolute;left:28px;right:28px;bottom:44px;opacity:0;background:none;
+  border:1px solid #3A2C22;border-radius:11px;padding:15px;color:#8A7358;
+  font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.22em}
+.cm.go .close{animation:cmIn .6s ease-out 3.6s forwards}
+
+/* hand-off */
+.ho{padding:54px 0 90px}
+.ho h2{font-size:26px;letter-spacing:-.03em;margin-bottom:6px}
+.ho h3{font-size:15px;margin:32px 0 8px;color:var(--gold)}
+.ho p,.ho li{color:var(--dim);font-size:14.6px;line-height:1.62;max-width:770px}
+.ho b{color:var(--ink);font-weight:500}
+.ho ol,.ho ul{padding-left:19px;margin:8px 0}
+.ho li{margin-bottom:10px}
+.ho .rank{border-left:2px solid var(--gold);padding-left:15px;margin:12px 0 20px}
+.ho .hate{border-left:2px solid var(--blood);padding-left:15px;margin:12px 0 20px}
+.ho .hate b{color:#ffb3ba}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="kick">Burn the Boats · Agent 6 · Round 2 · The Bank should be fun</div>
+  <h1>Ten worlds. Ten layouts.<br>No two of them are the same page.</h1>
+  <p>Round 1 gave you seven answers to one question, and you were right that none of them were fun. This is a
+  restart, not a revision. <b>The house aesthetic is off</b> for this tab — colour, saturation, light
+  backgrounds and outright silliness are all in play. The only two rules left are: it must stay legible, and
+  it must not look like the other six tabs.</p>
+  <p>Same data in all ten: <b>1,530 XP</b> · <b>2 privileges held</b> · 4 boosts · 5 rewards, two of them
+  affordable today, three still out of reach — and every one of them carrying the condition he wrote himself.</p>
+
+  <div class="protocol">
+    <h3>Step 1 — the three banned designs</h3>
+    <ul class="banned">
+      <li>A list of rewards with prices</li>
+      <li>A grid of cards</li>
+      <li>A balance at the top with items beneath</li>
+    </ul>
+    <p style="color:#7d7590;font-size:13.6px;margin:0 0 22px;max-width:640px">Round 1 was all three at once,
+    seven times. Nothing below is any of them. I also rejected five of the ten starting provocations:
+    <b style="color:#a9a2b8;font-weight:400">gacha, the claw machine and the casino cage</b> all make getting a
+    reward a matter of chance, which destroys the one mechanic he actually cares about — he sets the price and
+    writes the condition. <b style="color:#a9a2b8;font-weight:400">The trophy shelf</b> is about the past; this
+    tab is about what's next. <b style="color:#a9a2b8;font-weight:400">The restaurant menu</b> is the banned
+    priced list wearing a hat.</p>
+
+    <h3>Step 2 &amp; 3 — one world and one layout primitive each, no repeats</h3>
+    <table class="ptab">
+      <tr><th></th><th>World</th><th>Primary layout primitive</th><th>Register</th></tr>
+      <tr><td>01</td><td><b>Seaside arcade prize counter</b></td><td>A ticket strip running down the page with prizes hung off it</td><td><span class="lo">LOUD</span></td></tr>
+      <tr><td>02</td><td><b>A vending machine</b></td><td>A machine faceplate — window, keypad, coin column, dispense tray</td><td><span class="lo">LOUD</span></td></tr>
+      <tr><td>03</td><td><b>An airport departures board</b></td><td>Fixed-width character cells in rows — the only table in the set</td><td>mechanical</td></tr>
+      <tr><td>04</td><td><b>A pinball machine</b></td><td>Backglass over a raked field of lanes and target banks</td><td><span class="lo">LOUD</span></td></tr>
+      <tr><td>05</td><td><b>A 1974 bank passbook</b></td><td>Typewritten prose — no rows, no boxes, no layout at all</td><td><span class="lo pl">PLAIN</span></td></tr>
+      <tr><td>06</td><td><b>A sticker album</b></td><td>Die-cut silhouette slots waiting to be filled</td><td>warm</td></tr>
+      <tr><td>07</td><td><b>A mountain</b></td><td>An elevation profile — things plotted at the altitude they cost</td><td><span class="lo">LOUD</span></td></tr>
+      <tr><td>08</td><td><b>A fridge door</b></td><td>Overlapping paper held on with magnets</td><td><span class="lo">LOUD</span></td></tr>
+      <tr><td>09</td><td><b>A loyalty punch card</b></td><td>One enormous object filling the entire screen</td><td>industrial</td></tr>
+      <tr><td>10</td><td><b>A text thread</b></td><td>A conversation with quick-reply chips</td><td>chatty</td></tr>
+    </table>
+  </div>
+
+  <nav class="idx">
+    <a href="#d1">01 Prize Counter</a><a href="#d2">02 Machine No.7</a><a href="#d3">03 Departures</a>
+    <a href="#d4">04 Tilt</a><a href="#d5">05 Statement</a><a href="#d6">06 The Album</a>
+    <a href="#d7">07 The Mountain</a><a href="#d8">08 The Fridge</a><a href="#d9">09 Card 0041</a>
+    <a href="#d10">10 The Bank Texts</a><a href="#ce">11 The Ceremony</a><a href="#ho">Hand-off</a>
+  </nav>
+</header>
+
+<!-- ================= 01 · PRIZE COUNTER ================= -->
+<section class="dir" id="d1">
+  <div class="dh"><div class="dn">01</div><div class="dt">
+    <h2>The Prize Counter</h2>
+    <div class="dm">World: <b>a seaside arcade</b><br>Primitive: <b>a ticket strip with prizes hung off it</b></div>
+    <p class="notx">This is <b>NOT a quiet page.</b></p>
+    <p class="dl">Everything is priced in <b>tickets</b>, and the tickets are a physical strip spooling down the
+    left of the screen with the prizes hooked onto it. The two privileges are the top-shelf prizes he already
+    won, sitting up front where the kid can see them. Boosts are the big plastic buttons.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv w1">
+        <div class="w1-led"><div class="w1-n">1530</div><div class="w1-l">TICKETS ▲ 118 TODAY</div></div>
+
+        <div class="w1-topl">★ TOP SHELF · ALREADY YOURS ★</div>
+        <div class="w1-top">
+          <div class="w1-plush"><i>WON</i><b>CUT A BLOCK<br>IN HALF</b></div>
+          <div class="w1-plush"><i>WON</i><b>MAKE A BLOCK<br>YOURS</b></div>
+        </div>
+
+        <div class="w1-rail">
+          <div class="w1-strip"><span>★ 1530 ★ 1530 ★ 1530 ★ 1530 ★ 1530 ★ 1530 ★ 1530 ★ 1530 ★</span></div>
+
+          <div class="w1-prize">
+            <div class="w1-tag"><b>1,200</b><span>TICKETS</span></div>
+            <b>Nice restaurant date</b>
+            <em>Cooked + laundry every night this week</em>
+            <button class="w1-grab">GRAB IT</button></div>
+
+          <div class="w1-prize">
+            <div class="w1-tag"><b>1,500</b><span>TICKETS</span></div>
+            <b>A golf day</b>
+            <em>Two SANO push weeks back to back</em>
+            <button class="w1-grab">GRAB IT</button></div>
+
+          <div class="w1-prize soon">
+            <div class="w1-tag"><b>2,000</b><span>TICKETS</span></div>
+            <b>A full day off</b>
+            <em>85%+ three weeks running</em>
+            <div class="w1-wait">470 MORE TICKETS · ABOUT 4 DAYS</div></div>
+
+          <div class="w1-prize soon">
+            <div class="w1-tag"><b>2,500</b><span>TICKETS</span></div>
+            <b>That purchase</b>
+            <em>First client signed and paid</em>
+            <div class="w1-wait">970 MORE TICKETS · ABOUT 9 DAYS</div></div>
+
+          <div class="w1-prize soon">
+            <div class="w1-tag"><b>4,000</b><span>TICKETS</span></div>
+            <b>A weekend away</b>
+            <em>Anthony signed, and one more behind him</em>
+            <div class="w1-wait">2,470 MORE TICKETS · ABOUT 21 DAYS</div></div>
+        </div>
+
+        <div class="w1-topl" style="padding-top:18px">TICKET MACHINES · PRESS ONE WHEN YOU DID IT</div>
+        <div class="w1-btns">
+          <button class="w1-btn">NETWORKING EVENT<b>+250 &amp; A PRIZE</b></button>
+          <button class="w1-btn">GOLF DAY<b>+150</b></button>
+          <button class="w1-btn">FINANCES HOUR<b>+90</b></button>
+          <button class="w1-btn">READ TONIGHT<b>+60</b></button>
+        </div>
+      </div></div>
+      <div class="cap">01 · THE PRIZE COUNTER</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it might work</dt><dd>An arcade counter is the only place in ordinary life where you look at a
+      number you earned and immediately see what it buys, hanging in front of you. It is also the
+      <b>least serious</b> possible frame for a reward, which is the point.</dd>
+      <dt>Locked, expressed as</dt><dd>A prize still in the machine's colours instead of on white card, with the
+      exact ticket gap printed. "470 more tickets" is a far better sentence than "locked".</dd>
+      <dt>Privileges</dt><dd>Top shelf. Physically bigger and higher than everything else on the page, with a
+      WON flash on them, because they are the currency he said actually matters.</dd>
+      <div class="risk">Risk: this is the loudest thing in the set and it is close to childish. If he opens it
+      at 6:20 AM before trading it may be actively unpleasant. It wants a dimmed night variant.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 02 · MACHINE No.7 ================= -->
+<section class="dir" id="d2">
+  <div class="dh"><div class="dn">02</div><div class="dt">
+    <h2>Machine No.7</h2>
+    <div class="dm">World: <b>a vending machine</b><br>Primitive: <b>a machine faceplate — window, keypad, coin column, tray</b></div>
+    <p class="notx">This is <b>NOT something you browse</b> — it is something you operate.</p>
+    <p class="dl">You can see the thing through the glass before you can have it. You do not tap a reward, you
+    <b>punch its code</b>, and the readout tells you what you selected. The privileges you already own are
+    sitting in the dispense tray at the bottom of the machine, where you reach in and take them.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv w2">
+        <div class="w2-hd"><b>MACHINE No.7</b><span>DAY 41 / 91</span></div>
+
+        <div class="w2-glass">
+          <div class="w2-slot"><span class="w2-code">A1</span>
+            <span><b>Nice restaurant date</b><em>Cooked + laundry every night this week</em></span>
+            <span class="w2-pr">1200<small>IN STOCK</small></span></div>
+          <div class="w2-slot"><span class="w2-code">A2</span>
+            <span><b>A golf day</b><em>Two SANO push weeks back to back</em></span>
+            <span class="w2-pr">1500<small>IN STOCK</small></span></div>
+          <div class="w2-slot out"><span class="w2-code">B1</span>
+            <span><b>A full day off</b><em>85%+ three weeks running</em></span>
+            <span class="w2-pr">2000<small>RESTOCK 4d</small></span></div>
+          <div class="w2-slot out"><span class="w2-code">B2</span>
+            <span><b>That purchase</b><em>First client signed and paid</em></span>
+            <span class="w2-pr">2500<small>RESTOCK 9d</small></span></div>
+          <div class="w2-slot out"><span class="w2-code">C1</span>
+            <span><b>A weekend away</b><em>Anthony signed, and one more behind him</em></span>
+            <span class="w2-pr">4000<small>RESTOCK 21d</small></span></div>
+        </div>
+
+        <div class="w2-panel">
+          <div class="w2-cred"><span>CREDIT</span><b>1530</b></div>
+          <div class="w2-read">&gt; A1 SELECTED<br>&gt; NICE RESTAURANT DATE · 1200<br>&gt; PRESS BUY</div>
+          <div class="w2-keys">
+            <button>A1</button><button>A2</button><button>B1</button><button>B2</button>
+            <button>C1</button><button>C2</button><button>↺</button><button class="hot">BUY</button>
+          </div>
+        </div>
+
+        <div class="w2-trayl">COIN SLOT · NEVER SCORED AGAINST YOU</div>
+        <div class="w2-coins">
+          <button class="w2-coin"><i></i><span>NETWORK<br>EVENT</span><b>+250</b></button>
+          <button class="w2-coin"><i></i><span>GOLF<br>DAY</span><b>+150</b></button>
+          <button class="w2-coin"><i></i><span>FINANCES<br>HOUR</span><b>+90</b></button>
+          <button class="w2-coin"><i></i><span>READ<br>TONIGHT</span><b>+60</b></button>
+        </div>
+
+        <div class="w2-trayl">DISPENSE TRAY · PRIVILEGES ALREADY DROPPED</div>
+        <div class="w2-tray"><div class="w2-out2">
+          <div class="w2-token">CUT A BLOCK<br>IN HALF</div>
+          <div class="w2-token">MAKE A BLOCK<br>YOURS</div>
+        </div></div>
+      </div></div>
+      <div class="cap">02 · MACHINE No.7</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it might work</dt><dd>A vending machine is honest about the transaction in a way a "rewards
+      screen" never is. Credit goes in, a thing comes out, and the thing was visible the whole time.</dd>
+      <dt>Locked, expressed as</dt><dd><b>RESTOCK 4d.</b> Not "you can't have this" — "it isn't loaded yet".
+      The item stays fully visible and fully described behind the glass.</dd>
+      <dt>The detail worth stealing</dt><dd>The dispense tray. Privileges that have already dropped sit in a
+      physical tray at the bottom of the machine — you can see there are two, and you can see the tray is
+      the place things arrive.</dd>
+      <div class="risk">Risk: the keypad is a deliberate extra step, which fights the "under a minute a day"
+      law. Defensible for a reward you save nine days for, indefensible for logging a boost — which is why
+      boosts are the coin slot and bypass the keypad entirely.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 03 · DEPARTURES ================= -->
+<section class="dir" id="d3">
+  <div class="dh"><div class="dn">03</div><div class="dt">
+    <h2>Departures</h2>
+    <div class="dm">World: <b>an airport split-flap board</b><br>Primitive: <b>fixed-width character cells in rows</b></div>
+    <p class="notx">This is <b>NOT a place where locked means denied</b> — here it means <em>scheduled</em>.</p>
+    <p class="dl">The single best idea in the whole set is buried in this one: on a departures board nothing is
+    ever refused, it is only <b>not yet boarding</b>. A reward he cannot afford is not greyed out — it has a
+    departure time. The flaps clatter over when you open the tab.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv w3">
+        <div class="w3-hd">
+          <div class="k">BANKED<b>01530</b>+00118 TODAY</div>
+          <div class="k" style="text-align:right">GATE<b>41/91</b>RATE 118/DAY</div>
+        </div>
+
+        <div class="w3-lab">UPGRADE VOUCHERS · YOURS, UNEXPIRING</div>
+        <div class="w3-passes">
+          <div class="w3-pass"><div class="t">VOUCHER 07</div><div class="n">Cut a block in half</div>
+            <div class="s">ANY DAY</div></div>
+          <div class="w3-pass"><div class="t">VOUCHER 08</div><div class="n">Make a block yours</div>
+            <div class="s">ANY DAY</div></div>
+        </div>
+
+        <div class="w3-lab">DEPARTURES</div>
+        <div class="w3-board">
+          <div class="w3-row head"><span>DESTINATION</span><span>FARE</span><span>STATUS</span></div>
+          <div class="w3-row go flap" style="animation-delay:.05s">
+            <div class="d">NICE RESTAURANT DATE<span class="c">COOKED + LAUNDRY EVERY NIGHT</span></div>
+            <div class="f">01200</div><div class="s">BOARDING<br>NOW</div></div>
+          <div class="w3-row go flap" style="animation-delay:.13s">
+            <div class="d">A GOLF DAY<span class="c">TWO SANO PUSH WEEKS BACK TO BACK</span></div>
+            <div class="f">01500</div><div class="s">BOARDING<br>NOW</div></div>
+          <div class="w3-row flap" style="animation-delay:.21s">
+            <div class="d">A FULL DAY OFF<span class="c">85%+ THREE WEEKS RUNNING</span></div>
+            <div class="f">02000</div><div class="s">DEPARTS<br>IN 4d</div></div>
+          <div class="w3-row flap" style="animation-delay:.29s">
+            <div class="d">THAT PURCHASE<span class="c">FIRST CLIENT SIGNED AND PAID</span></div>
+            <div class="f">02500</div><div class="s">DEPARTS<br>IN 9d</div></div>
+          <div class="w3-row flap" style="animation-delay:.37s">
+            <div class="d">A WEEKEND AWAY<span class="c">ANTHONY SIGNED, AND ONE MORE</span></div>
+            <div class="f">04000</div><div class="s">DEPARTS<br>IN 21d</div></div>
+        </div>
+
+        <div class="w3-lab">EARN MILES · NEVER SCORED AGAINST YOU</div>
+        <div class="w3-miles">
+          <button class="w3-mile"><b>NETWORKING</b><span>+250 &amp; A VOUCHER</span></button>
+          <button class="w3-mile"><b>GOLF DAY</b><span>+150</span></button>
+          <button class="w3-mile"><b>FINANCES HR</b><span>+90</span></button>
+          <button class="w3-mile"><b>READ TONIGHT</b><span>+60</span></button>
+        </div>
+      </div></div>
+      <div class="cap">03 · DEPARTURES · flaps clatter on open</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it might work</dt><dd>It reframes waiting as <b>travel</b>. "A full day off departs in 4 days"
+      is a sentence with anticipation in it. "Locked · 2,000 XP" is a sentence with refusal in it. Same data.</dd>
+      <dt>Locked, expressed as</dt><dd>A departure time. Nothing on this board is unavailable — the entire
+      board is things that are going to happen, sorted by when.</dd>
+      <dt>The mechanic it unlocks</dt><dd>If rewards have departure times, the app can say
+      <b>"your day off boards Thursday"</b> in a push notification. No other direction here generates a
+      sentence that good for free.</dd>
+      <div class="risk">Risk: the least colourful of the loud group, and it is the closest thing in the set to
+      a table — which is a hair away from the banned priced list. It survives only because the status column
+      changes what the rows mean.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 04 · TILT ================= -->
+<section class="dir" id="d4">
+  <div class="dh"><div class="dn">04</div><div class="dt">
+    <h2>Tilt</h2>
+    <div class="dm">World: <b>a pinball machine</b><br>Primitive: <b>a backglass over a raked field of lanes and target banks</b></div>
+    <p class="notx">This is <b>NOT aligned to anything.</b></p>
+    <p class="dl">A pinball machine is the only reward surface in the world where the score is enormous, the
+    targets are physical, and nothing sits on a grid. Rewards are <b>drop targets</b> — standing ones you can
+    knock down today, dropped ones that reset in a few days. Privileges are the two lit bumpers. Boosts are
+    the rollover lanes.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv w4">
+        <div class="w4-glass">
+          <div class="w4-title">THE BANK</div>
+          <div class="w4-sub">★ BURN THE BOATS ★ 1 PLAYER ★</div>
+          <div class="w4-score"><b>1,530</b><span>BALL 41 OF 91<br>+118 THIS BALL</span></div>
+        </div>
+
+        <div class="w4-field">
+          <div class="w4-cap">— LIT BUMPERS · PRIVILEGES HELD —</div>
+          <div class="w4-bumps">
+            <div class="w4-bump"><b><i>PRIVILEGE</i>CUT A BLOCK<br>IN HALF</b></div>
+            <div class="w4-bump"><b><i>PRIVILEGE</i>MAKE A BLOCK<br>YOURS</b></div>
+          </div>
+
+          <div class="w4-cap">— DROP TARGETS · YOU SET THE PRICE —</div>
+          <div class="w4-bank">
+            <div class="w4-tgt"><b>Nice restaurant date</b>
+              <em>Cooked + laundry every night this week</em>
+              <button class="w4-hit">HIT ME<br>1,200</button></div>
+            <div class="w4-tgt"><b>A golf day</b>
+              <em>Two SANO push weeks back to back</em>
+              <button class="w4-hit">HIT ME<br>1,500</button></div>
+            <div class="w4-tgt down"><b>A full day off</b>
+              <em>85%+ three weeks running</em>
+              <button class="w4-hit">RESETS<br>4 DAYS</button></div>
+            <div class="w4-tgt down"><b>That purchase</b>
+              <em>First client signed and paid</em>
+              <button class="w4-hit">RESETS<br>9 DAYS</button></div>
+            <div class="w4-tgt down"><b>A weekend away</b>
+              <em>Anthony signed, and one more behind him</em>
+              <button class="w4-hit">RESETS<br>21 DAYS</button></div>
+          </div>
+
+          <div class="w4-cap" style="padding-top:6px">— ROLLOVER LANES · BOOSTS —</div>
+          <div class="w4-lanes">
+            <button class="w4-lane"><i></i><span>NETWORK<br>EVENT</span><b>250</b></button>
+            <button class="w4-lane"><i></i><span>GOLF<br>DAY</span><b>150</b></button>
+            <button class="w4-lane"><i></i><span>FINANCES<br>HOUR</span><b>90</b></button>
+            <button class="w4-lane"><i></i><span>READ<br>TONIGHT</span><b>60</b></button>
+          </div>
+
+          <div class="w4-apron">SPECIAL WHEN LIT · <b>REPLAY AT 2,000</b><br>
+            A LANE CANNOT LOSE YOU POINTS · TILT IS DISABLED</div>
+        </div>
+      </div></div>
+      <div class="cap">04 · TILT</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it might work</dt><dd>"REPLAY AT 2,000" is the single most motivating string in this document,
+      and it is native to the machine. A pinball table always tells you the next threshold in the language of
+      the game, not the language of the account.</dd>
+      <dt>Locked, expressed as</dt><dd>A <b>dropped target</b> — physically down, dark, and coming back up on
+      a timer. It is the only locked state in the set that implies motion without him doing anything.</dd>
+      <dt>The line that matters</dt><dd><b>"Tilt is disabled."</b> Printed on the apron where a real machine
+      warns you it can end your game. This tab cannot punish him, and it says so in its own idiom.</dd>
+      <div class="risk">Risk: it is a machine about luck and reflex, which is exactly the association I
+      rejected the casino for. It gets away with it only because nothing here is random — but that is a fine
+      line and he may not grant it.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 05 · STATEMENT ================= -->
+<section class="dir" id="d5">
+  <div class="dh"><div class="dn">05</div><div class="dt">
+    <h2>Statement of Account</h2>
+    <div class="dm">World: <b>a 1974 bank passbook</b><br>Primitive: <b>typewritten prose — no rows, no boxes, no layout</b></div>
+    <p class="notx">This is <b>NOT trying to be fun.</b></p>
+    <p class="dl">His words were <em>"or it could be super not colorful on purpose."</em> This is that, taken
+    all the way: <b>white paper, black typewriter, one red stamp, and not a single other colour on the
+    screen.</b> There is no list, no card, no bar and no button styling — the entire Bank is one letter written
+    to him by an institution that does not care whether he enjoys reading it.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv w5">
+        <div class="w5-pg">
+          <div class="co">BURN THE BOATS LTD.</div>
+          <div class="hd">STATEMENT OF ACCOUNT — FOLIO 41 — 25 JUL 2026</div>
+          <div class="rule"></div>
+
+          <p>You have <u>1,530 XP</u> on deposit. You added 118 today, which is
+          your usual. This account cannot go overdrawn and nothing can be taken
+          out of it except by you.</p>
+
+          <p>You are holding <u>two privileges</u>. One entitles the bearer to cut
+          any block in half. The other entitles the bearer to replace any block
+          with whatever he wants. They do not expire. A third will be issued on
+          any week at 85% or better, or the moment you log a boost.</p>
+
+          <p>The following boosts are available at any time and will not be
+          scored against you: a networking event, at 250 XP and a privilege;
+          a golf day, at 150; an hour on the finances, at 90; and reading
+          tonight, at 60.</p>
+
+          <p>Against this deposit you have written the following terms, in your
+          own words, and we hold you to them:</p>
+
+          <p class="ind">A nice restaurant date, at 1,200, on the condition that you
+          cooked and did the laundry every night this week.
+          <span class="yes">YOU MAY DRAW THIS TODAY.</span></p>
+
+          <p class="ind">A golf day, at 1,500, on the condition of two SANO push
+          weeks back to back.
+          <span class="yes">YOU MAY DRAW THIS TODAY.</span></p>
+
+          <p class="ind">A full day off, at 2,000, on the condition that you hold
+          85% or better for three weeks running. At your present rate this
+          becomes available in approximately four days.</p>
+
+          <p class="ind">That purchase, at 2,500, on the condition that the first
+          client is signed and paid. Approximately nine days.</p>
+
+          <p class="ind">A weekend away, at 4,000, on the condition that Anthony is
+          signed and one more behind him. Approximately twenty-one days.</p>
+
+          <p>No other charges apply. No interest is payable and none is charged.
+          This statement is issued for your information only.</p>
+        </div>
+        <div class="w5-stamp">PAID<br>IN WORK</div>
+        <div class="w5-foot">CLERK: NOBODY<br>THIS DOCUMENT IS NOT A REWARD.<br>THE REWARDS ARE LISTED ABOVE.</div>
+      </div></div>
+      <div class="cap">05 · STATEMENT OF ACCOUNT</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it might work</dt><dd>Every other tab in his app is dark. Opening this one is a
+      <b>physical shock</b> — a white page in a black app — and it takes zero colour to do it. It is also the
+      only direction where his own conditions are set in full sentences rather than compressed to a caption.</dd>
+      <dt>Locked, expressed as</dt><dd>A sentence. "Approximately nine days." No state, no styling, no colour
+      change at all — the paragraph simply does not end with YOU MAY DRAW THIS TODAY.</dd>
+      <dt>The joke that isn't one</dt><dd>The footer: <b>"This document is not a reward. The rewards are
+      listed above."</b> A bank statement has no interest in delighting you, and the flatness is the gag —
+      but the content underneath it is completely sincere.</dd>
+      <div class="risk">Risk: a full-white screen at 6:20 AM is physically bright, and this is the direction
+      most likely to be read as me ignoring the brief rather than answering the second half of it. If it
+      ships it needs a paper-toned dark variant that keeps the typewriter and loses the glare.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 06 · THE ALBUM ================= -->
+<section class="dir" id="d6">
+  <div class="dh"><div class="dn">06</div><div class="dt">
+    <h2>The Album</h2>
+    <div class="dm">World: <b>a sticker album</b><br>Primitive: <b>die-cut silhouette slots waiting to be filled</b></div>
+    <p class="notx">This is <b>NOT about what you can afford</b> — it is about the gaps.</p>
+    <p class="dl">A sticker album is organised around <b>absence</b>. The empty die-cut outline is the whole
+    product: it names the thing, it shows you the exact shape of it, and it is unbearable to leave blank.
+    Rewards he can take are glossy stickers with a PEEL tab; the rest are dashed outlines with the shortfall
+    pencilled in the corner.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv w6">
+        <div class="w6-hd"><div class="t">My book</div>
+          <div class="n">1,530<span>STARS · +118 TODAY</span></div></div>
+        <div class="w6-ul"></div>
+
+        <div class="w6-lab">carrying these — not stuck down yet</div>
+        <div class="w6-loose">
+          <div class="w6-st"><i>PRIVILEGE</i><b>Cut a block in half</b></div>
+          <div class="w6-st"><i>PRIVILEGE</i><b>Make a block yours</b></div>
+        </div>
+
+        <div class="w6-lab">the book — five spaces, two ready to stick</div>
+        <div class="w6-slots">
+          <div class="w6-slot got"><button class="w6-peel">PEEL</button>
+            <b>Nice restaurant date</b><em>Cooked + laundry every night this week · 1,200</em></div>
+          <div class="w6-slot got"><button class="w6-peel">PEEL</button>
+            <b>A golf day</b><em>Two SANO push weeks back to back · 1,500</em></div>
+          <div class="w6-slot gap"><b>A full day off</b>
+            <em>85%+ three weeks running · 2,000</em><span class="w6-pen">4 more days!</span></div>
+          <div class="w6-slot gap"><b>That purchase</b>
+            <em>First client signed and paid · 2,500</em><span class="w6-pen">9 days</span></div>
+          <div class="w6-slot gap"><b>A weekend away</b>
+            <em>Anthony signed, and one more behind him · 4,000</em><span class="w6-pen">21 days</span></div>
+        </div>
+
+        <div class="w6-lab">sticker sheet — press one when you did it</div>
+        <div class="w6-sheet">
+          <button class="w6-mini">Networking<span>+250 ★</span></button>
+          <button class="w6-mini">Golf day<span>+150</span></button>
+          <button class="w6-mini">Finances hr<span>+90</span></button>
+          <button class="w6-mini">Read tonight<span>+60</span></button>
+        </div>
+      </div></div>
+      <div class="cap">06 · THE ALBUM</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it might work</dt><dd>It is the only direction where <b>the empty state is the design</b> rather
+      than a problem to be styled around. Three blank slots is not a wall of failure — a blank slot in an album
+      is the most motivating object a child has ever been handed.</dd>
+      <dt>Locked, expressed as</dt><dd>A dashed die-cut outline with the reward's name printed inside it in the
+      paper's own colour, and a shortfall pencilled in by hand.</dd>
+      <dt>Honest note on the type</dt><dd>The handwriting is real: <b>Marker Felt</b>, which ships on iOS and
+      macOS, so it renders on his phone with no font to download. It is also the only reason this direction
+      and 08 don't look like a designer's idea of handwriting.</dd>
+      <div class="risk">Risk: warm rather than loud, which may read as "nice, still not fun". It is also the
+      closest of the ten to a conventional card stack, and only the die-cut treatment keeps it clear of the
+      banned grid.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 07 · THE MOUNTAIN ================= -->
+<section class="dir" id="d7">
+  <div class="dh"><div class="dn">07</div><div class="dt">
+    <h2>The Mountain</h2>
+    <div class="dm">World: <b>a mountain</b><br>Primitive: <b>an elevation profile — the snow line is your balance</b></div>
+    <p class="notx">This is <b>NOT a number you have to interpret.</b></p>
+    <p class="dl">Every reward is plotted at <b>the altitude it costs</b>, and a red dashed line is drawn across
+    the mountain at 1,530 m — his balance. Everything below the line is sunlit and reachable. Everything above
+    is rock and shadow. He never reads a price or a countdown; he sees <b>how much mountain is left</b>. The
+    chairlift on the right is the boosts: it takes you up.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv w7">
+        <div class="w7-hd">
+          <div class="t">The Mountain<span>DAY 41 OF 91 · CLIMBING</span></div>
+          <div class="a"><b>1,530</b><span>METRES · +118/DAY</span></div>
+        </div>
+
+        <div class="w7-mtn">
+          <div class="w7-band w7-rock" style="width:56%">
+            <span class="alt">4,000 m · THE SUMMIT</span>
+            <b>A weekend away</b>
+            <em>Anthony signed, and one more behind him</em>
+            <span class="up">+2,470 m · ~21 DAYS</span></div>
+
+          <div class="w7-band w7-rock" style="width:68%">
+            <span class="alt">2,500 m</span>
+            <b>That purchase</b>
+            <em>First client signed and paid</em>
+            <span class="up">+970 m · ~9 DAYS</span></div>
+
+          <div class="w7-band w7-rock" style="width:78%">
+            <span class="alt">2,000 m</span>
+            <b>A full day off</b>
+            <em>85%+ three weeks running</em>
+            <span class="up">+470 m · ~4 DAYS</span></div>
+
+          <div class="w7-line"><i></i><span>YOU ARE HERE · 1,530 m</span></div>
+
+          <div class="w7-band w7-snow" style="width:88%">
+            <span class="alt">1,500 m · REACHED</span>
+            <b>A golf day</b>
+            <em>Two SANO push weeks back to back</em>
+            <button class="go">TAKE IT</button></div>
+
+          <div class="w7-band w7-snow" style="width:96%">
+            <span class="alt">1,200 m · REACHED</span>
+            <b>Nice restaurant date</b>
+            <em>Cooked + laundry every night this week</em>
+            <button class="go">TAKE IT</button></div>
+
+          <div class="w7-base"></div>
+        </div>
+
+        <div class="w7-passl">IN YOUR POCKET · PRIVILEGES, UNEXPIRING</div>
+        <div class="w7-pass">
+          <div class="w7-tik"><div class="k">LIFT PASS 07</div><div class="v">Cut a block in half</div></div>
+          <div class="w7-tik"><div class="k">LIFT PASS 08</div><div class="v">Make a block yours</div></div>
+        </div>
+
+        <div class="w7-lift">
+          <div class="l">THE LIFT · CARRIES YOU UP · NEVER SCORED AGAINST YOU</div>
+          <div class="w7-chairs">
+            <button class="w7-chair"><span>NETWORK<br>EVENT</span><b>+250</b></button>
+            <button class="w7-chair"><span>GOLF<br>DAY</span><b>+150</b></button>
+            <button class="w7-chair"><span>FINANCES<br>HOUR</span><b>+90</b></button>
+            <button class="w7-chair"><span>READ<br>TONIGHT</span><b>+60</b></button>
+          </div>
+        </div>
+      </div></div>
+      <div class="cap">07 · THE MOUNTAIN</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it might work</dt><dd>It is the only direction where <b>the balance and the distance are the same
+      drawing</b>. Moving the line up is the entire game, and the line moves every single day whatever else
+      happens — which means this page is never static and never scolds.</dd>
+      <dt>Locked, expressed as</dt><dd><b>Rock above the snow line.</b> Not dimmed, not disabled — a different
+      altitude. The bands also narrow as they rise, so the summit is visibly the hardest and smallest thing.</dd>
+      <dt>The detail worth stealing</dt><dd>Reward names are plotted <em>in price order by height</em>, so the
+      cheapest thing is nearest his feet and the weekend away is a summit. He never has to be told which is
+      the stretch goal.</dd>
+      <div class="risk">Risk: the metaphor breaks the moment he <em>spends</em>. If claiming a reward drops the
+      snow line back down, the mountain regrows and that feels like punishment for spending. The fix is that
+      claiming plants a flag at that altitude and the line keeps its high-water mark — but that is a real
+      mechanic decision, not a visual one, and it is not mine to make.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 08 · THE FRIDGE ================= -->
+<section class="dir" id="d8">
+  <div class="dh"><div class="dn">08</div><div class="dt">
+    <h2>The Fridge</h2>
+    <div class="dm">World: <b>a fridge door</b><br>Primitive: <b>overlapping paper held on with magnets</b></div>
+    <p class="notx">This is <b>NOT designed by an adult.</b></p>
+    <p class="dl">A deliberately naive answer, and the highest-variance thing in this document. Everything is
+    handwritten in marker, held up with magnets, overlapping at the corners the way real paper does. Rewards
+    that are ready get a <b>fat green tick sticker</b>. The privileges are two magnets — objects he is holding
+    that are literally pinning things to the door.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv w8">
+        <div class="w8-board">
+          <div class="w8-chart" style="top:18px;left:13px;width:176px;transform:rotate(-2.5deg)">
+            <div class="w8-mag" style="background:radial-gradient(circle at 36% 30%,#FF8FA6,#E8232A 62%,#9E1015)"></div>
+            <div class="k">my points</div>
+            <div class="n">1530</div>
+            <div class="s">+118 today!</div>
+            <div class="w8-stars">★★★★★★</div>
+          </div>
+
+          <div class="w8-priv" style="top:26px;left:232px;width:142px;transform:rotate(5deg)">
+            <div class="w8-mag" style="background:radial-gradient(circle at 36% 30%,#FFE07A,#F2B705 62%,#B98C00)"></div>
+            <div class="k">PRIVILEGE · YOURS</div><b>Cut a block in half</b></div>
+
+          <div class="w8-priv" style="top:126px;left:218px;width:148px;transform:rotate(-4deg)">
+            <div class="w8-mag" style="background:radial-gradient(circle at 36% 30%,#9AF08A,#3FBF2E 62%,#227A16)"></div>
+            <div class="k">PRIVILEGE · YOURS</div><b>Make a block yours</b></div>
+
+          <div class="w8-note" style="top:200px;left:12px;width:214px;transform:rotate(-3deg)">
+            <div class="w8-mag" style="background:radial-gradient(circle at 36% 30%,#8FD4FF,#2E8FE8 62%,#125A9E)"></div>
+            <b>Nice restaurant date</b>
+            <em>cooked + laundry every night this week</em>
+            <div class="pr">1,200</div>
+            <div class="w8-tick">✓</div></div>
+
+          <div class="w8-note" style="top:346px;left:136px;width:216px;transform:rotate(2.5deg)">
+            <div class="w8-mag" style="background:radial-gradient(circle at 36% 30%,#FFB0DA,#E8238F 62%,#9E106A)"></div>
+            <b>A golf day</b>
+            <em>two SANO push weeks back to back</em>
+            <div class="pr">1,500</div>
+            <div class="w8-tick">✓</div></div>
+
+          <div class="w8-note" style="top:492px;left:16px;width:220px;transform:rotate(-1.8deg)">
+            <div class="w8-mag" style="background:radial-gradient(circle at 36% 30%,#C7B0FF,#7A4FE8 62%,#4A1F9E)"></div>
+            <b>A full day off</b>
+            <em>85%+ three weeks running</em>
+            <div class="pr">2,000</div>
+            <div class="w8-soon">4 more days →</div></div>
+
+          <div class="w8-note" style="top:634px;left:132px;width:224px;transform:rotate(3deg)">
+            <div class="w8-mag" style="background:radial-gradient(circle at 36% 30%,#FFD08F,#F28705 62%,#A85C00)"></div>
+            <b>That purchase</b>
+            <em>first client signed and paid</em>
+            <div class="pr">2,500</div>
+            <div class="w8-soon">9 days →</div></div>
+
+          <div class="w8-note" style="top:778px;left:14px;width:230px;transform:rotate(-1.4deg)">
+            <div class="w8-mag" style="background:radial-gradient(circle at 36% 30%,#9AF0E0,#22C3A8 62%,#0E7D6B)"></div>
+            <b>A weekend away</b>
+            <em>Anthony signed, and one more behind him</em>
+            <div class="pr">4,000</div>
+            <div class="w8-soon">21 days →</div></div>
+
+          <div class="w8-sheet" style="top:906px;left:16px;width:356px;transform:rotate(.8deg)">
+            <div class="w8-mag" style="background:radial-gradient(circle at 36% 30%,#FF8FA6,#E8232A 62%,#9E1015)"></div>
+            <div class="k">stick a star when you did one:</div>
+            <div class="w8-sk">
+              <button class="w8-star">networking<b>+250 ★</b></button>
+              <button class="w8-star">golf day<b>+150</b></button>
+              <button class="w8-star">finances hr<b>+90</b></button>
+              <button class="w8-star">read tonight<b>+60</b></button>
+            </div>
+          </div>
+        </div>
+      </div></div>
+      <div class="cap">08 · THE FRIDGE</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it might work</dt><dd>It removes every trace of institutional authority from the tab. Nothing here
+      is grading him — it is his own handwriting on his own door. For a man whose stated failure mode is
+      <b>abandoning an app that makes him feel judged</b>, a surface with no judgement in it is a real answer.</dd>
+      <dt>Locked, expressed as</dt><dd>A scribbled "<b>4 more days →</b>" in red marker. Handwriting cannot
+      condescend the way a greyed-out state can.</dd>
+      <dt>The one real idea</dt><dd>The privileges are <b>magnets</b> — the only objects on the door that are
+      holding something else up. They do work; the paper doesn't.</dd>
+      <div class="risk">Risk, and it is large: this is a chore chart, and he is a 40-something founder trying to
+      sign clients before his runway ends in February. Handing him a kid's reward chart risks reading as
+      condescension rather than warmth. <b>This is one of the two I expect him to hate</b> — and I built it
+      anyway, because the brief asked for genuinely opposite, and half-measures here score zero.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 09 · CARD No.0041 ================= -->
+<section class="dir" id="d9">
+  <div class="dh"><div class="dn">09</div><div class="dt">
+    <h2>Card No. 0041</h2>
+    <div class="dm">World: <b>a loyalty punch card, taken absurdly seriously</b><br>Primitive: <b>one enormous object filling the entire screen</b></div>
+    <p class="notx">This is <b>NOT many things</b> — it is one object, and the object is the page.</p>
+    <p class="dl">The whole tab is a single safety-orange card, edge to edge, with everything printed on it in
+    black. Each reward gets <b>a row of ten holes</b>; a hole is ten per cent of that reward. Full row means
+    take it. Eight of ten means you can see, without reading a single number, exactly how close you are — and
+    the privileges are die-cut tabs along the bottom edge, waiting to be torn off.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv w9">
+        <div class="w9-card">
+          <div class="w9-hd">
+            <div class="t">THE BANK<span>CARDHOLDER · J.</span></div>
+            <div class="no">CARD No. 0041<br>DAY 41 / 91<br>ISSUED 27 JUL</div>
+          </div>
+
+          <div class="w9-bal"><b>1,530</b><span>XP ON THE CARD<br>+118 PUNCHED TODAY</span></div>
+
+          <div class="w9-r">
+            <div class="top"><b>Nice restaurant date</b><span class="px">1,200</span></div>
+            <em>Cooked + laundry every night this week</em>
+            <div class="w9-holes"><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i>
+              <button class="full">REDEEM</button></div></div>
+
+          <div class="w9-r">
+            <div class="top"><b>A golf day</b><span class="px">1,500</span></div>
+            <em>Two SANO push weeks back to back</em>
+            <div class="w9-holes"><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i>
+              <button class="full">REDEEM</button></div></div>
+
+          <div class="w9-r">
+            <div class="top"><b>A full day off</b><span class="px">2,000</span></div>
+            <em>85%+ three weeks running</em>
+            <div class="w9-holes"><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i></i><i></i>
+              <span class="left">2 TO GO<br>~4 DAYS</span></div></div>
+
+          <div class="w9-r">
+            <div class="top"><b>That purchase</b><span class="px">2,500</span></div>
+            <em>First client signed and paid</em>
+            <div class="w9-holes"><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i></i><i></i><i></i><i></i>
+              <span class="left">4 TO GO<br>~9 DAYS</span></div></div>
+
+          <div class="w9-r">
+            <div class="top"><b>A weekend away</b><span class="px">4,000</span></div>
+            <em>Anthony signed, and one more behind him</em>
+            <div class="w9-holes"><i class="p"></i><i class="p"></i><i class="p"></i><i class="p"></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              <span class="left">6 TO GO<br>~21 DAYS</span></div></div>
+
+          <div class="w9-boost">GET PUNCHED FOR — <b>NETWORKING EVENT 250 &amp; A TAB · GOLF DAY 150 ·
+            FINANCES HOUR 90 · READ TONIGHT 60. NEVER SCORED AGAINST YOU.</b></div>
+
+          <div class="w9-tabs">
+            <button class="w9-tab"><div class="k">TEAR OFF TO USE</div><b>Cut a block in half</b><i>PRIVILEGE · NO EXPIRY</i></button>
+            <button class="w9-tab"><div class="k">TEAR OFF TO USE</div><b>Make a block yours</b><i>PRIVILEGE · NO EXPIRY</i></button>
+          </div>
+        </div>
+      </div></div>
+      <div class="cap">09 · CARD No. 0041</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it might work</dt><dd>Ten holes per row is the most legible progress representation in this entire
+      document. <b>Eight punched, two to go</b> is understood in under a second, by anyone, without a single
+      unit of measurement — and it makes five different prices directly comparable at a glance, which no bar
+      chart or price list can do.</dd>
+      <dt>Locked, expressed as</dt><dd>Unpunched holes. There is no locked state at all — every reward is on
+      the same card, in the same ink, at a different stage of being filled in.</dd>
+      <dt>The colour choice</dt><dd>Safety orange and black, like a warehouse tag or a parking ticket. Loud
+      without being playful, which makes it the one direction that could plausibly sit next to his trading
+      screen at 6:30 AM without embarrassing him.</dd>
+      <div class="risk">Risk: one object means one scroll and no hierarchy — everything is equally important,
+      which is restful but makes it hard to surface "you can take this right now" above "you're 6 holes off".
+      The REDEEM chips are doing all that work alone.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 10 · THE BANK TEXTS ================= -->
+<section class="dir" id="d10">
+  <div class="dh"><div class="dn">10</div><div class="dt">
+    <h2>The Bank Texts You</h2>
+    <div class="dm">World: <b>a text thread</b><br>Primitive: <b>a conversation with quick-reply chips</b></div>
+    <p class="notx">This is <b>NOT a surface you visit</b> — it is someone who talks to you first.</p>
+    <p class="dl">Every other direction here is a place he has to decide to go. This one <b>opens the
+    conversation</b>, which is the only structure in the set that matches how the Bank should actually behave
+    on a bad day. The boosts stop being buttons and become quick replies — <em>"I went to a networking
+    event"</em> — which is genuinely the fastest way to log one.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv w10">
+        <div class="w10-hd"><div class="w10-av">$</div>
+          <div><div class="n">The Bank</div><div class="s">1,530 BANKED · +118 TODAY</div></div></div>
+
+        <div class="w10-thread">
+          <div class="w10-t">TODAY · 06:04</div>
+
+          <div class="w10-b">Morning. You've got <b>1,530</b> banked. You put 118 in yesterday.</div>
+          <div class="w10-b">You're holding two of these. They don't expire.</div>
+
+          <div class="w10-att">
+            <div class="w10-card"><div class="k">PRIVILEGE</div><b>Cut a block in half</b>
+              <button>USE IT</button></div>
+            <div class="w10-card"><div class="k">PRIVILEGE</div><b>Make a block yours</b>
+              <button>USE IT</button></div>
+          </div>
+
+          <div class="w10-b">Two things you can take right now.</div>
+
+          <div class="w10-of"><b>Nice restaurant date</b>
+            <div class="said">"Cooked + laundry every night this week."</div>
+            <div class="did">↳ YOU DID. ALL SEVEN NIGHTS.</div>
+            <div class="row"><span>1,200</span><button>TAKE IT</button></div></div>
+
+          <div class="w10-of"><b>A golf day</b>
+            <div class="said">"Two SANO push weeks back to back."</div>
+            <div class="did">↳ YOU DID. WEEK 5 AND WEEK 6.</div>
+            <div class="row"><span>1,500</span><button>TAKE IT</button></div></div>
+
+          <div class="w10-b">Three more on the way. I'll tell you when they land.</div>
+          <div class="w10-soon">
+            <div><b>A full day off</b>2,000 · ~4 DAYS<br>85%+ THREE WEEKS</div>
+            <div><b>That purchase</b>2,500 · ~9 DAYS<br>FIRST CLIENT PAID</div>
+            <div><b>A weekend away</b>4,000 · ~21 DAYS<br>ANTHONY + ONE</div>
+          </div>
+
+          <div class="w10-b me">not yet</div>
+          <div class="w10-b">Fine. It'll still be here.</div>
+        </div>
+
+        <div class="w10-qr">
+          <div class="w10-qrl">TAP TO TELL IT SOMETHING · NEVER SCORED AGAINST YOU</div>
+          <div class="w10-chips">
+            <button class="w10-chip">I went to a networking event<b>+250</b></button>
+            <button class="w10-chip">Played golf<b>+150</b></button>
+            <button class="w10-chip">Did an hour on finances<b>+90</b></button>
+            <button class="w10-chip">Read tonight<b>+60</b></button>
+          </div>
+        </div>
+      </div></div>
+      <div class="cap">10 · THE BANK TEXTS YOU · chips scroll sideways</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it might work</dt><dd>It is the only direction that can <b>start</b>. Everything else waits to be
+      opened; this one has already said something by the time he arrives, and the last thing it said was
+      <em>"Fine. It'll still be here."</em> — which is the app's entire anti-abandonment law in five words.</dd>
+      <dt>Locked, expressed as</dt><dd>A sentence in the thread and three small cards: "Three more on the way.
+      I'll tell you when they land." Waiting becomes something being handled on his behalf.</dd>
+      <dt>The mechanic it unlocks</dt><dd>Quick replies are the correct interface for boosts. One tap on
+      <b>"I went to a networking event"</b> is faster than finding a button, and it reads as telling someone
+      rather than filing a record.</dd>
+      <div class="risk">Risk: it implies a personality the app has to sustain. If the Bank ever says something
+      that misses — congratulating him on a day he knows he wasted — the whole conceit curdles, and a chat UI
+      makes that failure feel personal in a way a dashboard never does.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 11 · THE CEREMONY ================= -->
+<section class="dir" id="ce">
+  <div class="cehead">
+    <div class="dh"><div class="dn">11</div><div class="dt">
+      <h2>The Breaking of the Seal — v2</h2>
+      <div class="dm">Carried forward from round 1 · not rebuilt · four things added</div>
+      <p class="dl">You didn't criticise the ceremonies, so this is the round-1 winner with the grafts I
+      recommended last time actually made: <b>the balance now falls while the wax cracks</b> (taken from The
+      Withdrawal), <b>a GRANTED stamp lands</b> with weight, <b>the broken wax stays on the floor of the
+      screen</b> instead of vanishing, and it closes on The Withdrawal's line rather than its own.
+      It waits for him — it never slides away while he is still reading.</p>
+    </div></div>
+  </div>
+  <div class="ce-grid">
+    <div>
+      <div class="p"><div class="notch"><i></i></div>
+        <div class="stage cm" id="cm">
+          <div class="pre">Decree · 2,000 XP</div>
+          <div class="bal"><span id="cmn">2,060</span> XP</div>
+          <div class="card">
+            <div class="sealwrap">
+              <div class="crack"></div>
+              <div class="half l"><i></i></div><div class="half r"><i></i></div>
+              <div class="sealtxt">DAY<br>OFF</div>
+            </div>
+            <div class="k">Granted to the bearer</div>
+            <div class="t">A full day<br>off.</div>
+            <div class="cl">THE TERMS YOU WROTE</div>
+            <div class="cv">"85%+ three weeks running."<br><b>You did it three weeks running.</b></div>
+            <div class="rule"></div>
+            <div class="grant">TAKE IT SATURDAY</div>
+            <div class="stamp">GRANTED</div>
+          </div>
+          <div class="dust" id="cmd"></div>
+          <div class="debris">
+            <i style="left:22%;transform:rotate(24deg)"></i><i style="left:34%;transform:rotate(-14deg)"></i>
+            <i style="left:47%;transform:rotate(41deg)"></i><i style="left:58%;transform:rotate(-33deg)"></i>
+            <i style="left:71%;transform:rotate(9deg)"></i>
+          </div>
+          <div class="say"><div class="l">You paid two thousand for this.</div>
+            <div class="s">TAKE IT WITHOUT GUILT</div></div>
+          <button class="close">CLOSE THE LEDGER</button>
+        </div></div>
+      <button class="replay" onclick="playCM()">▶ REPLAY</button>
+    </div>
+    <dl class="notes">
+      <dt>What changed</dt><dd>The balance falling <em>during</em> the crack was the single best note from
+      round 1 and it was in the wrong ceremony. Cost and reward now happen in the same second instead of
+      being two separate beats.</dd>
+      <dt>The wax stays</dt><dd>The shards settle at the bottom of the screen and are still there when he
+      dismisses it. Breaking a seal is irreversible, and the debris is the only thing on screen that says so.</dd>
+      <dt>The line</dt><dd><b>"Take it without guilt."</b> He is a man who works 2–3 hours a day and is trying
+      to become someone who executes. The failure mode of a reward system for that person is not overspending,
+      it is never cashing anything in. The ceremony's last word should be permission.</dd>
+      <div class="risk">Note: this ceremony is dressed in round 1's register, which you called boring. I kept
+      it because you explicitly said not to rebuild it — but if the Bank ends up being the arcade or the
+      pinball table, <b>the ceremony has to be re-skinned to match</b> or the claim will feel like it belongs
+      to a different app. The beats survive a re-skin; the palette does not.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= HAND-OFF ================= -->
+<section class="ho" id="ho">
+  <div class="kick">Hand-off · Agent 6 · Round 2</div>
+  <h2>Ranked, and the two I expect you to hate</h2>
+
+  <h3>What this is</h3>
+  <p><b><code>renditions/rend-bank-v2.html</code></b> — ten renditions in ten worlds with ten different layout
+  primitives, plus the round-1 ceremony carried forward and improved. Round 1 is untouched at
+  <code>rend-bank.html</code>. I did not touch <code>index.html</code> or any other agent's file.</p>
+
+  <h3>Ranked</h3>
+  <div class="rank">
+    <p><b>1 · 04 Tilt.</b> It is the loudest thing here and the only loud one where the noise carries meaning.
+    A pinball machine already speaks in exactly the register this tab needs: <b>"REPLAY AT 2,000"</b> is a
+    better motivator than any progress bar, because it is a threshold stated as a promise. And printing
+    <b>"TILT IS DISABLED"</b> on the apron states the app's first law — this page cannot punish you — in the
+    machine's own idiom, without a word of UX copy.</p>
+    <p><b>2 · 07 The Mountain.</b> The best single mechanic in either round: <b>the snow line is the balance</b>.
+    Price and distance stop being two numbers and become one drawing, and the line moves every day no matter
+    how the day went. It is bright, it is nothing like the rest of the app, and it is the one I would bet on
+    still being good in November. Its unresolved problem is what happens when he spends — see the risk note.</p>
+    <p><b>3 · 03 Departures.</b> Ranked third on fun and first on <em>copy</em>. Reframing a locked reward as a
+    scheduled departure is the strongest idea in the document: nothing on a departures board is ever refused,
+    it is only not boarding yet. It also hands you a push notification for free —
+    <b>"your day off boards Thursday"</b> — and no other direction generates a sentence that good without
+    someone writing it.</p>
+  </div>
+
+  <h3>The two I expect you to hate</h3>
+  <div class="hate">
+    <p><b>08 The Fridge.</b> It is a child's chore chart handed to a man with a February runway problem. There
+    is a real argument for it — nothing on that door is judging him, which speaks directly to why v1 died —
+    but the gap between "warm and disarming" and "condescending" is one bad morning wide. I built it at full
+    commitment rather than hedging it toward tasteful, because a hedged version would have been another
+    near-duplicate and scored zero.</p>
+    <p><b>05 Statement of Account.</b> You asked for fun and this is a white page of typewriter prose that
+    literally prints <em>"This document is not a reward."</em> You also said it could be
+    <b>"super not colorful on purpose"</b>, and I took that seriously enough to remove every colour on the
+    screen except one red stamp. It is either the sharpest thing here or it reads as me ignoring the first
+    half of your sentence. I don't think there's a middle outcome.</p>
+    <p>Runner-up risk: <b>10 The Bank Texts You</b>. A voice that talks first is powerful right up until it
+    congratulates you on a day you know you wasted.</p>
+  </div>
+
+  <h3>If you want one page rather than one style</h3>
+  <p>The composite I would actually build: <b>Tilt's backglass</b> at the top — enormous score, "REPLAY AT
+  2,000", "TILT IS DISABLED" — sitting above <b>the Mountain's snow line</b> as the body, with rewards plotted
+  by altitude and <b>Departures' status column</b> ("BOARDING NOW" / "DEPARTS IN 4d") replacing every price
+  countdown. Privileges as Card 0041's <b>tear-off tabs</b> pinned to the bottom edge, and boosts as
+  <b>The Bank Texts' quick-reply chips</b>, which are simply the fastest way to log one. That is four
+  primitives from four worlds, and they don't fight — because each is solving a different one of the four
+  content types.</p>
+
+  <h3>What I rejected and why</h3>
+  <ul>
+    <li><b>Gacha, the claw machine, the casino cage.</b> All three make getting a reward partly a matter of
+    chance. He sets the price and writes the condition himself — that is the mechanic he was emphatic about,
+    and chance destroys it. A casino frame is also the wrong register for a man tracking two vices.</li>
+    <li><b>The trophy shelf.</b> It displays what you already won. This tab's job is what's next.</li>
+    <li><b>The restaurant menu.</b> It is the banned "list of items with prices" wearing a hat, and I would
+    have been submitting round 1 again with better typography.</li>
+    <li><b>A tenth loud direction.</b> I stopped at five loud, one plain, four in between. Ten loud pages
+    would have converged just as hard as ten austere ones did — the divergence has to include register, not
+    just volume.</li>
+  </ul>
+
+  <h3>Verification</h3>
+  <p><code>arsenal-lint</code>: <b>clean ✓</b>. Rendered headlessly and screenshotted every phone at
+  <b>390×844</b>, top and scrolled, and I looked at all of them. <b>The round-1 overflow bug is fixed and
+  tested</b>: the gallery chrome is now checked at a <b>390px viewport</b> as well as 1400px, because that
+  was the width at which it broke last time — the phone frames go full-bleed and the wrapper padding
+  collapses below 452px.</p>
+
+  <h3>For the GM</h3>
+  <ul>
+    <li><b>Everything I flagged in round 1 still stands</b> and none of it is visual: no spend history
+    (<code>claim()</code> deletes the reward instead of recording it), rewards are one-shot for all 91 days,
+    <code>S.privileges</code> is a bare integer with no way to spend one, <code>dailyXp()</code> uses a
+    lifetime average so "~N days" drifts optimistic, and <code>logBoost</code> hands out a privilege on every
+    tap with no confirm.</li>
+    <li><b>Two directions here need a data model that doesn't exist yet.</b> The Mountain needs a high-water
+    mark so spending doesn't lower the snow line. Departures needs an actual projected date per reward, not
+    a day count, or the whole "boards Thursday" idea is unbuildable.</li>
+    <li><b>The handwriting is free.</b> Marker Felt and Chalkboard SE are iOS system fonts — no download, no
+    licence, renders on his phone. Worth knowing before anyone vendors a script webfont for 06 or 08.</li>
+    <li><b>Whichever wins, the ceremony must be re-skinned to match it.</b> Its beats are right; its palette
+    belongs to round 1.</li>
+  </ul>
+</section>
+
+
+</div>
+<script src="../lib/tsparticles/tsparticles.slim.bundle.min.js"></script>
+<script>
+/* ---- shared: count a number for the ceremony ---- */
+function roll(el,from,to,dur,delay){
+  setTimeout(function(){
+    var t0=null;
+    function step(ts){
+      if(t0===null)t0=ts;
+      var k=Math.min(1,(ts-t0)/dur), e=1-Math.pow(1-k,3);
+      el.textContent=Math.round(from+(to-from)*e).toLocaleString();
+      if(k<1)requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  },delay);
+}
+function restage(id){
+  var el=document.getElementById(id);
+  el.classList.remove('go'); void el.offsetWidth; el.classList.add('go');
+  return el;
+}
+/* ---- the ceremony: seal cracks, balance falls in the same second ---- */
+var dustLoaded=false;
+function goldDust(){
+  if(dustLoaded||typeof tsParticles==='undefined')return;
+  dustLoaded=true;
+  tsParticles.load({id:'cmd',options:{
+    fullScreen:{enable:false},detectRetina:true,fpsLimit:60,
+    particles:{
+      number:{value:0},
+      color:{value:['#E0B25E','#F5EAD6','#B8873A']},
+      shape:{type:'circle'},
+      opacity:{value:{min:.1,max:.7},animation:{enable:true,speed:.7,startValue:'max',destroy:'min'}},
+      size:{value:{min:.6,max:1.9}},
+      move:{enable:true,direction:'bottom',speed:{min:.4,max:1.5},straight:false,gravity:{enable:true,acceleration:2},
+        outModes:{default:'destroy'},drift:{min:-.4,max:.4}}
+    },
+    emitters:{position:{x:50,y:22},size:{width:16,height:4},
+      rate:{delay:.09,quantity:3},life:{duration:1.5,count:1}}
+  }});
+}
+function playCM(){
+  document.getElementById('cmn').textContent='2,060';
+  restage('cm');
+  /* the cost lands while the wax is still breaking — one beat, not two */
+  roll(document.getElementById('cmn'),2060,60,1300,760);
+  goldDust();
+}
+/* the flaps clatter, and the ceremony plays itself so nothing on this page is a dead frame */
+window.addEventListener('load',function(){ setTimeout(playCM,600); });
+</script>
+</body>
+</html>

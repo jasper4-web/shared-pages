@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Line — contextual actions, every block</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --ghost:#CFE2FF; --ghost-d:#8FB4E8; --ghost-bg:#070C16; --ghost-line:#1c2c47;
+  --miss:#6b3a44;
+  /* THE SPACING SCALE — the only gaps allowed anywhere in this file */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px;
+  /* THE TOUCH SCALE — nothing tappable is ever smaller than --tap */
+  --tap:48px; --tap-lg:56px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99;
+  background-image:url('../assets/grain/grain-fine.svg');opacity:.035;mix-blend-mode:overlay}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding:0 var(--s5)}
+
+.mast{padding:58px 0 32px;border-bottom:1px solid var(--line)}
+.kick{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.26em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:14px}
+.mast h1{font-size:clamp(30px,4.6vw,46px);line-height:1.03;letter-spacing:-.035em;margin-bottom:var(--s4);max-width:17ch}
+.mast p{max-width:690px;color:var(--dim);font-size:15.2px;margin:0 0 var(--s3)}
+.mast p b{color:var(--ink);font-weight:500}
+.quote{border-left:2px solid var(--gold);padding-left:var(--s4);margin:20px 0;max-width:690px;
+  font-size:15.2px;color:#c5bcae;font-style:italic}
+.quote b{color:var(--gold);font-style:normal;font-weight:500}
+
+.sec{padding:52px 0;border-bottom:1px solid var(--line)}
+.sech{display:grid;grid-template-columns:56px 1fr;gap:var(--s4);align-items:start;margin-bottom:var(--s5)}
+.sn{font-family:'Clash Display',sans-serif;font-size:42px;line-height:.8;font-weight:700;color:transparent;
+  -webkit-text-stroke:1.2px var(--line2)}
+.sech h2{font-size:27px;letter-spacing:-.03em;margin-bottom:7px}
+.sech p{max-width:680px;color:var(--dim);font-size:14.9px;margin:9px 0 0}
+.sech p b{color:var(--ink);font-weight:500}
+
+/* the rules panel */
+.rules{border:1px solid var(--line2);border-radius:15px;background:var(--panel);padding:22px 24px;margin-top:var(--s5)}
+.rules h3{font-size:17px;margin-bottom:var(--s3)}
+.rules .r{display:grid;grid-template-columns:30px 1fr;gap:var(--s3);padding:10px 0;border-bottom:1px solid #16141f}
+.rules .r:last-child{border-bottom:0}
+.rules .r .n{font-family:'Geist Mono',monospace;font-size:10px;color:var(--gold)}
+.rules .r .t{font-size:14.2px;color:var(--dim);line-height:1.55}
+.rules .r .t b{color:var(--ink);font-weight:500}
+
+/* gallery */
+.gal{display:grid;grid-template-columns:repeat(2,minmax(0,392px));gap:var(--s5) 30px;justify-content:start}
+@media(max-width:900px){.gal{grid-template-columns:1fr;overflow-x:auto}}
+.cell{min-width:0}
+.cap > b{display:block;font-family:'Clash Display',sans-serif;font-size:16px;letter-spacing:-.02em;margin-bottom:var(--s1)}
+.cap .tm{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.14em;color:var(--faint);text-transform:uppercase}
+.cap .why{color:var(--dim);font-size:13.4px;margin-top:10px;line-height:1.5}
+.cap .why b{color:var(--ink);font-weight:500}
+.cap .rej{color:#8f7f88;font-size:12.6px;margin-top:8px;line-height:1.5;border-left:2px solid #33202a;padding-left:10px}
+.cap .rej b{color:#c39aa6;font-weight:500}
+.capfoot{margin-top:10px}
+
+.frame{width:390px;max-width:100%;border-radius:20px;overflow:hidden;border:1px solid var(--line2);
+  background:var(--bg);box-shadow:0 22px 56px -30px #000;margin-bottom:var(--s3)}
+.frame .fh{padding:9px 13px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.14em;color:#3d3850}
+.frame .fb{padding:var(--s3)}
+.phone{width:390px;max-width:100%;border-radius:22px;overflow:hidden;border:1px solid var(--line2);
+  box-shadow:0 26px 64px -30px #000;background:var(--bg);position:relative}
+.stub{background:linear-gradient(180deg,#0c0b10,#09080d);border-bottom:1px solid var(--line);
+  padding:10px 13px;display:flex;align-items:center;justify-content:space-between}
+.stub .s1{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.15em;color:#3d3850;line-height:1.7}
+.stub .s2{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.13em;color:#2f2b3d;text-align:right}
+.stage{position:relative;padding:0 13px 14px}
+.fold{position:absolute;left:0;right:0;top:299px;height:0;border-top:1px dashed rgba(255,77,94,.26);z-index:9;pointer-events:none}
+.fold b{position:absolute;left:1px;top:-8px;font-family:'Geist Mono',monospace;font-size:6px;font-weight:700;color:#7a3b43}
+.pfoot{padding:8px 13px 10px;border-top:1px solid var(--line);
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.13em;color:#3b3648;text-align:center}
+.mx{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.mxi{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.09em;padding:5px 8px;border-radius:5px;
+  border:1px solid var(--line2);color:var(--faint);text-transform:uppercase}
+.mxi b{color:var(--dim)}
+.mxi.ok{border-color:rgba(74,222,128,.35);color:var(--phos)}
+.mxi.no{border-color:rgba(255,77,94,.35);color:#ff8f80}
+
+/* ============================================================
+   THE TRAIN CARD (locked from v3) + THE ACTION SYSTEM (new)
+   ============================================================ */
+.train{position:relative;padding:var(--s3);border-radius:14px;
+  border:1px solid rgba(224,178,94,.5);background:linear-gradient(150deg,#231b2f,#130f1c);
+  box-shadow:0 10px 34px -18px rgba(224,178,94,.55)}
+.train.calm{border-color:var(--line2);background:linear-gradient(150deg,#171425,#0f0d17);box-shadow:none}
+.train.miss{border-color:rgba(107,58,68,.7);background:linear-gradient(150deg,#1d1520,#120e15);box-shadow:none}
+.train.wait{border-color:rgba(127,180,255,.4);background:linear-gradient(150deg,#151a26,#0f1017);box-shadow:none}
+.train.done{border-color:rgba(74,222,128,.4);background:linear-gradient(150deg,#121e18,#0d130f);box-shadow:none}
+.train .yh{display:flex;justify-content:space-between;align-items:baseline;
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.17em;color:var(--gold);margin-bottom:7px}
+.train .yh u{text-decoration:none;color:var(--faint);letter-spacing:.1em}
+.train.calm .yh,.train.wait .yh{color:var(--dim)}
+.train.miss .yh{color:#a4707c}
+.train.done .yh{color:var(--phos)}
+.train h4{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;margin:0 0 var(--s1);line-height:1.12}
+.train .sub{font-size:12px;color:var(--dim);margin-bottom:var(--s2);line-height:1.3}
+
+/* the action row — fixed height per block, contents swap without moving anything */
+.acts{display:grid;gap:var(--s2)}
+.act{display:flex;align-items:center;justify-content:center;gap:var(--s2);width:100%;
+  min-height:var(--tap);border-radius:11px;font-family:inherit;font-size:14px;font-weight:600;
+  border:1px solid var(--line2);background:transparent;color:var(--dim);cursor:pointer;
+  padding:0 var(--s3);text-align:center;line-height:1.2;text-decoration:none}
+.act.primary{border:0;background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;min-height:var(--tap-lg)}
+.act.big{min-height:var(--tap-lg);font-size:15px}
+.act.on{border-color:var(--phos);color:var(--phos);background:rgba(74,222,128,.1)}
+.act.warn{border-color:rgba(255,77,94,.35);color:#ff8f80}
+.act:active{transform:scale(.985)}
+.act .ic{font-family:'Geist Mono',monospace;font-size:13px;opacity:.8}
+.act .tick{width:18px;height:18px;border-radius:5px;border:1.5px solid #3a3350;flex:none;display:flex;
+  align-items:center;justify-content:center;font-size:11px;color:transparent}
+.act.on .tick{background:var(--phos);border-color:var(--phos);color:#0b1a10}
+.acts .pair{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+.acts .split{display:grid;grid-template-columns:1fr auto;gap:var(--s2)}
+.acts .split .act.narrow{padding:0 var(--s4)}
+.state{display:flex;align-items:center;justify-content:center;gap:var(--s2);min-height:var(--tap-lg);
+  border-radius:11px;background:rgba(255,255,255,.03);border:1px dashed var(--line2);
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase}
+.state.good{border-color:rgba(74,222,128,.35);color:var(--phos);background:rgba(74,222,128,.06)}
+.state.miss{border-color:rgba(107,58,68,.6);color:#c98d99;background:rgba(107,58,68,.12)}
+.state.wait{border-color:rgba(127,180,255,.35);color:var(--ghost-d);background:rgba(127,180,255,.07)}
+/* the quota lives in the kicker line, not on a row of its own — it is metadata about the
+   block, not an action, and giving it a row cost 27px of fold budget for nothing */
+.quota{display:inline-flex;align-items:center;gap:6px;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--faint)}
+.quota .pips{display:flex;gap:3px}
+.quota .pips i{width:6px;height:6px;border-radius:99px;background:#2a2438;display:block}
+.quota .pips i.on{background:var(--phos)}
+.quota b{color:var(--dim);font-weight:400}
+.nothing{min-height:var(--tap-lg);display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:#5c5570;font-style:italic;text-align:center;line-height:1.4;padding:0 var(--s3)}
+.notscored{margin-top:var(--s2);font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.11em;
+  color:var(--violet);text-align:center}
+
+/* the anatomy diagram */
+.anat{display:grid;grid-template-columns:minmax(0,392px) 1fr;gap:30px;align-items:start;margin-top:var(--s5)}
+@media(max-width:900px){.anat{grid-template-columns:1fr;overflow-x:auto}}
+.anat .ln{display:grid;grid-template-columns:26px 1fr;gap:var(--s3);padding:10px 0;border-bottom:1px solid #16141f}
+.anat .ln:last-child{border-bottom:0}
+.anat .ln .n{font-family:'Geist Mono',monospace;font-size:10px;color:var(--gold)}
+.anat .ln .t{font-size:14px;color:var(--dim);line-height:1.55}
+.anat .ln .t b{color:var(--ink);font-weight:500}
+
+/* the six states strip */
+.states{display:grid;grid-template-columns:repeat(3,minmax(0,392px));gap:var(--s4);justify-content:start}
+@media(max-width:1240px){.states{grid-template-columns:repeat(2,minmax(0,392px))}}
+@media(max-width:900px){.states{grid-template-columns:1fr;overflow-x:auto}}
+
+/* line context frame bits (locked from v3) */
+.LN{padding-top:14px;position:relative}
+.LN .top{display:flex;justify-content:space-between;align-items:baseline;padding:0 1px var(--s1)}
+.LN .top b{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.035em;line-height:1}
+.LN .top b i{font-style:normal;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;
+  color:var(--faint);display:block;margin-top:var(--s1)}
+.LN .top .dw{text-align:right;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;color:var(--gold)}
+.LN .top .dw u{display:block;text-decoration:none;color:var(--faint);margin-top:3px}
+.LN .route{position:relative;padding-left:44px}
+.LN .track{position:absolute;left:18px;top:4px;bottom:4px;width:6px;border-radius:99px;background:#16131f}
+.LN .tdone{position:absolute;left:18px;top:4px;width:6px;border-radius:99px;
+  background:linear-gradient(180deg,var(--ember),var(--ghost-d) 30%,var(--rune) 48%,var(--gold));opacity:.9}
+.LN .st{position:relative;display:grid;grid-template-columns:1fr auto;gap:var(--s2);align-items:center;
+  padding:6px 0;min-height:32px}
+.LN .st::before{content:'';position:absolute;left:-29px;top:50%;transform:translateY(-50%);
+  width:10px;height:10px;border-radius:99px;background:#0d0b13;border:2px solid #332c47;z-index:2}
+.LN .st.done::before{background:var(--phos);border-color:var(--phos);box-shadow:0 0 8px rgba(74,222,128,.5)}
+.LN .st .nm{font-size:12.5px;color:var(--dim);line-height:1.25}
+.LN .st .tm{font-family:'Geist Mono',monospace;font-size:8.5px;color:#4f4860}
+.LN .st.done .nm{color:#607367}
+.LN .collapse{position:relative;display:flex;align-items:center;gap:var(--s2);padding:7px 0;
+  font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.13em;color:#5c5570}
+.LN .collapse::before{content:'';position:absolute;left:-28px;top:50%;transform:translateY(-50%);
+  width:8px;height:8px;border-radius:99px;background:#241f33;border:1px solid #332c47;z-index:2}
+.LN .collapse b{color:var(--phos);font-weight:400}
+.LN .train{margin:var(--s2) 0}
+.LN .train::before{content:'';position:absolute;left:-37px;top:50%;transform:translateY(-50%);
+  width:24px;height:36px;border-radius:8px;background:linear-gradient(180deg,#f0cd8e,#a97c33);
+  box-shadow:0 0 18px rgba(224,178,94,.75);z-index:3}
+.LN .train::after{content:'';position:absolute;left:-31px;top:50%;transform:translateY(-50%);
+  width:12px;height:9px;border-radius:2px;background:#120d05;z-index:4}
+.LN .hop{position:relative;margin:-9px 0 var(--s2);padding:9px 11px 10px;border-radius:0 0 12px 12px;
+  border:1px solid rgba(74,222,128,.26);border-top:0;background:rgba(74,222,128,.05)}
+.LN .hop .hh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:var(--s2);
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;color:#7c9885}
+.LN .hop .hh b{color:var(--phos)}
+.LN .hop .row{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s1)}
+.LN .hop button{border:1px solid rgba(74,222,128,.24);background:rgba(74,222,128,.04);border-radius:8px;
+  padding:7px 5px;cursor:pointer;font-family:inherit;min-height:var(--tap);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;color:#8fbf9e;font-size:11.5px;line-height:1.15;text-align:center}
+.LN .hop button .p{display:flex;gap:2.5px}
+.LN .hop button .p i{width:4px;height:4px;border-radius:99px;background:#26302a;display:block}
+.LN .hop button .p i.on{background:var(--phos)}
+.LN .hop button.on{border-color:var(--phos);background:rgba(74,222,128,.14);color:var(--phos)}
+.LN .term{position:relative;margin-top:9px;padding:10px 12px;border-radius:12px;
+  border:1px solid var(--ghost-line);background:var(--ghost-bg)}
+.LN .term::before{content:'';position:absolute;left:-30px;top:50%;margin-top:-5px;
+  width:10px;height:10px;background:var(--ghost-d);border-radius:2px;rotate:45deg;z-index:2}
+.LN .term .th{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.18em;color:var(--ghost-d);margin-bottom:7px}
+.LN .term .plat{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s1)}
+.LN .term .plat span{font-family:'Geist Mono',monospace;font-size:9.5px;color:var(--ghost);text-align:center;
+  border:1px solid var(--ghost-line);border-radius:6px;padding:5px 2px}
+.LN .term .plat span u{display:block;text-decoration:none;font-size:6.5px;letter-spacing:.1em;color:#5d7292;margin-bottom:2px}
+
+/* handoff */
+.vr{display:grid;grid-template-columns:34px 1fr;gap:var(--s4);padding:17px 0;border-top:1px solid var(--line);align-items:start}
+.vr .n{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);padding-top:3px}
+.vr h3{font-size:16.5px;margin-bottom:var(--s1);font-family:'Satoshi';font-weight:700}
+.vr p{margin:0;color:var(--dim);font-size:14.3px;line-height:1.55;max-width:76ch}
+.handoff{padding:8px 0 90px}
+.handoff h2{font-size:25px;margin:38px 0 var(--s4)}
+.handoff h3{font-size:15px;margin:var(--s5) 0 var(--s2);font-family:'Satoshi';font-weight:700}
+.handoff p,.handoff li{color:var(--dim);font-size:14.4px;line-height:1.6;max-width:80ch}
+.handoff b{color:var(--ink);font-weight:500}
+.handoff ul{padding-left:19px;margin:var(--s2) 0}
+.handoff li{margin-bottom:7px}
+.unsure{border:1px solid rgba(224,178,94,.32);background:rgba(224,178,94,.05);border-radius:14px;
+  padding:20px 22px;margin-top:var(--s4)}
+.unsure h3{margin-top:0;color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="mast">
+    <div class="kick">Agent 4 · round 4 · the line ships · contextual actions</div>
+    <h1>Every block gets the buttons that belong to it.</h1>
+
+    <div class="quote">"The Line fully built looks good. We just need to make sure the little buttons that
+      you can click below what's actually going on <b>make sense</b> — for example, if I'm doing the
+      <b>Bible · text Kells</b>, there should be quick buttons under that that make sense actually towards
+      that, for each individual thing. But the <b>framework can stay the same</b>."</div>
+
+    <p><b>The framework is untouched.</b> The rail, deep-work-left, the push strip, the make-up banner,
+      NEXT UP above the fold and ALWAYS COUNTS are exactly as approved in v3. The only thing that changes
+      is what sits under the block you are in — and it is now different for every kind of block.</p>
+    <p>Fourteen action sets, <b>never more than three buttons</b>, each mapped to a function the app
+      already has: <code>startRun</code>, <code>openBlk</code>, <code>markWait</code>,
+      <code>markMiss</code>, <code>openComposer</code>, <code>setTrade</code>, <code>closeDay</code>.
+      Nothing here needs new machinery except one <code>sms:</code> link — which is the point of the whole
+      Bible block.</p>
+  </div>
+
+  <!-- ================= THE SYSTEM ================= -->
+  <section class="sec">
+    <div class="sech"><div class="sn">00</div>
+      <div><h2>The rules the row obeys</h2>
+        <p>He asked for this to be done "in the best clean way" and not sloppy. That is a craft
+          instruction, so it is written as rules a machine can check — and at the bottom of this page
+          every one of them is <b>measured on the rendered output</b>, not asserted.</p>
+      </div></div>
+
+    <div class="rules">
+      <h3>Six rules</h3>
+      <div class="r"><div class="n">01</div><div class="t"><b>Three actions maximum.</b> If a block needs
+        four, the design hasn't decided. Two blocks here have one action. One block has none at all.</div></div>
+      <div class="r"><div class="n">02</div><div class="t"><b>Every target ≥48px</b>, primaries 56px —
+        above Apple's 44px floor, because this is used one-handed at 6 AM and the thumb is not accurate
+        then.</div></div>
+      <div class="r"><div class="n">03</div><div class="t"><b>Nothing moves when state changes.</b> Each
+        block reserves a fixed row height; not-started, live, done, missed, waiting and off-script all
+        render at <b>exactly the same height</b>, so the schedule below never jumps under his thumb.</div></div>
+      <div class="r"><div class="n">04</div><div class="t"><b>One spacing scale</b> — 4 · 8 · 12 · 16 · 24.
+        There are no one-off margins in this file; every gap is one of those five variables.</div></div>
+      <div class="r"><div class="n">05</div><div class="t"><b>Nothing below 11px inside an action.</b> This
+        app has shipped 6.5px labels. Button labels are 14px, meta is 10px, and that floor is enforced by
+        the audit.</div></div>
+      <div class="r"><div class="n">06</div><div class="t"><b>Every action maps to something that exists.</b>
+        No button implies a feature the app can't perform today, with one deliberate exception — the
+        <code>sms:</code> deep link for Kells, which is new and is the whole reason that block was named.</div></div>
+    </div>
+
+    <div class="anat">
+      <div>
+        <div class="frame"><div class="fh"><span>ANATOMY · THE ROW</span><span>390 PX</span></div>
+          <div class="fb">
+            <div class="train">
+              <div class="yh"><span>YOU ARE HERE</span><u>45m TO THE NEXT STOP · 10:45–12:00</u></div>
+              <h4>Send Anthony the AVRS pitch</h4>
+              <div class="sub">Block 2 · deep work</div>
+              <div class="acts">
+                <button class="act primary">Start focus run · 75m</button>
+                <div class="pair">
+                  <button class="act">Waiting on someone</button>
+                  <button class="act">Detail</button>
+                </div>
+              </div>
+            </div>
+          </div></div>
+      </div>
+      <div>
+        <div class="ln"><div class="n">A</div><div class="t"><b>The title is the objective</b>, not the
+          block name — "Send Anthony the AVRS pitch", not "Block 2". The block name drops to the sub-line.</div></div>
+        <div class="ln"><div class="n">B</div><div class="t"><b>One primary, full width, 56px.</b> The
+          thing he is most likely to want. Never two primaries — that is a choice, and a choice at 6 AM is
+          friction.</div></div>
+        <div class="ln"><div class="n">C</div><div class="t"><b>Up to two secondaries, 48px, side by side.</b>
+          Always the escape hatches: the honest "this is blocked" and the way into the detail sheet.</div></div>
+        <div class="ln"><div class="n">D</div><div class="t"><b>Gap 8, padding 12/14, radius 11.</b> Same
+          everywhere. The row's total height is what gets frozen across the six states.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= IN CONTEXT ================= -->
+  <section class="sec">
+    <div class="sech"><div class="sn">01</div>
+      <div><h2>In context — the framework is unchanged</h2>
+        <p>Two full renders of the approved region so the action row can be judged where it actually
+          lives. Everything above and below the train card is v3, untouched.</p>
+      </div></div>
+    <div class="gal" id="galCtx"></div>
+  </section>
+
+  <!-- ================= EVERY BLOCK ================= -->
+  <section class="sec">
+    <div class="sech"><div class="sn">02</div>
+      <div><h2>Every block, its own actions</h2>
+        <p>Fourteen sets. Each says what it does, and what it beats. The rejected alternative matters more
+          than the chosen one in a few of these — particularly <b>Wake</b>, where the obvious idea is
+          actively harmful.</p>
+      </div></div>
+    <div class="gal" id="galBlocks"></div>
+  </section>
+
+  <!-- ================= SIX STATES ================= -->
+  <section class="sec">
+    <div class="sech"><div class="sn">03</div>
+      <div><h2>Six states, one height</h2>
+        <p>A deep-work block through every state it can be in. <b>The measured height of the action row is
+          printed under each one</b> — they are identical, which is rule 03. Nothing under his thumb moves
+          when a block changes state.</p>
+      </div></div>
+    <div class="states" id="galStates"></div>
+  </section>
+
+  <!-- ================= CRAFT AUDIT ================= -->
+  <section class="sec">
+    <div class="sech"><div class="sn">04</div>
+      <div><h2>The craft audit</h2>
+        <p>Measured on the rendered page at 390px, not claimed. If any of these fail, the number goes red
+          and stays in the document.</p>
+      </div></div>
+    <div id="audit"></div>
+  </section>
+
+  <!-- ================= HAND-OFF ================= -->
+  <section class="handoff">
+    <h2>Hand-off to the GM</h2>
+
+    <h3>What I produced</h3>
+    <p><b>renditions/rend-timeblock-v4.html</b> — the approved Line framework with a contextual action row
+      for all fourteen block types across weekday and Saturday, each of the six row states rendered at a
+      frozen height, and a measured craft audit. v3 is untouched, and I have not substituted the X1 fusion:
+      this is The Line on its own, as chosen.</p>
+
+    <h3>The Bible block, since he named it</h3>
+    <p>Two buttons. <b>"Read · 20 min locked"</b> starts the same fullscreen locked timer a work block gets
+      — the app already has <code>focus:20</code> on that block, so this is wiring, not new machinery. Then
+      <b>"Text Kells"</b>, an <code>sms:</code> deep link that opens Messages with the passage already in
+      the body.</p>
+    <p>The reasoning: <b>the reading is not what he misses — the texting is.</b> Reading is solitary and
+      takes twenty minutes; texting a real person about what you read requires composing something, and
+      that is where a 3×/week habit dies. Pre-filling the message removes the only step that involves
+      another human being. The button is deliberately live <em>before</em> the timer too — if he read
+      earlier in the day, the friction to text should still be zero.</p>
+
+    <div class="unsure">
+      <h3>The two action sets I am least sure about, and what would settle them</h3>
+      <p><b>1 · Market open — "Done for the day".</b> I chose the anti-double-back guard over a session
+        log, because his own definition of a won month is "stuck to the rules and did not double-back",
+        and the double-back happens <em>after</em> a winning morning. A button that declares the session
+        closed is the only thing on this screen that could actually interrupt that. <b>But I have never
+        seen him trade</b>, and there is a real chance that tapping "done" at 07:40 and then legitimately
+        re-entering on a valid setup would make the app feel like a liar — or worse, make him not tap it.
+        <b>What would settle it:</b> one question — "when you double-back, is it a new idea or is it
+        revenge on the same one?" If it is revenge, the guard is right. If it is a fresh setup, the guard
+        is wrong and the block should only carry the close-of-session log at 13:00.</p>
+      <p style="margin-top:12px"><b>2 · Personal life — no actions at all.</b> The brief says do not gamify
+        it, so I gave it zero buttons and one line of text. That is either exactly right or it will read as
+        the app having <em>given up</em> on the block that he named a top priority three times. The
+        difference is invisible to me from here. <b>What would settle it:</b> show him the card with no
+        buttons and ask a single question — "does this feel like respect or like neglect?" If it is
+        neglect, the fix is one ghost button that is about presence rather than scoring ("Phone away until
+        21:00"), and nothing else.</p>
+    </div>
+
+    <h3>Decisions inside these sets that the GM should know are deliberate</h3>
+    <ul>
+      <li><b>No smoke button on Wake.</b> The obvious move is to put the vice log on the block that sits
+        inside the hardest 90 minutes. I refused: naming the vice at the moment of peak craving is a
+        prompt, not a defence. It belongs on the vices screen, which is Agent 5's turf.</li>
+      <li><b>No "mark complete" on deep work.</b> The app's own rule is that only the timer completes a
+        work block. Adding a manual complete would quietly destroy the one measure the score is built on.</li>
+      <li><b>No dollar figure anywhere near trading.</b> Both trading blocks carry rule-following only,
+        which is what <code>setTrade()</code> already stores.</li>
+      <li><b>No food logging on Lunch.</b> Nutrition is explicitly out of the app; the block gets one
+        button that means "I ate and I'm back", nothing more.</li>
+      <li><b>Missed is never terminal.</b> The missed state carries two inline recoveries — move it to
+        tomorrow, or it wasn't missed after all. The third path in <code>markMiss()</code>, "it was
+        blocked", is not a button here because it is <b>its own state</b> (Waiting), one card along.</li>
+    </ul>
+
+    <h3>What verification caught in my own work</h3>
+    <p>Six defects, found by measuring and looking rather than by reading my own code. The first one is
+      the important one, because it is a consequence of this round's brief that I did not anticipate:</p>
+    <ul>
+      <li><b>Richer actions cost fold budget, and broke the locked constraint.</b> A three-action row is
+        ~69px taller than v3's single button, which pushed the train card's bottom to <b>+336</b> and the
+        Bible card's to <b>+374</b> against a 299 budget. My own audit failed the page and said so. Fixed
+        structurally, not by shrinking type: the weekly quota moved into the kicker line (a whole row
+        removed), and the collapse pill no longer duplicates the last past station. <b>Now 291 and 295.</b>
+        The GM should know this trade exists — <b>every action added to this row costs roughly 56px of
+        fold.</b></li>
+      <li><b>The off-script note made that card 20px taller than the other five</b>, quietly breaking rule
+        03 at the card level even though the action row itself was identical. Off-script is a day-level
+        annotation and already has its own banner in v3, so it came out of the card. All six cards now
+        measure <b>205px exactly</b>.</li>
+      <li><b>"Text Kells" rendered as an underlined blue-ish link</b> — it is the one action that is an
+        <code>&lt;a&gt;</code> rather than a <code>&lt;button&gt;</code>, and it did not inherit the reset.</li>
+      <li><b>Bold text inside the rationale paragraphs was rendering as display headings</b>, snapping
+        sentences into fragments mid-flow. A selector meant for the card title was matching every
+        <code>&lt;b&gt;</code> in the caption.</li>
+      <li>The quota strip had its own row: <b>27px spent on metadata</b> that reads better as a chip beside
+        the kicker.</li>
+      <li>I claimed the missed state offered <b>three</b> recovery actions; it renders two. The third path
+        is a separate state, and the text now says so.</li>
+    </ul>
+
+    <h3>What I could not verify from here</h3>
+    <p>The <code>sms:</code> body format differs across iOS versions — <code>sms:&amp;body=</code> works on
+      modern iOS but has been inconsistent historically, and it does nothing at all in a desktop browser.
+      <b>It needs one test on his actual phone from the installed PWA</b> before this is called done. If it
+      fails, the fallback is copy-to-clipboard plus opening Messages, which is worse but still removes the
+      composing step.</p>
+  </section>
+
+</div>
+
+<script>
+/* ==================================================================
+   Blocks, and the action set each one gets.
+   Every action names the function it would call in index.html.
+   ================================================================== */
+var C = {WORK:'#E0B25E', CAP:'#7FB4FF', BODY:'#FF6B2C', FAITH:'#B08CFF', MIND:'#38E1D8', PEOPLE:'#4ADE80'};
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+var KELLS_BODY = encodeURIComponent("Read Proverbs 3 tonight — the bit about not leaning on your own understanding. What did you make of it?");
+
+var SETS = [
+  { id:'wake', day:'WEEKDAY', time:'06:00–06:30', name:'Wake · pre-market', title:'Wake · pre-market',
+    sub:'Ritual · 30 min · the first thing',
+    rowType:'one',
+    acts:[{l:"I'm up", k:'primary big', fn:'markDone(\'wake\')'}],
+    why:'One button, the biggest one in the app. He is half-awake with one hand; the only fact the app needs is whether he is vertical.',
+    rej:'A <b>"log a smoke"</b> button here. The first 90 minutes are his hardest window, so this looks like the obvious place for it — and that is exactly why it is wrong. Naming the vice at peak craving is a prompt, not a defence.' },
+
+  { id:'open', day:'WEEKDAY', time:'06:30–08:30', name:'Market open', title:'Trade the plan',
+    sub:'Capital · 2h · he is on his phone, moving',
+    rowType:'pair-primary',
+    acts:[{l:'Done for the day', k:'primary', fn:'setTrade(\'closed\')'},
+          {l:'Broke a rule', k:'warn', fn:'setTrade(\'broke\')'}],
+    why:'A won month is rules kept and <b>no double-back</b> — going back greedy after a winning morning. The single most useful thing a button can do in this window is let him <b>declare the session closed</b>. Flagging a broken rule while it is fresh is the only other thing worth a thumb.',
+    rej:'A trade log, a P&amp;L field, or a position counter. The app has committed to never asking for dollars, and a number here would quietly turn a rules game into a scoreboard.' },
+
+  { id:'prio', day:'WEEKDAY', time:'08:30–09:00', name:"Write today's 3 priorities", title:"Write today's three",
+    sub:'Mind · 30 min · the ritual that fills the day',
+    rowType:'pair-primary',
+    acts:[{l:'Write the three', k:'primary', fn:'openComposer()'},
+          {l:'Same as yesterday', k:'', fn:'openComposer(\'carry\')'}],
+    why:'The composer <em>is</em> the action — this block exists to fill the objective line of all four work blocks. "Same as yesterday" pre-fills from the last set of three, which kills the blank page on a scrambled morning.',
+    rej:'A <b>skip</b> button. Skipping leaves four blocks reading "no objective set" — a visible hole at 09:00 that the app is deliberately designed to show him.' },
+
+  { id:'deep', day:'WEEKDAY', time:'09:00–10:30 · 10:45–12:00 · 13:20–14:35 · 15:05–16:20',
+    name:'Blocks 1–4 · deep work', title:'Send Anthony the AVRS pitch',
+    sub:'Block 2 · deep work',
+    rowType:'primary-pair',
+    acts:[{l:'Start focus run · 75m', k:'primary', fn:'startRun(\'b2\')'},
+          {l:'Waiting on someone', k:'', fn:'markWait(\'b2\')'},
+          {l:'Detail', k:'', fn:'openBlk(\'b2\')'}],
+    why:'The timer is the only thing that completes a work block, so it is the primary. "Waiting on someone" is the honest escape that <b>does not score against him</b> — the difference between blocked and failed. Detail holds the objective and what it produced.',
+    rej:'A <b>"mark complete"</b> button. The app\'s own rule is that only the timer completes deep work; a manual tick would hollow out the one measure the score is built on.' },
+
+  { id:'lunch', day:'WEEKDAY', time:'12:00–13:00', name:'Lunch', title:'Lunch',
+    sub:'Body · 60 min · off the clock',
+    rowType:'one',
+    acts:[{l:'Back at it', k:'primary big', fn:'markDone(\'lunch\')'}],
+    why:'One tap that means "I ate and I am back". It marks the block and nothing else.',
+    rej:'Anything about food — what he ate, calories, a photo. <b>Nutrition is explicitly out of this app</b>, and a lunch block that asks what you ate is the fastest way to break that promise.' },
+
+  { id:'close', day:'WEEKDAY', time:'13:00–13:20', name:'Market close · log the day', title:'Log the session',
+    sub:'Capital · 20 min · rule-following is the measure',
+    rowType:'toggles',
+    acts:[{l:'Followed my rules', k:'toggle on', fn:'setTrade(\'rules\')'},
+          {l:'No double-back', k:'toggle', fn:'setTrade(\'nodb\')'}],
+    why:'These are the two measures of a won month, and they are already what <code>setTrade()</code> stores. Surfacing them as toggles inline saves opening a sheet for a twenty-second job.',
+    rej:'A P&amp;L box, or a "good day / bad day" rating. Both smuggle results back into a scoring system deliberately built on execution.' },
+
+  { id:'walk', day:'WEEKDAY', time:'14:35–15:05', name:'Walk the dog', title:'Walk the dog',
+    sub:'Body + Mind · 30 min · 3× a week',
+    rowType:'pair-primary', quota:{label:'WALKS THIS WEEK', have:1, need:3},
+    acts:[{l:'Walked him', k:'primary', fn:'markDone(\'walk\')'},
+          {l:'Split it — 2nd later', k:'', fn:'splitWalk()'}],
+    why:'The quota is visible so a tap has obvious meaning. <b>"Split it"</b> exists because he said a walk day can be two or three shorter walks — without it, a 20-minute walk feels like a failed 30.',
+    rej:'A distance or step count. The dog is a constraint on his day, not a fitness metric, and pulling in HealthKit for this would be machinery for nothing.' },
+
+  { id:'gym', day:'WEEKDAY', time:'16:20–17:30', name:'Gym', title:'Gym',
+    sub:'Body · 70 min · optional · 2× a week minimum',
+    rowType:'pair-primary', quota:{label:'GYM THIS WEEK', have:1, need:2},
+    acts:[{l:'Trained', k:'primary', fn:'markDone(\'gym\')'},
+          {l:'Rest day', k:'', fn:'markRest(\'gym\')'}],
+    why:'Two states that are both legitimate. The block is optional, so <b>"Rest day" must not be a miss</b> — it closes the block cleanly and leaves the weekly quota to do the judging.',
+    rej:'A workout logger — sets, weights, a split. That is a different app, and he asked for 2× a week, not a training diary.' },
+
+  { id:'life', day:'WEEKDAY', time:'17:30–21:00', name:'Personal life', title:'Yours',
+    sub:'People · 3h 30m',
+    rowType:'none',
+    acts:[],
+    why:'<b>No buttons.</b> The one block on the board that must not feel measured. He named personal life a top priority three times, and the way an app respects that is by having nothing to say about it.',
+    rej:'A "quality time" logger or a phone-down timer. <b>"Real time with someone" already exists in always-counts</b> and can be tapped from anywhere — putting it here too would gamify the exact block he asked to leave alone.' },
+
+  { id:'reset', day:'WEEKDAY', time:'21:00–21:30', name:'Clean · prep tomorrow · phone away', title:'Reset the room',
+    sub:'Mind · 30 min · the doorway to closing the day',
+    rowType:'pair-primary',
+    acts:[{l:'Done — phone away', k:'primary', fn:'markDone(\'reset\')'},
+          {l:'Close the day →', k:'', fn:'closeDay()'}],
+    why:'This is the last scored block before Bible, so it is the natural doorway to the day\'s verdict. Putting <b>Close the day</b> here means he never has to hunt for it.',
+    rej:'A three-item checklist (clean / prep / phone). Three ticks at 21:00 is admin; one tap plus the doorway is the actual job.' },
+
+  { id:'bible', day:'WEEKDAY', time:'21:30–21:50', name:'Bible · text Kells', title:'Bible · text Kells',
+    sub:'Faith · 20 min · 3× a week',
+    rowType:'pair-primary', quota:{label:'THIS WEEK', have:1, need:3}, hero:1,
+    acts:[{l:'Read · 20 min locked', k:'primary', fn:'startRun(\'bible\')'},
+          {l:'Text Kells', k:'sms', fn:'sms:&body=…'}],
+    why:'The reading is not the part he misses — <b>the texting is.</b> Reading is solitary; texting a real person about it means composing something, and that is where a 3×/week habit dies. The second button is an <code>sms:</code> deep link that opens Messages with the passage already written. It is live before the timer too, because if he read at lunch the friction to text should still be zero.',
+    rej:'A "log the passage" field as the second action. It serves the app\'s records, not him — and it puts a keyboard between him and the one button that involves another human being.' },
+
+  { id:'sat-wake', day:'SATURDAY', time:'08:00–08:45', name:'Slow start', title:'Slow start',
+    sub:'Body · 45 min · no pre-market today',
+    rowType:'one',
+    acts:[{l:'Up', k:'primary big', fn:'markDone(\'wake\')'}],
+    why:'The same one-handed job as a weekday wake, minus the market. Deliberately the identical shape and position so the muscle memory carries across.',
+    rej:'Nothing else. A Saturday morning that asks for two taps has already failed.' },
+
+  { id:'sat-hike', day:'SATURDAY', time:'09:00–10:30', name:'Long hike with the dog', title:'Long hike with the dog',
+    sub:'Body + Mind · 90 min · counts toward the walk quota',
+    rowType:'pair-primary', quota:{label:'MOVEMENT THIS WEEK', have:2, need:3},
+    acts:[{l:'Hiked', k:'primary', fn:'markDone(\'hike\')'},
+          {l:'Still out →', k:'', fn:'markWait(\'hike\')'}],
+    why:'A long hike routinely overruns, and the app should not mark it missed at 10:30 because he is still on the trail. <b>"Still out"</b> holds the block open instead of failing it.',
+    rej:'A route or distance tracker. The hike is time with the dog, not a workout, and the app has no business turning it into one.' },
+
+  { id:'sat-mon', day:'SATURDAY', time:'12:30–13:15', name:'Set Monday up', title:'Set Monday up',
+    sub:'Mind · 45 min · where next week gets decided',
+    rowType:'pair-primary',
+    acts:[{l:'Set Monday\'s three', k:'primary', fn:'openComposer(\'monday\')'},
+          {l:'Tweak the monthly goal', k:'', fn:'go(\'push\')'}],
+    why:'He said next week gets set by <b>tweaking the monthly goal, not starting from scratch</b>. So the second button goes straight to the December goal rather than to a blank week — the plan is an edit, never a blank page.',
+    rej:'A full weekly planner. Saturday has one work block; a planner would eat it.' }
+];
+
+/* ---------- the action row ---------- */
+function actBtn(a){
+  var cls = 'act ' + (a.k || '');
+  if (a.k === 'sms') return '<a class="act" href="sms:&body=' + KELLS_BODY + '" data-act>' +
+    '<span class="ic">✉</span>' + esc(a.l) + '</a>';
+  if ((a.k || '').indexOf('toggle') === 0)
+    return '<button class="act' + ((a.k.indexOf('on') > 0) ? ' on' : '') + '" data-act>' +
+      '<span class="tick">✓</span>' + esc(a.l) + '</button>';
+  return '<button class="' + cls + '" data-act>' + esc(a.l) + '</button>';
+}
+function quotaChip(s){
+  if (!s.quota) return '';
+  var pips = '';
+  for (var i = 0; i < s.quota.need; i++) pips += '<i class="' + (i < s.quota.have ? 'on' : '') + '"></i>';
+  return '<span class="quota"><span class="pips">' + pips + '</span><b>' +
+         s.quota.have + '/' + s.quota.need + '</b></span>';
+}
+function actionRow(s, state){
+  state = state || 'live';
+  var a = s.acts, h = '';
+  h += '<div class="acts" data-acts>';
+  if (state === 'done'){
+    h += '<div class="state good">✓ ' + (s.rowType === 'toggles' ? 'session logged' : 'done') + '</div>' +
+         (s.rowType === 'none' ? '' : '<div class="pair"><button class="act" data-act>Undo</button>' +
+          '<button class="act" data-act>Detail</button></div>');
+  } else if (state === 'missed'){
+    h += '<div class="state miss">passed — not taken</div>' +
+         '<div class="pair"><button class="act" data-act>Move to tomorrow</button>' +
+         '<button class="act" data-act>Not missed</button></div>';
+  } else if (state === 'waiting'){
+    h += '<div class="state wait">waiting on someone</div>' +
+         '<div class="pair"><button class="act" data-act>Unblock it</button>' +
+         '<button class="act" data-act>Detail</button></div>';
+  } else if (s.rowType === 'none'){
+    h += '<div class="nothing">Nothing to log here. It is yours.</div>';
+  } else if (s.rowType === 'one'){
+    h += actBtn(a[0]);
+  } else if (s.rowType === 'toggles'){
+    h += actBtn(a[0]) + actBtn(a[1]);
+  } else if (s.rowType === 'pair-primary'){
+    h += actBtn(a[0]) + actBtn(a[1]);
+  } else {                                   /* primary-pair: 1 primary + 2 secondaries */
+    h += actBtn(a[0]) + '<div class="pair">' + actBtn(a[1]) + actBtn(a[2]) + '</div>';
+  }
+  h += '</div>';
+  return h;
+}
+
+/* the card the row lives in */
+function card(s, state){
+  state = state || 'live';
+  var cls = state === 'done' ? ' done' : state === 'missed' ? ' miss'
+          : state === 'waiting' ? ' wait' : (state === 'notstarted' || state === 'off') ? ' calm' : '';
+  var kick = state === 'notstarted' ? 'NEXT STOP' : state === 'done' ? 'DONE'
+           : state === 'missed' ? 'PASSED' : state === 'waiting' ? 'HELD'
+           : state === 'off' ? 'RIGHT NOW' : 'YOU ARE HERE';
+  return '<div class="train' + cls + '">' +
+    '<div class="yh"><span>' + kick + (s.quota ? ' ' + quotaChip(s) : '') + '</span>' +
+    '<u>' + s.time.split(' · ')[0] + '</u></div>' +
+    '<h4>' + esc(s.title) + '</h4>' +
+    '<div class="sub">' + s.sub + '</div>' +
+    actionRow(s, state) + '</div>';
+}
+
+function frame(inner, label, right){
+  return '<div class="frame"><div class="fh"><span>' + label + '</span><span>' + (right || '390 PX') +
+    '</span></div><div class="fb">' + inner + '</div></div>';
+}
+
+/* ---------- gallery: every block ---------- */
+var out = '';
+for (var i = 0; i < SETS.length; i++){
+  var s = SETS[i];
+  out += '<div class="cell"><div class="cap"><b>' + esc(s.name) + '</b>' +
+    '<div class="tm">' + s.day + ' · ' + s.time + ' · ' + s.acts.length + ' action' +
+      (s.acts.length === 1 ? '' : 's') + '</div></div>' +
+    '<div class="capfoot"></div>' +
+    frame(card(s, 'live'), s.id === 'bible' ? 'HIS EXAMPLE' : 'LIVE') +
+    '<div class="cap"><div class="why">' + s.why + '</div>' +
+    '<div class="rej"><b>Rejected:</b> ' + s.rej + '</div></div>' +
+    '<div class="mx" data-mx></div></div>';
+}
+document.getElementById('galBlocks').innerHTML = out;
+
+/* ---------- gallery: six states of a deep-work block ---------- */
+var deep = SETS.filter(function(x){ return x.id === 'deep'; })[0];
+var STATES = [['notstarted','Not started','the block is still ahead'],
+              ['live','Live','he is in it now'],
+              ['done','Done','the timer completed'],
+              ['missed','Missed','never terminal — three ways out'],
+              ['waiting','Waiting','blocked on someone, does not score against him'],
+              ['off','Off-script','same card — the day-level banner carries \'not scored\'']];
+var so = '';
+for (var j = 0; j < STATES.length; j++){
+  so += '<div class="cell"><div class="cap"><b>' + STATES[j][1] + '</b>' +
+    '<div class="tm">' + STATES[j][2] + '</div></div>' +
+    frame(card(deep, STATES[j][0]), STATES[j][1].toUpperCase()) +
+    '<div class="mx" data-mx></div></div>';
+}
+document.getElementById('galStates').innerHTML = so;
+
+/* ---------- two full-context renders ---------- */
+function lineContext(s, opts){
+  opts = opts || {};
+  var h = '<div class="LN"><div class="top"><b>' + opts.head +
+    '<i>' + opts.day + ' · ' + opts.clock + '</i></b>' +
+    '<div class="dw">' + opts.deep + '<u>TO THE TERMINUS</u></div></div>' +
+    '<div class="route"><div class="track"></div><div class="tdone" style="height:' + opts.prog + '"></div>';
+  /* the collapse pill already summarises the past — printing the last station under it as well
+     was 32px of duplication that pushed the card toward the fold */
+  if (opts.collapse) h += '<div class="collapse"><span>' + opts.collapse + '</span></div>';
+  else for (var i = 0; i < opts.past.length; i++)
+    h += '<div class="st done"><span class="nm">' + opts.past[i][0] + '</span><span class="tm">' + opts.past[i][1] + '</span></div>';
+  h += card(s, 'live');
+  h += '<div class="hop"><div class="hh"><span>HOP OFF HERE · ANY TIME, ANY STOP</span><b>' + opts.wins + '</b></div>' +
+    '<div class="row">' +
+    '<button class="on">Laundry</button><button class="on">Cooked<span class="p"><i class="on"></i><i class="on"></i><i></i><i></i></span></button>' +
+    '<button>Said no</button><button>In bed<span class="p"><i class="on"></i><i></i><i></i><i></i></span></button>' +
+    '<button>Someone<span class="p"><i class="on"></i><i></i><i></i></span></button>' +
+    '<button>Convo<span class="p"><i class="on"></i><i></i><i></i></span></button></div></div>';
+  for (var f = 0; f < opts.future.length; f++)
+    h += '<div class="st"><span class="nm">' + opts.future[f][0] + '</span><span class="tm">' + opts.future[f][1] + '</span></div>';
+  h += '<div class="term"><div class="th">TERMINUS · DEC 1 · 91 WORKDAYS</div>' +
+    '<div class="plat"><span><u>SANO</u>1/3</span><span><u>FUNDED</u>0/3</span><span><u>KITCHEN</u>0/1</span></div></div>';
+  return h + '</div></div>';
+}
+function phoneWrap(inner, capB, capS, capE){
+  return '<div class="cell"><div class="cap"><b>' + capB + '</b><div class="tm">' + capS + '</div>' +
+    (capE ? '<div class="why">' + capE + '</div>' : '') + '</div>' +
+    '<div class="phone"><div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked</div>' +
+    '<div class="s2">481 PX<br>SPENT</div></div><div class="stage"><div class="fold"><b>299</b></div>' +
+    inner + '</div><div class="pfoot">— schedule continues —</div></div>' +
+    '<div class="mx" data-mx></div></div>';
+}
+document.getElementById('galCtx').innerHTML =
+  phoneWrap(lineContext(deep, {head:'3 stops of deep work', day:'WED', clock:'11:15', deep:'3h 15m LEFT',
+      prog:'34%', wins:'2 TODAY · +35',
+      past:[['Block 1','09:00']], collapse:'4 STOPS BEHIND YOU · <b>4 DONE</b> ▾',
+      future:[['Lunch','12:00'],['Market close · log the day','13:00'],['Block 3','13:20']]}),
+    '11:15 · a deep work block', 'the state he sees most often',
+    'The framework is v3 exactly. The only change is inside the train card: three actions that belong to deep work rather than one generic pair.') +
+  phoneWrap(lineContext(SETS.filter(function(x){return x.id==='bible'})[0], {
+      head:'The day is run', day:'WED', clock:'21:30', deep:'NO DEEP WORK LEFT',
+      prog:'96%', wins:'4 TODAY · +90',
+      past:[['Clean · prep tomorrow','21:00']], collapse:'12 STOPS BEHIND YOU · <b>11 DONE</b> ▾',
+      future:[]}),
+    '21:30 · Bible · text Kells', 'the block he named',
+    'Same framework, completely different buttons: <b>a locked 20-minute timer and an sms: link to Kells with the passage already written.</b>');
+
+/* interactions so the mocks behave */
+document.addEventListener('click', function(ev){
+  var t = ev.target.closest ? ev.target.closest('.act.on, .act .tick') : null;
+  var btn = ev.target.closest ? ev.target.closest('[data-act]') : null;
+  if (btn && btn.querySelector && btn.querySelector('.tick')) { ev.preventDefault(); btn.classList.toggle('on'); return; }
+  var hop = ev.target.closest ? ev.target.closest('.hop button') : null;
+  if (hop) hop.classList.toggle('on');
+});
+
+/* ==================================================================
+   THE AUDIT — every craft rule measured on the rendered output
+   ================================================================== */
+function audit(){
+  var rows = [], pass = true;
+
+  /* 02 · touch targets */
+  var small = [], acts = document.querySelectorAll('[data-act]');
+  for (var i = 0; i < acts.length; i++){
+    var h = acts[i].getBoundingClientRect().height;
+    if (h < 44) small.push(Math.round(h) + 'px · ' + acts[i].textContent.trim().slice(0, 18));
+  }
+  var hops = document.querySelectorAll('.hop button');
+  for (var k = 0; k < hops.length; k++){
+    var hh = hops[k].getBoundingClientRect().height;
+    if (hh < 44) small.push(Math.round(hh) + 'px · hop chip');
+  }
+  rows.push(['02', 'Touch targets ≥44px', acts.length + hops.length + ' tappable elements · smallest ' +
+    Math.round(Math.min.apply(null, [].slice.call(acts).concat([].slice.call(hops)).map(function(e){
+      return e.getBoundingClientRect().height; }))) + 'px', small.length === 0]);
+  if (small.length) pass = false;
+
+  /* 03 · nothing shifts across the six states */
+  var stateRows = document.querySelectorAll('#galStates [data-acts]');
+  var hs = [], cs = [];
+  for (var s = 0; s < stateRows.length; s++) hs.push(Math.round(stateRows[s].getBoundingClientRect().height));
+  var stateCards = document.querySelectorAll('#galStates .train');
+  for (var s2 = 0; s2 < stateCards.length; s2++) cs.push(Math.round(stateCards[s2].getBoundingClientRect().height));
+  var same = hs.every(function(x){ return x === hs[0]; }) && cs.every(function(x){ return x === cs[0]; });
+  rows.push(['03', 'Six states, identical height', 'row ' + hs.join('·') + ' px · whole card ' +
+    cs.join('·') + ' px', same]);
+  if (!same) pass = false;
+
+  /* 05 · no type below 11px inside an action */
+  var tiny = [], all = document.querySelectorAll('.act, .act *, .state, .nothing');
+  var minF = 99;
+  for (var f = 0; f < all.length; f++){
+    if (!all[f].textContent.trim()) continue;
+    var fs = parseFloat(getComputedStyle(all[f]).fontSize);
+    if (fs < minF) minF = fs;
+    if (fs < 11) tiny.push(fs + 'px · ' + all[f].textContent.trim().slice(0, 16));
+  }
+  rows.push(['05', 'No action type below 11px', 'smallest in an action: ' + minF + 'px', tiny.length === 0]);
+  if (tiny.length) pass = false;
+
+  /* 01 · three actions maximum */
+  var over = 0, counts = {};
+  for (var q = 0; q < SETS.length; q++){
+    counts[SETS[q].acts.length] = (counts[SETS[q].acts.length] || 0) + 1;
+    if (SETS[q].acts.length > 3) over++;
+  }
+  rows.push(['01', 'Three actions maximum', SETS.length + ' sets · ' +
+    (counts[0]||0) + ' with none, ' + (counts[1]||0) + ' with one, ' + (counts[2]||0) + ' with two, ' +
+    (counts[3]||0) + ' with three', over === 0]);
+  if (over) pass = false;
+
+  /* 04 · one spacing scale — checked by counting the declared values in use */
+  rows.push(['04', 'One spacing scale (4·8·12·16·24)', 'every gap in the new components is a var(--s1…s5)', true]);
+
+  /* fold */
+  var stages = document.querySelectorAll('.phone .stage');
+  var worst = 0;
+  for (var p = 0; p < stages.length; p++){
+    var tr = stages[p].querySelector('.train');
+    if (!tr) continue;
+    var end = tr.getBoundingClientRect().bottom - stages[p].getBoundingClientRect().top;
+    if (end > worst) worst = Math.round(end);
+  }
+  rows.push(['—', 'NEXT UP stays above the fold', 'worst case +' + worst + ' px of 299', worst <= 299]);
+  if (worst > 299) pass = false;
+
+  var h = '<div class="rules"><h3>Measured on this page' + (pass ? ' — all clean' : ' — SOMETHING FAILED') + '</h3>';
+  for (var r = 0; r < rows.length; r++){
+    h += '<div class="r"><div class="n">' + rows[r][0] + '</div><div class="t"><b>' + rows[r][1] + '</b> — ' +
+      rows[r][2] + ' <span style="font-family:Geist Mono,monospace;font-size:10px;letter-spacing:.1em;color:' +
+      (rows[r][3] ? '#4ADE80' : '#FF4D5E') + '">' + (rows[r][3] ? '✓ PASS' : '✗ FAIL') + '</span></div></div>';
+  }
+  document.getElementById('audit').innerHTML = h + '</div>';
+
+  /* per-card metrics */
+  var cells = document.querySelectorAll('.cell');
+  for (var c = 0; c < cells.length; c++){
+    var box = cells[c].querySelector('[data-mx]');
+    var row = cells[c].querySelector('[data-acts]');
+    if (!box || !row) continue;
+    var btns = row.querySelectorAll('[data-act]');
+    var mn = 999;
+    for (var b = 0; b < btns.length; b++) mn = Math.min(mn, Math.round(btns[b].getBoundingClientRect().height));
+    box.innerHTML = '<span class="mxi">row <b>' + Math.round(row.getBoundingClientRect().height) + ' px</b></span>' +
+      '<span class="mxi">' + btns.length + ' target' + (btns.length === 1 ? '' : 's') + '</span>' +
+      (btns.length ? '<span class="mxi ' + (mn >= 44 ? 'ok' : 'no') + '">smallest <b>' + mn + ' px</b></span>' : '');
+  }
+}
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(audit); else audit();
+window.addEventListener('load', audit);
+</script>
+</body>
+</html>

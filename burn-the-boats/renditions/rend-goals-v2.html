@@ -1,0 +1,1650 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Goals v2 — Four Ways To Zoom</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --d-work:#E0B25E; --d-cap:#7FB4FF; --d-body:#FF6B2C; --d-faith:#B08CFF; --d-mind:#38E1D8; --d-people:#4ADE80;
+  --ghost:#CFE2FF;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink)}
+body{font-family:'Satoshi',system-ui,sans-serif;line-height:1.45;-webkit-font-smoothing:antialiased}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:900;
+  background-image:url('../assets/grain/grain-fine.svg');opacity:.035;mix-blend-mode:overlay}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+.mono{font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums}
+button{font-family:inherit;cursor:pointer}
+
+/* ═══════════ showcase chrome ═══════════ */
+.wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+.mast{padding:60px 0 32px;border-bottom:1px solid var(--line)}
+.kick{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.27em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:14px}
+.mast h1{font-size:clamp(29px,5vw,48px);line-height:1.03;letter-spacing:-.035em;margin-bottom:15px}
+.mast p{max-width:680px;color:var(--dim);font-size:15.4px;margin:0 0 11px}
+.mast p b{color:var(--ink);font-weight:500}
+.rule{margin-top:20px;border-left:2px solid var(--line2);padding-left:14px;font-size:13.5px;
+  color:var(--faint);font-style:italic;max-width:640px}
+
+/* the altitude legend */
+.alts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:26px;max-width:820px}
+.alt{border:1px solid var(--line);border-radius:13px;background:var(--panel);padding:13px 14px}
+.alt .an{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.19em;color:var(--gold)}
+.alt .at{font-family:'Clash Display',sans-serif;font-size:17px;letter-spacing:-.02em;margin-top:6px}
+.alt .ad{font-size:13px;color:var(--dim);margin-top:6px;line-height:1.45}
+.alt .aw{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.12em;color:#4f4960;margin-top:9px}
+
+/* global controls */
+.ctl{position:sticky;top:0;z-index:500;background:rgba(7,6,11,.93);backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:11px 0;margin-top:34px}
+.ctl .in{max-width:1180px;margin:0 auto;padding:0 26px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.ctl .lb{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.17em;color:var(--faint);
+  text-transform:uppercase;margin-right:3px}
+.ctl button{background:transparent;border:1px solid var(--line2);color:var(--dim);border-radius:9px;
+  padding:8px 13px;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.12em;min-height:36px}
+.ctl button.on{border-color:var(--gold);color:var(--gold);background:rgba(224,178,94,.08)}
+.ctl .sep{width:1px;height:22px;background:var(--line2);margin:0 5px}
+
+.dir{padding:52px 0;border-bottom:1px solid var(--line)}
+.dh{display:grid;grid-template-columns:66px 1fr;gap:18px;align-items:start;margin-bottom:24px}
+.dn{font-family:'Clash Display',sans-serif;font-size:46px;line-height:.8;font-weight:700;
+  color:transparent;-webkit-text-stroke:1.2px var(--line2)}
+.dt h2{font-size:27px;letter-spacing:-.03em;margin-bottom:6px}
+.dm{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+.dl{max-width:630px;color:var(--dim);font-size:14.8px;margin-top:12px}
+.dl b{color:var(--ink);font-weight:500}
+.body{display:grid;grid-template-columns:392px 1fr;gap:38px;align-items:start}
+.notes dt{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);margin-top:18px}
+.notes dt:first-child{margin-top:0}
+.notes dd{margin:6px 0 0;font-size:14.2px;color:var(--dim);line-height:1.55}
+.notes dd b{color:var(--ink);font-weight:500}
+.notes dd code{font-family:'Geist Mono',monospace;font-size:12px;color:var(--rune)}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:22px}
+.met{border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:11px 12px}
+.met .k{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.15em;color:var(--faint);text-transform:uppercase}
+.met .v{font-family:'Geist Mono',monospace;font-size:15px;font-weight:700;color:var(--ink);margin-top:5px}
+.met .s{font-family:'Geist Mono',monospace;font-size:8px;color:#4f4960;margin-top:3px}
+.cost{border-left:2px solid rgba(255,107,44,.4);padding-left:13px;margin-top:22px;font-size:13.6px;
+  color:#a8846c;font-style:italic}
+.try{margin-top:16px;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.13em;
+  color:var(--rune);text-transform:uppercase}
+
+.phonewrap{position:sticky;top:74px}
+.phone{width:392px;border-radius:24px;overflow:hidden;border:1px solid var(--line2);background:var(--bg);
+  box-shadow:0 30px 74px -30px #000;position:relative}
+.notch{height:24px;background:#000;display:flex;align-items:center;justify-content:center}
+.notch i{width:54px;height:5px;border-radius:99px;background:#1a1a20}
+.screen{height:844px;overflow:hidden;position:relative;display:flex;flex-direction:column}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;display:flex;flex-direction:column}
+.scroll::-webkit-scrollbar{display:none}
+.pad{padding:10px 13px 14px;flex:1 0 auto}
+.f1 .pad,.f4 .pad{padding-bottom:66px}      /* clear the floating pill / close button */
+.f2 .pad{padding-bottom:60px}               /* clear the crumb dock */
+.f3 .pad{padding-bottom:78px}               /* clear the dial */
+.below{padding:9px 13px 11px;border-top:1px solid var(--line);text-align:center;
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.15em;color:#3f3a4d}
+.zoombtn{margin-top:12px;width:100%;background:transparent;border:1px solid var(--line2);color:var(--rune);
+  border-radius:10px;padding:10px;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.15em;min-height:38px}
+
+/* thumb-reach overlay */
+.thumb{position:absolute;inset:0;pointer-events:none;z-index:70;opacity:0;transition:opacity .25s}
+body.thumbs .thumb{opacity:1}
+.thumb .arc{position:absolute;right:-118px;bottom:-118px;width:660px;height:660px;border-radius:50%;
+  border:1px dashed rgba(74,222,128,.5);background:radial-gradient(circle at 100% 100%,
+  rgba(74,222,128,.09),rgba(74,222,128,.04) 62%,transparent 74%)}
+/* sits exactly where the reach arc crosses the left edge, so it labels the line */
+.thumb .lab{position:absolute;left:10px;top:314px;font-family:'Geist Mono',monospace;font-size:7px;
+  letter-spacing:.13em;color:rgba(255,107,44,.9);line-height:1.7;padding:5px 8px;border-radius:8px;
+  background:rgba(6,5,10,.9);border:1px solid rgba(255,107,44,.3)}
+.thumb .lab u{display:block;text-decoration:none;color:rgba(74,222,128,.95)}
+
+@media(max-width:920px){
+  .wrap{padding:0}
+  .ctl{position:static}
+  .body{grid-template-columns:1fr;gap:22px}
+  .dh,.mast,.notes,.rankwrap,.ctl .in{padding-left:18px;padding-right:18px}
+  .alts{grid-template-columns:1fr;padding:0 18px}
+  .dir{padding:32px 0}
+  .phonewrap{position:static}
+  .phone{width:100%;border-radius:0;border-left:0;border-right:0;box-shadow:none}
+  .dn{font-size:32px}
+}
+
+/* ═══════════ shared app chrome ═══════════ */
+.card{border-radius:13px;border:1px solid var(--line);background:var(--panel);padding:12px 13px}
+.chip{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.11em;padding:3px 7px;border-radius:4px;
+  border:1px solid var(--line2);color:var(--dim);text-transform:uppercase;display:inline-block}
+.blkchip{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;padding:4px 7px;border-radius:5px;
+  border:1px solid rgba(74,222,128,.3);color:var(--phos);background:rgba(74,222,128,.06);display:inline-block}
+.blkchip.pend{border-color:var(--line2);color:var(--faint);background:transparent}
+.blkchip.add{border-style:dashed;border-color:var(--line2);color:var(--faint);background:transparent}
+.btn{border:0;border-radius:11px;padding:12px;font-size:13.5px;font-weight:600;min-height:44px;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;width:100%;
+  font-family:'Satoshi',sans-serif;transition:transform .1s}
+.btn:active{transform:scale(.975)}
+.btn.gh{background:transparent;border:1px solid var(--line2);color:var(--dim)}
+.sec{font-size:8.5px;font-family:'Geist Mono',monospace;letter-spacing:.19em;text-transform:uppercase;
+  color:var(--faint);margin:17px 0 8px;font-weight:700;display:flex;justify-content:space-between;align-items:baseline}
+.sec u{text-decoration:none;color:var(--dim)}
+.dot{width:6px;height:6px;border-radius:99px;display:inline-block;flex:none}
+.tb{display:flex;background:rgba(9,8,13,.97);border-top:1px solid var(--line);flex:none;z-index:60}
+.tb button{flex:1;background:none;border:0;color:#5f5872;padding:8px 4px 9px;min-height:50px;
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;text-transform:uppercase;
+  display:flex;flex-direction:column;align-items:center;gap:5px;font-weight:700}
+.tb button .ti{font-size:14px;line-height:1}
+.tb button.on{color:var(--gold)}
+
+/* ── T0 · the horizon bar. Identical in all four. Never changes with altitude. ── */
+.hz{flex:none;padding:9px 13px 8px;background:linear-gradient(180deg,#0c0a10,#08070c);
+  border-bottom:1px solid #17151f;position:relative;overflow:hidden;z-index:65}
+.hz::before{content:'';position:absolute;left:-20%;right:-20%;top:-140%;height:260%;
+  background:radial-gradient(50% 50% at 50% 78%,rgba(255,107,44,.16),transparent 68%)}
+.hz .r1{position:relative;display:flex;align-items:baseline;gap:8px}
+.hz .th{font-family:'Clash Display',sans-serif;font-size:12.5px;letter-spacing:.06em;color:#e6b183}
+.hz .ln{font-size:10.5px;color:#7d7490;letter-spacing:-.01em}
+.hz .cd{margin-left:auto;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.1em;color:#8d6650;
+  text-align:right;line-height:1.45;white-space:nowrap}
+.hz .cd b{color:#f0c489;font-weight:700}
+
+/* ── T1 · THE RUN — seven ranked goals (was Six Doors) ── */
+.grow{display:grid;grid-template-columns:16px 1fr auto;gap:10px;align-items:start;padding:10px 11px;
+  border-radius:11px;background:var(--panel);border:1px solid var(--line);margin-bottom:5px;
+  position:relative;overflow:hidden;width:100%;text-align:left;color:var(--ink);min-height:52px}
+.grow::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--c)}
+.grow.dash::before{background:repeating-linear-gradient(180deg,var(--c) 0 5px,transparent 5px 10px)}
+.grow.wig{border-color:rgba(224,178,94,.42);background:rgba(224,178,94,.05)}
+.grow.parked{border-style:dashed;border-color:#312b46;background:transparent}
+.grow .rk{font-family:'Geist Mono',monospace;font-size:11px;font-weight:700;color:#4b445e;padding-top:1px}
+.grow.wig .rk{color:var(--gold)}
+.grow .sh{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.15em;color:var(--c)}
+.grow .ti{font-size:12.8px;line-height:1.28;margin-top:3px}
+.grow .wk{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.09em;color:#5f5872;margin-top:6px}
+.grow .wk.warn{color:var(--gold)}
+.grow .pr{font-family:'Geist Mono',monospace;font-size:9px;color:var(--dim);text-align:right;
+  white-space:nowrap;padding-top:2px}
+.grow .pr u{display:block;text-decoration:none;font-size:6.5px;letter-spacing:.13em;color:#4b445e;margin-top:3px}
+.rungpips{display:flex;gap:2px;margin-top:6px;width:64px}
+.rungpips i{height:3px;flex:1;border-radius:2px;background:#241f34}
+.rungpips i.hit{background:var(--phos)}
+.rungpips i.set{background:var(--c);opacity:.6}
+
+/* ── T2 · the spine ladder for one goal ── */
+.gh{display:flex;align-items:flex-start;gap:10px;padding:2px 0 12px;border-bottom:1px solid var(--line);
+  margin-bottom:13px}
+.gh .gk{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.16em;color:var(--c)}
+.gh .gt{font-family:'Clash Display',sans-serif;font-size:18px;letter-spacing:-.028em;line-height:1.14;margin-top:5px}
+.gh .gp{margin-left:auto;text-align:right;font-family:'Geist Mono',monospace;font-size:8px;color:var(--faint);
+  white-space:nowrap;line-height:1.6}
+.gh .gp b{display:block;font-size:16px;color:var(--ink)}
+.lad{position:relative;padding-left:24px}
+.lad::before{content:'';position:absolute;left:5px;top:8px;bottom:22px;width:2px;border-radius:2px;
+  background:linear-gradient(180deg,var(--phos) 0 var(--burn,22%),#2a2440 var(--burn,22%))}
+.rg{position:relative;margin-bottom:8px}
+.rg .nd{position:absolute;left:-24px;top:9px;width:12px;height:12px;border-radius:99px;
+  background:var(--bg);border:2px solid #3a3350}
+.rg.hit .nd{background:var(--phos);border-color:var(--phos);box-shadow:0 0 10px rgba(74,222,128,.55)}
+.rg.next .nd{border-color:var(--gold);background:var(--gold);box-shadow:0 0 11px rgba(224,178,94,.7)}
+.rg.dec .nd{border-color:var(--ember);box-shadow:0 0 11px rgba(255,107,44,.5)}
+.rg.wknode .nd{border-color:var(--rune);background:var(--rune);box-shadow:0 0 11px rgba(56,225,216,.6)}
+.rw{border:1px solid var(--line);background:var(--panel);border-radius:11px;padding:9px 11px}
+.rg.next .rw{border-color:rgba(224,178,94,.4);background:rgba(224,178,94,.05)}
+.rg.dec .rw{border-color:rgba(255,107,44,.3);background:rgba(255,107,44,.04)}
+.rg.wknode .rw{border-color:rgba(56,225,216,.35);background:rgba(56,225,216,.05)}
+.rg.stub .rw{border-style:dashed;border-color:#2f2942;background:transparent}
+.rg.passed .rw{border-color:rgba(224,178,94,.3)}
+.rw .k{display:flex;align-items:baseline;gap:7px;font-family:'Geist Mono',monospace;font-size:7px;
+  letter-spacing:.15em;color:var(--faint)}
+.rw .k u{margin-left:auto;text-decoration:none;color:#4f4960}
+.rw .k .hitk{color:var(--phos)}
+.rw .k .passk{color:var(--gold)}
+.rw .t{font-size:12.8px;line-height:1.3;margin-top:4px}
+.rw .t.none{color:#645d7a;font-style:italic}
+.rw .acts{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.mini{background:transparent;border:1px solid var(--line2);color:var(--faint);border-radius:7px;
+  padding:5px 8px;font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.09em;min-height:30px}
+.mini:active{border-color:var(--gold);color:var(--gold)}
+.checks{margin-top:8px;display:grid;gap:4px}
+.checks div{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--dim)}
+.checks i{width:11px;height:11px;border-radius:3px;background:var(--phos);flex:none}
+.confrow{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.confrow .cl{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.15em;color:var(--faint)}
+.confrow .pips{display:flex;gap:4px;margin-left:auto}
+.confrow .pips i{width:9px;height:9px;border-radius:99px;background:#2a2438}
+.confrow .pips i.on{background:var(--rune)}
+.confrow .nx{font-family:'Geist Mono',monospace;font-size:7px;color:#4b445e;letter-spacing:.1em}
+.quotaboard{display:grid;gap:5px}
+.qrow{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:center;padding:9px 11px;
+  border-radius:10px;background:var(--panel);border:1px solid var(--line);font-size:12.6px}
+.qrow b{font-family:'Geist Mono',monospace;font-size:9px;color:var(--dim)}
+.qrow.met b{color:var(--phos)}
+
+/* ── T3 · the week ── */
+.wkhead{display:flex;align-items:baseline;gap:9px;margin-bottom:11px}
+.wkhead b{font-family:'Clash Display',sans-serif;font-size:24px;letter-spacing:-.035em;line-height:1}
+.wkhead span{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--faint)}
+.wkhead u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.12em;
+  color:var(--ghost);text-decoration:none}
+.wt{height:7px;border-radius:99px;background:#191527;position:relative;margin-bottom:14px}
+.wt i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,#2f7a4c,var(--phos))}
+.wt u{position:absolute;top:-4px;bottom:-4px;left:85%;width:2px;background:var(--ghost);opacity:.7}
+.cmt{display:grid;grid-template-columns:1fr;gap:0;padding:10px 11px;border-radius:11px;background:var(--panel);
+  border:1px solid var(--line);margin-bottom:5px;position:relative;overflow:hidden;width:100%;text-align:left;color:var(--ink)}
+.cmt::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--c)}
+.cmt .ck{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.15em;color:var(--c)}
+.cmt .ct{font-size:13px;line-height:1.28;margin-top:4px;font-weight:500}
+.cmt .cw{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.09em;color:#5b5470;margin-top:5px}
+.cmt .cs{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px;align-items:center}
+.cmt .cn{margin-left:auto;font-family:'Geist Mono',monospace;font-size:9px;color:var(--dim);font-weight:700}
+.cmt.slack::before{background:#3a3350}
+.cmt.slack .ck{color:#5f5872}
+.ask{border:1px dashed #3a3350;border-radius:12px;padding:12px;background:transparent;margin-top:6px}
+.ask .ak{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
+.ask .at2{font-size:13px;color:var(--dim);margin-top:7px;line-height:1.4}
+.ask .ab{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+.ask .ab button{background:transparent;border:1px solid var(--line2);color:var(--faint);border-radius:8px;
+  padding:8px 9px;font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.09em;min-height:34px}
+.ask .ab button.pick{border-color:var(--violet);color:var(--violet)}
+.steps{display:flex;gap:5px;margin-bottom:14px}
+.steps i{flex:1;height:3px;border-radius:2px;background:#241f34}
+.steps i.on{background:var(--gold)}
+.steps i.past{background:#6a4c1d}
+.fq{font-family:'Clash Display',sans-serif;font-size:21px;letter-spacing:-.03em;line-height:1.16;margin-bottom:6px}
+.fsub{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--faint);margin-bottom:14px}
+.crow{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:center;padding:10px 11px;
+  border-radius:11px;background:var(--panel);border:1px solid var(--line);margin-bottom:5px}
+.crow .ck2{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.14em;color:var(--c)}
+.crow .ct2{font-size:12.6px;margin-top:4px;line-height:1.28}
+.crow .cm{font-family:'Geist Mono',monospace;font-size:7px;color:#5b5470;margin-top:5px;letter-spacing:.08em}
+.segs{display:flex;gap:3px;flex:none}
+.segs button{background:transparent;border:1px solid var(--line2);color:#5f5872;border-radius:7px;
+  padding:6px 7px;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.08em;min-height:32px}
+.segs button.on{border-color:var(--gold);color:var(--gold);background:rgba(224,178,94,.08)}
+.segs button.on.drop{border-color:var(--line2);color:var(--faint);background:transparent}
+.capline{display:flex;align-items:center;gap:9px;margin-top:11px;padding:10px 12px;border-radius:11px;
+  border:1px solid var(--line2);background:var(--panel)}
+.capline .cv{font-family:'Geist Mono',monospace;font-size:14px;font-weight:700;color:var(--ink)}
+.capline .cl2{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.12em;color:var(--faint);line-height:1.5}
+.capline .cbar{flex:1;height:6px;border-radius:99px;background:#191527;overflow:hidden;position:relative}
+.capline .cbar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#8a6224,var(--gold))}
+
+/* ═══════════ F1 · THE ONE SPINE ═══════════ */
+.f1 .sp{position:relative;padding-left:26px;transition:opacity .3s}
+.f1 .sp::before{content:'';position:absolute;left:6px;top:2px;bottom:10px;width:2px;border-radius:2px;
+  background:linear-gradient(180deg,var(--phos) 0 20%,var(--gold) 20% 26%,#241f34 26%)}
+.f1 .stn{position:relative;margin-bottom:13px}
+.f1 .stn .nd{position:absolute;left:-26px;top:2px;width:14px;height:14px;border-radius:99px;
+  background:var(--bg);border:2px solid #3a3350;transition:all .3s}
+.f1 .stn.now .nd{border-color:var(--rune);background:var(--rune);box-shadow:0 0 12px rgba(56,225,216,.7)}
+.f1 .stn.end .nd{border-color:var(--ember);box-shadow:0 0 12px rgba(255,107,44,.55)}
+.f1 .stn.past .nd{border-color:var(--phos);background:#12331f}
+.f1 .sh{display:flex;align-items:baseline;gap:8px;cursor:pointer}
+.f1 .sh b{font-family:'Clash Display',sans-serif;font-size:15px;letter-spacing:-.02em}
+.f1 .stn.now .sh b{color:var(--rune)}
+.f1 .stn.end .sh b{color:#f0b48a}
+.f1 .stn.past .sh b{font-size:12px;color:#4f6b57}
+.f1 .sh span{margin-left:auto;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;color:#4b445e}
+.f1 .thrs{margin-top:8px;display:grid;gap:4px}
+.f1 .thr{display:grid;grid-template-columns:8px 1fr auto;gap:9px;align-items:start;padding:8px 10px;
+  border-radius:9px;background:var(--panel);border:1px solid var(--line);width:100%;text-align:left;
+  color:var(--ink);overflow:hidden;transition:opacity .32s,transform .32s,padding .32s,max-height .32s;
+  max-height:120px}
+.f1 .thr .tn{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.14em;color:var(--c)}
+.f1 .thr .tt{font-size:12.2px;line-height:1.28;margin-top:3px}
+.f1 .thr .tx{font-family:'Geist Mono',monospace;font-size:7px;color:#4f4960;letter-spacing:.1em;white-space:nowrap;padding-top:6px}
+.f1 .thr .deep{display:none;margin-top:8px}
+.f1 .thr.stub{border-style:dashed;border-color:#2f2942;background:transparent}
+.f1 .thr.stub .tt{color:#645d7a;font-style:italic}
+/* the zoom: nothing moves, everything else recedes */
+.f1 .sp[data-focus] .thr{opacity:.13}
+.f1 .sp[data-focus] .thr.on{opacity:1;background:var(--panel2);border-color:var(--line2)}
+.f1 .sp[data-focus] .thr.on .deep{display:block}
+.f1 .sp[data-focus] .thr:not(.on){max-height:16px;padding-top:5px;padding-bottom:5px}
+.f1 .sp[data-focus] .thr:not(.on) .tt,.f1 .sp[data-focus] .thr:not(.on) .tx{display:none}
+.f1 .sp[data-zoom="week"] .stn:not(.now){opacity:.1;max-height:26px;overflow:hidden}
+.f1 .stn{transition:opacity .3s,max-height .34s}
+.f1 .wkbox{margin-top:9px;border-radius:12px;border:1px solid rgba(56,225,216,.3);
+  background:rgba(56,225,216,.04);padding:11px 12px;overflow:hidden;max-height:132px;transition:max-height .36s}
+.f1 .sp[data-zoom="week"] .wkbox{max-height:1400px}
+.f1 .wkbox .full{display:none}
+.f1 .sp[data-zoom="week"] .wkbox .full{display:block}
+.f1 .wkbox .peek{display:grid;gap:5px}
+.f1 .sp[data-zoom="week"] .wkbox .peek{display:none}
+.f1 .pk{display:grid;grid-template-columns:8px 1fr auto;gap:9px;align-items:center;font-size:12px;color:var(--dim)}
+.f1 .pk b{font-family:'Geist Mono',monospace;font-size:8.5px;color:var(--dim)}
+
+/* the zoom pill — bottom left, thumb zone */
+.zpill{position:absolute;left:11px;bottom:60px;z-index:80;display:flex;align-items:center;gap:0;
+  border:1px solid var(--line2);background:rgba(12,10,19,.96);border-radius:11px;overflow:hidden;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 30px -14px #000}
+.zpill button{background:none;border:0;color:var(--faint);padding:9px 11px;min-height:40px;
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;border-right:1px solid var(--line)}
+.zpill button:last-child{border-right:0;color:var(--gold)}
+.zpill button.home{color:var(--dim)}
+
+/* ═══════════ F2 · THE STACK ═══════════ */
+.f2 .sheetl{position:absolute;left:0;right:0;top:0;bottom:0;background:var(--bg);z-index:40;
+  transform:translateY(100%);transition:transform .34s cubic-bezier(.2,.9,.3,1);
+  display:flex;flex-direction:column;border-top:1px solid var(--line2);border-radius:18px 18px 0 0;
+  box-shadow:0 -18px 44px -20px #000}
+.f2 .sheetl.on{transform:translateY(0)}
+.f2 .sheetl .grab{width:34px;height:4px;border-radius:99px;background:var(--line2);margin:9px auto 4px;flex:none}
+.f2 .sheetl .sc{flex:1;overflow-y:auto;scrollbar-width:none;padding:6px 13px 90px}
+.f2 .sheetl .sc::-webkit-scrollbar{display:none}
+.dock{position:absolute;left:0;right:0;bottom:50px;z-index:75;display:flex;align-items:center;gap:6px;
+  padding:8px 11px;background:rgba(10,8,15,.96);border-top:1px solid var(--line);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.dock .crumb{background:transparent;border:1px solid var(--line2);color:var(--dim);border-radius:9px;
+  padding:8px 10px;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.12em;min-height:38px;
+  display:flex;align-items:center;gap:6px;white-space:nowrap}
+.dock .crumb.here{border-color:var(--gold);color:var(--gold);background:rgba(224,178,94,.08)}
+.dock .crumb i{font-style:normal;color:#4b445e}
+.dock .up{margin-left:auto;background:transparent;border:1px solid var(--line2);color:var(--faint);
+  border-radius:9px;padding:8px 11px;font-family:'Geist Mono',monospace;font-size:8px;min-height:38px;letter-spacing:.12em}
+
+/* ═══════════ F3 · THE DIAL ═══════════ */
+.dial{position:absolute;left:0;right:0;bottom:50px;z-index:75;padding:9px 11px 10px;
+  background:rgba(10,8,15,.97);border-top:1px solid var(--line);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.dial .track{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1px solid var(--line2);
+  border-radius:11px;overflow:hidden;position:relative;background:#0c0a13}
+.dial .knob{position:absolute;top:2px;bottom:2px;left:2px;width:calc(33.333% - 2.7px);border-radius:9px;
+  background:linear-gradient(135deg,rgba(224,178,94,.22),rgba(224,178,94,.07));
+  border:1px solid rgba(224,178,94,.5);transition:transform .3s cubic-bezier(.2,.9,.3,1)}
+.dial .track button{position:relative;z-index:2;background:none;border:0;color:#5f5872;padding:9px 4px;
+  min-height:48px;display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.13em}
+.dial .track button.on{color:var(--gold)}
+.dial .track button u{text-decoration:none;font-size:6.5px;letter-spacing:.1em;color:#4b445e;max-width:92px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dial .track button.on u{color:#9a7c48}
+.dial .hint{margin-top:6px;text-align:center;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.16em;color:#3f3a4d}
+.f3 .stage{position:relative}
+.f3 .lvl{animation:lvlin .3s cubic-bezier(.2,.9,.3,1)}
+@keyframes lvlin{from{opacity:0;transform:translateX(var(--dx,14px))}to{opacity:1;transform:none}}
+.subjbar{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;border:1px solid var(--line2);
+  background:var(--panel);margin-bottom:11px}
+.subjbar .sk{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.15em;color:var(--faint)}
+.subjbar .sv{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.12em;color:var(--c)}
+.subjbar button{margin-left:auto;background:transparent;border:1px solid var(--line2);color:var(--faint);
+  border-radius:7px;padding:5px 8px;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.1em;min-height:30px}
+.subjbar button.on{border-color:var(--gold);color:var(--gold)}
+
+/* ═══════════ F4 · THE DESCENT ═══════════ */
+/* max-height is set inline to the MEASURED content height — a 2600px cap would finish the
+   visible growth in the first third of the tween and the motion would read as a jump. */
+.f4 .exp{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(.2,.9,.3,1)}
+.f4 .inset{margin:2px 0 12px 13px;padding-left:13px;border-left:2px solid var(--line2)}
+.f4 .inset2{margin:2px 0 10px 13px;padding-left:13px;border-left:2px solid rgba(56,225,216,.35)}
+.f4 .caret{font-family:'Geist Mono',monospace;font-size:9px;color:#4b445e;transition:transform .3s;display:inline-block}
+.f4 .grow.open .caret{transform:rotate(180deg)}
+.f4 .grow.open{border-color:var(--line2);background:var(--panel2)}
+.up4{position:absolute;right:12px;bottom:60px;z-index:80;width:52px;height:52px;border-radius:99px;
+  border:1px solid var(--line2);background:rgba(12,10,19,.96);color:var(--dim);
+  font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.1em;line-height:1.4;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 30px -14px #000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  opacity:0;pointer-events:none;transition:opacity .25s}
+.up4.on{opacity:1;pointer-events:auto}
+.up4 b{font-size:13px;line-height:1}
+.depthbar{display:flex;align-items:center;gap:5px;padding:7px 11px;background:#0a0810;
+  border-bottom:1px solid var(--line);flex:none;font-family:'Geist Mono',monospace;font-size:7px;
+  letter-spacing:.13em;color:#4b445e;z-index:64}
+.depthbar b{color:var(--gold);font-weight:700}
+.depthbar i{width:5px;height:5px;border-radius:99px;background:#2a2438;display:block}
+.depthbar i.on{background:var(--gold)}
+
+/* ═══════════ comparison + ranking ═══════════ */
+.cmp{width:100%;border-collapse:collapse;margin-top:26px;max-width:980px}
+.cmp th,.cmp td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);font-size:13.4px;
+  color:var(--dim);vertical-align:top}
+.cmp th{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.15em;color:var(--faint);
+  text-transform:uppercase;border-bottom-color:var(--line2)}
+.cmp td b{color:var(--ink);font-weight:500}
+.cmp td.win{color:var(--phos)}
+.cmp td.bad{color:#b9836f}
+.rankwrap{padding:54px 0 90px}
+.rank{display:grid;gap:11px;margin-top:24px;max-width:880px}
+.rkc{display:grid;grid-template-columns:34px 1fr;gap:16px;border:1px solid var(--line);border-radius:14px;
+  background:var(--panel);padding:15px 17px;align-items:start}
+.rkc .p{font-family:'Clash Display',sans-serif;font-size:23px;color:var(--gold);line-height:1}
+.rkc.two .p,.rkc.three .p,.rkc.four .p{color:#4f4960}
+.rkc h3{font-size:17px;letter-spacing:-.02em;margin-bottom:5px}
+.rkc p{margin:0;font-size:14px;color:var(--dim);line-height:1.55}
+.rkc p+p{margin-top:8px}
+.rkc b{color:var(--ink);font-weight:500}
+.against{margin-top:28px;border:1px solid rgba(255,107,44,.35);border-radius:14px;padding:17px 19px;
+  background:rgba(255,107,44,.05);max-width:880px}
+.against h3{font-size:17px;color:var(--ember);margin-bottom:9px}
+.against p{margin:0;font-size:14.4px;color:#d6bda8;line-height:1.6}
+.against p+p{margin-top:10px}
+.hand{margin-top:42px;max-width:880px}
+.hand h2{font-size:24px;letter-spacing:-.03em;margin-bottom:6px}
+.hand h4{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--faint);margin:26px 0 9px;font-weight:700}
+.hand p,.hand li{font-size:14.2px;color:var(--dim);line-height:1.6}
+.hand li{margin-bottom:9px}
+.hand b{color:var(--ink);font-weight:500}
+.hand ul{padding-left:19px;margin:0}
+.hand code{font-family:'Geist Mono',monospace;font-size:12px;color:var(--rune)}
+
+/* SLOW-MO — a body class, so re-rendered nodes inherit it (an inline style would be wiped) */
+body.slow .f1 .thr,body.slow .f1 .stn,body.slow .f1 .wkbox,
+body.slow .f2 .sheetl,body.slow .f4 .exp{transition-duration:1.3s !important}
+body.slow .f3 .lvl{animation-duration:1.1s !important}
+body.slow .dial .knob{transition-duration:1.1s !important}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="mast">
+  <div class="kick">Burn the Boats · Agent 2 · Round 2 · Fusion</div>
+  <h1>One system, three altitudes,<br>four ways to move between them.</h1>
+  <p>Round 1's <b>Spine</b>, <b>Six Doors</b> and <b>Friday table</b> are not three pages any more. They are
+  three <b>altitudes</b> of one object, and the only question left is the one he actually asked:
+  <b>how do you zoom?</b> The One and The Board are gone.</p>
+  <p>All four prototypes below render the <b>same data</b> from the same source — Agent 1's v4 model, seven
+  ranked goals, landmark milestones, block-sized commitments. Nothing differs between them except the
+  navigation. That is deliberate: it is the only way to judge a navigation model.</p>
+
+  <div class="alts">
+    <div class="alt"><div class="an">OUT · TIER T1</div><div class="at">The Run</div>
+      <div class="ad">Seven goals, ranked, with December on each and this week's status beside it.
+      Round 1's Six Doors — now seven, because Agent 1's model makes LA&nbsp;Edible a real goal.</div>
+      <div class="aw">REVIEWED MONTHLY · NEVER IN THE FRIDAY FORM</div></div>
+    <div class="alt"><div class="an">MID · TIER T2</div><div class="at">The Spine</div>
+      <div class="ad">One goal down its own timeline: December at the bottom, landmark milestones above it,
+      this week at the top. The burn on the line is time already spent.</div>
+      <div class="aw">TOUCHED AT A LANDMARK, OR WHEN ONE IS HIT</div></div>
+    <div class="alt"><div class="an">IN · TIER T3</div><div class="at">The Week</div>
+      <div class="ad">What is committed, how big, in which blocks. On a Friday this same level becomes the
+      four-card ritual. It is the only tier that is scored.</div>
+      <div class="aw">EVERY FRIDAY · ≤90 SECONDS</div></div>
+  </div>
+
+  <div class="rule">T0 — the horizon — is not a fourth level. It is the strip across the top of every screen
+  that never changes no matter how deep you go: <b>BURN THE BOATS · become someone who executes · Dec 1 ·
+  income by Mar 1.</b> An unfailable layer cannot be somewhere you have to navigate to.</div>
+</header>
+</div>
+
+<div class="ctl"><div class="in">
+  <span class="lb">It is</span>
+  <button id="btTue" class="on">TUESDAY 06:40</button>
+  <button id="btFri">FRIDAY 17:20</button>
+  <span class="sep"></span>
+  <span class="lb">Overlay</span>
+  <button id="btThumb">THUMB REACH</button>
+  <span class="sep"></span>
+  <span class="lb">Motion</span>
+  <button id="btSlow">SLOW-MO ZOOM</button>
+  <span class="sep"></span>
+  <button id="btReset">RESET ALL FOUR</button>
+</div></div>
+
+<div class="wrap">
+
+<!-- ══════════════════════ F1 ══════════════════════ -->
+<section class="dir">
+  <div class="dh">
+    <div class="dn">01</div>
+    <div class="dt">
+      <h2>The One Spine</h2>
+      <div class="dm">Zoom = filter · nothing moves · the spine is never redrawn</div>
+      <p class="dl">There is only ever one screen. The spine, the station dates and their positions are
+      <b>fixed furniture</b>; zooming does not navigate anywhere, it changes what is lit. Tap a thread and
+      the other six collapse to hairline ticks in place while that goal's rows open where they already sat —
+      <b>the same element grows, nothing is replaced.</b> Tap the top node and the week unfolds inline while
+      the run compresses behind it. The back path is a pill in the bottom-left thumb corner.</p>
+    </div>
+  </div>
+  <div class="body">
+    <div class="phonewrap">
+    <div class="phone f1">
+      <div class="notch"><i></i></div>
+      <div class="screen" id="s1">
+        <div class="hz" id="hz1"></div>
+        <div class="scroll"><div class="pad">
+          <div id="f1head"></div>
+          <div class="sp" id="f1sp"></div>
+        </div></div>
+        <div class="zpill" id="f1pill"></div>
+        <div class="thumb"><div class="arc"></div>
+          <div class="lab">OUT OF REACH<u>ONE-THUMB ZONE</u></div></div>
+        <nav class="tb">
+          <button><span class="ti">◆</span>Today</button>
+          <button class="on"><span class="ti">▲</span>Goals</button>
+          <button><span class="ti">◈</span>Bank</button>
+          <button><span class="ti">▦</span>Record</button>
+        </nav>
+      </div>
+      <div class="below">01 · THE ONE SPINE — TAP A THREAD TO FOCUS · TAP THE TOP NODE FOR THE WEEK</div>
+    </div>
+    <button class="zoombtn" data-demo="f1">▶ PLAY THE ZOOM · RUN → SANO → THIS WEEK</button>
+    </div>
+
+    <div class="notes">
+      <dl>
+        <dt>The gesture</dt>
+        <dd><b>Tap anything to zoom into it.</b> A thread row → that goal. The top node → this week. There is
+        no second gesture to learn and no drag anywhere.</dd>
+        <dt>The back path</dt>
+        <dd>A <b>zoom pill</b> pinned bottom-left, above the tab bar, reading <code>RUN › SANO</code>. Tap a
+        crumb to pop to it. It is the only persistent chrome and it sits inside the thumb arc.</dd>
+        <dt>What persists</dt>
+        <dd>Everything. The horizon bar, the spine, every station date and the burned portion of the line are
+        <b>identical pixels</b> at all three altitudes. You cannot lose your place because your place never
+        moved — <b>the dimmed threads stay on screen as ticks, so the run is still visible while you are
+        inside one goal.</b> No other option here can say that.</dd>
+        <dt>Thumb cost</dt>
+        <dd>Targets are spread over the full column height, so zooming <i>in</i> often needs a reach into the
+        top third. Zooming <i>out</i> is always in the corner. Turn on the reach overlay: the pill is inside
+        the arc, the upper stations are not.</dd>
+        <dt>Where he lands</dt>
+        <dd>Tuesday → the week node already unfolded. Friday → the same node, in ritual mode. He is
+        <b>never dropped at the run level</b> — that tier is monthly by Agent 1's cadence rule, and this is
+        the only option where landing deep still shows you the whole shape.</dd>
+      </dl>
+      <div class="metrics">
+        <div class="met"><div class="k">Taps · out → in</div><div class="v">2</div><div class="s">RUN → GOAL → WEEK</div></div>
+        <div class="met"><div class="k">Taps · in → out</div><div class="v">1</div><div class="s">ONE CRUMB, THUMB ZONE</div></div>
+        <div class="met"><div class="k">Levels visible at once</div><div class="v win">3</div><div class="s">DIMMED, NOT REMOVED</div></div>
+        <div class="met"><div class="k">Scroll depth · run</div><div class="v" data-depth="f1sp">—</div><div class="s">ALL STATIONS OPEN</div></div>
+      </div>
+      <div class="cost">The cost: density. Four goals across four landmark stations plus seven at December
+      is <b>23 rows</b> on one screen, and the only thing keeping it readable is that a collapsed thread is a
+      16px tick. Give the other three goals milestones and it is 35. If a row ever needs a second line at the
+      run level, this design breaks.</div>
+      <div class="try">Try it → tap the SANO row under SEP 28 · then the pill · then the top node</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ F2 ══════════════════════ -->
+<section class="dir">
+  <div class="dh">
+    <div class="dn">02</div>
+    <div class="dt">
+      <h2>The Stack</h2>
+      <div class="dm">Zoom = layers · child rises over parent · crumbs dock in the thumb zone</div>
+      <p class="dl">The familiar iOS model, with one correction: <b>the breadcrumb is at the bottom, not the
+      top.</b> Every stacked sheet drops a crumb into a dock sitting directly above the tab bar, so going back
+      up is always a thumb tap and never a reach to a corner chevron. The tapped card <b>morphs into the new
+      sheet's header</b> — a measured FLIP, so the object you touched is the object that arrives.</p>
+    </div>
+  </div>
+  <div class="body">
+    <div class="phonewrap">
+    <div class="phone f2">
+      <div class="notch"><i></i></div>
+      <div class="screen" id="s2">
+        <div class="hz" id="hz2"></div>
+        <div class="scroll"><div class="pad" id="f2run"></div></div>
+        <div class="sheetl" id="f2sheet1"><div class="grab"></div><div class="sc" id="f2goal"></div></div>
+        <div class="sheetl" id="f2sheet2"><div class="grab"></div><div class="sc" id="f2week"></div></div>
+        <div class="dock" id="f2dock"></div>
+        <div class="thumb"><div class="arc"></div>
+          <div class="lab">OUT OF REACH<u>ONE-THUMB ZONE</u></div></div>
+        <nav class="tb">
+          <button><span class="ti">◆</span>Today</button>
+          <button class="on"><span class="ti">▲</span>Goals</button>
+          <button><span class="ti">◈</span>Bank</button>
+          <button><span class="ti">▦</span>Record</button>
+        </nav>
+      </div>
+      <div class="below">02 · THE STACK — TAP A GOAL, THEN ITS WEEK NODE · CRUMBS GO BACK</div>
+    </div>
+    <button class="zoombtn" data-demo="f2">▶ PLAY THE ZOOM · RUN → SANO → THIS WEEK</button>
+    </div>
+
+    <div class="notes">
+      <dl>
+        <dt>The gesture</dt>
+        <dd>Tap to descend, <b>swipe down or tap a crumb to ascend</b>. Both work; the swipe is the one he
+        already has in muscle memory from every other app on the phone.</dd>
+        <dt>The back path</dt>
+        <dd>The dock. <code>THE RUN › SANO › WEEK</code> as three tappable crumbs at y≈740, plus a
+        <b>↑ UP</b> button on the right edge. Deepest level is one tap from the shallowest — you never
+        unwind one layer at a time.</dd>
+        <dt>What persists</dt>
+        <dd>The horizon bar and the dock. <b>Not the content.</b> When SANO's ladder is open, the run is
+        gone — you know where you are from a text crumb, not from seeing it. That is the trade this model
+        makes, and it is the reason it is not ranked first.</dd>
+        <dt>Thumb cost</dt>
+        <dd>The lowest of the four for going back: every ascent target is in the bottom 100px. Descending
+        costs a reach up the list, same as F1.</dd>
+        <dt>Where he lands</dt>
+        <dd>Tuesday → the week sheet already open, two crumbs behind it. Friday → the same sheet in ritual
+        mode. He can dismiss straight down to the run without reading anything.</dd>
+      </dl>
+      <div class="metrics">
+        <div class="met"><div class="k">Taps · out → in</div><div class="v">2</div><div class="s">CARD → NODE</div></div>
+        <div class="met"><div class="k">Taps · in → out</div><div class="v win">1</div><div class="s">ANY CRUMB, ANY DEPTH</div></div>
+        <div class="met"><div class="k">Levels visible at once</div><div class="v bad">1</div><div class="s">+2 AS TEXT CRUMBS</div></div>
+        <div class="met"><div class="k">Chrome cost</div><div class="v">48px</div><div class="s">DOCK ABOVE THE TAB BAR</div></div>
+      </div>
+      <div class="cost">The cost: a dock plus a tab bar is 98px of permanent chrome at the bottom of a
+      844px screen — 12% of the app, spent on navigation, on a product whose first law is that the day must
+      be visible.</div>
+      <div class="try">Try it → tap SANO · tap its THIS WEEK node · then tap the "THE RUN" crumb</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ F3 ══════════════════════ -->
+<section class="dir">
+  <div class="dh">
+    <div class="dn">03</div>
+    <div class="dt">
+      <h2>The Dial</h2>
+      <div class="dm">Zoom = a control · altitude is a thing you hold, and the subject travels with you</div>
+      <p class="dl">Altitude becomes a physical three-position dial in the thumb zone. What makes it not a
+      tab bar: <b>it is ordered, and it carries a subject.</b> Pick BODY at the run level and the middle
+      notch relabels itself <code>GOAL · BODY</code>; slide right again and the week is <b>filtered to BODY's
+      commitments</b>, with the rest of the week one tap away. Zooming out is a leftward drag with the thumb
+      already resting there. The body cross-fades directionally, so the movement has a direction.</p>
+    </div>
+  </div>
+  <div class="body">
+    <div class="phonewrap">
+    <div class="phone f3">
+      <div class="notch"><i></i></div>
+      <div class="screen" id="s3">
+        <div class="hz" id="hz3"></div>
+        <div class="scroll"><div class="pad stage" id="f3body"></div></div>
+        <div class="dial" id="f3dial">
+          <div class="track">
+            <div class="knob" id="f3knob"></div>
+            <button data-lv="0" class="on">RUN<u>7 goals</u></button>
+            <button data-lv="1">GOAL<u id="f3g">SANO</u></button>
+            <button data-lv="2">WEEK<u id="f3w">week 6</u></button>
+          </div>
+          <div class="hint">DRAG THE DIAL · OR SWIPE THE PAGE LEFT AND RIGHT</div>
+        </div>
+        <div class="thumb"><div class="arc"></div>
+          <div class="lab">OUT OF REACH<u>ONE-THUMB ZONE</u></div></div>
+        <nav class="tb">
+          <button><span class="ti">◆</span>Today</button>
+          <button class="on"><span class="ti">▲</span>Goals</button>
+          <button><span class="ti">◈</span>Bank</button>
+          <button><span class="ti">▦</span>Record</button>
+        </nav>
+      </div>
+      <div class="below">03 · THE DIAL — DRAG OR TAP THE DIAL · PICK A DIFFERENT GOAL AT THE RUN LEVEL</div>
+    </div>
+    <button class="zoombtn" data-demo="f3">▶ PLAY THE ZOOM · RUN → SANO → WEEK (FILTERED)</button>
+    </div>
+
+    <div class="notes">
+      <dl>
+        <dt>The gesture</dt>
+        <dd>Tap or drag the dial; or swipe the body left/right. Three targets, always in the same place,
+        always reachable. <b>It is the only option a half-asleep thumb can operate without looking.</b></dd>
+        <dt>The back path</dt>
+        <dd>Slide left. Always one gesture, always the same gesture, from any depth to any depth.</dd>
+        <dt>What persists</dt>
+        <dd>The horizon bar, the dial, and — the real idea — <b>the subject</b>. The dial's middle notch
+        always names the goal you are holding, so "which goal am I inside" is answered by the control itself
+        rather than by a crumb. Switch subject at the run level and the other two levels re-aim.</dd>
+        <dt>Thumb cost</dt>
+        <dd>The best of the four. Every navigation target sits inside the arc, permanently, at a fixed
+        position. Nothing above the fold is ever required to move between altitudes.</dd>
+        <dt>Where he lands</dt>
+        <dd>Tuesday → notch 3, subject = the WIG. Friday → notch 3 in ritual mode, and the ritual
+        <b>unfilters itself</b> because a weekly plan filtered to one goal is a lie about the week.</dd>
+      </dl>
+      <div class="metrics">
+        <div class="met"><div class="k">Taps · out → in</div><div class="v win">1</div><div class="s">DIAL IS ABSOLUTE, NOT RELATIVE</div></div>
+        <div class="met"><div class="k">Taps · in → out</div><div class="v win">1</div><div class="s">SAME CONTROL</div></div>
+        <div class="met"><div class="k">Levels visible at once</div><div class="v bad">1</div><div class="s">SUBJECT CARRIED IN THE DIAL</div></div>
+        <div class="met"><div class="k">Chrome cost</div><div class="v">66px</div><div class="s">DIAL + HINT LINE</div></div>
+      </div>
+      <div class="cost">The cost: it is the closest of the four to the switcher he pre-empted, and the
+      subject filter is genuinely dangerous — a week filtered to SANO hides the four commitments that are
+      not SANO. I have defaulted the filter <b>off on Friday</b> for exactly that reason, which is a patch
+      on a model that wants to mislead.</div>
+      <div class="try">Try it → at RUN, tap BODY · then drag the dial right twice · watch the week filter</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ F4 ══════════════════════ -->
+<section class="dir">
+  <div class="dh">
+    <div class="dn">04</div>
+    <div class="dt">
+      <h2>The Descent</h2>
+      <div class="dm">Zoom = expansion · one document · no navigation chrome at all</div>
+      <p class="dl">There are no screens. There is one scroll, and depth is what happens when you tap
+      something: the goal opens its ladder <b>inside its own row</b>, a milestone opens the week's
+      commitments inside itself. Nothing is ever replaced and nothing is ever hidden — the parent is
+      literally still above your thumb. One rule keeps it from becoming the org chart: <b>only one path is
+      open at a time</b>, so opening BODY closes SANO. A depth strip at the top counts how deep you are and
+      a single floating button collapses everything.</p>
+    </div>
+  </div>
+  <div class="body">
+    <div class="phonewrap">
+    <div class="phone f4">
+      <div class="notch"><i></i></div>
+      <div class="screen" id="s4">
+        <div class="hz" id="hz4"></div>
+        <div class="depthbar" id="f4depth"></div>
+        <div class="scroll" id="f4scroll"><div class="pad" id="f4run"></div></div>
+        <button class="up4" id="f4up"><b>▲</b>CLOSE</button>
+        <div class="thumb"><div class="arc"></div>
+          <div class="lab">OUT OF REACH<u>ONE-THUMB ZONE</u></div></div>
+        <nav class="tb">
+          <button><span class="ti">◆</span>Today</button>
+          <button class="on"><span class="ti">▲</span>Goals</button>
+          <button><span class="ti">◈</span>Bank</button>
+          <button><span class="ti">▦</span>Record</button>
+        </nav>
+      </div>
+      <div class="below">04 · THE DESCENT — TAP SANO, THEN ITS THIS-WEEK RUNG · ONE PATH OPEN AT A TIME</div>
+    </div>
+    <button class="zoombtn" data-demo="f4">▶ PLAY THE ZOOM · RUN → SANO → THIS WEEK</button>
+    </div>
+
+    <div class="notes">
+      <dl>
+        <dt>The gesture</dt>
+        <dd>Tap to open, tap the same thing to close. That is the entire interaction model — <b>there is
+        nothing else to learn and nothing that can be got wrong.</b></dd>
+        <dt>The back path</dt>
+        <dd>Tap the open header again, or the floating <b>▲ CLOSE</b> button in the bottom-right corner,
+        which appears only when something is open. It collapses one level per tap.</dd>
+        <dt>What persists</dt>
+        <dd>Literally everything, because nothing was ever removed. The parent row is directly above the
+        expansion and its siblings are directly below. <b>Context is not preserved — it is never lost.</b></dd>
+        <dt>Thumb cost</dt>
+        <dd>Best-in-class for closing (corner button). Worst for reading: with SANO and its week open the
+        page measures <b>~2,700px</b> — what the second tap opened sits roughly 1,500px down, so he is
+        scrolling to see what he just did. The auto-scroll is not a nicety here, it is load-bearing.</dd>
+        <dt>Where he lands</dt>
+        <dd>Tuesday → SANO and its week rung pre-opened and <b>scrolled to</b>, which is the only reason
+        this model survives a default landing at all. Friday → the ritual opened inside the WIG's row, with
+        the run still above it.</dd>
+      </dl>
+      <div class="metrics">
+        <div class="met"><div class="k">Taps · out → in</div><div class="v">2</div><div class="s">ROW → RUNG</div></div>
+        <div class="met"><div class="k">Taps · in → out</div><div class="v">1–2</div><div class="s">ONE LEVEL PER TAP</div></div>
+        <div class="met"><div class="k">Levels visible at once</div><div class="v win">3</div><div class="s">IF YOU SCROLL TO THEM</div></div>
+        <div class="met"><div class="k">Scroll depth · fully open</div><div class="v" data-depth="f4run">—</div><div class="s">MEASURED, SANO + WEEK OPEN</div></div>
+      </div>
+      <div class="cost">The cost: scroll. Fully expanded this is the deepest page in the app by a wide
+      margin — 3.2 screens against The One Spine's 1.8 — and "zoom" that costs 2,700px of scrolling is not
+      zoom, it is a long document with a good table of contents.</div>
+      <div class="try">Try it → tap SANO · tap its THIS WEEK rung · then ▲ CLOSE twice</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ comparison ══════════════════════ -->
+<section class="dir">
+  <div class="kick">Side by side</div>
+  <h2 style="font-size:clamp(24px,4vw,34px);letter-spacing:-.035em;margin-bottom:6px">
+    The four, on the things that decide it.</h2>
+  <table class="cmp">
+    <tr><th>&nbsp;</th><th>01 · One Spine</th><th>02 · Stack</th><th>03 · Dial</th><th>04 · Descent</th></tr>
+    <tr><td><b>Gesture in</b></td><td>tap the thing</td><td>tap the card</td><td>slide / tap the dial</td><td>tap the row</td></tr>
+    <tr><td><b>Gesture out</b></td><td>crumb pill</td><td class="win">crumb dock or swipe down</td><td class="win">slide left</td><td>tap again / ▲</td></tr>
+    <tr><td><b>Blind-operable</b></td><td class="bad">no — targets move</td><td>partly</td><td class="win">yes — fixed positions</td><td class="bad">no</td></tr>
+    <tr><td><b>Context kept visually</b></td><td class="win">all three levels</td><td class="bad">text crumbs only</td><td class="bad">subject only</td><td class="win">all, via scroll</td></tr>
+    <tr><td><b>Same object grows</b></td><td class="win">yes — nothing redrawn</td><td>yes — FLIP into header</td><td>partial — chip morph</td><td class="win">yes — literally in place</td></tr>
+    <tr><td><b>Permanent chrome</b></td><td class="win">40px pill</td><td class="bad">98px dock + tabs</td><td class="bad">116px dial + tabs</td><td class="win">52px button, only when open</td></tr>
+    <tr><td><b>Worst failure</b></td><td>23 rows gets dense</td><td>you lose sight of the run</td><td class="bad">filtered week hides work</td><td class="bad">2,700px of scroll</td></tr>
+    <tr><td><b>Fits the cadence rule</b></td><td class="win">yes — lands deep, shows shape</td><td>yes</td><td>yes</td><td>yes, only if auto-scrolled</td></tr>
+  </table>
+</section>
+
+<!-- ══════════════════════ ranking + hand-off ══════════════════════ -->
+<section class="rankwrap">
+  <div class="kick">The ranking</div>
+  <h1 style="font-size:clamp(26px,4vw,38px);letter-spacing:-.035em;margin-bottom:14px">
+    What I would ship.</h1>
+  <p style="max-width:670px;color:var(--dim);font-size:15px;margin:0">One of these is a zoom and three of
+  them are navigation. That is the whole ranking.</p>
+
+  <div class="rank">
+    <div class="rkc">
+      <div class="p">1</div>
+      <div>
+        <h3>01 · The One Spine — ship this</h3>
+        <p>It is the only one of the four where <b>zooming is not going somewhere</b>. The spine, the dates
+        and the burn never move; focus is a change of emphasis on furniture that stays put. That is what he
+        described — <i>"zoom in and zoom out of your different goals"</i> — and it is the one model that
+        cannot make him lose his place, because his place is still on screen as a row of ticks.</p>
+        <p>It also has the least chrome (a 40px pill against the Dial's 116px), and it is the only one that
+        answers the cadence rule honestly: he lands at the week every day, and <b>still sees the whole run
+        behind it</b>, so a tier he is only meant to touch monthly is never hidden and never nagged.</p>
+      </div>
+    </div>
+    <div class="rkc two">
+      <div class="p">2</div>
+      <div>
+        <h3>03 · The Dial</h3>
+        <p>The best <b>ergonomics</b> by a distance — a fixed three-position control in the thumb arc that
+        works at 6:40 AM without looking, and the only one where in and out are the same single gesture.
+        Second because the subject filter is a real hazard: a week filtered to one goal is a week with work
+        hidden in it, and the mitigation is a special case rather than a property. Its dial belongs in the
+        winner: <b>put F1's zoom pill where F3's dial is, and F1 gets F3's ergonomics for free.</b></p>
+      </div>
+    </div>
+    <div class="rkc three">
+      <div class="p">3</div>
+      <div>
+        <h3>02 · The Stack</h3>
+        <p>Correct, familiar and slightly boring — and it is the version he pre-empted. Descending a sheet
+        stack is not zooming; it is opening a document over another document. The one genuinely good idea in
+        it is <b>the crumb dock at the bottom</b>, which fixes iOS's real ergonomic sin of putting Back in the
+        top-left corner of a 6-inch phone. Steal the dock, drop the stack.</p>
+      </div>
+    </div>
+    <div class="rkc four">
+      <div class="p">4</div>
+      <div>
+        <h3>04 · The Descent</h3>
+        <p>Theoretically the purest — nothing is ever hidden, so context cannot be lost — and practically
+        the worst. Fully open it is the longest screen in the product, and a design whose governing law is
+        "never render a wall" should be suspicious of a screen that renders <b>everything</b>. Its one
+        transferable idea is auto-scroll-to-open, which every expanding UI should do and almost none do.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="against">
+    <h3>What I had to give up to make zoom work</h3>
+    <p><b>1 · The Six Doors grid is gone.</b> He liked the six tiles. Seven ranked goals do not fit a 2×3
+    grid, and Agent 1's model is right that LA Edible must be a goal rather than an integer. Tiles became
+    ranked rows. That is a real loss of the thing he pointed at, traded for a level that can hold his actual
+    portfolio and show rank — and rank is what decides which goal gets the 9 AM peak block.</p>
+    <p><b>2 · The Spine stopped being a calendar of everything.</b> In Round 1 the Spine was all six domains
+    across four month-end stations, and that cross-domain view is exactly what he called "very usable". Under
+    a zoom model the Spine has to be able to mean <i>one goal</i> at the mid level. F1 is the only one of the
+    four that keeps both meanings — the same spine, filtered — and that is the single strongest argument for
+    it. In F2, F3 and F4 the cross-domain spine no longer exists at all.</p>
+    <p><b>3 · Something permanent now eats the bottom of the screen.</b> Every zoom model needs a back path
+    that a thumb can reach, and that costs 40–116px above the tab bar forever. On the Today tab that space
+    is the schedule. The winner spends the least of it, and it is still not free.</p>
+    <p><b>4 · A third of the week view had to be deleted on Tuesdays.</b> Agent 1's §4.3 forbids the capacity
+    number being re-rendered mid-week as a shortfall. So the capacity line — the best thing in the Friday
+    ritual — is absent from every Tuesday screen here. Correct, and it makes the Tuesday week view thinner
+    than it looks like it should be.</p>
+  </div>
+
+  <div class="hand">
+    <h2>Hand-off — Agent 2 · Round 2 · the fusion</h2>
+    <p style="margin-top:8px">For the GM. Nothing outside <b>renditions/rend-goals-v2.html</b> was written;
+    <code>rend-goals.html</code> is untouched for comparison and <code>index.html</code> was read-only.</p>
+
+    <h4>What I produced</h4>
+    <ul>
+      <li><b>Four navigation models over three altitudes</b>, all live at 390×844, all rendering the
+      <b>same</b> seven goals / four landmarks / six commitments from one shared data object — so the only
+      variable between them is the zoom.</li>
+      <li>Each has a <b>▶ PLAY THE ZOOM</b> button that runs its full RUN → GOAL → WEEK transition, and a
+      global <b>SLOW-MO</b> toggle that stretches every transition 4× so the morph can actually be watched.</li>
+      <li>A <b>THUMB REACH</b> overlay draws the one-handed arc on all four phones at once. The gesture-cost
+      claims in the notes are read off that overlay, not asserted.</li>
+      <li>A global <b>TUESDAY / FRIDAY</b> switch, because "where does he land" has two answers and the
+      brief asked for both. Tuesday lands at the week, read-only. Friday lands at the same level in the
+      four-card ritual.</li>
+    </ul>
+
+    <h4>The one I would ship, and the shape of it</h4>
+    <ul>
+      <li><b>F1 The One Spine, with F3's dial position for its pill.</b> F1 has the right model — zoom as
+      filter on fixed furniture — and F3 has the right ergonomics. The pill moves to where the dial sits and
+      becomes a two-crumb control; nothing else about F1 changes.</li>
+      <li><b>Steal from F2:</b> the bottom crumb dock concept (already absorbed above) and the FLIP morph
+      into a header.</li>
+      <li><b>Steal from F4:</b> auto-scroll so that whatever a tap opened is actually in view afterwards.</li>
+      <li><b>Do not ship F3's subject filter on the week.</b> It is the one idea here that can hide real work.</li>
+    </ul>
+
+    <h4>Where I map onto Agent 1's spec — and where I diverge</h4>
+    <ul>
+      <li><b>Adopted verbatim:</b> the five tiers; T0 as the unfailable layer; goals as ranked with a WIG;
+      domain-as-tag so LA Edible is a real goal (7 goals, not 6); the four <code>LANDMARKS</code>
+      (Aug 31 · Sep 28 · Oct 26 · Nov 23); the learning milestone before the outcome ones; 0 milestones for
+      habit goals; parking as a first-class non-failing state; confidence as an unscored 1–5; and §4.3's rule
+      that <b>capacity is a Friday-only number</b> — it appears on no Tuesday screen in any of the four.</li>
+      <li><b>My answer to his §8 open question — the one he was least sure about.</b> I built the
+      <b>size bands</b>, not the numeric block count: <code>SMALL · NORMAL · BIG</code> = 1 · 2 · 4 blocks.
+      Three taps, no arithmetic, and the layout, capacity line and orphan check all read the same integer.
+      Sizing five commitments numerically is five arithmetic decisions on a Friday afternoon, and the ritual's
+      survival depends on it being short. His de-risked middle is the right default, not the fallback.</li>
+      <li><b>Divergence 1 — the mid tier is not only "one goal's milestones."</b> Agent 1's T2 is per-goal.
+      F1 renders T2 <b>both ways</b>: unfocused it is every goal's milestones on one shared timeline, focused
+      it is one goal's ladder. The data model already supports this (milestones carry <code>by</code> dates,
+      so grouping by landmark is a view, not a schema change) — but the spec never describes the cross-goal
+      view, and that view is precisely what the owner called "very usable" in Round 1. Worth adding to the
+      spec as a sanctioned second reading of T2.</li>
+      <li><b>Divergence 2 — a milestone whose date has passed unhit has no state in the spec.</b>
+      <code>hitOn:null</code> plus <code>by</code> in the past is silent. LA Edible's Aug 31 milestone is
+      exactly this case and it is one of the most emotionally loaded rows in the product. I render it as
+      <code>PASSED · NOT HIT</code> in gold with a one-tap <b>push it</b> action — never red, never a miss.
+      The spec should name that state so it does not get invented three different ways.</li>
+      <li><b>Divergence 3 — seven goals, six domain colours.</b> Adopting domain-as-tag means SANO and
+      LA Edible are both WORK and therefore both gold. I distinguish them with the rank numeral and a dashed
+      colour rail. It works, but it is the first visible cost of D1 and the GM should see it before it
+      surprises someone.</li>
+    </ul>
+
+    <h4>Verified, not asserted</h4>
+    <ul>
+      <li><code>arsenal-lint</code> clean; rendered headlessly at 390×844; every transition screenshotted
+      <b>mid-flight</b> as well as at rest, because a morph that reads at its endpoints can still be wrong
+      in the middle.</li>
+      <li>No console errors before or after driving every gesture in all four prototypes.</li>
+      <li>Scroll depths in the notes are measured from the rendered DOM. Tap counts are counted off the
+      live prototypes.</li>
+      <li><b>GSAP Flip is not vendored.</b> <code>lib/gsap/gsap.min.js</code> is the core only — the string
+      "Flip" appears once, in a plugin-name list. The brief said Flip was available; it is not. The morphs
+      here are real FLIP (measure, invert, play) driven by GSAP core, which is vendored. If the GM wants
+      <code>Flip.getState()</code> in the app, the plugin file has to be added to the arsenal first.</li>
+    </ul>
+
+    <h4>For the GM — things I found that were not mine to fix</h4>
+    <ul>
+      <li><b>The tab rename knocks on, still.</b> Round 1 flagged it; nothing has changed. Push currently
+      carries the Anthony gate, the trading log and the LA Edible marker. Under Agent 1's migration the gate
+      becomes <code>m_sano_gate</code> and LA Edible becomes <code>g_kitchen</code> — both land inside Goals
+      cleanly. <b>The trading session log does not.</b> It is a daily action and it needs to move to Today or
+      the evening close-out before Push becomes Goals.</li>
+      <li><b>Every zoom model here needs one new thing from the model: a "current subject".</b> Which goal
+      the user is looking at is UI state, not data, but F1/F3 both persist it across a tab switch and F4
+      restores it on landing. It wants to live next to the view state, not in <code>S.goals</code>.</li>
+      <li><b>The Friday ritual and the Goals tab are the same screen in all four fusions.</b> That is a
+      consequence of treating the week as an altitude rather than a mode, and I think it is right — but it
+      means the ritual has no home of its own, and if the GM later wants a full-screen Friday takeover
+      (like the verdict overlay), it will fight the zoom model. Worth deciding before build.</li>
+      <li><b>Nothing here shows a delivery load.</b> Agent 1 §4.3 and PROFILE §8c both flag that the schedule
+      assumes zero client-delivery blocks and becomes arithmetically impossible around October. The capacity
+      line is where that will first become visible — these mocks show 9 of 20 committed, which will not
+      survive Anthony signing.</li>
+    </ul>
+  </div>
+</section>
+
+</div>
+
+<script src="../lib/gsap/gsap.min.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   ONE DATA SOURCE for all four prototypes.
+   Modelled on out-1-goals-spec.md v4: ranked goals, domain-as-tag,
+   landmark milestones, size-band commitments.
+   Scene: Tue 2026-09-01 — week 6, the Aug 31 landmark passed yesterday.
+   ══════════════════════════════════════════════════════════════════ */
+const RUN={week:6, weeksTotal:19, left:65, day:27, burn:29};
+const LM=['AUG 31','SEP 28','OCT 26','NOV 23'];
+const GOALS=[
+ {id:'sano',rank:1,short:'SANO',dom:'THE WORK',c:'#E0B25E',kind:'outcome',wig:1,
+  title:'3 SANO clients — at least one at full freight',lead:'Real conversations with owners',
+  at:1,target:3,unit:'clients',conf:3,week:'4 BLOCKS THIS WEEK',
+  ms:[{by:'AUG 31',t:'The six things checked and I signed off on each',learn:1,hit:'HIT AUG 12',
+       checks:['The pitch page is right','The offer and pricing are right','I know exactly what he gets',
+               'The first 30 days are mapped','The questionnaire is ready','I know what I am going to say']},
+      {by:'SEP 28',t:'First client live and paying',next:1},
+      {by:'OCT 26',t:'Client #2 signed · pricing cleaned up'},
+      {by:'NOV 23',t:'',stub:1}]},
+ {id:'trade',rank:2,short:'TRADING',dom:'CAPITAL',c:'#7FB4FF',kind:'outcome',
+  title:'3 live funded accounts',lead:'Rules kept · no double-back',
+  at:0,target:3,unit:'funded',conf:4,week:'LOGGED 4 OF 5',
+  ms:[{by:'AUG 31',t:'Rules written down · 20 sessions logged against them',learn:1,hit:'HIT AUG 28'},
+      {by:'SEP 28',t:'First evaluation passed',next:1},
+      {by:'OCT 26',t:'Second account funded'},
+      {by:'NOV 23',t:'',stub:1}]},
+ {id:'edible',rank:3,short:'LA EDIBLE',dom:'THE WORK',c:'#E0B25E',dash:1,kind:'outcome',
+  title:'In talks with a local kitchen',lead:'Kitchens contacted',
+  at:0,target:1,unit:'kitchen',conf:2,week:'NOTHING ON IT — 4 WEEKS',orphan:4,
+  ms:[{by:'AUG 31',t:'Ten kitchens with a name and a number',passed:1},
+      {by:'SEP 28',t:'',stub:1},{by:'OCT 26',t:'',stub:1},{by:'NOV 23',t:'',stub:1}]},
+ {id:'body',rank:4,short:'BODY',dom:'BODY',c:'#FF6B2C',kind:'outcome',
+  title:'185 lbs — heavier and leaner',lead:'Gym 2× · walks 3×',
+  at:179,target:185,unit:'lbs',conf:4,week:'GYM 1/2 · WALKS 2/3',
+  ms:[{by:'AUG 31',t:'179 lbs',hit:'HIT AUG 29'},{by:'SEP 28',t:'181 lbs',next:1},
+      {by:'OCT 26',t:'183 lbs'},{by:'NOV 23',t:'',stub:1}]},
+ {id:'faith',rank:5,short:'FAITH',dom:'FAITH',c:'#B08CFF',kind:'habit',
+  title:'3× a week, and Kells hears about it',lead:'Bible 3× · text Kells',conf:3,week:'1 OF 3 THIS WEEK',
+  quotas:[['Bible read','1 of 3'],['Texted Kells','1 of 3']],ms:[]},
+ {id:'people',rank:6,short:'PEOPLE',dom:'PEOPLE',c:'#4ADE80',kind:'habit',
+  title:'Nobody got the leftovers',lead:'Evenings with the phone away',conf:4,week:'1 OF 2 THIS WEEK',
+  quotas:[['Phone-down evenings','1 of 2'],['Called home','1 of 1',1]],ms:[]},
+ {id:'mind',rank:7,short:'MIND',dom:'MIND',c:'#38E1D8',kind:'habit',parked:'PARKED UNTIL OCT 5',
+  title:'Three guitar classes taken',lead:'Casual until SANO is further along',conf:2,week:'PARKED ON PURPOSE',
+  quotas:[['Nothing scheduled','by choice']],ms:[]},
+];
+const gById=id=>GOALS.find(g=>g.id===id);
+
+/* week 6 commitments — sized in BANDS, not typed numbers (spec §8, the de-risked middle) */
+const BAND={S:['SMALL',1],N:['NORMAL',2],B:['BIG',4]};
+const COMMITS=[
+ {g:'sano',  t:'Ship the onboarding doc and send it', band:'B',
+  slots:[['MON B1',1],['MON B2',1],['TUE B1',0],['WED B1',0]], hit:2},
+ {g:'sano',  t:'Book two owner calls', band:'N', ct:1, slots:[['TUE B2',0],['THU B1',0]], hit:0},
+ {g:'body',  t:'Gym twice · walk three times', band:'N', quota:1,
+  slots:[['GYM 16:20',1],['WALK 14:35',0]], hit:1},
+ {g:'faith', t:'Bible three times · text Kells each time', band:'S', quota:1,
+  slots:[['21:30 MON',1],['21:30 WED',0]], hit:1},
+ {g:'trade', t:'Log every session against the written rules', band:'S', quota:1,
+  slots:[['06:30 DAILY',1]], hit:1},
+ {g:null,    t:'Admin + follow-ups', band:'S', slack:1, slots:[['FRI B4',0]], hit:0},
+];
+const CAP={total:20, committed:9};
+
+/* ══════════════════════ shared level templates ══════════════════════ */
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* T0 — identical in all four, never changes with altitude */
+function horizonHTML(){
+  return `<div class="r1">
+    <span class="th">BURN THE BOATS</span>
+    <span class="ln">become someone who executes</span>
+    <span class="cd"><b>DEC 1 · ${RUN.left}</b><br>INCOME BY MAR 1</span>
+  </div>`;
+}
+
+function pips(g){
+  if(g.kind==='habit')return '';
+  return `<div class="rungpips">${g.ms.map(m=>
+    `<i class="${m.hit?'hit':(m.t?'set':'')}"></i>`).join('')}</div>`;
+}
+function progressOf(g){
+  if(g.kind==='habit')return {v:g.week.split(' ')[0]+' ',u:'THIS WEEK'};
+  return {v:`${g.at}/${g.target}`,u:g.unit.toUpperCase()};
+}
+
+/* T1 — THE RUN */
+function runHTML(opt){
+  return `<div class="sec">The run <u>WEEK ${RUN.week} OF ${RUN.weeksTotal} · 7 GOALS</u></div>` +
+    GOALS.map(g=>{const p=progressOf(g);
+    return `<button class="grow ${g.wig?'wig':''} ${g.dash?'dash':''} ${g.parked?'parked':''}"
+      style="--c:${g.c}" data-goal="${g.id}" data-opt="${opt}">
+      <span class="rk">${g.rank}</span>
+      <span>
+        <span class="sh">${esc(g.short)}${g.wig?' · THE WIG':''}${g.kind==='habit'?' · HABIT':''}</span>
+        <div class="ti">${esc(g.title)}</div>
+        <div class="wk ${g.orphan?'warn':''}">${esc(g.parked||g.week)}</div>
+        ${pips(g)}
+      </span>
+      <span class="pr">${p.v}<u>${p.u}</u></span>
+    </button>`}).join('');
+}
+
+/* T2 — one goal's spine ladder */
+function goalHTML(g,opt){
+  const head=`<div class="gh" style="--c:${g.c}">
+    <div><div class="gk">RANK ${g.rank} · ${esc(g.short)}${g.wig?' · THE WIG':''}</div>
+      <div class="gt">${esc(g.title)}</div></div>
+    <div class="gp">${g.kind==='habit'?`<b>—</b>QUOTA<br>MEASURED`
+      :`<b>${g.at}/${g.target}</b>${esc(g.unit).toUpperCase()}`}</div></div>`;
+
+  if(g.kind==='habit'){
+    return head+`
+      <div class="sec">No ladder <u>and that is correct</u></div>
+      <div class="card" style="font-size:12.6px;color:var(--dim);line-height:1.5">
+        A habit goal has no milestones. Its measure <b style="color:var(--ink);font-weight:500">is</b> the
+        weekly quota — a percentage here would be a number you typed about yourself.</div>
+      <div class="sec">This week</div>
+      <div class="quotaboard">${(g.quotas||[]).map(q=>
+        `<div class="qrow ${q[2]?'met':''}"><span>${esc(q[0])}</span><b>${esc(q[1])}</b></div>`).join('')}</div>
+      ${confHTML(g)}`;
+  }
+
+  const wknode=`<div class="rg wknode"><div class="nd"></div><div class="rw">
+      <div class="k">THIS WEEK <u>THE ONLY SCORED TIER</u></div>
+      <div class="t">${esc(weekLineFor(g.id))}</div>
+      <div class="acts">${slotChipsFor(g.id)}</div>
+      <div style="margin-top:9px"><button class="mini" data-zweek="${opt}">OPEN THE WEEK →</button></div>
+    </div></div>`;
+
+  const rungs=g.ms.map(m=>{
+    const cls=m.hit?'hit':m.next?'next':m.stub?'stub':m.passed?'passed':'';
+    const kick=m.hit?`<span class="hitk">${esc(m.hit)}</span>`
+      :m.passed?`<span class="passk">PASSED · NOT HIT</span>`
+      :m.next?`NEXT UP`:m.stub?`NOTHING SET`:``;
+    return `<div class="rg ${cls}"><div class="nd"></div><div class="rw">
+      <div class="k">${esc(m.by)}${m.learn?' · LEARNING':''} <u>${kick}</u></div>
+      <div class="t ${m.t?'':'none'}">${esc(m.t||'No milestone here yet')}</div>
+      ${m.checks?`<div class="checks">${m.checks.slice(0,3).map(c=>
+        `<div><i></i>${esc(c)}</div>`).join('')}
+        <div style="font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.12em;color:#4f4960;margin-top:2px">
+        + 3 MORE · ALL SIX SIGNED OFF</div></div>`:''}
+      ${m.passed?`<div class="acts"><button class="mini">PUSH IT TO SEP 28</button>
+        <button class="mini">IT IS DONE</button><button class="mini">DROP IT</button></div>`:''}
+      ${m.stub?`<div class="acts"><button class="mini">+ SET ONE</button></div>`:''}
+    </div></div>`}).join('');
+
+  const dec=`<div class="rg dec"><div class="nd"></div><div class="rw">
+      <div class="k">DEC 1 · THE RESULT <u>SET ONCE</u></div>
+      <div class="t">${esc(g.title)}</div>
+      <div class="acts"><span class="chip">LAG</span><span class="chip">LEAD — ${esc(g.lead)}</span></div>
+    </div></div>`;
+
+  return head+`<div class="lad" style="--c:${g.c};--burn:${RUN.burn}%">${wknode}${rungs}${dec}</div>${confHTML(g)}`;
+}
+function confHTML(g){
+  return `<div class="confrow"><span class="cl">CONFIDENCE · NEVER SCORED</span>
+    <span class="pips">${[1,2,3,4,5].map(n=>`<i class="${n<=g.conf?'on':''}"></i>`).join('')}</span></div>
+    <div class="confrow" style="border-top:0;padding-top:6px;margin-top:0">
+    <span class="nx">ONE TAP ON FRIDAY · IT IS A TREND, NOT A GRADE</span></div>`;
+}
+function weekLineFor(id){
+  const c=COMMITS.filter(x=>x.g===id);
+  return c.length?c.map(x=>x.t).join(' · '):'Nothing committed to this goal this week';
+}
+function slotChipsFor(id){
+  const c=COMMITS.filter(x=>x.g===id);
+  if(!c.length)return `<span class="blkchip add">+ GIVE IT A BLOCK</span>`;
+  return c.flatMap(x=>x.slots).map(s=>
+    `<span class="blkchip ${s[1]?'':'pend'}">${esc(s[0])}${s[1]?' ✓':''}</span>`).join('');
+}
+
+/* T3 — the week. Tuesday = running. Friday = the four-card ritual. */
+let FRI=false, fstep=0;
+function weekHTML(filterId){
+  return FRI?ritualHTML():tueWeekHTML(filterId);
+}
+function tueWeekHTML(filterId){
+  const list=COMMITS.filter(c=>!filterId||c.g===filterId);
+  const hidden=COMMITS.length-list.length;
+  return `<div class="wkhead"><b>Week ${RUN.week}</b><span>TUE · 12 OF 17<br>BLOCKS DONE</span>
+      <u>85% WINS THE WEEK</u></div>
+    <div class="wt"><i style="width:70%"></i><u></u></div>
+    ${list.map(c=>{const g=c.g?gById(c.g):null;
+      return `<div class="cmt ${c.slack?'slack':''}" style="--c:${g?g.c:'#3a3350'}">
+        <div class="ck">${g?esc(g.short):'SLACK · NO GOAL'} · ${BAND[c.band][0]}${c.ct?' · CENTRAL-TIME':''}</div>
+        <div class="ct">${esc(c.t)}</div>
+        <div class="cw">${c.quota?'A WEEKLY QUOTA — NOT A BLOCK COMMITMENT'
+          :`${BAND[c.band][1]} BLOCK${BAND[c.band][1]>1?'S':''} · LAID INTO REAL SLOTS`}</div>
+        <div class="cs">${c.slots.map(s=>`<span class="blkchip ${s[1]?'':'pend'}">${esc(s[0])}${s[1]?' ✓':''}</span>`).join('')}
+          <span class="cn">${c.hit}/${c.slots.length}</span></div>
+      </div>`}).join('')}
+    ${hidden?`<div class="ask" style="border-style:solid;border-color:var(--line2)">
+      <div class="ak" style="color:var(--dim)">${hidden} MORE COMMITMENTS THIS WEEK</div>
+      <div class="at2">Filtered to one goal. A week is not one goal.</div>
+      <div class="ab"><button class="pick" data-unfilter="1">SHOW THE WHOLE WEEK</button></div></div>`:''}
+    ${filterId?'':`<div class="sec">Not fed this week <u>1 of 7</u></div>
+    <div class="ask">
+      <div class="ak">LA EDIBLE · 4 WEEKS WITHOUT A BLOCK</div>
+      <div class="at2">Its August milestone passed unhit and nothing has been scheduled against it since
+        Aug 3. This is a question, not a mark.</div>
+      <div class="ab"><button>GIVE IT A BLOCK</button><button class="pick">PARK IT — ON PURPOSE</button>
+        <button>IT'S DONE, CLOSE IT</button></div>
+    </div>
+    <div class="sec">Also quiet <u>on purpose</u></div>
+    <div class="card" style="font-size:12.4px;color:var(--dim);line-height:1.5">
+      <b style="color:var(--violet);font-weight:500">MIND</b> is parked until Oct 5. Parked goals are not
+      asked about, are not scored, and cost nothing.</div>
+    <div class="sec">No capacity number here <u>deliberate</u></div>
+    <div class="card" style="font-size:12.4px;color:var(--dim);line-height:1.5">
+      "9 of 20 blocks" is a <b style="color:var(--ink);font-weight:500">planning</b> number. It appears on
+      Friday while he is deciding, and never mid-week as a shortfall — two competing shortfall numbers is
+      two walls instead of one.</div>`}`;
+}
+const RIT=[
+ {lab:'STEP 1 OF 4 · ~5s',next:'Next — what carries',
+  html:()=>`<div class="fq">Last week you kept<br>15 of 18.</div>
+    <div class="fsub">83% · A WON WEEK STARTS AT 85% · ONE BLOCK SHORT</div>
+    <div class="card"><div style="font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.16em;color:var(--faint)">WHAT MOVED</div>
+      <div style="font-size:13px;margin-top:7px;line-height:1.45;color:var(--dim)">
+      <b style="color:var(--phos);font-weight:500">The six things</b> — signed off Aug 12.
+      <b style="color:var(--phos);font-weight:500">Rules written</b> — Aug 28. Two milestones in one month.</div></div>
+    <div class="card" style="margin-top:6px"><div style="font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.16em;color:var(--faint)">WHAT DID NOT</div>
+      <div style="font-size:13px;margin-top:7px;line-height:1.45;color:var(--dim)">
+      LA Edible's Aug 31 milestone passed unhit. You will be asked about it in a moment.</div></div>`},
+ {lab:'STEP 2 OF 4 · ~25s',next:'Next — next week',
+  html:()=>`<div class="fq">Two things did not finish.</div>
+    <div class="fsub">CARRY IS PRE-TICKED · SIZED TO WHAT IS LEFT</div>
+    ${[['sano','Ship the onboarding doc and send it','2 OF 4 BLOCKS DONE → CARRIES AT NORMAL'],
+       ['sano','Book two owner calls','0 OF 2 DONE → CARRIES AT NORMAL']].map((r,i)=>{
+      const g=gById(r[0]);
+      return `<div class="crow" style="--c:${g.c}">
+        <div><div class="ck2">${esc(g.short)}</div><div class="ct2">${esc(r[1])}</div>
+          <div class="cm">${esc(r[2])}</div></div>
+        <div class="segs" data-seg="carry${i}">
+          <button class="on">CARRY</button><button>DONE</button><button class="drop">DROP</button></div>
+      </div>`}).join('')}
+    <div class="card" style="margin-top:8px;font-size:12.4px;color:var(--dim);line-height:1.5">
+      An unfinished commitment does not vanish on Sunday. It comes back <b style="color:var(--ink);font-weight:500">smaller</b>,
+      already ticked to carry. One tap.</div>`},
+ {lab:'STEP 3 OF 4 · ~35s',next:'Next — anything unscheduled',
+  html:()=>`<div class="fq">Next week.</div>
+    <div class="fsub">SIZE IN BANDS — NEVER IN NUMBERS</div>
+    ${[['sano','Ship the onboarding doc and send it','N'],
+       ['sano','Book two owner calls','N'],
+       ['trade','First evaluation — sit the first attempt','B'],
+       [null,'Admin + follow-ups','S']].map((r,i)=>{
+      const g=r[0]?gById(r[0]):null;
+      return `<div class="crow" style="--c:${g?g.c:'#3a3350'}">
+        <div><div class="ck2" style="${g?'':'color:#5f5872'}">${g?esc(g.short):'SLACK · NO GOAL'}</div>
+          <div class="ct2">${esc(r[1])}</div>
+          <div class="cm">${g?'SERVES: '+esc(g.ms.filter(m=>m.next)[0]?g.ms.filter(m=>m.next)[0].t:g.title).toUpperCase():'A WEEK IS ALLOWED TO CONTAIN SLACK'}</div></div>
+        <div class="segs band" data-band="${i}">
+          ${Object.keys(BAND).map(k=>`<button class="${k===r[2]?'on':''}" data-b="${k}">${k}</button>`).join('')}</div>
+      </div>`}).join('')}
+    <div class="capline"><span class="cv capv">${CAP.committed}</span>
+      <span class="cl2">OF ${CAP.total}<br>BLOCKS</span>
+      <span class="cbar"><i class="capbar" style="width:${CAP.committed/CAP.total*100}%"></i></span></div>
+    <div class="card" style="margin-top:7px;font-size:12.2px;color:var(--faint);line-height:1.5">
+      20 deep blocks a week. That number does not negotiate — and this line is only ever shown here,
+      while you are deciding.</div>`},
+ {lab:'STEP 4 OF 4 · ~15s',next:'Lock the week',
+  html:()=>`<div class="fq">One goal has nothing<br>on it.</div>
+    <div class="fsub">FOUR WEEKS · ASKED ONCE · NEVER TWICE IN A WEEK</div>
+    <div class="ask">
+      <div class="ak">LA EDIBLE · IN TALKS WITH A LOCAL KITCHEN</div>
+      <div class="at2">Nothing has been scheduled against it since Aug 3, and its August milestone passed
+        unhit. Three answers, and two of them are not failure.</div>
+      <div class="ab"><button>GIVE IT A BLOCK</button><button class="pick">PARK IT — ON PURPOSE</button>
+        <button>IT'S DONE, CLOSE IT</button></div>
+    </div>
+    <div class="sec">Confidence <u>one tap each · never scored</u></div>
+    ${['sano','trade','body'].map(id=>{const g=gById(id);
+      return `<div class="crow" style="--c:${g.c}">
+        <div><div class="ck2">${esc(g.short)}</div><div class="ct2" style="font-size:12px">${esc(g.title)}</div></div>
+        <span class="pips" style="display:flex;gap:4px">${[1,2,3,4,5].map(n=>
+          `<i style="width:9px;height:9px;border-radius:99px;display:block;background:${n<=g.conf?'var(--rune)':'#2a2438'}"></i>`).join('')}</span>
+      </div>`}).join('')}`},
+];
+function ritualHTML(){
+  const s=RIT[fstep];
+  return `<div class="wkhead"><b>Friday</b><span>${s.lab}</span><u>WEEK ${RUN.week+1} SETUP</u></div>
+    <div class="steps">${RIT.map((_,i)=>`<i class="${i<fstep?'past':i===fstep?'on':''}"></i>`).join('')}</div>
+    ${s.html()}
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:7px;margin-top:16px">
+      <button class="btn gh" style="width:auto;padding:12px 15px" data-fstep="-1">←</button>
+      <button class="btn" data-fstep="1">${esc(s.next)}</button>
+    </div>`;
+}
+
+/* ══════════════════════ motion helpers ══════════════════════ */
+let SLOW=false;
+const D=ms=>ms*(SLOW?4:1);
+/* real FLIP: measure both rects, invert, play. GSAP core drives it (Flip plugin is NOT vendored).
+   The source rect MUST be captured before the re-render — a detached node measures 0×0. */
+const rectOf=el=>el?el.getBoundingClientRect():null;
+function flip(a,toEl){
+  if(!a||!toEl)return;
+  const b=toEl.getBoundingClientRect();
+  if(!a.width||!b.width)return;
+  const dx=a.left-b.left, dy=a.top-b.top, sx=Math.max(.2,a.width/b.width), sy=Math.max(.2,a.height/b.height);
+  if(window.gsap){
+    gsap.fromTo(toEl,{x:dx,y:dy,scaleX:sx,scaleY:sy,transformOrigin:'0 0',opacity:.35},
+      {x:0,y:0,scaleX:1,scaleY:1,opacity:1,duration:D(340)/1000,ease:'power3.out',clearProps:'transform,opacity'});
+  }else{
+    toEl.animate([{transform:`translate(${dx}px,${dy}px) scale(${sx},${sy})`,transformOrigin:'0 0',opacity:.35},
+      {transform:'none',opacity:1}],{duration:D(340),easing:'cubic-bezier(.2,.9,.3,1)'});
+  }
+}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* ══════════════════════ F1 · THE ONE SPINE ══════════════════════ */
+const f1={focus:null,zoom:null};
+function f1Render(){
+  const sp=document.getElementById('f1sp');
+  const g=f1.focus?gById(f1.focus):null;
+
+  document.getElementById('f1head').innerHTML = g
+    ? `<div class="gh" style="--c:${g.c};padding-top:0">
+         <div><div class="gk">RANK ${g.rank} · ${esc(g.short)}${g.wig?' · THE WIG':''}</div>
+           <div class="gt">${esc(g.title)}</div></div>
+         <div class="gp">${g.kind==='habit'?'<b>—</b>QUOTA':`<b>${g.at}/${g.target}</b>${esc(g.unit).toUpperCase()}`}</div></div>`
+    : `<div class="sec" style="margin-top:2px">The run <u>WEEK ${RUN.week} OF ${RUN.weeksTotal} · 7 GOALS · 4 LANDMARKS</u></div>`;
+
+  const station=(key,label,meta,cls,rows)=>`
+    <div class="stn ${cls}" data-st="${key}"><div class="nd"></div>
+      <div class="sh"><b>${label}</b><span>${meta}</span></div>
+      <div class="thrs">${rows}</div></div>`;
+
+  /* the week node, always at the top of the spine */
+  const wk=`<div class="stn now" data-st="week"><div class="nd"></div>
+    <div class="sh" data-zoomweek="1"><b>This week</b><span>WEEK ${RUN.week} · ${FRI?'FRIDAY':'TUE'}</span></div>
+    <div class="wkbox">
+      <div class="peek">
+        ${COMMITS.slice(0,4).map(c=>{const gg=c.g?gById(c.g):null;
+          return `<div class="pk"><i class="dot" style="background:${gg?gg.c:'#3a3350'}"></i>
+            <span>${esc(c.t)}</span><b>${c.hit}/${c.slots.length}</b></div>`}).join('')}
+        <div style="font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;color:#4b445e;margin-top:3px">
+          + 2 MORE · TAP TO OPEN THE WEEK</div>
+      </div>
+      <div class="full">${weekHTML(null)}</div>
+    </div></div>`;
+
+  /* one station per landmark, threads = goals with a milestone there */
+  const stations=LM.map((by,i)=>{
+    const rows=GOALS.filter(x=>x.ms.length).map(x=>{
+      const m=x.ms[i]; if(!m)return '';
+      const on=f1.focus===x.id?'on':'';
+      const kick=m.hit?m.hit:m.passed?'PASSED':m.next?'NEXT':m.stub?'—':'';
+      return `<button class="thr ${m.stub?'stub':''} ${on}" style="--c:${x.c}" data-goal="${x.id}" data-opt="f1">
+        <i class="dot" style="background:${x.c};margin-top:4px"></i>
+        <span><span class="tn">${esc(x.short)}</span>
+          <div class="tt">${esc(m.t||'Nothing set')}</div>
+          <div class="deep">
+            <div class="acts" style="display:flex;gap:5px;flex-wrap:wrap">
+              ${m.hit?`<span class="chip" style="border-color:rgba(74,222,128,.4);color:var(--phos)">${esc(m.hit)}</span>`:''}
+              ${m.passed?`<span class="chip" style="border-color:rgba(224,178,94,.45);color:var(--gold)">PASSED · NOT HIT</span>
+                <span class="chip">PUSH IT →</span>`:''}
+              ${m.next?`<span class="chip" style="border-color:rgba(224,178,94,.45);color:var(--gold)">NEXT UP</span>
+                <span class="chip">${esc(weekLineFor(x.id)).slice(0,34)}…</span>`:''}
+              ${m.stub?`<span class="chip">+ SET ONE</span>`:''}
+            </div></div>
+        </span>
+        <span class="tx">${esc(kick)}</span></button>`}).join('');
+    const hitN=GOALS.filter(x=>x.ms[i]&&x.ms[i].hit).length;
+    return station('lm'+i,by,i===0?`${hitN} HIT · 1 NOT`:`WEEK ${[6,10,14,18][i]}`,
+      i===0?'past':'',rows);
+  }).join('');
+
+  const dec=station('dec','Dec 1','THE END OF THE RUN','end',
+    GOALS.map(x=>`<button class="thr ${f1.focus===x.id?'on':''}" style="--c:${x.c}" data-goal="${x.id}" data-opt="f1">
+      <i class="dot" style="background:${x.c};margin-top:4px"></i>
+      <span><span class="tn">${esc(x.short)}</span><div class="tt">${esc(x.title)}</div>
+        <div class="deep"><div class="acts" style="display:flex;gap:5px;flex-wrap:wrap">
+          <span class="chip">LAG</span><span class="chip">LEAD — ${esc(x.lead)}</span>
+          <span class="chip">CONFIDENCE ${x.conf}/5</span></div></div></span>
+      <span class="tx">${x.kind==='habit'?'QUOTA':x.at+'/'+x.target}</span></button>`).join(''));
+
+  sp.innerHTML=wk+stations+dec;
+  if(f1.focus)sp.dataset.focus=f1.focus; else delete sp.dataset.focus;
+  if(f1.zoom==='week')sp.dataset.zoom='week'; else delete sp.dataset.zoom;
+
+  /* the pill — bottom-left, inside the thumb arc */
+  const crumbs=[['run','THE RUN']];
+  if(f1.focus)crumbs.push(['goal',gById(f1.focus).short]);
+  if(f1.zoom==='week')crumbs.push(['week','THIS WEEK']);
+  document.getElementById('f1pill').innerHTML=crumbs.map((c,i)=>
+    `<button class="${i===0?'home':''}" data-pill="${c[0]}">${i?'› ':'⌂ '}${esc(c[1])}</button>`).join('');
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-goal][data-opt="f1"]');
+  if(t){ const prev=f1.focus, from=rectOf(t);
+    f1.focus=(f1.focus===t.dataset.goal&&!f1.zoom)?null:t.dataset.goal;
+    f1.zoom=null; f1Render();
+    if(f1.focus&&f1.focus!==prev){
+      const to=document.querySelector('#f1head .gh'); if(to)flip(from,to);
+    }
+    return; }
+  const w=e.target.closest('#f1sp [data-zoomweek]');
+  if(w){ f1.zoom=f1.zoom==='week'?null:'week'; f1Render(); return; }
+  const p=e.target.closest('#f1pill [data-pill]');
+  if(p){ if(p.dataset.pill==='run'){f1.focus=null;f1.zoom=null}
+         else if(p.dataset.pill==='goal'){f1.zoom=null}
+         f1Render(); return; }
+});
+
+/* ══════════════════════ F2 · THE STACK ══════════════════════ */
+const f2={goal:null,week:false};
+function f2Render(){
+  document.getElementById('f2run').innerHTML=runHTML('f2');
+  const g=f2.goal?gById(f2.goal):null;
+  document.getElementById('f2goal').innerHTML=g?goalHTML(g,'f2'):'';
+  document.getElementById('f2week').innerHTML=weekHTML(null);
+  const s1=document.getElementById('f2sheet1'), s2=document.getElementById('f2sheet2');
+  const was1=s1.classList.contains('on'), was2=s2.classList.contains('on');
+  s1.classList.toggle('on',!!f2.goal);
+  s2.classList.toggle('on',!!f2.week);
+  /* a sheet always opens at its top — stale scroll inside a re-rendered sheet is a real bug */
+  if(f2.goal&&!was1)document.getElementById('f2goal').scrollTop=0;
+  if(f2.week&&!was2)document.getElementById('f2week').scrollTop=0;
+  const cr=[['run','THE RUN']];
+  if(f2.goal)cr.push(['goal',g.short]);
+  if(f2.week)cr.push(['week','WEEK '+RUN.week]);
+  document.getElementById('f2dock').innerHTML=cr.map((c,i)=>
+    `<button class="crumb ${i===cr.length-1?'here':''}" data-f2crumb="${c[0]}">${i?'<i>›</i>':''}${esc(c[1])}</button>`).join('')
+    + (cr.length>1?`<button class="up" data-f2crumb="up">↑ UP</button>`:'');
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-goal][data-opt="f2"]');
+  if(t){ const from=rectOf(t); f2.goal=t.dataset.goal; f2.week=false; f2Render();
+    const to=document.querySelector('#f2goal .gh'); if(to)flip(from,to); return; }
+  const z=e.target.closest('#f2goal [data-zweek]');
+  if(z){ f2.week=true; f2Render(); return; }
+  const c=e.target.closest('#f2dock [data-f2crumb]');
+  if(c){ const k=c.dataset.f2crumb;
+    if(k==='run'){f2.goal=null;f2.week=false}
+    else if(k==='goal'){f2.week=false}
+    else if(k==='up'){ if(f2.week)f2.week=false; else f2.goal=null; }
+    f2Render(); return; }
+});
+/* swipe down on a sheet to ascend */
+['f2sheet1','f2sheet2'].forEach(id=>{
+  const el=document.getElementById(id); let y0=null;
+  el.addEventListener('pointerdown',e=>{y0=e.clientY});
+  el.addEventListener('pointerup',e=>{
+    if(y0!==null&&e.clientY-y0>60){ if(id==='f2sheet2')f2.week=false; else {f2.goal=null;f2.week=false} f2Render(); }
+    y0=null;
+  });
+});
+
+/* ══════════════════════ F3 · THE DIAL ══════════════════════ */
+const f3={lv:0,goal:'sano',filter:true};
+function f3Render(dir){
+  const g=gById(f3.goal);
+  const body=document.getElementById('f3body');
+  let html;
+  if(f3.lv===0) html=runHTML('f3');
+  else if(f3.lv===1) html=goalHTML(g,'f3');
+  else html=`${(!FRI&&f3.filter)?`<div class="subjbar" style="--c:${g.c}">
+      <span class="sk">FILTERED TO</span><span class="sv">${esc(g.short)}</span>
+      <button class="on" data-f3filter="1">ON</button></div>`:
+      (!FRI?`<div class="subjbar" style="--c:${g.c}">
+      <span class="sk">SHOWING</span><span class="sv" style="color:var(--dim)">THE WHOLE WEEK</span>
+      <button data-f3filter="1">FILTER</button></div>`:'')}
+    ${weekHTML(FRI?null:(f3.filter?f3.goal:null))}`;
+  body.innerHTML=`<div class="lvl" style="--dx:${dir<0?'-14px':'14px'}">${html}</div>`;
+  document.getElementById('f3knob').style.transform=`translateX(${f3.lv*100}%)`;
+  document.querySelectorAll('#f3dial [data-lv]').forEach(b=>b.classList.toggle('on',+b.dataset.lv===f3.lv));
+  document.getElementById('f3g').textContent=g.short;
+  document.getElementById('f3w').textContent=FRI?'the ritual':'week '+RUN.week;
+}
+document.addEventListener('click',e=>{
+  const d=e.target.closest('#f3dial [data-lv]');
+  if(d){ const n=+d.dataset.lv; const dir=n>f3.lv?1:-1; f3.lv=n; f3Render(dir); return; }
+  const t=e.target.closest('[data-goal][data-opt="f3"]');
+  if(t){ const from=rectOf(t); f3.goal=t.dataset.goal; f3.lv=1; f3Render(1);
+    const to=document.querySelector('#f3body .gh'); if(to)flip(from,to); return; }
+  const z=e.target.closest('#f3body [data-zweek]');
+  if(z){ f3.lv=2; f3Render(1); return; }
+  const f=e.target.closest('[data-f3filter]');
+  if(f){ f3.filter=!f3.filter; f3Render(0); return; }
+  const u=e.target.closest('#f3body [data-unfilter]');
+  if(u){ f3.filter=false; f3Render(0); return; }
+});
+/* swipe the body left/right to change altitude */
+(function(){
+  const el=document.getElementById('f3body'); let x0=null;
+  el.addEventListener('pointerdown',e=>{x0=e.clientX});
+  el.addEventListener('pointerup',e=>{
+    if(x0===null)return; const dx=e.clientX-x0; x0=null;
+    if(Math.abs(dx)<55)return;
+    const n=Math.max(0,Math.min(2,f3.lv+(dx<0?1:-1)));
+    if(n!==f3.lv){f3.lv=n;f3Render(dx<0?1:-1)}
+  });
+})();
+
+/* ══════════════════════ F4 · THE DESCENT ══════════════════════ */
+const f4={goal:null,week:false};
+function f4Render(){
+  const wrap=document.getElementById('f4run');
+  wrap.innerHTML=`<div class="sec">The run <u>WEEK ${RUN.week} OF ${RUN.weeksTotal} · 7 GOALS</u></div>`+
+    GOALS.map(g=>{const p=progressOf(g),open=f4.goal===g.id;
+      return `<button class="grow ${g.wig?'wig':''} ${g.dash?'dash':''} ${g.parked?'parked':''} ${open?'open':''}"
+        style="--c:${g.c}" data-f4goal="${g.id}">
+        <span class="rk">${g.rank}</span>
+        <span><span class="sh">${esc(g.short)}${g.wig?' · THE WIG':''}</span>
+          <div class="ti">${esc(g.title)}</div>
+          <div class="wk ${g.orphan?'warn':''}">${esc(g.parked||g.week)}</div>${pips(g)}</span>
+        <span class="pr">${p.v}<u>${p.u}</u> <span class="caret">▼</span></span>
+      </button>
+      <div class="exp ${open?'on':''}" id="exp_${g.id}">
+        <div class="inset">${open?f4GoalInner(g):''}</div>
+      </div>`}).join('');
+  /* animate to the measured height, not to an arbitrary cap */
+  wrap.querySelectorAll('.exp').forEach(x=>{
+    x.style.maxHeight = x.classList.contains('on') ? '0px' : '0px';
+  });
+  requestAnimationFrame(()=>wrap.querySelectorAll('.exp.on').forEach(x=>{
+    x.style.maxHeight = x.scrollHeight+'px';
+    /* release the clamp once it has arrived, or a NESTED expansion inside it gets clipped */
+    setTimeout(()=>{ if(x.classList.contains('on')) x.style.maxHeight='none' }, SLOW?1400:430);
+  }));
+  document.getElementById('f4up').classList.toggle('on',!!f4.goal);
+  const depth=f4.week?2:f4.goal?1:0;
+  document.getElementById('f4depth').innerHTML=
+    `<i class="${depth>=0?'on':''}"></i><i class="${depth>=1?'on':''}"></i><i class="${depth>=2?'on':''}"></i>`+
+    `<span style="margin-left:6px">THE RUN${f4.goal?` › <b>${esc(gById(f4.goal).short)}</b>`:''}${f4.week?` › <b>WEEK ${RUN.week}</b>`:''}</span>`;
+}
+function f4GoalInner(g){
+  const ladder=goalHTML(g,'f4');
+  return ladder.replace('data-zweek="f4"','data-f4week="1"')+
+    `<div class="exp ${f4.week?'on':''}"><div class="inset2">${f4.week?weekHTML(null):''}</div></div>`;
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-f4goal]');
+  if(t){ const id=t.dataset.f4goal;
+    f4.goal=f4.goal===id?null:id; f4.week=false; f4Render();
+    if(f4.goal)setTimeout(()=>{
+      const el=document.querySelector(`[data-f4goal="${id}"]`);
+      if(el)el.scrollIntoView({block:'start',behavior:SLOW?'smooth':'auto'});
+    },SLOW?260:60);
+    return; }
+  const w=e.target.closest('#f4run [data-f4week]');
+  if(w){ f4.week=!f4.week; f4Render();
+    setTimeout(()=>{const el=document.querySelector('#f4run .inset2');
+      if(el)el.scrollIntoView({block:'start',behavior:'smooth'})},80);
+    return; }
+});
+document.getElementById('f4up').addEventListener('click',()=>{
+  if(f4.week)f4.week=false; else f4.goal=null;
+  f4Render();
+});
+
+/* ══════════════════════ the Friday ritual stepper (shared) ══════════════════════ */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-fstep]');
+  if(!b)return;
+  fstep=(fstep+ +b.dataset.fstep+RIT.length)%RIT.length;
+  renderAll(true);
+});
+document.addEventListener('click',e=>{
+  const s=e.target.closest('.segs button'); if(!s)return;
+  s.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+  s.classList.add('on');
+  if(s.parentElement.classList.contains('band')){
+    /* scope to THIS phone — the ritual is rendered in all four prototypes at once */
+    const root=s.closest('.screen')||document;
+    let tot=0;
+    root.querySelectorAll('.segs.band').forEach(g=>{
+      const on=g.querySelector('button.on'); if(on)tot+=BAND[on.dataset.b][1];
+    });
+    const cv=root.querySelector('.capv'),cb=root.querySelector('.capbar');
+    if(cv){cv.textContent=tot;cb.style.width=Math.min(100,tot/CAP.total*100)+'%';
+      cv.style.color=tot>CAP.total?'var(--ember)':'var(--ink)'}
+  }
+});
+document.addEventListener('click',e=>{
+  const u=e.target.closest('[data-unfilter]');
+  if(u&&f3.lv===2){f3.filter=false;f3Render(0)}
+});
+document.addEventListener('click',e=>{
+  const a=e.target.closest('.ask .ab button'); if(!a)return;
+  a.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('pick'));
+  a.classList.add('pick');
+});
+
+/* ══════════════════════ global controls ══════════════════════ */
+function renderAll(keep){
+  ['hz1','hz2','hz3','hz4'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=horizonHTML()});
+  if(!keep){
+    f1.focus=null; f1.zoom=FRI?'week':'week';
+    f2.goal=null;  f2.week=true;
+    f3.lv=2;       f3.filter=!FRI;
+    f4.goal='sano';f4.week=true;
+  }
+  f1Render(); f2Render(); f3Render(0); f4Render();
+  /* F4's expansions animate to a measured height, so depth is only true once they settle */
+  setTimeout(measure,520);
+}
+function measure(){
+  document.querySelectorAll('[data-depth]').forEach(el=>{
+    const s=document.getElementById(el.dataset.depth);
+    if(!s)return;
+    const n=(s.scrollHeight+120)/844;
+    el.textContent=n<=1.02?'fits · 1 screen':n.toFixed(1)+' screens';
+  });
+}
+document.getElementById('btTue').addEventListener('click',()=>{
+  FRI=false;fstep=0;
+  document.getElementById('btTue').classList.add('on');
+  document.getElementById('btFri').classList.remove('on');
+  renderAll();
+});
+document.getElementById('btFri').addEventListener('click',()=>{
+  FRI=true;fstep=0;
+  document.getElementById('btFri').classList.add('on');
+  document.getElementById('btTue').classList.remove('on');
+  renderAll();
+});
+document.getElementById('btThumb').addEventListener('click',function(){
+  document.body.classList.toggle('thumbs');
+  this.classList.toggle('on',document.body.classList.contains('thumbs'));
+});
+document.getElementById('btSlow').addEventListener('click',function(){
+  SLOW=!SLOW;this.classList.toggle('on',SLOW);
+  document.body.classList.toggle('slow',SLOW);   /* a class, so re-renders keep it */
+});
+document.getElementById('btReset').addEventListener('click',()=>renderAll());
+
+/* ▶ PLAY THE ZOOM — runs each option's full transition so the morph can be watched */
+document.querySelectorAll('[data-demo]').forEach(b=>{
+  b.addEventListener('click',async()=>{
+    const k=b.dataset.demo, t=SLOW?1200:520;
+    if(k==='f1'){
+      f1.focus=null;f1.zoom=null;f1Render();await sleep(t*.7);
+      const row=document.querySelector('#f1sp .thr[data-goal="sano"]');
+      if(row)row.click(); await sleep(t);
+      const node=document.querySelector('#f1sp [data-zoomweek]');
+      if(node)node.click();
+    }
+    if(k==='f2'){
+      f2.goal=null;f2.week=false;f2Render();await sleep(t*.7);
+      const row=document.querySelector('#f2run [data-goal="sano"]');
+      if(row)row.click(); await sleep(t);
+      const z=document.querySelector('#f2goal [data-zweek]');
+      if(z)z.click();
+    }
+    if(k==='f3'){
+      f3.lv=0;f3Render(-1);await sleep(t*.7);
+      const row=document.querySelector('#f3body [data-goal="sano"]');
+      if(row)row.click(); await sleep(t);
+      f3.lv=2;f3Render(1);
+    }
+    if(k==='f4'){
+      f4.goal=null;f4.week=false;f4Render();await sleep(t*.7);
+      const row=document.querySelector('[data-f4goal="sano"]');
+      if(row)row.click(); await sleep(t);
+      const z=document.querySelector('#f4run [data-f4week]');
+      if(z)z.click();
+    }
+  });
+});
+
+renderAll();
+window.addEventListener('load',measure);
+</script>
+</body>
+</html>
