@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The Goal Builder — working prototype</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --t-fig:34px; --t-h2:19px; --t-h3:16px; --t-body:15px; --t-lab:12px; --t-min:11px;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+  --r1:6px; --r2:11px; --r3:16px; --tap:44px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+button,input,select,textarea{font-family:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.mono{font-family:'Geist Mono',monospace}
+
+/* ---------- phone shell (so it reads as the app on desktop too) ---------- */
+.shell{max-width:390px;margin:0 auto;min-height:100vh;position:relative;
+  padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+@media(min-width:520px){
+  body{background:#05050a;padding:22px 0}
+  .shell{border:1px solid var(--line2);border-radius:26px;overflow:hidden;min-height:860px;
+    box-shadow:0 34px 80px -34px #000;background:var(--bg)}
+}
+
+/* ---------- header ---------- */
+.vhead{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);
+  padding:calc(var(--s4) + env(safe-area-inset-top,0px)) var(--s4) var(--s3);
+  border-bottom:1px solid var(--line)}
+.vhead h2{font-size:26px;letter-spacing:-.03em}
+.vhead span{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.13em;color:var(--faint)}
+.segs{display:flex;gap:var(--s1);padding:var(--s3) var(--s4) 0}
+.seg{flex:1;min-height:var(--tap);border-radius:var(--r1);font-family:'Geist Mono',monospace;
+  font-size:var(--t-min);letter-spacing:.11em;color:var(--dim);background:var(--panel);
+  box-shadow:inset 0 0 0 1px var(--line)}
+.seg.on{background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;font-weight:700;box-shadow:none}
+
+/* ---------- section label ---------- */
+.sec{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s2);
+  padding:var(--s5) var(--s4) var(--s2);font-family:'Geist Mono',monospace;font-size:var(--t-lab);
+  letter-spacing:.17em;color:var(--faint);text-transform:uppercase}
+.sec b{color:var(--ink);font-weight:400}
+.sec button{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.12em;
+  color:var(--gold);min-height:var(--tap);display:flex;align-items:center}
+
+/* ---------- goal card ---------- */
+.wrapx{padding:0 var(--s4)}
+.gcard{position:relative;display:block;width:100%;text-align:left;border-radius:var(--r2);
+  background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);padding:var(--s3) var(--s3) var(--s3) var(--s4);
+  margin-bottom:var(--s2);min-height:var(--tap)}
+.gcard .rail{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:var(--r2) 0 0 var(--r2);
+  background:var(--c,var(--gold))}
+.gcard .top{display:flex;align-items:flex-start;gap:var(--s2)}
+.gcard .ttl{flex:1;min-width:0;font-family:'Clash Display',sans-serif;font-weight:600;
+  font-size:var(--t-h3);letter-spacing:-.02em;line-height:1.25}
+.gcard.parked .ttl,.gcard.done .ttl{color:var(--faint)}
+.gcard .meta{display:flex;flex-wrap:wrap;gap:var(--s1);margin-top:var(--s2)}
+.pill{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.09em;padding:5px 8px;
+  border-radius:var(--r1);background:var(--panel2);color:var(--dim);white-space:nowrap}
+.pill.area{color:var(--c,var(--gold));background:rgba(255,255,255,.04)}
+.pill.wig{background:rgba(224,178,94,.16);color:var(--gold)}
+.pill.learn{background:rgba(56,225,216,.14);color:var(--rune)}
+.pill.habit{background:rgba(176,140,255,.14);color:var(--violet)}
+.pill.miss{background:rgba(255,107,44,.12);color:#FF9A5E}
+.pill.ok{background:rgba(74,222,128,.14);color:var(--phos)}
+.gcard .lead{display:flex;align-items:center;gap:var(--s2);margin-top:var(--s3);
+  padding-top:var(--s3);border-top:1px solid var(--line)}
+.gcard .lead .n{font-family:'Clash Display',sans-serif;font-weight:700;font-size:23px;
+  letter-spacing:-.03em;color:var(--ink);line-height:1}
+.gcard .lead .l{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.1em;
+  color:var(--faint);line-height:1.6}
+.gcard .lead .bar{margin-left:auto;width:74px;height:6px;border-radius:99px;background:#221d33;overflow:hidden}
+.gcard .lead .bar i{display:block;height:100%;border-radius:99px;background:var(--c,var(--gold))}
+.empty{border-radius:var(--r2);padding:var(--s5) var(--s4);text-align:center;
+  box-shadow:inset 0 0 0 1px var(--line);margin:0 var(--s4)}
+.empty b{display:block;font-family:'Clash Display',sans-serif;font-weight:600;font-size:var(--t-h3);
+  letter-spacing:-.02em;margin-bottom:var(--s2)}
+.empty p{font-size:14px;color:var(--faint);margin:0 0 var(--s4);line-height:1.5}
+
+/* ---------- buttons ---------- */
+.btn{width:100%;min-height:var(--tap);border-radius:var(--r2);font-size:var(--t-body);font-weight:600;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204}
+.btn.gh{background:none;box-shadow:inset 0 0 0 1px var(--line2);color:var(--dim);font-weight:500}
+.btn.dz{background:none;box-shadow:inset 0 0 0 1px rgba(255,77,94,.4);color:var(--blood)}
+.btn:active{transform:translateY(1px)}
+.fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(22px + env(safe-area-inset-bottom,0px));
+  z-index:40;min-height:52px;padding:0 var(--s5);border-radius:99px;font-family:'Geist Mono',monospace;
+  font-size:var(--t-lab);letter-spacing:.14em;font-weight:700;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;
+  box-shadow:0 10px 28px -8px rgba(224,178,94,.6)}
+@media(min-width:520px){.fab{position:absolute}}
+
+/* ---------- sheet ---------- */
+.ov{position:fixed;inset:0;z-index:200;background:rgba(4,3,7,.84);backdrop-filter:blur(6px);
+  display:none;align-items:flex-end;justify-content:center}
+.ov.on{display:flex}
+@media(min-width:520px){.ov{position:absolute}}
+.sheet{width:100%;max-width:390px;background:#0c0a13;box-shadow:inset 0 0 0 1px var(--line2);
+  border-radius:var(--r3) var(--r3) 0 0;padding:var(--s2) var(--s4) calc(var(--s5) + env(safe-area-inset-bottom,0px));
+  max-height:92vh;overflow-y:auto}
+.grab{width:34px;height:4px;border-radius:99px;background:var(--line2);margin:0 auto var(--s4)}
+.sh-t{font-family:'Clash Display',sans-serif;font-weight:600;font-size:22px;letter-spacing:-.03em;
+  margin-bottom:var(--s1)}
+.sh-s{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.13em;color:var(--faint);
+  margin-bottom:var(--s4)}
+.fld{margin-bottom:var(--s4)}
+.fld label{display:block;font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;
+  color:var(--faint);text-transform:uppercase;margin-bottom:var(--s2)}
+.fld label u{text-decoration:none;color:#4b4459;letter-spacing:.1em}
+input[type=text],input[type=date],input[type=number],textarea,select{
+  width:100%;background:var(--panel2);box-shadow:inset 0 0 0 1px var(--line2);border:0;
+  border-radius:var(--r1);padding:var(--s3);font-size:16px;min-height:var(--tap);resize:none}
+input:focus,textarea:focus,select:focus{outline:none;box-shadow:inset 0 0 0 1px var(--gold)}
+.chips{display:flex;flex-wrap:wrap;gap:var(--s1)}
+.chip{min-height:var(--tap);padding:0 var(--s3);border-radius:var(--r1);font-family:'Geist Mono',monospace;
+  font-size:var(--t-min);letter-spacing:.09em;background:var(--panel2);color:var(--dim);
+  box-shadow:inset 0 0 0 1px var(--line2);display:flex;align-items:center;gap:6px}
+.chip.on{background:rgba(224,178,94,.16);color:var(--gold);box-shadow:inset 0 0 0 1px rgba(224,178,94,.5)}
+.chip i{width:9px;height:9px;border-radius:50%;background:var(--c,var(--gold));display:block}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+.row2.g3{grid-template-columns:1fr 1fr 1fr}
+.hint{font-size:13px;color:var(--faint);line-height:1.5;margin-top:var(--s2)}
+
+/* ---------- manage rows ---------- */
+.mrow{display:flex;align-items:center;gap:var(--s2);min-height:var(--tap);padding:var(--s2) var(--s3);
+  border-radius:var(--r1);background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);margin-bottom:var(--s2)}
+.mrow .nm{flex:1;min-width:0;font-size:var(--t-body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow .dt{font-family:'Geist Mono',monospace;font-size:var(--t-min);color:var(--faint);white-space:nowrap}
+.ic{min-width:var(--tap);min-height:var(--tap);display:flex;align-items:center;justify-content:center;
+  border-radius:var(--r1);font-family:'Geist Mono',monospace;font-size:14px;color:var(--dim)}
+.ic:active{background:var(--panel2)}
+
+/* ---------- the week ---------- */
+.cap{margin:0 var(--s4) var(--s3);border-radius:var(--r2);padding:var(--s3) var(--s4);
+  background:var(--panel);box-shadow:inset 0 0 0 1px var(--line)}
+.cap .r{display:flex;align-items:baseline;gap:var(--s2)}
+.cap .n{font-family:'Clash Display',sans-serif;font-weight:700;font-size:var(--t-fig);letter-spacing:-.04em;line-height:1}
+.cap .l{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.11em;color:var(--faint);line-height:1.6}
+.cap .t{margin-top:var(--s3);height:7px;border-radius:99px;background:#221d33;overflow:hidden}
+.cap .t i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#6b4a00,var(--gold))}
+.cap.over .t i{background:linear-gradient(90deg,#7a1f28,var(--blood))}
+.warn{margin:0 var(--s4) var(--s3);border-radius:var(--r2);padding:var(--s3) var(--s4);
+  box-shadow:inset 0 0 0 1px rgba(255,107,44,.4);background:rgba(255,107,44,.07)}
+.warn b{display:block;font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;
+  color:#FF9A5E;margin-bottom:var(--s2)}
+.warn p{margin:0;font-size:14px;color:var(--dim);line-height:1.5}
+.cmt{position:relative;border-radius:var(--r2);background:var(--panel);padding:var(--s3) var(--s3) var(--s3) var(--s4);
+  box-shadow:inset 0 0 0 1px var(--line);margin-bottom:var(--s2)}
+.cmt .rail{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:var(--r2) 0 0 var(--r2);background:var(--c)}
+.cmt .ct{font-size:var(--t-body);line-height:1.35}
+.cmt .cm{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s1);margin-top:var(--s2)}
+.cmt .cm button.pill{min-height:var(--tap);padding:0 var(--s3)}
+.foot{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.12em;color:#454055;
+  text-align:center;padding:var(--s5) var(--s4) 0;line-height:2}
+</style>
+</head>
+<body>
+<div class="shell" id="shell">
+  <div class="vhead"><h2>The Goals</h2><span id="hz"></span></div>
+  <div class="segs">
+    <button class="seg" data-v="area">BY AREA</button>
+    <button class="seg" data-v="horizon">BY DATE</button>
+    <button class="seg" data-v="week">THE WEEK</button>
+  </div>
+  <div id="body"></div>
+  <div class="foot">PROTOTYPE · SAVES TO THIS PHONE ONLY<br>NOTHING HERE TOUCHES THE LIVE APP</div>
+  <button class="fab" id="fab">+ ADD</button>
+</div>
+
+<div class="ov" id="ov"><div class="sheet" id="sheet"></div></div>
+
+<script>
+/* =======================================================================
+   THE MODEL — everything is yours to create. Nothing is hardcoded.
+   areas[]     what the goal belongs to   (a business, a life area — any number)
+   horizons[]  named dates                (December, month ends, a two-month, anything)
+   goals[]     the goal itself            (area + horizon + optional parent = the ladder)
+   commits[]   this week's work           (TYPED to a goal — the missing link)
+   ======================================================================= */
+const KEY='btb-goal-builder-v1';
+const uid=()=>Math.random().toString(36).slice(2,9);
+const PALETTE=['#E0B25E','#7FB4FF','#FF6B2C','#B08CFF','#38E1D8','#4ADE80','#FF4D5E','#F2C14E'];
+const DAYS=['mon','tue','wed','thu','fri'];
+const BLOCKS=['b1','b2','b3','b4'];
+const CAP=20;                              /* 4 deep blocks × 5 weekdays — the fixed volume */
+
+const BLANK={areas:[],horizons:[],goals:[],commits:[],v:1};
+let DB=load(), VIEW='area', FILTER=null;
+
+function load(){
+  try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.v)return r}catch(e){}
+  return JSON.parse(JSON.stringify(BLANK));
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(DB));render()}
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const area=id=>DB.areas.find(a=>a.id===id);
+const horizon=id=>DB.horizons.find(h=>h.id===id);
+const byRank=(a,b)=>(a.rank||0)-(b.rank||0);
+const active=g=>g.state==='active';
+const fmtDate=d=>{if(!d)return'NO DATE';const x=new Date(d+'T00:00:00');
+  return x.toLocaleDateString('en-US',{month:'short',day:'numeric'}).toUpperCase()};
+const daysTo=d=>{if(!d)return null;
+  return Math.round((new Date(d+'T00:00:00')-new Date().setHours(0,0,0,0))/864e5)};
+
+/* commitments made against a goal this week — the lead measure, counted for real */
+const leadDone=gid=>DB.commits.filter(c=>c.goalId===gid&&c.done).length;
+const leadSet =gid=>DB.commits.filter(c=>c.goalId===gid).length;
+
+/* =======================================================================
+   RENDER
+   ======================================================================= */
+function render(){
+  document.querySelectorAll('.seg').forEach(b=>b.classList.toggle('on',b.dataset.v===VIEW));
+  const n=DB.goals.filter(active).length;
+  document.getElementById('hz').textContent=n?`${n} LIVE · ${DB.areas.length} AREAS`:'NOTHING SET YET';
+  const el=document.getElementById('body');
+  if(!DB.areas.length&&!DB.goals.length){el.innerHTML=firstRun();return}
+  el.innerHTML = VIEW==='area'?byArea() : VIEW==='horizon'?byHorizon() : theWeek();
+}
+
+function firstRun(){
+  return `<div style="padding:var(--s5) 0">
+    <div class="empty"><b>Nothing in here yet — and that's the point.</b>
+      <p>This is empty on purpose. Add your own areas, your own dates and your own goals.
+         Start with an area: a business, or a part of your life.</p>
+      <button class="btn" onclick="editArea()">ADD YOUR FIRST AREA</button>
+      <button class="btn gh" style="margin-top:var(--s2)" onclick="demo()">OR LOAD AN EXAMPLE TO SEE THE SHAPE</button>
+    </div></div>`;
+}
+
+function goalCard(g){
+  const a=area(g.areaId), h=horizon(g.horizonId), c=a?a.color:'#E0B25E';
+  const dt=h?h.date:g.date, dd=daysTo(dt);
+  const miss=[]; if(!g.evidence)miss.push('NO EVIDENCE'); if(!g.lead||!g.lead.name)miss.push('NO LEAD MEASURE');
+  const kids=DB.goals.filter(x=>x.parentId===g.id&&active(x)).length;
+  const lead=g.lead&&g.lead.name?`<div class="lead">
+      <span class="n">${leadDone(g.id)}</span>
+      <span class="l">${esc(g.lead.name).toUpperCase()}<br>THIS WEEK · TARGET ${g.lead.target||'—'}</span>
+      <span class="bar"><i style="width:${Math.min(100,g.lead.target?leadDone(g.id)/g.lead.target*100:0)}%"></i></span>
+    </div>`:'';
+  return `<button class="gcard ${g.state}" style="--c:${c}" onclick="editGoal('${g.id}')">
+    <span class="rail"></span>
+    <span class="top"><span class="ttl">${esc(g.title)}</span></span>
+    <span class="meta">
+      ${a?`<span class="pill area" style="--c:${c}">${esc(a.name)}</span>`:''}
+      <span class="pill">${fmtDate(dt)}${dd!=null&&dd>=0?` · ${dd}d`:dd!=null?' · PAST':''}</span>
+      ${g.wig?'<span class="pill wig">WIG</span>':''}
+      ${g.kind==='learning'?'<span class="pill learn">LEARNING</span>':''}
+      ${g.kind==='habit'?'<span class="pill habit">HABIT</span>':''}
+      ${g.state==='parked'?'<span class="pill">PARKED</span>':''}
+      ${g.state==='done'?'<span class="pill ok">DONE</span>':''}
+      ${kids?`<span class="pill">${kids} STEP${kids>1?'S':''}</span>`:''}
+      ${miss.map(m=>`<span class="pill miss">${m}</span>`).join('')}
+    </span>
+    ${lead}</button>`;
+}
+
+function byArea(){
+  let h='';
+  DB.areas.slice().sort(byRank).forEach(a=>{
+    const gs=DB.goals.filter(g=>g.areaId===a.id).sort((x,y)=>(x.state==='done')-(y.state==='done')||byRank(x,y));
+    h+=`<div class="sec"><span style="color:${a.color}">${esc(a.name)}</span>
+      <b>${gs.filter(active).length} live</b></div><div class="wrapx">`;
+    h+= gs.length? gs.map(goalCard).join('')
+      : `<div style="padding:var(--s3) 0 var(--s2)"><button class="btn gh" onclick="editGoal(null,'${a.id}')">+ FIRST GOAL FOR ${esc(a.name).toUpperCase()}</button></div>`;
+    h+='</div>';
+  });
+  const orphanArea=DB.areas.filter(a=>!DB.goals.some(g=>g.areaId===a.id&&active(g)));
+  h+=`<div class="sec"><span>Manage</span></div><div class="wrapx">
+    <button class="btn gh" onclick="manageAreas()">AREAS · ${DB.areas.length}</button>
+    <div style="height:var(--s2)"></div>
+    <button class="btn gh" onclick="manageHorizons()">DATES · ${DB.horizons.length}</button>
+    <div style="height:var(--s2)"></div>
+    <button class="btn gh" onclick="wipe()">CLEAR EVERYTHING</button></div>`;
+  return h;
+}
+
+function byHorizon(){
+  const hs=DB.horizons.slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  let h='';
+  hs.forEach(hz=>{
+    const gs=DB.goals.filter(g=>g.horizonId===hz.id).sort(byRank);
+    const dd=daysTo(hz.date);
+    h+=`<div class="sec"><span>${esc(hz.label)}</span><b>${fmtDate(hz.date)}${dd!=null&&dd>=0?` · ${dd}d`:''}</b></div>
+      <div class="wrapx">${gs.length?gs.map(goalCard).join(''):
+        `<div class="empty" style="margin:0"><p style="margin:0">Nothing due at this date yet.</p></div>`}</div>`;
+  });
+  const none=DB.goals.filter(g=>!g.horizonId);
+  if(none.length)h+=`<div class="sec"><span>No date set</span></div><div class="wrapx">${none.map(goalCard).join('')}</div>`;
+  h+=`<div class="sec"><span>Manage</span></div><div class="wrapx">
+    <button class="btn gh" onclick="manageHorizons()">ADD OR EDIT DATES</button></div>`;
+  return h;
+}
+
+function theWeek(){
+  const cs=DB.commits;
+  const used=cs.length, over=used>CAP;
+  const live=DB.goals.filter(active);
+  const orphans=live.filter(g=>!cs.some(c=>c.goalId===g.id));
+  let h=`<div class="sec"><span>Capacity</span><b>fixed volume</b></div>
+    <div class="cap ${over?'over':''}"><div class="r"><span class="n">${used}</span>
+      <span class="l">OF ${CAP} DEEP BLOCKS<br>COMMITTED THIS WEEK</span></div>
+      <div class="t"><i style="width:${Math.min(100,used/CAP*100)}%"></i></div></div>`;
+  if(over)h+=`<div class="warn"><b>OVER CAPACITY</b><p>You have committed ${used} blocks against
+    ${CAP} that exist. Something here will not happen — better to decide which now than find out Thursday.</p></div>`;
+  if(live.length&&orphans.length)h+=`<div class="warn"><b>NOTHING ON THESE</b>
+    <p>${orphans.map(g=>esc(g.title)).join(' · ')} — no block this week. Allowed, but it should be
+    a decision rather than an accident.</p></div>`;
+
+  h+=`<div class="sec"><span>Committed</span><b>${cs.filter(c=>c.done).length} done</b></div><div class="wrapx">`;
+  h+= cs.length? cs.map(c=>{
+    const g=DB.goals.find(x=>x.id===c.goalId), a=g?area(g.areaId):null;
+    return `<div class="cmt" style="--c:${a?a.color:'#3a3350'}"><span class="rail"></span>
+      <div class="ct">${esc(c.text)}</div>
+      <div class="cm">
+        <span class="pill area" style="--c:${a?a.color:''}">${g?esc(g.title.slice(0,26)):'ORPHAN'}</span>
+        <span class="pill">${(c.day||'—').toUpperCase()} · ${(c.block||'—').toUpperCase()}</span>
+        <button class="pill ${c.done?'ok':''}" onclick="toggleCommit('${c.id}')">${c.done?'DONE':'MARK DONE'}</button>
+        <button class="pill" onclick="editCommit('${c.id}')">EDIT</button>
+      </div></div>`}).join('')
+    : `<div class="empty" style="margin:0"><b>No commitments yet.</b>
+        <p>A commitment is a goal, a day and a block. That is what makes it a plan instead of a wish.</p>
+        ${live.length?`<button class="btn" onclick="editCommit()">MAKE ONE</button>`
+          :`<p style="color:var(--faint)">Add a goal first.</p>`}</div>`;
+  h+='</div>';
+  if(cs.length)h+=`<div class="wrapx" style="margin-top:var(--s2)">
+    <button class="btn gh" onclick="editCommit()">+ COMMIT A BLOCK</button></div>`;
+  return h;
+}
+
+/* =======================================================================
+   SHEETS
+   ======================================================================= */
+const ov=document.getElementById('ov'), sheet=document.getElementById('sheet');
+function open_(html){sheet.innerHTML='<div class="grab"></div>'+html;ov.classList.add('on')}
+function close_(){ov.classList.remove('on')}
+ov.addEventListener('click',e=>{if(e.target===ov)close_()});
+
+/* ---- area ---- */
+function editArea(id){
+  const a=id?area(id):null;
+  open_(`<div class="sh-t">${a?'Edit area':'New area'}</div>
+    <div class="sh-s">A BUSINESS, OR A PART OF YOUR LIFE</div>
+    <div class="fld"><label>Name</label>
+      <input type="text" id="aName" value="${esc(a?a.name:'')}" placeholder="SANO, Trading, Fruits, Personal…"></div>
+    <div class="fld"><label>Colour</label><div class="chips" id="aCol">
+      ${PALETTE.map(c=>`<button class="chip ${a&&a.color===c?'on':(!a&&c===PALETTE[0]?'on':'')}"
+        data-c="${c}" onclick="pickCol(this)"><i style="--c:${c}"></i></button>`).join('')}</div></div>
+    <button class="btn" onclick="saveArea('${id||''}')">SAVE</button>
+    ${a?`<div style="height:var(--s2)"></div><button class="btn dz" onclick="delArea('${id}')">DELETE AREA</button>`:''}`);
+  setTimeout(()=>document.getElementById('aName').focus(),80);
+}
+function pickCol(b){b.parentNode.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));b.classList.add('on')}
+function saveArea(id){
+  const name=document.getElementById('aName').value.trim(); if(!name)return;
+  const col=document.querySelector('#aCol .chip.on')?.dataset.c||PALETTE[0];
+  if(id){Object.assign(area(id),{name,color:col})}
+  else DB.areas.push({id:uid(),name,color:col,rank:DB.areas.length});
+  close_();save();
+}
+function delArea(id){
+  if(DB.goals.some(g=>g.areaId===id)){alert('Move or delete its goals first.');return}
+  DB.areas=DB.areas.filter(a=>a.id!==id);close_();save();
+}
+function manageAreas(){
+  open_(`<div class="sh-t">Areas</div><div class="sh-s">TAP TO EDIT · ARROWS TO REORDER</div>
+    ${DB.areas.slice().sort(byRank).map((a,i,arr)=>`<div class="mrow">
+      <i style="width:11px;height:11px;border-radius:50%;background:${a.color};flex:none"></i>
+      <span class="nm">${esc(a.name)}</span>
+      <button class="ic" onclick="moveArea('${a.id}',-1)" ${i===0?'style="opacity:.25"':''}>▲</button>
+      <button class="ic" onclick="moveArea('${a.id}',1)" ${i===arr.length-1?'style="opacity:.25"':''}>▼</button>
+      <button class="ic" onclick="editArea('${a.id}')">✎</button></div>`).join('')}
+    <button class="btn" style="margin-top:var(--s3)" onclick="editArea()">+ NEW AREA</button>`);
+}
+function moveArea(id,d){
+  const s=DB.areas.slice().sort(byRank),i=s.findIndex(a=>a.id===id),j=i+d;
+  if(j<0||j>=s.length)return;
+  [s[i].rank,s[j].rank]=[s[j].rank??j,s[i].rank??i];
+  s.forEach((a,k)=>a.rank=k===i?j:k===j?i:k);
+  localStorage.setItem(KEY,JSON.stringify(DB));manageAreas();render();
+}
+
+/* ---- horizon ---- */
+function editHorizon(id){
+  const h=id?horizon(id):null;
+  open_(`<div class="sh-t">${h?'Edit date':'New date'}</div>
+    <div class="sh-s">A HORIZON YOU AIM AT — MONTHLY, TWO-MONTH, ANYTHING</div>
+    <div class="fld"><label>Label</label>
+      <input type="text" id="hLabel" value="${esc(h?h.label:'')}" placeholder="End of August · Q4 · December 1"></div>
+    <div class="fld"><label>Date</label><input type="date" id="hDate" value="${h?h.date:''}"></div>
+    <div class="fld"><label>Quick add <u>month ends motivate — use them</u></label><div class="chips">
+      ${monthEnds().map(m=>`<button class="chip" onclick="quickH('${m.label}','${m.date}')">${m.label}</button>`).join('')}
+    </div></div>
+    <button class="btn" onclick="saveHorizon('${id||''}')">SAVE</button>
+    ${h?`<div style="height:var(--s2)"></div><button class="btn dz" onclick="delHorizon('${id}')">DELETE</button>`:''}`);
+}
+function monthEnds(){
+  const out=[],d=new Date();
+  for(let i=0;i<6;i++){
+    const x=new Date(d.getFullYear(),d.getMonth()+i+1,0);
+    out.push({label:x.toLocaleDateString('en-US',{month:'long'}),
+      date:`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`});
+  }
+  return out;
+}
+function quickH(label,date){
+  document.getElementById('hLabel').value='End of '+label;
+  document.getElementById('hDate').value=date;
+}
+function saveHorizon(id){
+  const label=document.getElementById('hLabel').value.trim();
+  const date=document.getElementById('hDate').value;
+  if(!label||!date)return;
+  if(id)Object.assign(horizon(id),{label,date});
+  else DB.horizons.push({id:uid(),label,date});
+  close_();save();
+}
+function delHorizon(id){
+  DB.goals.forEach(g=>{if(g.horizonId===id)g.horizonId=null});   /* never destroy the goal */
+  DB.horizons=DB.horizons.filter(h=>h.id!==id);close_();save();
+}
+function manageHorizons(){
+  const hs=DB.horizons.slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  open_(`<div class="sh-t">Dates</div><div class="sh-s">DELETING A DATE NEVER DELETES A GOAL</div>
+    ${hs.length?hs.map(h=>`<div class="mrow"><span class="nm">${esc(h.label)}</span>
+      <span class="dt">${fmtDate(h.date)}</span>
+      <button class="ic" onclick="editHorizon('${h.id}')">✎</button></div>`).join('')
+      :`<p class="hint">No dates yet. A goal can live without one, but a dated goal is a picture and an undated one is a wish.</p>`}
+    <button class="btn" style="margin-top:var(--s3)" onclick="editHorizon()">+ NEW DATE</button>`);
+}
+
+/* ---- goal ---- */
+function editGoal(id,presetArea){
+  const g=id?DB.goals.find(x=>x.id===id):null;
+  const areas=DB.areas.slice().sort(byRank);
+  if(!areas.length){editArea();return}
+  const hs=DB.horizons.slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const aid=g?g.areaId:(presetArea||areas[0].id);
+  const parents=DB.goals.filter(x=>x.id!==id&&active(x));
+  open_(`<div class="sh-t">${g?'Edit goal':'New goal'}</div>
+    <div class="sh-s">${g?'CHANGE ANYTHING · NOTHING GETS ZEROED':'TITLE AND AREA ARE ENOUGH — REFINE IT LATER'}</div>
+
+    <div class="fld"><label>The goal</label>
+      <textarea id="gTitle" rows="2" placeholder="What has to be true">${esc(g?g.title:'')}</textarea></div>
+
+    <div class="fld"><label>Area</label><div class="chips" id="gArea">
+      ${areas.map(a=>`<button class="chip ${a.id===aid?'on':''}" data-id="${a.id}"
+        onclick="pickOne(this)"><i style="--c:${a.color}"></i>${esc(a.name)}</button>`).join('')}
+      <button class="chip" onclick="editArea()">+ NEW</button></div></div>
+
+    <div class="fld"><label>Due by</label><div class="chips" id="gHz">
+      ${hs.map((h,i)=>`<button class="chip ${g?(g.horizonId===h.id?'on':''):(i===0?'on':'')}" data-id="${h.id}"
+        onclick="pickOne(this)">${esc(h.label)}</button>`).join('')}
+      <button class="chip ${g&&!g.horizonId?'on':(!g&&!hs.length?'on':'')}" data-id="" onclick="pickOne(this)">NO DATE</button>
+      <button class="chip" onclick="editHorizon()">+ NEW DATE</button></div></div>
+
+    <div class="fld"><label>Kind <u>a new task needs a learning goal first</u></label><div class="chips" id="gKind">
+      ${[['outcome','OUTCOME'],['learning','LEARNING'],['habit','HABIT']].map(([k,l])=>
+        `<button class="chip ${(g?g.kind:'outcome')===k?'on':''}" data-id="${k}" onclick="pickOne(this)">${l}</button>`).join('')}
+    </div></div>
+
+    <div class="fld"><label>Evidence <u>what would prove it</u></label>
+      <input type="text" id="gEv" value="${esc(g?g.evidence:'')}" placeholder="A reply from a named kitchen in my inbox"></div>
+
+    <div class="fld"><label>What will stop this <u>optional, but it's the useful one</u></label>
+      <input type="text" id="gOb" value="${esc(g?g.obstacle:'')}" placeholder="I put off calling until the afternoon"></div>
+
+    <div class="fld"><label>Lead measure <u>the thing you control weekly</u></label>
+      <div class="row2"><input type="text" id="gLead" value="${esc(g&&g.lead?g.lead.name:'')}" placeholder="Conversations">
+      <input type="number" id="gTarget" value="${g&&g.lead?(g.lead.target||''):''}" placeholder="per week"></div></div>
+
+    ${parents.length?`<div class="fld"><label>A step toward <u>optional — builds the ladder</u></label>
+      <select id="gParent"><option value="">Nothing — this is a top-level goal</option>
+      ${parents.map(p=>`<option value="${p.id}" ${g&&g.parentId===p.id?'selected':''}>${esc(p.title.slice(0,44))}</option>`).join('')}
+      </select></div>`:''}
+
+    <div class="fld"><label>Flags</label><div class="chips">
+      <button class="chip ${g&&g.wig?'on':''}" id="gWig" onclick="this.classList.toggle('on')">THE WIG</button>
+    </div></div>
+
+    <button class="btn" onclick="saveGoal('${id||''}')">SAVE</button>
+    ${g?`<div class="row2" style="margin-top:var(--s2)">
+      <button class="btn gh" onclick="setState('${id}','${g.state==='parked'?'active':'parked'}')">${g.state==='parked'?'UNPARK':'PARK IT'}</button>
+      <button class="btn gh" onclick="setState('${id}','${g.state==='done'?'active':'done'}')">${g.state==='done'?'REOPEN':'MARK DONE'}</button>
+      </div>
+      <div style="height:var(--s2)"></div><button class="btn dz" onclick="delGoal('${id}')">DELETE GOAL</button>
+      <p class="hint">Parking is not failing. A parked goal keeps every count it earned.</p>`:''}`);
+  setTimeout(()=>document.getElementById('gTitle').focus(),80);
+}
+function pickOne(b){b.parentNode.querySelectorAll('.chip[data-id]').forEach(x=>x.classList.remove('on'));b.classList.add('on')}
+const pick=id=>document.querySelector('#'+id+' .chip.on')?.dataset.id;
+function saveGoal(id){
+  const title=document.getElementById('gTitle').value.trim(); if(!title)return;
+  const lead=document.getElementById('gLead').value.trim();
+  const o={
+    title, areaId:pick('gArea'), horizonId:pick('gHz')||null, kind:pick('gKind')||'outcome',
+    evidence:document.getElementById('gEv').value.trim(),
+    obstacle:document.getElementById('gOb').value.trim(),
+    lead:lead?{name:lead,target:parseInt(document.getElementById('gTarget').value)||null}:null,
+    parentId:document.getElementById('gParent')?document.getElementById('gParent').value||null:null,
+    wig:document.getElementById('gWig').classList.contains('on')?1:0,
+  };
+  if(id)Object.assign(DB.goals.find(x=>x.id===id),o);          /* never touches state or counts */
+  else DB.goals.push({id:uid(),state:'active',rank:DB.goals.length,createdOn:new Date().toISOString().slice(0,10),...o});
+  close_();save();
+}
+function setState(id,st){const g=DB.goals.find(x=>x.id===id);g.state=st;close_();save()}
+function delGoal(id){
+  DB.goals.forEach(g=>{if(g.parentId===id)g.parentId=null});
+  DB.commits=DB.commits.filter(c=>c.goalId!==id);
+  DB.goals=DB.goals.filter(g=>g.id!==id);close_();save();
+}
+
+/* ---- commitment: a goal + a day + a block ---- */
+function editCommit(id){
+  const c=id?DB.commits.find(x=>x.id===id):null;
+  const live=DB.goals.filter(active);
+  if(!live.length){close_();return}
+  open_(`<div class="sh-t">${c?'Edit block':'Commit a block'}</div>
+    <div class="sh-s">A GOAL, A DAY AND A BLOCK — THAT IS WHAT MAKES IT A PLAN</div>
+    <div class="fld"><label>Which goal</label><div class="chips" id="cGoal">
+      ${live.map(g=>{const a=area(g.areaId);return `<button class="chip ${c&&c.goalId===g.id?'on':(!c&&g.id===live[0].id?'on':'')}"
+        data-id="${g.id}" onclick="pickOne(this)"><i style="--c:${a?a.color:''}"></i>${esc(g.title.slice(0,22))}</button>`}).join('')}
+    </div></div>
+    <div class="fld"><label>What this block produces</label>
+      <input type="text" id="cText" value="${esc(c?c.text:'')}" placeholder="Call 10 owners from the list"></div>
+    <div class="fld"><label>Day</label><div class="chips" id="cDay">
+      ${DAYS.map(d=>`<button class="chip ${c&&c.day===d?'on':(!c&&d==='mon'?'on':'')}" data-id="${d}"
+        onclick="pickOne(this)">${d.toUpperCase()}</button>`).join('')}</div></div>
+    <div class="fld"><label>Block</label><div class="chips" id="cBlock">
+      ${BLOCKS.map(b=>`<button class="chip ${c&&c.block===b?'on':(!c&&b==='b1'?'on':'')}" data-id="${b}"
+        onclick="pickOne(this)">${b.toUpperCase()}</button>`).join('')}</div></div>
+    <button class="btn" onclick="saveCommit('${id||''}')">SAVE</button>
+    ${c?`<div style="height:var(--s2)"></div><button class="btn dz" onclick="delCommit('${id}')">REMOVE</button>`:''}`);
+}
+function saveCommit(id){
+  const text=document.getElementById('cText').value.trim(); if(!text)return;
+  const o={goalId:pick('cGoal'),text,day:pick('cDay'),block:pick('cBlock')};
+  if(id)Object.assign(DB.commits.find(x=>x.id===id),o);
+  else DB.commits.push({id:uid(),done:0,...o});
+  close_();save();
+}
+function toggleCommit(id){const c=DB.commits.find(x=>x.id===id);c.done=c.done?0:1;save()}
+function delCommit(id){DB.commits=DB.commits.filter(c=>c.id!==id);close_();save()}
+
+/* ---- utility ---- */
+function wipe(){if(confirm('Clear every area, date, goal and commitment on this device?')){
+  DB=JSON.parse(JSON.stringify(BLANK));save()}}
+function demo(){
+  const a1=uid(),a2=uid(),a3=uid(),h1=uid(),h2=uid();
+  const me=new Date(),end=new Date(me.getFullYear(),me.getMonth()+1,0);
+  const d=x=>x.toISOString().slice(0,10);
+  DB={v:1,
+    areas:[{id:a1,name:'Example business',color:PALETTE[0],rank:0},
+           {id:a2,name:'Second business',color:PALETTE[1],rank:1},
+           {id:a3,name:'Personal',color:PALETTE[2],rank:2}],
+    horizons:[{id:h1,label:'End of this month',date:d(end)},
+              {id:h2,label:'The run ends',date:'2026-12-01'}],
+    goals:[
+      {id:uid(),areaId:a1,horizonId:h2,title:'Three clients signed and paying',kind:'outcome',wig:1,state:'active',rank:0,
+       evidence:'Three signed agreements and three payments received',obstacle:'The process is not written down',
+       lead:{name:'Conversations',target:12}},
+      {id:uid(),areaId:a1,horizonId:h1,title:'The delivery process written down and signed off',kind:'learning',state:'active',rank:1,
+       evidence:'A document I have read and approved end to end',lead:{name:'Hours on it',target:3}},
+      {id:uid(),areaId:a2,horizonId:h2,title:'In talks with one supplier',kind:'outcome',state:'active',rank:2,
+       evidence:'A reply from a named supplier in my inbox',lead:{name:'Suppliers contacted',target:5}},
+      {id:uid(),areaId:a3,horizonId:h1,title:'Move three times a week',kind:'habit',state:'active',rank:3,
+       lead:{name:'Sessions',target:3}}],
+    commits:[]};
+  save();
+}
+
+document.querySelectorAll('.seg').forEach(b=>b.onclick=()=>{VIEW=b.dataset.v;render()});
+document.getElementById('fab').onclick=()=>{
+  if(VIEW==='week')editCommit(); else if(!DB.areas.length)editArea(); else editGoal();
+};
+render();
+</script>
+</body>
+</html>
