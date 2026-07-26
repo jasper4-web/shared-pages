@@ -729,7 +729,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
            {key:"ppfd",label:"Measured PPFD at canopy",unit:"µmol",hint:"Photone app or a meter. Leave blank if you have no reading.",sets:"ppfd"}]},
     {t:"measure",label:"Measure her",icon:"ruler",
      pick:{label:"What you measured",opts:["Height","Widest span","Node count"]},
-     num:{key:"val",label:"Value",unit:"in / nodes",hint:"Height & span in inches; nodes as a count."}},
+     num:{key:"val",label:"Value",unit:"in / nodes",unitBy:{"Node count":"nodes","Height":"in","Widest span":"in"},hint:"Height & span in inches; nodes as a count."}},
     {t:"topdress",label:"Top-dress",icon:"layers",
      pick:{label:"What went on",opts:["Castings","Craft blend","Kelp/alfalfa","Neem/karanja meal","Other"]},
      num:{key:"cups",label:"How much",unit:"cups"},detail:"Product name — worth recording exactly"},
@@ -840,6 +840,8 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
      so a stale tab can never revert a sibling's settings. */
   var CFGTOUCHED={};
   function touchCfg(){ for(var i=0;i<arguments.length;i++)CFGTOUCHED[arguments[i]]=1; }
+  var PURGED={};                 // demo keys deleted this session — must never come back from disk
+  var AUTHORITATIVE=false;       // set only by Restore: this write REPLACES, it does not merge
   /* save() is the ONLY writer, and it RECONCILES. It used to blind-write the whole
      in-memory store, so any write from a tab with a stale copy silently destroyed
      whatever the other tab had written — past days included. It is called bare from
@@ -847,18 +849,21 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
      live here rather than only in commitDraft(). */
   function save(){
     try{
-      var disk=reloadStore();
+      var disk=AUTHORITATIVE?null:reloadStore();
       if(disk){
-        // entries: never drop a day we don't have; merge days we both have
         Object.keys(disk.entries).forEach(function(k){
+          if(PURGED[k])return;                       // a purged sample day must stay dead
           if(!store.entries[k]) store.entries[k]=disk.entries[k];
-          else if(k!==todayKey) store.entries[k]=mergeEntry(store.entries[k],disk.entries[k]);
+          // TODAY was excluded before — the one day written three times a day
+          else store.entries[k]=mergeEntry(store.entries[k],disk.entries[k]);
         });
-        // config: disk wins for every key this tab hasn't touched
         var dc=disk.config||{};
         Object.keys(dc).forEach(function(k){ if(!CFGTOUCHED[k]) CFG[k]=dc[k]; });
       }
       localStorage.setItem(KEY,JSON.stringify(store));
+      // "touched" means "changed since my last successful write", not "ever" — otherwise this
+      // tab pins the key forever and keeps reverting a sibling's newer value
+      CFGTOUCHED={};
       storageBroken=false; return true;
     }
     catch(e){
@@ -906,18 +911,21 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       // "don't overwrite with undefined" — NOT "don't overwrite with falsy". The old
       // `mp.n||tp.n` meant clearing a note was impossible: the disk copy always won.
       var mergedTells;
-      if(mp.tells!=null&&tp.tells!=null){
-        // a sibling's tells must not be discarded wholesale; union them, minus explicit removals
-        var rm={}; (mine.tellsGone||[]).concat(theirs.tellsGone||[]).forEach(function(x){rm[x]=1;});
-        var u={}; tp.tells.concat(mp.tells).forEach(function(x){ if(!rm[x])u[x]=1; });
+      if(mp.tells!=null){
+        // MINE is authoritative for this session; theirs only contributes tells I never removed.
+        // The old union-minus-tombstone made on -> off -> on impossible: the tombstone outlived
+        // the re-add and vetoed it forever.
+        var rmv={}; (mine.tellsGone||[]).forEach(function(x){rmv[x]=1;});
+        var u={}; mp.tells.forEach(function(x){u[x]=1;});
+        (tp.tells||[]).forEach(function(x){ if(!rmv[x])u[x]=1; });
         mergedTells=Object.keys(u);
-      } else mergedTells = (mp.tells!=null?mp.tells:(tp.tells||[]));
+      } else mergedTells=(tp.tells||[]);
       out.plants["1"]={
         s: (mp.s!==undefined?mp.s:(tp.s||"")),
         n: (mp.n!==undefined?mp.n:(tp.n||"")),
         tells: mergedTells
       };
-      out.tellsGone=(mine.tellsGone||[]).concat((theirs.tellsGone||[]).filter(function(x){return (mine.tellsGone||[]).indexOf(x)<0;}));
+      out.tellsGone=(mine.tellsGone||[]).slice();
     }
     return out;
   }
@@ -944,7 +952,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     }
     save();
   }
-  function exitDemo(){ if(!isDemo)return; demoKeys.forEach(function(k){ delete store.entries[k]; }); isDemo=false; draft=blankDraft(); dial.temp=null; dial.rh=null; setFoot();
+  function exitDemo(){ if(!isDemo)return; demoKeys.forEach(function(k){ PURGED[k]=1; delete store.entries[k]; }); isDemo=false; draft=blankDraft(); dial.temp=null; dial.rh=null; setFoot();
     // purge must leave NO ghost of the sample data on screen — re-render everything
     renderBoards();renderGauges();renderTrendPeek();renderCaps();renderRibbon();renderDue(); }
   function setFoot(){$("foot1").textContent=(isDemo?"Sample data for preview — your first save replaces it · ":"")+"Day 0 = Jul 17, 2026";}
@@ -1007,7 +1015,11 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     var best=null,h=null;
     keysSorted().forEach(function(k){var dd=dnum(dtOf(k)); if(dd>d)return;
       (store.entries[k].events||[]).forEach(function(e){
-        if(e&&e.type==="light"){var v=evNums(e)["in"]; if(v!=null&&(best===null||dd>=best)){best=dd;h=v;}}
+        if(e&&e.type==="light"){
+          var v=evNums(e)["in"];
+          if(v==null&&e.pick){var pp=parseInt(e.pick,10); if(!isNaN(pp))v=pp;}   // legacy: height lived in pick
+          if(v!=null&&(best===null||dd>=best)){best=dd;h=v;}
+        }
       });});
     return h;
   }
@@ -1041,11 +1053,30 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       // a little more RH slack in the dark during veg; NONE in flower — that's how bud rot starts
       // clamp the top of the band below the damp red line — in flower the two were derived
       // independently and overlapped, so 24 RH values graded GREEN while firing "STOP — bud rot"
-      rHi: Math.min(dark ? (wk.phase==="flower" ? wk.rHi : wk.rHi+6) : wk.rHi, redLines().rhHi-1),
+      rHi: bandFor(wk,dark).hi,
       vLo: wk.vLo, vHi: wk.vHi,
       gradeVpd: !dark,
       rhLbl:"Humidity %", roomLbl: dark?"dark window":"room climate"
     };
+  }
+  /* The band a given week actually publishes, AFTER the red-line clamp. The clamp was applied
+     in targets() only, so the Guide table and the export kept printing the pre-clamp numbers —
+     the same 24 flower values that fire "STOP — bud rot starts here". */
+  function bandFor(row,dark){
+    var R=REDLINES[row.phase==="flower"?"flower":"veg"][dark?"off":"on"];
+    var damp=R.rhDamp;
+    if(row.phase==="flower"){ if(row.w>=10)damp=50; else if(row.w>=4)damp=55; }
+    var hi=dark?(row.phase==="flower"?row.rHi:row.rHi+6):row.rHi;
+    // Clamp the DRY end too. The bands were derived from VPD at the set-point, so the hottest
+    // + driest legal corner could exceed vpdHigh — an in-band temp AND an in-band RH together
+    // firing "STOP — transpiring faster than her roots can supply".
+    var lo=row.rLo;
+    if(R.vpdHigh){
+      var need=rhForVpd(row.dHi,R.vpdHigh-0.02,true);
+      if(need>lo)lo=Math.ceil(need);
+    }
+    if(lo>hi)lo=hi;                        // never invert the band
+    return {lo:lo, hi:Math.min(hi,damp-1)};
   }
   /* The old table was hand-authored per-cell and silently drifted out of agreement with
      vpd(). Assert it on every load so that can never happen again unnoticed. */
@@ -1054,6 +1085,12 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     VEG.concat(FLOWER).forEach(function(r){
       var v=vpd(r.day,r.rh,true);
       if(v<r.vLo-0.055||v>r.vHi+0.055) bad.push((r.phase==="flower"?"F":"W")+r.w+" "+r.day+"°/"+r.rh+"% → VPD "+v.toFixed(2)+" outside "+r.vLo+"–"+r.vHi);
+      // ALSO check the band CORNERS against the VPD red line — the set-point alone passing let
+      // an in-band temp AND an in-band RH still trip "STOP — transpiring faster than her roots"
+      var R=REDLINES[r.phase==="flower"?"flower":"veg"].on;
+      var b=bandFor(r,false);
+      var worst=vpd(r.dHi,b.lo,true);          // hottest + driest legal corner
+      if(R.vpdHigh&&worst>=R.vpdHigh) bad.push((r.phase==="flower"?"F":"W")+r.w+" corner "+r.dHi+"°/"+b.lo+"% → VPD "+worst.toFixed(2)+" trips the "+R.vpdHigh+" red line");
     });
     if(bad.length&&window.console&&console.warn)console.warn("[zangria] climate table inconsistent:\n"+bad.join("\n"));
     window.__zangriaTableErrors=bad;
@@ -1267,15 +1304,16 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       } else if(pl.s==="bad"){
         cls="warn";icon="alert-triangle";head="She's in bad droop";
         sub=droopCoach();
-      } else if(soilWas==="Wet"){
-        cls="warn";icon="hand";head="Soil is still wet";
-        sub="Nothing to do but wait. The surface being dry means nothing in a 30-gal.";
       } else if(lightsOn&&vs==="high"){
         cls="warn";icon="alert-triangle";head="She's transpiring faster than her roots can supply";
         sub="Raise humidity FIRST. Do not water, do not lower the light.";
       } else if(lightsOn&&vs==="low"){
         cls="warn";icon="alert-triangle";head="Air is too still and wet for her to drink";
         sub="Nutrients move with the water. More air across the canopy.";
+      } else if(soilWas==="Wet"){
+        // a branch whose own copy says "nothing to do" must not outrank an alarm
+        cls="warn";icon="hand";head="Soil is still wet";
+        sub="Nothing to do but wait. The surface being dry means nothing in a 30-gal.";
       } else if(soilD===null||soilD>2){
         // demoted BELOW the climate branches: this routine chore used to hide "she's
         // transpiring faster than her roots can supply" — one step from the water reflex.
@@ -1433,8 +1471,8 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     exitDemo();
     if(!draft.plants["1"])draft.plants["1"]={s:"",n:""};
     draft.plants["1"].s=s;
-    commitDraft();renderBoards();renderGauges();renderDue();
-    toast("✓ "+(STATUS[s]?STATUS[s].t:"Status")+" saved");
+    var okS=commitDraft();renderBoards();renderGauges();renderDue();renderPlantIfVisible();
+    if(okS)toast("✓ "+(STATUS[s]?STATUS[s].t:"Status")+" saved");
   }
 
   /* ---- trends peek ---- */
@@ -1735,7 +1773,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     exitDemo();
     if(dial.temp==null||dial.rh==null)return null;
     var t=nowClock();
-    draft.readings.push({rid:"r"+Date.now()+"_"+(++evSeq),time:t,temp:dial.temp,rh:dial.rh,vpd:rvpd(dial.temp,dial.rh,lightsOn),lights:lightsOn,leafOff:leafOff(lightsOn)});
+    draft.readings.push({rid:"r"+Date.now()+"_"+TABID+"_"+(++evSeq),time:t,temp:dial.temp,rh:dial.rh,vpd:rvpd(dial.temp,dial.rh,lightsOn),lights:lightsOn,leafOff:leafOff(lightsOn)});
     // the CAPTURE is the measurement — this is the only place the day's room number is set
     draft.temp=String(dial.temp);draft.rh=String(dial.rh);
     dialSeeded.temp=false;dialSeeded.rh=false;
@@ -1861,6 +1899,10 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   }
   /* event modal */
   var evEditing=null, evEditingIdx=-1, evPhotos=[], evPhotoBusy=0, evSeq=0;
+  /* Per-document salt. evSeq resets to 0 on every load, so two tabs saving in the same
+     millisecond used to mint identical ids and unite() dropped one as a duplicate —
+     and since the id is also the tombstone key, a delete could target the other tab's row. */
+  var TABID=Math.floor(Math.random()*1e6).toString(36);
   function openEvent(type,existing){
     exitDemo();
     var et=evType(type);
@@ -1869,7 +1911,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     // id must include a counter: two events logged in the same millisecond used to get
     // identical ids, and the merge then discarded one of them as a duplicate.
     evEditing = src ? JSON.parse(JSON.stringify(src))
-                    : {id:"e"+Date.now()+"_"+(++evSeq),time:nowClock(),type:type,detail:"",pick:"",plants:["1"],env:snapEnv(),thumbs:[],photoIds:[]};
+                    : {id:"e"+Date.now()+"_"+TABID+"_"+(++evSeq),time:nowClock(),type:type,detail:"",pick:"",plants:["1"],env:snapEnv(),thumbs:[],photoIds:[]};
     evPhotos=[];
     $("edIcon").setAttribute("data-lucide",et.icon);
     $("edTitle").textContent=et.label;
@@ -1926,13 +1968,19 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     if(!e)return {};
     var o={};
     if(e.nums)for(var k in e.nums){ if(e.nums[k]!=null)o[k]=e.nums[k]; }
-    if(e.num!=null&&o.ppfd==null&&!(e.nums&&"ppfd" in e.nums))o.ppfd=e.num;
+    var nf0=numFields(evType(e.type));
+    if(e.num!=null&&nf0.length===1&&o[nf0[0].key]==null)o[nf0[0].key]=e.num;
+    else if(e.num!=null&&e.type==="light"&&o.ppfd==null)o.ppfd=e.num;
     if(e.num!=null&&e.type==="measure"&&o.val==null)o.val=e.num;   // legacy single-num measures
     return o;
   }
   function evNumText(e){
     var et=evType(e.type), nf=numFields(et), got=evNums(e), parts=[];
-    nf.forEach(function(n){ if(got[n.key]!=null)parts.push(got[n.key]+(n.unit?" "+n.unit:"")); });
+    nf.forEach(function(n){
+      if(got[n.key]==null)return;
+      var u=(n.unitBy&&e.pick&&n.unitBy[e.pick])?n.unitBy[e.pick]:n.unit;
+      parts.push(got[n.key]+(u?" "+u:""));
+    });
     if(!parts.length){ for(var k in got)parts.push(String(got[k])); }
     return parts.join(" · ");
   }
@@ -1992,7 +2040,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     draft.events.splice(evEditingIdx,1);
     tomb(gone.id||(gone.time+"|"+gone.type));
     // deleting the Flip event must actually un-flip, or he is stuck in flower forever
-    if(gone.type==="flip"){ CFG.flipDay=null; save(); commitDraft(); location.reload(); return; }
+    if(gone.type==="flip"){ CFG.flipDay=null; touchCfg("flipDay"); commitDraft(); save(); location.reload(); return; }
     commitDraft();renderRibbon();renderDue();renderGauges();renderPlantIfVisible();
     $("evBg").classList.remove("open");evEditing=null;evEditingIdx=-1;
     undoStack={kind:"event",data:gone};
@@ -2073,18 +2121,20 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     }
     var doSave=function(){
       if(evEditingIdx>=0)draft.events[evEditingIdx]=ev; else draft.events.push(ev);
-      commitDraft();
+      var okE=commitDraft();
       renderRibbon();renderDue();renderGauges();syncSettings();
       $("evBg").classList.remove("open");
-      toast((evEditingIdx>=0?"✓ Updated ":"✓ ")+et0.label+(ev.pick?" · "+ev.pick:"")+(evEditingIdx>=0?"":" logged "+ev.time));
+      if(okE)toast((evEditingIdx>=0?"✓ Updated ":"✓ ")+et0.label+(ev.pick?" · "+ev.pick:"")+(evEditingIdx>=0?"":" logged "+ev.time));
       evEditing=null;evEditingIdx=-1;evSaving=false;
       renderPlantIfVisible();
     };
+    // ALWAYS write the arrays. Gating this on evPhotos.length meant removing every photo
+    // from an event was impossible — the old ids and thumbs simply stayed.
+    var stamp=Date.now(), shots=evPhotos.slice();
+    ev.thumbs=shots.map(function(x){return x.thumb;});
+    ev.photoIds=shots.map(function(x,i){var id=x.existingId||("p"+stamp+"_"+TABID+"_"+(++evSeq)+"_"+i);x.newId=id;return id;});
+    delete ev.thumb; delete ev.photoId;   // arrays are authoritative once written
     if(evPhotos.length){
-      var stamp=Date.now(), shots=evPhotos.slice();
-      ev.thumbs=shots.map(function(x){return x.thumb;});
-      delete ev.thumb; delete ev.photoId;   // arrays are authoritative once written
-      ev.photoIds=shots.map(function(x,i){var id=x.existingId||("p"+stamp+"_"+(++evSeq)+"_"+i);x.newId=id;return id;});
       shots=shots.filter(function(x){return !x.existingId&&x.data;});
       // Save the ENTRY FIRST, then write full-res photos in the background.
       // IndexedDB can be slow, evicted, or (on some origins) never settle at all —
@@ -2165,13 +2215,13 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     // header
     var head='<div class="pdhead" style="margin-top:16px"><div class="pdart '+k+'">'+plantArt(k,54)+'</div><div class="pdid"><div class="pdname">'+p.name+'</div><div class="pdsub">'+esc(strainName())+' · potted '+MONTHS[p.pot.getMonth()]+' '+p.pot.getDate()+' · Day '+age+'</div></div>'+statusPill(k,curS&&STATUS[curS]?STATUS[curS].t:"Not set")+'</div>';
     // health strip + trend
-    var strip="", stripDays=hist.slice(-6);
+    var strip="", stripDays=hist.filter(function(h){return statusScore(h.s)!=null;}).slice(-6);
     if(stripDays.length){
       strip='<div class="slabel">Health — recent days'+(trend.label!=="No data"?' <span class="trendtag '+trend.cls+'">'+(trend.arrow?trend.arrow+" ":"")+trend.label+'</span>':'')+'</div><div class="hstrip">'+
-        stripDays.map(function(h,i){return '<div class="hday'+(i===stripDays.length-1?" now":"")+'">'+plantArt(STATUS[h.s].k,28)+'<div class="hd">'+(h.dt.getMonth()+1)+'/'+h.dt.getDate()+'</div></div>';}).join('')+'</div>';
+        stripDays.map(function(h,i){var kk=STATUS[h.s]?STATUS[h.s].k:"none";return '<div class="hday'+(i===stripDays.length-1?" now":"")+'">'+plantArt(kk,28)+'<div class="hd">'+(h.dt.getMonth()+1)+'/'+h.dt.getDate()+'</div></div>';}).join('')+'</div>';
       if(stripDays.length>1){
         var W=300,H=30,n=stripDays.length;
-        var pts=stripDays.map(function(h,i){var sc=Math.max(1,Math.min(3,statusScore(h.s)));return{x:6+(W-12)*(i/(n-1)),y:6+(H-12)*(1-(sc-1)/2),c:STATUS[h.s].k};});
+        var pts=stripDays.map(function(h,i){var raw=statusScore(h.s),sc=Math.max(1,Math.min(3,raw==null?2:raw));return{x:6+(W-12)*(i/(n-1)),y:6+(H-12)*(1-(sc-1)/2),c:STATUS[h.s]?STATUS[h.s].k:"none"};});
         var poly=pts.map(function(pt){return pt.x.toFixed(1)+","+pt.y.toFixed(1);}).join(" ");
         var dots=pts.map(function(pt){return '<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="3" fill="'+(pt.c==="ok"?cvar("--ok"):pt.c==="bad"?cvar("--bad"):pt.c==="warn"?cvar("--warn"):cvar("--ink3"))+'"/>';}).join("");
         var lc=trend.cls==="ok"?cvar("--ok"):trend.cls==="bad"?cvar("--bad"):cvar("--warn");
@@ -2272,6 +2322,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   function report(k,e){
     var dt=new Date(k.split("-")[0],k.split("-")[1]-1,k.split("-")[2]),est=stageFor(e.day!=null?e.day:dnum(dt)),tw=est.row;
     var L=["• "+fmt(dt)+", "+dt.getFullYear()+"  (Day "+(e.day!=null?e.day:dnum(dt))+", "+(est.phase==="flower"?"Flower wk ":"Veg wk ")+est.shown+" — "+tw.stage+")"];
+    var dayN=(e.day!=null?e.day:dnum(dt)), isToday=(k===todayKey);
     var rds=(e.readings&&e.readings.length)?e.readings:null;
     // The day's room number is a CAPTURE or it doesn't exist. Never print a dial position.
     if(rds){
@@ -2279,8 +2330,8 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       var vv=lastR.vpd!=null?Number(lastR.vpd):vpd(lastR.temp,lastR.rh,lastR.lights!==false);
       L.push("  Room (last capture "+lastR.time+"): "+lastR.temp+"°F / "+lastR.rh+"%"+
              (lastR.lights===false?"  — dark window, VPD n/a":"  — VPD "+vv.toFixed(2)+" (leaf = air −"+(lastR.leafOff!=null?lastR.leafOff:1)+"°C, lights on)"));
-      var darkR=(tw.phase==="flower"?tw.rHi:tw.rHi+6);
-      L.push("  Target this week: "+tw.dLo+"–"+tw.dHi+"°F day / "+tw.nLo+"–"+tw.nHi+"°F dark · RH "+tw.rLo+"–"+tw.rHi+"% (dark ceiling "+darkR+"%) · VPD "+tw.vLo.toFixed(2)+"–"+tw.vHi.toFixed(2));
+      var bLit=bandFor(tw,false), bDark=bandFor(tw,true);
+      L.push("  Target this week: "+tw.dLo+"–"+tw.dHi+"°F day / "+tw.nLo+"–"+tw.nHi+"°F dark · RH "+bLit.lo+"–"+bLit.hi+"% (dark "+bDark.lo+"–"+bDark.hi+"%) · VPD "+tw.vLo.toFixed(2)+"–"+tw.vHi.toFixed(2));
     } else {
       L.push("  Room: NOT CAPTURED TODAY");
     }
@@ -2292,14 +2343,13 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     if(rds){L.push("  Captures ("+rds.length+"):");rds.forEach(function(r){
       L.push("    "+(r.time&&r.time!=="—"?r.time:"—")+" · "+r.temp+"°F / "+r.rh+"%"+(r.lights===false?"  (dark)":"  · VPD "+(r.vpd!=null?Number(r.vpd).toFixed(2):vpd(r.temp,r.rh,true).toFixed(2))));});}
     // the three questions a remote diagnosis always opens with
-    var dayN=(e.day!=null?e.day:dnum(dt)), isToday=(k===todayKey);
     var wd=daysSinceEvent("water",dayN), sd=daysSinceEvent("soil",dayN), soilWas=lastEventPick("soil",dayN);
     var wev=(e.events||[]).filter(function(x){return x&&x.type==="water";});
     L.push("  Water: "+(wev.length?("logged this day — "+wev.map(function(x){var n=evNumText(x);return (x.time||"")+(x.pick?" "+x.pick:"")+(n?" ("+n+")":"")+(x.detail?" ("+x.detail+")":"");}).join(", ").trim())
                                   :(wd==null?"never logged":wd+" days before this day")));
     L.push("  Soil: "+(soilWas?soilWas:"never checked")+(sd==null?"":(sd===0?" (checked this day)":" (checked "+sd+"d before)")));
     // light height comes from the LOG as of this day, not from today's config
-    var lh=lightAtDay(dayN); if(lh==null&&isToday)lh=CFG.lightIn;
+    var lh=isToday?(CFG.lightIn!=null?CFG.lightIn:lightAtDay(dayN)):lightAtDay(dayN);
     var lightLine="  Light: "+(lh!=null?lh+'" above canopy':"height not known for this day");
     if(isToday){
       var ds=dliState();               // null when the reading is stale for the current height
@@ -2410,11 +2460,24 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
   $("restoreBtn").addEventListener("click",function(){
     openModal("Restore — paste a backup, then tap Restore now","",{editable:true,onApply:function(txt){
       try{
-        var b=JSON.parse(txt);
+        // the block is labelled "paste into Guide → Restore", so accept the whole paste
+        var raw=String(txt), cut=raw.lastIndexOf('{"');
+        var b=JSON.parse(cut>0?raw.slice(cut):raw);
         exitDemo();
         if(b&&b.app==="zangria-cockpit"&&b.entry&&b.key){ // a single-day DATA v1 block from a Copy-today paste
           // MERGE, don't replace — the block has thumbs stripped, so assigning it wiped
           // every thumbnail for that day and made the stored photos unreachable
+          // the DATA v1 block has thumbs stripped by design — carry the live ones across by id
+          // before merging, or restoring "today's backup" destroys today's photos
+          (function(){
+            var cur=store.entries[b.key]; if(!cur||!cur.events)return;
+            var byId={}; cur.events.forEach(function(x){ if(x&&x.id)byId[x.id]=x; });
+            (b.entry.events||[]).forEach(function(x){
+              var old=x&&x.id&&byId[x.id]; if(!old)return;
+              if((!x.thumbs||!x.thumbs.length)&&old.thumbs&&old.thumbs.length)x.thumbs=old.thumbs;
+              if((!x.thumbs||!x.thumbs.length)&&old.thumb)x.thumb=old.thumb;
+            });
+          })();
           store.entries[b.key]=mergeEntry(b.entry,store.entries[b.key]);
           // a single day's config snapshot must not silently roll the whole app back
         } else {
@@ -2422,14 +2485,14 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
           if(!st||!st.entries)throw new Error("no entries");
           Object.keys(st.entries).forEach(function(k){if(st.entries[k])store.entries[k]=st.entries[k];});
           if(st.config){
-            // full restore replaces config wholesale, then re-applies defaults, so a backup
-            // predating a key can't leave a stale value behind
             Object.keys(CFG).forEach(function(k){delete CFG[k];});
             Object.keys(st.config).forEach(function(k){CFG[k]=st.config[k];});
             store.config=CFG;
+            touchCfg.apply(null,Object.keys(st.config));
           }
+          AUTHORITATIVE=true;   // this write REPLACES — do not merge the old device state back in
         }
-        save();
+        save(); AUTHORITATIVE=false;
         location.reload();
       }catch(err){ toast("Couldn't read that backup — paste the whole block",true); }
     }});
@@ -2460,9 +2523,11 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     list.innerHTML=ks.map(function(k){var e=store.entries[k],dt=new Date(k.split("-")[0],k.split("-")[1]-1,k.split("-")[2]);
       var h='<div class="logentry"><div class="le-top"><span class="le-date">'+fmt(dt)+'</span><span class="le-day">Day '+(e.day!=null?e.day:dnum(dt))+' · '+(function(){var q=stageFor(e.day!=null?e.day:dnum(dt));return (q.phase==="flower"?"F":"Wk ")+q.shown;})()+'</span></div>';
       var dr=dayRoom(e);
-      h+='<div class="le-row"><b>Room:</b> '+(dr.t!=null?dr.t+"°F / "+dr.r+"% <span class=\"q\">("+dr.n+" capture"+(dr.n>1?"s":"")+")</span>":"<span class=\"q\">not captured</span>")+'</div>';
+      h+='<div class="le-row"><b>Room:</b> '+(dr.t!=null?dr.t+"°F / "+dr.r+"% <span class=\"q\">(avg of "+dr.n+" capture"+(dr.n>1?"s":"")+")</span>":"<span class=\"q\">not captured</span>")+'</div>';
       // render whatever plant keys the entry actually has — pre-switch days recorded #2/#3 and that record stays honest
-      Object.keys(e.plants||{}).sort().forEach(function(pid){var q=e.plants[pid];if(q&&(q.s||q.n||(q.tells&&q.tells.length))){var dk=STATUS[q.s]?STATUS[q.s].k:"none",col=dk==="ok"?cvar("--ok"):dk==="bad"?cvar("--bad"):dk==="warn"?cvar("--warn"):cvar("--ink3");var nm=pid==="1"?"She":("#"+pid);h+='<div class="le-row"><span class="pdot" style="background:'+col+'"></span><b>'+nm+':</b> '+statusText(q.s)+(q.n?' — '+esc(q.n):"")+'</div>';}});
+      Object.keys(e.plants||{}).sort().forEach(function(pid){var q=e.plants[pid];if(q&&(q.s||q.n||(q.tells&&q.tells.length))){var dk=STATUS[q.s]?STATUS[q.s].k:"none",col=dk==="ok"?cvar("--ok"):dk==="bad"?cvar("--bad"):dk==="warn"?cvar("--warn"):cvar("--ink3");var nm=pid==="1"?"She":("#"+pid);
+        var tlab=(q.tells||[]).map(function(kk){var f=null;TELLS.forEach(function(t){if(t.k===kk)f=t.t;});return f||kk;});
+        h+='<div class="le-row"><span class="pdot" style="background:'+col+'"></span><b>'+nm+':</b> '+statusText(q.s)+(tlab.length?' <span class="q">· '+esc(tlab.join(" · "))+'</span>':"")+(q.n?' — '+esc(q.n):"")+'</div>';}});
       var evs=(e.events&&e.events.length)?e.events.filter(Boolean):null;
       if(evs&&evs.length){evs.forEach(function(ev){var et=evType(ev.type);var lnt=evNumText(ev);h+='<div class="evl"><i data-lucide="'+et.icon+'"></i><span class="et2">'+(ev.time||"—")+'</span> <b>'+et.label+'</b>'+(ev.pick?" · "+esc(ev.pick):"")+(lnt?" · "+esc(lnt):"")+(ev.detail?" — "+esc(ev.detail):"")+(evPhotoCount(ev)?' 📷'+(evPhotoCount(ev)>1?evPhotoCount(ev):""):"")+'</div>';});}
       if(e.notes)h+='<div class="le-row"><b>Notes:</b> '+esc(e.notes)+'</div>';
@@ -2493,7 +2558,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     h+=row("≥"+on.tHotWarn+"°F","Hot — raise the light, get air moving.");
     h+=row("≥"+on.tHotCrit+"°F","<b>STOP.</b> "+(fl?"Terpenes cook off and buds go airy.":"She stops growing and starts surviving."),"crit");
     h+=row("≤"+on.rhDryCrit+"%","<b>STOP.</b> She can't hold turgor in air this dry. Humidifier on.","crit");
-    h+=row("≤"+on.rhDry+"%","Dry — target is "+wk.rLo+"–"+wk.rHi+"%. Humidifier up.");
+    h+=row("≤"+on.rhDry+"%","Dry — target is "+bandFor(wk,false).lo+"–"+bandFor(wk,false).hi+"%. Humidifier up.");
     h+=row("≥"+redLines().rhHi+"%","<b>STOP.</b> "+(fl?"Bud rot starts here. Dehumidifier + air now.":"Too damp to stay ahead of mould."),"crit");
     h+=row("≥"+on.vpdHigh,"<b>STOP.</b> VPD — transpiring faster than her roots can supply. RAISE HUMIDITY FIRST; do not water, do not lower the light.","crit");
     h+=row("≤"+on.vpdLow,"VPD low — air too still and wet for her to drink. More air across the canopy.");
@@ -2512,7 +2577,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
         return '<tr'+(isNow?' class="now"':'')+'><td class="wkn">'+pfx+k.w+'</td>'+
           '<td class="mono">'+k.dLo+'–'+k.dHi+'</td>'+
           '<td class="mono">'+k.nLo+'–'+k.nHi+'</td>'+
-          '<td class="mono">'+k.rLo+'–'+k.rHi+'%</td>'+
+          '<td class="mono">'+bandFor(k,false).lo+'–'+bandFor(k,false).hi+'%</td>'+
           '<td class="mono">'+k.vLo.toFixed(2)+'–'+k.vHi.toFixed(2)+'</td>'+
           '<td class="mono" style="font-size:10px">'+k.s1+'/'+k.s2+'/'+k.s3+'</td></tr>';
       }).join("");
@@ -2554,7 +2619,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       lc.textContent='Light · '+CFG.lightIn+'"'+(ds2?' · '+ds2.dli.toFixed(0)+' mol':'');
     }
   }
-  $("tgIhc").addEventListener("click",function(){CFG.ihc=!CFG.ihc;touchCfg("ihc");save();syncChips();renderGauges();renderDue();flashRow(this);toast(CFG.ihc?"✓ Humidity controller ON — humidity now AUTO":"Humidity controller marked not installed");});
+  $("tgIhc").addEventListener("click",function(){exitDemo();CFG.ihc=!CFG.ihc;touchCfg("ihc");save();syncChips();renderGauges();renderDue();flashRow(this);toast(CFG.ihc?"✓ Humidity controller ON — humidity now AUTO":"Humidity controller marked not installed");});
   /* SETTINGS COMMIT MODEL — every row saves the moment you leave it AND confirms.
      Previously only Light height toasted, and the light-cycle fields did a full
      location.reload() on change, which looked like the app throwing your edit away.
@@ -2565,16 +2630,17 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     row.classList.remove("saved"); void row.offsetWidth; row.classList.add("saved");
     setTimeout(function(){row.classList.remove("saved");},1200);
   }
-  function settingSaved(el,label){ flashRow(el); toast("✓ "+label); }
+  function settingSaved(el,label,ok){ if(ok===false)return; flashRow(el); toast("✓ "+label); }
   var setT={};
   function onSetting(id,label,apply,after){
     var el=$(id); if(!el)return;
     function commit(quiet){
+      exitDemo();
       var ok=apply(el);
       if(ok===false)return;
-      save();
+      var okv2=save();
       if(after)after();
-      if(!quiet)settingSaved(el,label);
+      if(!quiet)settingSaved(el,label,okv2);
     }
     // save as you type so a missed blur can never lose the edit
     el.addEventListener("input",function(){clearTimeout(setT[id]);setT[id]=setTimeout(function(){commit(true);},600);});
@@ -2629,7 +2695,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
 
   $("clearFlip").addEventListener("click",function(){
     if(CFG.flipDay==null)return;
-    CFG.flipDay=null;touchCfg("flipDay");save();location.reload();
+    exitDemo();CFG.flipDay=null;touchCfg("flipDay");save();location.reload();
   });
 
   /* ---- one canonical home for the data ---- */
