@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Goal System — every screen</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --blue:#7FB4FF;
+  --t-h2:19px; --t-h3:16px; --t-body:15px; --t-lab:12px; --t-min:11px;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+  --r1:6px; --r2:11px; --r3:16px; --tap:44px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#08070c;color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+
+/* ---------- gallery chrome ---------- */
+.wrap{max-width:1320px;margin:0 auto;padding:0 22px}
+.mast{padding:44px 0 24px}
+.kick{font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.24em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:var(--s3)}
+.mast h1{font-size:clamp(27px,3.6vw,38px);line-height:1.04;letter-spacing:-.035em;margin-bottom:var(--s3)}
+.mast p{max-width:660px;color:var(--dim);font-size:var(--t-body);margin:0 0 var(--s2)}
+.mast p b{color:var(--ink);font-weight:500}
+.note{max-width:660px;border-radius:var(--r2);padding:var(--s3) var(--s4);margin-top:var(--s4);
+  box-shadow:inset 0 0 0 1px rgba(224,178,94,.35);background:rgba(224,178,94,.06);
+  font-size:14px;color:#d7c49b;line-height:1.55}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(392px,392px));gap:var(--s6) var(--s5);
+  justify-content:center;padding:var(--s4) 0 var(--s6)}
+.slot{width:392px}
+.sh{margin-bottom:var(--s3);min-height:66px}
+.sh .n{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.2em;color:var(--gold)}
+.sh h3{font-size:var(--t-h3);margin-top:var(--s1)}
+.sh p{font-size:13px;color:var(--faint);margin:var(--s1) 0 0;line-height:1.45}
+.p{width:390px;border-radius:24px;overflow:hidden;box-shadow:0 34px 80px -34px #000,inset 0 0 0 1px var(--line2);background:#000}
+.notch{height:24px;background:#000;display:flex;align-items:center;justify-content:center}
+.notch i{width:54px;height:5px;border-radius:99px;background:#17171d}
+.pv{height:820px;overflow:hidden;position:relative;background:var(--bg)}
+@media(max-width:452px){
+  .wrap{padding:0}.mast{padding:28px 15px 18px}.note{margin:var(--s4) 15px 0}
+  .grid{grid-template-columns:1fr;gap:var(--s5) 0;padding:0 0 var(--s5)}
+  .slot{width:100%}.sh{padding:0 15px}
+  .p{width:100%;border-radius:0}
+}
+
+/* =====================================================================
+   THE APP SURFACE
+   ===================================================================== */
+.vhead{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);
+  padding:var(--s4) var(--s4) var(--s3);border-bottom:1px solid var(--line)}
+.vhead h2{font-size:26px;letter-spacing:-.03em}
+.vhead span{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.13em;color:var(--faint)}
+.segs{display:flex;gap:var(--s1);padding:var(--s3) var(--s4) 0}
+.seg{flex:1;min-height:var(--tap);border-radius:var(--r1);display:flex;align-items:center;justify-content:center;
+  font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.11em;color:var(--dim);
+  background:var(--panel);box-shadow:inset 0 0 0 1px var(--line)}
+.seg.on{background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;font-weight:700;box-shadow:none}
+.sec{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s2);
+  padding:var(--s5) var(--s4) var(--s2);font-family:'Geist Mono',monospace;font-size:var(--t-lab);
+  letter-spacing:.17em;color:var(--faint);text-transform:uppercase}
+.sec b{color:var(--ink);font-weight:400}
+.sec .cnt{color:var(--faint)}
+.wrapx{padding:0 var(--s4)}
+
+/* goal card */
+.gc{position:relative;border-radius:var(--r2);background:var(--panel);
+  box-shadow:inset 0 0 0 1px var(--line);padding:var(--s3) var(--s3) var(--s3) var(--s4);margin-bottom:var(--s2)}
+.gc .rail{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:var(--r2) 0 0 var(--r2);background:var(--c)}
+.gc .ttl{font-family:'Clash Display',sans-serif;font-weight:600;font-size:var(--t-h3);
+  letter-spacing:-.02em;line-height:1.25}
+.gc .meta{display:flex;flex-wrap:wrap;gap:var(--s1);margin-top:var(--s2)}
+.pill{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.09em;padding:5px 8px;
+  border-radius:var(--r1);background:var(--panel2);color:var(--dim);white-space:nowrap}
+.pill.ar{background:rgba(255,255,255,.04);color:var(--c)}
+.pill.wig{background:rgba(224,178,94,.16);color:var(--gold)}
+.pill.lrn{background:rgba(56,225,216,.14);color:var(--rune)}
+.pill.hab{background:rgba(176,140,255,.14);color:var(--violet)}
+.pill.miss{background:rgba(255,107,44,.12);color:#FF9A5E}
+.pill.ok{background:rgba(74,222,128,.14);color:var(--phos)}
+.pill.warn{background:rgba(255,77,94,.12);color:#FF8A96}
+.gc .lead{display:flex;align-items:center;gap:var(--s2);margin-top:var(--s3);
+  padding-top:var(--s3);border-top:1px solid var(--line)}
+.gc .lead .n{font-family:'Clash Display',sans-serif;font-weight:700;font-size:23px;letter-spacing:-.03em;line-height:1}
+.gc .lead .l{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.1em;color:var(--faint);line-height:1.6}
+.gc .lead .bar{margin-left:auto;width:74px;height:6px;border-radius:99px;background:#221d33;overflow:hidden}
+.gc .lead .bar i{display:block;height:100%;border-radius:99px;background:var(--c)}
+.gc.parked .ttl,.gc.done .ttl{color:var(--faint)}
+.gc .ev{font-size:13px;color:var(--dim);line-height:1.45;margin-top:var(--s2)}
+.gc .ev u{text-decoration:none;color:var(--faint);font-family:'Geist Mono',monospace;font-size:var(--t-min);
+  letter-spacing:.12em;display:block;margin-bottom:3px}
+
+/* standards */
+.std{border-radius:var(--r2);background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);
+  padding:var(--s3) var(--s4);margin-bottom:var(--s2)}
+.std .h{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.15em;color:var(--faint);
+  margin-bottom:var(--s3)}
+.qr{display:flex;align-items:center;gap:var(--s3);min-height:34px}
+.qr .nm{flex:1;font-size:14px;color:var(--dim)}
+.qr .pips{display:flex;gap:4px}
+.qr .pips i{width:11px;height:11px;border-radius:50%;background:#2a2438;display:block}
+.qr .pips i.on{background:var(--phos)}
+.qr .v{font-family:'Geist Mono',monospace;font-size:var(--t-min);color:var(--faint);width:34px;text-align:right}
+
+/* sheet */
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#0c0a13;box-shadow:inset 0 0 0 1px var(--line2);
+  border-radius:var(--r3) var(--r3) 0 0;padding:var(--s2) var(--s4) var(--s5);max-height:96%;overflow:hidden}
+.dim{position:absolute;inset:0;background:rgba(4,3,7,.7)}
+.grab{width:34px;height:4px;border-radius:99px;background:var(--line2);margin:0 auto var(--s4)}
+.sh-t{font-family:'Clash Display',sans-serif;font-weight:600;font-size:22px;letter-spacing:-.03em;margin-bottom:var(--s1)}
+.sh-s{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.13em;color:var(--faint);margin-bottom:var(--s4)}
+.fld{margin-bottom:var(--s3)}
+.fld label{display:block;font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;
+  color:var(--faint);text-transform:uppercase;margin-bottom:var(--s2)}
+.fld label u{text-decoration:none;color:#4b4459;letter-spacing:.1em}
+.inp{background:var(--panel2);box-shadow:inset 0 0 0 1px var(--line2);border-radius:var(--r1);
+  padding:var(--s3);min-height:var(--tap);display:flex;align-items:center;font-size:15px}
+.inp.ph{color:#4b4459}
+.inp.ta{min-height:62px;align-items:flex-start}
+.chips{display:flex;flex-wrap:wrap;gap:var(--s1)}
+.chip{min-height:var(--tap);padding:0 var(--s3);border-radius:var(--r1);display:flex;align-items:center;gap:6px;
+  font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.09em;background:var(--panel2);
+  color:var(--dim);box-shadow:inset 0 0 0 1px var(--line2)}
+.chip.on{background:rgba(224,178,94,.16);color:var(--gold);box-shadow:inset 0 0 0 1px rgba(224,178,94,.5)}
+.chip i{width:9px;height:9px;border-radius:50%;background:var(--c);display:block}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+.btn{min-height:var(--tap);border-radius:var(--r2);display:flex;align-items:center;justify-content:center;
+  font-size:var(--t-body);font-weight:600;background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204}
+.btn.gh{background:none;box-shadow:inset 0 0 0 1px var(--line2);color:var(--dim);font-weight:500}
+.btn.dz{background:none;box-shadow:inset 0 0 0 1px rgba(255,77,94,.4);color:var(--blood)}
+.fab{position:absolute;left:50%;transform:translateX(-50%);bottom:22px;min-height:52px;padding:0 var(--s5);
+  border-radius:99px;display:flex;align-items:center;font-family:'Geist Mono',monospace;font-size:var(--t-lab);
+  letter-spacing:.14em;font-weight:700;background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;
+  box-shadow:0 10px 28px -8px rgba(224,178,94,.6)}
+
+/* week / capacity */
+.cap{margin:0 var(--s4) var(--s3);border-radius:var(--r2);padding:var(--s3) var(--s4);
+  background:var(--panel);box-shadow:inset 0 0 0 1px var(--line)}
+.cap .r{display:flex;align-items:baseline;gap:var(--s2)}
+.cap .n{font-family:'Clash Display',sans-serif;font-weight:700;font-size:34px;letter-spacing:-.04em;line-height:1}
+.cap .l{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.11em;color:var(--faint);line-height:1.6}
+.cap .t{margin-top:var(--s3);height:7px;border-radius:99px;background:#221d33;overflow:hidden}
+.cap .t i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#6b4a00,var(--gold))}
+.warn{margin:0 var(--s4) var(--s3);border-radius:var(--r2);padding:var(--s3) var(--s4);
+  box-shadow:inset 0 0 0 1px rgba(255,107,44,.4);background:rgba(255,107,44,.07)}
+.warn b{display:block;font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;
+  color:#FF9A5E;margin-bottom:var(--s2)}
+.warn p{margin:0;font-size:13.5px;color:var(--dim);line-height:1.5}
+.dayh{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.18em;color:var(--faint);
+  padding:var(--s3) var(--s4) var(--s2)}
+.cm{position:relative;border-radius:var(--r2);background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);
+  padding:var(--s3) var(--s3) var(--s3) var(--s4);margin:0 var(--s4) var(--s2)}
+.cm .rail{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:var(--r2) 0 0 var(--r2);background:var(--c)}
+.cm .ct{font-size:14.5px;line-height:1.35}
+.cm .cmeta{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s1);margin-top:var(--s2)}
+.cm .box{width:22px;height:22px;border-radius:var(--r1);box-shadow:inset 0 0 0 1.5px #362f47;flex:none}
+.cm .box.on{background:var(--phos);box-shadow:none;position:relative}
+.cm .box.on::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:#04240f;font-size:14px;font-weight:700}
+
+/* ritual */
+.step{display:flex;gap:var(--s1);padding:var(--s3) var(--s4) 0}
+.step i{flex:1;height:4px;border-radius:99px;background:#221d33}
+.step i.on{background:var(--gold)}
+.rt{padding:var(--s5) var(--s4) 0;text-align:center}
+.rt .k{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.2em;color:var(--gold)}
+.rt h3{font-size:24px;letter-spacing:-.03em;margin-top:var(--s2)}
+.rt p{font-size:14px;color:var(--dim);margin:var(--s2) 0 0;line-height:1.5}
+.conf{display:flex;gap:var(--s2);margin-top:var(--s3)}
+.conf b{flex:1;min-height:var(--tap);border-radius:var(--r1);display:flex;align-items:center;justify-content:center;
+  font-family:'Geist Mono',monospace;font-size:var(--t-body);font-weight:700;background:var(--panel2);
+  color:var(--dim);box-shadow:inset 0 0 0 1px var(--line2)}
+.conf b.on{background:rgba(224,178,94,.18);color:var(--gold);box-shadow:inset 0 0 0 1px rgba(224,178,94,.55)}
+.trail{margin-top:var(--s3);padding-top:var(--s3);border-top:1px solid var(--line)}
+.trail .th{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;color:var(--faint);
+  margin-bottom:var(--s2)}
+.trail div{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.05em;color:#7d7590;
+  line-height:2}
+.trail div b{color:#c9a961;font-weight:400}
+.mig{margin:0 var(--s4);border-radius:var(--r2);padding:var(--s4);background:var(--panel);
+  box-shadow:inset 0 0 0 1px var(--line)}
+.mig .q{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;color:#FF9A5E}
+.mig h4{font-family:'Clash Display',sans-serif;font-weight:600;font-size:19px;letter-spacing:-.025em;
+  margin:var(--s2) 0 0;line-height:1.25}
+.mig .sub{font-size:13.5px;color:var(--dim);margin-top:var(--s2);line-height:1.45}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2);margin-top:var(--s4)}
+.foot{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.12em;color:#454055;
+  text-align:center;padding:var(--s5) var(--s4) 0;line-height:2}
+.empty{margin:0 var(--s4);border-radius:var(--r2);padding:var(--s5) var(--s4);text-align:center;
+  box-shadow:inset 0 0 0 1px var(--line)}
+.empty b{display:block;font-family:'Clash Display',sans-serif;font-weight:600;font-size:var(--t-h3);margin-bottom:var(--s2)}
+.empty p{font-size:14px;color:var(--faint);margin:0 0 var(--s4);line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <div class="kick">Burn the Boats · the goal system · every screen</div>
+  <h1>What it looks like when you put your own goals in.</h1>
+  <p>Twelve screens, drawn accurately against the model in the plan — <b>areas · dates · goals ·
+  commitments</b>. Nothing here is hardcoded: every area, every date and every goal on these screens is
+  something you created from the phone.</p>
+  <div class="note"><b>The content is example content.</b> I've used real-looking businesses so it reads
+  true, but that's you typing — not me deciding. The structure is the proposal; the words in it are
+  placeholders.</div>
+</header>
+
+<div class="grid">
+
+<!-- ============ 01 · BY AREA ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">SCREEN 01 · HOME</div><h3>By area</h3>
+    <p>Your businesses, each with its own goals. Add a sixth area any time — nothing is fixed.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="vhead"><h2>The Goals</h2><span>9 LIVE · 5 AREAS</span></div>
+    <div class="segs"><div class="seg on">BY AREA</div><div class="seg">BY DATE</div><div class="seg">THE WEEK</div></div>
+
+    <div class="sec"><span style="color:var(--gold)">SANO</span><b>3 live</b></div>
+    <div class="wrapx">
+      <div class="gc" style="--c:var(--gold)"><span class="rail"></span>
+        <div class="ttl">Three clients signed and paying</div>
+        <div class="meta"><span class="pill ar">SANO</span><span class="pill">DEC 1 · 128d</span>
+          <span class="pill wig">WIG</span></div>
+        <div class="lead"><span class="n">7</span>
+          <span class="l">CONVERSATIONS<br>THIS WEEK · TARGET 12</span>
+          <span class="bar"><i style="width:58%"></i></span></div></div>
+
+      <div class="gc" style="--c:var(--gold)"><span class="rail"></span>
+        <div class="ttl">The delivery process written down and signed off</div>
+        <div class="meta"><span class="pill ar">SANO</span><span class="pill">AUG 31 · 36d</span>
+          <span class="pill lrn">LEARNING</span></div>
+        <div class="lead"><span class="n">2</span>
+          <span class="l">HOURS ON IT<br>THIS WEEK · TARGET 3</span>
+          <span class="bar"><i style="width:66%"></i></span></div></div>
+
+      <div class="gc" style="--c:var(--gold)"><span class="rail"></span>
+        <div class="ttl">Anthony live and paying</div>
+        <div class="meta"><span class="pill ar">SANO</span><span class="pill">SEP 30 · 66d</span>
+          <span class="pill">STEP TOWARD 3 CLIENTS</span></div></div>
+    </div>
+
+    <div class="sec"><span style="color:var(--blue)">FRUITS</span><b>2 live</b></div>
+    <div class="wrapx">
+      <div class="gc" style="--c:var(--blue)"><span class="rail"></span>
+        <div class="ttl">Ten wholesale accounts</div>
+        <div class="meta"><span class="pill ar">FRUITS</span><span class="pill">OCT 31 · 97d</span>
+          <span class="pill miss">NO EVIDENCE</span></div>
+        <div class="lead"><span class="n">3</span>
+          <span class="l">ACCOUNTS CONTACTED<br>THIS WEEK · TARGET 8</span>
+          <span class="bar"><i style="width:37%"></i></span></div></div>
+    </div>
+    <div class="fab">+ ADD</div>
+  </div></div>
+</div>
+
+<!-- ============ 02 · ADD A GOAL ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">SCREEN 02 · ADD</div><h3>Adding a goal</h3>
+    <p>Title and area are enough to save. Everything else can be filled in later, never blocks you.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="vhead"><h2>The Goals</h2><span>9 LIVE · 5 AREAS</span></div>
+    <div class="dim"></div>
+    <div class="sheet"><div class="grab"></div>
+      <div class="sh-t">New goal</div>
+      <div class="sh-s">TITLE AND AREA ARE ENOUGH — REFINE IT LATER</div>
+
+      <div class="fld"><label>The goal</label>
+        <div class="inp ta">Ten wholesale accounts</div></div>
+
+      <div class="fld"><label>Area</label><div class="chips">
+        <span class="chip"><i style="--c:var(--gold)"></i>SANO</span>
+        <span class="chip on"><i style="--c:var(--blue)"></i>FRUITS</span>
+        <span class="chip"><i style="--c:var(--violet)"></i>LA EDIBLE</span>
+        <span class="chip">+ NEW</span></div></div>
+
+      <div class="fld"><label>Due by</label><div class="chips">
+        <span class="chip">END OF AUG</span><span class="chip">END OF SEP</span>
+        <span class="chip on">END OF OCT</span><span class="chip">DEC 1</span>
+        <span class="chip">+ NEW DATE</span></div></div>
+
+      <div class="fld"><label>Kind <u>a new task needs a learning goal first</u></label><div class="chips">
+        <span class="chip on">OUTCOME</span><span class="chip">LEARNING</span><span class="chip">HABIT</span></div></div>
+
+      <div class="fld"><label>Evidence <u>what would prove it</u></label>
+        <div class="inp ph">Ten signed accounts in the CRM</div></div>
+
+      <div class="fld"><label>Lead measure <u>the thing you control weekly</u></label>
+        <div class="row2"><div class="inp">Accounts contacted</div><div class="inp">8</div></div></div>
+
+      <div class="btn">SAVE</div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ============ 03 · BY DATE ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">SCREEN 03 · HORIZONS</div><h3>By date</h3>
+    <p>The same goals, cut by when. Dates are yours — monthly, two-month, past Dec 1, anything.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="vhead"><h2>The Goals</h2><span>9 LIVE · 5 AREAS</span></div>
+    <div class="segs"><div class="seg">BY AREA</div><div class="seg on">BY DATE</div><div class="seg">THE WEEK</div></div>
+
+    <div class="sec"><span>END OF AUGUST</span><b>AUG 31 · 36d</b></div>
+    <div class="wrapx">
+      <div class="gc" style="--c:var(--gold)"><span class="rail"></span>
+        <div class="ttl">The delivery process written down and signed off</div>
+        <div class="meta"><span class="pill ar">SANO</span><span class="pill lrn">LEARNING</span></div></div>
+    </div>
+
+    <div class="sec"><span>END OF SEPTEMBER</span><b>SEP 30 · 66d</b></div>
+    <div class="wrapx">
+      <div class="gc" style="--c:var(--gold)"><span class="rail"></span>
+        <div class="ttl">Anthony live and paying</div>
+        <div class="meta"><span class="pill ar">SANO</span></div></div>
+      <div class="gc parked" style="--c:var(--rune)"><span class="rail"></span>
+        <div class="ttl">Formula locked</div>
+        <div class="meta"><span class="pill ar">SIMPLY LIVING</span><span class="pill">PARKED</span></div></div>
+    </div>
+
+    <div class="sec"><span>THE RUN ENDS</span><b>DEC 1 · 128d</b></div>
+    <div class="wrapx">
+      <div class="gc" style="--c:var(--gold)"><span class="rail"></span>
+        <div class="ttl">Three clients signed and paying</div>
+        <div class="meta"><span class="pill ar">SANO</span><span class="pill wig">WIG</span></div></div>
+    </div>
+
+    <div class="sec"><span>INCOME</span><b>MAR 1 · 219d</b></div>
+    <div class="wrapx">
+      <div class="gc" style="--c:var(--gold)"><span class="rail"></span>
+        <div class="ttl">Real income, not pipeline</div>
+        <div class="meta"><span class="pill ar">SANO</span><span class="pill">BEYOND THE RUN</span></div></div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ============ 04 · GOAL DETAIL ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">SCREEN 04 · ONE GOAL</div><h3>The whole goal</h3>
+    <p>Everything on one card, including the edit trail — every time you eased it, remembered.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="vhead"><h2>The Goals</h2><span>EDITING</span></div>
+    <div class="dim"></div>
+    <div class="sheet"><div class="grab"></div>
+      <div class="sh-t">Three clients signed and paying</div>
+      <div class="sh-s">SANO · DEC 1 · THE WIG</div>
+
+      <div class="fld"><label>Evidence</label>
+        <div class="inp">Three signed agreements and three payments received</div></div>
+      <div class="fld"><label>What will stop this</label>
+        <div class="inp">The delivery process isn't written down</div></div>
+
+      <div class="fld"><label>Lead measure</label>
+        <div class="row2"><div class="inp">Conversations</div><div class="inp">12 / wk</div></div></div>
+
+      <div class="fld"><label>Steps toward it</label>
+        <div class="chips"><span class="chip"><i style="--c:var(--phos)"></i>PROCESS SIGNED OFF</span>
+        <span class="chip"><i style="--c:var(--gold)"></i>ANTHONY LIVE</span></div></div>
+
+      <div class="trail"><div class="th">WHAT YOU'VE CHANGED</div>
+        <div>DAY 34 · TARGET <b>12 → 8</b> A WEEK</div>
+        <div>DAY 41 · DATE <b>NOV 1 → DEC 1</b></div>
+        <div>DAY 41 · CARRIED <b>2nd TIME</b></div>
+      </div>
+
+      <div class="row2" style="margin-top:var(--s4)"><div class="btn gh">PARK IT</div><div class="btn gh">MARK DONE</div></div>
+      <div style="height:var(--s2)"></div><div class="btn">SAVE</div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ============ 05 · THE WEEK ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">SCREEN 05 · THE ENGINE</div><h3>The week</h3>
+    <p>Every block is tied to a goal and a day. That link is what the app has never had.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="vhead"><h2>The Goals</h2><span>WEEK 6 · 14 OF 20</span></div>
+    <div class="segs"><div class="seg">BY AREA</div><div class="seg">BY DATE</div><div class="seg on">THE WEEK</div></div>
+
+    <div class="sec"><span>Capacity</span><b>fixed volume</b></div>
+    <div class="cap"><div class="r"><span class="n">14</span>
+      <span class="l">OF 20 DEEP BLOCKS<br>COMMITTED THIS WEEK</span></div>
+      <div class="t"><i style="width:70%"></i></div></div>
+
+    <div class="warn"><b>NOTHING ON THESE</b>
+      <p>Simply Living · LA Edible — no block this week. Allowed, but it should be a decision
+      rather than an accident.</p></div>
+
+    <div class="dayh">MONDAY</div>
+    <div class="cm" style="--c:var(--gold)"><span class="rail"></span>
+      <div class="ct">Call 10 owners from the list</div>
+      <div class="cmeta"><span class="box on"></span><span class="pill ar">SANO · 3 CLIENTS</span>
+        <span class="pill">B1 · 09:00</span></div></div>
+    <div class="cm" style="--c:var(--gold)"><span class="rail"></span>
+      <div class="ct">Write the delivery process, section 1</div>
+      <div class="cmeta"><span class="box on"></span><span class="pill ar">SANO · PROCESS</span>
+        <span class="pill">B2 · 10:30</span></div></div>
+
+    <div class="dayh">TUESDAY</div>
+    <div class="cm" style="--c:var(--blue)"><span class="rail"></span>
+      <div class="ct">Ring the five shops on the north list</div>
+      <div class="cmeta"><span class="box"></span><span class="pill ar">FRUITS · WHOLESALE</span>
+        <span class="pill">B1 · 09:00</span></div></div>
+    <div class="cm" style="--c:var(--gold)"><span class="rail"></span>
+      <div class="ct">Anthony — send the deck and ask for the call</div>
+      <div class="cmeta"><span class="box"></span><span class="pill ar">SANO · ANTHONY</span>
+        <span class="pill">B2 · 10:30</span></div></div>
+  </div></div>
+</div>
+
+<!-- ============ 06 · FRIDAY 1 ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">SCREEN 06 · FRIDAY, STEP 1</div><h3>Close the week</h3>
+    <p>What you committed to, and what actually happened. Ten seconds.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="vhead"><h2>Friday</h2><span>90 SECONDS</span></div>
+    <div class="step"><i class="on"></i><i></i><i></i></div>
+    <div class="rt"><div class="k">STEP 1 OF 3</div><h3>What actually happened?</h3>
+      <p>Tap anything you finished. Nothing here is scored against you.</p></div>
+
+    <div style="height:var(--s4)"></div>
+    <div class="cm" style="--c:var(--gold)"><span class="rail"></span>
+      <div class="ct">Call 10 owners from the list</div>
+      <div class="cmeta"><span class="box on"></span><span class="pill ar">SANO</span><span class="pill">MON · B1</span></div></div>
+    <div class="cm" style="--c:var(--gold)"><span class="rail"></span>
+      <div class="ct">Write the delivery process, section 1</div>
+      <div class="cmeta"><span class="box on"></span><span class="pill ar">SANO</span><span class="pill">MON · B2</span></div></div>
+    <div class="cm" style="--c:var(--blue)"><span class="rail"></span>
+      <div class="ct">Ring the five shops on the north list</div>
+      <div class="cmeta"><span class="box"></span><span class="pill ar">FRUITS</span><span class="pill">TUE · B1</span>
+        <span class="pill warn">MISSED TWICE</span></div></div>
+
+    <div class="warn" style="margin-top:var(--s3)"><b>SECOND MISS ON FRUITS</b>
+      <p>Not a failure — a signal. Shrink it, move it, or park it.</p></div>
+    <div class="wrapx" style="margin-top:var(--s3)"><div class="btn">NEXT</div></div>
+  </div></div>
+</div>
+
+<!-- ============ 07 · FRIDAY 2 ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">SCREEN 07 · FRIDAY, STEP 2</div><h3>Confidence</h3>
+    <p>One tap per goal. Never scored, never touches your rating — but the trend is the truest signal you'll get.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="vhead"><h2>Friday</h2><span>90 SECONDS</span></div>
+    <div class="step"><i class="on"></i><i class="on"></i><i></i></div>
+    <div class="rt"><div class="k">STEP 2 OF 3</div><h3>Will it land?</h3>
+      <p>Gut answer. This is never scored and never shown to anyone.</p></div>
+
+    <div class="wrapx" style="margin-top:var(--s4)">
+      <div class="gc" style="--c:var(--gold)"><span class="rail"></span>
+        <div class="ttl">Three clients signed and paying</div>
+        <div class="meta"><span class="pill">DEC 1</span><span class="pill wig">WIG</span></div>
+        <div class="conf"><b>1</b><b>2</b><b class="on">3</b><b>4</b><b>5</b></div></div>
+
+      <div class="gc" style="--c:var(--gold)"><span class="rail"></span>
+        <div class="ttl">Delivery process signed off</div>
+        <div class="meta"><span class="pill">AUG 31</span><span class="pill lrn">LEARNING</span></div>
+        <div class="conf"><b>1</b><b>2</b><b>3</b><b class="on">4</b><b>5</b></div></div>
+
+      <div class="gc" style="--c:var(--blue)"><span class="rail"></span>
+        <div class="ttl">Ten wholesale accounts</div>
+        <div class="meta"><span class="pill">OCT 31</span></div>
+        <div class="conf"><b>1</b><b class="on">2</b><b>3</b><b>4</b><b>5</b></div></div>
+      <div class="btn" style="margin-top:var(--s3)">NEXT</div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ============ 08 · FRIDAY 3 ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">SCREEN 08 · FRIDAY, STEP 3</div><h3>Next week, pre-filled</h3>
+    <p>Never a blank form. It proposes from your current dates; you accept or change it.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="vhead"><h2>Friday</h2><span>90 SECONDS</span></div>
+    <div class="step"><i class="on"></i><i class="on"></i><i class="on"></i></div>
+    <div class="rt"><div class="k">STEP 3 OF 3</div><h3>Next week</h3>
+      <p>Proposed from what's due at your next date. Change anything.</p></div>
+
+    <div class="cap" style="margin-top:var(--s4)"><div class="r"><span class="n">12</span>
+      <span class="l">OF 20 BLOCKS<br>PROPOSED</span></div>
+      <div class="t"><i style="width:60%"></i></div></div>
+
+    <div class="cm" style="--c:var(--gold)"><span class="rail"></span>
+      <div class="ct">Call 10 owners from the list</div>
+      <div class="cmeta"><span class="pill ar">SANO · 3 CLIENTS</span><span class="pill">MON · B1</span>
+        <span class="pill ok">CARRIED</span></div></div>
+    <div class="cm" style="--c:var(--gold)"><span class="rail"></span>
+      <div class="ct">Delivery process, section 2</div>
+      <div class="cmeta"><span class="pill ar">SANO · PROCESS</span><span class="pill">MON · B2</span>
+        <span class="pill ok">NEXT STEP</span></div></div>
+    <div class="cm" style="--c:var(--violet)"><span class="rail"></span>
+      <div class="ct">Five kitchens — name and number</div>
+      <div class="cmeta"><span class="pill ar">LA EDIBLE</span><span class="pill">WED · B1</span>
+        <span class="pill miss">WAS ORPHANED</span></div></div>
+    <div class="wrapx" style="margin-top:var(--s3)"><div class="btn">LOCK THE WEEK</div></div>
+  </div></div>
+</div>
+
+<!-- ============ 09 · MIGRATION ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">SCREEN 09 · MONTH TURN</div><h3>The migration</h3>
+    <p>Nothing auto-rolls. One goal at a time, four choices. The friction is the whole point.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="vhead"><h2>End of August</h2><span>2 OF 4</span></div>
+    <div class="rt"><div class="k">THE MIGRATION</div><h3>This didn't land.</h3>
+      <p>That's allowed. But it doesn't move by itself — decide what happens to it.</p></div>
+
+    <div class="mig" style="margin-top:var(--s5)">
+      <div class="q">DUE AUG 31 · NOT HIT</div>
+      <h4>Ten wholesale accounts</h4>
+      <div class="sub">You committed 3 blocks to this in 5 weeks. Your confidence has gone 3 → 2 → 2.</div>
+      <div class="mgrid">
+        <div class="btn">CARRY IT</div><div class="btn gh">CHANGE IT</div>
+        <div class="btn gh">PARK IT</div><div class="btn dz">DROP IT</div>
+      </div>
+    </div>
+
+    <div class="warn" style="margin-top:var(--s4)"><b>CARRIED TWICE ALREADY</b>
+      <p>Something that keeps moving forward without moving is usually telling you something.
+      Carrying it a third time is fine — but say it out loud.</p></div>
+  </div></div>
+</div>
+
+<!-- ============ 10 · AREA WITH STANDARDS ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">SCREEN 10 · STANDARDS</div><h3>An area that never ends</h3>
+    <p>Personal isn't a goal with a deadline — it's a standard you hold. Different by design.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="vhead"><h2>Personal</h2><span>AN AREA · NO END DATE</span></div>
+
+    <div class="sec"><span>The standard</span><b>this week</b></div>
+    <div class="wrapx"><div class="std">
+      <div class="h">HELD WEEKLY · NEVER "DONE"</div>
+      <div class="qr"><span class="nm">Gym</span>
+        <span class="pips"><i class="on"></i><i class="on"></i></span><span class="v">2/2</span></div>
+      <div class="qr"><span class="nm">Walks</span>
+        <span class="pips"><i class="on"></i><i></i><i></i></span><span class="v">1/3</span></div>
+      <div class="qr"><span class="nm">Bible + text Kells</span>
+        <span class="pips"><i class="on"></i><i class="on"></i><i></i></span><span class="v">2/3</span></div>
+      <div class="qr"><span class="nm">Phone away by 21:00</span>
+        <span class="pips"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span><span class="v">3/5</span></div>
+    </div></div>
+
+    <div class="sec"><span>Goals in this area</span><b>1 live</b></div>
+    <div class="wrapx">
+      <div class="gc" style="--c:var(--ember)"><span class="rail"></span>
+        <div class="ttl">185 lbs</div>
+        <div class="meta"><span class="pill ar">PERSONAL</span><span class="pill">DEC 1 · 128d</span></div>
+        <div class="ev"><u>EVIDENCE</u>The scale reads 185 on a Monday morning</div></div>
+    </div>
+
+    <div class="sec"><span>Manage</span></div>
+    <div class="wrapx"><div class="btn gh">EDIT THIS AREA</div></div>
+  </div></div>
+</div>
+
+<!-- ============ 11 · DAY ONE ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">SCREEN 11 · DAY ONE</div><h3>Before you've typed anything</h3>
+    <p>Empty on purpose. The first thing it asks for is an area, not a goal.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="vhead"><h2>The Goals</h2><span>NOTHING SET YET</span></div>
+    <div class="segs"><div class="seg on">BY AREA</div><div class="seg">BY DATE</div><div class="seg">THE WEEK</div></div>
+    <div style="height:var(--s6)"></div>
+    <div class="empty"><b>Nothing in here yet — and that's the point.</b>
+      <p>This is empty because it's yours to fill. Start with an area: a business, or a part of
+      your life. Then the dates you aim at. Then the goals.</p>
+      <div class="btn">ADD YOUR FIRST AREA</div>
+      <div style="height:var(--s2)"></div>
+      <div class="btn gh">OR LOAD AN EXAMPLE</div></div>
+
+    <div class="sec"><span>What goes where</span></div>
+    <div class="wrapx">
+      <div class="std"><div class="h">THE FOUR THINGS</div>
+        <div class="qr"><span class="nm"><b style="color:var(--ink);font-weight:500">Area</b> — never ends</span>
+          <span class="v" style="width:auto">SANO</span></div>
+        <div class="qr"><span class="nm"><b style="color:var(--ink);font-weight:500">Date</b> — a horizon you aim at</span>
+          <span class="v" style="width:auto">DEC 1</span></div>
+        <div class="qr"><span class="nm"><b style="color:var(--ink);font-weight:500">Goal</b> — ends, has evidence</span>
+          <span class="v" style="width:auto">3 CLIENTS</span></div>
+        <div class="qr"><span class="nm"><b style="color:var(--ink);font-weight:500">Block</b> — a goal, a day</span>
+          <span class="v" style="width:auto">MON B1</span></div>
+      </div></div>
+  </div></div>
+</div>
+
+<!-- ============ 12 · MANAGE ============ -->
+<div class="slot">
+  <div class="sh"><div class="n">SCREEN 12 · MANAGE</div><h3>Areas and dates</h3>
+    <p>Add a business, rename one, reorder them. Deleting a date never deletes a goal.</p></div>
+  <div class="p"><div class="notch"><i></i></div><div class="pv">
+    <div class="vhead"><h2>The Goals</h2><span>MANAGE</span></div>
+    <div class="dim"></div>
+    <div class="sheet"><div class="grab"></div>
+      <div class="sh-t">Areas</div><div class="sh-s">TAP TO EDIT · ARROWS TO REORDER</div>
+
+      <div class="std" style="margin-bottom:var(--s2)"><div class="qr">
+        <i style="width:11px;height:11px;border-radius:50%;background:var(--gold);flex:none"></i>
+        <span class="nm">SANO</span><span class="v" style="width:auto">3 GOALS</span></div></div>
+      <div class="std" style="margin-bottom:var(--s2)"><div class="qr">
+        <i style="width:11px;height:11px;border-radius:50%;background:var(--blue);flex:none"></i>
+        <span class="nm">Fruits</span><span class="v" style="width:auto">2 GOALS</span></div></div>
+      <div class="std" style="margin-bottom:var(--s2)"><div class="qr">
+        <i style="width:11px;height:11px;border-radius:50%;background:var(--violet);flex:none"></i>
+        <span class="nm">LA Edible</span><span class="v" style="width:auto">1 GOAL</span></div></div>
+      <div class="std" style="margin-bottom:var(--s2)"><div class="qr">
+        <i style="width:11px;height:11px;border-radius:50%;background:var(--rune);flex:none"></i>
+        <span class="nm">Simply Living</span><span class="v" style="width:auto">1 PARKED</span></div></div>
+      <div class="std" style="margin-bottom:var(--s3)"><div class="qr">
+        <i style="width:11px;height:11px;border-radius:50%;background:var(--ember);flex:none"></i>
+        <span class="nm">Personal</span><span class="v" style="width:auto">4 STANDARDS</span></div></div>
+
+      <div class="btn">+ NEW AREA</div>
+      <div style="height:var(--s2)"></div>
+      <div class="btn gh">MANAGE DATES · 5</div>
+    </div>
+  </div></div>
+</div>
+
+</div>
+
+<div class="foot" style="max-width:660px;margin:0 auto;text-align:left;padding-bottom:70px">
+  EVERY SCREEN ABOVE IS THE SAME FOUR OBJECTS — AREAS, DATES, GOALS, BLOCKS.<br>
+  ADD A SIXTH BUSINESS OR A TWO-MONTH HORIZON AND NOTHING IN THE CODE CHANGES.
+</div>
+</div>
+</body>
+</html>
