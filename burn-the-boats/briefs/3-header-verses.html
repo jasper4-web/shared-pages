@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>Header Verses — Burn the Boats</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{--bg:#07060b;--panel:#0e0c16;--line:#1e1a2b;--line2:#2b2540;--ink:#EDEAE4;
+ --dim:#9a93a8;--faint:#6b6480;--gold:#E0B25E;--ember:#FF6B2C;--phos:#4ADE80;--blood:#FF4D5E}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.62}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px 80px}
+.top{position:sticky;top:0;z-index:9;background:rgba(7,6,11,.95);backdrop-filter:blur(12px);
+ border-bottom:1px solid var(--line);margin:0 -18px 26px;padding:13px 18px;display:flex;
+ align-items:center;gap:12px}
+.top a{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--gold);
+ text-decoration:none;min-height:44px;display:flex;align-items:center}
+.top span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint);
+ margin-left:auto;text-align:right}
+h1,h2,h3,h4{font-family:'Clash Display',sans-serif;letter-spacing:-.02em;line-height:1.15;margin:0}
+h1{font-size:31px;font-weight:700;margin:28px 0 16px}
+h2{font-size:23px;font-weight:600;margin:40px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+h3{font-size:18px;font-weight:600;margin:28px 0 10px;color:var(--gold)}
+h4{font-size:15px;font-weight:600;margin:22px 0 8px;color:var(--dim)}
+p{font-size:16px;color:var(--dim);margin:0 0 16px}
+strong{color:var(--ink);font-weight:600}
+em{color:var(--ink);font-style:italic}
+ul,ol{padding-left:22px;margin:0 0 18px}
+li{font-size:16px;color:var(--dim);margin-bottom:9px}
+li::marker{color:var(--faint)}
+code{font-family:'Geist Mono',monospace;font-size:13.5px;background:var(--panel);
+ border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#c8bfe0}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px;
+ overflow-x:auto;margin:0 0 18px}
+pre code{background:none;border:0;padding:0;font-size:13px;line-height:1.7;color:#bdb5d4}
+blockquote{margin:0 0 18px;padding:12px 0 12px 17px;border-left:3px solid var(--gold);
+ color:#c9bda0;font-size:16px}
+blockquote p{color:inherit;margin:0 0 8px}
+blockquote p:last-child{margin:0}
+hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+a{color:var(--gold)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 20px;
+ border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint);
+ text-transform:uppercase;text-align:left;padding:12px;background:var(--panel);
+ border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:12px;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td strong{color:var(--ink)}
+</style></head><body><div class="wrap">
+<div class="top"><a href="../work.html">&larr; ALL THE WORK</a><span>BURN THE BOATS</span></div>
+<h1>AGENT 2 — THE HEADER: VERSES + THE BURN</h1>
+<p><strong>Mission:</strong> the furnace header stops being one fixed line. Most of the time it says <strong>THE BOATS HAVE BEEN BURNED</strong>; the rest of the time that line <strong>burns away</strong> and a Bible verse is revealed underneath.</p>
+<p><strong>Turf:</strong> <code>data/verses.js</code> · <code>renditions/rend-header.html</code> <strong>Depends on:</strong> nothing. Start immediately.</p>
+<hr>
+<h2>What he actually said</h2>
+<blockquote><p>&quot;The boats have been burned will <strong>always stay the main thing</strong> on there — that&#x27;s why I said it will </p><p>be on there <strong>more than half of the time</strong>. But the 35% of the time, the boats have been burned can </p><p>do something cool like <strong>look like it burns up</strong>, or it can just transition away, and a good Bible </p><p>verse about <strong>manhood, discipline</strong>, something that has to do with the feel of this whole page should </p><p>pop up. But they are <strong>all Christian Bible verses</strong>.&quot;</p></blockquote>
+<p>Read that precisely:</p>
+<ul><li>The boats line is <strong>the identity</strong>. It is dominant — roughly <strong>65%</strong> of the time.</li><li>The other <strong>~35%</strong> is a <strong>transition</strong>, not a replacement: the line burns/dissolves away and a verse appears. It should feel like the fire consumed the words.</li><li><strong>Christian Bible verses only.</strong> Not general motivational quotes, not philosophy, not Stoics.</li><li>Themes: <strong>manhood, discipline, endurance, courage, work, self-control, finishing.</strong></li></ul>
+<h2>Job</h2>
+<p><strong>Part A — curate the verses.</strong> Build <code>data/verses.js</code> exporting a plain array. Target <strong>~130 verses</strong> so it never repeats across the run (Jul 27 → Dec 31, all days). Each entry:</p>
+<pre><code>
+{ ref:&#x27;1 Corinthians 16:13&#x27;, text:&#x27;Be watchful, stand firm in the faith, act like men, be strong.&#x27;, theme:&#x27;manhood&#x27; }
+</code></pre>
+<p>Requirements:</p>
+<ul><li><strong>Verify every reference and its wording.</strong> A misquoted verse in a Christian man&#x27;s daily app is a serious failure. Use a public translation consistently (ESV or KJV — pick one, say which, be consistent) and check each one.</li><li>Themes across: manhood · discipline/self-control · endurance &amp; finishing · courage · work &amp; diligence · integrity · rising early / time · strength through weakness.</li><li>Keep them <strong>short enough to render large</strong> — most under ~140 characters. Long passages die at 22px.</li><li>Selection must be <strong>deliberate</strong>: no filler, no near-duplicates, no verses that only tangentially fit.</li><li>Include a <code>dayFor(dateISO)</code> helper giving a stable verse per date (same date always yields the same verse — no randomness that changes on refresh).</li></ul>
+<p><strong>Part B — design the transition.</strong> Build <code>renditions/rend-header.html</code> showing <strong>4–6 genuinely different treatments</strong> of the boats-line → verse transition, all animating live, all inside a phone frame with the real furnace header styling copied from <code>index.html</code>.</p>
+<p>Directions worth exploring (do not stop at these): the letters <strong>burning upward</strong> and dissolving into embers with the verse rising through · a <strong>heat-haze wipe</strong> · the plate <strong>cooling</strong> to reveal engraving underneath · charring from the baseline up · a hard <strong>cut on a flare</strong>. Use <code>lib/tsparticles/</code> for embers rather than hand-rolling.</p>
+<p>Also decide and show: <strong>how does he get the verse if he misses the transition?</strong> A tap to toggle is the obvious answer — but a verse he can never summon deliberately is a verse he&#x27;ll miss most days.</p>
+<h2>Done when</h2>
+<ul><li><code>data/verses.js</code> has ~130 <strong>verified</strong> verses with references, themes, and a stable <code>dayFor()</code></li><li>You state which translation you used and confirm you checked the wording of each</li><li><code>rend-header.html</code> shows 4–6 distinct transitions, animating, at 390×844</li><li>Lint clean, screenshotted, and you have looked at the screenshots</li><li>Hand-off names your recommended transition and why the others lost</li></ul>
+</div></body></html>

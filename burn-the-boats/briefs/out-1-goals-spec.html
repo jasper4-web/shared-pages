@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>Output · Goals spec — Burn the Boats</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{--bg:#07060b;--panel:#0e0c16;--line:#1e1a2b;--line2:#2b2540;--ink:#EDEAE4;
+ --dim:#9a93a8;--faint:#6b6480;--gold:#E0B25E;--ember:#FF6B2C;--phos:#4ADE80;--blood:#FF4D5E}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.62}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px 80px}
+.top{position:sticky;top:0;z-index:9;background:rgba(7,6,11,.95);backdrop-filter:blur(12px);
+ border-bottom:1px solid var(--line);margin:0 -18px 26px;padding:13px 18px;display:flex;
+ align-items:center;gap:12px}
+.top a{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--gold);
+ text-decoration:none;min-height:44px;display:flex;align-items:center}
+.top span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint);
+ margin-left:auto;text-align:right}
+h1,h2,h3,h4{font-family:'Clash Display',sans-serif;letter-spacing:-.02em;line-height:1.15;margin:0}
+h1{font-size:31px;font-weight:700;margin:28px 0 16px}
+h2{font-size:23px;font-weight:600;margin:40px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+h3{font-size:18px;font-weight:600;margin:28px 0 10px;color:var(--gold)}
+h4{font-size:15px;font-weight:600;margin:22px 0 8px;color:var(--dim)}
+p{font-size:16px;color:var(--dim);margin:0 0 16px}
+strong{color:var(--ink);font-weight:600}
+em{color:var(--ink);font-style:italic}
+ul,ol{padding-left:22px;margin:0 0 18px}
+li{font-size:16px;color:var(--dim);margin-bottom:9px}
+li::marker{color:var(--faint)}
+code{font-family:'Geist Mono',monospace;font-size:13.5px;background:var(--panel);
+ border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#c8bfe0}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px;
+ overflow-x:auto;margin:0 0 18px}
+pre code{background:none;border:0;padding:0;font-size:13px;line-height:1.7;color:#bdb5d4}
+blockquote{margin:0 0 18px;padding:12px 0 12px 17px;border-left:3px solid var(--gold);
+ color:#c9bda0;font-size:16px}
+blockquote p{color:inherit;margin:0 0 8px}
+blockquote p:last-child{margin:0}
+hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+a{color:var(--gold)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 20px;
+ border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint);
+ text-transform:uppercase;text-align:left;padding:12px;background:var(--panel);
+ border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:12px;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td strong{color:var(--ink)}
+</style></head><body><div class="wrap">
+<div class="top"><a href="../work.html">&larr; ALL THE WORK</a><span>BURN THE BOATS</span></div>
+<h1>OUT-1 · THE GOAL SYSTEM — SPEC</h1>
+<p>Agent 1 · Burn the Boats crew 2026-07-25. Companion to <code>out-1-goals-research.md</code>. Written against <code>index.html</code> (v3, 1825 lines), <code>GOAL-ENGINE.md</code> and <code>PROFILE.md</code>.</p>
+<p><strong>This spec is implementable as written.</strong> Every structure is given as code, every function that changes is named with its current line behaviour, and nothing is left for the GM to invent. Agent 2 owns how any of it looks; this document deliberately contains no layout, no copy for screens, and no HTML.</p>
+<hr>
+<h2>0 · What is actually broken today (the case for all of this)</h2>
+<p>Read the current build and the goal layer is three fields deep and stops:</p>
+<pre><code>
+S.december = { WORK:{lag,lead,at,target,unit}, CAPITAL:{...}, ... }   // 6 rows, flat
+week().tactics = {b1:&#x27;…&#x27;, b2:&#x27;…&#x27;, b3:&#x27;…&#x27;, b4:&#x27;…&#x27;}                     // 4 free strings, no owner
+day().prio     = [&#x27;…&#x27;,&#x27;…&#x27;,&#x27;…&#x27;,&#x27;…&#x27;]                                    // 4 free strings, no owner
+</code></pre>
+<p>Six concrete consequences:</p>
+<ol><li><strong>The cascade is a naming convention, not a structure.</strong> <code>GOAL-ENGINE.md</code> states &quot;a level may only ever be justified by the level above it… a weekly tactic that serves no December goal is deleted, not done.&quot; <strong>Nothing in the code can evaluate that sentence</strong>, because a tactic is a string with no <code>goalId</code>.</li><li><strong>No milestones exist.</strong> The owner&#x27;s central ask — a December goal, then a two-month goal, then a three-month goal — has no place to live at all.</li><li><strong>Nothing can be restructured</strong>, because there is nothing structured. Editing a December goal is one <code>saveGoal()</code> call that overwrites a string.</li><li><strong><code>g.at</code> is a number he types about himself.</strong> <code>saveGoal()</code> (line 1510) writes <code>parseFloat($(&#x27;gAt&#x27;).value)</code> straight into the record. Three of six goals are <code>at:30 / target:100 unit:&#x27;%&#x27;</code> — that is a mood with a percent sign. The scoreboard test (&quot;can I tell at a glance if I am winning?&quot;) cannot be passed by a self-reported number.</li><li><strong><code>week().theme</code> is a hardcoded four-item dropdown</strong> (<code>[&#x27;SANO&#x27;,&#x27;TRADING&#x27;,&#x27;LA Edible&#x27;,&#x27;Admin + follow-ups&#x27;]</code>, line 1783). LA Edible therefore has <em>no goal object anywhere</em> — it lives as <code>S.push.kitchen</code>, an integer.</li><li><strong>A goal with nothing scheduled against it is invisible.</strong> There is no query in the app that could even ask the question.</li></ol>
+<p>The Friday ritual, today, is four dropdowns that set a business label. That is the whole of &quot;set next week.&quot;</p>
+<hr>
+<h2>1 · THE MODEL</h2>
+<h3>1.1 Design decisions taken before the code</h3>
+<p><strong>D1 · A domain is a TAG, not a container.</strong> <em>This is a deliberate deviation from the brief&#x27;s &quot;a goal per life category across the six domains&quot; and the GM should know it is deliberate.</em> His real portfolio is SANO · Trading · LA Edible · body · faith · people · mind — <strong>seven</strong> things, and WORK holds two of them. Forcing one goal per domain is what pushed LA Edible out of the goal model and into <code>S.push.kitchen</code> as a loose integer. So: many goals may share a domain; each domain has exactly one <code>primary</code> goal for the places that need a single row (the character sheet, the radar labels). Domains keep doing their real job — routing block completions into <code>domainProgress()</code> — untouched.</p>
+<p><strong>D2 · Goals are ranked, not equal.</strong> 4DX&#x27;s ≤2-WIG rule, honestly applied. <code>rank:1</code> is the WIG (SANO), <code>rank:2</code> the runner-up (trading). Rank is the only input the block layout needs to implement Burkeman&#x27;s &quot;pay yourself first&quot;: <strong>the WIG gets the 09:00–12:00 peak window.</strong> Six co-equal goals cannot express the profile, which is explicit that SANO is priority 1.</p>
+<p><strong>D3 · Progress is a derived ledger, never a typed number.</strong> <code>at</code> becomes <code>sum(entries[].delta)</code>. Editing a goal&#x27;s text or target can then never move its progress — which is what makes restructuring safe (§3).</p>
+<p><strong>D4 · <code>kind</code> distinguishes outcome / learning / habit.</strong> From Locke &amp; Latham (research §7d): a performance-outcome goal on a novel complex task produces tunnel vision, and &quot;3 SANO clients&quot; is a performance goal on a task he has completed zero times. The profile&#x27;s own diagnosis — <em>not blocked on assets, blocked on process clarity; &quot;scrambled&quot;; the process is &quot;crowded and muddy&quot;</em> — is the textbook signature. So SANO carries a <strong>learning milestone before its outcome milestones</strong>, and habit goals (faith / people / mind) carry no fake percentage at all: their progress <em>is</em> the existing quota board.</p>
+<h3>1.2 The structures</h3>
+<pre><code>
+/* ==========================================================================
+   THE GOAL MODEL — schema v4.  Replaces S.december entirely.
+   Three new top-level stores, all keyed by id, all flat (no nesting) so that
+   re-parenting is a single pointer write and nothing can be orphaned by an edit.
+   ========================================================================== */
+
+S.goals      = {};   // id -&gt; Goal
+S.milestones = {};   // id -&gt; Milestone
+S.commits    = {};   // id -&gt; Commit      (weekly commitments, all weeks, forever)
+S.paid       = {};   // key -&gt; xp         (run-level one-time XP ledger — see §5.4)
+S.horizon    = {};   // the unfailable layer — see §2.1
+S.v          = 4;
+
+/* ---------------------------------------------------------------- GOAL --- */
+const GOAL = {
+  id:        &#x27;g_sano&#x27;,        // string. `g_` + slug. Stable forever. NEVER reused, NEVER renumbered.
+  domain:    &#x27;WORK&#x27;,          // &#x27;WORK&#x27;|&#x27;CAPITAL&#x27;|&#x27;BODY&#x27;|&#x27;FAITH&#x27;|&#x27;MIND&#x27;|&#x27;PEOPLE&#x27; — a tag (D1)
+  primary:   true,            // bool. Exactly one true per domain. The row the character sheet shows.
+  rank:      1,               // int, 1..n, unique, contiguous. 1 = the WIG. Drives peak-block layout.
+  kind:      &#x27;outcome&#x27;,       // &#x27;outcome&#x27; | &#x27;learning&#x27; | &#x27;habit&#x27;   (D4)
+  state:     &#x27;live&#x27;,          // &#x27;live&#x27; | &#x27;parked&#x27; | &#x27;done&#x27; | &#x27;archived&#x27;
+
+  short:     &#x27;SANO&#x27;,          // ≤10 chars. The chip on a block. Replaces week().theme values.
+  title:     &#x27;3 SANO clients — at least one at full freight&#x27;,   // THE LAG. Qualitative is fine.
+  lead:      &#x27;Real conversations with owners&#x27;,                  // THE LEAD. What he controls.
+
+  unit:      &#x27;clients&#x27;,       // null for kind:&#x27;habit&#x27;
+  target:    3,               // number | null   (null for kind:&#x27;habit&#x27; — quotas are its measure)
+  entries:   [                // APPEND-ONLY. `at` is sum(entries[].delta). Never edited, never cleared.
+    {on:&#x27;2026-07-27&#x27;, delta:0, note:&#x27;carried in from v3&#x27;, src:&#x27;migrate&#x27;}
+  ],
+
+  confidence: 3,              // 1..5, one tap on Friday. NOT scored, NOT in OVR. See §5.5.
+  confidenceOn: null,         // date it was last set
+
+  parked:    null,            // null | {until:&#x27;2026-10-05&#x27;, why:&#x27;casual until SANO is further along&#x27;, on:&#x27;…&#x27;}
+  milestones:[&#x27;m_sano_gate&#x27;], // ordered id list. Order is authoritative; `order` on the milestone mirrors it.
+
+  createdOn: &#x27;2026-07-27&#x27;,
+  closedOn:  null,            // set when state -&gt; &#x27;done&#x27;
+  archivedOn:null,            // set when state -&gt; &#x27;archived&#x27;. The row is NEVER deleted.
+  supersededBy: null,         // goal id, when he rewrites a goal rather than editing it (§3.5)
+
+  source:    null,            // null | {kind:&#x27;project&#x27;, ref:&#x27;sano-solutions/brain/MASTER_STATE.md&#x27;,
+                              //         field:&#x27;december&#x27;, syncedOn:&#x27;…&#x27;}   — PROFILE §8, see §4.6
+};
+
+/* ----------------------------------------------------------- MILESTONE --- */
+const MILESTONE = {
+  id:      &#x27;m_sano_gate&#x27;,
+  goalId:  &#x27;g_sano&#x27;,          // re-parentable: one pointer write (§3.3)
+  order:   0,                 // int. Reorder = renumber. Dates need not agree with order (§3.2).
+  by:      &#x27;2026-08-03&#x27;,      // FREE date. The app PROPOSES landmarks (§2.3), it never enforces them.
+  title:   &#x27;The six things are checked and I have signed off on each&#x27;,
+  kind:    &#x27;learning&#x27;,        // &#x27;learning&#x27; | &#x27;outcome&#x27;   (D4)
+  state:   &#x27;live&#x27;,            // &#x27;live&#x27; | &#x27;archived&#x27;
+  checks:  [                  // OPTIONAL sub-gate. This is where the Anthony six live.
+    {k:&#x27;pitch&#x27;,  n:&#x27;The pitch page is right&#x27;,        on:null},   // on = date ticked, or null
+    {k:&#x27;offer&#x27;,  n:&#x27;The offer and pricing are right&#x27;,on:null},
+    {k:&#x27;deliver&#x27;,n:&#x27;I know exactly what he gets&#x27;,    on:null},
+    {k:&#x27;onboard&#x27;,n:&#x27;The first 30 days are mapped&#x27;,   on:null},
+    {k:&#x27;quest&#x27;,  n:&#x27;The questionnaire is ready&#x27;,     on:null},
+    {k:&#x27;talk&#x27;,   n:&#x27;I know what I am going to say&#x27;,  on:null},
+  ],
+  hitOn:   null,              // date. WRITE-ONCE. Survives every later edit, re-parent or archive.
+  note:    &#x27;&#x27;,                // one line he writes when he hits it. Feeds the Record tab.
+};
+
+/* -------------------------------------------------------------- COMMIT --- */
+/* The weekly unit. 4DX&#x27;s &quot;commitment&quot;, 12WY&#x27;s &quot;tactic&quot; — but with an owner, a size and a WHEN.
+   Implementation intentions are only effective in contingent if-then form (research §7a), so a
+   commitment without slots is not a plan and the model refuses to pretend otherwise. */
+const COMMIT = {
+  id:        &#x27;c_2026-08-03_1&#x27;,
+  weekKey:   &#x27;2026-08-03&#x27;,    // mondayOf() of the week it belongs to
+  goalId:    &#x27;g_sano&#x27;,        // null is legal for one week only, then the ritual asks once
+  milestoneId:&#x27;m_sano_gate&#x27;,  // null | milestone id — the &quot;why now&quot; line on the block sheet
+  text:      &#x27;Send Anthony the pitch and book the call&#x27;,   // what a block is FOR
+  blocks:    4,               // THE CAPACITY CURRENCY. How many deep blocks this buys. 1..8.
+  slots:     [&#x27;mon:b1&#x27;,&#x27;mon:b2&#x27;,&#x27;tue:b1&#x27;,&#x27;wed:b1&#x27;],        // WRITTEN BY layoutWeek(). The if-then plan.
+  kind:      &#x27;push&#x27;,          // &#x27;push&#x27; | &#x27;quota&#x27; | &#x27;slack&#x27;
+  needsCT:   true,            // true = must land in a block that is still business hours in CENTRAL time
+  carriedFrom:null,           // commit id it was carried from — the Friday carry chain (§6)
+  state:     &#x27;live&#x27;,          // &#x27;live&#x27; | &#x27;met&#x27; | &#x27;carried&#x27; | &#x27;dropped&#x27;
+};
+
+/* --------------------------------------------------- WEEK (extended) ----- */
+/* week(k) already exists (line 627). Its defaults gain four keys; `due` and `done`
+   are UNTOUCHED — they remain the 12WY execution score and the only weekly score. */
+S.week[k] = {
+  theme:   {b1:&#x27;SANO&#x27;,b2:&#x27;SANO&#x27;,b3:&#x27;LA Edible&#x27;,b4:&#x27;Admin + follow-ups&#x27;},  // LEGACY. Now DERIVED, read-only.
+  tactics: {},                 // LEGACY. Now DERIVED, read-only. Kept so nothing downstream breaks.
+  due: 0, done: 0,             // UNCHANGED — recount() owns these
+  commits: [],                 // ordered commit ids for this week
+  grid: {mon:{b1:&#x27;c_…&#x27;,b2:&#x27;c_…&#x27;,b3:null,b4:&#x27;c_…&#x27;}, tue:{…}, wed:{…}, thu:{…}, fri:{…}},
+  overflow: 0,                 // blocks committed that could not be placed (see §4.3)
+  locked:  null,               // date the Friday ritual locked it
+  frozen:  0,                  // 1 once its Sunday has passed. Frozen weeks are IMMUTABLE (§3.4).
+};
+</code></pre>
+<h3>1.3 Derived accessors — the only sanctioned way to read a goal</h3>
+<pre><code>
+const goalsAll   = ()=&gt;Object.values(S.goals).sort((a,b)=&gt;a.rank-b.rank);
+const liveGoals  = ()=&gt;goalsAll().filter(g=&gt;g.state===&#x27;live&#x27;);
+const goalAt     = g=&gt;(g.entries||[]).reduce((a,e)=&gt;a+(+e.delta||0),0);   // replaces g.at ENTIRELY
+const isParked   = g=&gt;!!(g.parked &amp;&amp; g.parked.until &gt;= today());
+const msOf       = g=&gt;(g.milestones||[]).map(id=&gt;S.milestones[id])
+                       .filter(m=&gt;m &amp;&amp; m.state===&#x27;live&#x27;)
+                       .sort((a,b)=&gt;a.order-b.order);
+const nextMs     = g=&gt;msOf(g).find(m=&gt;!m.hitOn) || null;                 // the &quot;why now&quot; for the week
+const primaryOf  = k=&gt;goalsAll().find(g=&gt;g.domain===k &amp;&amp; g.primary) || goalsAll().find(g=&gt;g.domain===k);
+const theWIG     = ()=&gt;liveGoals()[0] || null;                            // rank 1
+</code></pre>
+<p><strong>Hard rule:</strong> nothing outside these accessors may read <code>S.goals</code> directly, and <strong>nothing anywhere may write <code>g.at</code></strong> — the field does not exist in v4. <code>openGoal()</code>/<code>saveGoal()</code> (lines 1497–1515) lose their <code>gAt</code> input and gain a <code>+ log progress</code> action that appends an entry.</p>
+<hr>
+<h2>2 · THE HORIZONS — how many, spaced how, and why</h2>
+<h3>2.1 Five tiers, of which he regularly touches three</h3>
+<div class='tw'><table><tr><th>#</th><th>Tier</th><th>Holds</th><th>Type</th><th>Set / reviewed</th><th>Scored?</th></tr><tr><td><strong>T0</strong></td><td><strong>THE HORIZON</strong></td><td>the theme + the real deadline</td><td>—</td><td>once, at setup</td><td><strong>never</strong></td></tr><tr><td><strong>T1</strong></td><td><strong>DECEMBER</strong></td><td>1 WIG + n ranked goals</td><td>lag</td><td>once; edited on demand, prompted monthly</td><td>no</td></tr><tr><td><strong>T2</strong></td><td><strong>MILESTONES</strong></td><td>0–5 dated checkpoints per goal</td><td>lag</td><td>at a landmark, or when one is hit</td><td>no</td></tr><tr><td><strong>T3</strong></td><td><strong>THE WEEK</strong></td><td>3–5 commitments, sized in blocks</td><td><strong>lead</strong></td><td>every Friday, ≤90 s</td><td><strong>yes — the only score</strong></td></tr><tr><td><strong>T4</strong></td><td><strong>THE DAY</strong></td><td>blocks executing commitments</td><td>execution</td><td>08:30 composer, ≤30 s</td><td>yes (feeds T3)</td></tr></table></div>
+<p><strong>T0 exists because of the single governing law.</strong> From the research: yearly-theme systems work precisely because <em>&quot;there is no failure as long as the new plans fit the theme&quot;</em> — an unfailable layer. A system where every tier is scored has nowhere to put a bad fortnight, and that is exactly how v1 died. T0 is one struct and it is what the app shows him on a week he lost:</p>
+<pre><code>
+S.horizon = {
+  theme: &#x27;BURN THE BOATS&#x27;,
+  line:  &#x27;Become someone who executes.&#x27;,          // PROFILE §1, verbatim intent
+  cliff: {on:&#x27;2027-03-01&#x27;, label:&#x27;Real income&#x27;},  // PROFILE §8b — the deadline BEHIND Dec 1
+};
+</code></pre>
+<p>The cliff is the other half of PROFILE §8b: <em>&quot;December is the pipeline checkpoint, not the money cliff… show both horizons.&quot;</em> The Push tab already renders <code>${workdaysLeft()} TO DEC 1 · INCOME BY MAR</code> (line 1614) as a hardcoded string — it becomes this field.</p>
+<h3>2.2 Why not more tiers, and why not fewer</h3>
+<ul><li><strong>Why not EOS&#x27;s four-rung ladder (10yr/3yr/1yr/quarter):</strong> 18 weeks. A 3-year picture is unanswerable and a quarterly-only re-plan gives exactly <strong>two</strong> chances to notice the plan is wrong across the whole run. The owner&#x27;s own words reject it: <em>&quot;a system instead of a linear path that we wrote down and can&#x27;t really be changed.&quot;</em></li><li><strong>Why not the 12 Week Year&#x27;s flat two-tier (12-week goal → weekly tactics):</strong> it deletes the month, which is right, but it leaves an 18-week goal with no intermediate object — and an intermediate object is literally what he asked for.</li><li><strong>Why not GTD&#x27;s six altitudes:</strong> five of them are answered better in <code>PROFILE.md</code> than any in-app form. What GTD contributes is not a ladder but a <strong>cadence rule</strong>, applied below.</li><li><strong>Why milestones are variable-count and not a fixed &quot;2-month goal / 3-month goal&quot; pair:</strong> he named those in a loose order mid-interview, and hard-coding two tiers would (a) force every goal to have exactly two, which is absurd for &quot;gym 2× a week&quot;, and (b) rebuild the rigidity he explicitly complained about. A goal may have <strong>0 to 5</strong> milestones. Zero is legal and normal for habit goals.</li></ul>
+<h3>2.3 The cadence rule — the single most load-bearing line in this section</h3>
+<p><strong>Higher tiers are reviewed less often, and T1 never appears in the weekly ritual.</strong> (GTD&#x27;s actual contribution; see research §5.)</p>
+<pre><code>
+const CADENCE = {
+  T0: &#x27;once&#x27;,                    // never prompted
+  T1: &#x27;monthly + on demand&#x27;,     // a prompt at a landmark. NEVER a field in the Friday flow.
+  T2: &#x27;at its landmark, or when hit&#x27;,
+  T3: &#x27;every Friday&#x27;,
+  T4: &#x27;every morning at 08:30&#x27;,
+};
+</code></pre>
+<p>Put December goals in the Friday form and two things happen: the 90-second ritual becomes a ten-minute one, and a goal that should be stable starts drifting every seven days. He can still edit a December goal at any moment — from the goal sheet, in two taps — it simply is not <em>asked for</em> weekly.</p>
+<h3>2.4 The landmark dates — proposed, never enforced</h3>
+<p>Milestone dates are free text-dates. But the app <strong>pre-fills</strong> from this list, because the fresh-start effect is real and measurable (Dai/Milkman/Riis — gym visits and goal commitments spike after temporal landmarks; research §7c), and a Monday that is also a month-turn is a double landmark:</p>
+<pre><code>
+/* Mondays, ≈4–5 weeks apart, each at or adjacent to a month boundary. Weeks 6 · 10 · 14 · 18. */
+const LANDMARKS = [&#x27;2026-08-31&#x27;,&#x27;2026-09-28&#x27;,&#x27;2026-10-26&#x27;,&#x27;2026-11-23&#x27;];
+</code></pre>
+<p>Four checkpoints in 18 weeks — one every ~4.5 weeks. That is deliberately between the 12WY&#x27;s &quot;the week is the new month&quot; and EOS&#x27;s 90-day Rock: short enough that the &quot;you have 11 months to procrastinate&quot; arithmetic never applies, long enough that a checkpoint means something. It also gives <strong>four</strong> chances to re-plan where a quarterly system gives two.</p>
+<p><em>Note for the GM:</em> <code>2026-11-23</code> is Thanksgiving week (Thanksgiving is Nov 26, 2026). PROFILE §8c already flags that holidays are currently counted as ordinary full-load weekdays. The landmark date itself is fine; the load that week is a separate open question and is not mine to fix.</p>
+<hr>
+<h2>3 · RESTRUCTURING — the requirement he cared most about</h2>
+<blockquote><p>*&quot;just to give a little bit of flexibility so we&#x27;re not stuck in one route, and the goals actually </p><p>becomes a system instead of a linear path that we wrote down and can&#x27;t really be changed.&quot;*</p></blockquote>
+<p><strong>The design must survive this test: any tree fixed at creation is a failed design.</strong> Here is why this one is not, and exactly what happens to earned progress in each case.</p>
+<h3>3.0 The finding that makes all of this safe</h3>
+<p><code>domainProgress()</code> (line 701) recomputes <strong>from <code>S.days</code> records every single time it is called</strong>. It reads block completions, quotas and off-script flags. <strong>It never reads <code>S.december</code>.</strong> The comment on line 699 says so: <em>&quot;Recomputed from the stored day records every time — self-healing, cannot drift.&quot;</em></p>
+<p><strong>Therefore the OVR curve is already structurally immune to goal edits.</strong> Nothing he does to a goal can move a stat, because the stats are made of days, not of goals. This is the strongest property in the existing engine and this spec&#x27;s first duty is not to break it.</p>
+<blockquote><p><strong>INVARIANT 1 — <code>domainProgress()</code> must never read <code>S.goals</code>, <code>S.milestones</code> or <code>S.commits</code>.</strong> </p><p>If a future change makes goal completion feed the radar, restructuring stops being free and the tuned </p><p>Dec-1-at-99 curve stops being tuned. This invariant is the whole reason §3 can be short.</p></blockquote>
+<h3>3.1 The five safety rules</h3>
+<pre><code>
+R1  NEVER DELETE. Delete sets state:&#x27;archived&#x27; + archivedOn. Rows are never removed from S.goals /
+    S.milestones / S.commits. History keeps resolving; nothing can ever point at a missing id.
+
+R2  LEDGER, NOT COUNTER. Progress is sum(entries[].delta) on an append-only array. Editing title, lead,
+    unit, target, rank, domain or kind touches NO entry. Changing `target` from 3 to 2 changes the
+    denominator only — the numerator is history and history does not move.
+
+R3  WRITE-ONCE FACTS. milestone.hitOn, check.on, goal.closedOn, commit.state:&#x27;met&#x27;, and every S.days
+    record are write-once. Once true, no later edit may make them false.
+
+R4  RE-PARENT FORWARD ONLY. Changing a pointer (commit.goalId, milestone.goalId) affects the LIVE record.
+    Frozen weeks keep the pointer they had. Re-parenting is not retroactive because rewriting what a past
+    week was for is a lie about a week he actually lived.
+
+R5  NEVER ZERO A COUNTER ON A CHANGE. A counter zeroed by an edit is a manufactured lapse, and the
+    what-the-hell effect (research §7b) says a manufactured lapse buys a real abandonment. No
+    restructuring operation may reduce S.xp, w.due, w.done, a streak, or any S.days value. Ever.
+</code></pre>
+<h3>3.2 Reordering and re-dating</h3>
+<pre><code>
+function reorderMs(goalId, fromIdx, toIdx){          // drag, or up/down
+  const g=S.goals[goalId], ids=g.milestones.slice();
+  ids.splice(toIdx,0,ids.splice(fromIdx,1)[0]);
+  g.milestones=ids; ids.forEach((id,i)=&gt;S.milestones[id].order=i);
+  save();                                            // hitOn untouched. Dates untouched.
+}
+</code></pre>
+<p>Order and date are <strong>independent</strong>. He may legitimately want &quot;take the first guitar class&quot; ordered after &quot;feel ready&quot; while both are dated the same month, or a later-ordered milestone with an earlier date because he reshuffled. The app must not &quot;helpfully&quot; re-sort by date — that is the rigidity he complained about. <code>nextMs()</code> walks <code>order</code>, not <code>by</code>.</p>
+<p>Re-dating a <strong>hit</strong> milestone is allowed and changes nothing about the hit: <code>hitOn</code> is the fact, <code>by</code> was the plan.</p>
+<h3>3.3 Re-parenting</h3>
+<pre><code>
+function reparentMs(msId, newGoalId){
+  const m=S.milestones[msId], old=S.goals[m.goalId], g=S.goals[newGoalId];
+  old.milestones=old.milestones.filter(x=&gt;x!==msId);
+  m.goalId=newGoalId; g.milestones.push(msId);
+  g.milestones.forEach((id,i)=&gt;S.milestones[id].order=i);
+  save();                                            // hitOn, checks, note: all preserved verbatim
+}
+</code></pre>
+<p>One pointer write, because the stores are flat. This is why the model is three keyed maps and not a nested tree — a nested tree makes re-parenting a move operation with a failure mode.</p>
+<p>Commits re-parent identically (<code>commit.goalId</code>), subject to R4: only commits in a non-frozen week.</p>
+<h3>3.4 Deleting a milestone that was already hit</h3>
+<pre><code>
+function archiveMs(msId){
+  const m=S.milestones[msId];
+  m.state=&#x27;archived&#x27;; m.archivedOn=today();
+  save();                                            // hitOn kept. XP kept (§5.4). Nothing recomputed.
+}
+</code></pre>
+<p>It leaves the live ladder immediately, and it stays in the Record as <em>&quot;hit Sep 12 · removed Oct 3.&quot;</em> Deliberate: silently erasing something he actually did is the exact felt experience of a wall of failure, delivered by his own edit. Milestone XP already paid stays paid (<code>S.paid</code> is a run-level ledger; §5.4).</p>
+<h3>3.5 Changing a December goal in October</h3>
+<p>Two distinct operations, and the distinction matters:</p>
+<pre><code>
+/* EDIT — same goal, better words. The overwhelmingly common case. */
+function editGoal(id,{title,lead,unit,target,kind,domain,short}){
+  const g=S.goals[id];
+  Object.assign(g,{title,lead,unit,target,kind,domain,short});
+  g.editedOn=today();
+  save();                                    // entries untouched, milestones untouched, XP untouched
+}
+
+/* REPLACE — a genuinely different goal. Only when he says so. */
+function replaceGoal(id, next){
+  const old=S.goals[id], g=newGoal(next);
+  old.state=&#x27;archived&#x27;; old.archivedOn=today(); old.supersededBy=g.id;
+  g.rank=old.rank; g.domain=old.domain; g.primary=old.primary;
+  g.replaces=old.id;
+  /* Milestones do NOT auto-move. He is asked once, per milestone: bring it, or leave it behind.
+     Auto-moving them silently re-purposes work he did for a different reason. */
+  save();
+}
+</code></pre>
+<p><strong>What he is told, once, and it is the anti-wall sentence of the whole spec:</strong></p>
+<blockquote><p>*You changed the December goal on Oct 14. Everything you earned before that is still yours — the XP, the </p><p>streak, the rating. The old goal is in the Record.*</p></blockquote>
+<p>That sentence is literally true under this design, and it is true because of INVARIANT 1 and R5, not because we say so.</p>
+<h3>3.6 Parking — the answer that is not failure</h3>
+<p>The profile explicitly parks things: Spanish and guitar are <em>&quot;casual until SANO is further along&quot;</em>, and four whole businesses are parked until December. A model with only live/dead states cannot represent his actual life.</p>
+<pre><code>
+function parkGoal(id, weeks, why){
+  const g=S.goals[id], d=new Date(); d.setDate(d.getDate()+weeks*7);
+  g.parked={until:iso(d), why:why||&#x27;&#x27;, on:today()};
+  g.state=&#x27;parked&#x27;;
+  save();
+}
+</code></pre>
+<p>Parked goals: excluded from <code>orphans()</code> (§4.4), excluded from the Friday ritual, still visible on the goal list, still capable of receiving progress entries if something good happens anyway. They wake up automatically on <code>parked.until</code> with a single question, on a Friday, never on a Monday morning.</p>
+<hr>
+<h2>4 · THE CASCADE — how a December goal reaches a 75-minute block on a Tuesday</h2>
+<p><strong>This is the centre of the brief.</strong> Today the answer is &quot;he retypes it.&quot; Here it is, end to end.</p>
+<pre><code>
+T1  GOAL          g_sano · &quot;3 SANO clients, one at full freight&quot;
+     │            rank 1 → owns the peak window
+T2  MILESTONE     m_sano_gate · by 2026-08-03 · &quot;the six things, signed off&quot;     [learning]
+     │            nextMs(g) — this is the &quot;why now&quot;
+T3  COMMIT        c_2026-08-03_1 · &quot;Send Anthony the pitch and book the call&quot;
+     │            blocks: 4      ← the capacity currency, set on Friday
+     │            layoutWeek()   ← deals 4 blocks into real slots
+     │            slots: mon:b1, mon:b2, tue:b1, wed:b1
+T4  BLOCK         Tue 09:00–10:30, id &#x27;b1&#x27;
+     │            commitFor(&#x27;b1&#x27;) → c_2026-08-03_1
+     │            tacticFor(b)    → &quot;Send Anthony the pitch and book the call&quot;
+                  bizFor(b)       → &quot;SANO&quot;
+                  and the block sheet&#x27;s &quot;Serves — December&quot; line resolves through
+                  commit → milestone → goal, instead of guessing from b.dom[0].
+</code></pre>
+<h3>4.1 Resolution — the exact replacement for <code>tacticFor()</code> (line 646)</h3>
+<p>Behaviour is a strict superset of today&#x27;s. The 08:30 line still wins; the legacy string still resolves.</p>
+<pre><code>
+const DAYK=[&#x27;sun&#x27;,&#x27;mon&#x27;,&#x27;tue&#x27;,&#x27;wed&#x27;,&#x27;thu&#x27;,&#x27;fri&#x27;,&#x27;sat&#x27;];
+const dateOf=(wk,dk)=&gt;{const d=new Date(wk+&#x27;T00:00:00&#x27;);
+  d.setDate(d.getDate()+(DAYK.indexOf(dk)+6)%7); return iso(d)};
+
+function commitFor(blockId, dateKey){
+  const dstr=dateKey||today();
+  const dt=new Date(dstr+&#x27;T00:00:00&#x27;);
+  const w=S.week[mondayOf(dt)]; if(!w||!w.grid) return null;
+  const id=(w.grid[DAYK[dt.getDay()]]||{})[blockId];
+  return id ? S.commits[id]||null : null;
+}
+
+function tacticFor(b){
+  if(b.kind!==&#x27;deep&#x27;) return null;
+  const d=day(), idx={b1:0,b2:1,b3:2,b4:3}[b.id];
+  if(d.prio &amp;&amp; d.prio[idx]) return d.prio[idx];              // 1. today&#x27;s hand-written line — unchanged
+  const c=commitFor(b.id);
+  if(c &amp;&amp; c.state!==&#x27;dropped&#x27;) return c.text;                // 2. NEW — the week&#x27;s commitment
+  const w=week();
+  if(w.tactics &amp;&amp; w.tactics[b.id]) return w.tactics[b.id];   // 3. legacy string — still resolves
+  return null;
+}
+
+function bizFor(b){
+  if(b.kind!==&#x27;deep&#x27;) return null;
+  const c=commitFor(b.id);
+  if(c &amp;&amp; c.goalId &amp;&amp; S.goals[c.goalId]) return S.goals[c.goalId].short;
+  return (week().theme||{})[b.id] || null;                   // legacy
+}
+
+/* NEW — what the block sheet&#x27;s chain should actually read. Today it guesses
+   `S.december[b.dom[0]]` (line 1239), which is wrong for every b4 that isn&#x27;t WORK. */
+function chainFor(b){
+  const c=commitFor(b.id); if(!c) return null;
+  const g=c.goalId?S.goals[c.goalId]:null;
+  const m=c.milestoneId?S.milestones[c.milestoneId]:null;
+  return {commit:c, goal:g, ms:m,
+          serves: g?g.title:null,
+          why:    m?`${m.title} · by ${m.by}`:null,
+          lead:   g?g.lead:null};
+}
+</code></pre>
+<h3>4.2 The layout — the only writer of <code>week.grid</code></h3>
+<pre><code>
+const WEEKDAYS=[&#x27;mon&#x27;,&#x27;tue&#x27;,&#x27;wed&#x27;,&#x27;thu&#x27;,&#x27;fri&#x27;];
+
+/* Peak first (b1,b2 = 09:00–12:00), then b3, then b4 — so slot #1 offered to the
+   highest-ranked commitment is always a peak block. &quot;Pay yourself first&quot;, in code. */
+function slotOrder(){
+  const out=[];
+  [[&#x27;b1&#x27;,&#x27;b2&#x27;],[&#x27;b3&#x27;],[&#x27;b4&#x27;]].forEach(t=&gt;WEEKDAYS.forEach(d=&gt;t.forEach(b=&gt;out.push([d,b]))));
+  return out;                                   // 10 peak · 5 mid · 5 late
+}
+
+/* THE LAYOUT.
+   R1  PAY YOURSELF FIRST — rank order takes peak slots first (Burkeman; PROFILE §3 &quot;peak brain
+       9 AM–noon, protect it absolutely&quot;).
+   R2  NEVER b4 FOR ANYTHING NEEDING CENTRAL TIME — b4 is 15:05 PT = 17:05 CT and every SANO lead
+       is Central (PROFILE §8c). A commit with needsCT:true is never placed in b4.
+   R3  SPREAD BEFORE STACKING — deal one slot per day per commitment before doubling up, so one lost
+       day never costs an entire commitment.
+   R4  THE PAST IS UNTOUCHABLE — slots on a date already gone keep exactly what they had.
+   Idempotent: same commits + same date in ⇒ same grid out. Safe to re-run on every render. */
+function layoutWeek(wk){
+  wk=wk||mondayOf(new Date());
+  const w=week(wk), tk=today();
+  w.grid=w.grid||{}; WEEKDAYS.forEach(d=&gt;w.grid[d]=w.grid[d]||{});
+
+  const live=(w.commits||[]).map(id=&gt;S.commits[id])
+    .filter(c=&gt;c &amp;&amp; c.state!==&#x27;dropped&#x27;)
+    .sort((a,b)=&gt;rankOf(a)-rankOf(b));
+  const need={};
+  live.forEach(c=&gt;{ c.slots=[]; need[c.id]=c.blocks; });
+
+  const slots=slotOrder();
+  slots.forEach(([dk,bk])=&gt;{                                   // R4
+    if(dateOf(wk,dk) &lt; tk){
+      const keep=w.grid[dk][bk];
+      if(keep &amp;&amp; need[keep]!==undefined){ need[keep]--; S.commits[keep].slots.push(dk+&#x27;:&#x27;+bk); }
+    } else delete w.grid[dk][bk];
+  });
+
+  const perDay=(c,dk)=&gt;c.slots.filter(s=&gt;s.slice(0,3)===dk).length;
+  for(let cap=1; cap&lt;=4; cap++){                               // R3: one per day, then two, …
+    let moved=true;
+    while(moved){
+      moved=false;
+      for(const c of live){
+        if(need[c.id]&lt;=0) continue;
+        const s=slots.find(([dk,bk])=&gt;
+          dateOf(wk,dk)&gt;=tk &amp;&amp; !w.grid[dk][bk] &amp;&amp;
+          !(c.needsCT &amp;&amp; bk===&#x27;b4&#x27;) &amp;&amp;                         // R2
+          perDay(c,dk)&lt;cap);
+        if(!s) continue;
+        w.grid[s[0]][s[1]]=c.id; c.slots.push(s[0]+&#x27;:&#x27;+s[1]);
+        need[c.id]--; moved=true;
+      }
+    }
+  }
+  w.overflow=Object.values(need).reduce((a,n)=&gt;a+Math.max(0,n),0);
+
+  /* legacy mirrors, so week().theme and week().tactics keep resolving for anything not yet ported */
+  [&#x27;b1&#x27;,&#x27;b2&#x27;,&#x27;b3&#x27;,&#x27;b4&#x27;].forEach(bk=&gt;{
+    const c=commitFor(bk);
+    if(c){ w.tactics[bk]=c.text; if(c.goalId&amp;&amp;S.goals[c.goalId]) w.theme[bk]=S.goals[c.goalId].short; }
+  });
+  save();
+}
+const rankOf=c=&gt;(c.goalId&amp;&amp;S.goals[c.goalId]) ? S.goals[c.goalId].rank : 99;
+</code></pre>
+<h3>4.3 Capacity — the fixed-volume truth</h3>
+<pre><code>
+/* 4 deep blocks × 5 weekdays = 20. That number does not negotiate, and committing past it is the
+   arithmetic origin of a wall of failure (Burkeman&#x27;s fixed-volume; research §6c).
+   Saturday&#x27;s single block is deliberately EXCLUDED — Saturday is light by design (PROFILE §7) and
+   counting it invites planning a six-day week. */
+function capacity(wk){
+  const w=week(wk||mondayOf(new Date()));
+  const total=WEEKDAYS.length*4;
+  const committed=(w.commits||[]).map(id=&gt;S.commits[id])
+    .filter(c=&gt;c&amp;&amp;c.state!==&#x27;dropped&#x27;).reduce((a,c)=&gt;a+c.blocks,0);
+  return {total, committed, free:Math.max(0,total-committed), over:Math.max(0,committed-total)};
+}
+</code></pre>
+<p><strong>Rule — and this is a hard one, from law #1.</strong> The capacity number is a <strong>forward-looking planning number only</strong>. It is rendered on Friday while he is deciding. It is <strong>never</strong> re-rendered mid-week as a shortfall, never as &quot;you delivered 11 of 18.&quot; Delivery is what the execution score is for, and two competing shortfall numbers is two walls instead of one.</p>
+<h3>4.4 THE ORPHAN CHECK — the thing nothing in the app does today</h3>
+<blockquote><p><em>&quot;A goal nothing is scheduled against is the single most useful thing this system could surface.&quot;</em></p></blockquote>
+<pre><code>
+/* A goal is ORPHANED when it is live, not parked, and nothing this week feeds it:
+   no commitment, and no weekly quota. Habit goals are fed by QUOTAS (line 690) and are never orphans —
+   the quota board IS their schedule. */
+function orphans(wk){
+  wk=wk||mondayOf(new Date());
+  const w=week(wk), fed=new Set();
+  (w.commits||[]).forEach(id=&gt;{
+    const c=S.commits[id];
+    if(c &amp;&amp; c.goalId &amp;&amp; c.state!==&#x27;dropped&#x27;) fed.add(c.goalId);
+  });
+  QUOTAS.forEach(q=&gt;goalsAll().forEach(g=&gt;{
+    if(g.domain===q.dom &amp;&amp; g.kind===&#x27;habit&#x27;) fed.add(g.id);
+  }));
+  return liveGoals()
+    .filter(g=&gt;!fed.has(g.id) &amp;&amp; !isParked(g))
+    .map(g=&gt;({goal:g, weeks:weeksSinceFed(g.id, wk)}));
+}
+
+function weeksSinceFed(goalId, from){
+  let n=0, k=from||mondayOf(new Date());
+  for(let i=0;i&lt;30;i++){
+    const w=S.week[k];
+    if(w &amp;&amp; (w.commits||[]).some(id=&gt;{const c=S.commits[id];
+      return c &amp;&amp; c.goalId===goalId &amp;&amp; c.state!==&#x27;dropped&#x27;})) return n;
+    n++;
+    const d=new Date(k+&#x27;T00:00:00&#x27;); d.setDate(d.getDate()-7); k=iso(d);
+  }
+  return n;                                   // capped at 30 weeks
+}
+</code></pre>
+<p><strong>How it is surfaced — and this is where law #1 governs the design, not the data.</strong></p>
+<ul><li>It is a <strong>question with answers</strong>, never a red banner. Three buttons, always: <code>Give it a block</code> · <code>Park it — on purpose</code> · <code>It&#x27;s done, close it</code>. Parking is a <em>legitimate, non-penalised answer</em>; an orphan that has been parked is silent.</li><li>It lives on the <strong>week / Record surface, never on Today.</strong> The Today tab is a ≤60-second surface and has no business asking a planning question.</li><li><strong>Escalation is calm and slow:</strong> 1 week silent · 2–3 weeks one line on the goal list (<code>&quot;LA Edible — 3 weeks without a block&quot;</code>) · 4+ weeks it appears once inside the Friday ritual as the fourth card. It never appears twice in a week and never goes red.</li><li>The precedent already exists in the app and should be matched: <code>daysSincePitchReady()</code> (line 1101) renders <code>PITCH-READY 3 DAYS · NOT SENT</code>. Same voice, same mechanic, generalised.</li></ul>
+<p><code>kind:&#x27;slack&#x27;</code> commits (the migrated &quot;Admin + follow-ups&quot;) carry <code>goalId:null</code> deliberately and are <strong>excluded from the orphan calculus in both directions</strong> — they feed nothing and they are not a goal. A week is allowed to contain slack. That is not a failure and the app must not treat it as one.</p>
+<h3>4.5 Does this replace the 08:30 composer, or feed it?</h3>
+<p><strong>It feeds it, and this fixes the composer&#x27;s current failure.</strong> <code>openComposer()</code> (line 1212) opens four empty inputs; if he skips it, four blocks read <code>no objective set</code> and the day has a visible hole at 09:00 by design. Under the cascade the composer opens <strong>pre-answered</strong>:</p>
+<pre><code>
+function composerPrefill(){
+  return [&#x27;b1&#x27;,&#x27;b2&#x27;,&#x27;b3&#x27;,&#x27;b4&#x27;].map((bk,i)=&gt;{
+    const d=day(), c=commitFor(bk);
+    return {
+      slot: bk,
+      value: (d.prio&amp;&amp;d.prio[i]) || (c?c.text:&#x27;&#x27;) || (week().tactics||{})[bk] || &#x27;&#x27;,
+      from:  (d.prio&amp;&amp;d.prio[i]) ? &#x27;you&#x27; : c ? &#x27;the week&#x27; : null,
+      goal:  c&amp;&amp;c.goalId ? S.goals[c.goalId] : null,
+      ms:    c&amp;&amp;c.milestoneId ? S.milestones[c.milestoneId] : null,
+    };
+  });
+}
+</code></pre>
+<p>He edits four pre-filled lines instead of writing four blank ones — <strong>which is the entire difference between a 15-second ritual he keeps and a 90-second one he abandons.</strong> <code>saveComposer()</code> (line 1225) keeps its current behaviour (<code>d.prio[i]=v</code>) and gains one line: if the text was changed away from the commitment&#x27;s text, store <code>d.prioFrom[i]=&#x27;edited&#x27;</code> so the Record can show where the day diverged from the plan. Nothing about the divergence is penalised.</p>
+<h3>4.6 The integration ask (PROFILE §8) — schema only</h3>
+<blockquote><p>*&quot;I&#x27;d like something that could plug into my projects… so you&#x27;re not asking me what&#x27;s gonna get you </p><p>there by December when I have a whole entire project behind these types of questions.&quot;*</p></blockquote>
+<p>Not this crew&#x27;s build, but the model must not have to change later to accept it. Two fields, already in §1.2, plus one inbox:</p>
+<pre><code>
+S.import = {                       // written by an external sync; the app only ever READS it
+  at: &#x27;2026-08-03T09:00:00Z&#x27;,
+  suggestions: [                   // proposed commitments, never auto-accepted
+    {goalId:&#x27;g_sano&#x27;, text:&#x27;Send AVRS pitch page to Anthony&#x27;, blocks:2,
+     ref:&#x27;agent-output/client-onboarding/clients/avrs-automotive/README.md&#x27;},
+  ],
+};
+</code></pre>
+<p>Rules: a suggestion is <strong>only ever a pre-fill on the Friday ritual</strong>, shown with its source, accepted with one tap and never applied silently. A goal with <code>source</code> set still allows local edits; <code>source.syncedOn</code> records the last read and a divergence is shown, never auto-resolved. Nothing in the daily loop reads <code>S.import</code> — an import failure must be invisible on a Tuesday.</p>
+<hr>
+<h2>5 · SCORING — extending the engine without breaking the curve</h2>
+<h3>5.1 The three invariants</h3>
+<pre><code>
+INVARIANT 1  domainProgress() must never read S.goals / S.milestones / S.commits.
+             Goals do NOT feed the radar, the domain stats, or the OVR.
+             (The curve is tuned so perfect execution hits 99 OVR on Dec 1 exactly — verified at
+             100%→Dec 1 · 95%→Dec 8 · 90%→Dec 16 · 85%→Dec 24. Any new term breaks that tuning.)
+
+INVARIANT 2  recount() keeps BLOCKS as its denominator. Commitments introduce NO second denominator.
+             (Score commitments AND blocks and every block is counted twice — the double-count trap.)
+
+INVARIANT 3  No goal operation — create, edit, re-parent, reorder, park, archive, replace — may change
+             S.xp, w.due, w.done, any streak, or any S.days record.
+</code></pre>
+<h3>5.2 Commitment progress is a VIEW, not a score</h3>
+<pre><code>
+/* Reads exactly the same rec.done[] that recount() reads. Double-counting is impossible by
+   construction, not by discipline. */
+function commitProgress(c){
+  const hit=(c.slots||[]).filter(s=&gt;{
+    const [dk,bk]=s.split(&#x27;:&#x27;);
+    const rec=S.days[dateOf(c.weekKey,dk)];
+    return rec &amp;&amp; rec.done &amp;&amp; rec.done[bk];
+  }).length;
+  return {hit, of:(c.slots||[]).length, met: hit&gt;0 &amp;&amp; hit&gt;=Math.ceil((c.slots||[]).length*0.85)};
+}
+</code></pre>
+<p>The 0.85 is the 12WY threshold already in the app, reused at the commitment level so a single number means one thing everywhere. <code>met</code> is display only; it never enters <code>w.due</code>/<code>w.done</code>.</p>
+<h3>5.3 What goals DO show — their own progress, kept off the OVR</h3>
+<pre><code>
+function goalProgress(g){
+  if(g.kind===&#x27;habit&#x27;){                        // quotas ARE its measure — no fake percentage
+    const qs=QUOTAS.filter(q=&gt;q.dom===g.domain);
+    const hit=qs.filter(q=&gt;weekHits(q.src,q.id)&gt;=q.n).length;
+    return {kind:&#x27;quota&#x27;, hit, of:qs.length, pct: qs.length?hit/qs.length:0};
+  }
+  const ms=msOf(g), done=ms.filter(m=&gt;m.hitOn).length;
+  const num=goalAt(g), den=g.target;
+  return {kind:&#x27;ladder&#x27;, ms:{done, of:ms.length},
+          at:num, target:den, pct: den ? Math.max(0,Math.min(1,num/den)) : 0};
+}
+</code></pre>
+<p>Rendered on the goal card and the Push tab. <strong>Never averaged into the OVR, never onto the radar.</strong></p>
+<h3>5.4 New XP — one-directional, keyed at RUN level, and small</h3>
+<p>A real defect blocks this: <code>award()</code> (line 637) keys into <code>day().credited</code>, so <strong>the same key pays again on a different day</strong>. Correct for daily things, wrong for a once-per-run milestone. Goal-layer XP needs its own ledger:</p>
+<pre><code>
+/* award() is day-scoped. Goal-layer XP is run-scoped. Do not use award() for milestones. */
+function awardOnce(key,n,label){
+  S.paid=S.paid||{};
+  if(S.paid[key]) return false;
+  S.paid[key]=n; S.xp+=n; save();
+  toast(`+${n} XP · ${label}`,&#x27;good&#x27;); render();
+  return true;
+}
+</code></pre>
+<div class='tw'><table><tr><th>Event</th><th>XP</th><th>Key</th><th>Notes</th></tr><tr><td>Milestone hit</td><td><strong>+200</strong></td><td><code>awardOnce(&#x27;ms:&#x27;+m.id)</code></td><td>once per milestone id, per run</td></tr><tr><td>Goal closed <code>done</code></td><td><strong>+500</strong></td><td><code>awardOnce(&#x27;goal:&#x27;+g.id)</code></td><td>the big one; ≤7 possible in the run</td></tr><tr><td>Friday ritual locked</td><td>+75</td><td><code>award(&#x27;setweek:&#x27;+wk)</code></td><td><strong>existing key, unchanged</strong></td></tr><tr><td>Confidence set</td><td><strong>0</strong></td><td>—</td><td>never pay for an opinion</td></tr><tr><td>Orphan answered</td><td><strong>0</strong></td><td>—</td><td>never pay for a planning tap</td></tr></table></div>
+<p>XP only rises (law #3), buys real-world rewards, and is completely outside the OVR. Archiving a hit milestone does <strong>not</strong> refund — <code>S.paid</code> is the ledger and the ledger does not reverse (R5).</p>
+<p>Sanity: 7 goals + ~15 milestones ≈ 6,500 XP added across 18 weeks, against a reward table priced at 1,200–2,500. That is roughly two extra rewards over the whole run — meaningful, not inflationary.</p>
+<h3>5.5 Confidence — one tap, on Friday, never scored</h3>
+<p>The only subjective field in the model. It is the one honest signal an execution score structurally cannot give: he can run a 100% week on the wrong tactics. OKR practice calls it a confidence check; here it is 1–5, set on the Friday ritual in one tap per goal, stored with its date, <strong>never scored, never in OVR</strong>. Its only job is to be a <em>trend</em> on the Record: <code>&quot;SANO confidence: 4 → 3 → 2 over three weeks&quot;</code> is the earliest possible signal that the tactics are wrong while the execution is fine.</p>
+<h3>5.6 What deliberately does NOT change</h3>
+<p><code>domainProgress()</code> · <code>domainStats()</code> · <code>ovr()</code> · <code>projection()</code> · <code>recount()</code> · <code>QUOTAS</code> · <code>SCORED()</code> · the HP floor · the streak and penance mechanics. <strong>Zero lines.</strong> If a proposed change touches any of them, it is out of scope for this spec and should be argued separately.</p>
+<hr>
+<h2>6 · THE WEEKLY RITUAL — Friday, ≤90 seconds</h2>
+<p>Exists today as four dropdowns (line 1778–1786) that set <code>week().theme</code> on next week and pay +75 XP. Replaced by four cards. <strong>It never contains a December goal</strong> (§2.3 cadence rule).</p>
+<p><strong>The governing principle</strong> — Newport&#x27;s multi-scale planning, and the owner&#x27;s own words: <em>&quot;this is the monthly goal, let me tweak it and add these changes.&quot;</em> <strong>The form is never blank.</strong> Every field arrives pre-filled; his job is to accept, adjust or drop — never to compose.</p>
+<div class='tw'><table><tr><th>#</th><th>Card</th><th>Pre-filled from</th><th>Interaction</th><th>Target</th></tr><tr><td>1</td><td><strong>The week that just went</strong></td><td><code>w.due/w.done</code>, <code>showVerdict</code> language</td><td>read-only</td><td>5 s</td></tr><tr><td>2</td><td><strong>The carry</strong></td><td>last week&#x27;s commits with <code>commitProgress()</code></td><td>per row: <code>carry</code> / <code>done</code> / <code>drop</code></td><td>25 s</td></tr><tr><td>3</td><td><strong>Next week</strong></td><td>carried commits + <code>nextMs()</code> of each live goal + <code>S.import.suggestions</code></td><td>± on <code>blocks</code>; capacity line updates live</td><td>35 s</td></tr><tr><td>4</td><td><strong>Anything unscheduled?</strong></td><td><code>orphans()</code> — only if ≥4 weeks, else skipped entirely</td><td><code>block</code> / <code>park</code> / <code>close</code></td><td>15 s</td></tr></table></div>
+<pre><code>
+function ritualPrefill(){
+  const cur=mondayOf(new Date());
+  const nxt=(()=&gt;{const d=new Date(cur+&#x27;T00:00:00&#x27;);d.setDate(d.getDate()+7);return iso(d)})();
+  const last=(S.week[cur].commits||[]).map(id=&gt;S.commits[id]).filter(Boolean);
+
+  const carry=last.filter(c=&gt;!commitProgress(c).met).map(c=&gt;({
+    from:c, text:c.text, goalId:c.goalId, milestoneId:c.milestoneId,
+    blocks:Math.max(1,c.blocks-commitProgress(c).hit),        // only what&#x27;s LEFT, not the original size
+  }));
+
+  const fresh=liveGoals().filter(g=&gt;!isParked(g) &amp;&amp; !carry.some(x=&gt;x.goalId===g.id))
+    .slice(0,3)                                               // rank order — the WIG first
+    .map(g=&gt;{const m=nextMs(g);
+      return {text:m?m.title:g.lead, goalId:g.id, milestoneId:m?m.id:null,
+              blocks: g.rank===1?4:2, proposed:true}});
+
+  const imported=((S.import&amp;&amp;S.import.suggestions)||[]).map(s=&gt;({...s, proposed:true, from:&#x27;project&#x27;}));
+
+  return {weekKey:nxt, rows:[...carry,...fresh,...imported].slice(0,6), cap:capacity(nxt),
+          ask:orphans(cur).filter(o=&gt;o.weeks&gt;=4)};
+}
+
+function lockWeek(rows, weekKey){
+  const w=week(weekKey);
+  w.commits=[]; 
+  rows.forEach((r,i)=&gt;{
+    const id=&#x27;c_&#x27;+weekKey+&#x27;_&#x27;+(i+1);
+    S.commits[id]={id, weekKey, goalId:r.goalId||null, milestoneId:r.milestoneId||null,
+      text:r.text, blocks:Math.max(1,Math.min(8,r.blocks)), slots:[],
+      kind:r.goalId?&#x27;push&#x27;:&#x27;slack&#x27;, needsCT:!!r.needsCT,
+      carriedFrom:r.from?r.from.id:null, state:&#x27;live&#x27;};
+    w.commits.push(id);
+    if(r.from) r.from.state=&#x27;carried&#x27;;
+  });
+  w.locked=today();
+  layoutWeek(weekKey);                       // the grid is written HERE, once
+  save();
+  award(&#x27;setweek:&#x27;+mondayOf(new Date()), 75, &#x27;next week is set&#x27;);   // existing key — unchanged
+}
+</code></pre>
+<p><strong>Carry-over is the whole point of card 2.</strong> Under the current build an unfinished tactic simply vanishes on Sunday. Under this design it comes back on Friday <strong>pre-ticked to carry, sized to what&#x27;s left</strong>, and carrying it is one tap. The what-the-hell effect (research §7b) says the danger is not the miss, it is the interpretation of the miss; &quot;here it is again, smaller&quot; is the interpretation that keeps him in the system.</p>
+<p><strong>Row cap: 6.</strong> Above that, capacity arithmetic fails and the ritual stops fitting in 90 seconds. The 4DX ≤2-WIG discipline lives here as the default sizing (<code>rank 1 → 4 blocks</code>, everything else 2), not as a hard limit — he can always override.</p>
+<p><strong>Saturday.</strong> PROFILE §7 puts a &quot;set Monday up&quot; block on Saturday. If Friday&#x27;s ritual was skipped, it surfaces there, unchanged and still pre-filled. Never twice, never nagged on a Sunday (§SABBATH: closed).</p>
+<hr>
+<h2>7 · MIGRATION — his live data, without loss</h2>
+<p>One function, idempotent, versioned, run <strong>before</strong> <code>recount()</code> at boot (line 1818).</p>
+<p><strong>The subtlety that makes the version guard work:</strong> <code>load()</code> (line 622) calls <code>merge(DEFAULT, saved)</code> with <code>saved</code> as the override, so a saved <code>v:3</code> survives even after <code>DEFAULT.v</code> is bumped to 4. The guard is therefore sound, and <code>merge()</code> will separately deliver new <em>default</em> keys to old saves — but it will <strong>not</strong> perform the transform. The transform must be explicit.</p>
+<pre><code>
+function migrateV4(){
+  if(S.v&gt;=4) return;                                    // idempotent
+
+  /* 1 · a frozen, never-read copy, so a bad migration is recoverable through the EXISTING
+         export/restore path (exportSave line 1194 / restoreSave line 1804). */
+  S._v3={december:JSON.parse(JSON.stringify(S.december||{})),
+         push:    JSON.parse(JSON.stringify(S.push||{})),
+         migrated:today()};
+
+  S.goals={}; S.milestones={}; S.commits={}; S.paid=S.paid||{};
+  S.horizon={theme:&#x27;BURN THE BOATS&#x27;, line:&#x27;Become someone who executes.&#x27;,
+             cliff:{on:&#x27;2027-03-01&#x27;, label:&#x27;Real income&#x27;}};
+
+  /* 2 · seven goals from six December rows + one integer. LA Edible finally becomes a goal. */
+  const D=S.december||{};
+  const SEED=[
+    {id:&#x27;g_sano&#x27;,   from:&#x27;WORK&#x27;,    dom:&#x27;WORK&#x27;,    rank:1, kind:&#x27;outcome&#x27;, short:&#x27;SANO&#x27;,      primary:1},
+    {id:&#x27;g_trading&#x27;,from:&#x27;CAPITAL&#x27;, dom:&#x27;CAPITAL&#x27;, rank:2, kind:&#x27;outcome&#x27;, short:&#x27;TRADING&#x27;,   primary:1},
+    {id:&#x27;g_kitchen&#x27;,from:null,      dom:&#x27;WORK&#x27;,    rank:3, kind:&#x27;outcome&#x27;, short:&#x27;LA Edible&#x27;, primary:0,
+      title:&#x27;In talks with a local kitchen by Dec 1&#x27;, lead:&#x27;Kitchens contacted&#x27;, unit:&#x27;kitchens&#x27;, target:1},
+    {id:&#x27;g_body&#x27;,   from:&#x27;BODY&#x27;,    dom:&#x27;BODY&#x27;,    rank:4, kind:&#x27;outcome&#x27;, short:&#x27;BODY&#x27;,      primary:1},
+    {id:&#x27;g_faith&#x27;,  from:&#x27;FAITH&#x27;,   dom:&#x27;FAITH&#x27;,   rank:5, kind:&#x27;habit&#x27;,   short:&#x27;FAITH&#x27;,     primary:1},
+    {id:&#x27;g_people&#x27;, from:&#x27;PEOPLE&#x27;,  dom:&#x27;PEOPLE&#x27;,  rank:6, kind:&#x27;habit&#x27;,   short:&#x27;PEOPLE&#x27;,    primary:1},
+    {id:&#x27;g_mind&#x27;,   from:&#x27;MIND&#x27;,    dom:&#x27;MIND&#x27;,    rank:7, kind:&#x27;habit&#x27;,   short:&#x27;MIND&#x27;,      primary:1,
+      parked:{until:&#x27;2026-10-05&#x27;, why:&#x27;casual until SANO is further along&#x27;, on:today()}},
+  ];
+  SEED.forEach(s=&gt;{
+    const src=s.from?D[s.from]:null;
+    const habit=s.kind===&#x27;habit&#x27;;
+    S.goals[s.id]={
+      id:s.id, domain:s.dom, primary:!!s.primary, rank:s.rank, kind:s.kind,
+      state:s.parked?&#x27;parked&#x27;:&#x27;live&#x27;,
+      short:s.short,
+      title:s.title||(src?src.lag:&#x27;&#x27;), lead:s.lead||(src?src.lead:&#x27;&#x27;),
+      /* habit goals LOSE their fake 0-100 percentage. FAITH at:30/target:100 was a number he typed
+         about himself; QUOTAS already measure faith, people and mind honestly. */
+      unit: habit?null:(s.unit||(src?src.unit:null)),
+      target: habit?null:(s.target!=null?s.target:(src?src.target:null)),
+      entries: habit?[]:[{on:RUN_START, delta:(s.at!=null?s.at:(src?+src.at||0:0)),
+                          note:&#x27;carried in from v3&#x27;, src:&#x27;migrate&#x27;}],
+      confidence:3, confidenceOn:null,
+      parked:s.parked||null, milestones:[],
+      createdOn:RUN_START, closedOn:null, archivedOn:null, supersededBy:null, source:null,
+    };
+  });
+
+  /* 3 · S.push.kitchen (an integer) becomes a real progress entry. */
+  if(S.push &amp;&amp; S.push.kitchen)
+    S.goals.g_kitchen.entries.push({on:today(), delta:1, note:&#x27;in talks&#x27;, src:&#x27;migrate:push.kitchen&#x27;});
+
+  /* 4 · THE ANTHONY GATE IS ALREADY A MILESTONE. It has six checks, a sign-off model and a
+         staleness clock — it just isn&#x27;t modelled as one. This is the learning milestone that
+         Locke &amp; Latham says must precede the outcome milestones (research §7d). */
+  const gate={
+    id:&#x27;m_sano_gate&#x27;, goalId:&#x27;g_sano&#x27;, order:0, by:&#x27;2026-08-03&#x27;, kind:&#x27;learning&#x27;, state:&#x27;live&#x27;,
+    title:&#x27;The six things are checked and I have signed off on each&#x27;,
+    checks:(typeof GATE!==&#x27;undefined&#x27;?GATE:[]).map(x=&gt;({k:x.k,n:x.n,
+      on:(S.push&amp;&amp;S.push.gate&amp;&amp;S.push.gate[x.k])?PITCH_READY:null})),
+    hitOn:(S.push&amp;&amp;S.push.anthonySent)||null, note:&#x27;&#x27;,
+  };
+  S.milestones[gate.id]=gate; S.goals.g_sano.milestones.push(gate.id);
+
+  /* 5 · landmark milestone stubs — proposed, dated, EMPTY. He fills them, or deletes them.
+         Nothing is invented about their content. */
+  [[&#x27;g_sano&#x27;,1],[&#x27;g_trading&#x27;,0],[&#x27;g_kitchen&#x27;,0],[&#x27;g_body&#x27;,0]].forEach(([gid,startAt])=&gt;{
+    LANDMARKS.forEach((by,i)=&gt;{
+      const id=`m_${gid.slice(2)}_${i}`;
+      S.milestones[id]={id, goalId:gid, order:startAt+i, by, title:&#x27;&#x27;, kind:&#x27;outcome&#x27;,
+                        state:&#x27;live&#x27;, checks:[], hitOn:null, note:&#x27;&#x27;, stub:1};
+      S.goals[gid].milestones.push(id);
+    });
+  });
+
+  /* 6 · every legacy weekly tactic becomes a commitment. Text preserved verbatim; nothing lost. */
+  const THEME2GOAL={&#x27;SANO&#x27;:&#x27;g_sano&#x27;,&#x27;TRADING&#x27;:&#x27;g_trading&#x27;,&#x27;LA Edible&#x27;:&#x27;g_kitchen&#x27;,
+                    &#x27;Admin + follow-ups&#x27;:null};
+  const cur=mondayOf(new Date());
+  Object.keys(S.week||{}).forEach(wk=&gt;{
+    const w=S.week[wk]; w.commits=w.commits||[]; w.grid=w.grid||{};
+    [&#x27;b1&#x27;,&#x27;b2&#x27;,&#x27;b3&#x27;,&#x27;b4&#x27;].forEach((bk,i)=&gt;{
+      const txt=w.tactics&amp;&amp;w.tactics[bk]; if(!txt) return;
+      const gid=THEME2GOAL[(w.theme||{})[bk]]||null;
+      const id=`c_${wk}_L${i+1}`;
+      S.commits[id]={id, weekKey:wk, goalId:gid, milestoneId:null, text:txt,
+        blocks:1, slots:[], kind:gid?&#x27;push&#x27;:&#x27;slack&#x27;, needsCT:false,
+        carriedFrom:null, state: wk&lt;cur?&#x27;met&#x27;:&#x27;live&#x27;, legacy:1};
+      w.commits.push(id);
+      WEEKDAYS.forEach(dk=&gt;{ w.grid[dk]=w.grid[dk]||{}; if(!w.grid[dk][bk]) w.grid[dk][bk]=id; });
+    });
+    if(wk&lt;cur) w.frozen=1;                     // history is immutable from here (R4)
+  });
+
+  S.v=4; save();
+  layoutWeek(cur);
+}
+</code></pre>
+<p><strong>What is deliberately NOT auto-decided.</strong> <code>S.december.WORK.at</code> is <code>1</code> in the current default — it claims one signed SANO client. Per the audit in PROFILE §8b, everything has been pitch-ready since 2026-07-24 and the recorded next action is still &quot;Jasper texts Anthony,&quot; so the honest number is <strong>0</strong>. Migration carries the value across faithfully rather than silently rewriting his data, and raises <strong>one reconcile card, once</strong>:</p>
+<blockquote><p><em>SANO says 1 of 3 clients. Is that right?</em>  ·  <code>Yes</code> / <code>It&#x27;s 0</code></p></blockquote>
+<p>Same card for <code>BODY at:177</code> (bodyweight, and PROFILE §8c lists current bodyweight as unknown). Two taps, one time, and then the ledger is trustworthy for the rest of the run.</p>
+<p><strong>Rollback.</strong> <code>S._v3</code> plus the existing Backup button is the rollback path — no new mechanism needed. The GM should take a <code>exportSave()</code> backup before shipping v4 to his device.</p>
+<hr>
+<h2>8 · THE DECISION I AM LEAST SURE ABOUT</h2>
+<p><strong>Should the week be planned in BLOCKS (a capacity budget, <code>commit.blocks</code>), or in SLOTS (a label per b1–b4, as today)?</strong></p>
+<p>This is the load-bearing choice in the entire spec. Blocks-as-currency is what produces the layout, the if-then plan, the capacity line, and — critically — the orphan detector. Take it out and §4 collapses back to a nicer version of what already exists.</p>
+<p><strong>The case FOR blocks (what I specified):</strong></p>
+<ul><li>It is the only design where &quot;a goal with nothing scheduled against it&quot; is computable at all. Slots can tell you a <em>block</em> is unassigned; only blocks-as-currency can tell you a <em>goal</em> is unfed.</li><li>Implementation intentions need a <em>when</em> to get their d ≈ 0.65 (research §7a). &quot;4 blocks, laid into Mon b1/b2, Tue b1, Wed b1&quot; is an if-then plan. &quot;SANO owns b1&quot; is a category.</li><li>It makes over-commitment visible <strong>before</strong> the week rather than after. &quot;You have committed 26 of 20 blocks&quot; on Friday is a five-second fix; discovering it on Thursday is the wall of failure.</li><li>It is the only structure that will survive Anthony signing. PROFILE §8c flags that the schedule assumes zero delivery load and becomes &quot;arithmetically impossible around October.&quot; A delivery commitment sized at 5 blocks/week makes that arrive as a number in September instead of as a crisis.</li></ul>
+<p><strong>The case AGAINST (and it is not weak):</strong></p>
+<ul><li><strong>It adds arithmetic to a ritual whose survival depends on being short.</strong> Every deliberate design choice in this app pushes toward fewer decisions; sizing 5 commitments in blocks is 5 more decisions than picking 4 dropdown values, on a Friday afternoon when he has already worked.</li><li><strong>It manufactures a second shortfall number.</strong> I have mitigated this by rule (§4.3: forward-looking only, never re-rendered as delivery), but a rule in a spec is weaker than a number that cannot exist. If Agent 2&#x27;s interface shows &quot;18 committed / 11 done&quot; anywhere, law #1 is violated and the mitigation was paper.</li><li><strong>It presumes he plans in units of blocks.</strong> Nothing in the interview says he does. He talks in outcomes — <em>&quot;text another 10 business owners I know&quot;</em> — not in block counts. The model may be imposing a planner&#x27;s mental model on someone who thinks in results.</li><li><strong>The auto-layout can be wrong in a way the slot model cannot.</strong> If <code>layoutWeek()</code> puts SANO in Tuesday b1 and he had a reason for Wednesday, he now has to fight the app. A label per slot has no opinion and therefore cannot be wrong.</li></ul>
+<p><strong>Where I land, and how thin the margin is.</strong> I specified blocks, at roughly 65/35 confidence, for one reason that outweighs the rest: <strong>the orphan detector is the highest-value thing in this brief and it does not exist without them.</strong> But the failure mode is real and I want the GM to see the fallback clearly rather than discover it in week three.</p>
+<p><strong>The de-risked middle, if Agent 2&#x27;s interface makes the block sizing feel heavy:</strong> keep <code>commit.blocks</code> in the schema but default every commitment to a <strong>size band</strong> — <code>small = 1 · normal = 2 · big = 4</code> — three taps, no arithmetic. The layout, the capacity line and the orphan check all still work unchanged, because they only read the number. This is a one-line UI change and no schema change, and it is the first thing to try if the ritual times out over 90 seconds in testing.</p>
+<p><strong>The runner-up uncertainty</strong>, recorded for honesty: whether <code>LANDMARKS</code> should be four dates or three. Four gives ~4.5 weeks between checkpoints; three gives ~6 and matches his &quot;two-month / three-month&quot; phrasing more literally. I chose four because the fresh-start research rewards more landmarks and because four gives twice EOS&#x27;s re-planning opportunities — but three is defensible and the constant is one line.</p>
+<hr>
+<h2>9 · IMPLEMENTATION ORDER (for the GM)</h2>
+<p>Each step leaves the app working. Nothing here requires Agent 2&#x27;s work to land first.</p>
+<ol><li><code>migrateV4()</code> + <code>S.v=4</code> + the two reconcile cards. Ship alone; nothing renders differently yet.</li><li><code>awardOnce()</code> (§5.4) — closes the day-scoped <code>award()</code> defect independently of everything else.</li><li>Accessors (§1.3) + <code>tacticFor()</code> / <code>bizFor()</code> / <code>chainFor()</code> (§4.1). Legacy strings still resolve, so this is invisible until step 4.</li><li><code>layoutWeek()</code> + <code>capacity()</code> (§4.2–4.3), wired to the Friday ritual only.</li><li>The four-card ritual (§6). This is where the behaviour actually changes.</li><li><code>orphans()</code> (§4.4), starting silent — log it for two weeks before surfacing it, then surface at 4 weeks.</li><li>Composer pre-fill (§4.5). Small, high-value, do not defer it.</li><li>Milestones UI + <code>goalProgress()</code> (§5.3). Last, because the model is already correct without a screen.</li></ol>
+<p><strong>Do not touch, at any step:</strong> <code>domainProgress</code>, <code>domainStats</code>, <code>ovr</code>, <code>projection</code>, <code>recount</code>, <code>QUOTAS</code>, <code>SCORED</code>, the HP floor, the streak or the penance chain.</p>
+<hr>
+<h2>HAND-OFF</h2>
+<h3>What I produced and where</h3>
+<ul><li><code>agent-briefs/crew-2026-07-25/out-1-goals-research.md</code> — eight systems and four research findings, each with an explicit steal/reject verdict against this app&#x27;s constraints; ~40 cited sources.</li><li><code>agent-briefs/crew-2026-07-25/out-1-goals-spec.md</code> (this file) — the data model in code, all seven briefed sections, an implementation order, and the uncertain decision argued both ways.</li><li>No HTML, no screens, no edits to <code>index.html</code>. Agent 2&#x27;s turf untouched.</li></ul>
+<h3>Verified, not asserted</h3>
+<p>This lane produces no HTML, so the lint/screenshot gate does not apply. What I checked instead:</p>
+<ul><li><strong>Every line number cited</strong> in this spec was grepped against <code>index.html</code> (637 <code>award</code> · 646 <code>tacticFor</code> · 653 <code>bizFor</code> · 622 <code>load</code> · 627 <code>week</code> · 701 <code>domainProgress</code> · 1100 <code>PITCH_READY</code> · 1194 <code>exportSave</code> · 1212 <code>openComposer</code> · 1239 <code>S.december[b.dom[0]]</code> · 1510 <code>saveGoal</code> · 1602 <code>GATE</code> · 1804 <code>restoreSave</code>). All correct.</li><li><strong>All four <code>LANDMARKS</code> dates are Mondays</strong> (2026-08-31 · 09-28 · 10-26 · 11-23), landing on run weeks 6 · 10 · 14 · 18. Computed, not assumed.</li><li><strong>91 weekdays Jul 27 → Dec 1 (exclusive)</strong> — recomputed independently and matches <code>TOTAL_DAYS</code>.</li><li><strong>Thanksgiving 2026 = Thu Nov 26</strong>, so the week-18 landmark does sit in Thanksgiving week (finding 9).</li><li><strong><code>merge(DEFAULT, saved)</code> lets a saved <code>v:3</code> survive a bumped <code>DEFAULT.v</code></strong> — read from line 614–623, which is what makes the <code>if(S.v&gt;=4) return</code> guard sound.</li><li><strong>Trading hours in code are 06:30–08:30</strong> (line 532), confirming the PROFILE note about 7:15 is stale.</li></ul>
+<h3>Ranked recommendation</h3>
+<ol><li><strong>Ship <code>migrateV4()</code> and the composer pre-fill first.</strong> They are the two smallest changes with the largest effect on whether he keeps using it. The composer currently opens four empty boxes at 08:30 — that is the single highest-frequency friction in the app and pre-filling it is maybe 20 lines.</li><li><strong><code>orphans()</code> is the highest-value new capability in the brief.</strong> Ship it silent, then at 4 weeks. Shipping it loud on day one would be the first wall of failure this design creates.</li><li><strong>Hold the three invariants absolutely</strong> (§5.1). The tuned Dec-1-at-99 curve is the most carefully built thing in the existing app and the temptation to let goal completion feed the radar will be strong. It must not.</li><li><strong><code>commit.blocks</code> is the reversible bet</strong> — the size-band fallback in §8 is one UI change, no schema change. Do not let it block the rest.</li></ol>
+<h3>What I deliberately rejected, and why</h3>
+<ul><li><strong>A fixed 2-month / 3-month goal tier</strong> (his literal phrasing) — rebuilding the rigidity he complained about in the same sentence. Replaced with 0–5 free-dated milestones and landmark defaults.</li><li><strong>Cutting the run into a 12-week block + a 6-week block</strong> for 12WY fidelity — an 18-week run is the container; a ceremony at week 12 serves a book, not him.</li><li><strong>Letting goal completion feed the OVR</strong> — breaks the tuned curve and makes restructuring unsafe.</li><li><strong>A second execution denominator for commitments</strong> — the double-count trap; commitment progress is a view over the same <code>rec.done</code> data.</li><li><strong>One goal per domain</strong> (the brief&#x27;s phrasing) — flagged as a deliberate deviation in §1.1/D1; it is the reason LA Edible currently has no goal object at all.</li><li><strong>OKR-style 0.7 grading and confidence-as-score</strong> — post-hoc goalpost movement on a scoreboard he has to believe. Confidence survives as an unscored trend only.</li><li><strong>Auto-moving milestones on <code>replaceGoal()</code></strong> — silently re-purposing work he did for another reason.</li></ul>
+<h3>For the GM — things I found that were not mine to fix</h3>
+<ol><li><strong><code>award()</code> pays the same key again on a different day.</strong> It keys into <code>day().credited</code> (line 637). Fine for daily awards; a live bug for anything intended once-per-run. <code>awardOnce()</code> (§5.4) is the fix and is independently shippable.</li><li><strong><code>S.december.WORK.at = 1</code> claims a SANO client he does not have.</strong> Per PROFILE §8b the recorded next action is still &quot;Jasper texts Anthony.&quot; Migration carries it faithfully and asks once — but the seed data in <code>DEFAULT</code> should be corrected to <code>0</code> regardless, or the number is wrong for any fresh install. 2b. <strong><code>FAITH/MIND/PEOPLE</code> use <code>at:30–60 / target:100 unit:&#x27;%&#x27;</code></strong> — self-reported percentages that no mechanic ever moves. Migration drops them (habit goals measure by quota instead).</li><li><strong><code>saveGoal()</code> writes an unvalidated <code>parseFloat</code> into <code>g.at</code></strong> (line 1513) — a stat he can type. Removed in v4; flagging in case any other surface starts reading <code>g.at</code> in the meantime.</li><li><strong>The <code>openBlk()</code> chain reads <code>S.december[b.dom[0]]</code></strong> (line 1239), so a non-WORK deep block shows the wrong December goal. <code>chainFor()</code> (§4.1) fixes it but only once commits exist.</li><li><strong>Block 4 is 15:05 PT = 17:05 CT.</strong> PROFILE §8c is right that it can never be an outreach block. R2 in <code>layoutWeek()</code> encodes it, but nothing enforces it before the layout ships.</li><li><strong>Delivery load is still zero everywhere.</strong> The moment Anthony signs, delivery consumes blocks that no structure currently accounts for. <code>capacity()</code> is what will make this visible — worth wiring before October rather than after.</li><li><strong>Trading hours are correct in code</strong> (<code>open</code> 06:30–08:30, line 532) — the PROFILE note that &quot;the current build has trading ending at 7:15&quot; is stale. Verified, no action needed.</li><li><strong><code>week()</code>&#x27;s default <code>theme</code> includes <code>&#x27;Admin + follow-ups&#x27;</code></strong>, which is not a goal. Under v4 it becomes <code>kind:&#x27;slack&#x27;</code> and is excluded from the orphan calculus in both directions. A week is allowed to contain slack.</li><li><strong><code>2026-11-23</code> (a <code>LANDMARKS</code> date) is Thanksgiving week.</strong> The landmark is fine; the full-load assumption that week is the open question PROFILE §8c already raised.</li><li><strong><code>2026-12-01</code> is a TUESDAY, not a Monday.</strong> <code>00-CREW-CONTEXT.md</code>, <code>PROFILE.md</code> and <code>GOAL-ENGINE.md</code> all say &quot;Mon 2026-12-01&quot;. Harmless in code — <code>workdaysLeft()</code>/<code>TOTAL_DAYS</code> use <code>while(c&lt;b)</code> so Dec 1 is excluded either way and the 91-weekday count is correct — but the run&#x27;s last full week is Mon Nov 23 → Fri Nov 27, and Nov 30 is a one-day week 19. Worth correcting in the docs so nobody builds a &quot;final week&quot; ceremony on a wrong assumption.</li><li><strong>Agent 2 divergence is expected and useful.</strong> If their interface plans the week by dragging goals onto slots rather than by sizing commitments, that is the &quot;slots&quot; branch of §8 and the schema supports it — <code>commit.blocks</code> can be derived from <code>commit.slots.length</code> instead of the reverse. Reconciling to their model costs one function, not a redesign.</li></ol>
+</div></body></html>

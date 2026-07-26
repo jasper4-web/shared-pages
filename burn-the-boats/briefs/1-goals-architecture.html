@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>Goals Architecture — Burn the Boats</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{--bg:#07060b;--panel:#0e0c16;--line:#1e1a2b;--line2:#2b2540;--ink:#EDEAE4;
+ --dim:#9a93a8;--faint:#6b6480;--gold:#E0B25E;--ember:#FF6B2C;--phos:#4ADE80;--blood:#FF4D5E}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.62}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px 80px}
+.top{position:sticky;top:0;z-index:9;background:rgba(7,6,11,.95);backdrop-filter:blur(12px);
+ border-bottom:1px solid var(--line);margin:0 -18px 26px;padding:13px 18px;display:flex;
+ align-items:center;gap:12px}
+.top a{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--gold);
+ text-decoration:none;min-height:44px;display:flex;align-items:center}
+.top span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint);
+ margin-left:auto;text-align:right}
+h1,h2,h3,h4{font-family:'Clash Display',sans-serif;letter-spacing:-.02em;line-height:1.15;margin:0}
+h1{font-size:31px;font-weight:700;margin:28px 0 16px}
+h2{font-size:23px;font-weight:600;margin:40px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+h3{font-size:18px;font-weight:600;margin:28px 0 10px;color:var(--gold)}
+h4{font-size:15px;font-weight:600;margin:22px 0 8px;color:var(--dim)}
+p{font-size:16px;color:var(--dim);margin:0 0 16px}
+strong{color:var(--ink);font-weight:600}
+em{color:var(--ink);font-style:italic}
+ul,ol{padding-left:22px;margin:0 0 18px}
+li{font-size:16px;color:var(--dim);margin-bottom:9px}
+li::marker{color:var(--faint)}
+code{font-family:'Geist Mono',monospace;font-size:13.5px;background:var(--panel);
+ border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#c8bfe0}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px;
+ overflow-x:auto;margin:0 0 18px}
+pre code{background:none;border:0;padding:0;font-size:13px;line-height:1.7;color:#bdb5d4}
+blockquote{margin:0 0 18px;padding:12px 0 12px 17px;border-left:3px solid var(--gold);
+ color:#c9bda0;font-size:16px}
+blockquote p{color:inherit;margin:0 0 8px}
+blockquote p:last-child{margin:0}
+hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+a{color:var(--gold)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 20px;
+ border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint);
+ text-transform:uppercase;text-align:left;padding:12px;background:var(--panel);
+ border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:12px;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td strong{color:var(--ink)}
+</style></head><body><div class="wrap">
+<div class="top"><a href="../work.html">&larr; ALL THE WORK</a><span>BURN THE BOATS</span></div>
+<h1>AGENT 1 — GOALS: THE ARCHITECTURE</h1>
+<p><strong>This is the most important lane in the crew.</strong> Goals are the structural spine of the whole app — everything else is downstream of them. Treat this as the hardest problem here and give it the effort that implies.</p>
+<p><strong>Mission:</strong> design the goal <em>system</em> — the research behind it, the data model, and above all <strong>how a December goal actually reaches a 75-minute block on a Tuesday</strong>.</p>
+<p><strong>Turf:</strong> <code>agent-briefs/crew-2026-07-25/out-1-goals-research.md</code> · <code>out-1-goals-spec.md</code> <strong>Depends on:</strong> nothing. Start immediately. <strong>Paired with:</strong> Agent 2 is designing the <em>interface</em> for this same problem, independently and at the same time. <strong>Do not coordinate with them and do not design screens.</strong> You own structure, data and logic; they own layout and feel. The GM reconciles. Divergence between you is useful, not a problem.</p>
+<hr>
+<h2>Why this lane carries the weight</h2>
+<p>Owner, verbatim:</p>
+<blockquote><p>&quot;Goals really needs some <strong>extra emphasis</strong> because it&#x27;s a real structure of this whole page. Me </p><p>really doing the things that I need to **revolves heavily around goals and how goals affect the daily </p><p>schedule<strong>, etc. So just want to make sure the goals really really gets that </strong>strenuous effort, data </p><p>build**, etc.&quot;</p></blockquote>
+<p>And on the shape:</p>
+<blockquote><p>&quot;I want us to be able to make the structure of the goals for <strong>each of my different categories</strong>. For </p><p>example I can create my personal goal all the way till December of taking three guitar classes, then </p><p>my two-month goal getting so ready that I feel like I can make a guitar class, then my three-month </p><p>goal take my first guitar class… just to give a little bit of <strong>flexibility</strong> so we&#x27;re not stuck in </p><p>one route, and the goals actually becomes a <strong>system</strong> instead of a **linear path that we wrote down </p><p>and can&#x27;t really be changed**.&quot;</p></blockquote>
+<p>Note his horizons came out in a loose order. <strong>The number and spacing of horizons is a design question you must answer with reasoning — not a spec to copy literally.</strong></p>
+<h2>Job</h2>
+<h3>Part A — real research (required, not decoration)</h3>
+<p>You have web access. Go and find out how established systems actually structure a multi-horizon cascade, and be specific about mechanics rather than summarising philosophies. Cover at least:</p>
+<ul><li><strong>OKR</strong> — objective/key-result split, why quarterly, how cascading works and the documented ways it fails for individuals rather than companies</li><li><strong>The 12 Week Year</strong> — already partly implemented here (execution score, 85% threshold)</li><li><strong>EOS / Traction</strong> — the 10yr → 3yr → 1yr → quarterly Rocks ladder, and the discipline of ≤7 Rocks</li><li><strong>4DX</strong> — WIG, lead vs lag, the ≤2 goals rule, the cadence of accountability</li><li><strong>GTD horizons of focus</strong> — 50,000ft → runway, and how review cadence differs per altitude</li><li>At least two credible <strong>personal</strong> (not corporate) goal systems from the last few years</li></ul>
+<p>Write <code>out-1-goals-research.md</code>: what each actually does, <strong>what transfers to one person over 18 weeks</strong>, what to steal, and <strong>what to reject and why</strong>. Cite sources. Do not pad.</p>
+<p>The app already implements 4DX lead/lag and the 12WY execution score — read <code>GOAL-ENGINE.md</code> first so you extend that rather than contradicting it.</p>
+<h3>Part B — the spec (<code>out-1-goals-spec.md</code>)</h3>
+<p>This is the deliverable that matters. It must answer, concretely:</p>
+<p><strong>1 · The model.</strong> A goal per life category across the app&#x27;s six domains (THE WORK · CAPITAL · BODY · FAITH · MIND · PEOPLE). Give the actual JS data structure — fields, types, ids, how a goal relates to its milestones and to weekly commitments. Write it as code, not prose.</p>
+<p><strong>2 · The horizons.</strong> How many, spaced how, and <em>why</em>. Justify against the research and against a 91-weekday run ending Dec 1 (with a real income deadline in Feb–March that the app already surfaces).</p>
+<p><strong>3 · Restructuring — the requirement he cared most about.</strong> Reordering, re-parenting, changing or deleting a milestone mid-run, changing a December goal in October without losing history. <strong>Any design where the tree is fixed at creation is a failed design.</strong> Specify what happens to already-earned progress when a goal changes — this is the hard part and the app&#x27;s OVR curve depends on it.</p>
+<p><strong>4 · THE CASCADE DOWN TO THE DAY — the centre of this brief.</strong> Read <code>index.html</code> and <code>GOAL-ENGINE.md</code> and specify exactly how a goal reaches a block. What exists today:</p>
+<ul><li><code>week().tactics{b1..b4}</code> — the week&#x27;s objective per block slot</li><li><code>week().theme{b1..b4}</code> — which business owns each block slot</li><li><code>day().prio[0..3]</code> — today&#x27;s three, written at the 08:30 composer, which override the week</li><li><code>tacticFor(block)</code> — resolves what a block is <em>for</em></li><li><code>domainProgress()</code> — what actually moves the six stats and therefore the OVR</li></ul>
+<p>Your spec must say: how does a weekly goal <em>become</em> <code>week().tactics</code>? Does it replace the composer or feed it? When he writes a weekly goal, does the app propose blocks? What happens to a goal with no block behind it — is that visible? <strong>A goal nothing is scheduled against is the single most useful thing this system could surface, and nothing in the app does it today.</strong></p>
+<p><strong>5 · Scoring.</strong> How goal progress relates to the existing execution score and OVR curve without double-counting or breaking the tuned Dec-1-at-99 progression. Do not break that curve.</p>
+<p><strong>6 · The weekly ritual.</strong> He writes weekly goals each week. Specify the flow, what it pre-fills from, and how long it should take. There is a Friday &quot;set next week&quot; ritual on the Record tab already.</p>
+<p><strong>7 · Migration.</strong> He has live data. Specify how existing <code>S.december</code> goals move into the new model without loss.</p>
+<h2>Done when</h2>
+<ul><li><code>out-1-goals-research.md</code> — real, cited, with an explicit steal/reject verdict</li><li><code>out-1-goals-spec.md</code> — a data model in code, all seven sections answered, unambiguous enough that the GM could implement it without inventing anything</li><li>You have named the <strong>one decision you are least sure about</strong> and argued both sides</li><li>No HTML. No screens. That is Agent 2&#x27;s turf.</li></ul>
+</div></body></html>

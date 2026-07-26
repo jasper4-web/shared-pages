@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>The Goal Engine — Burn the Boats</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{--bg:#07060b;--panel:#0e0c16;--line:#1e1a2b;--line2:#2b2540;--ink:#EDEAE4;
+ --dim:#9a93a8;--faint:#6b6480;--gold:#E0B25E;--ember:#FF6B2C;--phos:#4ADE80;--blood:#FF4D5E}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.62}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px 80px}
+.top{position:sticky;top:0;z-index:9;background:rgba(7,6,11,.95);backdrop-filter:blur(12px);
+ border-bottom:1px solid var(--line);margin:0 -18px 26px;padding:13px 18px;display:flex;
+ align-items:center;gap:12px}
+.top a{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--gold);
+ text-decoration:none;min-height:44px;display:flex;align-items:center}
+.top span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint);
+ margin-left:auto;text-align:right}
+h1,h2,h3,h4{font-family:'Clash Display',sans-serif;letter-spacing:-.02em;line-height:1.15;margin:0}
+h1{font-size:31px;font-weight:700;margin:28px 0 16px}
+h2{font-size:23px;font-weight:600;margin:40px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+h3{font-size:18px;font-weight:600;margin:28px 0 10px;color:var(--gold)}
+h4{font-size:15px;font-weight:600;margin:22px 0 8px;color:var(--dim)}
+p{font-size:16px;color:var(--dim);margin:0 0 16px}
+strong{color:var(--ink);font-weight:600}
+em{color:var(--ink);font-style:italic}
+ul,ol{padding-left:22px;margin:0 0 18px}
+li{font-size:16px;color:var(--dim);margin-bottom:9px}
+li::marker{color:var(--faint)}
+code{font-family:'Geist Mono',monospace;font-size:13.5px;background:var(--panel);
+ border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#c8bfe0}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px;
+ overflow-x:auto;margin:0 0 18px}
+pre code{background:none;border:0;padding:0;font-size:13px;line-height:1.7;color:#bdb5d4}
+blockquote{margin:0 0 18px;padding:12px 0 12px 17px;border-left:3px solid var(--gold);
+ color:#c9bda0;font-size:16px}
+blockquote p{color:inherit;margin:0 0 8px}
+blockquote p:last-child{margin:0}
+hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+a{color:var(--gold)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 20px;
+ border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint);
+ text-transform:uppercase;text-align:left;padding:12px;background:var(--panel);
+ border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:12px;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td strong{color:var(--ink)}
+</style></head><body><div class="wrap">
+<div class="top"><a href="../work.html">&larr; ALL THE WORK</a><span>BURN THE BOATS</span></div>
+<h1>Burn the Boats — The Goal Engine</h1>
+<p>The spec the app is built against. Written 2026-07-25. Run: Mon 2026-07-27 → Mon 2026-12-01.</p>
+<h2>Why this exists</h2>
+<p>The first build tracked <strong>compliance</strong> (did you tick the block?) but not <strong>purpose</strong> (what was the block <em>for</em>?). A review agent put it exactly right:</p>
+<blockquote><p>&quot;The schedule card contains no content — only containers. Ten identical strings, identical on all 91 </p><p>days, whose only variable is which boxes are ticked.&quot;</p></blockquote>
+<p>This document is the spine that fixes that. It is borrowed, not invented — from <strong>4DX</strong> (lead vs lag measures, the scoreboard test) and <strong>The 12 Week Year</strong> (the weekly execution score, 85% threshold).</p>
+<h2>The two borrowed ideas</h2>
+<p><strong>1. Lead vs lag (4DX).</strong></p>
+<ul><li><strong>Lag</strong> = the result. &quot;3 SANO clients.&quot; You cannot directly control it and it reports too late.</li><li><strong>Lead</strong> = the behaviour that predicts it. &quot;12 outreach conversations this week.&quot; Predictive AND within your control.</li><li>Scoreboard test: <em>&quot;Can I tell at a glance if I am winning?&quot;</em> If the screen fails that test, it is decoration.</li></ul>
+<p><strong>2. The weekly execution score (12 Week Year).</strong></p>
+<ul><li><code>execution = tactics completed ÷ tactics due</code></li><li><strong>85%+ = a won week.</strong> This is the documented threshold, not a number we picked.</li><li>The governing principle: <strong>&quot;You are scoring your execution, not your results.&quot;</strong></li></ul>
+<h2>Consequence: what actually moves the OVR</h2>
+<p>blocks completed → weekly execution score → domain stats → OVR</p>
+<p><strong>Nothing in that chain depends on an outcome outside his control.</strong> He can run a 100% week and still not have Anthony signed — and the app must call that a won week, because it was one.</p>
+<p>This is also what makes the rival fair. The Millionaire Version executes at <strong>100% every week</strong>. An <strong>85%+ week takes the round.</strong> Winnable, weekly, and objectively defined.</p>
+<h2>The four levels</h2>
+<div class='tw'><table><tr><th>Level</th><th>Holds</th><th>Type</th><th>Set</th></tr><tr><td><strong>December</strong></td><td>1 primary WIG + one goal per domain</td><td>lag</td><td>once</td></tr><tr><td><strong>Month</strong></td><td>milestone checkpoint — is the lag moving?</td><td>lag</td><td>Aug/Sep/Oct/Nov</td></tr><tr><td><strong>Week</strong></td><td>committed tactics, scored Friday</td><td><strong>lead</strong></td><td>each Friday</td></tr><tr><td><strong>Day</strong></td><td>blocks execute this week&#x27;s tactics</td><td>execution</td><td>daily</td></tr></table></div>
+<p>Rule: a level may only ever be justified by the level above it. A weekly tactic that serves no December goal is deleted, not done. That constraint is the entire point.</p>
+<h2>The six domains</h2>
+<p>Virtues (Focus, Discipline, Execution) were removed as axes — you cannot write a December goal for &quot;Execution&quot;, and three of the original six had no measurable input path. Domains are goal-bearing; virtues are not. Focus and discipline survive as <strong>multipliers</strong> on how cleanly a block is completed.</p>
+<div class='tw'><table><tr><th>Domain</th><th>Lag (December)</th><th>Lead (weekly)</th></tr><tr><td>THE WORK</td><td>3 SANO clients by Dec 1</td><td>outreach conversations, demos booked, pages shipped</td></tr><tr><td>CAPITAL</td><td>account target</td><td>rules followed, trades logged, R discipline</td></tr><tr><td>BODY</td><td>bodyweight / a lift number</td><td>4 sessions per week</td></tr><tr><td>FAITH</td><td>read through X</td><td>daily bible + prayer</td></tr><tr><td>MIND</td><td>books read / a skill</td><td>reading blocks</td></tr><tr><td>PEOPLE</td><td>state of the relationships</td><td>date nights, calls home</td></tr></table></div>
+<p><strong>A block credits more than one domain.</strong> Trail walk pays BODY + MIND. Workout pays BODY. Bible pays FAITH. This was an explicit owner requirement: &quot;certain things do more than one category.&quot;</p>
+<h2>The week</h2>
+<p>Set each Friday. Choose which December goals get attacked and commit to tactics. Each daily block is bound to one tactic — so Block 1 is never &quot;Block 1 · SANO&quot;, it is <em>&quot;SANO — ship the AVRS pitch page. Builds on: Tuesday&#x27;s questionnaire.&quot;</em></p>
+<p>The 07:45 coffee-shop ritual writes the three priorities that become the objective lines on Blocks 1–3. Until they are written those blocks show a dashed <strong>&quot;no objective set&quot;</strong> — a visible hole at 08:15.</p>
+<h2>The week shape</h2>
+<ul><li><strong>Mon–Fri</strong> — full load. 4 work blocks.</li><li><strong>Saturday</strong> — light. Late start, ONE work block + a &quot;set Monday up&quot; block. ~⅓ load. Rendered as a light day, never as a weekday with five misses.</li><li><strong>Sunday</strong> — <strong>CLOSED.</strong> Full-screen cross, <code>SABBATH</code>. No blocks, no scoring, no HP movement. Only bible/prayer and a read-only look back at the week.</li></ul>
+<p>Open question for the owner: the fuel gauge currently counts 91 weekdays. If Saturday carries a work block, the honest count is 109 working days. Built as 91 + Saturdays shown separately until decided.</p>
+<h2>Scoring rules (carried over, still true)</h2>
+<ul><li><strong>XP only ever goes up. HP can go down.</strong> Progress is permanent; integrity is current-state.</li><li>Daily HP loss floor of <strong>−15</strong> — no death spirals.</li><li>Focus runs use the Page Visibility API to genuinely detect leaving.</li><li><strong>Phone pass:</strong> 2/day. Tap STEP AWAY → 2:00 pause → return in time = clean. Leaving <em>without</em> tapping = instant break. The deliberate tap is the whole mechanism.</li><li>Blocks auto-mark by the clock; he taps only to record a <strong>miss</strong>, plus one 60-second evening close-out. Fewer taps — but MORE visible day, not less. Those are different things.</li></ul>
+<h2>Layout consequence</h2>
+<p>Measured: the hero card burned <strong>49% of page height</strong> on a number that moves once a week, while the schedule — which changes hourly — sat below the fold. So:</p>
+<ol><li><strong>Status bar</strong> (~90px): OVR, fuel, today&#x27;s progress. Tap → full character sheet + veil, fullscreen.</li><li><strong>The Day</strong> (the hero): day rail with live now-line · &quot;3h 45m of deep work left&quot; · blocks weighted by duration · NEXT UP called out · every block tappable into its objective.</li><li><strong>Focus run</strong>: fullscreen, nothing else on screen.</li></ol>
+<h2>Sources</h2>
+<ul><li>4DX — lead/lag measures + the four scoreboard questions</li><li>The 12 Week Year (Brian Moran) — weekly execution score, 85% threshold, &quot;score execution not results&quot;</li></ul>
+</div></body></html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>Goals Interface — Burn the Boats</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{--bg:#07060b;--panel:#0e0c16;--line:#1e1a2b;--line2:#2b2540;--ink:#EDEAE4;
+ --dim:#9a93a8;--faint:#6b6480;--gold:#E0B25E;--ember:#FF6B2C;--phos:#4ADE80;--blood:#FF4D5E}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.62}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px 80px}
+.top{position:sticky;top:0;z-index:9;background:rgba(7,6,11,.95);backdrop-filter:blur(12px);
+ border-bottom:1px solid var(--line);margin:0 -18px 26px;padding:13px 18px;display:flex;
+ align-items:center;gap:12px}
+.top a{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--gold);
+ text-decoration:none;min-height:44px;display:flex;align-items:center}
+.top span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint);
+ margin-left:auto;text-align:right}
+h1,h2,h3,h4{font-family:'Clash Display',sans-serif;letter-spacing:-.02em;line-height:1.15;margin:0}
+h1{font-size:31px;font-weight:700;margin:28px 0 16px}
+h2{font-size:23px;font-weight:600;margin:40px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+h3{font-size:18px;font-weight:600;margin:28px 0 10px;color:var(--gold)}
+h4{font-size:15px;font-weight:600;margin:22px 0 8px;color:var(--dim)}
+p{font-size:16px;color:var(--dim);margin:0 0 16px}
+strong{color:var(--ink);font-weight:600}
+em{color:var(--ink);font-style:italic}
+ul,ol{padding-left:22px;margin:0 0 18px}
+li{font-size:16px;color:var(--dim);margin-bottom:9px}
+li::marker{color:var(--faint)}
+code{font-family:'Geist Mono',monospace;font-size:13.5px;background:var(--panel);
+ border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#c8bfe0}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px;
+ overflow-x:auto;margin:0 0 18px}
+pre code{background:none;border:0;padding:0;font-size:13px;line-height:1.7;color:#bdb5d4}
+blockquote{margin:0 0 18px;padding:12px 0 12px 17px;border-left:3px solid var(--gold);
+ color:#c9bda0;font-size:16px}
+blockquote p{color:inherit;margin:0 0 8px}
+blockquote p:last-child{margin:0}
+hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+a{color:var(--gold)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 20px;
+ border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint);
+ text-transform:uppercase;text-align:left;padding:12px;background:var(--panel);
+ border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:12px;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td strong{color:var(--ink)}
+</style></head><body><div class="wrap">
+<div class="top"><a href="../work.html">&larr; ALL THE WORK</a><span>BURN THE BOATS</span></div>
+<h1>AGENT 2 — GOALS: THE INTERFACE</h1>
+<p><strong>Mission:</strong> design what the Goals page <em>is</em> on a phone — 4–6 structurally different architectures, rendered for real.</p>
+<p><strong>Turf:</strong> <code>renditions/rend-goals.html</code> <strong>Depends on:</strong> nothing. Start immediately. <strong>Paired with:</strong> Agent 1 is specifying the data model and cascade logic for this same problem, at the same time, independently. <strong>Do not wait for them and do not coordinate.</strong> You own layout, hierarchy and feel. Work from the same source material they are: <code>PROFILE.md</code>, <code>GOAL-ENGINE.md</code>, <code>index.html</code>, and the owner quotes below. The GM reconciles the two.</p>
+<hr>
+<h2>What he said</h2>
+<blockquote><p>&quot;Goals really needs some <strong>extra emphasis</strong> because it&#x27;s a real structure of this whole page… me </p><p>really doing the things I need to **revolves heavily around goals and how goals affect the daily </p><p>schedule**.&quot;</p></blockquote>
+<blockquote><p>&quot;I want us to be able to make the structure of the goals for <strong>each of my different categories</strong>… my </p><p>personal goal all the way till December of taking three guitar classes, then my two-month goal </p><p>getting ready enough that I feel like I can make a class, then my three-month goal take my first </p><p>class… so we&#x27;re not stuck in one route, and the goals becomes a <strong>system</strong> instead of a **linear path </p><p>we wrote down and can&#x27;t change**.&quot;</p></blockquote>
+<p>He also said the <strong>Anthony gate does not belong here</strong> — he wants to reach his own conclusions about goals first and add specific prospects later. <strong>Leave it out of your designs.</strong> (Do not delete it from the app; you do not touch the app.)</p>
+<p>The tab is currently called <strong>Push</strong>. He wants it to be <strong>Goals</strong>.</p>
+<h2>What the page must hold</h2>
+<ul><li>A goal per <strong>life category</strong> — the six domains: THE WORK · CAPITAL · BODY · FAITH · MIND · PEOPLE</li><li><strong>December</strong>, plus intermediate milestones (he said 3-month / 2-month / 1-month; treat the exact number as a design variable, and try more than one answer across your options)</li><li><strong>Weekly goals</strong> he writes each week, visibly connected to the daily blocks that already exist</li><li><strong>Editing and restructuring</strong> — this is the requirement he cared most about. Show the <em>interaction</em> for changing a milestone, not just the read-only view. A design that only renders a finished tree has not answered the brief.</li><li>Some honest view of a goal <strong>with nothing scheduled against it</strong></li></ul>
+<h2>The design problem</h2>
+<p>Six categories × several horizons × weekly commitments is a lot of nested information on a 390px screen. The failure mode is an org chart nobody opens. The directions worth exploring are genuinely different answers to <em>what is primary</em>:</p>
+<ul><li><strong>Time-first</strong> — horizons are the top level, categories nested inside</li><li><strong>Category-first</strong> — six cards, each drilling into its own ladder</li><li><strong>One-goal-at-a-time</strong> — a focus view, everything else collapsed (closest to 4DX&#x27;s ≤2-WIG discipline)</li><li><strong>The path</strong> — a single vertical spine from today to December with milestones as stations</li><li><strong>This-week-first</strong> — the week is the page, horizons are context above it</li><li><strong>A board</strong> — columns by horizon, cards move between them as things shift</li></ul>
+<p>Take at least four in clearly different directions. If two of yours could be described by the same sentence, replace one.</p>
+<h2>Job</h2>
+<p>Build <code>renditions/rend-goals.html</code>: 4–6 architectures as real rendered phone mock-ups at 390px, using the house design system from <code>index.html</code>. For each, state plainly: what it makes easy, what it makes hard, how long the weekly ritual takes in it, and its scroll depth. Then rank and recommend.</p>
+<p>Include at least one screen showing <strong>the act of restructuring</strong> — mid-edit, not just the result.</p>
+<h2>Done when</h2>
+<ul><li>4–6 structurally distinct architectures, rendered, at 390×844</li><li>At least one shows editing/restructuring in progress</li><li>Lint clean, screenshotted, and you have looked at the screenshots</li><li>Hand-off ranks them and names the strongest argument <em>against</em> your own pick</li></ul>
+</div></body></html>
