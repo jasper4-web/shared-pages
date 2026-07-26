@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>The goal system — how we build it — Burn the Boats</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{--bg:#07060b;--panel:#0e0c16;--line:#1e1a2b;--line2:#2b2540;--ink:#EDEAE4;
+ --dim:#9a93a8;--faint:#6b6480;--gold:#E0B25E;--ember:#FF6B2C;--phos:#4ADE80;--blood:#FF4D5E}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.62}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px 80px}
+.top{position:sticky;top:0;z-index:9;background:rgba(7,6,11,.95);backdrop-filter:blur(12px);
+ border-bottom:1px solid var(--line);margin:0 -18px 26px;padding:13px 18px;display:flex;
+ align-items:center;gap:12px}
+.top a{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--gold);
+ text-decoration:none;min-height:44px;display:flex;align-items:center}
+.top span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint);
+ margin-left:auto;text-align:right}
+h1,h2,h3,h4{font-family:'Clash Display',sans-serif;letter-spacing:-.02em;line-height:1.15;margin:0}
+h1{font-size:31px;font-weight:700;margin:28px 0 16px}
+h2{font-size:23px;font-weight:600;margin:40px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+h3{font-size:18px;font-weight:600;margin:28px 0 10px;color:var(--gold)}
+h4{font-size:15px;font-weight:600;margin:22px 0 8px;color:var(--dim)}
+p{font-size:16px;color:var(--dim);margin:0 0 16px}
+strong{color:var(--ink);font-weight:600}
+em{color:var(--ink);font-style:italic}
+ul,ol{padding-left:22px;margin:0 0 18px}
+li{font-size:16px;color:var(--dim);margin-bottom:9px}
+li::marker{color:var(--faint)}
+code{font-family:'Geist Mono',monospace;font-size:13.5px;background:var(--panel);
+ border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#c8bfe0}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px;
+ overflow-x:auto;margin:0 0 18px}
+pre code{background:none;border:0;padding:0;font-size:13px;line-height:1.7;color:#bdb5d4}
+blockquote{margin:0 0 18px;padding:12px 0 12px 17px;border-left:3px solid var(--gold);
+ color:#c9bda0;font-size:16px}
+blockquote p{color:inherit;margin:0 0 8px}
+blockquote p:last-child{margin:0}
+hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+a{color:var(--gold)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 20px;
+ border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint);
+ text-transform:uppercase;text-align:left;padding:12px;background:var(--panel);
+ border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:12px;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td strong{color:var(--ink)}
+</style></head><body><div class="wrap">
+<div class="top"><a href="../work.html">&larr; ALL THE WORK</a><span>BURN THE BOATS</span></div>
+<h1>THE GOAL SYSTEM — HOW WE BUILD IT</h1>
+<p>The brief changed and it changed correctly: <strong>I stop supplying goals and start supplying the machine you plug them into.</strong> So this document is not about your goals. It is about the shape of the thing that holds them, and it has to be right before a line of it gets merged, because the shape is the part you cannot cheaply change later.</p>
+<p>Three parts: <strong>how other people build these</strong>, <strong>the eight decisions that matter</strong>, and <strong>the plan</strong>.</p>
+<hr>
+<h2>PART 1 · HOW THIS IS ACTUALLY BUILT ELSEWHERE</h2>
+<p>Last time I looked at goal <em>methodologies</em> — OKR, 4DX, 12 Week Year. That was the wrong axis for this question. What matters now is <strong>how the software is structured</strong>, which is a different literature. Six patterns, and each one settles something for us.</p>
+<h3>Linear — the three-layer model, and time as a separate axis</h3>
+<p>Linear runs <strong>Initiative → Project → Issue</strong>, and then does something important: <strong>Cycles</strong> are a <em>separate</em> container. An issue belongs to a project <strong>and</strong> a cycle at the same time. Time is not a level in the tree — it is a second axis crossing it. Their own docs describe the three-level hierarchy as deliberately avoiding &quot;the complexity of Jira&#x27;s epic-story-subtask pyramid.&quot;</p>
+<p><strong>Settles:</strong> how deep to go, and — the big one — <strong>that a horizon must not be a level in the hierarchy.</strong></p>
+<h3>Things 3 / GTD / PARA — Areas and Projects are different <em>kinds</em> of thing</h3>
+<p>Every one of these systems draws the same line, and it is sharper than it first looks:</p>
+<blockquote><p>A project has a desired outcome that lets you mark it <strong>complete</strong>, and a timeframe. </p><p>An area of responsibility has a <strong>standard to be maintained</strong>, continuous over time. </p><p><strong>Projects end. Areas continue indefinitely.</strong></p></blockquote>
+<p>PARA adds the organising principle: sort by <strong>actionability</strong>, not by topic. Archive is not &quot;old&quot;, it is &quot;not actionable until it is again.&quot;</p>
+<p><strong>Settles:</strong> Areas and Goals are not the same object at different depths. An Area has no due date and can never be &quot;done&quot;. A Goal must have both.</p>
+<h3>Notion — relations and rollups, and the ceiling nobody mentions</h3>
+<p>Notion is the most flexible goal-structure tool there is: any database can relate to any other, and rollups aggregate across the relation. But there is a hard limit — <strong>a rollup only reaches one hop.</strong> There are no rollups of rollups.</p>
+<p><strong>Settles:</strong> deep hierarchies do not aggregate cleanly <em>even in the tool built for aggregating</em>. If the most flexible system on the market caps at one hop, a phone app for one person should not attempt a computed tree. This independently confirms EOS&#x27;s rule: <strong>dated pictures, never a computed tree.</strong></p>
+<h3>Beeminder — the akrasia horizon, and this is the best idea I found</h3>
+<p>Beeminder lets you change any goal parameter you like. But the changes are <strong>asymmetric</strong>:</p>
+<blockquote><p>You can&#x27;t make your goal easier any earlier than <strong>7 days from today.</strong> </p><p>Making it harder takes effect immediately.</p></blockquote>
+<p>Changing the rate, adding breaks, quitting, lowering the stakes — all of it takes a week. Making it tougher is instant. It is explicitly designed against <em>hyperbolic discounting</em>: the version of you at 4pm on a bad Thursday should not be able to rewrite what the version of you on Sunday committed to.</p>
+<p><strong>Settles:</strong> the central tension in your ask. You want to add, change and edit freely. A system you can freely soften is a system that cannot hold you. The answer is not to restrict editing — it is to make <strong>easing visible and slow, and hardening instant.</strong></p>
+<h3>Bullet Journal — migration as a deliberate filter</h3>
+<p>Every month you <strong>rewrite by hand</strong> anything still open. The friction is the entire point:</p>
+<blockquote><p>If a task isn&#x27;t worth rewriting, it probably isn&#x27;t worth doing. </p><p>If something keeps getting shuffled forward, that friction is the system filtering out </p><p>things burning your energy without going anywhere.</p></blockquote>
+<p><strong>Settles:</strong> goals must <strong>not</strong> auto-roll to the next horizon. The month turn should make you re-decide.</p>
+<h3>The one-database-many-views pattern</h3>
+<p>Notion, Airtable, Coda and Tana all converge here: <strong>one table, several types, many views</strong> — rather than separate tables per concept. Fewer objects to learn, and a new view costs nothing.</p>
+<p><strong>Settles:</strong> outcome / learning / habit are a <code>kind</code> field on one Goal table, not three tables.</p>
+<hr>
+<h2>PART 2 · THE EIGHT DECISIONS</h2>
+<p>For each: the options, what I recommend for <strong>this</strong> project, and why.</p>
+<h3>D1 · How deep does the hierarchy go?</h3>
+<div class='tw'><table><tr><th>Option</th><th>Verdict</th></tr><tr><td>Area → Goal → Commitment</td><td><strong>CHOSEN</strong></td></tr><tr><td>Area → Goal → Sub-goal → Commitment</td><td>Rejected — the Jira pyramid. Four levels means every entry is a filing decision.</td></tr><tr><td>Flat list + tags</td><td>Rejected — you have genuinely separate businesses; they need a wall between them.</td></tr></table></div>
+<p><strong>Three levels, plus an <em>optional</em> parent link</strong> on a goal (&quot;this is a step toward that&quot;). The ladder exists when you want it and costs nothing when you don&#x27;t. Critically the parent link is <strong>navigational only — a parent&#x27;s progress is never computed from its children.</strong> Linear caps at three; Notion can&#x27;t roll up past one hop; EOS says dated pictures. All three point the same way.</p>
+<h3>D2 · Is a horizon a level, or an attribute? — <em>the decision the whole thing turns on</em></h3>
+<p><strong>A horizon is a named date. A goal points at one. That&#x27;s it.</strong></p>
+<p>This is exactly why the app can&#x27;t do what you asked today. Right now the four landmark dates are <em>computed in code</em> from weeks 6/10/14/18, and the goals are six hardcoded slots. Adding a two-month horizon is a code change. Adding a fifth business is a code change.</p>
+<p>Make the date an attribute and all of it becomes data: monthly, two-month, December, a one-off date for a single goal, whatever you want, created from the phone in about eight seconds. This is Linear&#x27;s cycles — time crossing the hierarchy rather than being part of it.</p>
+<h3>D3 · Are Areas and Goals the same kind of thing?</h3>
+<p><strong>No, and the difference is load-bearing.</strong></p>
+<div class='tw'><table><tr><th></th><th>Area</th><th>Goal</th></tr><tr><td>Ends?</td><td><strong>Never</strong></td><td>Yes — has a date and a done state</td></tr><tr><td>Example</td><td>SANO · Fruits · Personal</td><td>&quot;Three clients signed by Dec 1&quot;</td></tr><tr><td>Carries</td><td>An ongoing <strong>standard</strong> (a weekly quota)</td><td>An <strong>outcome</strong> and its evidence</td></tr><tr><td>Count</td><td>Few, stable</td><td>Many, churning</td></tr></table></div>
+<p>An Area can carry a standing weekly quota — that is how &quot;gym 2×, walks 3×&quot; should live, attached to Personal rather than pretending to be a dated goal. That is Things/GTD/PARA&#x27;s line, and it is the reason your Personal thread currently feels different from the other three: it <em>is</em> different.</p>
+<h3>D4 · One goal type or several?</h3>
+<p><strong>One Goal table, a <code>kind</code> field: <code>outcome</code> · <code>learning</code> · <code>habit</code>.</strong></p>
+<ul><li><strong>outcome</strong> — the normal case. Date, evidence, done state.</li><li><strong>learning</strong> — for a thing you have never done. It is complete when the <em>method</em> is written down and signed off, not when the result lands. (Locke &amp; Latham: an outcome goal on a novel complex task causes tunnel vision and blocks learning the method.)</li><li><strong>habit</strong> — no date, no done state, just a weekly quota. Lives under an Area.</li></ul>
+<p>Three behaviours, one object, one editor. The one-database pattern.</p>
+<h3>D5 · How do edits stay safe? — <em>your explicit requirement</em></h3>
+<p>You must be able to add, change, edit, reorder, re-date and delete. Nothing gets locked. But:</p>
+<p><strong>The asymmetric rule (from Beeminder), in the lightest form that works:</strong></p>
+<div class='tw'><table><tr><th>Change</th><th>Effect</th></tr><tr><td>Add a goal · make a target harder · pull a date <strong>earlier</strong></td><td><strong>Instant, silent</strong></td></tr><tr><td>Lower a target · push a date <strong>later</strong> · park it</td><td><strong>Instant, but recorded</strong> — the goal keeps a one-line trail: <em>&quot;target 12 → 8 · day 34&quot;</em></td></tr><tr><td>Delete</td><td>Instant, and it takes its commitments with it</td></tr><tr><td>Anything at all</td><td><strong>Never zeroes a counter</strong></td></tr></table></div>
+<p>No lockouts, no waiting, no money. Just memory. If you push a date three times, the goal says so, and that is information you want rather than a punishment.</p>
+<p><strong>Open question for you:</strong> Beeminder uses a hard <strong>7-day delay</strong> on any easing. That is meaningfully stronger, and meaningfully more annoying. I have specced the visible-trail version because you said efficiency matters — but say the word and I&#x27;ll build the delay instead.</p>
+<h3>D6 · What stops it becoming a junk drawer?</h3>
+<p><strong>The migration ritual, at each horizon turn.</strong> Goals do <strong>not</strong> auto-roll.</p>
+<p>When a date passes, that horizon&#x27;s unfinished goals come up one screen at a time, four buttons each:</p>
+<p><strong>CARRY</strong> (pick the next date) · <strong>CHANGE IT</strong> · <strong>PARK</strong> · <strong>DROP</strong></p>
+<p>The friction is the feature. A goal you have carried three times gets a quiet marker — that is the system telling you it is burning energy without moving. This is bullet-journal migration, and it is the only mechanism in this document whose whole job is <em>removal</em>.</p>
+<h3>D7 · What&#x27;s typed vs derived?</h3>
+<p><strong>Derived — never typed, never stored:</strong> lead count this week · days to date · orphan status · capacity used · habit quota progress · carried-count.</p>
+<p><strong>Typed:</strong> everything else.</p>
+<p><strong>One hop only.</strong> A parent goal never computes from its children — it shows <em>&quot;3 steps · 1 done&quot;</em> as navigation, and its own state stays something you assert. Notion&#x27;s ceiling, adopted on purpose.</p>
+<h3>D8 · What do you touch, and how often?</h3>
+<div class='tw'><table><tr><th>Layer</th><th>Cadence</th><th>Time</th></tr><tr><td>Areas</td><td>Rarely</td><td>—</td></tr><tr><td>December goals</td><td><strong>Monthly</strong>, never weekly</td><td>5 min</td></tr><tr><td>Horizon goals</td><td>At the migration</td><td>5 min</td></tr><tr><td><strong>The week</strong></td><td><strong>Friday</strong></td><td><strong>≤90 sec</strong></td></tr><tr><td>The block</td><td>Daily — but on <strong>Today</strong>, not here</td><td>0</td></tr></table></div>
+<p>GTD&#x27;s rule: different altitudes get different review cadences. <strong>December goals must not appear in the weekly ritual.</strong> The Goals tab is not a daily surface, and building it as one is what makes goal apps feel like homework.</p>
+<hr>
+<h2>PART 3 · THE MODEL</h2>
+<pre><code>
+areas      id · name · colour · rank · quotas[] · archived
+horizons   id · label · date
+goals      id · areaId · horizonId? · parentId?
+           title · kind(outcome|learning|habit)
+           evidence? · obstacle? · lead{name,target}?
+           wig · rank · state(active|parked|done|dropped)
+           history[]  ← the edit trail
+commits    id · goalId · text · day · block · done
+</code></pre>
+<p>Five fields do the work the current app cannot do at all:</p>
+<ol><li><strong><code>areaId</code></strong> — any number of businesses, created by you</li><li><strong><code>horizonId</code></strong> — any number of dates, created by you</li><li><strong><code>parentId</code></strong> — the ladder, optional, never computed</li><li><strong><code>commits.goalId</code></strong> — the missing link. This is what makes the orphan check true, lead measures countable, and a commitment an actual if-then plan</li><li><strong><code>history[]</code></strong> — how editing stays honest without being restricted</li></ol>
+<hr>
+<h2>PART 4 · THE PLAN</h2>
+<h3>Phase 1 · The spine <em>(the prototype already proves this works)</em></h3>
+<p>Areas, horizons, goals, full CRUD, three views. <strong>Nothing hardcoded.</strong> → Already built and on your phone. Test it with real content.</p>
+<h3>Phase 2 · Migrate your live data — losslessly</h3>
+<p>Map the six fixed domains to Areas, their lag/lead to Goals, the sixteen milestone slots to dated Goals. Write it to a <strong>new key</strong>, keep the old one untouched, and provide a one-tap revert. Nothing is destroyed until you say the new shape is right.</p>
+<h3>Phase 3 · Typed commitments + the Friday ritual</h3>
+<p>The single highest-value change in the whole document. Commitments carry <code>goalId</code> and a day, the orphan check becomes true, and Friday gets a ≤90-second close-out → confidence tap → next week, <strong>pre-filled</strong> from the current horizon.</p>
+<h3>Phase 4 · Standards and quotas on Areas</h3>
+<p>Weekly quotas move to where they belong. Personal stops pretending to be a dated goal.</p>
+<h3>Phase 5 · The migration ritual</h3>
+<p>Month-turn screen. Carry / change / park / drop. Carried-count marker.</p>
+<h3>Phase 6 · The edit trail</h3>
+<p><code>history[]</code> written on every ease. One line on the goal card.</p>
+<h3>Phase 7 · Merge into the app</h3>
+<p>Replace <code>renderPush()</code>. The Goals tab becomes this. Old routes keep working.</p>
+<p><strong>Phases 1–3 are ~80% of the value.</strong> Everything after is refinement.</p>
+<hr>
+<h2>WHAT I NEED FROM YOU</h2>
+<p>Not your goals — the prototype is for those. Four structural answers:</p>
+<ol><li><strong>Easing: visible trail, or Beeminder&#x27;s hard 7-day delay?</strong> My recommendation is the trail; the delay is genuinely stronger.</li><li><strong>Do horizons run past Dec 1?</strong> Your profile says the real income cliff is February–March. I think the answer is yes and December stops being the edge of the world — but that is a real decision.</li><li><strong>Roughly how many areas?</strong> Four, or closer to eight? It changes whether the By Area view needs collapsing.</li><li><strong>Should an Area be able to carry a weekly standard</strong> (Personal: gym 2×, walks 3×) — or should everything be a goal? I recommend yes; it is the cleanest home for the quotas you already run.</li></ol>
+<p>Nothing gets merged into the live app until you have played with the prototype and answered these.</p>
+</div></body></html>
