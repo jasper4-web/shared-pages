@@ -422,6 +422,16 @@ button{font-family:inherit}
 .zpill button:last-child{border-right:0;color:var(--gold)}
 .zpill button.home{color:var(--dim)}
 .chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:11px}
+/* the goal handshake on the live block */
+.nu-goal{margin-top:11px;padding-top:11px;border-top:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;gap:10px}
+.nu-goal .gl{min-width:0;flex:1}
+.nu-goal .gk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--gc,var(--gold))}
+.nu-goal .gt{font-size:13.5px;color:var(--ink);line-height:1.35;margin-top:3px}
+.nu-goal .gn{flex:none;width:72px;font-family:'Clash Display',sans-serif;font-weight:700;font-size:22px;
+  letter-spacing:-.03em;color:var(--gc,var(--gold));text-align:right;line-height:1}
+.nu-goal .gn s{display:block;text-decoration:none;font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.08em;color:var(--faint);margin-top:5px;line-height:1.4}
 .chip{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.11em;padding:3px 7px;border-radius:4px;
   border:1px solid var(--line2);color:var(--dim);text-transform:uppercase}
 
@@ -527,6 +537,12 @@ h2.sec u{text-decoration:none;color:var(--dim)}
 .ws-note{margin-top:9px;font-size:12.5px;color:var(--dim);line-height:1.45}
 .ws-note b{color:var(--gold);font-weight:500}
 
+/* xp attribution rows in the Bank */
+.attr{display:flex;align-items:center;gap:12px;min-height:34px}
+.attr .an{flex:1;font-size:14px;color:var(--dim)}
+.attr .at{width:96px;height:6px;border-radius:99px;background:#221d33;overflow:hidden}
+.attr .at i{display:block;height:100%;border-radius:99px}
+.attr .av{font-family:'Geist Mono',monospace;font-size:11px;color:var(--ink);width:48px;text-align:right}
 .stat{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:13.5px}
 .stat:last-child{border-bottom:0}
 .stat b{font-family:'Geist Mono',monospace;font-weight:700}
@@ -550,6 +566,13 @@ h2.sec u{text-decoration:none;color:var(--dim)}
 input,textarea,select{width:100%;background:var(--panel2);border:1px solid var(--line2);color:var(--ink);
   border-radius:10px;padding:12px;font-family:'Satoshi',sans-serif;font-size:16px;appearance:none;-webkit-appearance:none;resize:none}
 input:focus,textarea:focus{outline:none;border-color:var(--gold)}
+/* goal picker inside the composer */
+.gpick{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.gpx{min-height:44px;padding:0 11px;border-radius:8px;background:var(--panel2);
+  box-shadow:inset 0 0 0 1px var(--line2);color:var(--dim);
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.09em}
+.gpx.on{background:color-mix(in srgb,var(--gc,var(--gold)) 18%,transparent);color:var(--gc,var(--gold));
+  box-shadow:inset 0 0 0 1px var(--gc,var(--gold))}
 .chain{border-left:2px solid var(--line2);padding-left:12px;margin:14px 0}
 .chain div{margin-bottom:9px}.chain div:last-child{margin-bottom:0}
 .chain .cl{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
@@ -968,7 +991,12 @@ function day(k){k=k||today();if(!S.days[k])S.days[k]={done:{},miss:{},wait:{},pr
   if(!S.days[k].credited)S.days[k].credited={};return S.days[k]}
 function week(k){k=k||mondayOf(new Date());
   if(!S.week[k])S.week[k]={theme:{b1:'SANO',b2:'SANO',b3:'LA Edible',b4:'Admin + follow-ups'},tactics:{},due:0,done:0};
+  S.week[k].goals=S.week[k].goals||{};   /* block id -> goal id. The missing link. */
   return S.week[k]}
+/* Which goal a block serves. Day-level override first, then the week's. */
+function goalFor(b){if(!b||!b.id)return null;const w=week(),d=day();
+  return (d.goals&&d.goals[b.id])||w.goals[b.id]||null}
+function goalById(id){return goals().find(g=>g.id===id)||null}
 
 function toast(m,kind){const t=$('toast');t.textContent=m;t.className='toast show '+(kind||'');
   clearTimeout(t._h);t._h=setTimeout(()=>t.className='toast',2400);
@@ -976,10 +1004,14 @@ function toast(m,kind){const t=$('toast');t.textContent=m;t.className='toast sho
 function gainXP(n,label){S.xp+=n;save();toast(`+${n} XP · ${label}`,'good');render()}
 /* XP buys real-world rewards, so it must be unfakeable and one-directional.
    Every award is keyed and recorded; a second tap pays nothing. */
-function award(key,n,label){
+function award(key,n,label,goalId){
   const d=day();
   if(d.credited[key])return false;
-  d.credited[key]=n;S.xp+=n;save();
+  d.credited[key]=n;S.xp+=n;
+  /* attribution: same XP, same rules — it just now records what earned it */
+  if(goalId){S.xpByGoal=S.xpByGoal||{};S.xpByGoal[goalId]=(S.xpByGoal[goalId]||0)+n;
+    d.xpByGoal=d.xpByGoal||{};d.xpByGoal[goalId]=(d.xpByGoal[goalId]||0)+n;}
+  save();
   toast(`+${n} XP · ${label}`,'good');render();
   return true;
 }
@@ -1795,7 +1827,30 @@ function renderNext(){
       <u>${b.s}–${b.e} · ${mins(b.e)-mins(b.s)}m</u></div>
     <div class="nu-t">${b.kind==='deep'&&t?esc(t):title}</div>
     <div class="nu-obj">${sub}</div>
+    ${goalStrip(b)}
     ${actionRow(b,state)}`;
+}
+/* THE HANDSHAKE — a block knows which goal it serves, and what it moves.
+   Renders nothing when no goal is attached, so it can never be in the way. */
+function goalStrip(b){
+  if(!b)return'';
+  const gid=goalFor(b);if(!gid)return'';
+  const g=goalById(gid);if(!g)return'';
+  const done=weekBlocksFor(gid),tgt=g.leadTarget||null;
+  return `<div class="nu-goal" style="--gc:${g.c}">
+    <div class="gl"><div class="gk">THIS BLOCK IS FOR</div>
+      <div class="gt">${esc(g.title)}</div></div>
+    <div class="gn">${done}<s>${tgt?'of '+tgt+'<br>this week':'blocks<br>this week'}</s></div></div>`;
+}
+/* how many blocks this week carried that goal */
+function weekBlocksFor(gid){
+  const mon=mondayOf(new Date()),w=week();let n=0;
+  for(let i=0;i<7;i++){const dt=new Date(mon+'T00:00:00');dt.setDate(dt.getDate()+i);
+    const r=S.days[iso(dt)];if(!r)continue;
+    ['b1','b2','b3','b4'].forEach(k=>{
+      const gg=(r.goals&&r.goals[k])||w.goals[k];
+      if(gg===gid&&r.done&&r.done[k])n++;});}
+  return n;
 }
 const ARCS=[['Morning',0,3],['Peak — deep work',3,5],['Midday',5,8],['Afternoon',8,11],['Evening',11,99]];
 function renderSched(){
@@ -2004,18 +2059,32 @@ function openComposer(mode){
     <div class="sh-t">${mode==='monday'?"Monday's three":"Today's three"}</div>
     <div class="sh-sub">${carry?'PRE-FILLED FROM YOUR LAST SET — EDIT WHAT CHANGED':'WRITE THEM ONCE — THEY FILL THE DAY'}</div>
     ${slots.map(([k,lab],i)=>`<div class="fld"><label>${lab}</label>
-      <input id="cp_${k}" value="${esc((carry&&carry[i])||(d.prio&&d.prio[i])||w.tactics[k]||'')}" placeholder="The one thing this block produces"></div>`).join('')}
+      <input id="cp_${k}" value="${esc((carry&&carry[i])||(d.prio&&d.prio[i])||w.tactics[k]||'')}" placeholder="The one thing this block produces">
+      <div class="gpick" id="gp_${k}">${goalPicker(k,(d.goals&&d.goals[k])||w.goals[k]||'')}</div></div>`).join('')}
     <div class="chain"><div><div class="cl">Why here</div>
       <div class="cv">These become the objective line inside each block. Until they're written those
       blocks show <b>no objective set</b> — a visible hole at 09:00.</div></div></div>
     <button class="btn" onclick="saveComposer()">${mode==='monday'?'Set Monday':'Set the day'}</button>`);
 }
+/* one chip per goal, plus a "none" — this is where a block gets its purpose */
+function goalPicker(k,sel){
+  return goals().map(g=>`<button type="button" class="gpx${sel===g.id?' on':''}" data-k="${k}" data-g="${g.id}"
+      style="--gc:${g.c}" onclick="pickGoal(this)">${esc(g.short)}</button>`).join('')
+    +`<button type="button" class="gpx${sel?'':' on'}" data-k="${k}" data-g="" onclick="pickGoal(this)">NONE</button>`;
+}
+function pickGoal(el){
+  el.parentNode.querySelectorAll('.gpx').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+}
 function saveComposer(){
   const key=S._composeFor||today(),mode=S._composeMode||'';
-  const d=day(key),w=week();d.prio=d.prio||[];
+  const d=day(key),w=week();d.prio=d.prio||[];d.goals=d.goals||{};
   ['b1','b2','b3','b4'].forEach((k,i)=>{
     const v=$('cp_'+k).value.trim();
     d.prio[i]=v; if(v&&mode!=='monday')w.tactics[k]=v;
+    const sel=document.querySelector('#gp_'+k+' .gpx.on');
+    const gid=sel?sel.dataset.g:'';
+    d.goals[k]=gid; if(mode!=='monday')w.goals[k]=gid;
   });
   /* setting Monday up closes Saturday's 'mon' block, not today's 'prio' block */
   if(mode==='monday'){day().done['mon']=true;save();closeSheet();award('blk:mon',25,'Monday is set');return}
@@ -2062,7 +2131,8 @@ function lastProduced(id){
   return null;
 }
 function markDone(id){const d=day();d.done[id]=true;delete d.miss[id];delete d.wait[id];save();closeSheet();
-  if(!award('blk:'+id,25,'block done'))render();}
+  const _b=shape().find(x=>x.id===id),_g=_b?goalFor(_b):null;
+  if(!award('blk:'+id,25,'block done',_g))render();}
 /* A miss must never be a terminal red row with no way out. */
 function markMiss(id){
   const d=day();d.miss[id]=true;delete d.done[id];save();
@@ -2152,7 +2222,8 @@ function finishRun(){
 }
 function shipIt(id){
   const v=($('shipIn')||{}).value||'';
-  if(v.trim()){day().produced[id]=v.trim();save();award('ship:'+id,25,'shipped')}
+  if(v.trim()){day().produced[id]=v.trim();save();
+    const _b=shape().find(x=>x.id===id);award('ship:'+id,25,'shipped',_b?goalFor(_b):null)}
   closeRun();
 }
 function closeRun(){
@@ -2369,7 +2440,8 @@ function renderClose(){
 function ccMark(id,how){
   const d=day();
   delete d.done[id];delete d.miss[id];delete d.wait[id];
-  if(how==='done'){d.done[id]=true;award('blk:'+id,25,'marked done')}
+  if(how==='done'){d.done[id]=true;
+    const _b=shape().find(x=>x.id===id);award('blk:'+id,25,'marked done',_b?goalFor(_b):null)}
   else if(how==='miss')d.miss[id]=true; else d.wait[id]={who:'someone',since:today()};
   save();render();
 }
@@ -2822,11 +2894,25 @@ function renderBank(){
       ${toks}
       <h2 class="sec"><span>Rewards</span><u>you set the terms</u></h2>
       ${blks}
+      ${xpAttribution()}
       <h2 class="sec"><span>Boosts</span><u>never scored against you</u></h2>
       <div class="wins">${BOOSTS.map(bo=>`<button class="win" onclick="logBoost('${bo.k}')">
         <span class="wtop">${esc(bo.n)}<b>+${bo.xp}</b></span></button>`).join('')}</div>
       <button class="btn gh" style="margin-top:12px" onclick="newReward()">+ New reward</button>
     </div>`;
+}
+/* WHAT BOUGHT THE SHELF — the bullion stops being a generic score.
+   Reads only what award() already recorded; adds no new counter. */
+function xpAttribution(){
+  const m=S.xpByGoal||{},rows=goals().map(g=>({g,n:m[g.id]||0})).filter(r=>r.n>0)
+    .sort((a,b)=>b.n-a.n);
+  if(!rows.length)return'';
+  const top=rows[0].n;
+  return `<h2 class="sec"><span>What bought this shelf</span><u>attributed</u></h2>
+    <div class="card">${rows.map(r=>`<div class="attr">
+      <span class="an">${esc(r.g.short)}</span>
+      <span class="at"><i style="width:${Math.round(r.n/top*100)}%;background:${r.g.c}"></i></span>
+      <span class="av">${r.n.toLocaleString()}</span></div>`).join('')}</div>`;
 }
 const BOOSTS=[
   {k:'network',n:'Networking event',xp:250},
