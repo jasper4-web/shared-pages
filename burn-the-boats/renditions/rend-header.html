@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07060b">
+<title>Burn the Boats — header: the burn &amp; the verse</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+/* palette lifted verbatim from index.html */
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8;
+  --st:0px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;line-height:1.45;-webkit-font-smoothing:antialiased}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:400;
+  background-image:url('../assets/grain/grain-fine.svg');opacity:.035;mix-blend-mode:overlay}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+.mono{font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:520px;margin:0 auto;padding:0 13px 80px}
+
+/* ---------- page chrome ---------- */
+.ph{padding:26px 0 16px;border-bottom:1px solid var(--line)}
+.ph .kick{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.2em;color:var(--ember)}
+.ph h1{font-size:27px;letter-spacing:-.035em;margin-top:9px;line-height:1.08}
+.ph p{color:var(--dim);font-size:13px;margin:10px 0 0;max-width:44ch}
+.ph .rule{display:flex;gap:14px;margin-top:14px;flex-wrap:wrap;
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;color:var(--faint)}
+.ph .rule b{color:var(--gold);font-weight:700}
+
+.bar{position:sticky;top:0;z-index:90;display:flex;align-items:center;gap:8px;
+  margin:0 -13px;padding:9px 13px;background:rgba(7,6,11,.93);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.bar .lab{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.15em;color:var(--faint);margin-right:auto}
+button{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;
+  background:transparent;border:1px solid var(--line2);color:var(--dim);border-radius:8px;
+  padding:8px 10px;min-height:34px;cursor:pointer;font-weight:700}
+button:hover{border-color:#3d3556;color:var(--ink)}
+button.on{border-color:rgba(224,178,94,.6);color:var(--gold);background:rgba(224,178,94,.07)}
+
+/* ---------- card ---------- */
+.card{margin-top:30px}
+.ch{display:flex;gap:11px;align-items:flex-start;margin-bottom:11px}
+.cn{flex:none;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;
+  border:1px solid var(--line2);background:var(--panel);
+  font-family:'Geist Mono',monospace;font-size:10px;font-weight:700;color:var(--gold)}
+.ch h2{font-size:16.5px;letter-spacing:-.02em}
+.ch .thesis{color:var(--dim);font-size:12px;margin-top:3px;line-height:1.4}
+.ch .tag{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.14em;
+  color:var(--faint);margin-top:6px;display:block}
+.ch .tag.pick{color:var(--phos)}
+
+/* the phone slab — the furnace as it actually sits at the top of Today */
+.slab{position:relative;border:1px solid #17151d;border-radius:15px;overflow:hidden;
+  background:#08070c;cursor:pointer;
+  box-shadow:0 18px 40px -22px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.03)}
+.slab::after{content:'';position:absolute;inset:0;pointer-events:none;border-radius:15px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)}
+
+/* ---------- THE FURNACE — styling copied from index.html ---------- */
+.furnace{position:relative;padding:calc(20px + var(--st)) 16px 17px;
+  background:linear-gradient(180deg,#0d0c10,#0a090d);overflow:hidden;border-bottom:1px solid #1c1a22}
+.furnace::before{content:'';position:absolute;left:-10%;right:-10%;top:-40%;height:150%;
+  background:radial-gradient(50% 46% at 50% 62%,rgba(255,107,44,.2),rgba(179,42,0,.08) 44%,transparent 70%);
+  animation:furn 5s ease-in-out infinite;opacity:var(--heat,1)}
+@keyframes furn{0%,100%{opacity:.62;transform:scale(1)}50%{opacity:1;transform:scale(1.07)}}
+.stamp{position:relative;z-index:2;text-align:center;font-family:'Clash Display',sans-serif;font-weight:700;
+  font-size:22px;letter-spacing:.035em;line-height:1.14;color:#2a2530;
+  text-shadow:0 1px 0 rgba(255,150,80,.34),0 -1px 0 rgba(0,0,0,.85)}
+.stamp em{font-style:normal;color:#e8a86a;text-shadow:0 0 22px rgba(255,107,44,.62)}
+.meter{position:relative;z-index:2;margin-top:15px;display:flex;align-items:center;gap:11px}
+.meter .n{font-family:'Clash Display',sans-serif;font-size:44px;line-height:.85;letter-spacing:-.05em;color:#f2ece4}
+.meter .r{flex:1}
+.meter .t{height:6px;border-radius:99px;background:#191419;overflow:hidden;position:relative}
+.meter .t i{position:absolute;left:0;top:0;bottom:0;
+  background:linear-gradient(90deg,#6b2400,var(--ember),#FFC98A);box-shadow:0 0 12px rgba(255,107,44,.65)}
+.meter .lab{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7.5px;
+  letter-spacing:.13em;color:#8d6650;margin-top:6px}
+
+/* ---------- the stamp / verse swap zone ----------
+   ONE fixed-height box holds both messages, so the header never changes height
+   and nothing below it ever jumps. This is the only structural change the
+   transition asks for. */
+.zone{position:relative;z-index:2;min-height:94px;display:grid}
+.zone > *{grid-area:1/1;width:100%}
+/* both messages occupy the FULL zone box, not just their own text height — the
+   haze wipe masks in zone coordinates and needs the two layers to line up. */
+.zone > .stamp,.zone > .verse{display:flex;flex-direction:column;justify-content:center}
+.ln{display:block}
+.chr{display:inline-block;will-change:transform,opacity,filter}
+
+.verse{text-align:center;visibility:hidden;padding:0 2px}
+.vt{font-family:'Satoshi',sans-serif;font-weight:500;font-size:16px;line-height:1.42;
+  letter-spacing:.004em;color:#cfc5b6;margin:0 auto;max-width:33ch;
+  text-shadow:0 1px 0 rgba(0,0,0,.7)}
+.vr{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.19em;text-transform:uppercase;
+  color:#a9793f;margin-top:9px}
+.vr::before{content:'';display:block;width:26px;height:1px;margin:0 auto 8px;
+  background:linear-gradient(90deg,transparent,rgba(224,178,94,.55),transparent)}
+
+/* engraved variant — direction C. Light rakes from the furnace above, so the
+   highlight sits on the top edge and the shadow drops below: cut into the plate,
+   but still bright enough to actually read at arm's length. */
+.verse.engraved .vt{color:#8e8374;text-shadow:0 -1px 0 rgba(255,160,90,.30),0 1px 1px rgba(0,0,0,.95)}
+.verse.engraved .vr{color:#7d6647}
+
+/* char mode — direction D. The gradient is clipped to the text of the whole line,
+   so every glyph inside it, <em> included, has to give up its own colour. The
+   deboss and the amber halo are NOT killed here — they are tweened out line by
+   line as the burn front reaches them, so the stamp keeps its shipped look right
+   up to the moment it is consumed. */
+.stamp.charmode em{color:transparent}
+
+/* particle host */
+.pfx{position:absolute;inset:0;z-index:3;pointer-events:none}
+
+/* B — the haze band */
+.band{position:absolute;left:-4%;right:-4%;height:44px;top:0;z-index:4;pointer-events:none;opacity:0;
+  background:linear-gradient(180deg,transparent,rgba(255,150,80,.09) 45%,rgba(255,190,120,.05) 60%,transparent);
+  backdrop-filter:blur(3px) saturate(1.5) brightness(1.12);
+  -webkit-backdrop-filter:blur(3px) saturate(1.5) brightness(1.12)}
+
+/* E — the flare */
+.flare{position:absolute;inset:-30%;z-index:5;pointer-events:none;opacity:0;mix-blend-mode:screen;
+  background:radial-gradient(46% 42% at 50% 46%,#FFF6E8,rgba(255,190,120,.75) 34%,rgba(255,107,44,.25) 58%,transparent 74%)}
+
+/* F — the ember line the letters fall onto */
+.emberline{position:absolute;left:14%;right:14%;top:64%;height:1px;z-index:4;pointer-events:none;
+  transform:scaleX(0);opacity:0;
+  background:linear-gradient(90deg,transparent,#FF8A3C,#FFD9A0,#FF8A3C,transparent);
+  box-shadow:0 0 14px rgba(255,107,44,.85)}
+
+/* ---------- card footer ---------- */
+.cf{display:flex;align-items:center;gap:7px;margin-top:9px}
+.cf .hint{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;color:#4e4760;margin-left:auto}
+.cf .state{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;color:var(--faint)}
+
+/* ---------- sections ---------- */
+.sec{margin-top:44px;padding-top:26px;border-top:1px solid var(--line)}
+.sec > .kick{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.2em;color:var(--ember)}
+.sec h2{font-size:21px;letter-spacing:-.03em;margin-top:9px}
+.sec p{color:var(--dim);font-size:13px;line-height:1.55}
+.sec p b{color:var(--ink);font-weight:700}
+
+.tally{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:11px;overflow:hidden;margin-top:13px}
+.tally div{background:var(--panel);padding:11px 8px;text-align:center}
+.tally .k{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.13em;color:var(--faint);text-transform:uppercase}
+.tally .v{font-family:'Geist Mono',monospace;font-size:16px;font-weight:700;margin-top:4px;color:var(--ink)}
+
+.today{margin-top:13px;border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:13px}
+.today .row{display:flex;align-items:center;gap:8px}
+.today .row .d{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--gold);margin-right:auto}
+.today .q{font-size:14px;color:#cfc5b6;margin-top:11px;line-height:1.45}
+.today .m{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.16em;color:#a9793f;margin-top:8px;text-transform:uppercase}
+
+.read{margin-top:13px;border-left:2px solid var(--line2);padding-left:13px}
+.read h3{font-family:'Clash Display',sans-serif;font-size:14px;margin-top:15px;letter-spacing:-.01em}
+.read h3:first-child{margin-top:0}
+.read h3 .pill{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.14em;font-weight:700;
+  border:1px solid var(--line2);border-radius:99px;padding:2px 6px;color:var(--faint);
+  vertical-align:middle;margin-left:6px;text-transform:uppercase}
+.read h3 .pill.win{border-color:rgba(74,222,128,.45);color:var(--phos)}
+.read h3 .pill.no{border-color:rgba(255,77,94,.35);color:#c9707c}
+.read p{font-size:12.5px;margin:5px 0 0}
+.read code{font-family:'Geist Mono',monospace;font-size:11px;color:var(--rune);
+  background:rgba(56,225,216,.07);border-radius:4px;padding:1px 4px;word-break:break-all}
+.read p b{color:var(--ink);font-weight:700}
+.read p i{color:var(--dim)}
+.foot{margin-top:40px;font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.13em;
+  color:#3f3950;text-align:center;line-height:2}
+@media (prefers-reduced-motion:reduce){.furnace::before{animation:none}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="haze" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
+    <feTurbulence id="hazeNoise" type="fractalNoise" baseFrequency="0.012 0.09"
+                  numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap id="hazeMap" in="SourceGraphic" in2="n" scale="0"
+                       xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</defs></svg>
+
+<div class="wrap">
+
+<header class="ph">
+  <div class="kick">AGENT 3 · THE HEADER</div>
+  <h1>The line burns away<br>and Scripture is underneath.</h1>
+  <p>Six ways THE BOATS HAVE BEEN BURNED can hand the plate over to a verse — and hand it back.
+     The boats line stays the identity: it holds roughly two of every three views.</p>
+  <div class="rule">
+    <span><b>157</b> VERSES · ESV</span><span><b>65/35</b> BOATS/VERSE</span><span><b>390×844</b></span>
+  </div>
+</header>
+
+<div class="bar">
+  <span class="lab">SIX TREATMENTS</span>
+  <button id="btnPlay" class="on">Pause all</button>
+  <button id="btnAll">Fire all</button>
+</div>
+
+<div id="cards"></div>
+
+<!-- ============ the real behaviour ============ -->
+<section class="sec">
+  <div class="kick">HOW IT ACTUALLY BEHAVES</div>
+  <h2>Two in three opens, nothing happens.</h2>
+  <p>The roll is per <b>view of the header</b>, not per day. On a verse day he still sees
+     THE BOATS HAVE BEEN BURNED first — it just doesn't stay. The verse holds seven seconds,
+     then the plate re-fires and the boats line comes back. He never loses the identity.</p>
+  <p style="margin-top:11px">And the answer to <b>“what if he misses it?”</b> — <b>tap the plate.</b>
+     Every slab on this page is tappable, in both directions. A verse he can only receive by luck
+     is a verse he'll miss most days; one tap makes it his to summon, and tapping again gives the
+     boats line back. No new button, no new screen, no extra second in his day.</p>
+
+  <div class="slab" id="liveSlab" style="margin-top:16px"></div>
+  <div class="cf">
+    <button id="btnOpen">Open the app</button>
+    <button id="btnOpen20">×100 opens</button>
+    <span class="hint">TAP THE PLATE TO SUMMON</span>
+  </div>
+  <div class="tally">
+    <div><div class="k">Opens</div><div class="v mono" id="tOpens">0</div></div>
+    <div><div class="k">Verse shown</div><div class="v mono" id="tVerse">0</div></div>
+    <div><div class="k">Share · target 35%</div><div class="v mono" id="tPct">—</div></div>
+  </div>
+</section>
+
+<!-- ============ the data ============ -->
+<section class="sec">
+  <div class="kick">DATA/VERSES.JS</div>
+  <h2>157 verses, one per day, never random.</h2>
+  <p>Every reference was pulled from the publisher's own ESV text and machine-checked to be an exact
+     substring of that passage — nothing was typed from memory. <b>dayFor()</b> is stable: the same
+     date always yields the same verse, so refreshing never swaps it. Step the date and watch.</p>
+  <div class="today">
+    <div class="row">
+      <span class="d mono" id="dDate">—</span>
+      <button id="dPrev">◀</button><button id="dNext">▶</button>
+    </div>
+    <div class="q" id="dText">—</div>
+    <div class="m" id="dRef">—</div>
+  </div>
+</section>
+
+<!-- ============ my read ============ -->
+<section class="sec">
+  <div class="kick">MY READ</div>
+  <h2>Ranked.</h2>
+  <div class="read" id="read"></div>
+</section>
+
+<!-- ============ hand-off ============ -->
+<section class="sec">
+  <div class="kick">HAND-OFF · FOR THE GM</div>
+  <h2>What to take, and what it costs.</h2>
+
+  <div class="read">
+    <h3>What I produced</h3>
+    <p><b>data/verses.js</b> — 157 ESV verses across eight themes, with <b>dayFor(dateISO)</b>,
+       <b>verseIndexFor()</b>, <b>dayNumber()</b> and <b>rollVerse(p)</b>. It attaches to the global scope
+       and also sets <b>module.exports</b>, so the GM can either keep the file or paste the array inline
+       into index.html. Anchored to 2026-07-27 = day 1, which is 1 Corinthians 16:13 on purpose.</p>
+    <p><b>renditions/rend-header.html</b> — this page. Six live transitions, the 65/35 open simulator,
+       and a date stepper that proves dayFor() is stable.</p>
+
+    <h3>Verification, honestly stated</h3>
+    <p>Every verse string was fetched from Bible Gateway's ESV text for that exact reference and then
+       machine-checked to be a character-exact substring of the returned passage. The build fails loudly
+       if any string is not. <b>40+ entries are excerpts</b> of longer verses — a clean clause lifted
+       verbatim, never a paraphrase, and each is flagged <b>p:1</b> in the data. I did not use the ESV
+       API (it needs a key); Bible Gateway's own rendering is the source. Small caps for the divine name
+       are flattened to LORD / GOD, which is the standard plain-text convention. As a second,
+       independent check I re-verified a random sample of 14 entries against <b>esv.org</b> itself —
+       a different source from the one used to build — and all 14 matched.</p>
+
+    <h3>The one thing this costs you</h3>
+    <p>A verse needs more room than two words. The stamp and the verse share one fixed <b>94px</b> box so
+       the header can never change height and nothing below it can ever jump — but that box is about
+       <b>44px taller</b> than the stamp alone, which pushes the gauge strip and everything under it down
+       by that much. I judged a permanently taller, calmer plate to be much better than a header that
+       resizes twice a day, but it is a real cost and it is your call, not mine.</p>
+    <p>The verse type auto-fits (17.5px down to 12.5px) so it always lands inside the box. I trimmed the
+       eight longest verses to verbatim excerpts specifically so nothing has to drop below 15px.</p>
+
+    <h3>Two traps I hit, so you don't</h3>
+    <p><b>tsParticles must be initialised.</b> <code>lib/tsparticles/tsparticles.slim.bundle.min.js</code>
+       is the slim <i>package</i>, not a self-starting bundle. Without <b>loadSlim(tsParticles)</b> a
+       container loads happily and reports its particle count, but no shape drawer is registered and not
+       one pixel is ever painted. It fails silently — no console error.</p>
+    <p><b>addParticle takes canvas coordinates, not CSS pixels.</b> With detectRetina on, the canvas is
+       devicePixelRatio× the CSS box, so CSS-pixel positions put every ember in the top-left quarter of
+       the plate. Multiply by <b>container.retina.pixelRatio</b>.</p>
+
+    <h3>Things I found that were not my lane</h3>
+    <p>The furnace's <b>--heat</b> variable I added for direction C is a useful hook regardless of which
+       transition wins: it lets any screen dim or fire the plate without touching the locked styling.</p>
+    <p>Sunday is a Sabbath screen with no scoring. A verse on the boats plate is the one thing that
+       arguably still belongs there — worth a decision by whoever owns that screen.</p>
+    <p>The verse pool covers Jul 27 → Dec 30 with zero repeats. If the run extends past Dec 1 as the
+       profile's February–March runway note implies, it will start over from day 1 rather than break.</p>
+  </div>
+</section>
+
+<div class="foot">
+  BURN THE BOATS · HEADER RENDITIONS · 2026-07-25<br>
+  SCRIPTURE: ESV · CROSSWAY · USED BY PERMISSION
+</div>
+
+</div>
+
+<script src="../lib/gsap/gsap.min.js"></script>
+<script src="../lib/tsparticles/tsparticles.slim.bundle.min.js"></script>
+<script src="../data/verses.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var V = window.BTB_VERSES;
+  var TODAY = '2026-07-27';                 /* day 1 of the run */
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ------------------------------------------------------------------ *
+   * slab construction
+   * ------------------------------------------------------------------ */
+  function slabHTML() {
+    return '' +
+      '<div class="furnace">' +
+        '<div class="pfx"></div>' +
+        '<div class="band"></div>' +
+        '<div class="flare"></div>' +
+        '<div class="zone">' +
+          '<div class="stamp">' +
+            '<span class="ln l1">THE BOATS HAVE</span>' +
+            '<span class="ln l2"><em>BEEN BURNED</em></span>' +
+          '</div>' +
+          '<div class="verse"><div class="vt"></div><div class="vr"></div></div>' +
+          '<div class="emberline"></div>' +
+        '</div>' +
+        '<div class="meter">' +
+          '<div class="n">91</div>' +
+          '<div class="r">' +
+            '<div class="t"><i style="width:100%"></i></div>' +
+            '<div class="lab"><span>WORKDAYS TO DEC 1</span><span>WK 01</span></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  /* split each line into per-character spans (A and F need real glyphs to move) */
+  function splitChars(stamp) {
+    var out = [];
+    Array.prototype.forEach.call(stamp.querySelectorAll('.ln'), function (ln) {
+      var host = ln.querySelector('em') || ln;
+      var txt = host.textContent;
+      host.textContent = '';
+      Array.prototype.forEach.call(txt, function (c) {
+        var s = document.createElement('span');
+        s.className = 'chr';
+        s.textContent = c === ' ' ? ' ' : c;
+        host.appendChild(s);
+        if (c !== ' ') out.push(s);
+      });
+    });
+    return out;
+  }
+
+  /* shrink the verse until it fits the fixed zone — never let the header grow */
+  function fitVerse(vt, maxH) {
+    var s = 17.5;
+    vt.style.fontSize = s + 'px';
+    while (vt.scrollHeight > maxH && s > 12.5) { s -= 0.5; vt.style.fontSize = s + 'px'; }
+    return s;
+  }
+
+  var VT_MAX_H = 66;
+  function setVerse(ctx, v) {
+    ctx.vt.textContent = v.t;
+    ctx.vr.textContent = v.r;
+    fitVerse(ctx.vt, VT_MAX_H);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * embers — tsParticles, one container per slab that needs one
+   * ------------------------------------------------------------------ */
+  var emberSeq = 0;
+  /* the vendored file is the slim PACKAGE, not a self-initialising bundle. Without
+     this call the container loads and counts its particles quite happily but no
+     shape drawer is ever registered, so not one pixel is painted. */
+  var slimReady = (window.tsParticles && typeof loadSlim === 'function')
+    ? Promise.resolve(loadSlim(tsParticles)) : Promise.resolve();
+
+  function makeEmbers(host, dir) {
+    if (!window.tsParticles) return null;
+    var id = 'emb' + (++emberSeq);
+    host.id = id;
+    var up = dir === 'up';
+    return slimReady.then(function () { return tsParticles.load({
+      id: id,
+      options: {
+        fullScreen: { enable: false },
+        detectRetina: true,
+        fpsLimit: 60,
+        /* the engine parks itself when the window loses focus; a header that only
+           burns while the tab is focused is useless for capture and for a PWA */
+        pauseOnBlur: false,
+        pauseOnOutsideViewport: true,
+        particles: {
+          number: { value: 0 },
+          color: { value: ['#FFD9A0', '#FF8A3C', '#FF6B2C', '#B33200'] },
+          shape: { type: 'circle' },
+          opacity: { value: { min: .35, max: 1 } },
+          size: { value: { min: .6, max: 1.9 } },
+          life: { duration: { value: up ? 1.3 : 1.0, sync: false }, count: 1 },
+          move: {
+            enable: true, speed: { min: up ? 1.6 : 1.2, max: up ? 6 : 5 },
+            direction: up ? 'top' : 'bottom', straight: false,
+            outModes: { default: 'destroy' },
+            gravity: { enable: true, acceleration: up ? -4 : 11, maxSpeed: 22 },
+            angle: { value: 26, offset: 0 }
+          }
+        }
+      }
+    }); });
+  }
+
+  function burst(ctxEmbers, rect, host, n) {
+    if (!ctxEmbers || !ctxEmbers.particles) return;
+    var hb = host.getBoundingClientRect();
+    /* addParticle takes CANVAS coordinates. With detectRetina on, the canvas is
+       devicePixelRatio times the CSS box — pass CSS pixels and every ember spawns
+       in the top-left quarter of the plate. */
+    var pr = (ctxEmbers.retina && ctxEmbers.retina.pixelRatio) || 1;
+    for (var i = 0; i < n; i++) {
+      ctxEmbers.particles.addParticle({
+        x: (rect.left - hb.left + Math.random() * rect.width) * pr,
+        y: (rect.top - hb.top + Math.random() * rect.height) * pr
+      });
+    }
+  }
+
+  /* ------------------------------------------------------------------ *
+   * six transitions
+   * each returns { toVerse(ctx), toStamp(ctx) } producing GSAP timelines
+   * ------------------------------------------------------------------ */
+  var FX = {};
+
+  /* ---- A · ASHFALL — glyphs burn upward, verse rises through the embers ---- */
+  FX.ashfall = {
+    prep: function (ctx) { ctx.chars = splitChars(ctx.stamp); ctx.embers = makeEmbers(ctx.pfx, 'up'); },
+    toVerse: function (ctx) {
+      var tl = gsap.timeline();
+      tl.set(ctx.verse, { visibility: 'visible' })
+        .to(ctx.chars, {
+          duration: .60, y: -30, opacity: 0, scale: 1.16, color: '#FF8A3C',
+          filter: 'blur(7px)', ease: 'power2.in',
+          stagger: { each: .012, from: 'random' },
+          onStart: function () { ctx.emit(64); }
+        })
+        .fromTo(ctx.verse, { y: 20, opacity: 0, filter: 'blur(10px)' },
+                { y: 0, opacity: 1, filter: 'blur(0px)', duration: .72, ease: 'power2.out' }, '-=.34');
+      return tl;
+    },
+    toStamp: function (ctx) {
+      var tl = gsap.timeline();
+      tl.to(ctx.verse, { y: -14, opacity: 0, filter: 'blur(8px)', duration: .40, ease: 'power2.in' })
+        .set(ctx.verse, { visibility: 'hidden' })
+        .fromTo(ctx.chars, { y: 22, opacity: 0, scale: .88, filter: 'blur(6px)', color: '#FFB877' },
+                { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', color: '', duration: .58,
+                  ease: 'power3.out', stagger: { each: .011, from: 'center' }, clearProps: 'color,filter' }, '-=.10');
+      return tl;
+    }
+  };
+
+  /* ---- B · HEAT HAZE — a band of moving air crosses the plate; behind it, different words ---- */
+  FX.hazewipe = {
+    prep: function (ctx) { ctx.zone.style.filter = ''; },
+    _wipe: function (ctx, from, to) {
+      var H = ctx.zone.offsetHeight, tl = gsap.timeline();
+      /* masks are in zone coordinates; the band lives in the furnace, one padding
+         box further out — without this offset the shimmer and the seam separate */
+      var zTop = ctx.zone.offsetTop;
+      var st = { p: -46 };
+      var map = document.getElementById('hazeMap');
+      var noise = document.getElementById('hazeNoise');
+      tl.set(to, { visibility: 'visible' })
+        .set(ctx.band, { opacity: 1, top: zTop - 46 })
+        .to(st, {
+          p: H + 46, duration: 1.05, ease: 'power1.inOut',
+          onStart: function () { ctx.zone.style.filter = 'url(#haze)'; },
+          onUpdate: function () {
+            var p = st.p;
+            /* keep the seam narrow — a wide crossfade shows both messages at once
+               through the blur and the whole thing turns to smudge */
+            from.style.webkitMaskImage = 'linear-gradient(to bottom,transparent ' + (p - 1) + 'px,#000 ' + (p + 15) + 'px)';
+            from.style.maskImage = from.style.webkitMaskImage;
+            to.style.webkitMaskImage = 'linear-gradient(to bottom,#000 ' + (p - 1) + 'px,transparent ' + (p + 15) + 'px)';
+            to.style.maskImage = to.style.webkitMaskImage;
+            ctx.band.style.top = (zTop + p - 15) + 'px';
+            var mid = 1 - Math.abs((p - H / 2) / (H / 2 + 46));
+            map.setAttribute('scale', (5 * Math.max(0, mid)).toFixed(2));
+            noise.setAttribute('baseFrequency', '0.014 ' + (0.05 + 0.06 * Math.max(0, mid)).toFixed(3));
+          },
+          onComplete: function () {
+            ctx.zone.style.filter = '';
+            map.setAttribute('scale', '0');
+            from.style.webkitMaskImage = from.style.maskImage = '';
+            to.style.webkitMaskImage = to.style.maskImage = '';
+            from.style.visibility = 'hidden';
+          }
+        })
+        .to(ctx.band, { opacity: 0, duration: .22 }, '-=.22');
+      return tl;
+    },
+    toVerse: function (ctx) { return FX.hazewipe._wipe(ctx, ctx.stamp, ctx.verse); },
+    toStamp: function (ctx) {
+      var tl = FX.hazewipe._wipe(ctx, ctx.verse, ctx.stamp);
+      tl.set(ctx.stamp, { visibility: 'visible' }, 0);
+      return tl;
+    }
+  };
+
+  /* ---- C · COOLING PLATE — the heat drains and the engraving underneath shows ---- */
+  FX.coolplate = {
+    prep: function (ctx) { ctx.verse.classList.add('engraved'); },
+    toVerse: function (ctx) {
+      var tl = gsap.timeline(), furn = ctx.furnace;
+      tl.set(ctx.verse, { visibility: 'visible', opacity: 0 })
+        /* the plate loses its fire */
+        .to(furn, { duration: .80, ease: 'power2.inOut',
+                    onUpdate: function () { furn.style.setProperty('--heat', 1 - this.progress() * .78); } }, 0)
+        /* the hot line goes dead, then sinks into the steel */
+        .to(ctx.stamp.querySelector('em'), { color: '#33303a', textShadow: '0 0 0 rgba(255,107,44,0)',
+              duration: .48, ease: 'power2.in' }, 0)
+        .to(ctx.stamp, { opacity: 0, scale: .965, filter: 'blur(1.4px)', duration: .44, ease: 'power2.in' }, .34)
+        .set(ctx.stamp, { visibility: 'hidden' })
+        /* the engraving is revealed by a light raking across the cold plate. It
+           waits for the hot line to be fully gone — an engraving showing through
+           a message that is still legible reads as a double exposure. */
+        .fromTo(ctx.verse, { opacity: 0, clipPath: 'inset(0 46% 0 46%)' },
+                { opacity: 1, clipPath: 'inset(0 0% 0 0%)', duration: .64, ease: 'power3.out' }, .78);
+      return tl;
+    },
+    toStamp: function (ctx) {
+      var tl = gsap.timeline(), furn = ctx.furnace;
+      tl.to(ctx.verse, { opacity: 0, clipPath: 'inset(0 46% 0 46%)', duration: .42, ease: 'power2.in' })
+        .set(ctx.verse, { visibility: 'hidden', clipPath: 'none' })
+        .set(ctx.stamp, { visibility: 'visible' })
+        .to(furn, { duration: .85, ease: 'power2.out',
+                    onUpdate: function () { furn.style.setProperty('--heat', .22 + this.progress() * .78); } }, '-=.20')
+        .fromTo(ctx.stamp, { opacity: 0, scale: .975, filter: 'blur(1.4px)' },
+                { opacity: 1, scale: 1, filter: 'blur(0px)', duration: .55, ease: 'power2.out' }, '-=.75')
+        .fromTo(ctx.stamp.querySelector('em'), { color: '#33303a', textShadow: '0 0 0 rgba(255,107,44,0)' },
+                { color: '#e8a86a', textShadow: '0 0 22px rgba(255,107,44,.62)', duration: .70,
+                  ease: 'power2.out', clearProps: 'color,textShadow' }, '-=.55');
+      return tl;
+    }
+  };
+
+  /* ---- D · CHARLINE — a burn front crawls up the letterforms from the baseline ---- */
+  FX.charline = {
+    prep: function (ctx) {
+      ctx.l1 = ctx.stamp.querySelector('.l1');
+      ctx.l2 = ctx.stamp.querySelector('.l2');
+      ctx.embers = makeEmbers(ctx.pfx, 'up');
+    },
+    _grad: function (base, a) {
+      /* a = 0..1 position of the burn front, measured up from the baseline */
+      var p = (a * 118 - 9);
+      return 'linear-gradient(to top,' +
+        'rgba(0,0,0,0) 0%,rgba(0,0,0,0) ' + p.toFixed(1) + '%,' +
+        '#2b0f02 ' + (p + 1.2).toFixed(1) + '%,' +
+        '#FFE9C4 ' + (p + 3.0).toFixed(1) + '%,' +
+        '#FF7A2C ' + (p + 6.5).toFixed(1) + '%,' +
+        '#5d2a10 ' + (p + 10).toFixed(1) + '%,' +
+        base + ' ' + (p + 13).toFixed(1) + '%,' + base + ' 100%)';
+    },
+    _paint: function (ctx, a) {
+      var F = FX.charline, em = ctx.stamp.querySelector('em');
+      ctx.stamp.classList.add('charmode');
+      [[ctx.l1, '#2a2530'], [ctx.l2, '#e8a86a']].forEach(function (pair, i) {
+        var el = pair[0];
+        /* line 2 sits lower, so the front reaches it first, then line 1 —
+           together they read as ONE front crossing the whole two-line block */
+        var av = Math.max(0, Math.min(1, i === 1 ? a * 2 : (a * 2 - 1)));
+        el.style.backgroundImage = F._grad(pair[1], av);
+        el.style.webkitBackgroundClip = 'text';
+        el.style.backgroundClip = 'text';
+        el.style.color = 'transparent';
+        /* the relief dies with the front that is eating it, not on a guessed
+           clock — a line that has not started burning still looks stamped */
+        var k = 1 - Math.min(1, av * 2.5);
+        el.style.textShadow = '0px 1px 0px rgba(255,150,80,' + (.34 * k).toFixed(3) +
+                              '), 0px -1px 0px rgba(0,0,0,' + (.85 * k).toFixed(3) + ')';
+        if (i === 1) em.style.textShadow = '0px 0px 22px rgba(255,107,44,' + (.62 * k).toFixed(3) + ')';
+      });
+    },
+    _clear: function (ctx) {
+      ctx.stamp.classList.remove('charmode');
+      [ctx.l1, ctx.l2, ctx.stamp.querySelector('em')].forEach(function (el) {
+        el.style.backgroundImage = '';
+        el.style.webkitBackgroundClip = '';
+        el.style.backgroundClip = '';
+        el.style.color = '';
+        el.style.textShadow = '';
+      });
+    },
+    toVerse: function (ctx) {
+      var F = FX.charline, tl = gsap.timeline(), st = { a: 0 };
+      /* the verse waits until the front has cleared the top line. Two messages at
+         readable brightness in the same box is unreadable mush, and this is the
+         one direction where the old words are legible right up to the last frame. */
+      tl.set(ctx.verse, { visibility: 'visible', opacity: 0 })
+        .set(ctx.vt, { color: '#3a3444' })
+        .set(ctx.vr, { opacity: 0 })
+        .to(st, { a: 1, duration: .98, ease: 'power1.in',
+                  onStart: function () { F._paint(ctx, 0); ctx.emit(46); },
+                  onUpdate: function () { F._paint(ctx, st.a); },
+                  onComplete: function () { ctx.stamp.style.visibility = 'hidden'; F._clear(ctx); } })
+        .to(ctx.verse, { opacity: 1, duration: .42, ease: 'power2.out' }, .76)
+        .to(ctx.vt, { color: '#cfc5b6', duration: .54, ease: 'power2.out' }, .80)
+        .to(ctx.vr, { opacity: 1, duration: .36 }, 1.04);
+      return tl;
+    },
+    toStamp: function (ctx) {
+      var F = FX.charline, tl = gsap.timeline(), st = { a: 1 };
+      tl.to(ctx.verse, { opacity: 0, duration: .34, ease: 'power2.in' })
+        .set(ctx.verse, { visibility: 'hidden' })
+        .set(ctx.stamp, { visibility: 'visible' })
+        .to(st, { a: 0, duration: .72, ease: 'power2.out',
+                  onStart: function () { F._paint(ctx, 1); },
+                  onUpdate: function () { F._paint(ctx, st.a); },
+                  onComplete: function () { F._clear(ctx); } });
+      return tl;
+    }
+  };
+
+  /* ---- E · FLARE CUT — no dissolve. the furnace blows out and the words have changed ---- */
+  FX.flarecut = {
+    prep: function () {},
+    _cut: function (ctx, from, to) {
+      var tl = gsap.timeline();
+      tl.to(ctx.flare, { opacity: 1, duration: .085, ease: 'power4.in' })
+        .to(ctx.furnace, { filter: 'brightness(1.5)', duration: .085, ease: 'power4.in' }, 0)
+        .set(from, { visibility: 'hidden' })
+        .set(to, { visibility: 'visible' })
+        .to(ctx.flare, { opacity: 0, duration: .36, ease: 'power2.out' })
+        .to(ctx.furnace, { filter: 'brightness(1)', duration: .40, ease: 'power2.out' }, '-=.36')
+        .fromTo(to, { scale: 1.035 }, { scale: 1, duration: .5, ease: 'power2.out' }, '-=.42');
+      return tl;
+    },
+    toVerse: function (ctx) { return FX.flarecut._cut(ctx, ctx.stamp, ctx.verse); },
+    toStamp: function (ctx) { return FX.flarecut._cut(ctx, ctx.verse, ctx.stamp); }
+  };
+
+  /* ---- F · EMBERFALL — the letters break off and fall; what they land on is the verse ---- */
+  FX.emberfall = {
+    prep: function (ctx) { ctx.chars = splitChars(ctx.stamp); ctx.embers = makeEmbers(ctx.pfx, 'down'); },
+    toVerse: function (ctx) {
+      var tl = gsap.timeline();
+      tl.set(ctx.verse, { visibility: 'visible' })
+        .to(ctx.chars, {
+          duration: .70, y: 34, opacity: 0, color: '#FF7A2C', filter: 'blur(3px)',
+          rotation: function () { return gsap.utils.random(-26, 26); },
+          x: function () { return gsap.utils.random(-7, 7); },
+          ease: 'power2.in', stagger: { each: .014, from: 'edges' },
+          onStart: function () { ctx.emit(70); }
+        })
+        .fromTo(ctx.emberline, { scaleX: 0, opacity: 0 },
+                { scaleX: 1, opacity: 1, duration: .40, ease: 'power3.out' }, '-=.34')
+        .fromTo(ctx.verse, { opacity: 0, y: 8, filter: 'blur(5px)' },
+                { opacity: 1, y: 0, filter: 'blur(0px)', duration: .62, ease: 'power2.out' }, '-=.14')
+        .to(ctx.emberline, { opacity: 0, duration: .55, ease: 'power2.in' }, '-=.34');
+      return tl;
+    },
+    toStamp: function (ctx) {
+      var tl = gsap.timeline();
+      tl.to(ctx.verse, { opacity: 0, y: 10, filter: 'blur(5px)', duration: .38, ease: 'power2.in' })
+        .set(ctx.verse, { visibility: 'hidden' })
+        .fromTo(ctx.chars, { y: -26, opacity: 0, filter: 'blur(5px)' },
+                { y: 0, x: 0, rotation: 0, opacity: 1, filter: 'blur(0px)', color: '', duration: .60,
+                  ease: 'power3.out', stagger: { each: .013, from: 'center' }, clearProps: 'color,filter' }, '-=.08');
+      return tl;
+    }
+  };
+
+  /* ------------------------------------------------------------------ *
+   * card definitions
+   * ------------------------------------------------------------------ */
+  var CARDS = [
+    { k: 'ashfall',   n: 'A', t: 'Ashfall',
+      d: 'The glyphs char, lift and go out as embers. The verse rises up through the ash they leave.',
+      tag: 'Closest to what he described — “look like it burns up.”' },
+    { k: 'hazewipe',  n: 'B', t: 'Heat Haze',
+      d: 'Nothing burns. A band of distorted air crosses the plate, and on the far side of it the words are different.',
+      tag: 'The restrained one. Reads as heat, not as an effect.' },
+    { k: 'coolplate', n: 'C', t: 'The Cooling Plate',
+      d: 'The furnace drops. As the steel goes cold the hot line dies and an engraving that was always cut into the plate shows through.',
+      tag: 'The idea underneath it: the boats line is what he wrote on the metal. Scripture is what the metal is made of.' },
+    { k: 'charline',  n: 'D', t: 'The Char Line',
+      d: 'A burn front crawls up the letterforms from the baseline. Below it the type is ash, at the front it is white-hot, above it still stands.',
+      tag: 'Precise, legible on a phone, and the front is genuinely fire rather than a fade.' },
+    { k: 'flarecut',  n: 'E', t: 'Flare Cut',
+      d: 'No dissolve at all. The furnace blows out for a tenth of a second and the message has changed behind it.',
+      tag: 'The hardest, cheapest cut. Also the most jarring at 6am.' },
+    { k: 'emberfall', n: 'F', t: 'Emberfall',
+      d: 'Gravity instead of updraft. The letters break off, tumble and fall onto a line of embers, and the verse comes up out of that line.',
+      tag: 'The debris of a burned ship, not smoke off a fire.' }
+  ];
+
+  var ctxs = [];
+
+  function buildCard(def) {
+    var art = document.createElement('article');
+    art.className = 'card';
+    art.innerHTML =
+      '<div class="ch"><span class="cn mono">' + def.n + '</span><div><h2>' + def.t + '</h2>' +
+      '<div class="thesis">' + def.d + '</div><span class="tag">' + def.tag + '</span></div></div>' +
+      '<div class="slab"></div>' +
+      '<div class="cf"><button data-a="fire">Burn it</button>' +
+      '<span class="state mono">HOLDING · BOATS</span>' +
+      '<span class="hint">TAP THE PLATE</span></div>';
+    var slab = art.querySelector('.slab');
+    slab.innerHTML = slabHTML();
+    document.getElementById('cards').appendChild(art);
+
+    var ctx = wire(slab, def.k);
+    ctx.state = art.querySelector('.state');
+    ctx.card = art;
+    art.querySelector('[data-a="fire"]').addEventListener('click', function (e) {
+      e.stopPropagation(); toggle(ctx);
+    });
+    ctxs.push(ctx);
+    return ctx;
+  }
+
+  function wire(slab, key) {
+    var ctx = {
+      key: key, slab: slab,
+      furnace: slab.querySelector('.furnace'),
+      zone: slab.querySelector('.zone'),
+      stamp: slab.querySelector('.stamp'),
+      verse: slab.querySelector('.verse'),
+      vt: slab.querySelector('.vt'),
+      vr: slab.querySelector('.vr'),
+      pfx: slab.querySelector('.pfx'),
+      band: slab.querySelector('.band'),
+      flare: slab.querySelector('.flare'),
+      emberline: slab.querySelector('.emberline'),
+      showing: 'stamp', busy: false, tl: null, embers: null, live: false
+    };
+    /* embers trickle out over the length of the burn rather than in one puff,
+       and only from the band of the plate the type actually occupies */
+    ctx.emit = function (n) {
+      var lns = ctx.stamp.querySelectorAll('.ln');
+      var a = lns[0].getBoundingClientRect(), z = lns[lns.length - 1].getBoundingClientRect();
+      var r = { left: a.left, top: a.top, width: a.width, height: z.bottom - a.top };
+      var host = ctx.pfx, t0 = 0, rounds = 9;
+      (function step() {
+        burst(ctx.embers, r, host, Math.ceil(n / rounds));
+        if (++t0 < rounds) setTimeout(step, 48);
+      })();
+    };
+    setVerse(ctx, V.dayFor(TODAY));
+    FX[key].prep(ctx);
+    Promise.resolve(ctx.embers).then(function (c) {
+      if (c && c.particles) { ctx.embers = c; c.play(); }
+    });
+    slab.addEventListener('click', function () { toggle(ctx); });
+    return ctx;
+  }
+
+  function toggle(ctx) {
+    if (ctx.busy) return;
+    ctx.busy = true;
+    stopLoop(ctx);
+    var going = ctx.showing === 'stamp' ? 'toVerse' : 'toStamp';
+    var tl = FX[ctx.key][going](ctx);
+    ctx.showing = ctx.showing === 'stamp' ? 'verse' : 'stamp';
+    if (ctx.state) ctx.state.textContent = ctx.showing === 'verse' ? 'SHOWING · VERSE' : 'HOLDING · BOATS';
+    tl.eventCallback('onComplete', function () {
+      ctx.busy = false;
+      if (playing && ctx.live) startLoop(ctx);
+    });
+    return tl;
+  }
+
+  /* the demo loop: long hold on the boats line, short visit to the verse */
+  function startLoop(ctx) {
+    stopLoop(ctx);
+    var wait = ctx.showing === 'stamp' ? 3400 : 5200;
+    ctx.timer = setTimeout(function () { if (playing && ctx.live && !ctx.busy) toggle(ctx); }, wait);
+  }
+  function stopLoop(ctx) { if (ctx.timer) { clearTimeout(ctx.timer); ctx.timer = null; } }
+
+  CARDS.forEach(buildCard);
+
+  /* only animate what is on screen */
+  if (window.IntersectionObserver) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        var c = ctxs.filter(function (x) { return x.card === e.target; })[0];
+        if (!c) return;
+        c.live = e.isIntersecting;
+        if (c.live && playing) startLoop(c); else stopLoop(c);
+      });
+    }, { threshold: .35 });
+    ctxs.forEach(function (c) { io.observe(c.card); });
+  } else {
+    ctxs.forEach(function (c) { c.live = true; startLoop(c); });
+  }
+
+  var playing = !reduce;
+  var btnPlay = document.getElementById('btnPlay');
+  btnPlay.textContent = playing ? 'Pause all' : 'Play all';
+  btnPlay.classList.toggle('on', playing);
+  btnPlay.addEventListener('click', function () {
+    playing = !playing;
+    btnPlay.textContent = playing ? 'Pause all' : 'Play all';
+    btnPlay.classList.toggle('on', playing);
+    ctxs.forEach(function (c) { if (playing && c.live) startLoop(c); else stopLoop(c); });
+  });
+  document.getElementById('btnAll').addEventListener('click', function () {
+    ctxs.forEach(function (c) { if (c.showing === 'stamp') toggle(c); });
+  });
+
+  /* ------------------------------------------------------------------ *
+   * the real behaviour: 65/35 on open, tap to summon
+   * ------------------------------------------------------------------ */
+  var liveSlab = document.getElementById('liveSlab');
+  liveSlab.innerHTML = slabHTML();
+  var live = wire(liveSlab, 'charline');
+  var opens = 0, hits = 0;
+
+  function tally() {
+    document.getElementById('tOpens').textContent = opens;
+    document.getElementById('tVerse').textContent = hits;
+    document.getElementById('tPct').textContent = opens ? Math.round(hits / opens * 100) + '%' : '—';
+  }
+
+  function appOpen(quiet) {
+    opens++;
+    var show = V.rollVerse();
+    if (show) hits++;
+    tally();
+    if (!show || quiet) return;
+    if (live.showing === 'verse') return;
+    setTimeout(function () {
+      if (live.showing !== 'stamp' || live.busy) return;
+      var tl = toggle(live);
+      if (tl) tl.eventCallback('onComplete', function () {
+        live.busy = false;
+        setTimeout(function () { if (live.showing === 'verse' && !live.busy) toggle(live); }, 7000);
+      });
+    }, 2200);
+  }
+
+  document.getElementById('btnOpen').addEventListener('click', function () { appOpen(false); });
+  document.getElementById('btnOpen20').addEventListener('click', function () {
+    for (var i = 0; i < 100; i++) appOpen(true);
+  });
+  tally();
+
+  /* ------------------------------------------------------------------ *
+   * dayFor() proof
+   * ------------------------------------------------------------------ */
+  var cursor = TODAY;
+  function shift(days) {
+    var p = cursor.split('-');
+    var d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2]));
+    d.setUTCDate(d.getUTCDate() + days);
+    cursor = d.toISOString().slice(0, 10);
+    paintDay();
+  }
+  function paintDay() {
+    var v = V.dayFor(cursor);
+    document.getElementById('dDate').textContent =
+      cursor + '  ·  DAY ' + (V.dayNumber(cursor) + 1) + ' / 157';
+    document.getElementById('dText').textContent = '“' + v.t + '”';
+    document.getElementById('dRef').textContent = v.r + '  ·  ' + v.h + (v.p ? '  ·  excerpt' : '');
+  }
+  document.getElementById('dPrev').addEventListener('click', function () { shift(-1); });
+  document.getElementById('dNext').addEventListener('click', function () { shift(1); });
+  paintDay();
+
+  /* ------------------------------------------------------------------ *
+   * my read
+   * ------------------------------------------------------------------ */
+  var READ = [
+    ['D · The Char Line', 'win', 'my pick',
+     'The only one where the fire does the work AND both messages stay legible the whole way through — I ' +
+     'checked every frame at 390×844 and there is never a moment where two messages are readable at once. ' +
+     'The burn front is a real edge, not a fade. Mechanically it is also the cheapest of the six: a background ' +
+     'clip on the type itself, no SVG filter, no per-glyph transforms, no layout work. Turn the animation off ' +
+     'entirely and it degrades to a clean swap.'],
+    ['C · The Cooling Plate', '', 'runner-up',
+     'The best idea on the page and the one I would keep in the drawer. The furnace dimming to let an engraving ' +
+     'show says something true: the boats line is what he wrote on the plate, the Scripture is what the plate ' +
+     'is made of. It loses on time — the heat has to drain before the engraving can appear without ' +
+     'double-exposing, which puts the full move at about 1.4s. That is a long beat for a man with under a ' +
+     'minute to spend.'],
+    ['A · Ashfall', '', 'closest to his words',
+     'He said “look like it burns up,” and this is literally that. It is the prettiest of the six and the one ' +
+     'he will point at first. It lost on discipline: the mid-transition frames are genuinely mushy — every ' +
+     'glyph is blurred while the verse is also blurred on its way in — and it is the only treatment that needs ' +
+     'the particle engine live inside the header on every single view.'],
+    ['F · Emberfall', '', 'rejected',
+     'Gravity is the wrong physics for this product. Falling, tumbling letters read as collapse — the thing ' +
+     'coming apart — and this app cannot afford one frame that looks like failure. Kept in the set because ' +
+     'the direction was worth testing, not because it should ship.'],
+    ['B · Heat Haze', '', 'rejected',
+     'The least gimmicky and, standing still, the most premium. It fails while it moves: the band is exactly ' +
+     'where the two messages cross, so whatever line the seam is passing over is unreadable — look at the ' +
+     'reference line on card B as the band crosses it. It is also the only option carrying an SVG displacement filter over live ' +
+     'text every frame, which is the one real GPU risk in the set. Not worth it on a screen he opens daily.'],
+    ['E · Flare Cut', 'no', 'rejected',
+     'Fast, cheap, cinematic once. By the tenth morning a white blowout on a black screen at 6:30am is an ' +
+     'assault, and it is the one option that could plausibly make him stop opening the app — which is the ' +
+     'only failure mode that actually matters here.']
+  ];
+  var read = document.getElementById('read');
+  READ.forEach(function (r) {
+    var h = document.createElement('h3');
+    h.textContent = r[0];
+    var s = document.createElement('span');
+    s.className = 'pill' + (r[1] ? ' ' + r[1] : '');
+    s.textContent = r[2];
+    h.appendChild(s);
+    var p = document.createElement('p');
+    p.textContent = r[3];
+    read.appendChild(h); read.appendChild(p);
+  });
+})();
+</script>
+</body>
+</html>

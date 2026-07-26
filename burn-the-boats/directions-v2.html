@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Burn the Boats — Round 2: The Fusion</title>
+<link rel="stylesheet" href="lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#070709; --ink:#EDEAE4; --dim:#8b8b96; --faint:#565663;
+  --line:#1c1c22; --line2:#2a2a33;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --ice:#7FB4FF;
+  --rune:#38E1D8; --blood:#FF4D5E; --violet:#B08CFF;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink)}
+body{font-family:'Satoshi',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99;
+  background-image:url('assets/grain/grain-fine.svg');opacity:.035;mix-blend-mode:overlay}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+
+.mast{padding:74px 0 42px;border-bottom:1px solid var(--line)}
+.kick{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.28em;color:var(--faint);text-transform:uppercase;margin-bottom:16px}
+.mast h1{font-size:clamp(34px,5.6vw,60px);line-height:1;letter-spacing:-.035em;margin-bottom:18px}
+.mast h1 em{font-style:normal;color:var(--faint)}
+.mast p{max-width:680px;color:var(--dim);font-size:16px;margin:0 0 12px}
+.mast p b{color:var(--ink);font-weight:500}
+.dna{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+.dna span{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.13em;padding:5px 10px;border-radius:5px;
+  border:1px solid var(--line2);color:var(--dim);text-transform:uppercase}
+.dna span b{color:var(--gold);font-weight:400}
+
+/* research callout */
+.rsch{margin:30px 0 0;padding:20px 22px;border-radius:14px;background:#0c0d12;border:1px solid var(--line2)}
+.rsch h3{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.19em;color:var(--rune);text-transform:uppercase;margin-bottom:12px}
+.rsch p{font-size:14.5px;color:var(--dim);margin:0 0 9px;max-width:none}
+.rsch p:last-child{margin-bottom:0}
+.rsch b{color:var(--ink);font-weight:500}
+
+.dir{padding:60px 0;border-bottom:1px solid var(--line)}
+.dhead{display:grid;grid-template-columns:72px 1fr;gap:20px;align-items:start;margin-bottom:28px}
+.dnum{font-family:'Clash Display',sans-serif;font-size:52px;line-height:.8;font-weight:700;color:transparent;-webkit-text-stroke:1.2px var(--line2)}
+.dtitle h2{font-size:31px;letter-spacing:-.03em;margin-bottom:5px}
+.dmeta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+.dlede{max-width:640px;color:var(--dim);font-size:15.5px;margin-top:12px}
+.dlede b{color:var(--ink);font-weight:500}
+.dbody{display:grid;grid-template-columns:minmax(0,430px) 1fr;gap:38px;align-items:start}
+@media(max-width:880px){.dbody{grid-template-columns:1fr}.dhead{grid-template-columns:50px 1fr;gap:13px}.dnum{font-size:36px}}
+.notes dt{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.17em;text-transform:uppercase;color:var(--faint);margin-top:20px}
+.notes dt:first-child{margin-top:0}
+.notes dd{margin:6px 0 0;font-size:14.8px;color:var(--dim);line-height:1.58}
+.notes dd b{color:var(--ink);font-weight:500}
+.cost{border-left:2px solid var(--line2);padding-left:14px;margin-top:22px;font-size:14px;color:var(--faint);font-style:italic}
+.stolen{margin-top:20px;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--faint)}
+.stolen b{color:var(--rune);font-weight:400}
+
+.mock{border-radius:18px;overflow:hidden;border:1px solid var(--line2);box-shadow:0 30px 80px -30px #000}
+.mock .bar{height:29px;display:flex;align-items:center;padding:0 12px;gap:6px;border-bottom:1px solid var(--line)}
+.mock .bar i{width:8px;height:8px;border-radius:99px;background:var(--line2);display:block}
+.mock .bar span{font-family:'Geist Mono',monospace;font-size:9.5px;color:var(--faint);margin-left:8px;letter-spacing:.1em}
+.pane{padding:16px;min-height:452px}
+
+/* ---- shared burn strip (the element he liked, shrunk to a header) ---- */
+.burnstrip{display:flex;align-items:center;gap:10px;padding-bottom:11px;margin-bottom:14px;border-bottom:1px solid rgba(255,107,44,.16)}
+.burnstrip b{font-family:'Clash Display',sans-serif;font-size:17px;color:var(--ember);line-height:1;letter-spacing:-.02em}
+.burnstrip u{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.16em;color:#6b4530;text-decoration:none;text-transform:uppercase}
+.bstiles{display:flex;gap:1.6px;flex:1;justify-content:flex-end}
+.bstiles i{width:3px;height:13px;border-radius:1px;background:#1d1713}
+.bstiles i.g{background:var(--gold);opacity:.85}
+.bstiles i.c{background:#100b09}
+.bstiles i.n{background:var(--ember);box-shadow:0 0 6px var(--ember)}
+
+/* ============ 06 THE CARD ============ */
+.m-card{background:radial-gradient(120% 80% at 50% 0%,#1a1508,#0a0805 60%,#070605)}
+.m-card .bar{background:#0e0b06}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+.fut{border-radius:11px;padding:13px 12px 11px;position:relative;overflow:hidden}
+.fut.you{background:linear-gradient(160deg,#4a3a14,#241b07 55%,#171106);border:1px solid #6d5520;
+  box-shadow:0 0 26px -8px rgba(224,178,94,.55)}
+.fut.riv{background:linear-gradient(160deg,#1a2233,#0e1420 60%,#0a0e16);border:1px solid #2c3a52;opacity:.9}
+.fut-top{display:flex;align-items:flex-start;gap:9px;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.09)}
+.ovr{font-family:'Clash Display',sans-serif;font-size:38px;line-height:.82;font-weight:700;letter-spacing:-.045em}
+.fut.you .ovr{color:var(--gold)} .fut.riv .ovr{color:#7f97bd}
+.pos{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.14em;margin-top:3px}
+.fut.you .pos{color:#a5885a} .fut.riv .pos{color:#4f627f}
+.delta{margin-left:auto;font-family:'Geist Mono',monospace;font-size:10px;font-weight:600;text-align:right}
+.delta.up{color:var(--phos)} .delta.flat{color:#4f627f}
+.delta u{display:block;font-size:7.5px;letter-spacing:.13em;text-decoration:none;color:inherit;opacity:.62;margin-top:2px}
+.fut-name{font-family:'Clash Display',sans-serif;font-size:15px;letter-spacing:.09em;text-align:center;
+  padding:9px 0 8px;border-bottom:1px solid rgba(255,255,255,.09)}
+.fut.you .fut-name{color:#f0dcb4} .fut.riv .fut-name{color:#8ea3c4;font-size:12.5px}
+.fut-st{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;padding-top:9px}
+.fut-st div{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:10px}
+.fut-st span{letter-spacing:.09em}
+.fut.you .fut-st span{color:#8c7346} .fut.riv .fut-st span{color:#465872}
+.fut.you .fut-st b{color:#f0dcb4;font-weight:500} .fut.riv .fut-st b{color:#8ea3c4;font-weight:500}
+.fut-st b.low{color:var(--blood)!important}
+.card-foot{margin-top:14px;padding-top:12px;border-top:1px solid #211a0e}
+.card-foot p{margin:0;font-family:'Geist Mono',monospace;font-size:9.5px;color:#6d5c3c;letter-spacing:.09em;line-height:1.7}
+.card-foot p b{color:var(--gold);font-weight:400}
+.tierbar{display:flex;gap:3px;margin-top:11px}
+.tierbar i{flex:1;height:3px;border-radius:99px;background:#241c10}
+.tierbar i.on{background:var(--gold)}
+.tierlab{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7.5px;
+  letter-spacing:.11em;color:#5b4b30;margin-top:5px}
+
+/* ============ 07 EQUITY CURVE ============ */
+.m-eq{background:#060708}
+.m-eq .bar{background:#090a0c}
+.eq-h{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px}
+.eq-h b{font-family:'Clash Display',sans-serif;font-size:31px;color:var(--blood);line-height:.85;letter-spacing:-.035em;display:block}
+.eq-h span{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.16em;color:#4a4f57;text-transform:uppercase}
+.eq-h .r{text-align:right}
+.eq-h .r b{font-size:17px;color:var(--ink)}
+.eq-chart{border:1px solid #14161a;border-radius:8px;background:#08090b;padding:8px 4px 4px;margin-bottom:13px}
+.eq-legend{display:flex;gap:15px;font-family:'Geist Mono',monospace;font-size:8.5px;color:#4a4f57;letter-spacing:.1em;margin-bottom:14px}
+.eq-legend i{width:13px;height:2px;display:inline-block;margin-right:5px;vertical-align:3px}
+.eq-pos{border-top:1px solid #14161a}
+.eq-row{display:grid;grid-template-columns:78px 1fr 46px 40px;gap:8px;align-items:center;
+  padding:7px 0;border-bottom:1px solid #101216;font-family:'Geist Mono',monospace;font-size:10px}
+.eq-row .n{color:#6a707a;letter-spacing:.1em}
+.eq-row .b{height:4px;background:#14161a;border-radius:99px;overflow:hidden;position:relative}
+.eq-row .b i{position:absolute;top:0;bottom:0;border-radius:99px}
+.eq-row .v{text-align:right;font-weight:600}
+.eq-row .d{text-align:right;font-size:9px}
+.up{color:var(--phos)} .dn{color:var(--blood)} .fl{color:#4a4f57}
+.eq-row.hd{color:#3a3f47;font-size:8px;letter-spacing:.15em;border-bottom:1px solid #1a1d22;padding-bottom:6px}
+
+/* ============ 08 THE DUEL ============ */
+.m-duel{background:linear-gradient(180deg,#12080a,#0a0709 45%,#07080c)}
+.m-duel .bar{background:#0d0709}
+.duel-hp{display:grid;grid-template-columns:1fr 40px 1fr;gap:8px;align-items:center;margin-bottom:6px}
+.hpbar{height:15px;border-radius:3px;background:#1a1418;border:1px solid #2a2028;overflow:hidden;position:relative}
+.hpbar i{position:absolute;top:0;bottom:0;display:block}
+.hpbar.l i{right:0;background:linear-gradient(270deg,var(--gold),#8a6420)}
+.hpbar.r i{left:0;background:linear-gradient(90deg,#4a5d80,#2f3c52)}
+.duel-vs{font-family:'Clash Display',sans-serif;font-size:15px;color:#4d3f45;text-align:center;letter-spacing:.06em}
+.duel-nm{display:grid;grid-template-columns:1fr 40px 1fr;gap:8px;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.15em;margin-bottom:15px}
+.duel-nm .a{color:var(--gold)}
+.duel-nm .b{color:#6b7d9c;text-align:right}
+.rounds{display:flex;align-items:center;gap:6px;justify-content:center;padding:11px 0;margin-bottom:14px;
+  border-top:1px solid #1c151a;border-bottom:1px solid #1c151a}
+.rounds u{font-family:'Geist Mono',monospace;font-size:8.5px;color:#5a4a52;letter-spacing:.14em;text-decoration:none;margin-right:5px}
+.pip{width:19px;height:19px;border-radius:5px;display:grid;place-items:center;font-family:'Geist Mono',monospace;
+  font-size:9px;font-weight:700;border:1px solid #2a2028;color:#4d3f45}
+.pip.w{background:rgba(224,178,94,.16);border-color:rgba(224,178,94,.5);color:var(--gold)}
+.pip.l{background:rgba(255,77,94,.1);border-color:rgba(255,77,94,.35);color:var(--blood)}
+.pip.now{border-color:var(--gold);box-shadow:0 0 12px -2px var(--gold);color:var(--gold)}
+.duel-st{display:grid;gap:8px}
+.dst{display:grid;grid-template-columns:1fr 74px 1fr;gap:7px;align-items:center}
+.dst .lb{height:7px;background:#191419;border-radius:2px;position:relative;overflow:hidden}
+.dst .lb i{position:absolute;top:0;bottom:0;right:0;background:linear-gradient(270deg,var(--gold),#7a5a1c);border-radius:2px}
+.dst .rb{height:7px;background:#191419;border-radius:2px;position:relative;overflow:hidden}
+.dst .rb i{position:absolute;top:0;bottom:0;left:0;background:#38455e;border-radius:2px}
+.dst .lab{font-family:'Geist Mono',monospace;font-size:8.5px;color:#6a5a62;text-align:center;letter-spacing:.1em}
+.duel-foot{margin-top:15px;padding-top:13px;border-top:1px solid #1c151a;text-align:center;
+  font-family:'Clash Display',sans-serif;font-size:13.5px;color:#8d7680;line-height:1.4}
+.duel-foot b{color:var(--gold)}
+
+/* ============ 09 SILHOUETTE ============ */
+.m-sil{background:radial-gradient(100% 80% at 50% 20%,#0e1018,#08090d 65%)}
+.m-sil .bar{background:#0a0b10}
+.sil-wrap{display:grid;grid-template-columns:1fr 1fr;gap:6px;justify-items:center;margin-bottom:8px}
+.sil-lab{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-align:center;margin-top:4px}
+.sil-map{margin-top:12px;padding-top:13px;border-top:1px solid #161923;display:grid;gap:6px}
+.smrow{display:grid;grid-template-columns:11px 66px 1fr 30px;gap:8px;align-items:center;
+  font-family:'Geist Mono',monospace;font-size:9.5px}
+.smrow i{width:9px;height:9px;border-radius:2px}
+.smrow .n{color:#5f6675;letter-spacing:.1em}
+.smrow .t{height:4px;background:#161923;border-radius:99px;overflow:hidden;position:relative}
+.smrow .t i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;width:auto;height:auto}
+.smrow .t u{position:absolute;top:-3px;bottom:-3px;width:1.5px;background:#4a5670;text-decoration:none}
+.smrow b{text-align:right;font-weight:500}
+.sil-note{margin-top:13px;padding-top:12px;border-top:1px solid #161923;
+  font-family:'Clash Display',sans-serif;font-size:13.5px;color:#7d8494;line-height:1.4}
+.sil-note b{color:var(--ember)}
+
+/* ============ 10 COCKPIT ============ */
+.m-cock{background:linear-gradient(180deg,#0a0b0e,#070708)}
+.m-cock .bar{background:#0b0c10}
+.gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.gauge{background:#0c0e13;border:1px solid #191d26;border-radius:11px;padding:9px 6px 7px;text-align:center}
+.gauge .gl{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.15em;color:#5a6272;margin-bottom:3px}
+.gauge .gv{font-family:'Clash Display',sans-serif;font-size:17px;letter-spacing:-.03em;line-height:1}
+.gauge .gd{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;margin-top:2px}
+.fuelbox{background:#0c0e13;border:1px solid #191d26;border-radius:11px;padding:11px 12px;margin-bottom:12px}
+.fuelbox .fh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.fuelbox .fh span{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.16em;color:#5a6272}
+.fuelbox .fh b{font-family:'Clash Display',sans-serif;font-size:19px;color:var(--ember);letter-spacing:-.03em}
+.fuel{height:9px;border-radius:3px;background:#14171f;overflow:hidden;position:relative}
+.fuel i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#7a3a12,var(--ember))}
+.fuel u{position:absolute;top:0;bottom:0;width:1px;background:#2a303d}
+.cock-read{border-top:1px solid #161a22;padding-top:11px;display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.cr{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:9.5px}
+.cr span{color:#5a6272;letter-spacing:.09em} .cr b{color:var(--ink);font-weight:500}
+
+/* verdict */
+.verdict{padding:62px 0 100px}
+.verdict h2{font-size:26px;margin-bottom:8px}
+.verdict>p{color:var(--dim);max-width:660px;margin:0 0 28px;font-size:15.5px}
+.vrow{display:grid;grid-template-columns:32px 1fr;gap:15px;padding:17px 0;border-top:1px solid var(--line);align-items:start}
+.vrow .n{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);padding-top:3px;letter-spacing:.1em}
+.vrow h3{font-size:16.5px;margin-bottom:4px;font-family:'Satoshi';font-weight:700;letter-spacing:-.01em}
+.vrow p{margin:0;color:var(--dim);font-size:14.5px;line-height:1.55}
+.vrow.pick h3{color:var(--gold)}
+.tagp{display:inline-block;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.14em;
+  padding:2.5px 7px;border-radius:4px;border:1px solid var(--line2);color:var(--faint);margin-left:8px;text-transform:uppercase;vertical-align:2px}
+.tagp.g{border-color:rgba(224,178,94,.45);color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="mast">
+    <div class="kick">Round 2 · The Fusion</div>
+    <h1>Character + Rival + Burn,<br><em>fused five different ways</em></h1>
+    <p>You picked three: the <b>radar that shows where you're lacking</b>, the <b>Burn shrunk to a header strip</b>, and a <b>live rival</b> you can watch yourself gain on. Every direction below contains all three. What changes is <b>which one is load-bearing</b> — and that changes everything about how the page feels at 6 AM.</p>
+    <div class="dna">
+      <span><b>◈</b> Attributes · where am I lacking</span>
+      <span><b>◈</b> Rival · live comparison</span>
+      <span><b>◈</b> Burn · urgency strip, not the whole page</span>
+    </div>
+
+    <div class="rsch">
+      <h3>Two things the research changed since round one</h3>
+      <p><b>Your rival has to be beatable, or it will quietly break you.</b> The leaderboard research is blunt: competition only motivates when it makes you feel <em>competent</em>. A single 91-day gap you're permanently losing does the opposite. The fix is <b>time-segmentation</b> — "you might be buried all-time but crushing it this week." So in every direction below, the rival is fought in <b>weekly rounds you can actually win</b>, with the cumulative gap kept as the quieter background number.</p>
+      <p><b>An OVR shouldn't be a flat average.</b> EA rates a player by weighting the attributes that matter <em>for their position</em> — a defender's tackling counts more than their finishing. Yours should work the same way: you're a founder, so Discipline and Execution carry more weight than Faith does. It makes the number honest instead of decorative, and it means gaming one easy stat won't move it.</p>
+    </div>
+  </div>
+
+  <!-- ===== 06 THE CARD ===== -->
+  <section class="dir">
+    <div class="dhead">
+      <div class="dnum">06</div>
+      <div class="dtitle">
+        <h2>The Card</h2>
+        <div class="dmeta">Attributes load-bearing · stolen from EA FC Ultimate Team</div>
+        <p class="dlede">You are <b>a rated player</b>. One overall number, six attributes, and a card that visibly upgrades tier as you climb. Your card sits next to <b>his</b> — a 99 you're chasing. Every attribute you're weak in is <b>printed in red on your own card</b>, which is a very hard thing to look away from.</p>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="mock m-card">
+        <div class="bar"><i></i><i></i><i></i><span>THE CARD — OVR 74</span></div>
+        <div class="pane">
+          <div class="burnstrip">
+            <b>57</b><u>days on contract</u>
+            <div class="bstiles" id="bs1"></div>
+          </div>
+          <div class="cards">
+            <div class="fut you">
+              <div class="fut-top">
+                <div><div class="ovr">74</div><div class="pos">FDR · GOLD</div></div>
+                <div class="delta up">+3<u>THIS WK</u></div>
+              </div>
+              <div class="fut-name">JASPER</div>
+              <div class="fut-st">
+                <div><span>DIS</span><b>82</b></div><div><span>FTH</span><b>68</b></div>
+                <div><span>FOC</span><b>91</b></div><div><span>CAP</span><b>57</b></div>
+                <div><span>BOD</span><b class="low">44</b></div><div><span>EXE</span><b>71</b></div>
+              </div>
+            </div>
+            <div class="fut riv">
+              <div class="fut-top">
+                <div><div class="ovr">99</div><div class="pos">FDR · ICON</div></div>
+                <div class="delta flat">—<u>NEVER</u></div>
+              </div>
+              <div class="fut-name">THE MILLIONAIRE</div>
+              <div class="fut-st">
+                <div><span>DIS</span><b>99</b></div><div><span>FTH</span><b>99</b></div>
+                <div><span>FOC</span><b>99</b></div><div><span>CAP</span><b>99</b></div>
+                <div><span>BOD</span><b>99</b></div><div><span>EXE</span><b>99</b></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-foot">
+            <p>WEEK 07 DUEL · <b>WON 3 OF 5</b> · card upgrades at OVR 80</p>
+            <div class="tierbar"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div>
+            <div class="tierlab"><span>BRONZE</span><span>SILVER</span><span>GOLD</span><span>ELITE</span><span>ICON</span></div>
+          </div>
+        </div>
+      </div>
+      <dl class="notes">
+        <dt>The signature move</dt>
+        <dd>One number carries everything. <b>OVR 74.</b> You'll know it like you know your weight. It ticks up a point or two a week and the whole card changes tier at 80 — a visual event you can see coming for a month.</dd>
+        <dt>Why it answers what you said</dt>
+        <dd>You wanted to see where you're lacking. <b>BOD 44 sits in red on your own card</b>, next to a 99. There is no chart to interpret — it's a number on your identity, and it's embarrassing in exactly the productive way.</dd>
+        <dt>Where the burn went</dt>
+        <dd>Shrunk to a <b>contract length</b> at the top. 57 days remaining, with the tiles you've already spent rendered small and gold. Urgency without a wall of ash.</dd>
+        <div class="cost">The cost: a card is a <em>snapshot</em>. It's superb at "what am I right now" and poor at "how far have I come" — the history lives somewhere else or not at all. Also the most literally game-like of the five, which cuts both ways.</div>
+        <div class="stolen">STOLEN FROM · <b>EA FC Ultimate Team</b> (weighted OVR, tier upgrades, Evolutions) · <b>NBA 2K</b> (attribute grid)</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ===== 07 EQUITY CURVE ===== -->
+  <section class="dir">
+    <div class="dhead">
+      <div class="dnum">07</div>
+      <div class="dtitle">
+        <h2>The Equity Curve</h2>
+        <div class="dmeta">Rival load-bearing · your own trading screen, pointed at your life</div>
+        <p class="dlede">Your discipline as a <b>cumulative equity curve</b>, benchmarked against the Millionaire's line — exactly how you already judge a portfolio. Bad weeks show as <b>drawdown</b>. Each attribute is a <b>position</b> with its own P&L, so a losing one is obvious and named. You already read this chart every morning.</p>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="mock m-eq">
+        <div class="bar"><i></i><i></i><i></i><span>EQUITY — SESSION 34/91</span></div>
+        <div class="pane">
+          <div class="burnstrip">
+            <b>57</b><u>sessions remain</u>
+            <div class="bstiles" id="bs2"></div>
+          </div>
+          <div class="eq-h">
+            <div><b>−14.2%</b><span>vs benchmark</span></div>
+            <div class="r"><b>+8,140</b><span>cumulative</span></div>
+          </div>
+          <div class="eq-chart"><svg id="eqSvg" viewBox="0 0 400 150" width="100%" height="150"></svg></div>
+          <div class="eq-legend">
+            <span><i style="background:#E0B25E"></i>YOU</span>
+            <span><i style="background:#4a5d80;border-top:1px dashed #7FB4FF"></i>THE MILLIONAIRE</span>
+            <span><i style="background:rgba(255,77,94,.35)"></i>DRAWDOWN</span>
+          </div>
+          <div class="eq-pos">
+            <div class="eq-row hd"><span class="n">POSITION</span><span></span><span class="v">VAL</span><span class="d">Δ WK</span></div>
+            <div class="eq-row"><span class="n">FOCUS</span><span class="b"><i class="up" style="width:91%;background:#4ADE80"></i></span><span class="v up">91</span><span class="d up">+4</span></div>
+            <div class="eq-row"><span class="n">DISCIPLINE</span><span class="b"><i style="width:82%;background:#4ADE80"></i></span><span class="v up">82</span><span class="d up">+2</span></div>
+            <div class="eq-row"><span class="n">EXECUTION</span><span class="b"><i style="width:71%;background:#E0B25E"></i></span><span class="v" style="color:#E0B25E">71</span><span class="d fl">0</span></div>
+            <div class="eq-row"><span class="n">FAITH</span><span class="b"><i style="width:68%;background:#E0B25E"></i></span><span class="v" style="color:#E0B25E">68</span><span class="d up">+1</span></div>
+            <div class="eq-row"><span class="n">CAPITAL</span><span class="b"><i style="width:57%;background:#E0B25E"></i></span><span class="v" style="color:#E0B25E">57</span><span class="d dn">−2</span></div>
+            <div class="eq-row"><span class="n">BODY</span><span class="b"><i style="width:44%;background:#FF4D5E"></i></span><span class="v dn">44</span><span class="d dn">−6</span></div>
+          </div>
+        </div>
+      </div>
+      <dl class="notes">
+        <dt>The signature move</dt>
+        <dd><b>Drawdown.</b> A bad week isn't a red X — it's a dip in a curve that's still going up and to the right. That's the most emotionally survivable way to render failure that exists, and you already understand it instinctively.</dd>
+        <dt>Why it fits you specifically</dt>
+        <dd>This is <b>the exact chart you stare at from 6:30 to 7:00 every morning.</b> Zero new visual language to learn. Your life gets judged by the same instrument as your book — which is either the smartest thing on this page or too much of one thing.</dd>
+        <dt>Where the rival went</dt>
+        <dd>He's the <b>benchmark line</b>. You don't beat him daily; you track him. "Down 14% against the millionaire" is a sentence that will genuinely bother you.</dd>
+        <div class="cost">The cost: it's the least <em>fun</em> of the five, and the one most likely to make the whole run feel like work. There's also a real risk that turning your life into a P&L is exactly what you shouldn't do at 9 PM on a Sunday.</div>
+        <div class="stolen">STOLEN FROM · <b>portfolio-vs-benchmark charting</b> · <b>Whoop</b> (strain vs baseline) · <b>Strava</b> (trend + PR line)</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ===== 08 THE DUEL ===== -->
+  <section class="dir">
+    <div class="dhead">
+      <div class="dnum">08</div>
+      <div class="dtitle">
+        <h2>The Duel</h2>
+        <div class="dmeta">Rival load-bearing · fighting-game frame, weekly rounds you can win</div>
+        <p class="dlede">Two health bars facing each other at the top of the screen. The week is a <b>round</b>, and rounds are <b>winnable</b> — that's the fix for the flaw in the original Rival. You'll lose the war on paper and still stack up <b>W W L W W</b> across the weeks, which is what actually keeps a competitive person coming back.</p>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="mock m-duel">
+        <div class="bar"><i></i><i></i><i></i><span>THE DUEL — ROUND 07</span></div>
+        <div class="pane">
+          <div class="burnstrip">
+            <b>12</b><u>rounds remain</u>
+            <div class="bstiles" id="bs3"></div>
+          </div>
+          <div class="duel-hp">
+            <div class="hpbar l"><i style="width:78%"></i></div>
+            <div class="duel-vs">VS</div>
+            <div class="hpbar r"><i style="width:100%"></i></div>
+          </div>
+          <div class="duel-nm"><span class="a">JASPER · 78</span><span></span><span class="b">MILLIONAIRE · 100</span></div>
+          <div class="rounds">
+            <u>ROUNDS</u>
+            <div class="pip w">W</div><div class="pip l">L</div><div class="pip w">W</div>
+            <div class="pip w">W</div><div class="pip l">L</div><div class="pip w">W</div>
+            <div class="pip now">7</div>
+          </div>
+          <div class="duel-st" id="duelSt"></div>
+          <div class="duel-foot">You've taken <b>4 of the last 6 rounds</b>.<br>Take this one and you're up on the month.</div>
+        </div>
+      </div>
+      <dl class="notes">
+        <dt>The signature move</dt>
+        <dd><b>The round record.</b> W L W W L W. A permanent, growing row of small wins against a perfect opponent — the thing a 91-day gap can never give you. This is the direct application of the research finding that killed the original Rival.</dd>
+        <dt>The emotional math</dt>
+        <dd>You will never beat him overall — he doesn't miss. But <b>you can beat him this week</b>, and next week, and the week after. Six round wins by December is a real record you earned against a perfect standard.</dd>
+        <dt>Where the attributes went</dt>
+        <dd>Fighter stats, compared bar-to-bar meeting in the middle. <b>The short bar is where you're losing the fight</b> — same information as the radar, read as a matchup instead of a shape.</dd>
+        <div class="cost">The cost: combat framing is loud. It's the most energizing at 9 AM and potentially exhausting by week ten — living inside a fight for four straight months is a lot. Also the least "premium-calm" of the five.</div>
+        <div class="stolen">STOLEN FROM · <b>Street Fighter / Tekken</b> (facing HP bars, round pips) · <b>Duolingo Leagues</b> (weekly resettable competition)</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ===== 09 SILHOUETTE ===== -->
+  <section class="dir">
+    <div class="dhead">
+      <div class="dnum">09</div>
+      <div class="dtitle">
+        <h2>The Silhouette</h2>
+        <div class="dmeta">Attributes load-bearing · the radar, made anatomical</div>
+        <p class="dlede">The radar chart, but it's <b>a body</b>. Each attribute lights a region — Focus is the head, Body is the legs, Faith is the chest, Capital the hands. Weak areas are literally <b>dim</b>. Beside you stands the Millionaire, <b>fully lit</b>. You don't read this screen. You <b>see</b> it, in about a fifth of a second.</p>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="mock m-sil">
+        <div class="bar"><i></i><i></i><i></i><span>THE MIRROR — WEEK 07</span></div>
+        <div class="pane">
+          <div class="burnstrip">
+            <b>57</b><u>days to become him</u>
+            <div class="bstiles" id="bs4"></div>
+          </div>
+          <div class="sil-wrap">
+            <div><svg id="silYou" width="128" height="196" viewBox="0 0 100 155"></svg>
+              <div class="sil-lab" style="color:var(--gold)">YOU · 69 AVG</div></div>
+            <div><svg id="silRiv" width="128" height="196" viewBox="0 0 100 155"></svg>
+              <div class="sil-lab" style="color:#4a5670">THE MILLIONAIRE · 99</div></div>
+          </div>
+          <div class="sil-map" id="silMap"></div>
+          <div class="sil-note">Your legs are dark. <b>Body 44</b> — you've trained twice in nine days.</div>
+        </div>
+      </div>
+      <dl class="notes">
+        <dt>The signature move</dt>
+        <dd><b>Pre-cognitive reading.</b> Every other direction needs you to interpret a number. This one you feel before you've finished opening it — a dim leg is a dim leg. It's the fastest possible answer to "where am I lacking."</dd>
+        <dt>Why it's the strongest version of what you liked</dt>
+        <dd>You said the radar's value was <em>seeing</em> where you're weak. A pentagon is still a chart you decode. <b>A body is not.</b> And standing your dim figure next to his lit one fuses the two things you liked into one image.</dd>
+        <dt>The unlock</dt>
+        <dd>It's the most emotionally direct thing on this page. Watching your own silhouette fill in over 91 days is a genuinely different experience from watching a bar fill.</dd>
+        <div class="cost">The cost: it's the most abstract about <em>numbers</em> — great for a glance, weak for detail, so it needs the map underneath to stay useful. And mapping "Faith" to a body region is a metaphor that could read as either poetic or silly depending on your mood.</div>
+        <div class="stolen">STOLEN FROM · <b>Oura / Whoop body readiness maps</b> · <b>RPG equipment paperdolls</b> · <b>medical heat maps</b></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ===== 10 COCKPIT ===== -->
+  <section class="dir">
+    <div class="dhead">
+      <div class="dnum">10</div>
+      <div class="dtitle">
+        <h2>The Cockpit</h2>
+        <div class="dmeta">Burn load-bearing · instrument cluster, fuel is the countdown</div>
+        <p class="dlede">An instrument panel. Six gauges, each with a <b>redline marked at where the Millionaire sits</b>, so falling behind reads as a needle in the wrong zone. The burn stops being a grid of ash and becomes <b>the fuel gauge</b> — the most natural depletion metaphor there is, and one nobody finds cruel.</p>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="mock m-cock">
+        <div class="bar"><i></i><i></i><i></i><span>INSTRUMENTS — 06:42 PT</span></div>
+        <div class="pane">
+          <div class="gauges" id="gaugeGrid"></div>
+          <div class="fuelbox">
+            <div class="fh"><span>RUN REMAINING</span><b>57 DAYS</b></div>
+            <div class="fuel"><i style="width:62.6%"></i>
+              <u style="left:25%"></u><u style="left:50%"></u><u style="left:75%"></u></div>
+            <div class="fh" style="margin:7px 0 0"><span style="font-size:7.5px">DEC 01</span>
+              <span style="font-size:7.5px">34 SPENT · 29 CLEAN</span></div>
+          </div>
+          <div class="cock-read">
+            <div class="cr"><span>OVERALL</span><b>74</b></div>
+            <div class="cr"><span>vs RIVAL</span><b style="color:#FF4D5E">−25</b></div>
+            <div class="cr"><span>WEEK</span><b style="color:#4ADE80">WINNING</b></div>
+            <div class="cr"><span>CLEAN RUNS</span><b>51</b></div>
+          </div>
+        </div>
+      </div>
+      <dl class="notes">
+        <dt>The signature move</dt>
+        <dd><b>The redline.</b> Every gauge carries a mark where he sits. You're not reading your own number in a vacuum — you're reading it <b>against a standard printed on the dial</b>. The rival becomes ambient instead of confrontational.</dd>
+        <dt>Where the burn went</dt>
+        <dd>It became <b>a fuel gauge</b>, which is the single best move available here. Depletion, urgency, and finiteness — with none of the punishment. A tank at 62% is information; a wall of char is an accusation.</dd>
+        <dt>Emotional register</dt>
+        <dd>Calm, controlled, machine-like. The most <b>premium</b> of the five and by far the most glanceable — this is the one that looks best as a widget or a second screen you leave open all day.</dd>
+        <div class="cost">The cost: it's cool rather than moving. Gauges don't make you feel much, and the whole point of this rebuild was to make you <em>feel</em> the progress. Excellent instrument, thin narrative.</div>
+        <div class="stolen">STOLEN FROM · <b>Whoop / Oura daily readiness dials</b> · <b>automotive clusters</b> · <b>flight instruments</b></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ===== VERDICT ===== -->
+  <section class="verdict">
+    <h2>My read</h2>
+    <p>All five carry your three ingredients. They differ in which one is load-bearing — and that's the actual decision, because it sets what the page makes you feel at 6 AM.</p>
+
+    <div class="vrow pick">
+      <div class="n">01</div>
+      <div><h3>The Card, with the Duel's round record underneath <span class="tagp g">my pick</span></h3>
+        <p>The Card gives you the single number you'll live by and puts your weakness in red on your own identity. The Duel gives you something the Card can't — <em>a way to win this week</em>, which the research says is the difference between a rival that drives you and one that grinds you down. Card on top, round record below it, burn as the contract strip. It's the tightest fusion of everything you said you liked.</p></div>
+    </div>
+    <div class="vrow">
+      <div class="n">02</div>
+      <div><h3>The Silhouette <span class="tagp">strongest single image</span></h3>
+        <p>The best pure answer to "show me where I'm lacking" — a dim leg needs no interpretation at all. If I were optimizing for the one screenshot that makes you change behavior, this is it. It's second only because it needs the detail map underneath to be a complete tool.</p></div>
+    </div>
+    <div class="vrow">
+      <div class="n">03</div>
+      <div><h3>The Cockpit <span class="tagp">best fuel-gauge idea</span></h3>
+        <p>Solves the Burn problem better than anything else here — a fuel gauge is urgent without being cruel. <b>I'd take that one idea into whichever direction you pick</b>, regardless of whether you choose this one. Loses because gauges inform rather than move you.</p></div>
+    </div>
+    <div class="vrow">
+      <div class="n">04</div>
+      <div><h3>The Duel <span class="tagp">most energizing</span></h3>
+        <p>The round record is the single best mechanic on this page and it belongs in the final build. As a whole architecture I think it's too loud to live in for four months — but as a component it might be the most valuable thing we've designed in either round.</p></div>
+    </div>
+    <div class="vrow">
+      <div class="n">05</div>
+      <div><h3>The Equity Curve <span class="tagp">smartest, riskiest</span></h3>
+        <p>Intellectually the best fit for you and the best rendering of a bad week I know of. I rank it last only because it makes your life look like your job, and you already told me you want to feel like you're <em>upgrading yourself</em> — not auditing yourself. The drawdown idea, though, deserves to survive into whatever we build.</p></div>
+    </div>
+  </section>
+</div>
+
+<script src="lib/gsap/gsap.min.js"></script>
+<script>
+/* ---- shared burn strips ---- */
+['bs1','bs2','bs3','bs4'].forEach(id=>{
+  const el=document.getElementById(id); if(!el) return;
+  const N=id==='bs3'?19:46, spent=id==='bs3'?7:17;
+  let h='';
+  for(let i=0;i<N;i++){
+    let c=''; if(i<spent) c=(i%6===4)?'c':'g'; else if(i===spent) c='n';
+    h+=`<i class="${c}"></i>`;
+  }
+  el.innerHTML=h;
+});
+
+/* ---- 07 equity curve ---- */
+(function(){
+  const svg=document.getElementById('eqSvg'); if(!svg) return;
+  const W=400,H=150,P=6;
+  const you=[0,3,7,6,11,16,14,19,25,24,29,35,33,38,44,49,47,53,59,58,64,70,68,74,80,79,85,91,89,95,101,106,104,110];
+  const riv=you.map((_,i)=>i*3.7);
+  const max=Math.max(...riv,...you)*1.06;
+  const X=i=>P+(i/(you.length-1))*(W-P*2);
+  const Y=v=>H-P-(v/max)*(H-P*2);
+  const path=a=>a.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join(' ');
+  // drawdown band between rival and you
+  const band=`${path(riv)} L ${X(you.length-1).toFixed(1)} ${Y(you[you.length-1]).toFixed(1)} `+
+             you.slice().reverse().map((v,i)=>'L '+X(you.length-1-i).toFixed(1)+' '+Y(v).toFixed(1)).join(' ')+' Z';
+  let h='';
+  for(let g=0;g<=3;g++){const y=P+(g/3)*(H-P*2);h+=`<line x1="${P}" y1="${y}" x2="${W-P}" y2="${y}" stroke="#12141a" stroke-width="1"/>`;}
+  h+=`<path d="${band}" fill="rgba(255,77,94,.13)"/>`;
+  h+=`<path d="${path(riv)}" fill="none" stroke="#4a5d80" stroke-width="1.4" stroke-dasharray="4 3"/>`;
+  h+=`<path d="${path(you)}" fill="none" stroke="#E0B25E" stroke-width="1.9" stroke-linejoin="round"/>`;
+  const li=you.length-1;
+  h+=`<circle cx="${X(li).toFixed(1)}" cy="${Y(you[li]).toFixed(1)}" r="3" fill="#E0B25E"/>`;
+  h+=`<circle cx="${X(li).toFixed(1)}" cy="${Y(riv[li]).toFixed(1)}" r="2.4" fill="#4a5d80"/>`;
+  svg.innerHTML=h;
+})();
+
+/* ---- 08 duel stats ---- */
+(function(){
+  const el=document.getElementById('duelSt'); if(!el) return;
+  const A=[['FOCUS',91],['DISCIPLINE',82],['EXECUTION',71],['FAITH',68],['CAPITAL',57],['BODY',44]];
+  el.innerHTML=A.map(a=>`<div class="dst">
+    <div class="lb"><i style="width:${a[1]}%"></i></div>
+    <div class="lab">${a[0].slice(0,3)} ${a[1]}<span style="color:#3d4a5e"> / 99</span></div>
+    <div class="rb"><i style="width:99%"></i></div></div>`).join('');
+})();
+
+/* ---- 09 silhouettes ---- */
+(function(){
+  // region -> [attribute, value 0..1, colour]
+  const REG=[['head','FOCUS',.91,'#38E1D8'],['chest','FAITH',.68,'#B08CFF'],
+             ['arms','EXECUTION',.71,'#E0B25E'],['hands','CAPITAL',.57,'#7FB4FF'],
+             ['core','DISCIPLINE',.82,'#4ADE80'],['legs','BODY',.44,'#FF6B2C']];
+  // simple stylised figure: each region is a rounded shape
+  const SHAPES={
+    head:'<circle cx="50" cy="16" r="11"/>',
+    chest:'<rect x="35" y="30" width="30" height="22" rx="7"/>',
+    core:'<rect x="38" y="53" width="24" height="20" rx="6"/>',
+    arms:'<rect x="21" y="31" width="11" height="34" rx="5.5"/><rect x="68" y="31" width="11" height="34" rx="5.5"/>',
+    hands:'<circle cx="26.5" cy="71" r="6"/><circle cx="73.5" cy="71" r="6"/>',
+    legs:'<rect x="38" y="75" width="10.5" height="52" rx="5"/><rect x="51.5" y="75" width="10.5" height="52" rx="5"/>'
+  };
+  function draw(id,lit){
+    const svg=document.getElementById(id); if(!svg) return;
+    let h='<g>';
+    REG.forEach(([r,,v,c])=>{
+      const val=lit?1:v;
+      const op=(.13+val*.87).toFixed(2);
+      h+=`<g fill="${lit?'#3a4560':c}" opacity="${lit?.55:op}"
+           style="filter:drop-shadow(0 0 ${(val*7).toFixed(1)}px ${lit?'#2b3550':c})">${SHAPES[r]}</g>`;
+    });
+    h+='</g>';
+    svg.innerHTML=h;
+  }
+  draw('silYou',false); draw('silRiv',true);
+
+  const map=document.getElementById('silMap');
+  if(map) map.innerHTML=REG.map(([r,n,v,c])=>`<div class="smrow">
+    <i style="background:${c};opacity:${(.2+v*.8).toFixed(2)}"></i>
+    <span class="n">${n}</span>
+    <span class="t"><i style="width:${v*100}%;background:${c}"></i><u style="left:99%"></u></span>
+    <b style="color:${v<.5?'#FF6B2C':'#EDEAE4'}">${Math.round(v*99)}</b></div>`).join('');
+})();
+
+/* ---- 10 gauges ---- */
+(function(){
+  const G=[['FOCUS',91,'#38E1D8'],['DISCIPLINE',82,'#4ADE80'],['EXECUTION',71,'#E0B25E'],
+           ['FAITH',68,'#B08CFF'],['CAPITAL',57,'#7FB4FF'],['BODY',44,'#FF6B2C']];
+  const grid=document.getElementById('gaugeGrid'); if(!grid) return;
+  grid.innerHTML=G.map(([n,v,c])=>{
+    const R=21,C=Math.PI*R, // semicircle arc length
+      off=C*(1-v/100);
+    return `<div class="gauge">
+      <div class="gl">${n.slice(0,3)}</div>
+      <svg width="60" height="34" viewBox="0 0 60 34">
+        <path d="M8 29 A 22 22 0 0 1 52 29" fill="none" stroke="#1a1e28" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M8 29 A 22 22 0 0 1 52 29" fill="none" stroke="${c}" stroke-width="4.5" stroke-linecap="round"
+              stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/>
+        <line x1="51" y1="29" x2="55" y2="29" stroke="#FF4D5E" stroke-width="2"/>
+      </svg>
+      <div class="gv" style="color:${c}">${v}</div>
+      <div class="gd" style="color:${v<50?'#FF4D5E':'#4a5262'}">${v<50?'BELOW':'REDLINE 99'}</div>
+    </div>`;
+  }).join('');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Masthead — the working vice screen</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --hot:#FFB25E; --warm:#e8a86a;
+
+  /* THE TYPE SCALE — six steps. The display step has two optical sizes:
+     64px for figures, 44px for words. Figures are narrow, words are not;
+     this keeps their optical weight identical inside the same masthead. */
+  --t-display:64px; --t-word:44px; --t-unit:30px;
+  --t-head:18px; --t-mod:14.5px; --t-body:13.6px; --t-data:8px; --t-micro:7px;
+
+  /* THE MEASURE — one 8px rhythm, four stops */
+  --s1:8px; --s2:16px; --s3:26px; --s4:38px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99;
+  background-image:url('../assets/grain/grain-fine.svg');opacity:.035;mix-blend-mode:overlay}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+button{font-family:inherit;cursor:pointer}
+
+.wrap{max-width:1240px;margin:0 auto;padding:0 26px}
+.mast{padding:58px 0 30px;border-bottom:1px solid var(--line)}
+.kick{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.26em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:14px}
+.mast h1{font-size:clamp(29px,4.6vw,46px);line-height:1.03;letter-spacing:-.035em;margin-bottom:15px}
+.mast p{max-width:690px;color:var(--dim);font-size:15.2px;margin:0 0 11px}
+.mast p b{color:var(--ink);font-weight:500}
+.quote{border-left:2px solid var(--line2);padding-left:14px;margin:22px 0 0;max-width:660px;
+  color:var(--faint);font-size:14px;font-style:italic;line-height:1.6}
+.quote b{color:var(--dim);font-style:normal;font-weight:500}
+.toc{display:flex;flex-wrap:wrap;gap:7px;padding:22px 0 0}
+.toc a{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--dim);border:1px solid var(--line2);border-radius:99px;padding:7px 12px;text-decoration:none}
+.toc a:hover{border-color:var(--gold);color:var(--gold)}
+
+.sec{padding:50px 0;border-bottom:1px solid var(--line)}
+.sh{display:grid;grid-template-columns:60px 1fr;gap:18px;align-items:start;margin-bottom:26px}
+.sn{font-family:'Clash Display',sans-serif;font-size:46px;line-height:.8;font-weight:700;color:transparent;
+  -webkit-text-stroke:1.2px var(--line2)}
+.st h2{font-size:27px;letter-spacing:-.03em;margin-bottom:5px}
+.sm{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+.sl{max-width:660px;color:var(--dim);font-size:14.8px;margin-top:11px}
+.sl b{color:var(--ink);font-weight:500}
+.sbody{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:38px;align-items:start}
+.stack{display:flex;gap:22px;flex-wrap:wrap;min-width:0}
+@media(max-width:1080px){.sbody{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:520px){.wrap{padding:0 8px}.sh{grid-template-columns:40px 1fr;gap:12px}.sn{font-size:30px}}
+.notes dt{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);margin-top:19px}
+.notes dt:first-child{margin-top:0}
+.notes dd{margin:6px 0 0;font-size:14px;color:var(--dim);line-height:1.55}
+.notes dd b{color:var(--ink);font-weight:500}
+.cost{border-left:2px solid var(--line2);padding-left:13px;margin-top:20px;font-size:13.4px;color:var(--faint);font-style:italic}
+
+/* phone chrome */
+.phw{flex:1 1 330px;max-width:390px;min-width:0;margin:0}
+.phone{border-radius:22px;overflow:hidden;border:1px solid var(--line2);box-shadow:0 30px 70px -30px #000;
+  background:var(--bg);width:100%}
+.notch{height:26px;background:#000;display:flex;align-items:center;justify-content:center}
+.notch i{width:56px;height:5px;border-radius:99px;background:#1a1a20}
+.scr{position:relative;overflow:hidden}
+.bl{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.16em;color:#4a445c;text-align:center;
+  margin:10px 0 0;text-transform:uppercase;line-height:1.6}
+.bl b{color:var(--gold);font-weight:700;display:block;margin-bottom:3px}
+
+/* =====================================================================
+   THE MASTHEAD — the shipping component set.
+   Touch: every interactive element has a >=44px hit box. Visual size is
+   allowed to be smaller; the hit box is not.
+   ===================================================================== */
+.m-bar{display:flex;align-items:center;gap:10px;padding:0 12px;height:52px;flex:none}
+.m-bar .bk{width:44px;height:44px;margin-left:-9px;border-radius:99px;border:0;background:transparent;
+  color:var(--dim);font-size:19px;line-height:1;display:grid;place-items:center;flex:none}
+.m-bar .lb{font-family:'Geist Mono',monospace;font-size:var(--t-data);letter-spacing:.19em;
+  text-transform:uppercase;color:var(--dim);font-weight:700}
+.m-bar .rt{margin-left:auto;font-family:'Geist Mono',monospace;font-size:var(--t-micro);
+  letter-spacing:.13em;color:#4b4560;text-transform:uppercase}
+
+.m-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;
+  padding:var(--s1) 16px var(--s2)}
+.m-streak{display:flex;align-items:baseline;gap:8px;line-height:1}
+.m-streak b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:var(--t-display);
+  letter-spacing:-.055em;color:#f6f1e8;line-height:.84}
+.m-streak b.word{font-size:var(--t-word);letter-spacing:-.04em}
+.m-streak em{font-style:normal;font-family:'Clash Display',sans-serif;font-weight:600;
+  font-size:var(--t-unit);letter-spacing:-.03em;color:var(--warm)}
+.m-streak.held b{color:#e6d6c4}
+.m-sub{font-family:'Geist Mono',monospace;font-size:var(--t-data);letter-spacing:.17em;
+  text-transform:uppercase;color:#6d5c3c;font-weight:700;margin-top:10px;line-height:1.5}
+.m-today{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.15em;
+  text-transform:uppercase;margin-top:7px;line-height:1.6}
+.m-today.live{color:var(--ember)}
+.m-today.held{color:var(--phos)}
+.m-today.plain{color:var(--faint)}          /* a broken gate is stated, never shouted */
+.m-today i{display:inline-block;width:5px;height:5px;border-radius:99px;margin-right:6px;
+  vertical-align:1px;background:currentColor}
+
+/* the top visual — tappable, 44px hit box guaranteed by padding */
+.m-ringwrap{background:none;border:0;padding:6px;display:block;position:relative}
+.m-ring{display:block;position:relative}
+.m-ring svg{display:block}
+
+.m-makeup{margin:0 16px var(--s2);border:1px solid rgba(255,107,44,.42);background:rgba(255,107,44,.075);
+  border-radius:14px;padding:11px 13px}
+.m-makeup .k{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.19em;
+  color:var(--hot);text-transform:uppercase;font-weight:700;display:flex;justify-content:space-between;gap:8px}
+.m-makeup .t{font-size:13px;color:#eccbb1;margin-top:6px;line-height:1.42}
+.m-makeup .t b{color:#ffdcc1;font-weight:500}
+.m-makeup .go{margin-top:10px;width:100%;min-height:44px;border-radius:99px;border:1px solid rgba(255,178,94,.5);
+  background:transparent;color:var(--hot);font-family:'Geist Mono',monospace;font-size:8.5px;
+  letter-spacing:.17em;font-weight:700}
+.m-makeup.final{border-color:rgba(255,178,94,.75);background:rgba(255,107,44,.13)}
+
+.m-mods{padding:0 16px;display:grid;gap:var(--s1)}
+.m-mods.two{grid-template-columns:1fr 1fr}
+.m-mod{border:1px solid var(--line2);border-radius:14px;background:var(--panel);padding:11px 12px;position:relative}
+.m-mod .top{display:flex;align-items:baseline;gap:8px}
+.m-mod .stt{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.2em;
+  text-transform:uppercase;color:#5f5872;font-weight:700}
+.m-mod .pay{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;font-weight:700;color:var(--gold)}
+.m-mod .ti{font-size:var(--t-mod);font-weight:500;margin-top:6px;line-height:1.25;color:var(--ink)}
+.m-mod .su{font-size:12px;color:var(--faint);margin-top:5px;line-height:1.4}
+.m-rail{height:5px;border-radius:99px;background:#191527;overflow:hidden;margin-top:9px;position:relative}
+.m-rail i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;
+  background:linear-gradient(90deg,#6b2400,var(--ember),#FFC98A);box-shadow:0 0 9px rgba(255,107,44,.45)}
+.m-mod .foot{display:flex;justify-content:space-between;gap:6px;font-family:'Geist Mono',monospace;
+  font-size:var(--t-micro);letter-spacing:.11em;color:#6d5c3c;margin-top:7px;text-transform:uppercase}
+.m-act{margin-top:9px;width:100%;min-height:44px;border:1px solid rgba(224,178,94,.45);background:transparent;
+  color:var(--gold);border-radius:99px;padding:10px;font-family:'Geist Mono',monospace;font-size:8.5px;
+  letter-spacing:.17em;font-weight:700}
+.m-mod.live{border-color:rgba(255,107,44,.42);background:linear-gradient(150deg,rgba(255,107,44,.09),rgba(255,107,44,.015))}
+.m-mod.live .stt{color:var(--ember)}
+.m-mod.claim{border-color:rgba(74,222,128,.45);background:linear-gradient(150deg,rgba(74,222,128,.1),rgba(74,222,128,.015))}
+.m-mod.claim .stt,.m-mod.claim .pay{color:var(--phos)}
+.m-mod.claim .m-act{border:0;background:linear-gradient(135deg,var(--phos),#2f9e5c);color:#062010;
+  font-family:'Satoshi',sans-serif;font-size:13.5px;letter-spacing:0;font-weight:700}
+.m-mod.offer .stt{color:var(--gold)}
+.m-mod.lock{opacity:.58;border-style:dashed}
+.m-ladder{display:flex;gap:4px;margin-top:8px}
+.m-ladder i{flex:1;height:3px;border-radius:99px;background:#241f33}
+.m-ladder i.on{background:var(--gold);box-shadow:0 0 7px rgba(224,178,94,.45)}
+/* a lapsed offer, and the empty slot. Neither is a box — a box implies something is owed. */
+.m-lapsed,.m-none{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.14em;
+  text-transform:uppercase;color:#4b4560;padding:13px 2px;line-height:1.7;border-top:1px solid var(--line)}
+.m-lapsed b{color:#6b6480;font-weight:700}
+
+.m-graph{padding:var(--s2) 16px 0}
+.m-graph .k{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;
+  font-size:var(--t-micro);letter-spacing:.18em;color:#3b3549;text-transform:uppercase;margin-bottom:9px}
+.m-graph .key{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.11em;
+  color:#3b3549;margin-top:8px;line-height:1.7;text-transform:uppercase}
+.m-empty{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.15em;
+  color:#3b3549;text-transform:uppercase;text-align:center;padding:22px 0 6px;line-height:1.8}
+
+.m-why{padding:var(--s2) 16px var(--s3);margin-top:var(--s1)}
+.m-why .r{border-top:1px solid var(--line);padding-top:13px;font-size:var(--t-body);color:var(--dim);line-height:1.5}
+.m-why .r b{color:var(--ink);font-weight:500}
+.m-why .c{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.16em;
+  color:#4b4560;text-transform:uppercase;margin-top:7px}
+
+/* ---------- the entry frame: the locked gauge strip he taps ---------- */
+.t-furnace{position:relative;padding:16px 16px 14px;background:linear-gradient(180deg,#0d0c10,#0a090d);
+  overflow:hidden;border-bottom:1px solid #1c1a22}
+.t-furnace::before{content:'';position:absolute;left:0;right:0;top:-40%;height:150%;
+  background:radial-gradient(62% 46% at 50% 62%,rgba(255,107,44,.2),rgba(179,42,0,.08) 44%,transparent 70%)}
+.t-stamp{position:relative;z-index:2;text-align:center;font-family:'Clash Display',sans-serif;font-weight:700;
+  font-size:19px;letter-spacing:.035em;line-height:1.14;color:#2a2530;
+  text-shadow:0 1px 0 rgba(255,150,80,.34),0 -1px 0 rgba(0,0,0,.85)}
+.t-stamp em{font-style:normal;color:#e8a86a;text-shadow:0 0 22px rgba(255,107,44,.62)}
+.t-gauges{display:grid;grid-template-columns:repeat(3,1fr);
+  background:linear-gradient(180deg,#0b0a0e,#08080b);border-bottom:1px solid var(--line)}
+.t-gg{padding:9px 4px;text-align:center;position:relative;border-right:1px solid #16151b;min-height:56px}
+.t-gg:last-child{border-right:0}
+.t-gg .val{font-family:'Geist Mono',monospace;font-size:12px;font-weight:700;color:#efe6da;line-height:1;margin-top:-7px}
+.t-gg .lb{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.12em;text-transform:uppercase;
+  color:#514a58;text-shadow:0 1px 0 rgba(255,150,80,.16);margin-top:5px}
+.t-gg.tap{outline:1px dashed rgba(224,178,94,.6);outline-offset:-3px;border-radius:8px}
+.t-rest{padding:14px 16px 22px}
+.t-rest .ln{height:9px;border-radius:99px;background:#12101c;margin-bottom:9px}
+.t-rest .ln.a{width:74%}.t-rest .ln.b{width:52%}.t-rest .ln.c{width:88%}.t-rest .ln.d{width:41%}
+
+/* the motion stage */
+.stage{position:relative}
+.stage .layerA,.stage .layerB{top:0;left:0;right:0}
+.stage .layerB{position:absolute}
+.fly{position:absolute;top:0;left:0;pointer-events:none;z-index:6;transform-origin:50% 50%}  /* top/left MUST be pinned: without them an absolutely positioned element resolves to its
+     STATIC flow position, which put the flying arc ~300px below where it belonged. */
+.mbtn{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+.mbtn button{background:transparent;border:1px solid var(--line2);color:var(--dim);border-radius:99px;
+  padding:11px 15px;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.14em;min-height:44px}
+.mbtn button:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ---------- interaction annotation ---------- */
+.hit{position:absolute;border:1px dashed rgba(74,222,128,.75);border-radius:10px;pointer-events:none;z-index:5}
+.hit::after{content:attr(data-t);position:absolute;left:0;top:-15px;font-family:'Geist Mono',monospace;
+  font-size:6.5px;letter-spacing:.12em;color:var(--phos);white-space:nowrap;text-transform:uppercase}
+.hit.below::after{top:auto;bottom:-15px}
+table.tap{width:100%;border-collapse:collapse;font-size:13.4px;margin-top:6px}
+table.tap th{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.17em;text-transform:uppercase;
+  color:var(--faint);text-align:left;padding:0 12px 9px 0;border-bottom:1px solid var(--line);font-weight:700}
+table.tap td{padding:10px 12px 10px 0;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+table.tap td.n{color:var(--ink);font-weight:500;white-space:nowrap}
+table.tap td.s{font-family:'Geist Mono',monospace;font-size:11px;color:var(--phos);white-space:nowrap}
+
+/* penance ladder study */
+.ladders{display:grid;gap:12px;max-width:420px}
+
+/* handoff */
+.ho{padding:52px 0 90px}
+.ho h2{font-size:27px;letter-spacing:-.03em;margin-bottom:16px}
+.ho h3{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--faint);margin:30px 0 10px;font-weight:700}
+.ho p,.ho li{color:var(--dim);font-size:14.6px;line-height:1.62;max-width:820px}
+.ho li{margin-bottom:10px}
+.ho b{color:var(--ink);font-weight:500}
+.ho code{font-family:'Geist Mono',monospace;font-size:12.5px;color:var(--warm);
+  overflow-wrap:anywhere;word-break:break-word}
+.ho .flag{border-left:2px solid var(--ember);padding-left:13px;margin:16px 0;max-width:820px}
+.ho .flag b{color:var(--hot)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <div class="kick">Burn the Boats · crew 2026-07-25 · agent 5 · round 3</div>
+  <h1>The Masthead, built out</h1>
+  <p>The composition is chosen. This round turns it into a screen that survives 91 days: <b>both vices in
+  full</b>, <b>every state a real user hits</b>, the interaction and touch targets made explicit, and one
+  considered motion moment on entry. Nothing here is a new idea — it is the same masthead, taken all the
+  way through.</p>
+  <p>Thirteen rendered frames. Sample state is unchanged from round 2 so nothing has to be re-learned:
+  <b>smoke — 6 days clean, best 11, gate 12:00</b> · <b>the dishwasher — 4 weeks at or under, best 4,
+  0 of 1 used</b>.</p>
+  <div class="quote">
+    “Personally I like the Masthead the most, so let’s go that direction. But let the agent know if it wants
+    to tweak a few things once it fully thinks about <b>how the page actually will look and function</b>.”
+  </div>
+  <nav class="toc">
+    <a href="#screen">The screen · both vices</a>
+    <a href="#motion">Entry &amp; motion</a>
+    <a href="#states">Every state</a>
+    <a href="#penance">The make-up ladder</a>
+    <a href="#tap">Interaction &amp; targets</a>
+    <a href="#handoff">Hand-off</a>
+  </nav>
+</header>
+
+<!-- ===================== 1 · THE SCREEN ===================== -->
+<section class="sec" id="screen">
+  <div class="sh"><div class="sn">01</div><div class="st">
+    <h2>The screen</h2>
+    <div class="sm">both vices · the shipping layout</div>
+    <p class="sl">The masthead in its ordinary, healthy state, for each vice. The layout is identical; only
+    the rule changes. Everything fits on one screen without scrolling — <b>the whole reason this composition
+    won</b> — and both frames measure under the 844px viewport.</p>
+  </div></div>
+  <div class="sbody">
+    <div class="stack">
+
+      <figure class="phw">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr" data-frame="smoke-live"></div></div>
+        <figcaption class="bl"><b>Smoke · gate live</b>09:42 · nothing logged · a challenge running</figcaption>
+      </figure>
+
+      <figure class="phw">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr" data-frame="dish-live"></div></div>
+        <figcaption class="bl"><b>The dishwasher · week running</b>Tuesday · 0 of 1 used · week-at-zero taken</figcaption>
+      </figure>
+
+    </div>
+    <dl class="notes">
+      <dt>What is on the screen</dt>
+      <dd>Masthead (streak + unit) · the ring · today’s fact in one line · the modules · the graph · one
+      reason. Six things, in that order, every time.</dd>
+      <dt>The ring, at 128px</dt>
+      <dd>Round 2 drew it at 112. Rendered and looked at, the gate tick and the now-hand were under 2px and
+      illegible. <b>128px is the smallest size where every mark on the ring survives</b>; the masthead still
+      clears 196px for type, which fits the longest streak the app can produce.</dd>
+      <dt>Today’s line</dt>
+      <dd>New in this round. Without it the screen never states <b>what happened today</b> — the single most
+      important fact on it. Ember when the rule is live, green when it has been kept, plain grey when it was
+      broken.</dd>
+      <dt>Both rules, one layout</dt>
+      <dd>The ring reads a day or a week. The graph plots a time against noon, or a count against the
+      allowance. The streak counts days or weeks. He learns the objects once.</dd>
+      <div class="cost">Measured on the render: 602px and 609px of an 844px viewport. Neither vice
+      scrolls, and the tallest state in the whole set — a second-level make-up, which carries the strip
+      <i>and</i> an open offer — still lands at 808px, inside the fold.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ===================== 2 · ENTRY & MOTION ===================== -->
+<section class="sec" id="motion">
+  <div class="sh"><div class="sn">02</div><div class="st">
+    <h2>Entry, and the one motion moment</h2>
+    <div class="sm">the gauge you tapped opens into the instrument</div>
+    <p class="sl">He arrives here by tapping a dial in the locked gauge strip. That dial is a <b>180° arc</b>;
+    the masthead ring is a <b>270° arc</b>. So the transition is not a fade — <b>the gauge unrolls</b>. The
+    arc he tapped stays almost exactly where it is on the glass, grows <b>2.8×</b>, and opens the last 90°
+    into the ring’s track; only then does the day’s ember arc sweep in behind it and the masthead type rise.
+    It barely travels — <b>59px right, 4px down</b> — and that is the point: <i>the small instrument becomes
+    the big one, in place.</i></p>
+  </div></div>
+  <div class="sbody">
+    <div class="stack">
+      <figure class="phw" style="flex-basis:390px">
+        <div class="phone"><div class="notch"><i></i></div>
+          <div class="scr stage" id="stage">
+            <div class="layerA" id="layerA">
+              <div class="t-furnace">
+                <div class="t-stamp">BURN THE <em>BOATS</em></div>
+              </div>
+              <div class="t-gauges">
+                <div class="t-gg"><div class="gd" data-mini="dish"></div><div class="val">4w</div><div class="lb">Dishwasher</div></div>
+                <div class="t-gg tap" id="tapGauge"><div class="gd" data-mini="smoke"></div><div class="val">6d</div><div class="lb">Smoke · 2h18</div></div>
+                <div class="t-gg"><div class="gd" data-mini="week"></div><div class="val">71%</div><div class="lb">This week</div></div>
+              </div>
+              <div class="t-rest">
+                <div class="ln a"></div><div class="ln b"></div><div class="ln c"></div>
+                <div class="ln d"></div><div class="ln b"></div><div class="ln a"></div>
+                <div class="ln c"></div><div class="ln d"></div>
+              </div>
+            </div>
+            <div class="layerB" id="layerB" style="opacity:0"><div data-frame="smoke-live" data-motion="1"></div></div>
+          </div>
+        </div>
+        <figcaption class="bl"><b>The entry</b>Tap the smoke gauge · the arc unrolls into the ring</figcaption>
+        <div class="mbtn">
+          <button type="button" id="playBtn">▶ Play the transition</button>
+          <button type="button" id="resetBtn">↺ Back to the strip</button>
+        </div>
+      </figure>
+    </div>
+    <dl class="notes">
+      <dt>The choreography</dt>
+      <dd><b>0–300ms</b> the strip screen falls back and dims · <b>60–620ms</b> the arc grows 2.8× and
+      unrolls from 180° to 270°, sliding 59px right into the masthead’s ring slot · <b>380ms</b> the ember
+      day-arc fades in behind it · <b>500ms</b> the flying arc hands over and disappears · <b>420ms</b> the
+      masthead figure rises 14px and fades up · <b>520ms+</b> the modules, graph and reason stagger in 60ms
+      apart. Total <b>≈820ms</b>, and it is interruptible.</dd>
+      <dt>Why this one and not five</dt>
+      <dd>It is the only transition that <b>carries information</b>: it tells him the thing he tapped and the
+      thing he is looking at are the same instrument. Everything else on the screen appears with a plain
+      stagger, which costs nothing and reads as calm.</dd>
+      <dt>The way out</dt>
+      <dd>The chevron reverses it — the ring rolls back down into the strip. iOS edge-swipe is free because
+      the app is hash-routed, and it should play the same reverse. <b>No modal, no dead-end.</b></dd>
+      <dt>Honesty note</dt>
+      <dd>The gauge arc and the ring arc encode <b>different things</b> — the strip dial is the streak, the
+      ring is the day. So the flying arc becomes the ring’s <b>track</b>, not its value; the value draws in
+      afterwards. Morphing one number into a different number would have looked better and lied.</dd>
+      <div class="cost">Reduced motion: the whole timeline collapses to a 120ms cross-fade. One flag.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ===================== 3 · EVERY STATE ===================== -->
+<section class="sec" id="states">
+  <div class="sh"><div class="sn">03</div><div class="st">
+    <h2>Every state</h2>
+    <div class="sm">the seven a real user hits in 91 days</div>
+    <p class="sl">A composition only has to look good once. A screen has to hold on the first morning, on the
+    best week, and on the worst day. These are rendered, not listed — and the rule they are all designed
+    against is the same one: <b>never render a wall of failure.</b></p>
+  </div></div>
+
+  <div class="stack" style="margin-bottom:30px">
+    <figure class="phw">
+      <div class="phone"><div class="notch"><i></i></div><div class="scr" data-frame="smoke-day1"></div></div>
+      <figcaption class="bl"><b>1 · Day one — smoke</b>No streak, no history, nothing earned</figcaption>
+    </figure>
+    <figure class="phw">
+      <div class="phone"><div class="notch"><i></i></div><div class="scr" data-frame="dish-day1"></div></div>
+      <figcaption class="bl"><b>1b · Day one — the dishwasher</b>The same treatment, the weekly rule</figcaption>
+    </figure>
+    <figure class="phw">
+      <div class="phone"><div class="notch"><i></i></div><div class="scr" data-frame="smoke-healthy"></div></div>
+      <figcaption class="bl"><b>2 · Healthy</b>11 days, afternoon, gate kept, a claim waiting</figcaption>
+    </figure>
+  </div>
+  <div class="sbody" style="margin-bottom:30px">
+    <dl class="notes" style="max-width:820px">
+      <dt>Day one — the state that decides whether there is a day two</dt>
+      <dd>The masthead <b>never shows a zero</b>. It reads <b>DAY 1</b> — a fact, not a score — and the
+      sub-line says exactly what earns the first one. The graph does not render an empty chart with nothing
+      in it; it renders one line saying it fills in as he goes. There is one module, offered, worth 35 XP,
+      and it is winnable this morning. <b>Nothing on this screen is red, faded, or accusatory, and there is
+      something to win within the hour.</b></dd>
+      <dt>Healthy</dt>
+      <dd>The whole screen goes green-ish only in the two places green is allowed: the kept-gate line and the
+      claimable module. The streak is the largest thing on the screen and the graph shows an unbroken top
+      rail. This is the reward state, and it is deliberately the plainest of the seven.</dd>
+    </dl>
+  </div>
+
+  <div class="stack" style="margin-bottom:30px">
+    <figure class="phw">
+      <div class="phone"><div class="notch"><i></i></div><div class="scr" data-frame="smoke-broke"></div></div>
+      <figcaption class="bl"><b>3 · Gate broken today</b>Logged 09:30 · honest, not punishing</figcaption>
+    </figure>
+    <figure class="phw">
+      <div class="phone"><div class="notch"><i></i></div><div class="scr" data-frame="smoke-makeup"></div></div>
+      <figcaption class="bl"><b>4 · A slip, make-up owed</b>Second level · mercy with a price</figcaption>
+    </figure>
+    <figure class="phw">
+      <div class="phone"><div class="notch"><i></i></div><div class="scr" data-frame="dish-over"></div></div>
+      <figcaption class="bl"><b>4b · The dishwasher, over</b>Third level · the final warning</figcaption>
+    </figure>
+  </div>
+  <div class="sbody" style="margin-bottom:30px">
+    <dl class="notes" style="max-width:820px">
+      <dt>The broken gate is stated in grey</dt>
+      <dd>This is the most important typographic decision in the round. The today-line for a broken gate is
+      <b>plain grey</b> — the same weight as any other fact on the screen. It does not turn red, it does not
+      turn ember, it does not grow. <b>Understatement is the mercy.</b> The consequence lives in the make-up
+      strip underneath, where it belongs, and the ring carries a single ember tick at 09:30 so the record is
+      still honest.</dd>
+      <dt>The streak does not move</dt>
+      <dd>It is marked <b>HELD</b> and keeps its number. That is his own mechanic and it is the reason a bad
+      morning does not become a lost month. The price is in the strip, and the strip escalates.</dd>
+      <dt>What the strip never does</dt>
+      <dd>It never counts. There is no “slip 2 of 3” tally anywhere — the escalation is legible from the
+      make-up itself getting harder. A running failure count under his vice’s name is exactly the wall this
+      whole product is built to avoid.</dd>
+      <div class="cost">Three frames, no red pixel in any of them. The palette does the work the layout used to.</div>
+    </dl>
+  </div>
+
+  <div class="stack" style="margin-bottom:30px">
+    <figure class="phw">
+      <div class="phone"><div class="notch"><i></i></div><div class="scr" data-frame="smoke-chal"></div></div>
+      <figcaption class="bl"><b>5 · A challenge live</b>Accepted 09:12 · counting down · a second rung offered</figcaption>
+    </figure>
+    <figure class="phw">
+      <div class="phone"><div class="notch"><i></i></div><div class="scr" data-frame="smoke-lapsed"></div></div>
+      <figcaption class="bl"><b>6 · A challenge missed</b>It costs nothing, and it says so once</figcaption>
+    </figure>
+    <figure class="phw">
+      <div class="phone"><div class="notch"><i></i></div><div class="scr" data-frame="smoke-none"></div></div>
+      <figcaption class="bl"><b>7 · Nothing on offer</b>The quiet state — no hole where a card should be</figcaption>
+    </figure>
+  </div>
+  <div class="sbody">
+    <dl class="notes" style="max-width:820px">
+      <dt>A missed challenge, in full</dt>
+      <dd>One low-contrast line above a hairline: <b>“Offer expired. Nothing lost.”</b> No card, no colour,
+      no XP change, no HP change, no streak change, and <b>no record of it anywhere else in the app</b>. It
+      is gone on the next open and the offer quietly returns to the pool tomorrow. A lapse that leaves a
+      trace is an obligation wearing a costume.</dd>
+      <dt>Why the empty state matters more than it looks</dt>
+      <dd>Round 2 drew the modules two-up. Thought all the way through, <b>most days will have one offer, and
+      some will have none</b> — so a fixed two-up grid spends its life with a hole in it. The modules now
+      reflow: two-up when there are two, full-width when there is one, and a single line of text when there
+      are none. <b>The screen is never asking him to fill an empty box.</b></dd>
+      <dt>The ceiling, enforced</dt>
+      <dd>Never more than two modules. If a third qualifies it waits until a slot frees. This is the
+      anti-nagging rule from round 1, now expressed as a hard layout constraint rather than an intention.</dd>
+    </dl>
+  </div>
+</section>
+
+<!-- ===================== 4 · THE MAKE-UP LADDER ===================== -->
+<section class="sec" id="penance">
+  <div class="sh"><div class="sn">04</div><div class="st">
+    <h2>The make-up ladder</h2>
+    <div class="sm">three levels · rendered, not described</div>
+    <p class="sl">His own escalation, in the strip that carries it. The wording moves from a receipt, to a
+    heavier receipt, to a genuine warning — but <b>the streak number above it never changes at any level</b>,
+    and no level is drawn in red.</p>
+  </div></div>
+  <div class="sbody">
+    <div class="ladders" id="ladders"></div>
+    <dl class="notes">
+      <dt>Level 1</dt>
+      <dd>Bible 15 minutes · six passages written out · a photograph as proof.</dd>
+      <dt>Level 2</dt>
+      <dd>All of level 1, plus a 90-minute workout, with proof for both.</dd>
+      <dt>Level 3</dt>
+      <dd>The final warning. The only frame in the whole set that is allowed to feel heavy — and it is still
+      amber, still keeps the streak, and still ends with a way through.</dd>
+      <dt>One thing the GM must not lose</dt>
+      <dd>The button says <b>“Log the make-up”</b>, not “Accept punishment”. He is paying a price he set for
+      himself. The voice matters as much as the mechanic.</dd>
+      <div class="cost">PROFILE §8c: the 90-minute workout at level 2 is un-gated by any injury or current
+      bodyweight question. Worth confirming before it can be handed to him for real.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ===================== 5 · INTERACTION ===================== -->
+<section class="sec" id="tap">
+  <div class="sh"><div class="sn">05</div><div class="st">
+    <h2>Interaction and touch targets</h2>
+    <div class="sm">what is tappable · what happens · how he gets out</div>
+    <p class="sl">Every interactive element on the masthead, drawn with its <b>real hit box</b>. Dashed green
+    is the touch target, not the visual. Nothing on this screen has a target under 44px, including the two
+    controls whose <i>visible</i> size is smaller than that.</p>
+  </div></div>
+  <div class="sbody">
+    <div class="stack">
+      <figure class="phw">
+        <div class="phone"><div class="notch"><i></i></div>
+          <div class="scr" style="position:relative">
+            <div data-frame="smoke-live" data-annot="1"></div>
+          </div>
+        </div>
+        <figcaption class="bl"><b>Touch targets</b>Every box drawn is ≥44px on its short side</figcaption>
+      </figure>
+      <div style="flex:1 1 330px;min-width:0">
+        <table class="tap">
+          <thead><tr><th>Target</th><th>Size</th><th>What happens</th></tr></thead>
+          <tbody>
+            <tr><td class="n">Chevron</td><td class="s">44×44</td><td>Back to Today. Plays the entry transition in reverse; the ring rolls down into the gauge strip.</td></tr>
+            <tr><td class="n">The ring</td><td class="s">140×140</td><td>Expands to the full-screen day view — the danger windows, every logged time, the ladder. The only place that detail lives.</td></tr>
+            <tr><td class="n">The masthead</td><td class="s">198×74</td><td>Nothing. Deliberately inert — it is the reward, not a control, and a tappable trophy invites fiddling.</td></tr>
+            <tr><td class="n">Module body</td><td class="s">full×≥86</td><td>Opens the challenge’s terms in a sheet: what it pays, when it closes, what happens if he lets it go.</td></tr>
+            <tr><td class="n">Module action</td><td class="s">full×44</td><td><b>Take it</b> accepts · <b>Claim</b> banks the XP · a live module has no button at all, so there is nothing to press by mistake.</td></tr>
+            <tr><td class="n">Make-up strip</td><td class="s">full×44</td><td>Opens the make-up with its proof upload. Never auto-dismisses.</td></tr>
+            <tr><td class="n">The graph</td><td class="s">—</td><td>Not tappable. It is a record, and a record that reacts invites him to poke at his own bad days.</td></tr>
+            <tr><td class="n">Edge swipe</td><td class="s">iOS</td><td>Free — the app is hash-routed. Same reverse transition.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <dl class="notes" style="max-width:820px;margin-top:22px">
+      <dt>Two controls that are smaller than they look</dt>
+      <dd>The chevron draws at 19px and the ring at 128px. Their <b>hit boxes</b> are 44 and 140. This is why
+      the top bar is 52px tall rather than the 44 it appears to need.</dd>
+      <dt>The one gesture that is not a tap</dt>
+      <dd>None. There are no swipes, no long-presses and no drags on this screen. Everything is a tap on a
+      thing he can see. That is not minimalism, it is the sixty-second rule.</dd>
+    </dl>
+  </div>
+</section>
+
+<!-- ===================== HAND-OFF ===================== -->
+<section class="ho" id="handoff">
+  <h2>Hand-off — agent 5, round 3</h2>
+
+  <h3>What I produced</h3>
+  <p><b>renditions/rend-vices-v3.html</b> — thirteen rendered frames: both vices in full masthead form, all
+  seven required states, the three-level make-up ladder, an annotated touch-target frame, and the entry
+  transition running live with a replay control. Rounds 1 and 2 are untouched. <b>index.html was not
+  modified.</b> XP values are unchanged from round 1: +35 / +60 / +120 / +180 / +400 · +90 / +250.</p>
+
+  <h3>The tweaks I made, and why each one was forced by function</h3>
+  <ol>
+    <li><b>The ring went from 112px to 128px.</b> At 112 the gate tick, the now-hand and the danger bands
+    rendered under 2px and were illegible on a screenshot at 3× — I looked, and they were noise. 128 is the
+    smallest size at which every mark on the ring survives. It costs 16px of masthead width and the type
+    still clears 196px, which fits the longest streak the app can produce (“<b>32 weeks</b>”).</li>
+    <li><b>I added a today-line to the masthead.</b> Round 2’s head said how long the streak was and nothing
+    about <i>today</i> — which is the fact he opens the screen for. One mono line under the sub: gate live,
+    gate held, gate broken, or “the gate starts today”. It is the only genuinely new element in this round.</li>
+    <li><b>The modules now reflow.</b> Two-up when there are two offers, <b>full-width when there is one</b>,
+    and a single line of type when there are none. A fixed two-up grid spends most of its life with a hole
+    in it, and an empty card reads as something owed.</li>
+    <li><b>Day one shows “DAY 1”, never “0 days”.</b> A zero in 64px display type on the first morning is
+    precisely the wall of failure, before he has even had a chance. The figure is replaced by a fact.</li>
+    <li><b>The display step gained a second optical size</b> — 64px for figures, 44px for words. “DAY 1” at
+    64 overflows the 198px masthead column; at 44 it has the same optical weight as “6” at 64. This is a
+    documented pair, not a break in the scale.</li>
+    <li><b>The graph gained an empty state.</b> One centred line instead of an axis with nothing on it.</li>
+    <li><b>A broken gate is set in plain grey, not in ember.</b> Round 2 would have coloured it as “live and
+    at risk”. Thought through, colouring the worst line on the screen is the opposite of what this product
+    needs — the consequence belongs in the make-up strip, and the statement belongs in the same grey as
+    every other fact. <b>Understatement is the mercy.</b></li>
+    <li><b>The top bar is 52px, not 44.</b> Required to give a 19px chevron a 44px hit box without crowding
+    the label.</li>
+    <li><b>The graph gained a fourth mark: a hollow dashed ring for today.</b> Rendering the live state
+    exposed it — at 09:42 nothing has been logged, and drawing today as a filled green “clean all day” dot
+    claims a result the day has not produced yet. Today is now drawn hollow until it resolves.</li>
+    <li><b>The smoke streak counts DAYS THE GATE HELD, not fully clean days.</b> This is the largest change
+    in the round and the today-line is what exposed it: a masthead reading “6 days clean” directly above a
+    line reading “logged 14:40 today” is a contradiction, and round 2 only got away with it because it never
+    stated what happened today. His rule is <i>nothing before 12:00</i>, so the streak that means anything is
+    the run of days that rule held. Fully-clean days still show — they are the green dots, and they are what
+    the 24h and 32h challenges are made of. <b>Every chart in this file was rebuilt so the dots agree with
+    the number above them.</b></li>
+  </ol>
+
+  <h3>What I was tempted to change and deliberately did not</h3>
+  <ul>
+    <li><b>The horizontal module rail from The Instrument.</b> It is a better container for three offers and
+    I wanted it. It is also a different composition’s idea, and the reflow above solves the real problem
+    (usually one offer, sometimes none) without importing it. He chose the Masthead.</li>
+    <li><b>Making the masthead tappable.</b> Every other big number in this app opens something. This one
+    should not — it is the reward, and a tappable trophy invites fiddling on exactly the days he should be
+    closing the app and going to work.</li>
+    <li><b>Polishing the graph.</b> It could carry a rolling average, a best-streak marker, week dividers. He
+    called it “rudimentary but a cool little style”, which is a compliment about restraint. It has been made
+    <i>consistent</i> across both vices and otherwise left alone.</li>
+    <li><b>A second motion moment on the modules.</b> A claim animation would be satisfying. One considered
+    transition was the brief and the entry is the one that carries meaning.</li>
+    <li><b>Colouring the streak green when it is long.</b> Green is reserved for banked, past-tense things.
+    A running streak is not banked. Holding that line is most of why the palette still reads as one system.</li>
+  </ul>
+
+  <h3>What will be awkward when the GM integrates this into index.html</h3>
+  <div class="flag">
+    <p><b>1 · The shipped slip logic contradicts the shipped copy — and this design sides with the copy.</b>
+    In <code>logSlip()</code> the toast says <i>“Streak held. You owe a make-up.”</i> while
+    <code>logSmoked()</code> two functions above sets <code>S.vices.smoke.cleanStreak=0</code> when the gate
+    breaks. So today the streak is both held and wiped. Every frame here shows it <b>held</b>, marked
+    <code>HELD</code>, with the price in the strip — because that is his stated mechanic and the crew’s law
+    #3. <b>This is a behaviour change in the engine, not a styling change</b>, and it needs the owner’s nod
+    before it ships. If he wants the wipe kept, the masthead needs a different answer for the broken-gate
+    state and I would want to design it rather than have it fall out of an edit.</p>
+    <p><b>1b · The engine stores the wrong streak for the rule it enforces.</b>
+    <code>S.vices.smoke.cleanStreak</code> is written by <code>viceClean()</code>, which counts days he
+    logged as <i>completely clean</i> — but the rule the app actually gates on is <i>nothing before
+    12:00</i>. So a day where he held the gate and smoked at 2 PM does not extend the streak the masthead
+    is built to show. The screen needs a <b>gate-held streak</b> derived from <code>day().smoked.at</code>
+    versus <code>vices.smoke.gate</code>, with the fully-clean count kept alongside it for the 24h/32h
+    ladder. Both numbers already exist in the data; only the streak derivation is missing.</p>
+    <p><b>2 · The vice screen is currently a bottom sheet, not a view.</b> <code>openVice()</code> calls
+    <code>sheet(...)</code>. The masthead is a full screen with its own top bar and back path, so it wants to
+    be a fourth destination in <code>route()</code> alongside today/push/bank/record — otherwise the entry
+    transition has nowhere to run and iOS edge-swipe does not work. That is a router change, and it is the
+    single biggest integration cost in this round.</p>
+    <p><b>3 · The masthead needs a streak the engine does not currently store.</b> The graph plots the
+    <b>time of first use</b> per day; <code>day().smoked</code> stores exactly that (<code>{at:'HH:MM'}</code>),
+    so the smoke graph is free. The dishwasher graph needs a <b>per-week count history</b>, and
+    <code>rollDishWeek()</code> currently throws the count away when it rolls the week. One line to keep it,
+    but it must be added before the graph has anything to draw.</p>
+    <p><b>4 · The gauge strip is locked, and the entry transition touches it.</b> Nothing about the strip’s
+    design changes — but the transition needs the tapped dial’s bounding rect at the moment of the tap, so
+    <code>openVice</code> has to pass it through. That is additive and does not alter a single pixel of the
+    locked strip, which I assume is inside the spirit of the lock. <b>Flagging it rather than assuming.</b></p>
+    <p><b>5 · The gauge arc still overstates its own number.</b> Carried from round 1 and still true:
+    <code>dial()</code> uses <code>Math.PI*21</code> as the dasharray for an arc of radius 19, so 50% draws
+    as about 55%. If the entry transition flies that arc into the masthead ring, the two will visibly
+    disagree at the hand-off frame unless it is fixed. <b>This round gives that old bug a new way to be
+    seen.</b></p>
+    <p><b>6 · <code>viceClean('smoke')</code> can still be tapped before noon</b>, banking a clean day at
+    9 AM that the 11 AM gate break then contradicts. The masthead has no equivalent button — the clean day
+    settles at close-out — so integrating this screen is a natural moment to retire it.</p>
+  </div>
+
+  <h3>Still-open questions this design inherits</h3>
+  <ul>
+    <li><b>The waking day is hard-coded 05:00–23:00</b> in the ring. PROFILE §8c lists his actual sleep hours
+    as unknown. The ring is wrong at both ends if that is off, and it is the most visible element on the
+    screen.</li>
+    <li><b>Level 2’s 90-minute workout is un-gated</b> by current bodyweight or any injury — also PROFILE
+    §8c. It is rendered here because it is his design, but it should not be handed to him for real until
+    that is answered.</li>
+    <li><b>The 32-hour rung has no defined clock.</b> 24 hours clean is unambiguous; 32 hours crosses a
+    sleep boundary and a noon gate, and the app will need to decide whether the count runs from the last log
+    or from midnight. Not a design question — an engine one — but the module cannot display a truthful
+    countdown until it is settled.</li>
+  </ul>
+</section>
+
+</div>
+
+<script src="../lib/gsap/gsap.min.js"></script>
+<script>
+/* =====================================================================
+   THE RING — one geometry, two rules. 270 degrees, the rule at the crown.
+   ===================================================================== */
+var RING = (function(){
+  var DAY_A = 300, DAY_B = 1380, SPAN = DAY_B - DAY_A;      /* 05:00 -> 23:00 */
+
+  function geo(SZ){
+    var R = SZ * 0.379, SW = Math.max(7, SZ * 0.049);
+    return { C: SZ / 2, R: R, SW: SW };
+  }
+  function ang(t){ return 270 + ((t - 720) / SPAN) * 270 }
+  function pt(C, r, a){ var v = a * Math.PI / 180; return [C + r * Math.cos(v), C + r * Math.sin(v)] }
+  function arcD(C, r, a0, a1){
+    var p0 = pt(C, r, a0), p1 = pt(C, r, a1), big = (a1 - a0) > 180 ? 1 : 0;
+    return 'M' + p0[0].toFixed(2) + ' ' + p0[1].toFixed(2) + ' A ' + r.toFixed(2) + ' ' + r.toFixed(2) +
+           ' 0 ' + big + ' 1 ' + p1[0].toFixed(2) + ' ' + p1[1].toFixed(2);
+  }
+  function stroke(d, col, w, cap, extra){
+    return '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="' + w.toFixed(2) +
+      '" stroke-linecap="' + (cap || 'round') + '"' + (extra || '') + '/>';
+  }
+  function tick(C, R, a, len, col, w){
+    var p0 = pt(C, R - len / 2, a), p1 = pt(C, R + len / 2, a);
+    return '<line x1="' + p0[0].toFixed(1) + '" y1="' + p0[1].toFixed(1) + '" x2="' + p1[0].toFixed(1) +
+      '" y2="' + p1[1].toFixed(1) + '" stroke="' + col + '" stroke-width="' + w.toFixed(1) +
+      '" stroke-linecap="round"/>';
+  }
+
+  /* mode 'day'  : now (minutes), logAt (minutes|null), empty (day one -> no history but a live day)
+     mode 'week' : held (days elapsed 0-7), used (allowance spent) */
+  function build(SZ, mode, o){
+    o = o || {};
+    var g = geo(SZ), C = g.C, R = g.R, SW = g.SW, s = '';
+    if (mode === 'week'){
+      var names = ['M','T','W','T','F','S','S'], held = o.held == null ? 2 : o.held, GAP = 3.2;
+      for (var i = 0; i < 7; i++){
+        var a0 = 135 + i * (270 / 7) + GAP, a1 = 135 + (i + 1) * (270 / 7) - GAP;
+        s += stroke(arcD(C, R, a0, a1), i < held ? '#FF6B2C' : '#231f31', SW, 'round',
+          i < held ? ' style="filter:drop-shadow(0 0 6px rgba(255,107,44,.55))"' : '');
+      }
+      /* the rule at the crown: allowance tokens, gold when unspent, hollow when used */
+      var tr = Math.max(6.5, SZ * 0.055), pc = pt(C, R, 270), spent = !!o.used;
+      s += '<circle cx="' + pc[0].toFixed(1) + '" cy="' + pc[1].toFixed(1) + '" r="' + tr.toFixed(1) +
+        '" fill="#0b0912" stroke="' + (spent ? '#4a4560' : '#E0B25E') + '" stroke-width="' +
+        Math.max(2, SZ * 0.017).toFixed(1) + '"' +
+        (spent ? '' : ' style="filter:drop-shadow(0 0 6px rgba(224,178,94,.6))"') + '/>' +
+        '<text x="' + pc[0].toFixed(1) + '" y="' + (pc[1] + tr * 0.37).toFixed(1) + '" fill="' +
+        (spent ? '#4a4560' : '#E0B25E') + '" font-family="Geist Mono, monospace" font-weight="700" ' +
+        'font-size="' + (tr * 1.06).toFixed(1) + '" text-anchor="middle">' + (spent ? '0' : '1') + '</text>';
+    } else {
+      var now = o.now == null ? 582 : o.now;
+      s += stroke(arcD(C, R, ang(DAY_A), ang(DAY_B)), '#171420', SW);
+      [[390, 480], [780, 870], [1290, 1380]].forEach(function(w){    /* his named danger windows */
+        s += stroke(arcD(C, R, ang(w[0]), ang(w[1])), '#5a2a10', SW, 'butt');
+      });
+      s += stroke(arcD(C, R, ang(DAY_A), ang(now)), '#FF6B2C', SW, 'round',
+        ' style="filter:drop-shadow(0 0 6px rgba(255,107,44,.7))"');
+      s += tick(C, R, ang(720), SW * 2.3, '#E0B25E', Math.max(2.4, SZ * 0.021));   /* the gate */
+      if (o.flag) s += tick(C, R, ang(o.flag), SW * 1.7, '#4ADE80', Math.max(2, SZ * 0.017));
+      s += tick(C, R, ang(now), SW * 1.6, '#FFF4E2', Math.max(1.9, SZ * 0.015));   /* now */
+      if (o.logAt != null){                                                        /* what actually happened */
+        var pl = pt(C, R, ang(o.logAt));
+        s += '<circle cx="' + pl[0].toFixed(1) + '" cy="' + pl[1].toFixed(1) + '" r="' +
+          Math.max(3.2, SZ * 0.030).toFixed(1) + '" fill="#FFF4E2" stroke="#7a2c05" stroke-width="1.8"/>';
+      }
+    }
+    return '<svg width="' + SZ + '" height="' + SZ + '" viewBox="0 0 ' + SZ + ' ' + SZ + '" aria-hidden="true">' + s + '</svg>';
+  }
+  return { build: build, geo: geo, ang: ang, pt: pt, arcD: arcD, stroke: stroke, DAY_A: DAY_A };
+})();
+
+/* =====================================================================
+   THE GRAPH — kept rudimentary. A DOT placed against a LINE.
+   ===================================================================== */
+var GRAPH = (function(){
+  var W = 300, H = 74, PADT = 8, PADB = 16, IN = H - PADT - PADB;
+  function base(lineY){
+    return '<line x1="0" y1="' + PADT + '" x2="' + W + '" y2="' + PADT + '" stroke="#1e1a2b" stroke-width="1"/>' +
+      '<line x1="0" y1="' + lineY.toFixed(1) + '" x2="' + W + '" y2="' + lineY.toFixed(1) +
+      '" stroke="#3a3350" stroke-width="1" stroke-dasharray="3 4"/>';
+  }
+  function ends(l, r){
+    return '<text x="14" y="' + (H - 3) + '" fill="#3b3549" font-family="Geist Mono, monospace" ' +
+      'font-size="7" letter-spacing="1.2">' + l + '</text>' +
+      '<text x="' + (W - 14) + '" y="' + (H - 3) + '" fill="#3b3549" font-family="Geist Mono, monospace" ' +
+      'font-size="7" letter-spacing="1.2" text-anchor="end">' + r + '</text>';
+  }
+  /* an OPEN day — today, not yet resolved. A hollow mark, because a filled one would
+     be claiming a result the day has not produced. */
+  function open(x, y){
+    return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="4" fill="none" ' +
+      'stroke="#8b8398" stroke-width="1.6" stroke-dasharray="2.4 2.2"/>';
+  }
+  function dot(x, y, col, ring){
+    return (ring ? '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="7.5" fill="none" stroke="' +
+      col + '" stroke-opacity=".3"/>' : '') +
+      '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (ring ? 4 : 3.6) + '" fill="' + col + '"' +
+      (ring ? ' style="filter:drop-shadow(0 0 5px rgba(74,222,128,.6))"' : '') + '/>';
+  }
+  function stem(x, y, col){
+    return '<line x1="' + x.toFixed(1) + '" y1="' + PADT + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) +
+      '" stroke="' + col + '" stroke-width="1.5"/>';
+  }
+  function wrap(s, key){
+    return '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true">' + s + '</svg>' +
+      '<div class="key">' + key + '</div>';
+  }
+  function day(days){
+    var GATE = 720, LO = 600, HI = 1320;
+    function y(m){ return PADT + IN * (1 - (Math.max(LO, Math.min(HI, m)) - LO) / (HI - LO)) }
+    var s = base(y(GATE));
+    days.forEach(function(m, i){
+      var x = 14 + i * ((W - 28) / (days.length - 1));
+      if (m === 'open'){ s += open(x, PADT); return }
+      if (m === null){ s += dot(x, PADT, '#4ADE80', true); return }
+      var yy = y(m), held = m >= GATE;
+      s += stem(x, yy, held ? '#2a2438' : '#3a2418') + dot(x, yy, held ? '#E0B25E' : '#FF6B2C');
+    });
+    return wrap(s + ends('14 DAYS AGO', 'TODAY'),
+      'GREEN — CLEAN ALL DAY · GOLD — HELD PAST NOON · EMBER — BEFORE NOON · HOLLOW — TODAY, STILL RUNNING<br>' +
+      'THE DOT IS THE TIME. 11:40 IS NOT 7 AM, AND THE CHART SAYS SO.');
+  }
+  function week(weeks){
+    var MAXU = 3;
+    function y(n){ return PADT + IN * (Math.min(MAXU, n) / MAXU) }
+    var s = base(y(1));
+    weeks.forEach(function(n, i){
+      var x = 14 + i * ((W - 28) / (weeks.length - 1)), yy = y(n);
+      if (n === 0){ s += dot(x, PADT, '#4ADE80', true); return }
+      s += stem(x, yy, n > 1 ? '#3a2418' : '#2a2438') + dot(x, yy, n > 1 ? '#FF6B2C' : '#E0B25E');
+    });
+    return wrap(s + ends('12 WEEKS AGO', 'THIS WEEK'),
+      'GREEN — A ZERO WEEK · GOLD — AT THE ALLOWANCE · EMBER — OVER IT<br>' +
+      'AN EMBER WEEK IS ONE YOU MADE UP FOR. IT STAYS ON THE CHART AND IT IS NOT RED.');
+  }
+  return { day: day, week: week };
+})();
+
+/* =====================================================================
+   THE FRAMES. Every state is data; the masthead renders it.
+   ===================================================================== */
+(function(){
+  /* Every dataset below is built so the chart AGREES with the streak the masthead claims.
+     The smoke streak counts DAYS THE GATE HELD — that is the rule he set — so green (clean
+     all day) and gold (held past noon) both extend it, and only ember breaks it. */
+  var SMOKE_LIVE    = [820, null, 760, 905, 700, 940, 690, null, null, null, null, null, null, 'open'];
+  var SMOKE_LOGGED  = [820, null, 760, 905, 700, 940, 690, null, null, null, null, null, null, 880];
+  var SMOKE_BROKE   = [820, null, 760, 905, 700, 940, 690, null, null, null, null, null, null, 570];
+  var SMOKE_HEALTHY = [null, 780, 690, null, 810, null, null, null, null, null, null, null, null, 860];
+  var DISH12    = [1, 0, 2, 1, 1, 0, 2, 1, 0, 1, 1, 0];
+  var DISH_OVER = [0, 1, 1, 0, 2, 1, 2, 1, 0, 1, 1, 2];
+
+  var MAKEUP = [
+    { k: 'You owe a make-up', t: '<b>Bible 15 minutes · write out 6 passages · photograph them.</b> ' +
+        'Nothing was taken from you. There is a price, and it goes up each time.' },
+    { k: 'You owe a make-up · second', t: '<b>A 90-minute workout, on top of 30 minutes of Bible and the ' +
+        'passages.</b> Proof for both. The streak is still yours.' },
+    { k: 'Final warning', t: '<b>The next one takes the streak.</b> This make-up is significantly harder — ' +
+        'and it is still a way through, which is more than the streak owed you.' }
+  ];
+
+  function mod(o){
+    var h = '<div class="m-mod ' + (o.cls || '') + '">' +
+      '<div class="top"><span class="stt">' + o.st + '</span>' +
+      (o.pay ? '<span class="pay">' + o.pay + '</span>' : '') + '</div>' +
+      '<div class="ti">' + o.ti + '</div>';
+    if (o.rail != null) h += '<div class="m-rail"><i style="width:' + o.rail + '%"></i></div>';
+    if (o.su) h += '<div class="su">' + o.su + '</div>';
+    if (o.ladder) h += '<div class="m-ladder">' +
+      [1,2,3].map(function(n){ return '<i class="' + (n <= o.ladder ? 'on' : '') + '"></i>' }).join('') + '</div>';
+    if (o.foot) h += '<div class="foot"><span>' + o.foot[0] + '</span><span>' + o.foot[1] + '</span></div>';
+    if (o.act) h += '<button class="m-act" type="button">' + o.act + '</button>';
+    return h + '</div>';
+  }
+  function makeup(level){
+    var m = MAKEUP[level - 1];
+    return '<div class="m-makeup' + (level === 3 ? ' final' : '') + '">' +
+      '<div class="k"><span>' + m.k + '</span><span>Streak intact</span></div>' +
+      '<div class="t">' + m.t + '</div>' +
+      '<button class="go" type="button">LOG THE MAKE-UP</button></div>';
+  }
+
+  function render(f, opts){
+    opts = opts || {};
+    var h = '';
+    h += '<div class="m-bar"><button class="bk" type="button" aria-label="Back">‹</button>' +
+         '<span class="lb">' + f.name + '</span><span class="rt">' + f.when + '</span></div>';
+
+    h += '<div class="m-head"><div>' +
+         '<div class="m-streak' + (f.held ? ' held' : '') + '">' +
+           '<b' + (f.word ? ' class="word"' : '') + '>' + f.big + '</b>' +
+           (f.unit ? '<em>' + f.unit + '</em>' : '') +
+           (f.held ? '<em style="font-size:13px;color:var(--hot);letter-spacing:.14em;' +
+             'font-family:\'Geist Mono\',monospace;font-weight:700">HELD</em>' : '') +
+         '</div>' +
+         '<div class="m-sub">' + f.sub + '</div>' +
+         '<div class="m-today ' + f.todayCls + '"><i></i>' + f.today + '</div>' +
+         '</div>' +
+         '<button class="m-ringwrap" type="button" aria-label="Open the full day view">' +
+           '<span class="m-ring">' + RING.build(128, f.ring, f.ringOpts || {}) + '</span>' +
+         '</button></div>';
+
+    if (f.makeup) h += makeup(f.makeup);
+
+    if (f.mods && f.mods.length){
+      h += '<div class="m-mods' + (f.mods.length > 1 ? ' two' : '') + '">' + f.mods.map(mod).join('') + '</div>';
+    }
+    if (f.lapsed) h += '<div class="m-mods"><div class="m-lapsed"><b>Offer expired. Nothing lost.</b><br>' +
+      'It comes back tomorrow. Nothing was recorded.</div></div>';
+    if (f.none) h += '<div class="m-mods"><div class="m-none">Nothing on offer right now.<br>' +
+      'The next one opens at 06:00.</div></div>';
+
+    h += '<div class="m-graph"><div class="k"><span>' + f.gk[0] + '</span><span>' + f.gk[1] + '</span></div>' +
+      (f.graphEmpty
+        ? '<div class="m-empty">Nothing recorded yet.<br>This fills in as you go.</div>'
+        : (f.ring === 'week' ? GRAPH.week(f.data) : GRAPH.day(f.data))) + '</div>';
+
+    h += '<div class="m-why"><div class="r">' + f.why + '</div><div class="c">' + f.cite + '</div></div>';
+    return h;
+  }
+
+  var FRAMES = {
+    /* ---- the shipping state, both vices ---- */
+    'smoke-live': {
+      name: 'Smoke', when: '09:42 · Tue', big: '6', unit: 'days',
+      sub: 'gate held · best ever 11', today: 'Gate live · 2h 18m to noon', todayCls: 'live',
+      ring: 'day', ringOpts: { now: 582, flag: 840 },
+      mods: [
+        { cls: 'live', st: 'Live', pay: '+35 XP', ti: 'Hold to 14:00', rail: 63, foot: ['4h 18m', 'Taken 09:12'] },
+        { cls: 'offer', st: 'Tonight', pay: '+120 XP', ti: '24 hours clean', ladder: 2,
+          foot: ['2 of 3 to 32h', 'Optional'] }
+      ],
+      gk: ['The last fourteen days', 'vs the gate'], data: SMOKE_LIVE,
+      why: 'The first ninety minutes are the hardest — and they are <b>the same ninety minutes the market is open.</b>',
+      cite: 'Reason · rotates each open'
+    },
+    'dish-live': {
+      name: 'The Dishwasher', when: 'Tue · week 18', big: '4', unit: 'weeks',
+      sub: 'at or under · best ever 4', today: '0 of 1 used · 5 days to hold', todayCls: 'live',
+      ring: 'week', ringOpts: { held: 2, used: false },
+      mods: [
+        { cls: 'live', st: 'Live', pay: '+250 XP', ti: 'A week at zero', rail: 29, foot: ['2 of 7 days', 'Through Sun'] },
+        { cls: 'offer', st: 'The on-ramp', pay: '+90 XP', ti: 'Hold to Thursday',
+          su: 'Cannot run alongside the week at zero.' }
+      ],
+      gk: ['The last twelve weeks', 'vs the allowance'], data: DISH12,
+      why: 'Once a week is the deal you made with yourself. <b>Nobody else is checking.</b>',
+      cite: 'Reason · rotates each open'
+    },
+
+    /* ---- 1 · day one ---- */
+    'smoke-day1': {
+      name: 'Smoke', when: '09:42 · Mon', big: 'DAY 1', word: true, unit: '',
+      sub: 'hold the gate and day one counts',
+      today: 'Gate live · 2h 18m to noon', todayCls: 'live',
+      ring: 'day', ringOpts: { now: 582 },
+      mods: [{ cls: 'offer', st: 'Offered · closes at 12:00', pay: '+35 XP', ti: 'Hold until 2 PM today',
+        su: 'Optional. If you let it go, nothing happens at all.', act: 'TAKE IT' }],
+      gk: ['Your record', 'starts today'], graphEmpty: true,
+      why: 'Burn the boats. <b>What is the millionaire version of yourself doing right now?</b>',
+      cite: 'Reason · rotates each open'
+    },
+    'dish-day1': {
+      name: 'The Dishwasher', when: 'Mon · week 1', big: 'WEEK 1', word: true, unit: '',
+      sub: 'the streak starts when this week closes at or under',
+      today: '0 of 1 used · 7 days to hold', todayCls: 'live',
+      ring: 'week', ringOpts: { held: 0, used: false },
+      mods: [{ cls: 'offer', st: 'Monday offer · closes tomorrow', pay: '+250 XP', ti: 'A week at zero',
+        su: 'The big one. Optional, and letting it go costs nothing.', act: 'TAKE IT' }],
+      gk: ['Your record', 'starts this week'], graphEmpty: true,
+      why: 'Once a week is the deal you made with yourself. <b>Nobody else is checking.</b>',
+      cite: 'Reason · rotates each open'
+    },
+
+    /* ---- 2 · healthy ---- */
+    'smoke-healthy': {
+      name: 'Smoke', when: '16:20 · Fri', big: '11', unit: 'days',
+      sub: 'gate held · your best ever', today: 'Held today · logged 14:20', todayCls: 'held',
+      ring: 'day', ringOpts: { now: 980, logAt: 860, flag: 840 },
+      mods: [
+        { cls: 'claim', st: 'Ready to claim', pay: '+35 XP', ti: 'You held it until 2 PM', act: 'Claim +35 XP' },
+        { cls: 'offer', st: 'Tonight', pay: '+180 XP', ti: '32 hours clean', ladder: 3,
+          foot: ['Rung 3 unlocked', 'Optional'] }
+      ],
+      gk: ['The last fourteen days', 'vs the gate'], data: SMOKE_HEALTHY,
+      why: 'You are eleven days into something you have never done. <b>Do not negotiate with it today.</b>',
+      cite: 'Reason · rotates each open'
+    },
+
+    /* ---- 3 · gate broken today ---- */
+    'smoke-broke': {
+      name: 'Smoke', when: '11:05 · Wed', big: '6', unit: 'days', held: true,
+      sub: 'gate held · best ever 11', today: 'Logged 09:30 · before the gate', todayCls: 'plain',
+      ring: 'day', ringOpts: { now: 665, logAt: 570 },
+      makeup: 1,
+      none: true,
+      gk: ['The last fourteen days', 'vs the gate'], data: SMOKE_BROKE,
+      why: 'It was one morning. <b>The streak is still yours</b> — the price is above, and tomorrow the gate is new.',
+      cite: 'Reason · rotates each open'
+    },
+
+    /* ---- 4 · slip, make-up owed (second level) ---- */
+    'smoke-makeup': {
+      name: 'Smoke', when: '20:14 · Thu', big: '6', unit: 'days', held: true,
+      sub: 'gate held · best ever 11', today: 'Logged 09:30 · make-up owed', todayCls: 'plain',
+      ring: 'day', ringOpts: { now: 1214, logAt: 570 },
+      makeup: 2,
+      mods: [{ cls: 'offer', st: 'Still open tonight', pay: '+120 XP', ti: '24 hours clean from now',
+        su: 'The make-up and the challenge are separate. Owing one does not close the other.', act: 'TAKE IT' }],
+      gk: ['The last fourteen days', 'vs the gate'], data: SMOKE_BROKE,
+      why: '“I discipline my body and keep it under control.”', cite: '1 Corinthians 9:27'
+    },
+
+    /* ---- 4b · the dishwasher, over the allowance, final warning ---- */
+    'dish-over': {
+      name: 'The Dishwasher', when: 'Sat · week 19', big: '4', unit: 'weeks', held: true,
+      sub: 'at or under · best ever 4', today: '2 of 1 used · over the allowance', todayCls: 'plain',
+      ring: 'week', ringOpts: { held: 6, used: true },
+      makeup: 3,
+      none: true,
+      gk: ['The last twelve weeks', 'vs the allowance'], data: DISH_OVER,
+      why: 'The week went over. <b>It goes on the chart in amber and it stays there</b> — and the run does not end here.',
+      cite: 'Reason · rotates each open'
+    },
+
+    /* ---- 5 · a challenge live ---- */
+    'smoke-chal': {
+      name: 'Smoke', when: '10:26 · Tue', big: '6', unit: 'days',
+      sub: 'gate held · best ever 11', today: 'Gate live · 1h 34m to noon', todayCls: 'live',
+      ring: 'day', ringOpts: { now: 626, flag: 840 },
+      mods: [
+        { cls: 'live', st: 'Live', pay: '+35 XP', ti: 'Holding until 14:00',
+          rail: 71, foot: ['Taken 09:12', '3h 34m to go'] },
+        { cls: 'lock', st: 'Locked · rung 3', pay: '+180 XP', ti: '32 hours clean',
+          su: 'Clear the 24-hour rung once more and this replaces it.', ladder: 2 }
+      ],
+      gk: ['The last fourteen days', 'vs the gate'], data: SMOKE_LIVE,
+      why: '9 AM to noon is the best brain you own. <b>The gate is what buys it.</b>',
+      cite: 'Reason · rotates each open'
+    },
+
+    /* ---- 6 · a challenge missed ---- */
+    'smoke-lapsed': {
+      name: 'Smoke', when: '15:02 · Tue', big: '6', unit: 'days',
+      sub: 'gate held · best ever 11', today: 'Held today · logged 14:40', todayCls: 'held',
+      ring: 'day', ringOpts: { now: 902, logAt: 880 },
+      lapsed: true,
+      gk: ['The last fourteen days', 'vs the gate'], data: SMOKE_LOGGED,
+      why: 'The gate held anyway. <b>That is the thing that was actually worth doing.</b>',
+      cite: 'Reason · rotates each open'
+    },
+
+    /* ---- 7 · nothing on offer ---- */
+    'smoke-none': {
+      name: 'Smoke', when: '21:40 · Tue', big: '6', unit: 'days',
+      sub: 'gate held · best ever 11', today: 'Held today · logged 14:40', todayCls: 'held',
+      ring: 'day', ringOpts: { now: 1300, logAt: 880 },
+      none: true,
+      gk: ['The last fourteen days', 'vs the gate'], data: SMOKE_LOGGED,
+      why: 'Nothing is being asked of you tonight. <b>That is also part of it.</b>',
+      cite: 'Reason · rotates each open'
+    }
+  };
+
+  document.querySelectorAll('[data-frame]').forEach(function(el){
+    var f = FRAMES[el.dataset.frame];
+    if (f) el.innerHTML = render(f);
+  });
+
+  /* the make-up ladder study */
+  var lad = document.getElementById('ladders');
+  if (lad) lad.innerHTML = [1, 2, 3].map(makeup).join('');
+
+  /* the mini gauge-strip dials on the entry frame — the app's own 180-degree arc */
+  document.querySelectorAll('[data-mini]').forEach(function(el){
+    var pct = el.dataset.mini === 'dish' ? 0.5 : el.dataset.mini === 'smoke' ? 0.857 : 0.71;
+    var col = el.dataset.mini === 'week' ? '#FFB25E' : '#FF6B2C';
+    var A = Math.PI * 19, off = A * (1 - pct);
+    el.innerHTML = '<svg width="46" height="27" viewBox="0 0 46 27" aria-hidden="true">' +
+      '<path d="M4 24 A 19 19 0 0 1 42 24" fill="none" stroke="#1c1a23" stroke-width="3.6" stroke-linecap="round"/>' +
+      '<path d="M4 24 A 19 19 0 0 1 42 24" fill="none" stroke="' + col + '" stroke-width="3.6" ' +
+      'stroke-linecap="round" stroke-dasharray="' + A.toFixed(2) + '" stroke-dashoffset="' + off.toFixed(2) +
+      '" style="filter:drop-shadow(0 0 4px ' + col + 'aa)"/></svg>';
+  });
+})();
+
+/* =====================================================================
+   THE ONE MOTION MOMENT — the gauge unrolls into the ring.
+   180 degrees -> 270 degrees, small -> large, then the day sweeps in.
+   ===================================================================== */
+(function(){
+  var stage = document.getElementById('stage'), A = document.getElementById('layerA'),
+      B = document.getElementById('layerB'), play = document.getElementById('playBtn'),
+      reset = document.getElementById('resetBtn'), gauge = document.getElementById('tapGauge');
+  if (!stage || !A || !B || typeof gsap === 'undefined') return;
+
+  var SZ = 190, fly = null, tl = null;
+
+  function makeFly(){
+    var d = document.createElement('div');
+    d.className = 'fly';
+    d.style.width = SZ + 'px'; d.style.height = SZ + 'px';
+    d.innerHTML = '<svg width="' + SZ + '" height="' + SZ + '" viewBox="0 0 ' + SZ + ' ' + SZ + '">' +
+      '<path id="flyTrack" fill="none" stroke="#FF6B2C" stroke-width="7" stroke-linecap="round" ' +
+      'style="filter:drop-shadow(0 0 7px rgba(255,107,44,.8))"/></svg>';
+    stage.appendChild(d);
+    return d;
+  }
+  function setArc(el, a0, a1, r, w){
+    var g = { C: SZ / 2 };
+    el.setAttribute('d', RING.arcD(g.C, r, a0, a1));
+    el.setAttribute('stroke-width', w.toFixed(2));
+  }
+
+  function run(){
+    if (tl) tl.kill();
+    var gd = gauge.querySelector('svg').getBoundingClientRect();
+    var sr = stage.getBoundingClientRect();
+
+    /* where the ring will land, measured off the real masthead */
+    B.style.opacity = 1;
+    var ringSvg = B.querySelector('.m-ring svg');
+    var rr = ringSvg.getBoundingClientRect();
+    B.style.opacity = 0;
+
+    if (fly) fly.remove();
+    fly = makeFly();
+    var path = fly.querySelector('#flyTrack');
+
+    /* start: the strip dial — a 180 degree arc, radius 19 in a 46-wide box */
+    var startR  = 19 * (gd.width / 46) * (SZ / gd.width);   /* in fly-local units */
+    var startSc = gd.width / SZ;
+    var endR    = RING.geo(128).R * (SZ / 128);
+    var endSc   = rr.width / SZ;
+
+    /* centre the fly box on each anchor */
+    var startX = gd.left - sr.left + gd.width / 2  - SZ / 2;
+    var startY = gd.top  - sr.top  + gd.height * 0.9 - SZ / 2;
+    var endX   = rr.left - sr.left + rr.width / 2  - SZ / 2;
+    var endY   = rr.top  - sr.top  + rr.height / 2 - SZ / 2;
+
+    var st = { a0: 180, a1: 360, r: startR, w: 3.6 * (SZ / 46) };
+    setArc(path, st.a0, st.a1, st.r, st.w);
+    gsap.set(fly, { x: startX, y: startY, scale: startSc, opacity: 1 });
+
+    var head = B.querySelector('.m-head > div');
+    var after = B.querySelectorAll('.m-mods, .m-graph, .m-why, .m-makeup');
+    gsap.set(B, { opacity: 0 });
+    gsap.set(ringSvg, { opacity: 0 });
+    gsap.set(head, { opacity: 0, y: 14 });
+    gsap.set(after, { opacity: 0, y: 10 });
+    gsap.set(A, { opacity: 1, scale: 1, filter: 'blur(0px)' });
+
+    tl = gsap.timeline();
+    /* 1 — the strip falls back */
+    tl.to(A, { opacity: 0, scale: 0.97, duration: 0.30, ease: 'power2.inOut' }, 0);
+    tl.set(B, { opacity: 1 }, 0.18);
+    /* 2 — the arc flies, grows, and unrolls the last 90 degrees */
+    tl.to(fly, { x: endX, y: endY, scale: endSc, duration: 0.56, ease: 'power3.inOut' }, 0.06);
+    tl.to(st, {
+      a0: 165, a1: 435, r: endR, w: RING.geo(128).SW * (SZ / 128),
+      duration: 0.56, ease: 'power3.inOut',
+      onUpdate: function(){ setArc(path, st.a0, st.a1, st.r, st.w) }
+    }, 0.06);
+    /* 3 — the day draws in behind it, the fly hands over */
+    tl.to(ringSvg, { opacity: 1, duration: 0.26, ease: 'power2.out' }, 0.38);
+    tl.to(fly, { opacity: 0, duration: 0.20, ease: 'power2.out' }, 0.50);
+    /* 4 — the masthead rises */
+    tl.to(head, { opacity: 1, y: 0, duration: 0.34, ease: 'power2.out' }, 0.42);
+    /* 5 — everything else, calm and staggered */
+    tl.to(after, { opacity: 1, y: 0, duration: 0.30, stagger: 0.06, ease: 'power2.out' }, 0.52);
+    return tl;
+  }
+
+  function back(){
+    if (tl) tl.kill();
+    if (fly) { fly.remove(); fly = null }
+    gsap.set(B, { opacity: 0 });
+    gsap.set(A, { opacity: 1, scale: 1 });
+  }
+
+  play.addEventListener('click', run);
+  gauge.addEventListener('click', run);
+  reset.addEventListener('click', back);
+})();
+
+/* =====================================================================
+   TOUCH TARGETS — drawn from the real geometry, not from memory.
+   ===================================================================== */
+(function(){
+  var host = document.querySelector('[data-annot]');
+  if (!host) return;
+  function box(el, label, minW, minH, below){
+    var p = host.getBoundingClientRect(), r = el.getBoundingClientRect();
+    var w = Math.max(r.width, minW || 0), h = Math.max(r.height, minH || 0);
+    var d = document.createElement('div');
+    d.className = 'hit' + (below ? ' below' : '');
+    d.dataset.t = label;
+    d.style.left   = (r.left - p.left - (w - r.width) / 2) + 'px';
+    d.style.top    = (r.top  - p.top  - (h - r.height) / 2) + 'px';
+    d.style.width  = w + 'px';
+    d.style.height = h + 'px';
+    host.appendChild(d);
+  }
+  requestAnimationFrame(function(){
+    host.style.position = 'relative';
+    box(host.querySelector('.m-bar .bk'), 'back · 44', 44, 44, true);
+    box(host.querySelector('.m-ringwrap'), 'the ring · 140', 140, 140);
+    box(host.querySelector('.m-streak'), 'masthead · inert', 0, 0);
+    var mods = host.querySelectorAll('.m-mod');
+    if (mods[0]) box(mods[0], 'module · opens terms', 0, 0, true);
+    if (mods[1]) box(mods[1], 'module · opens terms', 0, 0, true);
+  });
+})();
+</script>
+</body>
+</html>

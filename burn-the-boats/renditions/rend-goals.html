@@ -1,0 +1,1637 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Goals — Six Architectures</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+/* palette lifted verbatim from index.html */
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --d-work:#E0B25E; --d-cap:#7FB4FF; --d-body:#FF6B2C; --d-faith:#B08CFF; --d-mind:#38E1D8; --d-people:#4ADE80;
+  --ghost:#CFE2FF;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink)}
+body{font-family:'Satoshi',system-ui,sans-serif;line-height:1.45;-webkit-font-smoothing:antialiased}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:400;
+  background-image:url('../assets/grain/grain-fine.svg');opacity:.035;mix-blend-mode:overlay}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+.mono{font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums}
+button{font-family:inherit;cursor:pointer}
+
+/* ============ showcase chrome ============ */
+.wrap{max-width:1160px;margin:0 auto;padding:0 26px}
+.mast{padding:62px 0 34px;border-bottom:1px solid var(--line)}
+.kick{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.27em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:14px}
+.mast h1{font-size:clamp(30px,5vw,50px);line-height:1.02;letter-spacing:-.035em;margin-bottom:15px}
+.mast p{max-width:660px;color:var(--dim);font-size:15.5px;margin:0 0 11px}
+.mast p b{color:var(--ink);font-weight:500}
+.mast .rule{margin-top:22px;border-left:2px solid var(--line2);padding-left:14px;font-size:13.5px;
+  color:var(--faint);font-style:italic;max-width:620px}
+
+.dir{padding:54px 0;border-bottom:1px solid var(--line)}
+.dh{display:grid;grid-template-columns:64px 1fr;gap:18px;align-items:start;margin-bottom:26px}
+.dn{font-family:'Clash Display',sans-serif;font-size:46px;line-height:.8;font-weight:700;
+  color:transparent;-webkit-text-stroke:1.2px var(--line2)}
+.dt h2{font-size:27px;letter-spacing:-.03em;margin-bottom:6px}
+.dm{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+.dl{max-width:620px;color:var(--dim);font-size:14.8px;margin-top:12px}
+.dl b{color:var(--ink);font-weight:500}
+.body{display:grid;grid-template-columns:392px 1fr;gap:38px;align-items:start}
+.notes dt{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);margin-top:19px}
+.notes dt:first-child{margin-top:0}
+.notes dd{margin:6px 0 0;font-size:14.2px;color:var(--dim);line-height:1.55}
+.notes dd b{color:var(--ink);font-weight:500}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:22px}
+.met{border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:11px 12px}
+.met .k{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.15em;color:var(--faint);text-transform:uppercase}
+.met .v{font-family:'Geist Mono',monospace;font-size:15px;font-weight:700;color:var(--ink);margin-top:5px}
+.met .s{font-family:'Geist Mono',monospace;font-size:8px;color:#4f4960;margin-top:3px}
+.cost{border-left:2px solid rgba(255,107,44,.4);padding-left:13px;margin-top:22px;font-size:13.6px;
+  color:#a8846c;font-style:italic}
+.try{margin-top:16px;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.13em;
+  color:var(--rune);text-transform:uppercase}
+
+/* phone frame */
+.phone{width:392px;border-radius:24px;overflow:hidden;border:1px solid var(--line2);background:var(--bg);
+  box-shadow:0 30px 74px -30px #000;position:relative}
+.notch{height:24px;background:#000;display:flex;align-items:center;justify-content:center}
+.notch i{width:54px;height:5px;border-radius:99px;background:#1a1a20}
+.screen{height:844px;overflow-y:auto;overflow-x:hidden;position:relative;scrollbar-width:none;
+  display:flex;flex-direction:column}
+.screen::-webkit-scrollbar{display:none}
+.pad{padding:8px 13px 0;flex:1 0 auto}
+.below{padding:9px 13px 11px;border-top:1px solid var(--line);text-align:center;
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.16em;color:#3f3a4d}
+
+@media(max-width:900px){
+  .wrap{padding:0}
+  .body{grid-template-columns:1fr;gap:24px}
+  .dh,.mast,.notes,.rankwrap{padding-left:18px;padding-right:18px}
+  .dir{padding:34px 0}
+  .phone{width:100%;border-radius:0;border-left:0;border-right:0;box-shadow:none}
+  .dn{font-size:32px}
+}
+
+/* ============ shared app chrome (from index.html) ============ */
+.vhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  padding:14px 0 12px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.vhead h2{font-size:26px;letter-spacing:-.03em}
+.vhead span{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--faint)}
+.card{border-radius:14px;border:1px solid var(--line);background:var(--panel);padding:13px 14px}
+h3.sec{font-size:9px;font-family:'Geist Mono',monospace;letter-spacing:.19em;text-transform:uppercase;
+  color:var(--faint);margin:20px 0 8px;font-weight:700;display:flex;justify-content:space-between;align-items:baseline}
+h3.sec u{text-decoration:none;color:var(--dim)}
+.chip{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.11em;padding:3px 7px;border-radius:4px;
+  border:1px solid var(--line2);color:var(--dim);text-transform:uppercase;display:inline-block}
+.chip.on{border-color:rgba(224,178,94,.5);color:var(--gold)}
+.btn{border:0;border-radius:11px;padding:13px 12px;font-size:14px;font-weight:600;min-height:46px;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;width:100%;transition:transform .1s;
+  font-family:'Satoshi',sans-serif}
+.btn:active{transform:scale(.975)}
+.btn.gh{background:transparent;border:1px solid var(--line2);color:var(--dim)}
+.btn.sm{padding:9px 11px;font-size:12.5px;min-height:38px;border-radius:9px}
+.stat{display:flex;justify-content:space-between;align-items:center;padding:10px 0;
+  border-bottom:1px solid var(--line);font-size:13.5px}
+.stat:last-child{border-bottom:0}
+.stat b{font-family:'Geist Mono',monospace;font-weight:700}
+.tb{position:sticky;bottom:0;display:flex;background:rgba(9,8,13,.96);z-index:20;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line);margin-top:20px}
+.tb button{flex:1;background:none;border:0;color:#5f5872;padding:9px 4px 10px;min-height:52px;
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;text-transform:uppercase;
+  display:flex;flex-direction:column;align-items:center;gap:5px;font-weight:700}
+.tb button .ti{font-size:14px;line-height:1}
+.tb button.on{color:var(--gold)}
+.bar{height:4px;border-radius:99px;background:#221d33;overflow:hidden;position:relative}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:99px}
+.dot{width:6px;height:6px;border-radius:99px;display:inline-block;flex:none}
+
+/* ============ 01 · THE SPINE ============ */
+.sp{position:relative;padding-left:26px}
+.sp::before{content:'';position:absolute;left:6px;top:6px;bottom:34px;width:2px;border-radius:2px;
+  background:linear-gradient(180deg,var(--gold),#6a4c1d 26%,#241f34 60%,#241f34)}
+.st{position:relative;margin-bottom:15px}
+.st .node{position:absolute;left:-26px;top:3px;width:14px;height:14px;border-radius:99px;
+  background:var(--bg);border:2px solid #3a3350}
+.st.here .node{border-color:var(--gold);background:var(--gold);box-shadow:0 0 12px rgba(224,178,94,.75)}
+.st.end .node{border-color:var(--ember);box-shadow:0 0 12px rgba(255,107,44,.55)}
+.st-h{display:flex;align-items:baseline;gap:8px;cursor:pointer}
+.st-h b{font-family:'Clash Display',sans-serif;font-size:16px;letter-spacing:-.02em}
+.st.here .st-h b{color:var(--gold)}
+.st.end .st-h b{color:#f0b48a}
+.st-h span{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.13em;color:var(--faint);margin-left:auto}
+.st-sub{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.12em;color:#4f4960;margin-top:3px}
+.st-b{margin-top:9px;display:grid;gap:5px;overflow:hidden}
+.st.shut .st-b{display:none}
+.mile{display:grid;grid-template-columns:8px 1fr auto;gap:9px;align-items:start;padding:9px 10px;
+  border-radius:10px;background:var(--panel);border:1px solid var(--line);transition:transform .28s,opacity .28s}
+.mile .dot{margin-top:5px}
+.mile .mn{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;color:var(--faint)}
+.mile .mt{font-size:12.8px;line-height:1.3;margin-top:2px}
+.mile .mv{font-family:'Geist Mono',monospace;font-size:9px;color:var(--dim);white-space:nowrap;padding-top:8px}
+.mile.void{border-style:dashed;border-color:#2f2942;background:transparent}
+.mile.void .mt{color:#6b6480;font-style:italic}
+.mile.moving{transform:translateY(16px);opacity:0}
+.push{background:transparent;border:1px solid var(--line2);color:var(--faint);border-radius:7px;
+  padding:5px 7px;font-family:'Geist Mono',monospace;font-size:8px;min-height:30px;letter-spacing:.06em}
+.push:active{border-color:var(--gold);color:var(--gold)}
+.spweek{border-radius:12px;border:1px solid rgba(224,178,94,.35);background:rgba(224,178,94,.05);padding:11px 12px}
+.spweek .r{display:grid;grid-template-columns:8px 1fr auto;gap:9px;align-items:center;padding:6px 0;
+  border-bottom:1px solid rgba(255,255,255,.05);font-size:12.5px}
+.spweek .r:last-child{border-bottom:0}
+.spweek .r b{font-family:'Geist Mono',monospace;font-size:9px;color:var(--dim);font-weight:700}
+.quiet{margin-top:8px;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.1em;color:#5b5470;
+  border-top:1px dashed #2b2540;padding-top:8px}
+
+/* ============ 02 · SIX DOORS ============ */
+.doors{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.door{border-radius:13px;border:1px solid var(--line);background:var(--panel);padding:11px;
+  text-align:left;color:var(--ink);position:relative;overflow:hidden;min-height:118px;
+  display:flex;flex-direction:column}
+.door::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--c)}
+.door .dk{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.15em;color:var(--c)}
+.door .dg{font-size:12.5px;line-height:1.26;margin-top:6px;flex:1}
+.door .rungs{display:flex;gap:3px;margin-top:9px}
+.door .rungs i{height:3px;flex:1;border-radius:2px;background:#241f34}
+.door .rungs i.set{background:var(--c);opacity:.75}
+.door .dw{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.08em;color:var(--dim);margin-top:7px}
+.door.empty{border-style:dashed;border-color:#2f2942;background:transparent}
+.door.empty .dw{color:#5f5872;font-style:italic}
+.ladder{position:absolute;inset:0;background:var(--bg);z-index:30;overflow-y:auto;
+  transform:translateX(100%);transition:transform .3s cubic-bezier(.2,.9,.3,1);scrollbar-width:none}
+.ladder::-webkit-scrollbar{display:none}
+.ladder.on{transform:translateX(0)}
+.ld-h{display:flex;align-items:center;gap:10px;padding:14px 13px 12px;border-bottom:1px solid var(--line);
+  position:sticky;top:0;background:var(--bg);z-index:3}
+.ld-h button{background:none;border:0;color:var(--dim);font-size:17px;padding:0 4px;min-height:34px}
+.ld-h b{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;color:var(--d-work)}
+.ld-h span{margin-left:auto;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--faint)}
+.ld-b{padding:14px 13px 0;position:relative}
+.rung{position:relative;padding-left:24px;margin-bottom:9px}
+.rung::before{content:'';position:absolute;left:5px;top:16px;bottom:-14px;width:2px;background:#241f34}
+.rung:last-of-type::before{display:none}
+.rung .rn{position:absolute;left:0;top:6px;width:12px;height:12px;border-radius:99px;
+  background:var(--bg);border:2px solid #3a3350}
+.rung.lag .rn{border-color:var(--d-work);background:var(--d-work);box-shadow:0 0 11px rgba(224,178,94,.6)}
+.rung.wk .rn{border-color:var(--phos);background:var(--phos);box-shadow:0 0 11px rgba(74,222,128,.5)}
+.rw{border:1px solid var(--line);background:var(--panel);border-radius:11px;padding:10px 11px}
+.rung.lag .rw{border-color:rgba(224,178,94,.35);background:rgba(224,178,94,.05)}
+.rung.wk .rw{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.04)}
+.rw .rk{display:flex;align-items:baseline;gap:7px;font-family:'Geist Mono',monospace;font-size:7px;
+  letter-spacing:.15em;color:var(--faint)}
+.rw .rk u{margin-left:auto;text-decoration:none;color:#4f4960}
+.rw .rt{font-size:13px;line-height:1.32;margin-top:5px}
+.rung.lag .rw .rt{font-family:'Clash Display',sans-serif;font-size:15.5px;letter-spacing:-.02em}
+.rw .rb{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.grip{background:transparent;border:0;color:#4a4459;font-family:'Geist Mono',monospace;font-size:13px;
+  padding:2px 4px;line-height:1}
+.editrow .rw{border-color:var(--gold);box-shadow:0 0 0 1px rgba(224,178,94,.25),0 14px 40px -22px rgba(224,178,94,.7)}
+.editrow textarea{width:100%;background:var(--panel2);border:1px solid var(--line2);color:var(--ink);
+  border-radius:9px;padding:10px;font-family:'Satoshi',sans-serif;font-size:14px;resize:none;line-height:1.35}
+.editrow textarea:focus{outline:none;border-color:var(--gold)}
+.when{display:flex;align-items:center;gap:8px;margin-top:9px}
+.when .lb{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.16em;color:var(--faint)}
+.when .pick{margin-left:auto;display:flex;align-items:center;gap:2px;border:1px solid var(--line2);border-radius:8px}
+.when .pick button{background:none;border:0;color:var(--dim);font-size:12px;padding:6px 9px;min-height:32px}
+.when .pick b{font-family:'Geist Mono',monospace;font-size:10px;color:var(--gold);min-width:56px;text-align:center}
+.eacts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:9px}
+.eacts button{background:transparent;border:1px solid var(--line2);color:var(--dim);border-radius:8px;
+  padding:8px 4px;font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.08em;min-height:34px}
+.eacts button.warn{border-color:rgba(255,77,94,.35);color:#d97b84}
+.insert{height:34px;border:1px dashed #3a3350;border-radius:9px;display:flex;align-items:center;
+  justify-content:center;font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.15em;
+  color:#5b5470;margin:0 0 9px 24px;background:transparent;width:calc(100% - 24px)}
+.insert:active{border-color:var(--gold);color:var(--gold)}
+.blkchip{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;padding:4px 7px;border-radius:5px;
+  border:1px solid rgba(74,222,128,.3);color:var(--phos);background:rgba(74,222,128,.06)}
+.blkchip.add{border-style:dashed;border-color:var(--line2);color:var(--faint);background:transparent}
+
+/* ============ 03 · THE ONE ============ */
+.one-k{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.26em;color:var(--gold);text-transform:uppercase}
+.one-t{font-family:'Clash Display',sans-serif;font-size:31px;line-height:1.06;letter-spacing:-.04em;margin-top:11px}
+.one-t em{font-style:normal;color:var(--gold)}
+.one-m{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--faint);margin-top:12px}
+.lead{margin-top:17px;border-radius:15px;padding:15px;border:1px solid rgba(224,178,94,.4);
+  background:linear-gradient(150deg,#1d1626,#110e1a 62%,#0d0b14)}
+.lead .lk{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.19em;color:var(--gold)}
+.lead .lv{display:flex;align-items:baseline;gap:9px;margin-top:8px}
+.lead .lv b{font-family:'Clash Display',sans-serif;font-size:42px;line-height:.85;letter-spacing:-.05em}
+.lead .lv span{font-family:'Geist Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.1em;line-height:1.5}
+.lead .lt{height:7px;border-radius:99px;background:#191527;position:relative;margin-top:12px;overflow:hidden}
+.lead .lt i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;
+  background:linear-gradient(90deg,#8a6224,var(--gold));transition:width .5s}
+.lead .lb{display:flex;gap:4px;flex-wrap:wrap;margin-top:11px}
+.month{margin-top:9px;display:flex;align-items:center;gap:9px;padding:11px 13px;border-radius:12px;
+  border:1px solid var(--line);background:var(--panel);font-size:12.8px}
+.month .mk{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.15em;color:var(--faint)}
+.five{margin-top:18px;border-top:1px solid var(--line);padding-top:13px;padding-bottom:6px}
+.five-h{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;padding:0;color:var(--dim)}
+.five-h .fk{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.19em;color:var(--faint);text-transform:uppercase}
+.five-h .fd{display:flex;gap:5px;margin-left:auto}
+.five-h .car{color:#4f4960;font-size:11px;transition:transform .25s}
+.five.open .five-h .car{transform:rotate(180deg)}
+.five-b{max-height:0;overflow:hidden;transition:max-height .32s cubic-bezier(.2,.9,.3,1)}
+.five.open .five-b{max-height:520px}
+.frow{display:grid;grid-template-columns:8px 1fr auto;gap:9px;align-items:center;padding:11px 0;
+  border-bottom:1px solid var(--line)}
+.frow .fn{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.14em;color:var(--faint)}
+.frow .fg{font-size:12.6px;margin-top:2px;line-height:1.25}
+.frow .fb{font-family:'Geist Mono',monospace;font-size:8px;color:var(--dim);text-align:right;white-space:nowrap}
+.frow.none .fg{color:#6b6480}
+.frow.none .fb{color:#5f5872;font-style:italic}
+.promote{margin-top:7px;background:transparent;border:1px dashed var(--line2);color:var(--faint);
+  border-radius:8px;padding:7px 9px;font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.12em;min-height:32px}
+.promote:active{border-color:var(--gold);color:var(--gold)}
+.swap{animation:swap .5s ease}
+@keyframes swap{0%{opacity:0;transform:translateY(14px) scale(.97)}100%{opacity:1;transform:none}}
+
+/* ============ 04 · THE WEEK IS THE PAGE ============ */
+.ribbon{display:flex;gap:0;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:var(--panel)}
+.ribbon button{flex:1;background:none;border:0;border-right:1px solid var(--line);padding:9px 2px;
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;color:#5b5470;min-height:44px;
+  display:flex;flex-direction:column;align-items:center;gap:4px}
+.ribbon button:last-child{border-right:0}
+.ribbon button.on{background:rgba(224,178,94,.08);color:var(--gold)}
+.ribbon button i{width:4px;height:4px;border-radius:99px;background:#332c46;display:block}
+.ribbon button.on i{background:var(--gold);box-shadow:0 0 7px var(--gold)}
+.ctx{margin-top:8px;border-radius:11px;border:1px solid var(--line);background:var(--panel);padding:11px 12px;
+  font-size:12.6px;color:var(--dim);line-height:1.4;min-height:60px}
+.ctx b{color:var(--ink);font-weight:500}
+.ctx .ck{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.15em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:6px;display:block}
+.wsum{margin-top:14px;display:flex;align-items:baseline;gap:9px}
+.wsum b{font-family:'Clash Display',sans-serif;font-size:27px;letter-spacing:-.035em;line-height:1}
+.wsum span{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--faint)}
+.wsum u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.12em;
+  color:var(--ghost);text-decoration:none}
+.wt{height:7px;border-radius:99px;background:#191527;position:relative;margin-top:9px}
+.wt i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,#2f7a4c,var(--phos))}
+.wt u{position:absolute;top:-4px;bottom:-4px;left:85%;width:2px;background:var(--ghost);opacity:.7}
+.tac{display:grid;grid-template-columns:20px 1fr;gap:10px;padding:11px 11px;border-radius:11px;
+  background:var(--panel);border:1px solid var(--line);margin-bottom:6px;position:relative;overflow:hidden}
+.tac::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--c)}
+.tac .bx{width:18px;height:18px;border-radius:5px;border:1.5px solid #362f47;margin-top:1px;background:none;padding:0}
+.tac.done .bx{background:var(--phos);border-color:var(--phos)}
+.tac .tt{font-size:13.2px;font-weight:500;letter-spacing:-.01em;line-height:1.25}
+.tac.done .tt{color:#6d7a70}
+.tac .tc{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.09em;color:#5b5470;margin-top:5px;line-height:1.5}
+.tac .tc b{color:var(--c);font-weight:400}
+.tac .tb2{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px;align-items:center}
+.tac .cnt{margin-left:auto;font-family:'Geist Mono',monospace;font-size:9px;color:var(--dim);font-weight:700}
+.orphan{border:1px dashed #332d47;border-radius:12px;padding:12px;background:transparent}
+.orphan .ok{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.16em;color:#6f6688;text-transform:uppercase}
+.orow{display:grid;grid-template-columns:8px 1fr;gap:9px;align-items:start;padding:11px 0;
+  border-bottom:1px solid rgba(255,255,255,.05)}
+.orow:last-child{border-bottom:0}
+.orow .og{font-size:12.6px;color:var(--dim);line-height:1.3}
+.orow .oa{display:flex;gap:5px;margin-top:8px}
+.orow .oa button{background:transparent;border:1px solid var(--line2);color:var(--faint);border-radius:7px;
+  padding:6px 9px;font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;min-height:32px}
+.orow .oa button.parked{border-color:rgba(176,140,255,.45);color:var(--violet)}
+
+/* ============ 05 · THE BOARD ============ */
+.bwrap{margin:0 -13px;padding:0 13px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.bwrap::-webkit-scrollbar{display:none}
+.cols{display:flex;gap:9px;padding-bottom:6px}
+.col{flex:none;width:246px;scroll-snap-align:start;border:1px solid var(--line);border-radius:13px;
+  background:linear-gradient(180deg,#100d19,#0b0912);padding:10px;min-height:430px}
+.col.hot{border-color:rgba(224,178,94,.45);background:rgba(224,178,94,.05)}
+.col-h{display:flex;align-items:baseline;gap:7px;padding:0 2px 10px;border-bottom:1px solid var(--line);margin-bottom:9px}
+.col-h b{font-family:'Clash Display',sans-serif;font-size:15px;letter-spacing:-.02em}
+.col.hot .col-h b{color:var(--gold)}
+.col-h span{margin-left:auto;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;color:var(--faint)}
+.gcard{border-radius:10px;border:1px solid var(--line2);background:var(--panel);padding:9px 10px;
+  margin-bottom:6px;position:relative;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+.gcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--c)}
+.gcard .gk{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.15em;color:var(--c)}
+.gcard .gt{font-size:12.2px;line-height:1.28;margin-top:5px}
+.gcard .gm{font-family:'Geist Mono',monospace;font-size:7px;color:#5b5470;margin-top:6px;letter-spacing:.08em}
+.gcard.drag{position:fixed;z-index:60;width:226px;pointer-events:none;
+  box-shadow:0 22px 44px -18px #000;border-color:var(--gold);transform:rotate(-1.6deg) scale(1.03)}
+.gcard.ghosted{opacity:.28}
+.col.over{border-color:var(--gold);box-shadow:inset 0 0 0 1px rgba(224,178,94,.3)}
+.slotless{border:1px dashed #2f2942;border-radius:10px;padding:14px 10px;text-align:center;
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.12em;color:#544d68;line-height:1.7}
+.bhint{margin-top:11px;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.12em;color:#5b5470;
+  display:flex;align-items:center;gap:7px}
+.bhint i{width:14px;height:1px;background:#3a3350;display:block;flex:none}
+
+/* ============ 06 · THE FRIDAY TABLE ============ */
+.steps{display:flex;gap:5px;margin-bottom:16px}
+.steps i{flex:1;height:3px;border-radius:2px;background:#241f34}
+.steps i.on{background:var(--gold)}
+.steps i.past{background:#6a4c1d}
+.fq{font-family:'Clash Display',sans-serif;font-size:23px;letter-spacing:-.03em;line-height:1.16;margin-bottom:7px}
+.fsub{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--faint);margin-bottom:16px}
+.was{border-radius:12px;border:1px solid var(--line);background:var(--panel);padding:12px 13px}
+.was .wk{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
+.was .wv{font-size:14px;line-height:1.4;margin-top:7px;color:var(--dim)}
+.was .wv s{color:#5f5872;text-decoration-color:rgba(255,77,94,.6)}
+.was .wv ins{text-decoration:none;color:var(--phos);background:rgba(74,222,128,.1);
+  border-radius:4px;padding:1px 4px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.fedit{margin-top:10px}
+.fedit textarea{width:100%;background:var(--panel2);border:1px solid var(--gold);color:var(--ink);
+  border-radius:11px;padding:12px;font-family:'Satoshi',sans-serif;font-size:15px;resize:none;line-height:1.38;
+  min-height:92px}
+.fedit textarea:focus{outline:none}
+.fmodes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:9px}
+.fmodes button{background:transparent;border:1px solid var(--line2);color:var(--faint);border-radius:9px;
+  padding:9px 4px;font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.11em;min-height:38px}
+.fmodes button.on{border-color:var(--gold);color:var(--gold);background:rgba(224,178,94,.07)}
+.fcarry{margin-top:13px;border-left:2px solid var(--line2);padding-left:12px}
+.fcarry .cl{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
+.fcarry .cv{font-size:12.6px;color:var(--dim);margin-top:4px;line-height:1.4}
+.fcarry .cv b{color:var(--ink);font-weight:500}
+.fnav{display:grid;grid-template-columns:auto 1fr;gap:7px;margin-top:20px}
+.fnav .back{background:transparent;border:1px solid var(--line2);color:var(--dim);border-radius:11px;
+  padding:13px 16px;font-size:13px;min-height:46px}
+.receipt{border-radius:12px;border:1px solid var(--line);background:var(--panel);padding:12px 13px;margin-bottom:7px}
+.receipt .rk{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.15em;color:var(--c)}
+.receipt .rt{font-size:13px;margin-top:5px;line-height:1.32}
+.receipt .rm{font-family:'Geist Mono',monospace;font-size:7.5px;color:#5b5470;margin-top:7px;letter-spacing:.08em}
+
+/* ============ ranking ============ */
+.rankwrap{padding:56px 0 90px}
+.rank{display:grid;gap:11px;margin-top:26px;max-width:860px}
+.rkc{display:grid;grid-template-columns:34px 1fr;gap:16px;border:1px solid var(--line);border-radius:14px;
+  background:var(--panel);padding:15px 17px;align-items:start}
+.rkc .p{font-family:'Clash Display',sans-serif;font-size:23px;color:var(--gold);line-height:1}
+.rkc.two .p,.rkc.three .p,.rkc.four .p,.rkc.five .p,.rkc.six .p{color:#4f4960}
+.rkc h3{font-size:17px;letter-spacing:-.02em;margin-bottom:5px}
+.rkc p{margin:0;font-size:14px;color:var(--dim);line-height:1.55}
+.rkc p+p{margin-top:8px}
+.rkc b{color:var(--ink);font-weight:500}
+.against{margin-top:30px;border:1px solid rgba(255,107,44,.35);border-radius:14px;padding:17px 19px;
+  background:rgba(255,107,44,.05);max-width:860px}
+.against h3{font-size:17px;color:var(--ember);margin-bottom:9px}
+.against p{margin:0;font-size:14.4px;color:#d6bda8;line-height:1.6}
+.hand{margin-top:44px;max-width:860px}
+.hand h2{font-size:24px;letter-spacing:-.03em;margin-bottom:6px}
+.hand h4{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--faint);margin:26px 0 9px;font-weight:700}
+.hand p,.hand li{font-size:14.2px;color:var(--dim);line-height:1.6}
+.hand li{margin-bottom:9px}
+.hand b{color:var(--ink);font-weight:500}
+.hand ul{padding-left:19px;margin:0}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="kick">Burn the Boats · Agent 2 · 2026-07-25</div>
+  <h1>Goals — six architectures<br>for a 390px screen.</h1>
+  <p>The tab called <b>Push</b> becomes <b>Goals</b>. It has to hold six life domains, several horizons
+  between now and December 1, the tactics committed this week, and the link from each of those down to the
+  blocks on the day rail — <b>without becoming an org chart nobody opens.</b></p>
+  <p>Each of the six below answers one question differently: <b>what is primary?</b> Time, category, focus,
+  the week, mutability, or the ritual. They are not six skins of one idea. Two of them are rendered
+  <b>mid-edit</b>, because restructuring is the requirement he cared most about.</p>
+  <div class="rule">Every mock is live. Tap the stations, open a door, drag a card, run the Friday steps.
+  Each frame is a real 390×844 phone viewport that scrolls inside itself — so the scroll depth quoted in
+  the notes is measured, not estimated.</div>
+</header>
+
+<!-- ══════════════════════════════ 01 ══════════════════════════════ -->
+<section class="dir">
+  <div class="dh">
+    <div class="dn">01</div>
+    <div class="dt">
+      <h2>The Spine</h2>
+      <div class="dm">Primary: time · 4 stations · Aug 31 · Sep 30 · Oct 31 · Dec 1</div>
+      <p class="dl">One vertical line from today to the end of the run. Stations are month-end checkpoints;
+      every domain that has something due at that station appears as a row inside it. The gold segment of
+      the line is the distance already burned. <b>You cannot look at this and think you have time.</b>
+      Milestones are moved with a single <b>↓ push</b> — the row physically drops into the next station,
+      which is what "not stuck in one route" looks like as a gesture.</p>
+    </div>
+  </div>
+  <div class="body">
+    <div class="phone">
+      <div class="notch"><i></i></div>
+      <div class="screen" id="s1">
+        <div class="pad">
+          <div class="vhead"><h2>Goals</h2><span>WEEK 1 · 91 LEFT</span></div>
+          <div class="sp" id="spine">
+            <div class="st here" data-st="now">
+              <div class="node"></div>
+              <div class="st-h"><b>This week</b><span>MON JUL 27</span></div>
+              <div class="st-sub">SET FRIDAY 18:40 · 6 COMMITMENTS · 4 DOMAINS</div>
+              <div class="st-b">
+                <div class="spweek">
+                  <div class="r"><i class="dot" style="background:var(--d-work)"></i><span>12 outreach conversations</span><b>4/12</b></div>
+                  <div class="r"><i class="dot" style="background:var(--d-work)"></i><span>Ship one pitch page</span><b>0/1</b></div>
+                  <div class="r"><i class="dot" style="background:var(--d-cap)"></i><span>Rules kept · no double-back</span><b>3/5</b></div>
+                  <div class="r"><i class="dot" style="background:var(--d-body)"></i><span>Gym 2× · walks 3×</span><b>1/2 · 2/3</b></div>
+                  <div class="r"><i class="dot" style="background:var(--d-faith)"></i><span>Bible 3× · text Kells</span><b>1/3</b></div>
+                  <div class="r"><i class="dot" style="background:var(--d-people)"></i><span>Two evenings, phone down</span><b>1/2</b></div>
+                  <div class="quiet">MIND has nothing on it this week. Parked on purpose.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="st" data-st="aug">
+              <div class="node"></div>
+              <div class="st-h"><b>Aug 31</b><span>26 WORKDAYS</span></div>
+              <div class="st-sub">FIRST CHECKPOINT · 4 OF 6 DOMAINS DUE</div>
+              <div class="st-b" data-bay="aug">
+                <div class="mile"><i class="dot" style="background:var(--d-work)"></i>
+                  <div><div class="mn">THE WORK</div><div class="mt">First client live and paying</div></div>
+                  <button class="push" data-push="sep">↓ SEP</button></div>
+                <div class="mile"><i class="dot" style="background:var(--d-cap)"></i>
+                  <div><div class="mn">CAPITAL</div><div class="mt">Rules written down · 20 sessions logged against them</div></div>
+                  <button class="push" data-push="sep">↓ SEP</button></div>
+                <div class="mile"><i class="dot" style="background:var(--d-body)"></i>
+                  <div><div class="mn">BODY</div><div class="mt">179 lbs · gym twice a week held for 4 weeks</div></div>
+                  <button class="push" data-push="sep">↓ SEP</button></div>
+                <div class="mile"><i class="dot" style="background:var(--d-faith)"></i>
+                  <div><div class="mn">FAITH</div><div class="mt">Three straight weeks of 3× and a text every time</div></div>
+                  <button class="push" data-push="sep">↓ SEP</button></div>
+                <div class="mile void"><i class="dot" style="background:#3a3350"></i>
+                  <div><div class="mn">MIND · PEOPLE</div><div class="mt">Nothing set for August — and that is allowed</div></div>
+                  <button class="push" data-add="1">+ SET</button></div>
+              </div>
+            </div>
+
+            <div class="st" data-st="sep">
+              <div class="node"></div>
+              <div class="st-h"><b>Sep 30</b><span>47 WORKDAYS</span></div>
+              <div class="st-sub">HALFWAY · 5 OF 6 DOMAINS DUE</div>
+              <div class="st-b" data-bay="sep">
+                <div class="mile"><i class="dot" style="background:var(--d-work)"></i>
+                  <div><div class="mn">THE WORK</div><div class="mt">Client #2 signed · pricing cleaned up</div></div>
+                  <button class="push" data-push="oct">↓ OCT</button></div>
+                <div class="mile"><i class="dot" style="background:var(--d-cap)"></i>
+                  <div><div class="mn">CAPITAL</div><div class="mt">First evaluation passed</div></div>
+                  <button class="push" data-push="oct">↓ OCT</button></div>
+                <div class="mile"><i class="dot" style="background:var(--d-body)"></i>
+                  <div><div class="mn">BODY</div><div class="mt">181 lbs</div></div>
+                  <button class="push" data-push="oct">↓ OCT</button></div>
+                <div class="mile"><i class="dot" style="background:var(--d-mind)"></i>
+                  <div><div class="mn">MIND</div><div class="mt">Ready enough that I could walk into a guitar class</div></div>
+                  <button class="push" data-push="oct">↓ OCT</button></div>
+                <div class="mile"><i class="dot" style="background:var(--d-people)"></i>
+                  <div><div class="mn">PEOPLE</div><div class="mt">A standing night that never gets moved</div></div>
+                  <button class="push" data-push="oct">↓ OCT</button></div>
+              </div>
+            </div>
+
+            <div class="st" data-st="oct">
+              <div class="node"></div>
+              <div class="st-h"><b>Oct 31</b><span>68 WORKDAYS</span></div>
+              <div class="st-sub">LAST CHECKPOINT BEFORE THE END</div>
+              <div class="st-b" data-bay="oct">
+                <div class="mile"><i class="dot" style="background:var(--d-work)"></i>
+                  <div><div class="mn">THE WORK</div><div class="mt">Client #3 in talks · one of them at full freight</div></div>
+                  <button class="push" data-push="dec">↓ DEC</button></div>
+                <div class="mile"><i class="dot" style="background:var(--d-cap)"></i>
+                  <div><div class="mn">CAPITAL</div><div class="mt">Second account funded</div></div>
+                  <button class="push" data-push="dec">↓ DEC</button></div>
+                <div class="mile"><i class="dot" style="background:var(--d-mind)"></i>
+                  <div><div class="mn">MIND</div><div class="mt">Took my first class</div></div>
+                  <button class="push" data-push="dec">↓ DEC</button></div>
+                <div class="mile"><i class="dot" style="background:var(--d-body)"></i>
+                  <div><div class="mn">BODY</div><div class="mt">183 lbs</div></div>
+                  <button class="push" data-push="dec">↓ DEC</button></div>
+              </div>
+            </div>
+
+            <div class="st end" data-st="dec">
+              <div class="node"></div>
+              <div class="st-h"><b>Dec 1</b><span>THE END OF THE RUN</span></div>
+              <div class="st-sub">SIX LAG GOALS · SET ONCE · CHANGED RARELY</div>
+              <div class="st-b" data-bay="dec">
+                <div class="mile"><i class="dot" style="background:var(--d-work)"></i>
+                  <div><div class="mn">THE WORK</div><div class="mt">3 SANO clients — at least one at full freight</div></div><span></span></div>
+                <div class="mile"><i class="dot" style="background:var(--d-cap)"></i>
+                  <div><div class="mn">CAPITAL</div><div class="mt">3 live funded accounts</div></div><span></span></div>
+                <div class="mile"><i class="dot" style="background:var(--d-body)"></i>
+                  <div><div class="mn">BODY</div><div class="mt">185 lbs — heavier and leaner</div></div><span></span></div>
+                <div class="mile"><i class="dot" style="background:var(--d-faith)"></i>
+                  <div><div class="mn">FAITH</div><div class="mt">3× a week, consistently, and Kells hears about it</div></div><span></span></div>
+                <div class="mile"><i class="dot" style="background:var(--d-mind)"></i>
+                  <div><div class="mn">MIND</div><div class="mt">Three guitar classes taken</div></div><span></span></div>
+                <div class="mile"><i class="dot" style="background:var(--d-people)"></i>
+                  <div><div class="mn">PEOPLE</div><div class="mt">Nobody got the leftovers</div></div><span></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <nav class="tb">
+          <button><span class="ti">◆</span>Today</button>
+          <button class="on"><span class="ti">▲</span>Goals</button>
+          <button><span class="ti">◈</span>Bank</button>
+          <button><span class="ti">▦</span>Record</button>
+        </nav>
+      </div>
+      <div class="below">01 · THE SPINE — TAP A STATION TO COLLAPSE IT · TAP ↓ TO PUSH A MILESTONE BACK</div>
+    </div>
+
+    <div class="notes">
+      <dl>
+        <dt>What it makes easy</dt>
+        <dd>Time pressure, honestly. Four stations and a burned gold line answer "how much runway is left"
+        before he reads a word. It is also the only option where <b>load per month</b> is visible — August
+        holds four milestones, October holds four; if he pushes everything back, the stack at the bottom
+        gets visibly, uncomfortably tall.</dd>
+        <dt>What it makes hard</dt>
+        <dd>Following <b>one</b> domain. THE WORK's chain is scattered across four stations — to read it he
+        has to scan vertically and colour-match. Nothing here says "here is guitar, start to finish".</dd>
+        <dt>The weekly ritual</dt>
+        <dd>~90s. The week lives at the top so it is read first, but writing next week's tactics means
+        scrolling to the August station and back up — the ritual is split across the scroll.</dd>
+        <dt>Restructuring</dt>
+        <dd><b>↓ PUSH</b> on any row moves it one station later, with the row animating down into its new
+        home. One tap, no drag, no sheet. Re-timing is the most common restructure he will do and this is
+        the cheapest gesture for it.</dd>
+        <dt>Nothing scheduled</dt>
+        <dd>A dashed row inside August that reads <i>"Nothing set for August — and that is allowed"</i>.
+        Absence gets a seat rather than a red mark.</dd>
+      </dl>
+      <div class="metrics">
+        <div class="met"><div class="k">Scroll depth</div><div class="v" data-depth="s1">—</div><div class="s">ALL STATIONS OPEN</div></div>
+        <div class="met"><div class="k">Taps to edit a milestone</div><div class="v">1</div><div class="s">RE-TIME ONLY · TEXT NEEDS A SHEET</div></div>
+      </div>
+      <div class="cost">The cost: it is a calendar of obligations. On a bad week the stations below him read
+      as a list of things he has not done yet — the closest of the six to the failure mode.</div>
+      <div class="try">Try it → tap "Aug 31" to collapse a station · tap ↓ SEP on any August row</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 02 ══════════════════════════════ -->
+<section class="dir">
+  <div class="dh">
+    <div class="dn">02</div>
+    <div class="dt">
+      <h2>Six Doors</h2>
+      <div class="dm">Primary: category · 3 intermediate rungs — his own 1/2/3-month model</div>
+      <p class="dl">Six tiles, one per domain, each showing its December line and a three-pip rung strip.
+      Tap a tile and it slides open into the <b>ladder</b> for that domain alone: December at the top, the
+      rungs beneath it, this week at the bottom, and the blocks the week is bound to. <b>Rendered here
+      mid-edit</b> — the September rung is open, its date on a stepper, an insertion line waiting below it.
+      This is the screen that answers "how do I restructure a goal".</p>
+    </div>
+  </div>
+  <div class="body">
+    <div class="phone">
+      <div class="notch"><i></i></div>
+      <div class="screen" id="s2">
+        <div class="pad">
+          <div class="vhead"><h2>Goals</h2><span>91 TO DEC 1</span></div>
+          <div class="doors">
+            <button class="door" style="--c:var(--d-work)" data-door="work">
+              <div class="dk">THE WORK</div>
+              <div class="dg">3 SANO clients — one at full freight</div>
+              <div class="rungs"><i class="set"></i><i class="set"></i><i class="set"></i></div>
+              <div class="dw">4 BLOCKS THIS WEEK</div>
+            </button>
+            <button class="door" style="--c:var(--d-cap)">
+              <div class="dk">CAPITAL</div>
+              <div class="dg">3 live funded accounts</div>
+              <div class="rungs"><i class="set"></i><i class="set"></i><i></i></div>
+              <div class="dw">5 SESSIONS THIS WEEK</div>
+            </button>
+            <button class="door" style="--c:var(--d-body)">
+              <div class="dk">BODY</div>
+              <div class="dg">185 lbs — heavier and leaner</div>
+              <div class="rungs"><i class="set"></i><i class="set"></i><i class="set"></i></div>
+              <div class="dw">GYM 1/2 · WALKS 2/3</div>
+            </button>
+            <button class="door" style="--c:var(--d-faith)">
+              <div class="dk">FAITH</div>
+              <div class="dg">3× a week, and Kells hears about it</div>
+              <div class="rungs"><i class="set"></i><i></i><i></i></div>
+              <div class="dw">1 OF 3 THIS WEEK</div>
+            </button>
+            <button class="door empty" style="--c:var(--d-mind)">
+              <div class="dk">MIND</div>
+              <div class="dg">Three guitar classes taken</div>
+              <div class="rungs"><i></i><i class="set"></i><i class="set"></i></div>
+              <div class="dw">NOTHING ON IT — PARKED</div>
+            </button>
+            <button class="door" style="--c:var(--d-people)">
+              <div class="dk">PEOPLE</div>
+              <div class="dg">Nobody got the leftovers</div>
+              <div class="rungs"><i></i><i class="set"></i><i></i></div>
+              <div class="dw">2 EVENINGS THIS WEEK</div>
+            </button>
+          </div>
+          <h3 class="sec">The run <u>week 1 of 19</u></h3>
+          <div class="card">
+            <div class="stat"><span>Domains with a December goal</span><b>6 of 6</b></div>
+            <div class="stat"><span>Rungs set between here and Dec</span><b>13 of 18</b></div>
+            <div class="stat"><span>Domains with nothing this week</span><b style="color:var(--violet)">1 · PARKED</b></div>
+          </div>
+        </div>
+        <nav class="tb">
+          <button><span class="ti">◆</span>Today</button>
+          <button class="on"><span class="ti">▲</span>Goals</button>
+          <button><span class="ti">◈</span>Bank</button>
+          <button><span class="ti">▦</span>Record</button>
+        </nav>
+
+        <!-- the ladder, open and mid-edit -->
+        <div class="ladder on" id="ladder">
+          <div class="ld-h">
+            <button id="ldClose">←</button><b>THE WORK</b><span>DEC 1 · 91 LEFT</span>
+          </div>
+          <div class="ld-b">
+            <div class="rung lag">
+              <div class="rn"></div>
+              <div class="rw">
+                <div class="rk">DECEMBER · THE RESULT <u>SET ONCE</u></div>
+                <div class="rt">3 SANO clients — at least one at full freight</div>
+                <div class="rb"><span class="chip">LAG</span><span class="chip">1 OF 3 SO FAR</span></div>
+              </div>
+            </div>
+
+            <div class="rung">
+              <div class="rn"></div>
+              <div class="rw">
+                <div class="rk">3 MONTHS · OCT 31 <u>&#8942;</u></div>
+                <div class="rt">Client #3 in talks · one of them at full freight</div>
+              </div>
+            </div>
+
+            <div class="rung editrow" id="editRung">
+              <div class="rn"></div>
+              <div class="rw">
+                <div class="rk">2 MONTHS · EDITING <u>&#8942;</u></div>
+                <textarea rows="2" id="rungText">Client #2 signed · pricing cleaned up</textarea>
+                <div class="when">
+                  <span class="lb">WHEN</span>
+                  <span class="pick"><button data-when="-1">◀</button><b id="whenVal">SEP 30</b><button data-when="1">▶</button></span>
+                </div>
+                <div class="eacts">
+                  <button id="splitBtn">SPLIT IN TWO</button>
+                  <button>MOVE UP</button>
+                  <button class="warn">DELETE RUNG</button>
+                </div>
+              </div>
+            </div>
+
+            <button class="insert" id="insertBtn">+ INSERT A RUNG HERE</button>
+
+            <div class="rung">
+              <div class="rn"></div>
+              <div class="rw">
+                <div class="rk">1 MONTH · AUG 31 <u>&#8942;</u></div>
+                <div class="rt">First client live and paying</div>
+              </div>
+            </div>
+
+            <div class="rung wk">
+              <div class="rn"></div>
+              <div class="rw">
+                <div class="rk">THIS WEEK · THE LEAD MEASURE <u>SET FRIDAY</u></div>
+                <div class="rt">12 outreach conversations · ship one pitch page</div>
+                <div class="rb">
+                  <span class="blkchip">B1 MON</span><span class="blkchip">B2 TUE</span>
+                  <span class="blkchip">B1 THU</span><span class="blkchip add">+ BIND A BLOCK</span>
+                </div>
+              </div>
+            </div>
+            <div style="padding:6px 0 22px"><button class="btn" id="ldSave">Save the ladder</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="below">02 · SIX DOORS — LADDER SHOWN MID-EDIT · ← RETURNS TO THE SIX</div>
+    </div>
+
+    <div class="notes">
+      <dl>
+        <dt>What it makes easy</dt>
+        <dd>Reading one goal end to end. Inside a door, <b>December → Oct → Sep → Aug → this week → the
+        blocks</b> is a single unbroken column, which is the exact cascade the goal engine describes.
+        Also the best six-at-a-glance: the rung strip shows at a glance that FAITH has one rung set and
+        PEOPLE has one — structural neglect is visible without a single number.</dd>
+        <dt>What it makes hard</dt>
+        <dd>Seeing the week whole. His week spans four domains, and here that is four doors. There is no
+        screen that says "these are the nine things you committed to".</dd>
+        <dt>The weekly ritual</dt>
+        <dd>~2 min, and that is the honest weakness — six doors is six open-close cycles. It wants a
+        Friday mode that walks the doors for him.</dd>
+        <dt>Restructuring</dt>
+        <dd>The strongest of the six. A rung is an editable row: text in place, date on a <b>◀ SEP 30 ▶</b>
+        stepper, <b>split in two</b> (which is exactly his guitar example — "ready enough" and "took the
+        class" were one thought that became two), and a dashed <b>insert</b> line between any two rungs.
+        Nothing here forces him to start over, which is the requirement.</dd>
+        <dt>Nothing scheduled</dt>
+        <dd>MIND's tile is dashed and reads <b>NOTHING ON IT — PARKED</b> in violet, not red. It is
+        obviously different from the other five without being an accusation.</dd>
+      </dl>
+      <div class="metrics">
+        <div class="met"><div class="k">Scroll depth · the six</div><div class="v" data-depth="s2">—</div><div class="s">GRID + RUN SUMMARY</div></div>
+        <div class="met"><div class="k">Scroll depth · one ladder</div><div class="v" id="ldDepth">—</div><div class="s">MID-EDIT, WITH THE EDITOR OPEN</div></div>
+        <div class="met"><div class="k">Taps to edit a milestone</div><div class="v">2</div><div class="s">DOOR → RUNG · THEN EDIT IN PLACE</div></div>
+        <div class="met"><div class="k">Taps to review all six</div><div class="v">12</div><div class="s">SIX OPEN-CLOSE CYCLES</div></div>
+      </div>
+      <div class="cost">The cost: six doors means six decisions about which door to open, every time.
+      The page never tells him where to go — it waits.</div>
+      <div class="try">Try it → step the date · split the rung in two · insert a rung · ← to see the six</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 03 ══════════════════════════════ -->
+<section class="dir">
+  <div class="dh">
+    <div class="dn">03</div>
+    <div class="dt">
+      <h2>The One</h2>
+      <div class="dm">Primary: focus · 2 horizons only — December and this month</div>
+      <p class="dl">4DX's discipline of focus, taken literally: one goal owns the screen, the other five
+      are a single collapsed line. The horizons are cut to two, because a goal you are not attacking does
+      not need a four-rung ladder. The page's whole job is the scoreboard test — <b>can I tell at a glance
+      whether I am winning?</b> — and it answers in the top third with no scrolling at all.</p>
+    </div>
+  </div>
+  <div class="body">
+    <div class="phone">
+      <div class="notch"><i></i></div>
+      <div class="screen" id="s3">
+        <div class="pad">
+          <div class="vhead"><h2>Goals</h2><span>WEEK 1 · 91 LEFT</span></div>
+          <div id="oneBox">
+            <div class="one-k">The one that matters</div>
+            <div class="one-t" id="oneTitle">Three SANO clients.<br><em>One at full freight.</em></div>
+            <div class="one-m" id="oneMeta">THE WORK · DEC 1 · 1 OF 3 SIGNED</div>
+            <div class="lead">
+              <div class="lk">THE LEAD MEASURE — WHAT YOU ACTUALLY CONTROL</div>
+              <div class="lv"><b id="leadNum">4</b><span id="leadCap">OF 12 CONVERSATIONS<br>THIS WEEK</span></div>
+              <div class="lt"><i style="width:33%"></i></div>
+              <div class="lb">
+                <span class="blkchip">B1 MON ✓</span><span class="blkchip">B2 TUE ✓</span>
+                <span class="blkchip">B1 THU</span><span class="blkchip">B2 THU</span>
+              </div>
+            </div>
+            <div class="month">
+              <div><div class="mk">THIS MONTH · BY AUG 31</div>
+                <div id="monthTxt">First client live and paying</div></div>
+            </div>
+          </div>
+
+          <div class="five" id="five">
+            <button class="five-h" id="fiveH">
+              <span class="fk">The other five</span>
+              <span class="fd">
+                <i class="dot" style="background:var(--d-cap)"></i><i class="dot" style="background:var(--d-body)"></i>
+                <i class="dot" style="background:var(--d-faith)"></i><i class="dot" style="background:#332c46"></i>
+                <i class="dot" style="background:var(--d-people)"></i>
+              </span>
+              <span class="car">▼</span>
+            </button>
+            <div class="five-b">
+              <div class="frow" data-swap="CAPITAL"><i class="dot" style="background:var(--d-cap)"></i>
+                <div><div class="fn">CAPITAL</div><div class="fg">3 live funded accounts</div></div>
+                <div class="fb">5 SESSIONS<br>THIS WEEK</div></div>
+              <div class="frow" data-swap="BODY"><i class="dot" style="background:var(--d-body)"></i>
+                <div><div class="fn">BODY</div><div class="fg">185 lbs — heavier and leaner</div></div>
+                <div class="fb">GYM 1/2<br>WALKS 2/3</div></div>
+              <div class="frow" data-swap="FAITH"><i class="dot" style="background:var(--d-faith)"></i>
+                <div><div class="fn">FAITH</div><div class="fg">3× a week, and Kells hears about it</div></div>
+                <div class="fb">1 OF 3</div></div>
+              <div class="frow none" data-swap="MIND"><i class="dot" style="background:#332c46"></i>
+                <div><div class="fn">MIND</div><div class="fg">Three guitar classes taken</div>
+                  <button class="promote" data-promote="MIND">MAKE THIS THE ONE</button></div>
+                <div class="fb">nothing<br>this week</div></div>
+              <div class="frow" data-swap="PEOPLE"><i class="dot" style="background:var(--d-people)"></i>
+                <div><div class="fn">PEOPLE</div><div class="fg">Nobody got the leftovers</div></div>
+                <div class="fb">2 EVENINGS</div></div>
+            </div>
+          </div>
+
+          <h3 class="sec">Why only one <u>4DX</u></h3>
+          <div class="card" style="font-size:12.8px;color:var(--dim);line-height:1.5">
+            The other five are still scored and still pay XP. They just do not get the screen.
+            <b style="color:var(--ink);font-weight:500">Two goals is focus; six goals is a to-do list.</b>
+          </div>
+        </div>
+        <nav class="tb">
+          <button><span class="ti">◆</span>Today</button>
+          <button class="on"><span class="ti">▲</span>Goals</button>
+          <button><span class="ti">◈</span>Bank</button>
+          <button><span class="ti">▦</span>Record</button>
+        </nav>
+      </div>
+      <div class="below">03 · THE ONE — EXPAND THE FIVE · PROMOTE MIND TO SEE THE SWAP</div>
+    </div>
+
+    <div class="notes">
+      <dl>
+        <dt>What it makes easy</dt>
+        <dd>The scoreboard test, decisively. <b>4 of 12 conversations</b> at 42px is legible in a pocket
+        glance, and the four block chips underneath say where the other eight are coming from. It is the
+        only one of the six that survives being looked at for two seconds.</dd>
+        <dt>What it makes hard</dt>
+        <dd>Everything that is not The One drifts quietly. FAITH at 1 of 3 is a line of 8px mono behind a
+        collapsed panel. That is the deliberate trade and it is a real cost — <b>faith and people are the
+        two he is most likely to let slide, and this design hides them.</b></dd>
+        <dt>The weekly ritual</dt>
+        <dd>~40s, the fastest of the six — but only because it does not ask about five of the domains.
+        Fast for the wrong reason.</dd>
+        <dt>Restructuring</dt>
+        <dd>Promotion, not editing. <b>MAKE THIS THE ONE</b> swaps a goal into the hero with an animated
+        replacement — restructuring here means changing what you are pointed at, not changing the tree.
+        Milestone editing has to live somewhere else.</dd>
+        <dt>Nothing scheduled</dt>
+        <dd>MIND reads <i>"nothing this week"</i> in the collapsed list and is the one row offered a
+        promotion — the absence becomes the invitation.</dd>
+      </dl>
+      <div class="metrics">
+        <div class="met"><div class="k">Scroll depth</div><div class="v" data-depth="s3">—</div><div class="s">FIVE COLLAPSED</div></div>
+        <div class="met"><div class="k">Taps to edit a milestone</div><div class="v">n/a</div><div class="s">NO EDITOR — PROMOTION ONLY</div></div>
+      </div>
+      <div class="cost">The cost: it does not answer the brief. He asked for a system for six categories
+      across several horizons; this is a beautiful screen for one category across two.</div>
+      <div class="try">Try it → tap "The other five" · then MAKE THIS THE ONE on MIND</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 04 ══════════════════════════════ -->
+<section class="dir">
+  <div class="dh">
+    <div class="dn">04</div>
+    <div class="dt">
+      <h2>The Week Is The Page</h2>
+      <div class="dm">Primary: the week · horizons compressed to one context ribbon</div>
+      <p class="dl">The horizons become a five-segment ribbon across the top — tap a month, read what is
+      due there, move on. Everything below is <b>this week</b>: the committed tactics, each carrying its own
+      lineage in one line of 7px mono (<b>THE WORK ▸ AUG: first client live ▸ DEC: 3 clients</b>) and the
+      block chips it is bound to. The last section is the honest one — the goals with nothing on them,
+      each offered <b>PARK IT</b> or <b>GIVE IT A BLOCK</b>.</p>
+    </div>
+  </div>
+  <div class="body">
+    <div class="phone">
+      <div class="notch"><i></i></div>
+      <div class="screen" id="s4">
+        <div class="pad">
+          <div class="vhead"><h2>Goals</h2><span>WEEK 1 OF 19</span></div>
+          <div class="ribbon" id="ribbon">
+            <button class="on" data-m="aug"><i></i>AUG</button>
+            <button data-m="sep"><i></i>SEP</button>
+            <button data-m="oct"><i></i>OCT</button>
+            <button data-m="nov"><i></i>NOV</button>
+            <button data-m="dec"><i></i>DEC</button>
+          </div>
+          <div class="ctx" id="ctx"></div>
+
+          <div class="wsum"><b>7</b><span>OF 17 TACTICS<br>DONE THIS WEEK</span><u>85% WINS THE WEEK</u></div>
+          <div class="wt"><i style="width:41%"></i><u></u></div>
+
+          <h3 class="sec">Committed Friday <u>tap to complete</u></h3>
+          <div id="tacs">
+            <div class="tac done" style="--c:var(--d-work)">
+              <button class="bx"></button>
+              <div><div class="tt">12 outreach conversations</div>
+                <div class="tc">THE WORK ▸ <b>AUG:</b> first client live ▸ <b>DEC:</b> 3 clients</div>
+                <div class="tb2"><span class="blkchip">B1 MON</span><span class="blkchip">B2 TUE</span>
+                  <span class="blkchip">B1 THU</span><span class="cnt">4/12</span></div></div>
+            </div>
+            <div class="tac" style="--c:var(--d-work)">
+              <button class="bx"></button>
+              <div><div class="tt">Ship one pitch page</div>
+                <div class="tc">THE WORK ▸ <b>AUG:</b> first client live ▸ <b>DEC:</b> 3 clients</div>
+                <div class="tb2"><span class="blkchip">B3 WED</span><span class="cnt">0/1</span></div></div>
+            </div>
+            <div class="tac done" style="--c:var(--d-cap)">
+              <button class="bx"></button>
+              <div><div class="tt">Rules kept · no double-back</div>
+                <div class="tc">CAPITAL ▸ <b>AUG:</b> rules written · 20 logged ▸ <b>DEC:</b> 3 funded</div>
+                <div class="tb2"><span class="blkchip">OPEN · DAILY</span><span class="cnt">3/5</span></div></div>
+            </div>
+            <div class="tac" style="--c:var(--d-body)">
+              <button class="bx"></button>
+              <div><div class="tt">Gym twice · walk three times</div>
+                <div class="tc">BODY ▸ <b>AUG:</b> 179 lbs ▸ <b>DEC:</b> 185 lbs</div>
+                <div class="tb2"><span class="blkchip">GYM 16:20</span><span class="blkchip">WALK 14:35</span><span class="cnt">1/2 · 2/3</span></div></div>
+            </div>
+            <div class="tac" style="--c:var(--d-faith)">
+              <button class="bx"></button>
+              <div><div class="tt">Bible three times · text Kells each time</div>
+                <div class="tc">FAITH ▸ <b>AUG:</b> three straight weeks ▸ <b>DEC:</b> consistent</div>
+                <div class="tb2"><span class="blkchip">21:30 MON</span><span class="blkchip">21:30 WED</span><span class="cnt">1/3</span></div></div>
+            </div>
+            <div class="tac done" style="--c:var(--d-people)">
+              <button class="bx"></button>
+              <div><div class="tt">Two evenings with the phone in another room</div>
+                <div class="tc">PEOPLE ▸ <b>AUG:</b> — ▸ <b>DEC:</b> nobody got the leftovers</div>
+                <div class="tb2"><span class="blkchip">17:30 TUE</span><span class="cnt">1/2</span></div></div>
+            </div>
+          </div>
+
+          <h3 class="sec">Nothing on them this week <u>2 of 6</u></h3>
+          <div class="orphan">
+            <div class="orow"><i class="dot" style="background:var(--d-mind)"></i>
+              <div><div class="fn" style="font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.14em;color:var(--faint)">MIND</div>
+                <div class="og">Three guitar classes taken — nothing between here and Sep 30 touches it</div>
+                <div class="oa"><button class="parked" data-park="1">PARKED ✓</button><button>GIVE IT A BLOCK</button></div></div></div>
+            <div class="orow"><i class="dot" style="background:var(--d-people)"></i>
+              <div><div class="fn" style="font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.14em;color:var(--faint)">PEOPLE · AUGUST</div>
+                <div class="og">No August milestone set. December has one; the road to it does not.</div>
+                <div class="oa"><button data-park="1">PARK IT</button><button>SET A MILESTONE</button></div></div></div>
+          </div>
+          <div class="quiet" style="border-top:0;padding-top:11px">Parking is a decision, not a miss.
+          A parked goal costs no execution score.</div>
+        </div>
+        <nav class="tb">
+          <button><span class="ti">◆</span>Today</button>
+          <button class="on"><span class="ti">▲</span>Goals</button>
+          <button><span class="ti">◈</span>Bank</button>
+          <button><span class="ti">▦</span>Record</button>
+        </nav>
+      </div>
+      <div class="below">04 · THE WEEK IS THE PAGE — TAP THE RIBBON MONTHS · TICK A TACTIC · PARK A GOAL</div>
+    </div>
+
+    <div class="notes">
+      <dl>
+        <dt>What it makes easy</dt>
+        <dd>The thing he actually does every day. The week is the only level with daily consequences, and
+        it is the whole page. The <b>lineage line</b> under each tactic is the cheapest solution found here
+        to "goals affect the daily schedule": every commitment carries its parent chain and its block
+        chips in one row, so the connection is never a separate screen.</dd>
+        <dt>What it makes hard</dt>
+        <dd>Structure. December is five taps of ribbon away and even then it is prose in a small box. This
+        page cannot be used to <b>design</b> the cascade — only to run it.</dd>
+        <dt>The weekly ritual</dt>
+        <dd>~60s and by far the most natural: on Friday the tactic list becomes editable in place. He is
+        already looking at last week's list, which is what he asked for — <b>tweak, don't restate.</b></dd>
+        <dt>Restructuring</dt>
+        <dd>Weak by design. Tactics are add/remove/rebind; milestones and December goals are read-only from
+        here and need somewhere else to live. That is a real gap against the brief.</dd>
+        <dt>Nothing scheduled</dt>
+        <dd>The best treatment of the six, and the only one that makes absence <b>an action</b>: two orphan
+        goals, each offered <b>PARK IT</b> or <b>GIVE IT A BLOCK</b>, with a line stating that parking costs
+        nothing. Neglect becomes a decision he made rather than a failure he is being shown.</dd>
+      </dl>
+      <div class="metrics">
+        <div class="met"><div class="k">Scroll depth</div><div class="v" data-depth="s4">—</div><div class="s">FULL WEEK · 6 TACTICS</div></div>
+        <div class="met"><div class="k">Taps to edit a milestone</div><div class="v">—</div><div class="s">NOT POSSIBLE FROM HERE</div></div>
+      </div>
+      <div class="cost">The cost: it is a beautiful week page pretending to be a goals page. Half the brief
+      — the ladders, the restructuring — is somewhere else.</div>
+      <div class="try">Try it → tap SEP / OCT / DEC on the ribbon · tick a tactic · park MIND</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 05 ══════════════════════════════ -->
+<section class="dir">
+  <div class="dh">
+    <div class="dn">05</div>
+    <div class="dt">
+      <h2>The Board</h2>
+      <div class="dm">Primary: mutability · 4 columns — this week · Aug · Oct · December</div>
+      <p class="dl">Horizons become columns you swipe between; goals are cards you physically drag from one
+      to another. This is the most literal possible answer to <i>"a system instead of a linear path we wrote
+      down and can't change"</i> — re-timing is a drag, not a form. <b>Drag a card between columns; it
+      works.</b> It is also the option that most obviously fights a 390px screen, and I am showing it
+      partly to prove that.</p>
+    </div>
+  </div>
+  <div class="body">
+    <div class="phone">
+      <div class="notch"><i></i></div>
+      <div class="screen" id="s5">
+        <div class="pad">
+          <div class="vhead"><h2>Goals</h2><span>DRAG TO RE-TIME</span></div>
+          <div class="bwrap" id="bwrap">
+            <div class="cols" id="cols">
+              <div class="col hot" data-col="week">
+                <div class="col-h"><b>This week</b><span>6 CARDS</span></div>
+                <div class="drop" data-drop="week">
+                  <div class="gcard" style="--c:var(--d-work)"><div class="gk">THE WORK</div>
+                    <div class="gt">12 outreach conversations</div><div class="gm">B1 MON · B2 TUE · B1 THU · 4/12</div></div>
+                  <div class="gcard" style="--c:var(--d-work)"><div class="gk">THE WORK</div>
+                    <div class="gt">Ship one pitch page</div><div class="gm">B3 WED · 0/1</div></div>
+                  <div class="gcard" style="--c:var(--d-cap)"><div class="gk">CAPITAL</div>
+                    <div class="gt">Rules kept · no double-back</div><div class="gm">OPEN · DAILY · 3/5</div></div>
+                  <div class="gcard" style="--c:var(--d-body)"><div class="gk">BODY</div>
+                    <div class="gt">Gym 2× · walks 3×</div><div class="gm">GYM 16:20 · WALK 14:35</div></div>
+                  <div class="gcard" style="--c:var(--d-faith)"><div class="gk">FAITH</div>
+                    <div class="gt">Bible 3× · text Kells</div><div class="gm">21:30 MON · WED · 1/3</div></div>
+                  <div class="gcard" style="--c:var(--d-people)"><div class="gk">PEOPLE</div>
+                    <div class="gt">Two phone-down evenings</div><div class="gm">17:30 TUE · 1/2</div></div>
+                </div>
+              </div>
+              <div class="col" data-col="aug">
+                <div class="col-h"><b>Aug 31</b><span>26 DAYS</span></div>
+                <div class="drop" data-drop="aug">
+                  <div class="gcard" style="--c:var(--d-work)"><div class="gk">THE WORK</div>
+                    <div class="gt">First client live and paying</div><div class="gm">1 MONTH</div></div>
+                  <div class="gcard" style="--c:var(--d-cap)"><div class="gk">CAPITAL</div>
+                    <div class="gt">Rules written · 20 sessions logged</div><div class="gm">1 MONTH</div></div>
+                  <div class="gcard" style="--c:var(--d-body)"><div class="gk">BODY</div>
+                    <div class="gt">179 lbs</div><div class="gm">1 MONTH</div></div>
+                  <div class="gcard" style="--c:var(--d-faith)"><div class="gk">FAITH</div>
+                    <div class="gt">Three straight weeks of 3×</div><div class="gm">1 MONTH</div></div>
+                </div>
+              </div>
+              <div class="col" data-col="oct">
+                <div class="col-h"><b>Oct 31</b><span>68 DAYS</span></div>
+                <div class="drop" data-drop="oct">
+                  <div class="gcard" style="--c:var(--d-work)"><div class="gk">THE WORK</div>
+                    <div class="gt">Client #3 in talks · one at full freight</div><div class="gm">3 MONTHS</div></div>
+                  <div class="gcard" style="--c:var(--d-mind)"><div class="gk">MIND</div>
+                    <div class="gt">Took my first guitar class</div><div class="gm">3 MONTHS · NOTHING FEEDS THIS</div></div>
+                  <div class="gcard" style="--c:var(--d-cap)"><div class="gk">CAPITAL</div>
+                    <div class="gt">Second account funded</div><div class="gm">3 MONTHS</div></div>
+                </div>
+              </div>
+              <div class="col" data-col="dec">
+                <div class="col-h"><b>Dec 1</b><span>THE END</span></div>
+                <div class="drop" data-drop="dec">
+                  <div class="gcard" style="--c:var(--d-work)"><div class="gk">THE WORK</div>
+                    <div class="gt">3 SANO clients — one at full freight</div><div class="gm">LAG · SET ONCE</div></div>
+                  <div class="gcard" style="--c:var(--d-cap)"><div class="gk">CAPITAL</div>
+                    <div class="gt">3 live funded accounts</div><div class="gm">LAG · SET ONCE</div></div>
+                  <div class="gcard" style="--c:var(--d-body)"><div class="gk">BODY</div>
+                    <div class="gt">185 lbs</div><div class="gm">LAG · SET ONCE</div></div>
+                  <div class="gcard" style="--c:var(--d-mind)"><div class="gk">MIND</div>
+                    <div class="gt">Three guitar classes taken</div><div class="gm">LAG · SET ONCE</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bhint"><i></i>SWIPE FOR AUG · OCT · DEC<i></i></div>
+
+          <h3 class="sec">The empty lane <u>honest</u></h3>
+          <div class="slotless">MIND HAS NOTHING IN "THIS WEEK"<br>ITS FIRST CARD SITS IN OCTOBER</div>
+        </div>
+        <nav class="tb">
+          <button><span class="ti">◆</span>Today</button>
+          <button class="on"><span class="ti">▲</span>Goals</button>
+          <button><span class="ti">◈</span>Bank</button>
+          <button><span class="ti">▦</span>Record</button>
+        </nav>
+      </div>
+      <div class="below">05 · THE BOARD — PRESS AND DRAG A CARD INTO ANOTHER COLUMN</div>
+    </div>
+
+    <div class="notes">
+      <dl>
+        <dt>What it makes easy</dt>
+        <dd>Re-timing, and seeing load. Four cards in August against three in October is a visible weight
+        distribution, and moving a commitment is one gesture with no dialog. Nothing else here makes the
+        tree feel as <b>soft</b> — which is precisely the feeling he asked for.</dd>
+        <dt>What it makes hard</dt>
+        <dd>Almost everything else. A column is 246px, so a goal gets ~30 characters a line. Chains are
+        invisible — nothing on this board tells you that <i>"first client live"</i> and <i>"3 SANO
+        clients"</i> are the same thread. And the horizontal axis fights the vertical scroll of every other
+        screen in the app.</dd>
+        <dt>The weekly ritual</dt>
+        <dd>~2.5 min. Dragging is satisfying once and tiring by week four. A weekly ritual should be
+        typing and tapping, not aiming.</dd>
+        <dt>Restructuring</dt>
+        <dd>The most fluid gesture of the six — and the most likely to be done <b>by accident</b>. There is
+        no undo affordance on a phone drag, and a fat-thumbed re-time of the December lag is exactly the
+        kind of edit that should be hard.</dd>
+        <dt>Nothing scheduled</dt>
+        <dd>Structural and immediate: MIND simply has no card in the first column, and the note below spells
+        it out. Emptiness is a visible gap in the lane rather than a message.</dd>
+      </dl>
+      <div class="metrics">
+        <div class="met"><div class="k">Scroll depth</div><div class="v" data-depth="s5">—</div><div class="s">PLUS 4 COLUMNS SIDEWAYS</div></div>
+        <div class="met"><div class="k">Taps to edit a milestone</div><div class="v">drag</div><div class="s">RE-TIME ONLY · NO TEXT EDIT</div></div>
+      </div>
+      <div class="cost">The cost: a board is a desktop shape. On 390px it trades every one of this app's
+      strengths — chain, hierarchy, glanceability — for one good gesture.</div>
+      <div class="try">Try it → press and hold a card, drag it into another column, let go</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 06 ══════════════════════════════ -->
+<section class="dir">
+  <div class="dh">
+    <div class="dn">06</div>
+    <div class="dt">
+      <h2>The Friday Table</h2>
+      <div class="dm">Primary: the ritual · month is the unit of edit · rendered mid-flow, step 2 of 4</div>
+      <p class="dl">The only one that is not a document. On Friday the Goals tab <b>is</b> a four-step
+      ceremony; the rest of the week it is the receipt of what he committed. Built directly on his sentence:
+      <i>"this is the monthly goal, let me tweak it and add these changes"</i> — so step 2 opens with
+      <b>August already written</b>, shows what changed against last week in strike-and-insert, and offers
+      only <b>KEEP · TWEAK · REPLACE</b>. He never faces an empty field.</p>
+    </div>
+  </div>
+  <div class="body">
+    <div class="phone">
+      <div class="notch"><i></i></div>
+      <div class="screen" id="s6">
+        <div class="pad">
+          <div class="vhead"><h2>Friday</h2><span id="fStepLab">STEP 2 OF 4 · ~50s</span></div>
+          <div class="steps" id="fSteps"><i class="past"></i><i class="on"></i><i></i><i></i></div>
+          <div id="fBody"></div>
+          <div class="fnav">
+            <button class="back" id="fBack">←</button>
+            <button class="btn" id="fNext">Next — the week</button>
+          </div>
+        </div>
+        <nav class="tb">
+          <button><span class="ti">◆</span>Today</button>
+          <button class="on"><span class="ti">▲</span>Goals</button>
+          <button><span class="ti">◈</span>Bank</button>
+          <button><span class="ti">▦</span>Record</button>
+        </nav>
+      </div>
+      <div class="below">06 · THE FRIDAY TABLE — RUN THE FOUR STEPS · STEP 4 IS THE MON–THU RECEIPT</div>
+    </div>
+
+    <div class="notes">
+      <dl>
+        <dt>What it makes easy</dt>
+        <dd>The one interaction that decides whether any of this survives: <b>the Friday reset.</b> One
+        question per screen, previous answer pre-filled, three buttons. It is the only design here where
+        restructuring is the <b>default path</b> rather than a thing he has to go find — and the only one
+        that asks him directly about the goals nothing is touching (step 3).</dd>
+        <dt>What it makes hard</dt>
+        <dd>Browsing. There is no moment where the whole tree is in front of him, so it cannot answer
+        "what is September again?" without walking the flow. Step 4 — the receipt — is the fallback for
+        Mon–Thu and is deliberately thin.</dd>
+        <dt>The weekly ritual</dt>
+        <dd>It <b>is</b> the weekly ritual: ~50s measured at one question per screen. Every other design
+        bolts the ritual onto a document; this one inverts it.</dd>
+        <dt>Restructuring</dt>
+        <dd>The truest to what he said. Step 2 shows the month as it stands with <s>the old wording struck
+        through</s> and <b>the change highlighted</b>, so a tweak is visibly a tweak — history, not a
+        rewrite. KEEP costs one tap and is the honest default most weeks.</dd>
+        <dt>Nothing scheduled</dt>
+        <dd>Step 3 exists only for this: <i>"Two goals have nothing on them. On purpose?"</i> — Park or give
+        it a block. It converts drift into a recorded decision once a week, which is exactly where that
+        conversation belongs.</dd>
+      </dl>
+      <div class="metrics">
+        <div class="met"><div class="k">Scroll depth</div><div class="v" data-depth="s6">—</div><div class="s">EVERY STEP FITS ONE SCREEN</div></div>
+        <div class="met"><div class="k">Taps to edit a milestone</div><div class="v">0</div><div class="s">IT OPENS ALREADY EDITING</div></div>
+      </div>
+      <div class="cost">The cost: six days out of seven this tab is a receipt. On its own it is half a
+      product — it needs a document behind it.</div>
+      <div class="try">Try it → run all four steps · try KEEP vs TWEAK vs REPLACE on step 2</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ ranking ══════════════════════════════ -->
+<section class="rankwrap">
+  <div class="kick">The ranking</div>
+  <h1 style="font-size:clamp(26px,4vw,38px);letter-spacing:-.035em;margin-bottom:14px">
+    What I would build, and in what order.</h1>
+  <p style="max-width:660px;color:var(--dim);font-size:15px;margin:0">Six architectures, one page. The
+  honest finding is that <b style="color:var(--ink);font-weight:500">no single one of these covers the
+  brief</b> — the brief contains two different jobs (run the week · restructure the tree) and they want
+  different shapes. The ranking reflects that.</p>
+
+  <div class="rank">
+    <div class="rkc">
+      <div class="p">1</div>
+      <div>
+        <h3>02 · Six Doors — with 06's Friday flow bolted on as the ritual</h3>
+        <p>Six Doors is the only option that holds <b>all six domains, several horizons, the weekly lead
+        measure and the block binding in one unbroken column</b>, and its ladder editor is the strongest
+        answer to the requirement he cared most about. Split-in-two and insert-a-rung mean the tree bends
+        instead of breaking, which is his "not stuck in one route" in concrete form.</p>
+        <p>Its one real weakness — a slow, six-door weekly ritual — is exactly what <b>The Friday Table</b>
+        fixes. Ship the doors as the document and the Friday flow as the ceremony that walks them. They are
+        not competing designs; one is the read view and one is the write view.</p>
+      </div>
+    </div>
+    <div class="rkc two">
+      <div class="p">2</div>
+      <div>
+        <h3>06 · The Friday Table</h3>
+        <p>Ranked second only because it cannot stand alone. As the write path it is the best thing on this
+        page: one question per screen, the month pre-filled, tweak-not-restate, and a step that asks about
+        the neglected goals so parking becomes a decision. If only one of these six gets built this week,
+        build this one — <b>the Friday ritual is the load-bearing habit of the entire goal engine.</b></p>
+      </div>
+    </div>
+    <div class="rkc three">
+      <div class="p">3</div>
+      <div>
+        <h3>04 · The Week Is The Page</h3>
+        <p>The best <b>daily</b> screen of the six and the cheapest solution to "goals affect the daily
+        schedule" — the lineage line plus block chips puts the whole cascade in one row of a tactic card.
+        Third because it is largely a better version of the Today tab; most of what it does well belongs
+        <i>there</i>, not behind a Goals tab. Steal the lineage line regardless of which architecture wins.</p>
+      </div>
+    </div>
+    <div class="rkc four">
+      <div class="p">4</div>
+      <div>
+        <h3>01 · The Spine</h3>
+        <p>The most emotionally correct and the most dangerous. It is the only one that makes the runway
+        physical, and the ↓ push gesture is a genuinely good one-tap re-time. But four stations of unmet
+        milestones stacked below the fold is the closest any of these comes to a <b>wall of failure</b>, and
+        that is the one thing this app is not allowed to be. Worth revisiting as a <i>read-only</i> view
+        inside the Record tab, where looking back is the point.</p>
+      </div>
+    </div>
+    <div class="rkc five">
+      <div class="p">5</div>
+      <div>
+        <h3>03 · The One</h3>
+        <p>Wins the glance test outright and loses the brief. He asked for a system across six categories;
+        this answers with one. Its idea is still worth keeping: <b>put the single WIG's lead measure, at
+        42px, at the top of whichever architecture wins.</b> As a whole page it hides FAITH and PEOPLE, and
+        those are the two he most needs kept visible.</p>
+      </div>
+    </div>
+    <div class="rkc six">
+      <div class="p">6</div>
+      <div>
+        <h3>05 · The Board</h3>
+        <p>Last, and I would not build it. It is the only one where the phone actively loses: 246px columns,
+        no visible chains, a horizontal axis at war with the rest of the app, and an undoable destructive
+        gesture on the goals that should be hardest to change. Built and shown because "drag between
+        horizons" sounds right until you hold it — and now we know.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="against">
+    <h3>The strongest argument against my own pick</h3>
+    <p>Six Doors starts <b>closed</b>. Six tiles, no instruction, nothing demanding attention — a page that
+    waits. And the governing failure mode of this product is not a bad design, it is <b>him not opening
+    it</b>. Options 04 and 06 both have a claim on the first screen that 02 does not: one shows him what he
+    owes today, the other tells him what to do right now. A Goals page that opens as a polite grid of six
+    doors is a page he will visit on Friday and forget on Tuesday — and a goal structure he does not look at
+    is a goal structure that does not affect the daily schedule, which was the entire point of his ask.
+    <br><br>If that argument wins, the answer is not to demote the doors — it is to make the Goals tab open
+    on <b>this week</b> (04) with the six doors one swipe behind it, and let the Friday flow (06) take over
+    the whole tab on Fridays.</p>
+  </div>
+
+  <div class="hand">
+    <h2>Hand-off — Agent 2 · Goals interface</h2>
+    <p style="margin-top:8px">Everything below is for the GM. Nothing outside
+    <b>renditions/rend-goals.html</b> was touched; <b>index.html</b> was read only.</p>
+
+    <h4>What I produced and where</h4>
+    <ul>
+      <li><b>renditions/rend-goals.html</b> — six live phone mock-ups at a true 390×844 viewport, all
+      interactive. Two are rendered mid-edit: <b>02 Six Doors</b> (ladder open, September rung in the
+      editor, date stepper, split, insert) and <b>06 The Friday Table</b> (step 2 of 4, month pre-filled,
+      strike-and-insert diff).</li>
+      <li>Scroll depths in the notes are <b>measured from the rendered DOM</b> at 390px on load, not
+      estimated. Weekly-ritual times are my estimates and are labelled as such.</li>
+      <li>The horizon count is deliberately different in each: 4 stations (01), 3 rungs (02), 2 horizons
+      (03), 1 ribbon (04), 4 columns (05), month-as-unit (06). No answer is assumed correct.</li>
+    </ul>
+
+    <h4>Ranked recommendation</h4>
+    <ul>
+      <li><b>Build 02 + 06 as one feature.</b> Six Doors is the document, the Friday Table is the ceremony.
+      The doors hold the structure and the editor; the flow gets him through it in under a minute once a
+      week. Neither is complete alone and together they cover the whole brief.</li>
+      <li><b>Steal 04's lineage line unconditionally</b> — <span class="mono" style="font-size:11px">THE WORK
+      ▸ AUG: first client live ▸ DEC: 3 clients</span> under a tactic, with its block chips beside it. It is
+      the cheapest thing on this page and it is the thing that makes goals visibly drive the schedule.</li>
+      <li><b>Steal 03's hero.</b> Whatever wins, the WIG's lead measure belongs at the top at 42px. The
+      scoreboard test is passed by one number, not by a tree.</li>
+      <li><b>Do not build 05.</b></li>
+    </ul>
+
+    <h4>What I deliberately rejected</h4>
+    <ul>
+      <li><b>A seventh option — horizon accordion / "four shelves."</b> Killed before building: it is the
+      same sentence as The Board ("horizon is the top level"), and the brief says replace, not pad. Five
+      distinct primaries plus the ritual is the honest count; there was no sixth axis worth a mock.</li>
+      <li><b>A radar / hexagon of the six domains.</b> Pretty, and it duplicates the locked glance card at
+      the top of Today. A second radar would be decoration, and the glance card is locked.</li>
+      <li><b>Progress percentages on December lags.</b> "62% to 3 clients" is a fiction — the goal engine is
+      explicit that lags are not scored. Every option here shows lag goals as <b>text with a count</b>, never
+      as a bar.</li>
+      <li><b>Red anywhere.</b> No red appears on any of the six screens except the DELETE RUNG affordance.
+      Parked, empty and behind are all rendered in violet, dashed grey or gold. That was a deliberate rule.</li>
+      <li><b>The Anthony gate.</b> Left out entirely per the brief. No prospect is named anywhere in these
+      designs — THE WORK's tactics are generic outreach counts, which is also what makes them re-usable for
+      clients 2 and 3.</li>
+    </ul>
+
+    <h4>Things the GM should know that were not mine to fix</h4>
+    <ul>
+      <li><b>The tab rename has a knock-on.</b> The Push tab currently carries the Anthony gate, the trading
+      session log and the LA Edible marker (index.html <span class="mono" style="font-size:11px">renderPush()</span>).
+      If Goals replaces Push, those three need a home. The trading log is a <i>daily</i> action and belongs on
+      Today or in the evening close-out, not behind a goals tab, regardless of which architecture wins.</li>
+      <li><b>The data model needs a "parked" state and a "no milestone set" state</b>, and both must be
+      distinguishable from "missed" in the execution score. Four of my six options depend on it. Agent 1 owns
+      the model — flagging it because every one of these screens breaks the wall-of-failure law without it.</li>
+      <li><b>Block binding is currently one-way.</b> <span class="mono" style="font-size:11px">tacticFor()</span>
+      reads a tactic for a block; nothing lets a tactic name its blocks. Every design here shows block chips on
+      the tactic (<span class="mono" style="font-size:11px">B1 MON · B2 TUE</span>), which needs the reverse
+      index. It is a small change and it is what makes the connection legible in either direction.</li>
+      <li><b>PEOPLE has no August milestone anywhere in the source material</b> and MIND's is unstated. I
+      rendered both as honestly empty rather than inventing them. If the GM wants a fuller-looking mock,
+      the missing content is real, not a rendering gap.</li>
+      <li><b>Weekly-ritual times are estimates.</b> Scroll depths are measured; the ~40s/~60s/~2min figures
+      are my judgement from tap-count and screen count, and should be treated as ranking signal, not data.</li>
+    </ul>
+  </div>
+</section>
+
+</div>
+
+<script>
+/* ============ 01 · THE SPINE ============ */
+document.querySelectorAll('#spine .st-h').forEach(h=>{
+  h.addEventListener('click',()=>h.parentElement.classList.toggle('shut'));
+});
+document.querySelectorAll('#spine .push').forEach(b=>{
+  b.addEventListener('click',e=>{
+    e.stopPropagation();
+    const to=b.dataset.push; if(!to)return;
+    const row=b.closest('.mile'), bay=document.querySelector('[data-bay="'+to+'"]');
+    if(!bay)return;
+    row.classList.add('moving');
+    setTimeout(()=>{
+      const nx={sep:'oct',oct:'dec',dec:null}[to];
+      if(nx){b.dataset.push=nx;b.textContent='↓ '+nx.toUpperCase()}
+      else{b.remove()}
+      bay.appendChild(row);
+      row.closest('.st').classList.remove('shut');
+      requestAnimationFrame(()=>row.classList.remove('moving'));
+    },260);
+  });
+});
+
+/* ============ 02 · SIX DOORS ============ */
+const ladder=document.getElementById('ladder');
+document.querySelectorAll('#s2 .door').forEach(d=>{
+  d.addEventListener('click',()=>ladder.classList.add('on'));
+});
+document.getElementById('ldClose').addEventListener('click',()=>ladder.classList.remove('on'));
+document.getElementById('ldSave').addEventListener('click',()=>ladder.classList.remove('on'));
+const WHENS=['AUG 15','AUG 31','SEP 15','SEP 30','OCT 15','OCT 31','NOV 15','DEC 1'];
+let whenIdx=3;
+document.querySelectorAll('#editRung [data-when]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    whenIdx=Math.max(0,Math.min(WHENS.length-1,whenIdx+ +b.dataset.when));
+    document.getElementById('whenVal').textContent=WHENS[whenIdx];
+    const kick=document.querySelector('#editRung .rk');
+    const label=whenIdx<2?'1 MONTH':whenIdx<4?'2 MONTHS':whenIdx<6?'3 MONTHS':'4 MONTHS';
+    kick.innerHTML=label+' · EDITING <u>&#8942;</u>';
+  });
+});
+document.getElementById('splitBtn').addEventListener('click',()=>{
+  const ta=document.getElementById('rungText');
+  const parts=ta.value.split('·');
+  ta.value=(parts[0]||'Client #2 signed').trim();
+  const holder=document.createElement('div');
+  holder.className='rung';
+  holder.innerHTML='<div class="rn"></div><div class="rw"><div class="rk">2 MONTHS · '+WHENS[Math.min(WHENS.length-1,whenIdx+1)]+' <u>&#8942;</u></div>'+
+    '<div class="rt">'+((parts[1]||'pricing cleaned up').trim())+'</div></div>';
+  document.getElementById('editRung').after(holder);
+  holder.animate([{opacity:0,transform:'translateY(-8px)'},{opacity:1,transform:'none'}],{duration:280,easing:'ease-out'});
+});
+document.getElementById('insertBtn').addEventListener('click',function(){
+  const holder=document.createElement('div');
+  holder.className='rung';
+  holder.innerHTML='<div class="rn"></div><div class="rw"><div class="rk">NEW RUNG <u>&#8942;</u></div>'+
+    '<div class="rt" style="color:#6b6480;font-style:italic">Untitled — tap to write it</div></div>';
+  this.after(holder);
+  holder.animate([{opacity:0,transform:'translateY(-8px)'},{opacity:1,transform:'none'}],{duration:280,easing:'ease-out'});
+});
+
+/* ============ 03 · THE ONE ============ */
+const five=document.getElementById('five');
+document.getElementById('fiveH').addEventListener('click',()=>five.classList.toggle('open'));
+const ONE={
+  MIND:{t:'Three guitar<br><em>classes taken.</em>',m:'MIND · DEC 1 · 0 OF 3 TAKEN',
+        n:'0',c:'OF 3 PRACTICE SESSIONS<br>THIS WEEK',w:'0%',mo:'Nothing set for August — set one'},
+};
+document.querySelectorAll('#s3 [data-promote]').forEach(b=>{
+  b.addEventListener('click',e=>{
+    e.stopPropagation();
+    const o=ONE[b.dataset.promote]; if(!o)return;
+    const box=document.getElementById('oneBox');
+    document.getElementById('oneTitle').innerHTML=o.t;
+    document.getElementById('oneMeta').textContent=o.m;
+    document.getElementById('leadNum').textContent=o.n;
+    document.getElementById('leadCap').innerHTML=o.c;
+    document.querySelector('#s3 .lead .lt i').style.width=o.w;
+    document.querySelector('#s3 .lead .lb').innerHTML='<span class="blkchip add">+ BIND A BLOCK</span>';
+    document.getElementById('monthTxt').textContent=o.mo;
+    box.classList.remove('swap');void box.offsetWidth;box.classList.add('swap');
+    const row=b.closest('.frow');
+    row.innerHTML='<i class="dot" style="background:var(--d-work)"></i>'+
+      '<div><div class="fn">THE WORK</div><div class="fg">3 SANO clients — one at full freight</div></div>'+
+      '<div class="fb">4 OF 12<br>THIS WEEK</div>';
+    row.classList.remove('none');
+    const dots=document.querySelectorAll('#s3 .five-h .fd .dot');
+    if(dots[3])dots[3].style.background='var(--d-work)';
+    document.getElementById('s3').scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+/* ============ 04 · THE WEEK IS THE PAGE ============ */
+const CTX={
+  aug:['AUG 31 · 26 WORKDAYS','<b>THE WORK</b> first client live · <b>CAPITAL</b> rules written, 20 sessions logged · <b>BODY</b> 179 lbs · <b>FAITH</b> three straight weeks. <b>MIND</b> and <b>PEOPLE</b> have nothing set.'],
+  sep:['SEP 30 · 47 WORKDAYS','<b>THE WORK</b> client #2 signed · <b>CAPITAL</b> first evaluation passed · <b>BODY</b> 181 lbs · <b>MIND</b> ready enough to walk into a class · <b>PEOPLE</b> a standing night that never moves.'],
+  oct:['OCT 31 · 68 WORKDAYS','<b>THE WORK</b> client #3 in talks, one at full freight · <b>CAPITAL</b> second account funded · <b>BODY</b> 183 lbs · <b>MIND</b> took my first class.'],
+  nov:['NOV 30 · 87 WORKDAYS','Nothing set. November is the month that decides December and it is currently empty — <b>the ribbon is showing you a hole, not a failure.</b>'],
+  dec:['DEC 1 · THE END OF THE RUN','<b>3 SANO clients</b>, one at full freight · <b>3 funded accounts</b> · <b>185 lbs</b> · <b>Bible 3× a week</b>, consistently · <b>3 guitar classes</b> · nobody got the leftovers.'],
+};
+function paintCtx(m){
+  const c=CTX[m];
+  document.getElementById('ctx').innerHTML='<span class="ck">'+c[0]+'</span>'+c[1];
+}
+document.querySelectorAll('#ribbon button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('#ribbon button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');paintCtx(b.dataset.m);
+  });
+});
+paintCtx('aug');
+document.querySelectorAll('#tacs .bx').forEach(b=>{
+  b.addEventListener('click',()=>b.closest('.tac').classList.toggle('done'));
+});
+document.querySelectorAll('#s4 [data-park]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const on=b.classList.toggle('parked');
+    b.textContent=on?'PARKED ✓':'PARK IT';
+  });
+});
+
+/* ============ 05 · THE BOARD — real drag between columns ============ */
+(function(){
+  let drag=null,src=null,off={x:0,y:0};
+  const wrap=document.getElementById('bwrap');
+  function start(e){
+    const card=e.target.closest('.gcard'); if(!card||drag)return;
+    const r=card.getBoundingClientRect();
+    src=card;off.x=e.clientX-r.left;off.y=e.clientY-r.top;
+    drag=card.cloneNode(true);
+    drag.classList.add('drag');
+    drag.style.left=r.left+'px';drag.style.top=r.top+'px';
+    document.body.appendChild(drag);
+    card.classList.add('ghosted');
+    card.setPointerCapture&&card.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  }
+  function move(e){
+    if(!drag)return;
+    drag.style.left=(e.clientX-off.x)+'px';
+    drag.style.top=(e.clientY-off.y)+'px';
+    drag.style.display='none';
+    const under=document.elementFromPoint(e.clientX,e.clientY);
+    drag.style.display='';
+    document.querySelectorAll('#cols .col').forEach(c=>c.classList.remove('over'));
+    const col=under&&under.closest?under.closest('.col'):null;
+    if(col)col.classList.add('over');
+    e.preventDefault();
+  }
+  function end(e){
+    if(!drag)return;
+    drag.style.display='none';
+    const under=document.elementFromPoint(e.clientX,e.clientY);
+    drag.style.display='';
+    const col=under&&under.closest?under.closest('.col'):null;
+    const bay=col?col.querySelector('.drop'):null;
+    if(bay&&!bay.contains(src)){
+      bay.appendChild(src);
+      src.animate([{opacity:.3,transform:'scale(.97)'},{opacity:1,transform:'none'}],{duration:240,easing:'ease-out'});
+      const meta=src.querySelector('.gm');
+      const lab={week:'MOVED TO THIS WEEK · UNBOUND',aug:'1 MONTH · RE-TIMED',oct:'3 MONTHS · RE-TIMED',dec:'LAG · RE-TIMED'}[col.dataset.col];
+      if(meta&&lab)meta.textContent=lab;
+      const wk=document.querySelector('[data-col="week"]');
+      wk.querySelector('.col-h span').textContent=wk.querySelectorAll('.gcard').length+' CARDS';
+    }
+    document.querySelectorAll('#cols .col').forEach(c=>c.classList.remove('over'));
+    src.classList.remove('ghosted');
+    drag.remove();drag=null;src=null;
+  }
+  wrap.addEventListener('pointerdown',start);
+  window.addEventListener('pointermove',move,{passive:false});
+  window.addEventListener('pointerup',end);
+  window.addEventListener('pointercancel',end);
+})();
+
+/* ============ 06 · THE FRIDAY TABLE ============ */
+const STEPS=[
+  {lab:'STEP 1 OF 4 · ~15s',next:'Next — the month',
+   html:`<div class="fq">Last week you kept<br>14 of 17.</div>
+     <div class="fsub">82% · A WON WEEK STARTS AT 85%</div>
+     <div class="was"><div class="wk">What slipped</div>
+       <div class="wv"><b style="color:var(--ink);font-weight:500">Bible</b> — 1 of 3.
+       <b style="color:var(--ink);font-weight:500">Gym</b> — 1 of 2. Everything else held.</div></div>
+     <div class="fcarry"><div class="cl">The engine's read</div>
+       <div class="cv">Both misses are <b>evening</b> commitments. Nothing in THE WORK slipped —
+       the peak window held all five days.</div></div>
+     <div class="fcarry" style="margin-top:12px"><div class="cl">Carried into next week</div>
+       <div class="cv">Bible 3× · Gym 2× — <b>unchanged, not re-typed.</b></div></div>`},
+  {lab:'STEP 2 OF 4 · ~20s',next:'Next — the empty ones',
+   html:`<div class="fq">August, as it stands.</div>
+     <div class="fsub">TWEAK IT — DO NOT START OVER</div>
+     <div class="was"><div class="wk">THE WORK · WRITTEN JUL 27</div>
+       <div class="wv" id="fDiff">First client live and paying <s>by the 15th</s> <ins>by Aug 31</ins></div></div>
+     <div class="fedit"><textarea rows="3" id="fText">First client live and paying by Aug 31</textarea></div>
+     <div class="fmodes" id="fModes">
+       <button data-mode="keep">KEEP</button>
+       <button class="on" data-mode="tweak">TWEAK</button>
+       <button data-mode="replace">REPLACE</button>
+     </div>
+     <div class="fcarry"><div class="cl">Below it</div>
+       <div class="cv">Five other August milestones. <b>Four unchanged</b>, one empty —
+       you will be asked about that next.</div></div>`},
+  {lab:'STEP 3 OF 4 · ~10s',next:'Next — commit the week',
+   html:`<div class="fq">Two goals have<br>nothing on them.</div>
+     <div class="fsub">ON PURPOSE — OR AN OVERSIGHT?</div>
+     <div class="orphan" style="margin-top:2px">
+       <div class="orow"><i class="dot" style="background:var(--d-mind)"></i>
+         <div><div style="font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.14em;color:var(--faint)">MIND</div>
+           <div class="og">Three guitar classes taken</div>
+           <div class="oa"><button class="parked" data-park="1">PARKED ✓</button><button>GIVE IT A BLOCK</button></div></div></div>
+       <div class="orow"><i class="dot" style="background:var(--d-people)"></i>
+         <div><div style="font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.14em;color:var(--faint)">PEOPLE · AUGUST</div>
+           <div class="og">No August milestone set</div>
+           <div class="oa"><button data-park="1">PARK IT</button><button>SET A MILESTONE</button></div></div></div>
+     </div>
+     <div class="fcarry" style="margin-top:15px"><div class="cl">Why this is a step</div>
+       <div class="cv">A parked goal costs nothing. An <b>ignored</b> one quietly rots for four months.
+       This is the one screen a week that tells the difference.</div></div>`},
+  {lab:'MON–THU · THE RECEIPT',next:'Done — back to today',
+   html:`<div class="fq">Committed.</div>
+     <div class="fsub">WHAT THIS TAB SHOWS UNTIL FRIDAY</div>
+     <div class="receipt" style="--c:var(--d-work)"><div class="rk">THE WORK</div>
+       <div class="rt">12 outreach conversations · ship one pitch page</div>
+       <div class="rm">B1 MON · B2 TUE · B1 THU · B3 WED → AUG: FIRST CLIENT LIVE</div></div>
+     <div class="receipt" style="--c:var(--d-cap)"><div class="rk">CAPITAL</div>
+       <div class="rt">Rules kept · no double-back, five sessions</div>
+       <div class="rm">06:30 DAILY → AUG: RULES WRITTEN, 20 LOGGED</div></div>
+     <div class="receipt" style="--c:var(--d-body)"><div class="rk">BODY</div>
+       <div class="rt">Gym twice · walk three times</div>
+       <div class="rm">GYM 16:20 · WALK 14:35 → AUG: 179 LBS</div></div>
+     <div class="receipt" style="--c:var(--d-faith)"><div class="rk">FAITH</div>
+       <div class="rt">Bible three times · text Kells each time</div>
+       <div class="rm">21:30 MON · WED · SAT → AUG: THREE STRAIGHT WEEKS</div></div>
+     <div class="receipt" style="--c:var(--d-mind);border-style:dashed;background:transparent">
+       <div class="rk">MIND · PARKED</div>
+       <div class="rt" style="color:#6b6480">Three guitar classes — nothing this week, by choice</div>
+       <div class="rm">COSTS NOTHING · REVIEWED FRIDAY</div></div>`},
+];
+let fStep=1;
+function paintF(){
+  const s=STEPS[fStep];
+  document.getElementById('fStepLab').textContent=s.lab;
+  document.getElementById('fBody').innerHTML=s.html;
+  document.getElementById('fNext').textContent=s.next;
+  document.querySelectorAll('#fSteps i').forEach((i,n)=>{
+    i.className=n<fStep?'past':n===fStep?'on':'';
+  });
+  document.querySelectorAll('#fBody [data-park]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const on=b.classList.toggle('parked');b.textContent=on?'PARKED ✓':'PARK IT';
+    });
+  });
+  const modes=document.getElementById('fModes');
+  if(modes)modes.querySelectorAll('button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      modes.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      const ta=document.getElementById('fText'),diff=document.getElementById('fDiff');
+      if(b.dataset.mode==='keep'){
+        ta.value='First client live and paying by Aug 31';
+        diff.innerHTML='First client live and paying by Aug 31 <ins>unchanged</ins>';
+      }else if(b.dataset.mode==='tweak'){
+        ta.value='First client live and paying by Aug 31';
+        diff.innerHTML='First client live and paying <s>by the 15th</s> <ins>by Aug 31</ins>';
+      }else{
+        ta.value='';ta.placeholder='Write a new August milestone…';
+        diff.innerHTML='<s>First client live and paying by the 15th</s>';
+        ta.focus();
+      }
+    });
+  });
+  document.getElementById('s6').scrollTo({top:0});
+}
+document.getElementById('fNext').addEventListener('click',()=>{fStep=(fStep+1)%STEPS.length;paintF()});
+document.getElementById('fBack').addEventListener('click',()=>{fStep=(fStep+STEPS.length-1)%STEPS.length;paintF()});
+paintF();
+
+/* ============ measured scroll depth ============ */
+window.addEventListener('load',()=>{
+  document.querySelectorAll('[data-depth]').forEach(el=>{
+    const s=document.getElementById(el.dataset.depth);
+    if(!s)return;
+    const n=s.scrollHeight/844;
+    el.textContent=n<=1.02?'fits · 1 screen':n.toFixed(1)+' screens';
+  });
+  const ld=document.getElementById('ladder'),tgt=document.getElementById('ldDepth');
+  if(ld&&tgt){const n=ld.scrollHeight/844;tgt.textContent=n<=1.02?'fits · 1 screen':n.toFixed(1)+' screens'}
+});
+</script>
+</body>
+</html>

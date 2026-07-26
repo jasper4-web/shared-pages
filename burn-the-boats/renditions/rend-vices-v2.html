@@ -1,0 +1,1193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Vice Screens v2 — One Object, Five Compositions</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --hot:#FFB25E; --warm:#e8a86a;
+
+  /* ---- THE TYPE SCALE · six steps, nothing else ---- */
+  --t-display:64px;   /* the streak, Clash 700 */
+  --t-unit:30px;      /* its unit, Clash 600 */
+  --t-head:18px;      /* section head, Clash 600 */
+  --t-mod:14.5px;     /* module title, Satoshi 500 */
+  --t-body:13.6px;    /* reason + prose, Satoshi 400 */
+  --t-data:8px;       /* labels, Geist Mono 700, .19em */
+  --t-micro:7px;      /* axis + fine print, Geist Mono 400, .12em */
+
+  /* ---- THE MEASURE · one 8px rhythm ---- */
+  --s1:8px; --s2:16px; --s3:26px; --s4:38px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99;
+  background-image:url('../assets/grain/grain-fine.svg');opacity:.035;mix-blend-mode:overlay}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+button{font-family:inherit;cursor:pointer}
+
+.wrap{max-width:1240px;margin:0 auto;padding:0 26px}
+.mast{padding:58px 0 30px;border-bottom:1px solid var(--line)}
+.kick{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.26em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:14px}
+.mast h1{font-size:clamp(29px,4.6vw,46px);line-height:1.03;letter-spacing:-.035em;margin-bottom:15px}
+.mast p{max-width:680px;color:var(--dim);font-size:15.2px;margin:0 0 11px}
+.mast p b{color:var(--ink);font-weight:500}
+.quote{border-left:2px solid var(--line2);padding-left:14px;margin:22px 0 0;max-width:660px;
+  color:var(--faint);font-size:14px;font-style:italic;line-height:1.6}
+.quote b{color:var(--dim);font-style:normal;font-weight:500}
+.toc{display:flex;flex-wrap:wrap;gap:7px;padding:22px 0 0}
+.toc a{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--dim);border:1px solid var(--line2);border-radius:99px;padding:7px 12px;text-decoration:none}
+.toc a:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ---------- the four kept parts ---------- */
+.kept{padding:44px 0;border-bottom:1px solid var(--line)}
+.kept h2{font-size:26px;letter-spacing:-.03em;margin-bottom:6px}
+.kept .dm{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--faint);margin-bottom:18px}
+.parts{display:grid;grid-template-columns:repeat(auto-fit,minmax(236px,1fr));gap:12px;margin-top:20px}
+.pt{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:14px}
+.pt .n{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase}
+.pt .t{font-family:'Clash Display',sans-serif;font-size:17px;letter-spacing:-.025em;margin-top:8px}
+.pt .k{font-size:13.2px;color:var(--dim);margin-top:8px;line-height:1.5}
+.pt .d{font-size:12.4px;color:#5f5872;margin-top:9px;padding-top:9px;border-top:1px solid var(--line);line-height:1.5}
+.pt .d b{color:#8b8398;font-weight:500}
+
+/* ---------- the system ---------- */
+.sys{padding:44px 0;border-bottom:1px solid var(--line)}
+.sys h2{font-size:26px;letter-spacing:-.03em;margin-bottom:6px}
+.sysgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:22px;margin-top:24px}
+.sb h3{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:12px;font-weight:700}
+.spec{border-left:2px solid var(--line2);padding-left:13px;margin-bottom:11px}
+.spec .l{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.16em;color:#4b4560;text-transform:uppercase}
+.spec .s{margin-top:3px}
+.swatch{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.swatch i{width:26px;height:26px;border-radius:99px;flex:none}
+.swatch div{font-size:13px;color:var(--dim);line-height:1.4}
+.swatch div b{display:block;color:var(--ink);font-weight:500;font-size:13.4px}
+.sysnote{margin-top:22px;border-left:2px solid var(--gold);padding-left:14px;max-width:820px;
+  font-size:14.4px;color:var(--dim);line-height:1.6}
+.sysnote b{color:var(--ink);font-weight:500}
+
+/* ---------- version shell ---------- */
+.ver{padding:52px 0;border-bottom:1px solid var(--line)}
+.vh{display:grid;grid-template-columns:60px 1fr;gap:18px;align-items:start;margin-bottom:26px}
+.vn{font-family:'Clash Display',sans-serif;font-size:46px;line-height:.8;font-weight:700;color:transparent;
+  -webkit-text-stroke:1.2px var(--line2)}
+.vt h2{font-size:27px;letter-spacing:-.03em;margin-bottom:5px}
+.vm{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+.vl{max-width:640px;color:var(--dim);font-size:14.8px;margin-top:11px}
+.vl b{color:var(--ink);font-weight:500}
+.vbody{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:38px;align-items:start}
+.stack{display:flex;gap:22px;flex-wrap:wrap;min-width:0}
+@media(max-width:1080px){.vbody{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:520px){.wrap{padding:0 8px}.vh{grid-template-columns:40px 1fr;gap:12px}.vn{font-size:30px}}
+.notes dt{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);margin-top:19px}
+.notes dt:first-child{margin-top:0}
+.notes dd{margin:6px 0 0;font-size:14px;color:var(--dim);line-height:1.55}
+.notes dd b{color:var(--ink);font-weight:500}
+.cost{border-left:2px solid var(--line2);padding-left:13px;margin-top:20px;font-size:13.4px;color:var(--faint);font-style:italic}
+
+/* ---------- phone chrome ---------- */
+.phw{flex:1 1 340px;max-width:390px;min-width:0;margin:0}
+.phone{border-radius:22px;overflow:hidden;border:1px solid var(--line2);box-shadow:0 30px 70px -30px #000;
+  background:var(--bg);width:100%}
+.notch{height:26px;background:#000;display:flex;align-items:center;justify-content:center}
+.notch i{width:56px;height:5px;border-radius:99px;background:#1a1a20}
+.scr{min-height:600px;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.bl{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.16em;color:#3f3a4d;text-align:center;
+  margin:10px 0 0;text-transform:uppercase}
+
+/* =====================================================================
+   THE SHARED COMPONENT SET — every version below is built from these
+   and only these. One type scale, one shape rule, one colour logic.
+   ===================================================================== */
+
+/* top bar */
+.v-bar{display:flex;align-items:center;gap:11px;padding:13px 16px 12px;flex:none}
+.v-bar .bk{width:26px;height:26px;border-radius:99px;border:1px solid var(--line2);background:transparent;
+  color:var(--faint);font-size:13px;line-height:1;display:grid;place-items:center;flex:none}
+.v-bar .lb{font-family:'Geist Mono',monospace;font-size:var(--t-data);letter-spacing:.19em;
+  text-transform:uppercase;color:var(--dim);font-weight:700}
+.v-bar .rt{margin-left:auto;font-family:'Geist Mono',monospace;font-size:var(--t-micro);
+  letter-spacing:.13em;color:#4b4560;text-transform:uppercase}
+
+/* PART A — the big visual: the streak at scale */
+.v-streak{display:flex;align-items:baseline;gap:9px;line-height:1}
+.v-streak b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:var(--t-display);
+  letter-spacing:-.055em;color:#f6f1e8;line-height:.84}
+.v-streak em{font-style:normal;font-family:'Clash Display',sans-serif;font-weight:600;
+  font-size:var(--t-unit);letter-spacing:-.03em;color:var(--warm)}
+.v-sub{font-family:'Geist Mono',monospace;font-size:var(--t-data);letter-spacing:.19em;
+  text-transform:uppercase;color:#6d5c3c;font-weight:700;margin-top:10px}
+
+/* PART B — the ring (and its cropped crown) */
+.v-ring{display:grid;place-items:center;position:relative}
+.v-ring svg{display:block}
+.v-ring.crop{height:116px;overflow:hidden;align-items:start}
+.v-ring .in{position:absolute;text-align:center;width:150px}
+.v-ring .in .k{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.19em;
+  color:#6d5c3c;text-transform:uppercase}
+.v-ring .in .n{font-family:'Clash Display',sans-serif;font-weight:700;font-size:40px;line-height:.9;
+  letter-spacing:-.05em;color:#f6f1e8;margin-top:7px}
+.v-ring .in .n small{font-size:16px;letter-spacing:-.02em;color:var(--warm)}
+.v-ring .in .s{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.16em;
+  color:var(--faint);text-transform:uppercase;margin-top:9px}
+.v-legend{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;
+  font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.12em;color:#4b4560;text-transform:uppercase}
+.v-legend i{display:inline-block;width:8px;height:3px;border-radius:99px;margin-right:5px;vertical-align:2px}
+
+/* PART C — the modules. One shape: rounded, round-capped rail, gold payout. */
+.v-mods{display:grid;gap:var(--s1)}
+.v-mod{border:1px solid var(--line2);border-radius:14px;background:var(--panel);padding:12px 13px;position:relative}
+.v-mod .top{display:flex;align-items:center;gap:9px}
+.v-mod .st{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.2em;
+  text-transform:uppercase;color:#5f5872;font-weight:700}
+.v-mod .pay{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11.5px;font-weight:700;color:var(--gold)}
+.v-mod .ti{font-size:var(--t-mod);font-weight:500;margin-top:7px;line-height:1.3;color:var(--ink)}
+.v-mod .su{font-size:12.2px;color:var(--faint);margin-top:5px;line-height:1.4}
+.v-rail{height:5px;border-radius:99px;background:#191527;overflow:hidden;margin-top:10px;position:relative}
+.v-rail i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;
+  background:linear-gradient(90deg,#6b2400,var(--ember),#FFC98A);box-shadow:0 0 9px rgba(255,107,44,.45)}
+.v-mod .foot{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;
+  font-size:var(--t-micro);letter-spacing:.12em;color:#6d5c3c;margin-top:7px;text-transform:uppercase}
+.v-act{margin-top:10px;width:100%;border:1px solid rgba(224,178,94,.45);background:transparent;color:var(--gold);
+  border-radius:99px;padding:10px;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.17em;
+  min-height:38px;font-weight:700}
+.v-mod.live{border-color:rgba(255,107,44,.42);background:linear-gradient(150deg,rgba(255,107,44,.09),rgba(255,107,44,.015))}
+.v-mod.live .st{color:var(--ember)}
+.v-mod.claim{border-color:rgba(74,222,128,.45);background:linear-gradient(150deg,rgba(74,222,128,.1),rgba(74,222,128,.015))}
+.v-mod.claim .st,.v-mod.claim .pay{color:var(--phos)}
+.v-mod.claim .v-act{border:0;background:linear-gradient(135deg,var(--phos),#2f9e5c);color:#062010;
+  font-family:'Satoshi',sans-serif;font-size:13px;letter-spacing:0;font-weight:700}
+.v-mod.offer .st{color:var(--gold)}
+.v-mod.lock{opacity:.6;border-style:dashed}
+.v-ladder{display:flex;gap:5px;margin-top:9px}
+.v-ladder i{flex:1;height:3px;border-radius:99px;background:#241f33}
+.v-ladder i.on{background:var(--gold);box-shadow:0 0 7px rgba(224,178,94,.45)}
+
+/* the same module, as a flush row instead of a card (v4 only) */
+.v-mod.flush{border:0;border-radius:0;background:none;padding:13px 0;border-top:1px solid var(--line)}
+
+/* PART D — the plain graph. Rudimentary on purpose. */
+.v-graph .k{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;
+  font-size:var(--t-micro);letter-spacing:.18em;color:#3b3549;text-transform:uppercase;margin-bottom:10px}
+.v-graph .key{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.11em;
+  color:#3b3549;margin-top:9px;line-height:1.7;text-transform:uppercase}
+
+/* the reason line */
+.v-why{font-size:var(--t-body);color:var(--dim);line-height:1.5}
+.v-why b{color:var(--ink);font-weight:500}
+.v-cite{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.16em;
+  color:#4b4560;text-transform:uppercase;margin-top:7px}
+
+/* mercy with a price — amber, never red. There is no red on these screens. */
+.v-makeup{border:1px solid rgba(255,107,44,.4);background:rgba(255,107,44,.07);border-radius:14px;
+  padding:11px 13px}
+.v-makeup .k{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.19em;
+  color:var(--hot);text-transform:uppercase;font-weight:700}
+.v-makeup .t{font-size:13px;color:#e8c6ac;margin-top:6px;line-height:1.4}
+.v-makeup .t b{color:#ffd9bd;font-weight:500}
+
+.v-rule{height:1px;background:var(--line);border:0;margin:0}
+.v-sec{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.2em;
+  text-transform:uppercase;color:#4b4560;font-weight:700}
+
+/* =====================================================================
+   THE FIVE COMPOSITIONS — layout only. No new components, no new colours.
+   ===================================================================== */
+
+/* K1 · THE CROWN — ring and streak fused into one object */
+.k1 .hero{position:relative;padding:var(--s1) 16px 0;display:grid;place-items:center}
+/* the streak sits INSIDE the ring; its supporting lines sit in the ring's own bottom opening,
+   pulled up so the arc's dead space is used rather than left as a hole */
+.k1 .under{text-align:center;padding:0 16px;margin-top:-16px}
+.k1 .under .det{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.15em;
+  color:var(--faint);text-transform:uppercase;margin-top:8px}
+.k1 .rest{padding:var(--s2) 16px calc(var(--s3));display:grid;gap:var(--s2)}
+
+/* K2 · THE MASTHEAD — type dominates, ring is a jewel */
+.k2 .head{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:var(--s2) 16px var(--s2)}
+.k2 .rest{padding:0 16px var(--s3);display:grid;gap:var(--s2)}
+.k2 .mods2{grid-template-columns:1fr 1fr}
+
+/* K3 · THE INSTRUMENT — ring is the hero, everything else is instrumentation */
+.k3 .hero{padding:var(--s1) 0 0;display:grid;place-items:center}
+.k3 .plate{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);margin-top:var(--s1)}
+.k3 .plate div{padding:11px 6px;text-align:center;border-right:1px solid var(--line)}
+.k3 .plate div:last-child{border-right:0}
+.k3 .plate .kk{font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.16em;
+  color:#4b4560;text-transform:uppercase}
+.k3 .plate .vv{font-family:'Clash Display',sans-serif;font-weight:700;font-size:27px;letter-spacing:-.04em;
+  color:#f6f1e8;margin-top:5px;line-height:.9}
+.k3 .plate .vv small{font-size:12px;color:var(--warm);letter-spacing:-.01em}
+.k3 .rail{display:flex;gap:9px;overflow-x:auto;padding:var(--s2) 16px var(--s1);scrollbar-width:none}
+.k3 .rail::-webkit-scrollbar{display:none}
+.k3 .rail .v-mod{flex:0 0 224px}
+.k3 .rest{padding:var(--s1) 16px var(--s3);display:grid;gap:var(--s2)}
+
+/* K4 · THE SPINE — one continuous document, no cards */
+.k4 .doc{padding:0 16px var(--s3)}
+.k4 .streakrow{padding:var(--s2) 0 var(--s2)}
+.k4 .v-mod{padding-left:0;padding-right:0}
+
+/* K5 · THE INVERSION — act first, reward at the bottom */
+.k5 .act{padding:var(--s1) 16px 0;display:grid;gap:var(--s1)}
+.k5 .mid{padding:var(--s2) 16px 0;display:grid;gap:var(--s2)}
+.k5 .payoff{margin-top:auto;padding:var(--s3) 16px var(--s3);
+  background:radial-gradient(78% 120% at 50% 100%,rgba(255,107,44,.13),transparent 68%);
+  border-top:1px solid var(--line);text-align:center}
+.k5 .payoff .v-streak{justify-content:center}
+
+/* handoff */
+.ho{padding:52px 0 90px}
+.ho h2{font-size:27px;letter-spacing:-.03em;margin-bottom:16px}
+.ho h3{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--faint);margin:30px 0 10px;font-weight:700}
+.ho p,.ho li{color:var(--dim);font-size:14.6px;line-height:1.62;max-width:800px}
+.ho li{margin-bottom:9px}
+.ho b{color:var(--ink);font-weight:500}
+.ho ol.rank li{margin-bottom:14px}
+.ho code{font-family:'Geist Mono',monospace;font-size:12.5px;color:var(--warm);
+  overflow-wrap:anywhere;word-break:break-word}
+.ho .flag{border-left:2px solid var(--ember);padding-left:13px;margin:16px 0;max-width:800px}
+.ho .flag b{color:var(--hot)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <div class="kick">Burn the Boats · crew 2026-07-25 · agent 5 · round 2</div>
+  <h1>One object, five compositions</h1>
+  <p>Round 1 offered six visual languages and the owner picked <b>four parts out of four different ones</b>.
+  This round is not six new ideas. It builds a <b>single design system</b> from those four parts — one type
+  scale, one shape rule, one colour logic, one vertical rhythm — and then asks the only question left:
+  <b>how should they be composed?</b></p>
+  <p>Every screen below uses the same components. Nothing is restyled between versions. What changes is
+  proportion, order, and which part dominates. Sample state is held identical throughout:
+  <b>smoke — 6 days clean, best 11, 09:42, gate held 12 of the last 14</b> ·
+  <b>the dishwasher — 4 weeks at or under, best 4, 0 of 1 used, Tuesday</b>.</p>
+  <div class="quote">
+    “Let’s take all of those into consideration and let’s get another five with all of these things in
+    consideration, and really kind of bringing a <b>real congruency</b> to it.”
+  </div>
+  <nav class="toc">
+    <a href="#kept">The four kept parts</a>
+    <a href="#sys">The system</a>
+    <a href="#k1">01 · The Crown</a>
+    <a href="#k2">02 · The Masthead</a>
+    <a href="#k3">03 · The Instrument</a>
+    <a href="#k4">04 · The Spine</a>
+    <a href="#k5">05 · The Inversion</a>
+    <a href="#handoff">Hand-off &amp; ranking</a>
+  </nav>
+</header>
+
+<!-- ===================== THE FOUR KEPT PARTS ===================== -->
+<section class="kept" id="kept">
+  <h2>The four kept parts</h2>
+  <div class="dm">what survived round 1 · and what was explicitly left behind</div>
+  <p class="vl" style="max-width:820px">He separated <b>form from concept</b> in his verdict, so this round
+  does too. Three of the four parts arrive without the idea that carried them.</p>
+  <div class="parts">
+    <div class="pt">
+      <div class="n">From 01 · The Chain</div>
+      <div class="t">The big visual</div>
+      <div class="k">The streak at real scale — “I really just like the big visual with the six days.”
+      It is now the emotional centre of every version.</div>
+      <div class="d"><b>Dropped:</b> the chain metaphor entirely. No links, no forging, no welding, no
+      “breaking a link”. He said the idea itself wasn’t cool. It is gone, including the language.</div>
+    </div>
+    <div class="pt">
+      <div class="n">From 02 · The Gate Clock</div>
+      <div class="t">The ring</div>
+      <div class="k">His strongest single reaction in the whole set. The 270° arc with the rule at the crown.
+      Kept exactly — same geometry, same danger bands.</div>
+      <div class="d"><b>Held in check:</b> it is not allowed to become the whole screen in any version except
+      the one that argues for it on purpose (03).</div>
+    </div>
+    <div class="pt">
+      <div class="n">From 02 + 04</div>
+      <div class="t">The modules</div>
+      <div class="k">Discrete offers as separate takeable units. The <b>hold-until-14:00</b> mechanic was rated
+      “OK”, so the mechanic is unchanged and only the presentation is rebuilt.</div>
+      <div class="d"><b>Dropped:</b> the quest-board framing, the rank/rarity language, the trophy shelf.
+      A module is now a plain instrument row, not a game card.</div>
+    </div>
+    <div class="pt">
+      <div class="n">From 05 · The Testimony</div>
+      <div class="t">The plain graph</div>
+      <div class="k">“Rudimentary but a cool little style.” That is a compliment about restraint, so it has
+      been made <b>more consistent, not more polished</b>.</div>
+      <div class="d"><b>Dropped:</b> the testimony framing, the 60px scripture setting, the reverent tone.
+      Scripture survives as one of several rotating reason lines, not as the screen’s thesis.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== THE SYSTEM ===================== -->
+<section class="sys" id="sys">
+  <h2>The system</h2>
+  <div class="dm">four decisions, held across all five versions</div>
+  <p class="vl" style="max-width:820px">Congruency is not a mood, it is a set of decisions you refuse to
+  break. These are the four the brief asked for, decided once.</p>
+
+  <div class="sysgrid">
+    <div class="sb">
+      <h3>1 · One type scale — six steps</h3>
+      <div class="spec"><div class="l">Display · Clash 700 · 64/‑.055em</div>
+        <div class="s"><span class="v-streak" style="display:inline-flex"><b>SIX</b><em>days</em></span></div></div>
+      <div class="spec"><div class="l">Head · Clash 600 · 18px</div>
+        <div class="s" style="font-family:'Clash Display',sans-serif;font-size:18px;letter-spacing:-.025em">Hold until 2 PM</div></div>
+      <div class="spec"><div class="l">Module · Satoshi 500 · 14.5px</div>
+        <div class="s" style="font-size:14.5px;font-weight:500">24 hours clean</div></div>
+      <div class="spec"><div class="l">Body · Satoshi 400 · 13.6px</div>
+        <div class="s" style="font-size:13.6px;color:var(--dim)">9 AM to noon is the best brain you own.</div></div>
+      <div class="spec"><div class="l">Data · Geist Mono 700 · 8px · .19em</div>
+        <div class="s" style="font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.19em;color:#6d5c3c;font-weight:700">CLEAN · BEST EVER 11</div></div>
+      <div class="spec"><div class="l">Micro · Geist Mono 400 · 7px · .12em</div>
+        <div class="s" style="font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.12em;color:#3b3549">14 DAYS AGO</div></div>
+    </div>
+
+    <div class="sb">
+      <h3>2 · One shape rule</h3>
+      <p style="font-size:14px;color:var(--dim);line-height:1.6;margin:0 0 14px">
+      <b style="color:var(--ink);font-weight:500">Every terminal is round.</b> The ring is a stroke with a
+      round cap; so is every module’s progress rail; so is every dot on the graph; so is every button and
+      every legend key. Nothing in the vice screens ends in a square. The modules therefore <b>echo</b> the
+      big visual’s geometry rather than contrasting with it — the whole screen is made of the same one mark
+      at four sizes.</p>
+      <div class="v-rail" style="margin-bottom:12px"><i style="width:63%"></i></div>
+      <div class="v-legend" style="justify-content:flex-start">
+        <span><i style="background:var(--ember)"></i>the same cap</span>
+        <span><i style="background:var(--gold)"></i>at every size</span>
+      </div>
+      <p style="font-size:13.4px;color:var(--faint);line-height:1.6;margin:14px 0 0">
+      Corner radius follows suit: 14px on every module, 99px on every control. Two values, no others.</p>
+    </div>
+
+    <div class="sb">
+      <h3>3 · One colour logic</h3>
+      <div class="swatch"><i style="background:var(--ember);box-shadow:0 0 14px rgba(255,107,44,.5)"></i>
+        <div><b>Ember — now</b>The rule that is live this minute. The ring’s elapsed arc, the running module.
+        Heat means <i>currently being held</i>.</div></div>
+      <div class="swatch"><i style="background:var(--gold);box-shadow:0 0 14px rgba(224,178,94,.4)"></i>
+        <div><b>Gold — him</b>Everything earned or offered to him: XP, the gate marker, every action. Gold is
+        the app talking to him.</div></div>
+      <div class="swatch"><i style="background:var(--phos);box-shadow:0 0 14px rgba(74,222,128,.35)"></i>
+        <div><b>Green — banked</b>Past tense only. Claimed, clean, done. Never used for anything pending.</div></div>
+      <div class="swatch"><i style="background:#141120;border:1px dashed var(--line2)"></i>
+        <div><b>Red — not used</b>There is no red anywhere on a vice screen. The make-up strip is amber. A
+        slip is ember. This is law #1 enforced at the palette, not at the layout.</div></div>
+    </div>
+
+    <div class="sb">
+      <h3>4 · One rhythm</h3>
+      <p style="font-size:14px;color:var(--dim);line-height:1.6;margin:0 0 14px">
+      An 8px measure, four stops: <b style="color:var(--ink);font-weight:500">8 · 16 · 26 · 38</b>.
+      16 separates things of the same kind, 26 separates movements, 38 is reserved for the one break that
+      matters in a given composition. Nothing else exists.</p>
+      <p style="font-size:14px;color:var(--dim);line-height:1.6;margin:0">
+      And one reading order, which is what the five versions actually argue about:<br>
+      <b style="color:var(--ink);font-weight:500">where you are → what you could do → how it has gone.</b>
+      Four of the five hold that order. <b style="color:var(--ink);font-weight:500">05 deliberately inverts
+      it</b>, to test whether at 9:42 in the morning he needs the offer before the trophy.</p>
+    </div>
+  </div>
+
+  <div class="sysnote">
+    One consequence worth stating plainly: <b>the two vices now share a grammar instead of sharing a
+    screen layout.</b> One ring — a 270° arc with the rule at its crown; for smoking the crown is noon, for
+    the dishwasher it is the weekly allowance. One graph — a dot placed against a line; for smoking the line
+    is noon and the dot is the time of first use, for the dishwasher the line is the allowance and the dot is
+    that week’s count. Same two objects, two different rules, no re-learning.
+  </div>
+</section>
+
+<!-- ===================== 01 · THE CROWN ===================== -->
+<section class="ver" id="k1">
+  <div class="vh"><div class="vn">01</div><div class="vt">
+    <h2>The Crown</h2>
+    <div class="vm">the ring and the streak fused into one object</div>
+    <p class="vl">The two visuals he liked most were competing for the same real estate, so this version
+    refuses to stack them: <b>the streak lives inside the ring</b>. One object, roughly 44% of the screen,
+    that answers “how long have I held this” and “where am I in today” in a single glance. Modules and the
+    graph then sit underneath in strict rhythm. This is the most direct reading of his two strongest
+    reactions — and the only version where the big visual and the ring are not fighting.</p>
+  </div></div>
+  <div class="vbody">
+    <div class="stack">
+
+      <figure class="phw">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr k1">
+          <div class="v-bar"><button class="bk" type="button">‹</button><span class="lb">Smoke</span>
+            <span class="rt">09:42 · Tue</span></div>
+          <div class="hero">
+            <div class="v-ring" data-ring="day" data-size="300"></div>
+            <div class="in" style="position:absolute;text-align:center;width:206px;top:98px">
+              <div class="v-streak" style="justify-content:center"><b>6</b><em>days</em></div>
+            </div>
+          </div>
+          <div class="under">
+            <div class="v-sub">clean · best ever 11</div>
+            <div class="det">2h 18m to the gate</div>
+          </div>
+          <div class="v-legend" style="margin-top:13px">
+            <span><i style="background:var(--ember)"></i>Elapsed</span>
+            <span><i style="background:#5a2a10"></i>Danger</span>
+            <span><i style="background:var(--gold)"></i>Gate</span>
+            <span><i style="background:var(--phos)"></i>Flag</span>
+          </div>
+          <div class="rest">
+            <div class="v-mods">
+              <div class="v-mod live">
+                <div class="top"><span class="st">Live</span><span class="pay">+35 XP</span></div>
+                <div class="ti">Holding until 14:00</div>
+                <div class="v-rail"><i style="width:63%"></i></div>
+                <div class="foot"><span>Taken 09:12</span><span>4h 18m to go</span></div>
+              </div>
+              <div class="v-mod offer">
+                <div class="top"><span class="st">Offered tonight</span><span class="pay">+120 XP</span></div>
+                <div class="ti">24 hours clean</div>
+                <div class="su">Optional. Ignoring it costs nothing — 2 of 3 toward the 32-hour rung.</div>
+                <div class="v-ladder"><i class="on"></i><i class="on"></i><i></i></div>
+              </div>
+            </div>
+            <div class="v-graph">
+              <div class="k"><span>The last fourteen days</span><span>vs the gate</span></div>
+              <div data-graph="day"></div>
+            </div>
+            <div>
+              <hr class="v-rule" style="margin-bottom:13px">
+              <div class="v-why">The first ninety minutes are the hardest — and they are <b>the same ninety
+              minutes the market is open.</b></div>
+              <div class="v-cite">Reason · rotates each open</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption class="bl">1a · smoke — the day at the crown, the streak inside it</figcaption>
+      </figure>
+
+      <figure class="phw">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr k1">
+          <div class="v-bar"><button class="bk" type="button">‹</button><span class="lb">The Dishwasher</span>
+            <span class="rt">Tue · week 18</span></div>
+          <div class="hero">
+            <div class="v-ring" data-ring="week" data-size="300"></div>
+            <div class="in" style="position:absolute;text-align:center;width:206px;top:98px">
+              <div class="v-streak" style="justify-content:center"><b>4</b><em>weeks</em></div>
+            </div>
+          </div>
+          <div class="under">
+            <div class="v-sub">at or under · best ever 4</div>
+            <div class="det">1 unspent · 5 days to hold</div>
+          </div>
+          <div class="v-legend" style="margin-top:13px">
+            <span><i style="background:var(--ember)"></i>Days gone</span>
+            <span><i style="background:#2b2540"></i>Days left</span>
+            <span><i style="background:var(--gold)"></i>Allowance</span>
+          </div>
+          <div class="rest">
+            <div class="v-mods">
+              <div class="v-mod live">
+                <div class="top"><span class="st">Live</span><span class="pay">+250 XP</span></div>
+                <div class="ti">A week at zero</div>
+                <div class="v-rail"><i style="width:29%"></i></div>
+                <div class="foot"><span>Taken Mon 08:12</span><span>2 of 7 days held</span></div>
+              </div>
+              <div class="v-makeup">
+                <div class="k">You owe a make-up · the streak is intact</div>
+                <div class="t"><b>Bible 15 min · write out 6 passages · photograph them.</b>
+                Nothing was taken from you. There is just a price.</div>
+              </div>
+            </div>
+            <div class="v-graph">
+              <div class="k"><span>The last twelve weeks</span><span>vs the allowance</span></div>
+              <div data-graph="week"></div>
+            </div>
+            <div>
+              <hr class="v-rule" style="margin-bottom:13px">
+              <div class="v-why">“A man without self-control is like a city broken into and left without walls.”</div>
+              <div class="v-cite">Proverbs 25:28</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption class="bl">1b · the dishwasher — the same object, a different rule</figcaption>
+      </figure>
+
+    </div>
+    <dl class="notes">
+      <dt>Composition</dt>
+      <dd>One dominant object (44%), then two movements of equal weight. The eye lands once and then
+      descends in even steps.</dd>
+      <dt>How the parts relate</dt>
+      <dd>The big visual and the ring are <b>the same element</b>, which is the only way to give both his
+      favourite things the top of the screen without either shrinking.</dd>
+      <dt>Both rules, one grammar</dt>
+      <dd>1a and 1b are the identical layout. The ring reads a day or a week; the graph plots a time or a
+      count; the streak counts days or weeks. Nothing else changes — and <b>the make-up strip is shown on
+      1b in amber</b>, which is what “mercy with a price” looks like in this palette.</dd>
+      <dt>Risk — measured</dt>
+      <dd>The hero costs real estate. On a 390×844 phone the first module lands at <b>422px</b> and the graph
+      at <b>686px</b>, so the history is the last thing above the fold and the screen scrolls about 145px.
+      That is the price of giving the ring 300px, and it is the one thing to weigh against 02. The ring’s
+      interior clears 213px against a 206px streak block, so the longest state (“<b>32h clean</b>”) still
+      fits — but there is no room left, and any third line inside the ring would have to go back out.</dd>
+      <div class="cost">The safest composition, and the one that most literally answers what he said he liked.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ===================== 02 · THE MASTHEAD ===================== -->
+<section class="ver" id="k2">
+  <div class="vh"><div class="vn">02</div><div class="vt">
+    <h2>The Masthead</h2>
+    <div class="vm">type dominates · the ring becomes a jewel</div>
+    <p class="vl">The inverse trade: the streak gets the full width as a <b>masthead</b>, and the ring is
+    demoted to a 108px live indicator beside it. The bet is that the number is what he wants to see and the
+    ring is what he wants to <i>check</i> — two different jobs that deserve two different sizes. It buys a
+    great deal of room below, so the modules can sit <b>two-up</b> and the graph gets full width without the
+    screen scrolling.</p>
+  </div></div>
+  <div class="vbody">
+    <div class="stack">
+      <figure class="phw">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr k2">
+          <div class="v-bar"><button class="bk" type="button">‹</button><span class="lb">Smoke</span>
+            <span class="rt">09:42 · Tue</span></div>
+          <div class="head">
+            <div>
+              <div class="v-streak"><b>6</b><em>days</em></div>
+              <div class="v-sub">clean · best ever 11</div>
+              <div style="font-family:'Geist Mono',monospace;font-size:var(--t-micro);letter-spacing:.15em;
+                color:var(--faint);text-transform:uppercase;margin-top:8px">Gate held 12 of the last 14</div>
+            </div>
+            <div class="v-ring" data-ring="day" data-size="112" data-bare="1"></div>
+          </div>
+          <div class="rest">
+            <div class="v-mods mods2" style="grid-template-columns:1fr 1fr">
+              <div class="v-mod live">
+                <div class="top"><span class="st">Live</span></div>
+                <div class="ti">Hold to 14:00</div>
+                <div class="v-rail"><i style="width:63%"></i></div>
+                <div class="foot"><span>4h 18m</span><span style="color:var(--gold)">+35</span></div>
+              </div>
+              <div class="v-mod offer">
+                <div class="top"><span class="st">Tonight</span></div>
+                <div class="ti">24 hours clean</div>
+                <div class="v-ladder"><i class="on"></i><i class="on"></i><i></i></div>
+                <div class="foot"><span>2 of 3 to 32h</span><span style="color:var(--gold)">+120</span></div>
+              </div>
+            </div>
+            <div class="v-graph">
+              <div class="k"><span>The last fourteen days</span><span>vs the gate</span></div>
+              <div data-graph="day"></div>
+            </div>
+            <div>
+              <hr class="v-rule" style="margin-bottom:13px">
+              <div class="v-why">9 AM to noon is the best brain you own. <b>The gate is what buys it.</b></div>
+              <div class="v-cite">Reason · rotates each open</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption class="bl">2 · smoke — the number leads, the ring reports</figcaption>
+      </figure>
+    </div>
+    <dl class="notes">
+      <dt>Composition</dt>
+      <dd>A wide masthead, then three even movements. Nothing dominates by size; the <b>reading order</b>
+      does the work instead.</dd>
+      <dt>How the parts relate</dt>
+      <dd>The ring stops being a hero and becomes an instrument — a live read you glance at, the way you
+      glance at a fuel gauge. It keeps every mark of the full ring at 112px, so the object is still
+      recognisably the one he liked.</dd>
+      <dt>What it buys — measured</dt>
+      <dd>The only version that does not scroll. Streak, both modules, the full graph and the reason line
+      occupy <b>600px</b> of an 844px screen; the modules start at 195px and the graph at 325px. Every other
+      version here runs past 900px. That matters for a <b>sixty-second daily interaction</b>.</dd>
+      <dt>Risk</dt>
+      <dd>He called the ring “the thing at the top that looks very nice”. This version makes it small. If
+      what he liked was its <i>size</i> rather than its <i>information</i>, this is the version that loses
+      the thing he actually responded to.</dd>
+      <div class="cost">Most efficient. Possibly too efficient — it optimises for a glance he may not want yet.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ===================== 03 · THE INSTRUMENT ===================== -->
+<section class="ver" id="k3">
+  <div class="vh"><div class="vn">03</div><div class="vt">
+    <h2>The Instrument</h2>
+    <div class="vm">the ring at full size · everything else is instrumentation</div>
+    <p class="vl">The version that takes his ring reaction at maximum face value. The ring runs the full
+    width of the screen, the streak is demoted into a <b>three-cell readout plate</b> directly beneath it,
+    and the modules become a <b>horizontal rail</b> you swipe rather than a stack you scroll. The graph
+    anchors the base. It reads like a cockpit — the one composition where the screen’s job is
+    <i>monitoring</i> rather than motivating.</p>
+  </div></div>
+  <div class="vbody">
+    <div class="stack">
+
+      <figure class="phw">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr k3">
+          <div class="v-bar"><button class="bk" type="button">‹</button><span class="lb">Smoke</span>
+            <span class="rt">09:42 · Tue</span></div>
+          <div class="hero">
+            <div class="v-ring" data-ring="day" data-size="330">
+              <div class="in" style="width:170px">
+                <div class="k">Until the gate</div>
+                <div class="n">2<small>h</small> 18<small>m</small></div>
+                <div class="s">Hold the line</div>
+              </div>
+            </div>
+          </div>
+          <div class="plate">
+            <div><div class="kk">Clean</div><div class="vv">6<small>d</small></div></div>
+            <div><div class="kk">Best</div><div class="vv">11<small>d</small></div></div>
+            <div><div class="kk">Held</div><div class="vv">12<small>/14</small></div></div>
+          </div>
+          <div class="rail">
+            <div class="v-mod live">
+              <div class="top"><span class="st">Live</span><span class="pay">+35</span></div>
+              <div class="ti">Hold until 14:00</div>
+              <div class="v-rail"><i style="width:63%"></i></div>
+              <div class="foot"><span>4h 18m</span><span>Taken 09:12</span></div>
+            </div>
+            <div class="v-mod offer">
+              <div class="top"><span class="st">Tonight</span><span class="pay">+120</span></div>
+              <div class="ti">24 hours clean</div>
+              <div class="v-ladder"><i class="on"></i><i class="on"></i><i></i></div>
+              <div class="foot"><span>2 of 3 to 32h</span><span>Optional</span></div>
+            </div>
+            <div class="v-mod lock">
+              <div class="top"><span class="st">Locked</span><span class="pay">+180</span></div>
+              <div class="ti">32 hours clean</div>
+              <div class="su">The bar rises with you.</div>
+            </div>
+          </div>
+          <div class="rest">
+            <div class="v-graph">
+              <div class="k"><span>The last fourteen days</span><span>vs the gate</span></div>
+              <div data-graph="day"></div>
+            </div>
+            <div>
+              <hr class="v-rule" style="margin-bottom:13px">
+              <div class="v-why">Burn the boats. <b>What is the millionaire version of yourself doing right
+              now?</b> He is not negotiating with a clock at 9 AM.</div>
+              <div class="v-cite">Reason · rotates each open</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption class="bl">3a · smoke — the ring at 330px, streak as a readout</figcaption>
+      </figure>
+
+      <figure class="phw">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr k3">
+          <div class="v-bar"><button class="bk" type="button">‹</button><span class="lb">The Dishwasher</span>
+            <span class="rt">Tue · week 18</span></div>
+          <div class="hero">
+            <div class="v-ring" data-ring="week" data-size="330">
+              <div class="in" style="width:170px">
+                <div class="k">Allowance</div>
+                <div class="n">1<small> left</small></div>
+                <div class="s">5 days to hold</div>
+              </div>
+            </div>
+          </div>
+          <div class="plate">
+            <div><div class="kk">Under</div><div class="vv">4<small>w</small></div></div>
+            <div><div class="kk">Best</div><div class="vv">4<small>w</small></div></div>
+            <div><div class="kk">Used</div><div class="vv">0<small>/1</small></div></div>
+          </div>
+          <div class="rail">
+            <div class="v-mod live">
+              <div class="top"><span class="st">Live</span><span class="pay">+250</span></div>
+              <div class="ti">A week at zero</div>
+              <div class="v-rail"><i style="width:29%"></i></div>
+              <div class="foot"><span>2 of 7 days</span><span>Through Sunday</span></div>
+            </div>
+            <div class="v-mod offer">
+              <div class="top"><span class="st">The on-ramp</span><span class="pay">+90</span></div>
+              <div class="ti">Hold to Thursday</div>
+              <div class="su">Cannot run alongside the week at zero.</div>
+            </div>
+          </div>
+          <div class="rest">
+            <div class="v-graph">
+              <div class="k"><span>The last twelve weeks</span><span>vs the allowance</span></div>
+              <div data-graph="week"></div>
+            </div>
+            <div>
+              <hr class="v-rule" style="margin-bottom:13px">
+              <div class="v-why">Once a week is the deal you made with yourself.
+              <b>Nobody else is checking.</b></div>
+              <div class="v-cite">Reason · rotates each open</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption class="bl">3b · the dishwasher — same cockpit, week rule</figcaption>
+      </figure>
+
+    </div>
+    <dl class="notes">
+      <dt>Composition</dt>
+      <dd>One enormous object, then a hard horizontal break (the plate), then a sideways axis (the rail),
+      then the base. Four movements, each in a different direction — the most <b>architectural</b> of the five.</dd>
+      <dt>How the parts relate</dt>
+      <dd>The ring rules and everything else defers to it. The streak stops being the emotional centre and
+      becomes a number on a plate.</dd>
+      <dt>The rail</dt>
+      <dd>Horizontal modules are the one real innovation here: three offers occupy the space of one, so the
+      screen can carry the whole ladder without three cards demanding decisions. It also physically caps
+      what is visible — <b>one and a half modules at rest</b>, which is the anti-nagging default from round 1
+      expressed as layout rather than as a rule.</dd>
+      <dt>Risk — the real one</dt>
+      <dd>It demotes the thing he called “really nice… the big visual with the six days”. A cockpit monitors;
+      it does not move anyone. On a screen whose stated job is to make him want to hold the line, that is a
+      genuine cost, not a stylistic one.</dd>
+      <div class="cost">Best-looking of the five. Least likely to change what he does at 9:42 in the morning.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ===================== 04 · THE SPINE ===================== -->
+<section class="ver" id="k4">
+  <div class="vh"><div class="vn">04</div><div class="vt">
+    <h2>The Spine</h2>
+    <div class="vm">one continuous document · no cards anywhere</div>
+    <p class="vl">Every other version puts things in boxes. This one asks whether the modules need to be
+    boxes at all. The ring is <b>cropped to its crown</b> — a wide, shallow arc across the top, which is
+    literally the part he liked and none of the part he didn’t — the streak sits flush left beneath it, and
+    the modules become <b>rows divided by hairlines</b>. The result is quiet and dense, and it is the only
+    version where the screen reads as a single object rather than a stack of components.</p>
+  </div></div>
+  <div class="vbody">
+    <div class="stack">
+      <figure class="phw">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr k4">
+          <div class="v-bar"><button class="bk" type="button">‹</button><span class="lb">The Dishwasher</span>
+            <span class="rt">Tue · week 18</span></div>
+          <div class="v-ring crop" data-ring="week" data-size="358" data-crop="1"></div>
+          <div class="doc">
+            <div class="streakrow">
+              <div class="v-streak"><b>4</b><em>weeks</em></div>
+              <div class="v-sub">at or under · best ever 4 · 0 of 1 used</div>
+            </div>
+            <div class="v-mod flush live" style="border-top:1px solid var(--line)">
+              <div class="top"><span class="st">Live</span><span class="pay">+250 XP</span></div>
+              <div class="ti">A week at zero — through Sunday</div>
+              <div class="v-rail"><i style="width:29%"></i></div>
+              <div class="foot"><span>Taken Mon 08:12</span><span>2 of 7 days held</span></div>
+            </div>
+            <div class="v-mod flush offer">
+              <div class="top"><span class="st">The on-ramp</span><span class="pay">+90 XP</span></div>
+              <div class="ti">Hold to Thursday</div>
+              <div class="su">Cannot run alongside the week at zero. Optional — letting it go costs nothing.</div>
+            </div>
+            <div class="v-mod flush" style="padding-bottom:var(--s2)">
+              <div class="top"><span class="st">You owe a make-up</span>
+                <span class="pay" style="color:var(--hot)">Streak intact</span></div>
+              <div class="ti" style="color:#e8c6ac">Bible 15 min · write out 6 passages · photograph them</div>
+              <div class="su">Nothing was taken from you. There is just a price, and it goes up each time.</div>
+            </div>
+            <div class="v-graph" style="border-top:1px solid var(--line);padding-top:var(--s2)">
+              <div class="k"><span>The last twelve weeks</span><span>vs the allowance</span></div>
+              <div data-graph="week"></div>
+            </div>
+            <div style="border-top:1px solid var(--line);padding-top:var(--s2);margin-top:var(--s2)">
+              <div class="v-why">Once a week is the deal you made with yourself.
+              <b>Nobody else is checking.</b></div>
+              <div class="v-cite">Reason · rotates each open</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption class="bl">4 · the dishwasher — the crown, then one column</figcaption>
+      </figure>
+    </div>
+    <dl class="notes">
+      <dt>Composition</dt>
+      <dd>No boxes. A single left-aligned spine with hairline rules doing all the separation, and the
+      cropped crown as a lid.</dd>
+      <dt>How the parts relate</dt>
+      <dd>The ring is <b>the same SVG as every other version</b>, simply clipped to 116px. That is the
+      strictest possible reading of “keep the top visual” — the geometry is untouched and only the frame
+      changed.</dd>
+      <dt>What it proves</dt>
+      <dd>That the modules do not need card chrome to read as discrete takeable units. The state colour on
+      the label, the rail, and the gold payout are enough. That is a useful finding regardless of which
+      version ships.</dd>
+      <dt>Risk</dt>
+      <dd>Cropping the ring removes the countdown and the danger bands, which were the ring’s actual
+      information. What is left is decoration in the shape of an instrument — <b>handsome, and less useful
+      than it looks</b>. Also the flattest of the five: without cards, the live module has to compete for
+      attention using colour alone.</dd>
+      <div class="cost">The most disciplined layout here, built on the weakest use of the part he liked most.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ===================== 05 · THE INVERSION ===================== -->
+<section class="ver" id="k5">
+  <div class="vh"><div class="vn">05</div><div class="vt">
+    <h2>The Inversion</h2>
+    <div class="vm">act first · the streak is the payoff you scroll to</div>
+    <p class="vl">The one version that breaks the reading order on purpose. It opens with <b>what he could
+    do right now</b>, gives the ring the middle as context, and puts the big visual at the <b>bottom</b>,
+    lit from below, as the thing the screen resolves into. The argument: at 09:42 the streak is not
+    information, it is a reward — and a reward at the top of a screen is spent before it is earned. It is
+    also the only version where scrolling down is <b>going somewhere good</b>, which matters for a screen he
+    opens on his worst days.</p>
+  </div></div>
+  <div class="vbody">
+    <div class="stack">
+      <figure class="phw">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr k5">
+          <div class="v-bar"><button class="bk" type="button">‹</button><span class="lb">Smoke</span>
+            <span class="rt">09:42 · Tue</span></div>
+          <div class="act">
+            <div class="v-sec" style="padding:0 0 var(--s1)">What you could do right now</div>
+            <div class="v-mod claim">
+              <div class="top"><span class="st">Ready</span><span class="pay">+35 XP</span></div>
+              <div class="ti">You held it until 2 PM yesterday</div>
+              <button class="v-act" type="button">Claim +35 XP</button>
+            </div>
+            <div class="v-mod live">
+              <div class="top"><span class="st">Live</span><span class="pay">+35 XP</span></div>
+              <div class="ti">Holding until 14:00</div>
+              <div class="v-rail"><i style="width:63%"></i></div>
+              <div class="foot"><span>Taken 09:12</span><span>4h 18m to go</span></div>
+            </div>
+          </div>
+          <div class="mid">
+            <div class="v-ring" data-ring="day" data-size="188" data-bare="1"></div>
+            <div class="v-legend" style="margin-top:-10px">
+              <span><i style="background:var(--ember)"></i>Elapsed</span>
+              <span><i style="background:#5a2a10"></i>Danger</span>
+              <span><i style="background:var(--gold)"></i>Gate · 2h 18m</span>
+            </div>
+            <div class="v-graph">
+              <div class="k"><span>The last fourteen days</span><span>vs the gate</span></div>
+              <div data-graph="day"></div>
+            </div>
+          </div>
+          <div class="payoff">
+            <div class="v-sec" style="margin-bottom:11px">And this is what it has bought</div>
+            <div class="v-streak" style="justify-content:center"><b>6</b><em>days</em></div>
+            <div class="v-sub">clean · best ever 11 · gate held 12 of 14</div>
+            <div class="v-why" style="margin-top:15px">The first ninety minutes are the hardest — and they
+            are <b>the same ninety minutes the market is open.</b></div>
+            <div class="v-cite">Reason · rotates each open</div>
+          </div>
+        </div></div>
+        <figcaption class="bl">5 · smoke — offers first, the streak as the destination</figcaption>
+      </figure>
+    </div>
+    <dl class="notes">
+      <dt>Composition</dt>
+      <dd>Deliberately inverted: act → context → reward. The payoff block is lit from below and pinned to
+      the bottom of the screen, so the composition has a floor rather than a ceiling.</dd>
+      <dt>How the parts relate</dt>
+      <dd>The modules lead, the ring supports, the graph explains, the streak pays. Every part keeps its
+      exact styling from the system — <b>only the order changed</b>, which is the cleanest possible proof
+      that the system holds.</dd>
+      <dt>The honest argument for it</dt>
+      <dd>On a good day every version works. On a bad day — the day that killed v1 — the top of the screen
+      is the first thing he sees, and in the other four versions that is a streak he may have just broken.
+      Here the first thing he sees is <b>something he can still do</b>.</dd>
+      <dt>Risk — measured</dt>
+      <dd>It buries the thing he said he liked. The first module lands at <b>85px</b> — the best number in
+      the set for “what do I do now” — but the streak does not appear until roughly <b>760px</b>, which is
+      below the fold on a 390×844 phone. He asked for the streak “more grand”, and this version makes him
+      scroll to it. Real idea, possibly the wrong answer to this brief.</dd>
+      <div class="cost">The most interesting argument in the set and the least likely to be what he asked for.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ===================== HAND-OFF ===================== -->
+<section class="ho" id="handoff">
+  <h2>Hand-off — agent 5, round 2</h2>
+
+  <h3>What I produced and where</h3>
+  <p>This file — <b>renditions/rend-vices-v2.html</b>. Round 1’s <b>rend-vices.html</b> is untouched for
+  comparison. Five compositions built from one component set: a shared type scale, one shape rule, one
+  colour logic and one 8px rhythm, all declared at the top of the page so the GM can hold the system rather
+  than reverse-engineer it. <b>index.html was not modified.</b> XP values are unchanged from round 1
+  (+35 / +60 / +120 / +180 / +400 · +90 / +250) — nothing in his feedback gave a reason to move them.</p>
+
+  <h3>The one I would ship</h3>
+  <p><b>01 · The Crown.</b> It is the only composition where the two things he reacted to most strongly —
+  the big visual and the ring — are not competing for the same space, because they became the same object.
+  Everything else follows in a plain rhythm underneath. It also carries both vices in an identical layout
+  with only the rule changing, which means the GM builds <b>one screen, not two</b>.</p>
+  <p>If it needs a hedge: ship <b>01</b> and steal <b>03’s horizontal module rail</b>. The rail is the best
+  single idea in this round — it caps how many offers are visible at rest without needing a rule to enforce
+  it, which is the round-1 nagging guard turned into layout.</p>
+
+  <h3>Ranked</h3>
+  <ol class="rank">
+    <li><b>01 · The Crown</b> — fuses his two favourite parts instead of stacking them. Safest, most direct,
+    works identically for both vices. Ship this.</li>
+    <li><b>03 · The Instrument</b> — the best-looking screen in the set and the source of the rail idea, but
+    it demotes the big visual to a number on a plate. A cockpit monitors; it does not motivate. Take its
+    rail, leave its hierarchy.</li>
+    <li><b>02 · The Masthead</b> — measured at <b>600px against 844</b>, it is the only version that does
+    not scroll at all, which is worth real money against the sixty-second rule. Loses because it shrinks the
+    ring to 112px, and “the thing at the top that looks very nice” may well have been a comment about its
+    <i>size</i>. <b>If he says the screens feel long, this is the answer</b> — it is the fallback, not a
+    rejection.</li>
+    <li><b>05 · The Inversion</b> — the most interesting argument here and the one I would most like to be
+    wrong about. It is the only version designed for his bad days rather than his good ones. It also
+    directly contradicts “show my streak more grand”, so it goes to him as a question, not a candidate.</li>
+    <li><b>04 · The Spine</b> — <b>the weak one, and I would not ship it.</b> Its layout discipline is the
+    best in the set, but it gets there by cropping the ring down to an arc with no countdown, no danger
+    bands and no live read. That is the part he liked most, reduced to decoration. It stays in the set
+    because it proves modules do not need card chrome — a finding worth keeping even though the screen isn’t.</li>
+  </ol>
+
+  <h3>Which of the four parts was hardest to reconcile — and why</h3>
+  <div class="flag">
+    <p><b>The ring.</b> Not the graph, which slotted in everywhere, and not the modules, which are inherently
+    flexible. The ring is hard because it is the only part that is <b>simultaneously the most beautiful and
+    the most information-dense object on the screen</b>, and those two properties want opposite sizes.</p>
+    <p>At full size it is genuinely striking — and it takes 55% of the screen to say one number (“2h 18m”).
+    Shrink it and the danger bands, the gate tick and the now-hand all become sub-pixel decoration; crop it
+    and you keep the beauty and throw away every piece of information it carried. Each of the five versions
+    is essentially a different answer to that one problem: <b>01 fills it with the streak so the space earns
+    its keep, 02 shrinks it to an indicator, 03 surrenders the screen to it, 04 crops it, 05 sizes it
+    honestly at 188px and puts it in the middle where a supporting element belongs.</b></p>
+    <p>The second-hardest was <b>the big visual against the ring</b>, for the same reason from the other
+    side: two heroes, one top-of-screen. Only 01 dissolves that conflict rather than choosing a winner —
+    which is most of why it is ranked first.</p>
+    <p>Easiest by a distance: <b>the graph.</b> Keeping it rudimentary made it universally compatible. It is
+    the same twelve lines of drawing code in all five versions and it never once fought the layout. That is
+    worth remembering — the part he described most casually turned out to be the most portable.</p>
+  </div>
+
+  <h3>Measured, not asserted</h3>
+  <p>Every screen was rendered headlessly at 390×844 and measured. Where each version places its first
+  module and its graph, and how tall the whole screen runs:</p>
+  <ul>
+    <li><b>01 · Crown</b> — module 422px · graph 686px · total 923px</li>
+    <li><b>02 · Masthead</b> — module 195px · graph 325px · <b>total 600px, no scroll</b></li>
+    <li><b>03 · Instrument</b> — module 520px · graph 657px · total 914px</li>
+    <li><b>04 · Spine</b> — module 274px · graph 652px · total 904px</li>
+    <li><b>05 · Inversion</b> — <b>module 85px</b> · graph 567px · streak ~760px · total 912px</li>
+  </ul>
+  <p>Read across that list and the trade is plain: the more grandly the streak is shown, the further down
+  the actionable part of the screen goes. <b>01 buys the grandeur and pays 145px of scroll. 02 refuses to
+  pay it. 05 inverts the bill entirely.</b> That is genuinely the whole decision, and it is his to make.</p>
+
+  <h3>Congruency decisions the GM should know I made</h3>
+  <ul>
+    <li><b>Red is not used on a vice screen at all.</b> Not for slips, not for the make-up, not for a broken
+    gate. Ember covers “live and at risk”, amber covers “you owe a make-up”, and the palette itself now
+    enforces law #1 rather than relying on layout restraint. If the GM integrates these, the existing
+    <code>--blood</code> usages in the vice sheet should go with them.</li>
+    <li><b>The two vices share a grammar, not a layout hack.</b> One ring (270°, the rule at the crown), one
+    graph (a dot against a line), one streak object. Smoking plots a time against noon; the dishwasher plots
+    a count against the allowance. He learns the objects once.</li>
+    <li><b>The chain language is gone completely</b> — no links, no welding, no forging anywhere in this
+    file, including in the make-up copy, which now reads as a price rather than as a repair.</li>
+    <li><b>Modules are unstyled by rank.</b> Round 1 gave them rarity/rank framing; that is removed. A module
+    is now state-coloured only: ember = running, gold = offered, green = claimable, dashed = locked.</li>
+  </ul>
+
+  <h3>Carried forward from round 1 — still open, still not mine to fix</h3>
+  <ul>
+    <li><b>The gauge arc in <code>index.html</code> overstates its own number</b> — <code>dial()</code> uses
+    <code>Math.PI*21</code> as the dasharray for an arc of radius 19 (true length <code>Math.PI*19</code>),
+    so 50% renders as roughly 55%. The rings and dials in both rendition files use the corrected length.</li>
+    <li><b><code>viceClean('smoke')</code> can be tapped before noon</b>, so a clean day can be banked at
+    9 AM and the gate broken at 11.</li>
+    <li><b>The vendored tsParticles slim bundle needs <code>await loadSlim(tsParticles)</code></b> before
+    <code>load()</code>, or it reports a full particle count and paints an entirely blank canvas. Round 2
+    uses no particles, but this will bite the next agent who reaches for <code>lib/tsparticles</code>.</li>
+    <li><b>The ring hard-codes his waking day as 05:00–23:00.</b> PROFILE §8c lists actual sleep hours as
+    unknown. Every version in this file inherits that assumption — it should be confirmed before build,
+    because the ring is wrong at both ends if it is off.</li>
+  </ul>
+</section>
+
+</div>
+
+<script>
+/* =====================================================================
+   PART B — THE RING. One geometry, two rules.
+   270 degrees. The RULE always sits at the crown: noon for smoking,
+   the weekly allowance for the dishwasher.
+   ===================================================================== */
+(function(){
+  var DAY_A = 300, DAY_B = 1380, SPAN = DAY_B - DAY_A;   // 05:00 -> 23:00
+  var NOW = 9 * 60 + 42;
+
+  function build(SZ, mode, bare){
+    var C = SZ / 2, R = SZ * 0.379, SW = Math.max(7, SZ * 0.049), LR = R + SZ * 0.094;
+    function ang(t){ return 270 + ((t - 720) / SPAN) * 270 }
+    function pt(r, a){ var v = a * Math.PI / 180; return [C + r * Math.cos(v), C + r * Math.sin(v)] }
+    function arc(r, a0, a1, stroke, w, cap, extra){
+      var p0 = pt(r, a0), p1 = pt(r, a1), big = (a1 - a0) > 180 ? 1 : 0;
+      return '<path d="M' + p0[0].toFixed(1) + ' ' + p0[1].toFixed(1) + ' A ' + r.toFixed(1) + ' ' +
+        r.toFixed(1) + ' 0 ' + big + ' 1 ' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1) + '" fill="none" ' +
+        'stroke="' + stroke + '" stroke-width="' + w.toFixed(1) + '" stroke-linecap="' + (cap || 'round') + '" ' +
+        (extra || '') + '/>';
+    }
+    function tickAt(a, len, color, w){
+      var p0 = pt(R - len / 2, a), p1 = pt(R + len / 2, a);
+      return '<line x1="' + p0[0].toFixed(1) + '" y1="' + p0[1].toFixed(1) + '" x2="' + p1[0].toFixed(1) +
+        '" y2="' + p1[1].toFixed(1) + '" stroke="' + color + '" stroke-width="' + w.toFixed(1) +
+        '" stroke-linecap="round"/>';
+    }
+    function label(a, txt, color, r){
+      var p = pt(r, a), c = Math.cos(a * Math.PI / 180);
+      var anchor = c < -0.35 ? 'start' : c > 0.35 ? 'end' : 'middle';
+      var dx = c < -0.35 ? 3 : c > 0.35 ? -3 : 0;
+      return '<text x="' + (p[0] + dx).toFixed(1) + '" y="' + (p[1] + 3).toFixed(1) + '" fill="' + color +
+        '" font-family="Geist Mono, monospace" font-size="' + Math.max(7, SZ * 0.032).toFixed(1) +
+        '" letter-spacing="1.1" text-anchor="' + anchor + '">' + txt + '</text>';
+    }
+    var s = '';
+    if (mode === 'day'){
+      s += arc(R, ang(DAY_A), ang(DAY_B), '#171420', SW);
+      [[390, 480], [780, 870], [1290, 1380]].forEach(function(w){          // his named danger windows
+        s += arc(R, ang(w[0]), ang(w[1]), '#5a2a10', SW, 'butt');
+      });
+      s += arc(R, ang(DAY_A), ang(NOW), '#FF6B2C', SW, 'round',
+        'style="filter:drop-shadow(0 0 7px rgba(255,107,44,.75))"');
+      s += tickAt(ang(720), SW * 2.4, '#E0B25E', Math.max(2.2, SZ * 0.011));   // the rule, at the crown
+      s += tickAt(ang(840), SW * 1.8, '#4ADE80', Math.max(2, SZ * 0.009));     // the 2 PM flag
+      s += tickAt(ang(NOW), SW * 1.7, '#FFF4E2', Math.max(1.8, SZ * 0.008));   // now
+      if (!bare){
+        s += label(ang(720), 'GATE', '#E0B25E', LR);
+        s += label(ang(840), '2PM', '#4ADE80', LR);
+        s += label(ang(390), '6:30', '#7d4a2c', LR);
+        s += label(ang(1320), 'NIGHT', '#7d4a2c', LR);
+      }
+    } else {
+      var names = ['M','T','W','T','F','S','S'], held = 2, GAP = 3.2;
+      for (var i = 0; i < 7; i++){
+        var a0 = 135 + i * (270 / 7) + GAP, a1 = 135 + (i + 1) * (270 / 7) - GAP;
+        s += arc(R, a0, a1, i < held ? '#FF6B2C' : '#231f31', SW, 'round',
+          i < held ? 'style="filter:drop-shadow(0 0 7px rgba(255,107,44,.6))"' : '');
+        if (!bare){
+          var pm = pt(LR, (a0 + a1) / 2), cc = Math.cos((a0 + a1) / 2 * Math.PI / 180);
+          s += '<text x="' + (pm[0] + (cc < -0.35 ? 3 : cc > 0.35 ? -3 : 0)).toFixed(1) + '" y="' +
+            (pm[1] + 3).toFixed(1) + '" fill="' + (i < held ? '#8d6650' : '#4b4560') +
+            '" font-family="Geist Mono, monospace" font-size="' + Math.max(7, SZ * 0.034).toFixed(1) +
+            '" text-anchor="' + (cc < -0.35 ? 'start' : cc > 0.35 ? 'end' : 'middle') + '">' + names[i] + '</text>';
+        }
+      }
+      // the rule at the crown: the unspent allowance, drawn as a gold token on the ring's top
+      var pc = pt(R, 270), tr = Math.max(7, SZ * 0.038);
+      s += '<circle cx="' + pc[0].toFixed(1) + '" cy="' + pc[1].toFixed(1) + '" r="' + tr.toFixed(1) +
+        '" fill="#0b0912" stroke="#E0B25E" stroke-width="' + Math.max(2, SZ * 0.009).toFixed(1) +
+        '" style="filter:drop-shadow(0 0 7px rgba(224,178,94,.6))"/>' +
+        '<text x="' + pc[0].toFixed(1) + '" y="' + (pc[1] + tr * 0.36).toFixed(1) + '" fill="#E0B25E" ' +
+        'font-family="Geist Mono, monospace" font-weight="700" font-size="' + (tr * 1.05).toFixed(1) +
+        '" text-anchor="middle">1</text>';
+      /* no text label on the token: at the crown it would sit outside the viewBox and clip.
+         The gold key in the legend already names it, and the token carries the count. */
+    }
+    return '<svg width="' + SZ + '" height="' + SZ + '" viewBox="0 0 ' + SZ + ' ' + SZ + '" aria-hidden="true">' + s + '</svg>';
+  }
+
+  document.querySelectorAll('[data-ring]').forEach(function(el){
+    var SZ = parseFloat(el.dataset.size || '264');
+    el.insertAdjacentHTML('afterbegin', build(SZ, el.dataset.ring, el.dataset.bare === '1'));
+    if (el.dataset.crop === '1') el.querySelector('svg').style.maxWidth = '100%';
+  });
+})();
+
+/* =====================================================================
+   PART D — THE PLAIN GRAPH. Rudimentary on purpose; kept plain.
+   One grammar: a DOT placed against a LINE.
+     smoke — the line is noon, the dot is the time of first use
+     dish  — the line is the allowance, the dot is that week's count
+   Green = clean/zero. Gold = at or inside the rule. Ember = outside it.
+   No red, ever.
+   ===================================================================== */
+(function(){
+  var W = 300, H = 74, PADT = 8, PADB = 16, IN = H - PADT - PADB;
+  /* The rule is one dashed line and nothing else. It carries no inline caption — the graph's
+     own header already says what the line is ("vs the gate" / "vs the allowance"), and any
+     caption inside the plot collides with the dots on one rule or the other. Plainer, and
+     it is the same drawing for both vices. */
+  function frame(lineY){
+    return '<line x1="0" y1="' + PADT + '" x2="' + W + '" y2="' + PADT + '" stroke="#1e1a2b" stroke-width="1"/>' +
+      '<line x1="0" y1="' + lineY.toFixed(1) + '" x2="' + W + '" y2="' + lineY.toFixed(1) +
+      '" stroke="#3a3350" stroke-width="1" stroke-dasharray="3 4"/>';
+  }
+  function ends(l, r){
+    return '<text x="14" y="' + (H - 3) + '" fill="#3b3549" font-family="Geist Mono, monospace" ' +
+      'font-size="7" letter-spacing="1.2">' + l + '</text>' +
+      '<text x="' + (W - 14) + '" y="' + (H - 3) + '" fill="#3b3549" font-family="Geist Mono, monospace" ' +
+      'font-size="7" letter-spacing="1.2" text-anchor="end">' + r + '</text>';
+  }
+  function dot(x, y, color, ring){
+    var s = '';
+    if (ring) s += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="7.5" fill="none" stroke="' +
+      color + '" stroke-opacity=".3"/>';
+    return s + '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (ring ? 4 : 3.6) +
+      '" fill="' + color + '"' + (ring ? ' style="filter:drop-shadow(0 0 5px rgba(74,222,128,.6))"' : '') + '/>';
+  }
+  function stem(x, y, color){
+    return '<line x1="' + x.toFixed(1) + '" y1="' + PADT + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) +
+      '" stroke="' + color + '" stroke-width="1.5"/>';
+  }
+  function wrapSvg(s, key){
+    return '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true">' + s + '</svg>' +
+      '<div class="key">' + key + '</div>';
+  }
+
+  // ---- smoke: time of first use vs noon. null = clean all day.
+  function graphDay(){
+    var days = [820, null, 760, 905, 700, 725, 940, 690, null, null, null, null, null, null];
+    var GATE = 720, LO = 600, HI = 1320;
+    function y(m){ return PADT + IN * (1 - (Math.max(LO, Math.min(HI, m)) - LO) / (HI - LO)) }
+    var s = frame(y(GATE));
+    days.forEach(function(m, i){
+      var x = 14 + i * ((W - 28) / (days.length - 1));
+      if (m === null){ s += dot(x, PADT, '#4ADE80', true); return }
+      var yy = y(m), held = m >= GATE;
+      s += stem(x, yy, held ? '#2a2438' : '#3a2418') + dot(x, yy, held ? '#E0B25E' : '#FF6B2C');
+    });
+    s += ends('14 DAYS AGO', 'TODAY');
+    return wrapSvg(s, 'GREEN — CLEAN ALL DAY · GOLD — HELD PAST NOON · EMBER — BEFORE NOON<br>' +
+      'THE DOT IS THE TIME. 11:40 IS NOT 7 AM, AND THE CHART SAYS SO.');
+  }
+
+  // ---- dishwasher: uses that week vs the allowance of 1.
+  function graphWeek(){
+    var weeks = [1, 0, 2, 1, 1, 0, 2, 1, 0, 1, 1, 0];   // week 18 is running at 0
+    var MAXU = 3;
+    function y(n){ return PADT + IN * (Math.min(MAXU, n) / MAXU) }
+    var s = frame(y(1));
+    weeks.forEach(function(n, i){
+      var x = 14 + i * ((W - 28) / (weeks.length - 1)), yy = y(n);
+      if (n === 0){ s += dot(x, PADT, '#4ADE80', true); return }
+      var over = n > 1;
+      s += stem(x, yy, over ? '#3a2418' : '#2a2438') + dot(x, yy, over ? '#FF6B2C' : '#E0B25E');
+    });
+    s += ends('12 WEEKS AGO', 'THIS WEEK');
+    return wrapSvg(s, 'GREEN — A ZERO WEEK · GOLD — AT THE ALLOWANCE · EMBER — OVER IT<br>' +
+      'AN EMBER WEEK IS ONE YOU MADE UP FOR. IT STAYS ON THE CHART AND IT IS NOT RED.');
+  }
+
+  document.querySelectorAll('[data-graph]').forEach(function(el){
+    el.classList.add('v-graph');
+    el.innerHTML = el.dataset.graph === 'week' ? graphWeek() : graphDay();
+  });
+})();
+</script>
+</body>
+</html>

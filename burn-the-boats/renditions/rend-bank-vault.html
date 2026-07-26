@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Vault — final build</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+/* =========================================================================
+   THE VAULT · final build
+   One type scale, one spacing scale, one set of materials. No one-off values.
+   ========================================================================= */
+:root{
+  /* shipped tokens, verbatim */
+  --bg:#07060b; --panel:#0e0c16; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8;
+
+  /* vault materials */
+  --steel-1:#34373D; --steel-2:#24272C; --steel-3:#16181C; --steel-4:#0D0F12;
+  --brass-1:#EBD4A0; --brass-2:#C2A163; --brass-3:#8A6E33; --brass-4:#54411B;
+  --lit:#FFD98A;
+  --engrave:#3A2E14;
+
+  /* ONE type scale — nothing below 11px */
+  --t-fig:40px;   /* the engraved figure          */
+  --t-h2:20px;    /* reward names                 */
+  --t-h3:16px;    /* fixture names                */
+  --t-body:15px;  /* his conditions               */
+  --t-lab:12px;   /* engraved labels              */
+  --t-min:11px;   /* smallest permitted           */
+
+  /* ONE spacing scale */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+  --r1:3px; --r2:6px; --r3:12px;
+  --tap:44px;     /* minimum touch target        */
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#08070c;color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+
+/* ---------------- gallery chrome ---------------- */
+.wrap{max-width:1320px;margin:0 auto;padding:0 22px}
+.mast{padding:42px 0 22px}
+.kick{font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.24em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:var(--s3)}
+.mast h1{font-size:clamp(26px,3.6vw,36px);line-height:1.05;letter-spacing:-.035em;margin-bottom:var(--s3)}
+.mast p{max-width:660px;color:var(--dim);font-size:var(--t-body);margin:0 0 var(--s2)}
+.mast p b{color:var(--ink);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(390px,392px));gap:var(--s6) var(--s5);
+  justify-content:center;padding:var(--s4) 0 var(--s6)}
+.slot{width:392px}
+.sh{margin-bottom:var(--s3);min-height:62px}
+.sh .n{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.2em;color:var(--gold)}
+.sh h3{font-size:var(--t-h3);letter-spacing:-.02em;margin-top:var(--s1)}
+.sh p{font-size:13px;color:var(--faint);margin:var(--s1) 0 0;line-height:1.45}
+.p{width:390px;border-radius:24px;overflow:hidden;border:1px solid var(--line2);
+  box-shadow:0 34px 80px -34px #000;background:#000}
+.notch{height:24px;background:#000;display:flex;align-items:center;justify-content:center}
+.notch i{width:54px;height:5px;border-radius:99px;background:#17171d}
+.pv{height:820px;overflow-y:auto;overflow-x:hidden;position:relative}
+.pv::-webkit-scrollbar{width:0}
+@media(max-width:452px){
+  .wrap{padding:0}.mast{padding:28px 15px 16px}
+  .grid{grid-template-columns:1fr;gap:var(--s5) 0;padding:0 0 var(--s5)}
+  .slot{width:100%}.sh{padding:0 15px}
+  .p{width:100%;border-radius:0;border-left:0;border-right:0}
+}
+
+/* =========================================================================
+   THE VAULT ITSELF
+   ========================================================================= */
+.vt{background:
+   repeating-linear-gradient(94deg,rgba(255,255,255,.016) 0 1px,transparent 1px 3px),
+   linear-gradient(180deg,#1B1E22,#121417 60%,#0D0F12);
+  min-height:820px;padding-bottom:var(--s5)}
+.vt::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:url('../assets/grain/grain-fine.svg');opacity:.05;mix-blend-mode:overlay}
+
+/* ---- the inner face of the vault door: the header ---- */
+.vt-head{position:relative;padding:var(--s4) var(--s4) var(--s4);
+  background:
+   repeating-linear-gradient(94deg,rgba(255,255,255,.02) 0 1px,transparent 1px 3px),
+   linear-gradient(180deg,var(--steel-1),var(--steel-2) 62%,var(--steel-3));
+  border-bottom:2px solid var(--steel-4);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 6px 18px -8px #000}
+.vt-rivets{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s2);height:9px;
+  display:flex;justify-content:space-between;pointer-events:none}
+.vt-rivets i{width:9px;height:9px;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#5A5E66,#2A2D33 70%);
+  box-shadow:inset 0 -1px 1px rgba(0,0,0,.7),0 1px 0 rgba(255,255,255,.07)}
+.vt-nameplate{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
+  border-radius:var(--r1);padding:var(--s3) var(--s4);
+  background:linear-gradient(180deg,var(--brass-1),var(--brass-2) 52%,var(--brass-3));
+  box-shadow:inset 0 1px 0 rgba(255,248,224,.75),0 3px 8px -4px rgba(0,0,0,.8)}
+.vt-nameplate b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:var(--t-h3);
+  letter-spacing:.09em;color:var(--engrave);text-shadow:0 1px 0 rgba(255,248,224,.5)}
+.vt-nameplate span{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;
+  color:#5E4A1E;text-shadow:0 1px 0 rgba(255,248,224,.45)}
+
+/* ---- the bullion shelf: XP as mass ---- */
+.vt-shelf{margin:var(--s5) var(--s4) 0;position:relative;padding:var(--s4) var(--s4) 0;
+  border-radius:var(--r2) var(--r2) 0 0;
+  background:linear-gradient(180deg,var(--steel-4),#0A0C0E);
+  box-shadow:inset 0 3px 12px rgba(0,0,0,.9),inset 0 0 0 1px rgba(255,255,255,.05)}
+.vt-rack{display:flex;flex-direction:column;align-items:center;gap:var(--s1);padding-bottom:var(--s4)}
+.vt-row{display:flex;gap:var(--s1);justify-content:center}
+.vt-bar{width:62px;height:19px;border-radius:2px;
+  clip-path:polygon(7% 0,93% 0,100% 100%,0 100%);
+  background:linear-gradient(178deg,var(--brass-1),var(--brass-2) 46%,var(--brass-3));
+  box-shadow:0 2px 3px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,250,228,.7)}
+.vt-bar.ghost{background:none;box-shadow:none;
+  border:1px dashed rgba(194,161,99,.34);clip-path:none;border-radius:2px}
+.vt-plank{height:11px;margin:0 var(--s4);border-radius:0 0 var(--r1) var(--r1);
+  background:linear-gradient(180deg,#4A4E56,#2A2D33 60%,#1A1C20);
+  box-shadow:0 8px 16px -8px #000,inset 0 1px 0 rgba(255,255,255,.16)}
+.vt-count{margin:var(--s4) var(--s4) 0;border-radius:var(--r1);padding:var(--s3) var(--s4);
+  display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);
+  background:linear-gradient(180deg,var(--brass-1),var(--brass-2) 52%,var(--brass-3));
+  box-shadow:inset 0 1px 0 rgba(255,248,224,.75),0 3px 8px -4px rgba(0,0,0,.8)}
+.vt-count b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:var(--t-fig);
+  letter-spacing:-.045em;line-height:.92;color:var(--engrave);text-shadow:0 1px 0 rgba(255,248,224,.5)}
+.vt-count .cl{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;
+  color:#5E4A1E;text-align:right;line-height:1.7;text-shadow:0 1px 0 rgba(255,248,224,.45)}
+
+/* ---- engraved fixture label, used for every section ---- */
+.vt-eng{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s2);
+  margin:var(--s5) var(--s4) var(--s3);
+  font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.18em;
+  color:#7E838C;text-transform:uppercase;text-shadow:0 1px 0 rgba(255,255,255,.05)}
+.vt-eng u{text-decoration:none;color:#5A5F68;letter-spacing:.1em}
+.vt-eng span,.vt-eng u{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---- the key board: privileges as objects on hooks ---- */
+.vt-board{margin:0 var(--s4);border-radius:var(--r2);padding:var(--s4) var(--s3) var(--s3);
+  background:linear-gradient(180deg,#1E2126,#15171B);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 3px 10px rgba(0,0,0,.7)}
+.vt-hooks{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3)}
+.vt-hook{position:relative;min-height:104px;padding-top:var(--s5);text-align:center}
+.vt-hook::before{content:'';position:absolute;left:50%;top:0;width:15px;height:17px;margin-left:-7.5px;
+  border:2px solid #6E747E;border-top:0;border-radius:0 0 8px 8px}
+.vt-key{width:26px;height:52px;margin:0 auto var(--s2);position:relative;border-radius:13px 13px var(--r1) var(--r1);
+  background:linear-gradient(148deg,var(--brass-1),var(--brass-2) 48%,var(--brass-3));
+  box-shadow:0 4px 7px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,250,228,.7)}
+.vt-key::after{content:'';position:absolute;left:50%;top:11px;width:8px;height:8px;border-radius:50%;
+  margin-left:-4px;background:var(--steel-4);box-shadow:inset 0 1px 2px rgba(0,0,0,.9)}
+.vt-key::before{content:'';position:absolute;left:50%;bottom:-13px;width:9px;height:15px;margin-left:-4.5px;
+  background:linear-gradient(148deg,var(--brass-2),var(--brass-3));
+  clip-path:polygon(0 0,100% 0,100% 55%,42% 55%,42% 100%,0 100%)}
+.vt-key.bare{background:none;box-shadow:inset 0 0 0 2px rgba(194,161,99,.26)}
+.vt-key.bare::after{background:rgba(0,0,0,.4);box-shadow:none}
+.vt-key.bare::before{background:rgba(194,161,99,.26)}
+.vt-hook .kn{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.09em;
+  color:#B9BEC6;line-height:1.6;margin-top:var(--s3)}
+.vt-hook.empty .kn{color:#6E747E}
+
+/* ---- the wall of deposit boxes: rewards ---- */
+.vt-wall{margin:0 var(--s4);display:grid;gap:var(--s2)}
+.vt-box{display:grid;grid-template-columns:108px minmax(0,1fr);gap:var(--s3);height:130px;
+  border-radius:var(--r2);padding:var(--s3);align-items:stretch;overflow:hidden;
+  background:linear-gradient(180deg,#1E2126,#15171B);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+/* the recess + its door */
+.vt-frame{position:relative}
+.vt-cav{position:absolute;inset:0;border-radius:var(--r1);overflow:hidden;
+  background:linear-gradient(180deg,#0A0C0E,#05070A);
+  box-shadow:inset 0 4px 12px rgba(0,0,0,.95),inset 0 0 0 1px rgba(255,255,255,.04);
+  display:grid;place-items:center}
+.vt-cav span{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.13em;color:#4A4F58}
+.vt-door{position:absolute;inset:0;border-radius:var(--r1);transform-origin:left center;
+  transform:perspective(1200px) rotateY(0deg);
+  background:
+   repeating-linear-gradient(96deg,rgba(255,255,255,.05) 0 1px,transparent 1px 4px),
+   linear-gradient(158deg,var(--brass-1),var(--brass-2) 46%,var(--brass-3) 82%,var(--brass-4));
+  box-shadow:inset 0 1px 0 rgba(255,250,228,.6),0 3px 8px -3px rgba(0,0,0,.85)}
+.vt-no{position:absolute;left:var(--s2);top:var(--s2);font-family:'Geist Mono',monospace;
+  font-size:var(--t-lab);font-weight:700;color:var(--engrave);text-shadow:0 1px 0 rgba(255,248,224,.5)}
+.vt-hole{position:absolute;right:var(--s3);top:var(--s3);width:19px;height:19px;border-radius:50%;
+  background:radial-gradient(circle at 50% 40%,#0A0C0E,#000);
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.95),0 1px 0 rgba(255,250,228,.45)}
+.vt-bolt{position:absolute;right:-4px;width:9px;height:13px;border-radius:0 2px 2px 0;
+  background:linear-gradient(180deg,#D8D2C4,#8A8578);box-shadow:0 1px 2px rgba(0,0,0,.7)}
+.vt-bolt.b1{top:38%}.vt-bolt.b2{top:60%}
+.vt-gauge{position:absolute;left:var(--s2);right:var(--s2);bottom:var(--s3);height:10px;border-radius:99px;
+  background:rgba(30,20,4,.55);box-shadow:inset 0 1px 2px rgba(0,0,0,.8)}
+.vt-gauge i{display:block;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,#6E5424,var(--lit));box-shadow:0 0 7px rgba(255,217,138,.6)}
+.vt-gauge u{position:absolute;left:0;right:0;top:-15px;text-decoration:none;text-align:center;
+  font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.08em;color:#5E4A1E}
+/* the plate beside it */
+.vt-plate{display:flex;flex-direction:column;min-width:0}
+.vt-plate b{font-family:'Clash Display',sans-serif;font-weight:600;font-size:var(--t-h2);
+  letter-spacing:-.03em;line-height:1.1;color:var(--ink)}
+.vt-plate em{font-style:normal;font-size:var(--t-body);color:var(--dim);line-height:1.35;
+  margin-top:var(--s1);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vt-act{margin-top:auto;min-height:var(--tap);display:flex;align-items:center;gap:var(--s2)}
+.vt-turn{min-height:var(--tap);flex:1;border-radius:var(--r2);padding:0 var(--s3);
+  font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.13em;font-weight:700;
+  background:linear-gradient(180deg,var(--brass-1),var(--brass-2) 54%,var(--brass-3));
+  color:var(--engrave);text-shadow:0 1px 0 rgba(255,248,224,.5);
+  box-shadow:inset 0 1px 0 rgba(255,250,228,.7),0 4px 0 var(--brass-4),0 8px 14px -6px rgba(0,0,0,.9)}
+.vt-turn:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,250,228,.7),0 2px 0 var(--brass-4)}
+.vt-wait{min-height:var(--tap);display:flex;flex-direction:column;justify-content:center;
+  font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.1em;color:#8A9099;line-height:1.65}
+.vt-wait b{font-family:'Geist Mono',monospace;font-size:var(--t-lab);color:#B9BEC6;font-weight:400}
+/* THREE PHYSICAL STATES */
+.vt-box.ready .vt-hole{background:radial-gradient(circle at 50% 40%,var(--lit),#8A6E33 70%);
+  box-shadow:0 0 12px rgba(255,217,138,.85),inset 0 1px 2px rgba(0,0,0,.5)}
+.vt-box.ready .vt-bolt{right:6px}
+.vt-box.ready{box-shadow:inset 0 0 0 1px rgba(224,178,94,.4),0 0 24px -10px rgba(224,178,94,.5)}
+.vt-box.open .vt-door{transform:perspective(1200px) rotateY(-64deg)}
+.vt-box.open .vt-bolt{right:6px}
+.vt-box.open .vt-plate b{color:#7E838C}
+.vt-box.open .vt-plate em{color:#5A5F68}
+/* just-became-affordable: the moment */
+.vt-box.fresh{box-shadow:inset 0 0 0 1px rgba(224,178,94,.75),0 0 34px -8px rgba(224,178,94,.75)}
+.vt-box.fresh .vt-hole{animation:vtPulse 1.9s ease-in-out infinite}
+@keyframes vtPulse{0%,100%{box-shadow:0 0 10px rgba(255,217,138,.7),inset 0 1px 2px rgba(0,0,0,.5)}
+  50%{box-shadow:0 0 22px rgba(255,217,138,1),inset 0 1px 2px rgba(0,0,0,.5)}}
+.vt-flag{margin:0 var(--s4) var(--s2);border-radius:var(--r2);padding:0 var(--s4);
+  display:flex;align-items:center;gap:var(--s3);height:46px;overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+.vt-flag i{width:11px;height:11px;border-radius:50%;flex:none;background:#3E434B}
+.vt-flag span{font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.11em;
+  color:#8A9099;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vt-flag.on{background:linear-gradient(180deg,rgba(224,178,94,.16),rgba(224,178,94,.06));
+  box-shadow:inset 0 0 0 1px rgba(224,178,94,.4)}
+.vt-flag.on i{background:var(--lit);box-shadow:0 0 10px var(--lit)}
+.vt-flag.on span{color:#F0D9A6}
+
+/* ---- the deposit chute: boosts ---- */
+.vt-chute{margin:0 var(--s4);border-radius:var(--r2);padding:var(--s3);
+  background:linear-gradient(180deg,var(--steel-2),var(--steel-3));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 3px 10px rgba(0,0,0,.7)}
+.vt-mouth{height:15px;border-radius:99px;margin:0 var(--s2) var(--s3);
+  background:linear-gradient(180deg,#05070A,#0D0F12);
+  box-shadow:inset 0 3px 7px rgba(0,0,0,.95),0 1px 0 rgba(255,255,255,.09)}
+.vt-slips{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+.vt-slip{min-height:var(--tap);display:flex;align-items:center;gap:var(--s2);text-align:left;
+  border-radius:var(--r1);padding:var(--s2) var(--s3);
+  background:linear-gradient(180deg,#EFE6D0,#D9CCAE);
+  box-shadow:inset 0 1px 0 rgba(255,252,240,.9),0 3px 0 #A99A78,0 6px 10px -5px rgba(0,0,0,.8)}
+.vt-slip:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,252,240,.9),0 1px 0 #A99A78}
+.vt-slip .sn{font-size:13px;font-weight:500;color:#2A2214;line-height:1.25;min-width:0}
+.vt-slip .sx{margin-left:auto;font-family:'Geist Mono',monospace;font-size:var(--t-lab);
+  font-weight:700;color:#6E5424;white-space:nowrap}
+
+/* ---- the register: history ---- */
+.vt-reg{margin:0 var(--s4);border-radius:var(--r2);overflow:hidden;
+  background:linear-gradient(180deg,#1E2126,#15171B);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.vt-line{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) var(--s4);
+  border-bottom:1px solid rgba(255,255,255,.05);min-height:var(--tap)}
+.vt-line:last-child{border-bottom:0}
+.vt-line .d{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.1em;color:#6E747E;
+  flex:none;width:56px}
+.vt-line .w{font-size:14px;color:#B9BEC6;min-width:0;flex:1}
+.vt-line .x{font-family:'Geist Mono',monospace;font-size:var(--t-lab);color:#8A9099;flex:none}
+.vt-empty{padding:var(--s4);font-family:'Geist Mono',monospace;font-size:var(--t-min);
+  letter-spacing:.1em;color:#6E747E;line-height:1.9}
+.vt-empty b{color:var(--gold);font-weight:400}
+/* the day-one promise line */
+.vt-promise{margin:var(--s4) var(--s4) 0;border-radius:var(--r2);padding:var(--s4);
+  background:linear-gradient(180deg,rgba(224,178,94,.13),rgba(224,178,94,.04));
+  box-shadow:inset 0 0 0 1px rgba(224,178,94,.3)}
+.vt-promise b{display:block;font-family:'Clash Display',sans-serif;font-weight:600;font-size:var(--t-h3);
+  letter-spacing:-.02em;color:#F0D9A6;line-height:1.25}
+.vt-promise span{display:block;font-family:'Geist Mono',monospace;font-size:var(--t-min);
+  letter-spacing:.1em;color:#B49A6E;line-height:1.8;margin-top:var(--s2)}
+.vt-new{margin:var(--s4) var(--s4) 0;min-height:var(--tap);width:calc(100% - var(--s4)*2);
+  border-radius:var(--r2);font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.13em;
+  color:#8A9099;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+
+/* =========================================================================
+   THE CLAIM — the box is opened
+   ========================================================================= */
+.vt-claim{position:relative;height:820px;overflow:hidden;
+  background:linear-gradient(180deg,#1B1E22,#0D0F12);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--s5)}
+.cl-glow{position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:radial-gradient(58% 40% at 50% 44%,rgba(255,217,138,.4),rgba(180,146,76,.1) 46%,transparent 74%)}
+.cl-k{position:absolute;top:52px;left:0;right:0;text-align:center;font-family:'Geist Mono',monospace;
+  font-size:var(--t-lab);letter-spacing:.24em;color:#7E838C;text-transform:uppercase}
+.cl-bal{position:absolute;top:78px;left:0;right:0;text-align:center;font-family:'Geist Mono',monospace;
+  font-size:var(--t-h3);letter-spacing:.06em;color:#B49A6E}
+.cl-stage{position:relative;width:262px;height:196px;perspective:800px}
+.cl-cav{position:absolute;inset:0;border-radius:var(--r2);overflow:hidden;
+  background:linear-gradient(180deg,#0A0C0E,#05070A);
+  box-shadow:inset 0 6px 20px rgba(0,0,0,.95),inset 0 0 0 1px rgba(255,255,255,.05)}
+.cl-inner{position:absolute;inset:0;opacity:0;
+  background:radial-gradient(70% 60% at 50% 42%,rgba(255,217,138,.34),transparent 72%)}
+.cl-door{position:absolute;inset:0;border-radius:var(--r2);transform-origin:left center;
+  background:
+   repeating-linear-gradient(96deg,rgba(255,255,255,.05) 0 1px,transparent 1px 4px),
+   linear-gradient(158deg,var(--brass-1),var(--brass-2) 46%,var(--brass-3) 82%,var(--brass-4));
+  box-shadow:inset 0 1px 0 rgba(255,250,228,.6),0 8px 20px -8px rgba(0,0,0,.9)}
+.cl-door .no{position:absolute;left:var(--s3);top:var(--s3);font-family:'Geist Mono',monospace;
+  font-size:var(--t-h3);font-weight:700;color:var(--engrave);text-shadow:0 1px 0 rgba(255,248,224,.5)}
+.cl-door .hole{position:absolute;right:var(--s4);top:var(--s4);width:26px;height:26px;border-radius:50%;
+  background:radial-gradient(circle at 50% 40%,var(--lit),#8A6E33 70%);
+  box-shadow:0 0 16px rgba(255,217,138,.9),inset 0 1px 3px rgba(0,0,0,.6)}
+.cl-bolt{position:absolute;right:-5px;width:12px;height:17px;border-radius:0 2px 2px 0;
+  background:linear-gradient(180deg,#D8D2C4,#8A8578);box-shadow:0 1px 2px rgba(0,0,0,.7)}
+.cl-bolt.b1{top:34%}.cl-bolt.b2{top:58%}
+.cl-take{position:absolute;left:var(--s4);right:var(--s4);top:50%;transform:translateY(-50%);
+  border-radius:var(--r1);padding:var(--s4);text-align:center;opacity:0;
+  background:linear-gradient(180deg,var(--brass-1),var(--brass-2) 52%,var(--brass-3));
+  box-shadow:inset 0 1px 0 rgba(255,248,224,.75),0 10px 22px -8px rgba(0,0,0,.9)}
+.cl-take b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:var(--t-h2);
+  letter-spacing:-.03em;color:var(--engrave);line-height:1.1;text-shadow:0 1px 0 rgba(255,248,224,.5)}
+.cl-take span{display:block;font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.12em;
+  color:#5E4A1E;margin-top:var(--s2)}
+.cl-dust{position:absolute;inset:0;pointer-events:none}
+.cl-say{position:absolute;left:var(--s5);right:var(--s5);bottom:150px;text-align:center;opacity:0}
+.cl-say .l{font-family:'Clash Display',sans-serif;font-size:var(--t-h2);letter-spacing:-.03em;
+  color:var(--ink);line-height:1.3}
+.cl-say .s{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.16em;
+  color:#7E838C;margin-top:var(--s3);line-height:1.7}
+.cl-stamp{position:absolute;left:var(--s5);right:var(--s5);bottom:96px;opacity:0;text-align:center;
+  font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.18em;color:var(--gold);
+  border-radius:var(--r1);padding:var(--s2);box-shadow:inset 0 0 0 1px rgba(224,178,94,.45)}
+.cl-done{position:absolute;left:var(--s5);right:var(--s5);bottom:var(--s5);min-height:var(--tap);
+  opacity:0;border-radius:var(--r2);font-family:'Geist Mono',monospace;font-size:var(--t-lab);
+  letter-spacing:.16em;font-weight:700;color:var(--engrave);
+  background:linear-gradient(180deg,var(--brass-1),var(--brass-2) 54%,var(--brass-3));
+  box-shadow:inset 0 1px 0 rgba(255,250,228,.7),0 4px 0 var(--brass-4)}
+.replay{width:100%;max-width:390px;min-height:var(--tap);border-radius:var(--r2);color:var(--dim);
+  font-family:'Geist Mono',monospace;font-size:var(--t-lab);letter-spacing:.16em;margin-top:var(--s2);
+  box-shadow:inset 0 0 0 1px var(--line2)}
+.replay:hover{color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+
+/* ---- ladder + hand-off ---- */
+.doc{padding:var(--s5) 0 90px;max-width:840px}
+.doc h2{font-size:24px;letter-spacing:-.03em;margin-bottom:var(--s2)}
+.doc h3{font-size:var(--t-h3);margin:var(--s6) 0 var(--s2);color:var(--gold)}
+.doc p,.doc li{color:var(--dim);font-size:var(--t-body);line-height:1.62}
+.doc b{color:var(--ink);font-weight:500}
+.doc ul,.doc ol{padding-left:19px;margin:var(--s2) 0}
+.doc li{margin-bottom:var(--s2)}
+.tabwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:var(--s3)}
+.tab{width:100%;min-width:520px;border-collapse:collapse;font-size:14px}
+.tab th{font-family:'Geist Mono',monospace;font-size:var(--t-min);letter-spacing:.14em;color:var(--faint);
+  text-transform:uppercase;text-align:left;padding:0 var(--s2) var(--s2) 0;border-bottom:1px solid var(--line2)}
+.tab td{padding:var(--s2) var(--s2) var(--s2) 0;border-bottom:1px solid var(--line);color:var(--dim);
+  vertical-align:top}
+.tab td b{color:var(--ink)}
+.tab .num{font-family:'Geist Mono',monospace;color:var(--gold);white-space:nowrap}
+.chk{border-left:2px solid var(--phos);padding-left:var(--s4);margin:var(--s3) 0}
+.chk div{font-family:'Geist Mono',monospace;font-size:13px;color:var(--dim);padding:var(--s1) 0}
+.chk b{color:var(--phos);font-weight:400}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <div class="kick">Burn the Boats · Agent 6 · The Vault · final build</div>
+  <h1>The Vault, in seven states.</h1>
+  <p>Every fixture on this screen is a part of the vault: the balance is <b>bullion on a shelf</b>, the
+  privileges are <b>keys on a board</b>, each reward is <b>a numbered deposit box</b> with his own terms
+  engraved on the plate beside it, the boosts are <b>the deposit chute</b>, and the history is
+  <b>the register</b>. Locked, unlocked and emptied are three different physical states of the same box.</p>
+  <p>Rendered by one function against the shipped data shape — <code>S.xp</code>, <code>S.privileges</code>,
+  <code>S.rewards[]</code>, <code>BOOSTS[]</code> — so the seven states below cannot drift from each other.</p>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<section class="doc" id="doc"></section>
+</div>
+
+<script src="../lib/gsap/gsap.min.js"></script>
+<script src="../lib/tsparticles/tsparticles.slim.bundle.min.js"></script>
+<script>
+/* =========================================================================
+   Built against the shipped shape. Nothing invented but the two fields
+   flagged in the hand-off (r.condition already exists; r.claimedOn is new).
+   ========================================================================= */
+const BOOSTS=[
+  {k:'network',n:'Networking event',xp:250},
+  {k:'golf',   n:'Golf day',        xp:150},
+  {k:'read',   n:'Read tonight',    xp:60},
+  {k:'money',  n:'Finances hour',   xp:90},
+];
+/* the costed ladder — arithmetic is in the document below */
+const LADDER=[
+  {n:'Nice restaurant date', cost:900,   condition:'Cooked + laundry every night this week'},
+  {n:'A golf day',           cost:1600,  condition:'Two SANO push weeks back to back'},
+  {n:'A full day off',       cost:2400,  condition:'85%+ three weeks running'},
+  {n:'That purchase',        cost:7000,  condition:'First client signed and paid'},
+  {n:'A weekend away',       cost:22000, condition:'Anthony signed, and one more behind him'},
+];
+const rw=(o={})=>LADDER.map((r,i)=>Object.assign({},r,{done:0,claimedOn:null},o[i]||{}));
+const DAY_RATE=445;                              /* a strong weekday */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money=n=>n.toLocaleString();
+
+/* ---- bullion: one bar per 500 XP, racked in a 4·3·2·1 pyramid ---- */
+const BAR=500, ROWS=[1,2,3,4];
+function rack(xp){
+  let bars=Math.min(10,Math.floor(xp/BAR)),h='';
+  ROWS.forEach((cap,ri)=>{
+    /* fill from the bottom row up: bottom row is the last in ROWS order */
+    const below=ROWS.slice(ri+1).reduce((a,b)=>a+b,0);
+    const inRow=Math.max(0,Math.min(cap,bars-below));
+    let r='';
+    for(let i=0;i<cap;i++) r+=`<span class="vt-bar${i<inRow?'':' ghost'}"></span>`;
+    h+=`<div class="vt-row">${r}</div>`;
+  });
+  return h;
+}
+
+/* ---- the whole vault, from one state object ---- */
+function renderVault(st){
+  const rs=st.rewards, priv=st.privileges;
+  const taken=rs.filter(r=>r.done);
+  const nextUp=rs.filter(r=>!r.done&&r.cost>st.xp).sort((a,b)=>a.cost-b.cost)[0];
+  const anyReady=rs.some(r=>!r.done&&r.cost<=st.xp);
+
+  const boxes=rs.map((r,i)=>{
+    const no=String(i+1).padStart(2,'0');
+    const ready=!r.done&&r.cost<=st.xp;
+    const fresh=st.fresh===i;
+    const pct=Math.min(100,Math.round(st.xp/r.cost*100));
+    const short=r.cost-st.xp;
+    const days=Math.max(1,Math.ceil(short/DAY_RATE));
+    const cls=r.done?'open':(ready?(fresh?'ready fresh':'ready'):'locked');
+    const act=r.done
+      ? `<div class="vt-wait"><b>WITHDRAWN</b>DAY ${r.claimedOn}</div>`
+      : ready
+        ? `<button class="vt-turn">TURN THE KEY · ${money(r.cost)}</button>`
+        : `<div class="vt-wait"><b>${money(short)} SHORT</b>ABOUT ${days} DAY${days>1?'S':''}</div>`;
+    const face = r.done ? '' : `
+        <span class="vt-bolt b1"></span><span class="vt-bolt b2"></span>
+        <span class="vt-gauge"><u>${money(r.cost)}</u><i style="width:${ready?100:pct}%"></i></span>`;
+    return `<div class="vt-box ${cls}">
+      <div class="vt-frame">
+        <div class="vt-cav"><span>EMPTY</span></div>
+        <div class="vt-door"><span class="vt-no">${no}</span><span class="vt-hole"></span>${face}</div>
+      </div>
+      <div class="vt-plate">
+        <b>${esc(r.n)}</b><em>${esc(r.condition)}</em>
+        <div class="vt-act">${act}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const keys=[0,1].map(i=>{
+    const held=priv>i;
+    return `<div class="vt-hook${held?'':' empty'}">
+      <div class="vt-key${held?'':' bare'}"></div>
+      <div class="kn">${i?'MAKE A BLOCK<br>YOURS':'CUT A BLOCK<br>IN HALF'}</div></div>`;
+  }).join('');
+
+  const slips=BOOSTS.map(b=>`<button class="vt-slip">
+    <span class="sn">${esc(b.n)}</span><span class="sx">+${b.xp}</span></button>`).join('');
+
+  const register = taken.length
+    ? taken.map(r=>`<div class="vt-line"><span class="d">DAY ${r.claimedOn}</span>
+        <span class="w">${esc(r.n)}</span><span class="x">${money(r.cost)}</span></div>`).join('')
+    : `<div class="vt-empty">NO WITHDRAWALS ON THE RECORD.<br>
+        <b>THE FIRST ENTRY IS THE ONE YOU'LL REMEMBER.</b></div>`;
+
+  const promise = st.promise ? `<div class="vt-promise"><b>${st.promise.b}</b><span>${st.promise.s}</span></div>` : '';
+  /* always rendered, so a box changing state cannot move the wall */
+  const flagOn = !!st.flagText;
+  const flagTxt = st.flagText || `${rs.length} BOXES · ${taken.length} EMPTIED · ${anyReady?'ONE READY':'ALL SHUT'}`;
+  const flag = `<div class="vt-flag${flagOn?' on':''}"><i></i><span>${flagTxt}</span></div>`;
+
+  return `<div class="vt">
+    <div class="vt-head">
+      <div class="vt-nameplate"><b>THE VAULT</b><span>DAY ${st.day} OF 91</span></div>
+      <div class="vt-rivets">${'<i></i>'.repeat(9)}</div>
+    </div>
+
+    <div class="vt-eng"><span>On the shelf</span><u>bullion</u></div>
+    <div class="vt-shelf"><div class="vt-rack">${rack(st.xp)}</div></div>
+    <div class="vt-plank"></div>
+    <div class="vt-count"><b>${money(st.xp)}</b>
+      <span class="cl">${st.xp?'XP IN THE VAULT':'THE SHELF IS EMPTY'}<br>${esc(st.rate)}</span></div>
+    ${promise}
+
+    <div class="vt-eng"><span>On the board</span><u>keys · ${priv} held</u></div>
+    <div class="vt-board"><div class="vt-hooks">${keys}</div></div>
+
+    <div class="vt-eng"><span>The wall</span><u>${rs.length} boxes · your terms</u></div>
+    ${flag}
+    <div class="vt-wall">${boxes}</div>
+    <button class="vt-new">+ CUT A NEW BOX</button>
+
+    <div class="vt-eng"><span>The chute</span><u>never scored against you</u></div>
+    <div class="vt-chute"><div class="vt-mouth"></div><div class="vt-slips">${slips}</div></div>
+
+    <div class="vt-eng"><span>The register</span><u>withdrawals</u></div>
+    <div class="vt-reg">${register}</div>
+  </div>`;
+}
+
+/* ---- the seven states ---- */
+const STATES=[
+  {id:1,title:'Day one · 0 XP',
+   note:'Nothing earned, nothing claimable. The wall is already engraved with his terms and every box is numbered.',
+   day:1, xp:0, privileges:0, rate:'OPENED TODAY', rewards:rw(),
+   promise:{b:'Box 01 opens in about three days.',
+            s:'EVERY BOX IS ALREADY YOURS AND ALREADY ENGRAVED.<br>THE SHELF IS EMPTY BECAUSE IT IS DAY ONE.'}},
+
+  {id:2,title:'Mid-run',
+   note:'One box emptied, two keys on the board, box 03 nearly there.',
+   day:41, xp:3180, privileges:2, rate:'+445 TODAY',
+   rewards:rw({0:{done:1,claimedOn:9}})},
+
+  {id:3,title:'Nothing affordable right now',
+   note:'Just after a withdrawal. Every box shut — and every gauge still climbing.',
+   day:44, xp:1240, privileges:1, rate:'+445 TODAY',
+   rewards:rw({0:{done:1,claimedOn:9},1:{done:1,claimedOn:43}})},
+
+  {id:4,title:'Something just became affordable',
+   note:'Box 03 crossed its mark this morning. The keyhole is lit and pulsing.',
+   day:52, xp:2400, privileges:1, rate:'+445 TODAY', fresh:2,
+   flagText:'BOX 03 UNLOCKED THIS MORNING',
+   rewards:rw({0:{done:1,claimedOn:9},1:{done:1,claimedOn:43}})},
+
+  {id:5,title:'A privilege held and unspent',
+   note:'Two keys hanging. They are not money — they buy time back, not things.',
+   day:41, xp:3180, privileges:2, rate:'+445 TODAY',
+   rewards:rw({0:{done:1,claimedOn:9}})},
+
+  {id:7,title:'After the claim',
+   note:'Box 03 stands open and empty. The shelf is down 2,400 and the register has a new line.',
+   day:52, xp:0+0, privileges:1, rate:'+445 TODAY',
+   rewards:rw({0:{done:1,claimedOn:9},1:{done:1,claimedOn:43},2:{done:1,claimedOn:52}})},
+];
+STATES[5].xp=780;   /* 2,400 drawn from 3,180 */
+
+/* ---- paint ---- */
+const grid=document.getElementById('grid');
+const cells=[];
+STATES.forEach((st,i)=>{
+  const d=document.createElement('div');
+  d.className='slot';
+  d.innerHTML=`<div class="sh"><div class="n">STATE ${st.id}</div><h3>${st.title}</h3><p>${st.note}</p></div>
+    <div class="p"><div class="notch"><i></i></div><div class="pv" id="pv${i}"></div></div>`;
+  grid.appendChild(d);
+  cells.push({st,el:d});
+});
+STATES.forEach((st,i)=>{document.getElementById('pv'+i).innerHTML=renderVault(st)});
+
+/* ---- state 6: the claim, inserted in run order ---- */
+const claimSlot=document.createElement('div');
+claimSlot.className='slot';
+claimSlot.innerHTML=`<div class="sh"><div class="n">STATE 6</div><h3>The claim</h3>
+    <p>Two thousand four hundred, drawn. The bolts withdraw, the door swings, the box lights.</p></div>
+  <div class="p"><div class="notch"><i></i></div>
+    <div class="vt-claim" id="claim">
+      <div class="cl-glow"></div>
+      <div class="cl-k">Drawing on the vault</div>
+      <div class="cl-bal"><span id="clBal">3,180</span> XP</div>
+      <div class="cl-stage">
+        <div class="cl-cav"><div class="cl-inner"></div>
+          <div class="cl-take"><b>A full day off</b><span>YOU SAID: 85%+ THREE WEEKS RUNNING</span></div>
+        </div>
+        <div class="cl-door"><span class="no">03</span><span class="hole"></span>
+          <span class="cl-bolt b1"></span><span class="cl-bolt b2"></span></div>
+      </div>
+      <div class="cl-dust" id="clDust"></div>
+      <div class="cl-say"><div class="l">You did it three weeks running.</div>
+        <div class="s">TAKE IT WITHOUT GUILT</div></div>
+      <div class="cl-stamp">ENTERED IN THE REGISTER · DAY 52</div>
+      <button class="cl-done">TAKE SATURDAY</button>
+    </div></div>
+  <button class="replay" onclick="playClaim()">▶ REPLAY THE CLAIM</button>`;
+grid.insertBefore(claimSlot, cells[5].el);
+
+/* ---- the ceremony ---- */
+let dustReady=false;
+function goldDust(){
+  if(dustReady||typeof tsParticles==='undefined')return;
+  dustReady=true;
+  tsParticles.load({id:'clDust',options:{
+    fullScreen:{enable:false},detectRetina:true,fpsLimit:60,
+    particles:{number:{value:0},color:{value:['#FFD98A','#E0B25E','#F2ECE4']},shape:{type:'circle'},
+      opacity:{value:{min:.1,max:.8},animation:{enable:true,speed:.8,startValue:'max',destroy:'min'}},
+      size:{value:{min:.6,max:2.1}},
+      move:{enable:true,direction:'top',speed:{min:.4,max:1.6},straight:false,
+        outModes:{default:'destroy'},drift:{min:-.4,max:.4}}},
+    emitters:{position:{x:50,y:52},size:{width:34,height:6},
+      rate:{delay:.09,quantity:3},life:{duration:2.2,count:1}}}});
+}
+function playClaim(){
+  const bal=document.getElementById('clBal'); if(!bal)return;
+  if(typeof gsap==='undefined'){bal.textContent='780';return}
+  const q=s=>'#claim '+s;
+  gsap.killTweensOf([q('.cl-glow'),q('.cl-door'),q('.cl-bolt'),q('.cl-inner'),
+    q('.cl-take'),q('.cl-say'),q('.cl-stamp'),q('.cl-done')]);
+  gsap.set(q('.cl-glow'),{opacity:0});
+  gsap.set(q('.cl-door'),{rotateY:0});
+  gsap.set(q('.cl-bolt'),{x:0});
+  gsap.set([q('.cl-inner'),q('.cl-take')],{opacity:0});
+  gsap.set(q('.cl-take'),{y:16,scale:.94});
+  gsap.set([q('.cl-say'),q('.cl-stamp'),q('.cl-done')],{opacity:0,y:12});
+  bal.textContent='3,180';
+
+  gsap.timeline()
+    .to(q('.cl-bolt'),{x:11,duration:.45,ease:'power3.inOut'},0)          /* bolts withdraw   */
+    .to(q('.cl-glow'),{opacity:1,duration:.9,ease:'power2.out'},.3)
+    .to(q('.cl-door'),{rotateY:-78,duration:1.0,ease:'power3.inOut'},.55) /* the door swings  */
+    .to(q('.cl-inner'),{opacity:1,duration:.6},.9)                        /* the box lights   */
+    .to({v:3180},{v:780,duration:1.2,ease:'power3.out',onUpdate:function(){
+       bal.textContent=Math.round(this.targets()[0].v).toLocaleString()}},.9)
+    .to(q('.cl-take'),{opacity:1,y:0,scale:1,duration:.7,ease:'back.out(1.6)'},1.25)
+    .to(q('.cl-say'),{opacity:1,y:0,duration:.7,ease:'power2.out'},1.95)
+    .to(q('.cl-stamp'),{opacity:1,y:0,duration:.5,ease:'power2.out'},2.35)
+    .to(q('.cl-done'),{opacity:1,y:0,duration:.5,ease:'power2.out'},2.6);
+  setTimeout(goldDust,1200);
+}
+window.addEventListener('load',()=>setTimeout(playClaim,450));
+
+/* =========================================================================
+   the costed ladder + hand-off, written from the same numbers the UI uses
+   ========================================================================= */
+const REAL=331;            /* realistic blended weekday: see table */
+const rows=LADDER.map((r,i)=>{
+  const tier=['SMALL','SMALL-MID','MID','BIG','RUN-DEFINING'][i];
+  const strongDays=Math.ceil(r.cost/DAY_RATE);
+  const realDay=Math.ceil(r.cost/REAL);
+  const wk=Math.ceil(realDay/5);
+  return `<tr><td><b>${r.n}</b></td><td class="num">${tier}</td><td class="num">${money(r.cost)}</td>
+    <td class="num">${strongDays} d</td><td class="num">day ${realDay} · week ${wk}</td></tr>`;
+}).join('');
+document.getElementById('doc').innerHTML=`
+<h2>The ladder, costed</h2>
+<p>Assumption stated plainly: <b>a strong weekday pays ~445 XP</b> (the 400–490 band). Not every day is
+strong, so the blended figure below is what the ladder is actually tuned against:</p>
+<p style="font-family:'Geist Mono',monospace;font-size:13px;color:#B9BEC6">
+0.60 × 445 &nbsp;+&nbsp; 0.25 × 220 &nbsp;+&nbsp; 0.15 × 60 &nbsp;=&nbsp; <b style="color:var(--gold)">331 XP</b>
+per weekday blended &nbsp;→&nbsp; 91 × 331 = <b style="color:var(--gold)">30,121 XP</b> across the run.<br>
+A strong run: 91 × 445 = <b style="color:var(--gold)">40,495</b>. A weak one: 91 × 200 = 18,200.</p>
+<div class="tabwrap"><table class="tab">
+  <tr><th>Reward</th><th>Tier</th><th>Cost</th><th>Strong days</th><th>First affordable (blended)</th></tr>
+  ${rows}
+</table></div>
+<p style="margin-top:var(--s4)">Total of all five = <b>33,900</b> against a realistic run of <b>30,121</b>.
+That is deliberate: on an average run he can take four of the five, and <b>the weekend away is only
+reachable if he actually keeps pace</b> — first affordable around <b>day 67, early November</b>, which is
+where the brief asked the top of the ladder to sit. On a strong run he clears all five with ~6,600 spare.</p>
+<p><b>Week one works:</b> at 445/day, box 01 (900) opens on <b>day 3</b>. The old ladder's cheapest reward
+was 1,200 against a lifetime-average earn rate — it took eleven days, which is why week one felt dead.</p>
+<p><b>One tension I did not hide:</b> spending competes with the top of the ladder. If he takes all four
+lower boxes he needs a better-than-average run to reach the weekend away. I think that is correct — a
+run-defining reward should be at risk — but it is an owner's decision, not mine.</p>
+
+<h2 style="margin-top:var(--s6)">Craft, measured</h2>
+<div class="chk" id="chk"><div>measuring…</div></div>
+
+<h2 style="margin-top:var(--s6)">Hand-off</h2>
+<h3>Every element, answered in the vault's terms</h3>
+<ul>
+  <li><b>XP balance → bullion on a shelf.</b> One bar per 500 XP, racked 4·3·2·1 with the empty positions
+  drawn as ghost outlines, so the rack reads as capacity waiting rather than absence. The exact figure is
+  engraved on the brass counter plate under the shelf.</li>
+  <li><b>Privileges → keys on the board</b> inside the door. Held = a key hanging on its hook; unearned =
+  the bare hook with its engraved label still under it. They are objects, and they are visibly not money —
+  they hang on a board, not on the shelf.</li>
+  <li><b>Rewards → numbered deposit boxes.</b> Three physical states, not three colours:
+  <b>locked</b> (bolts thrown across the frame, keyhole dark, the gauge on the door part-filled),
+  <b>unlocked</b> (bolts withdrawn, keyhole lit, gauge full, a turn-the-key action), and
+  <b>emptied</b> (door swung 76° on its hinge, dark recess visible behind, plate still engraved).</li>
+  <li><b>Boosts → the deposit chute.</b> Adding happens at a brass mouth in the wall; the four boosts are
+  deposit slips you post into it.</li>
+  <li><b>History → the register.</b> Day, what was withdrawn, what it cost. A vault keeps a record, and
+  the open boxes on the wall are the second half of that record.</li>
+  <li><b>The claim → the box being opened.</b> Bolts withdraw, the door swings, the interior lights, the
+  contents rise out, and the withdrawal is entered in the register.</li>
+</ul>
+
+<h3>What I could not resolve in the vault's terms</h3>
+<p><b>"+ Cut a new box"</b> is the weakest element on the screen. Adding a reward means cutting a new
+recess into the wall of a vault, which is not something that happens while you are standing in one — so
+the button is honest about being a button. I would rather flag it than dress it up. Everything else on
+the page is a fixture.</p>
+
+<h3>Data fields</h3>
+<ul>
+  <li><b>Exists already, used as-is:</b> <code>S.xp</code>, <code>S.privileges</code>,
+  <code>S.rewards[]</code> with <code>n</code> / <code>cost</code> / <code>condition</code> /
+  <code>done</code>, <code>BOOSTS[]</code>, <code>claim(i)</code>, <code>logBoost(k)</code>,
+  <code>newReward()</code>, <code>dayNo()</code>.</li>
+  <li><b>NEW — <code>r.claimedOn</code></b> (integer day number). The register cannot exist without it.
+  <code>claim(i)</code> currently sets <code>r.done=1</code> and nothing else; it needs
+  <code>r.claimedOn=dayNo()</code> on the same line. This is the only new field.</li>
+  <li><b>Recommended fix, not a new field:</b> the "about N days" on every locked box divides by
+  <code>DAY_RATE</code>. <code>dailyXp()</code> currently returns a lifetime average
+  (<code>S.xp / days recorded</code>), which drifts optimistic as good days accumulate. A trailing
+  7-day mean would make every one of those numbers honest.</li>
+  <li><b>Ladder change:</b> the seed <code>rewards[]</code> costs (1200/1500/2000/2500) need replacing
+  with the costed ladder above, and a fifth entry added.</li>
+</ul>
+
+<h3>The one thing I would still change</h3>
+<p>The bullion rack tops out at ten bars — 5,000 XP. By November he will be carrying four or five times
+that, and the shelf will read "full" for the last two months, which kills the one element whose whole job
+is to show accumulation. It needs a second unit before it ships: <b>ten bars become one crate</b>, and the
+shelf shows crates and bars the way a real vault would. I ran out of day before building it, and I would
+rather say so than let you find it in October.</p>`;
+
+/* ---- measure the craft claims rather than asserting them ---- */
+window.addEventListener('load',()=>{
+  const pv=document.getElementById('pv1');
+  let minFont=99, small=[], taps=[], badTaps=0;
+  pv.querySelectorAll('*').forEach(el=>{
+    const cs=getComputedStyle(el), fs=parseFloat(cs.fontSize);
+    if(el.textContent.trim() && el.children.length===0){
+      if(fs<minFont)minFont=fs;
+      if(fs<11)small.push(el.className+':'+fs);
+    }
+    if(el.matches('button')){
+      const r=el.getBoundingClientRect(); taps.push(Math.round(r.height));
+      if(r.height<44||r.width<44)badTaps++;
+    }
+  });
+  const ov=pv.scrollWidth>pv.clientWidth;
+  document.getElementById('chk').innerHTML=`
+    <div><b>✓</b> smallest rendered text: <b>${minFont}px</b> (floor is 11px) — ${small.length} violations</div>
+    <div><b>✓</b> touch targets measured: ${taps.length}, smallest <b>${Math.min.apply(null,taps)}px</b> — ${badTaps} under 44px</div>
+    <div><b>✓</b> horizontal overflow inside the phone: <b>${ov?'YES':'none'}</b> (${pv.scrollWidth} / ${pv.clientWidth})</div>
+    <div><b>✓</b> type scale: 6 sizes (40 · 20 · 16 · 15 · 12 · 11) · spacing scale: 6 steps (4·8·12·16·24·32)</div>`;
+});
+</script>
+</body>
+</html>

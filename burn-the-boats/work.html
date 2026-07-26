@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Burn the Boats — the work</title>
+<link rel="stylesheet" href="lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480; --gold:#E0B25E; --phos:#4ADE80;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99;
+  background-image:url('assets/grain/grain-fine.svg');opacity:.04;mix-blend-mode:overlay}
+h1,h2{font-family:'Clash Display',sans-serif;font-weight:700;letter-spacing:-.03em;margin:0}
+a{text-decoration:none;color:inherit}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px 64px}
+.hero{position:relative;overflow:hidden;margin:0 -16px 4px;padding:44px 20px 26px;
+  background:linear-gradient(180deg,#0d0c10,#0a090d)}
+.hero::before{content:'';position:absolute;left:-10%;right:-10%;top:-40%;height:150%;
+  background:radial-gradient(50% 46% at 50% 62%,rgba(255,107,44,.2),rgba(179,42,0,.08) 44%,transparent 70%);
+  animation:g 5s ease-in-out infinite}
+@keyframes g{0%,100%{opacity:.62;transform:scale(1)}50%{opacity:1;transform:scale(1.07)}}
+.hero .k{position:relative;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;
+  color:#8d6650;text-transform:uppercase}
+.hero h1{position:relative;font-size:30px;line-height:1.05;margin-top:12px}
+.hero h1 em{font-style:normal;color:#e8a86a;text-shadow:0 0 22px rgba(255,107,44,.6)}
+.hero p{position:relative;color:var(--dim);font-size:15px;margin:12px 0 0}
+.sec{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--faint);
+  text-transform:uppercase;margin:30px 0 10px;display:flex;justify-content:space-between;align-items:baseline}
+.sec u{text-decoration:none;color:#4b4459;letter-spacing:.12em}
+.card{display:flex;align-items:center;gap:14px;min-height:64px;padding:14px 16px;margin-bottom:8px;
+  border-radius:13px;background:var(--panel);border:1px solid var(--line)}
+.card:active{transform:scale(.99)}
+.card .t{min-width:0;flex:1}
+.card b{display:block;font-family:'Clash Display',sans-serif;font-weight:600;font-size:17px;
+  letter-spacing:-.02em;line-height:1.2}
+.card span{display:block;font-size:13px;color:var(--dim);margin-top:3px;line-height:1.35}
+.card .go{font-family:'Geist Mono',monospace;font-size:16px;color:var(--faint);flex:none}
+.card.live{border-color:rgba(224,178,94,.5);background:rgba(224,178,94,.07)}
+.card.live b{color:var(--gold)}
+.card.pick{border-color:rgba(74,222,128,.45)}
+.tag{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.13em;padding:4px 7px;
+  border-radius:5px;background:#241f33;color:#8b83a0;flex:none}
+.tag.g{background:rgba(74,222,128,.16);color:var(--phos)}
+.tag.o{background:rgba(224,178,94,.16);color:var(--gold)}
+.foot{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:#454055;
+  text-align:center;margin-top:34px;line-height:2}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="k">Burn the Boats</div>
+    <h1>Every screen we've <em>built</em>.</h1>
+    <p>The app, and every design round behind it. Tap anything.</p>
+  </div>
+
+  <div class="sec"><span>The app</span><u>installed on your phone</u></div>
+  <a class="card live" href="./"><div class="t"><b>Burn the Boats</b>
+    <span>The live app — Today, Push, Bank, Record</span></div><span class="go">→</span></a>
+
+  <div class="sec"><span>The Bank</span><u>five rounds · the Vault won</u></div>
+  <a class="card pick" href="renditions/rend-bank-vault.html"><div class="t"><b>The Vault — final build</b>
+    <span>Seven states · costed ladder · claim ceremony</span></div><span class="tag g">CHOSEN</span></a>
+  <a class="card" href="renditions/rend-bank-v4.html"><div class="t"><b>Round 4 — ten built objects</b>
+    <span>Jars, dial, balance, stack, corkboard…</span></div><span class="tag">R4</span></a>
+  <a class="card" href="renditions/rend-bank-v3.html"><div class="t"><b>Round 3 — fifty ideas, ten rendered</b>
+    <span>The full cull, forty killed in writing</span></div><span class="tag">R3</span></a>
+  <a class="card" href="renditions/rend-bank-v2.html"><div class="t"><b>Round 2 — ten worlds</b>
+    <span>Arcade, vending machine, pinball…</span></div><span class="tag">R2</span></a>
+  <a class="card" href="renditions/rend-bank.html"><div class="t"><b>Round 1 — seven materials</b>
+    <span>The austere set</span></div><span class="tag">R1</span></a>
+
+  <div class="sec"><span>Time blocks</span></div>
+  <a class="card" href="renditions/rend-timeblock-v4.html"><div class="t"><b>Time block — v4</b>
+    <span>Latest</span></div><span class="tag o">LATEST</span></a>
+  <a class="card" href="renditions/rend-timeblock-v3.html"><div class="t"><b>Time block — v3</b></div><span class="tag">V3</span></a>
+  <a class="card" href="renditions/rend-timeblock-v2.html"><div class="t"><b>Time block — v2</b></div><span class="tag">V2</span></a>
+  <a class="card" href="renditions/rend-timeblock.html"><div class="t"><b>Time block — v1</b></div><span class="tag">V1</span></a>
+
+  <div class="sec"><span>The vices</span></div>
+  <a class="card" href="renditions/rend-vices-v3.html"><div class="t"><b>Vices — v3</b>
+    <span>Latest</span></div><span class="tag o">LATEST</span></a>
+  <a class="card" href="renditions/rend-vices-v2.html"><div class="t"><b>Vices — v2</b></div><span class="tag">V2</span></a>
+  <a class="card" href="renditions/rend-vices.html"><div class="t"><b>Vices — v1</b></div><span class="tag">V1</span></a>
+
+  <div class="sec"><span>Goals</span></div>
+  <a class="card" href="renditions/rend-goals-v2.html"><div class="t"><b>Goals — v2</b>
+    <span>Latest</span></div><span class="tag o">LATEST</span></a>
+  <a class="card" href="renditions/rend-goals.html"><div class="t"><b>Goals — v1</b></div><span class="tag">V1</span></a>
+
+  <div class="sec"><span>Header &amp; verses</span></div>
+  <a class="card" href="renditions/rend-header.html"><div class="t"><b>Header directions</b>
+    <span>What the furnace says, and how it turns over</span></div><span class="go">→</span></a>
+  <a class="card" href="headers.html"><div class="t"><b>Header — earlier set</b></div><span class="go">→</span></a>
+  <a class="card" href="strips.html"><div class="t"><b>The furnace strip</b>
+    <span>Five strips</span></div><span class="go">→</span></a>
+
+  <div class="sec"><span>Earlier explorations</span></div>
+  <a class="card" href="directions-v3.html"><div class="t"><b>Directions — v3</b></div><span class="go">→</span></a>
+  <a class="card" href="directions-v2.html"><div class="t"><b>Directions — v2</b></div><span class="go">→</span></a>
+  <a class="card" href="directions.html"><div class="t"><b>Directions — v1</b></div><span class="go">→</span></a>
+  <a class="card" href="sheet.html"><div class="t"><b>Character sheet</b></div><span class="go">→</span></a>
+  <a class="card" href="v2.html"><div class="t"><b>App — early v2</b></div><span class="go">→</span></a>
+
+  <div class="foot">MON 27 JUL 2026 → MON 1 DEC 2026 · 91 WEEKDAYS<br>
+    YOU BURNED THE BOATS. IT'S TIME TO WORK.</div>
+</div>
+</body>
+</html>

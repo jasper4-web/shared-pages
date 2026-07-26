@@ -1,0 +1,1334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Vice Screens — Six Directions</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --ghost:#CFE2FF; --hot:#FFB25E; --warm:#e8a86a;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99;
+  background-image:url('../assets/grain/grain-fine.svg');opacity:.035;mix-blend-mode:overlay}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+.mono{font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums}
+button{font-family:inherit;cursor:pointer}
+
+.wrap{max-width:1240px;margin:0 auto;padding:0 26px}
+.mast{padding:58px 0 30px;border-bottom:1px solid var(--line)}
+.kick{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.26em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:14px}
+.mast h1{font-size:clamp(29px,4.6vw,46px);line-height:1.03;letter-spacing:-.035em;margin-bottom:15px}
+.mast p{max-width:660px;color:var(--dim);font-size:15.2px;margin:0 0 11px}
+.mast p b{color:var(--ink);font-weight:500}
+.quote{border-left:2px solid var(--line2);padding-left:14px;margin:22px 0 0;max-width:640px;
+  color:var(--faint);font-size:14px;font-style:italic;line-height:1.6}
+.quote b{color:var(--dim);font-style:normal;font-weight:500}
+
+.toc{display:flex;flex-wrap:wrap;gap:7px;padding:22px 0 0}
+.toc a{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--dim);border:1px solid var(--line2);border-radius:99px;padding:7px 12px;text-decoration:none}
+.toc a:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ---------- the mechanic section ---------- */
+.mech{padding:46px 0;border-bottom:1px solid var(--line)}
+.mech h2{font-size:26px;letter-spacing:-.03em;margin-bottom:6px}
+.mech .dm{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--faint);margin-bottom:16px}
+.mech>.wrapinner{max-width:none}
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px;margin:22px 0 10px}
+.fc{border:1px solid var(--line);border-radius:13px;background:var(--panel);padding:13px 14px;position:relative}
+.fc .st{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.19em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:9px}
+.fc.offer{border-color:rgba(224,178,94,.34)} .fc.offer .st{color:var(--gold)}
+.fc.live{border-color:rgba(255,107,44,.4)} .fc.live .st{color:var(--ember)}
+.fc.claim{border-color:rgba(74,222,128,.42)} .fc.claim .st{color:var(--phos)}
+.fc.lapse{border-color:var(--line)} .fc.lapse .st{color:#4b4560}
+.fc .fx{font-size:13.5px;color:var(--ink);line-height:1.35;margin-bottom:4px}
+.fc .fy{font-size:12px;color:var(--faint);line-height:1.45}
+.fc.lapse .fx{color:#6b6480}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0 34px;margin-top:26px}
+.rules li{color:var(--dim);font-size:14px;line-height:1.5;margin-bottom:9px}
+.rules li b{color:var(--ink);font-weight:500}
+table.xp{width:100%;border-collapse:collapse;margin-top:24px;font-size:13.4px}
+table.xp th{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.17em;text-transform:uppercase;
+  color:var(--faint);text-align:left;padding:0 12px 9px 0;border-bottom:1px solid var(--line);font-weight:700}
+table.xp td{padding:10px 12px 10px 0;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+table.xp td.n{color:var(--ink);font-weight:500}
+table.xp td.p{font-family:'Geist Mono',monospace;color:var(--gold);font-weight:700;white-space:nowrap}
+table.xp tr.lock td{color:#5f5872} table.xp tr.lock td.p{color:#6d5c3c}
+
+.demo{margin-top:26px;border:1px solid var(--line2);border-radius:14px;background:var(--panel);padding:15px;
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;max-width:660px}
+.demo .dslot{min-height:78px}
+.demo button{background:transparent;border:1px solid var(--line2);color:var(--dim);border-radius:9px;
+  padding:11px 14px;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.13em;min-height:42px}
+.demo button:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ---------- direction shell ---------- */
+.dir{padding:52px 0;border-bottom:1px solid var(--line)}
+.dh{display:grid;grid-template-columns:60px 1fr;gap:18px;align-items:start;margin-bottom:26px}
+.dn{font-family:'Clash Display',sans-serif;font-size:46px;line-height:.8;font-weight:700;color:transparent;
+  -webkit-text-stroke:1.2px var(--line2)}
+.dt h2{font-size:27px;letter-spacing:-.03em;margin-bottom:5px}
+.dm{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+.dl{max-width:640px;color:var(--dim);font-size:14.8px;margin-top:11px}
+.dl b{color:var(--ink);font-weight:500}
+.body{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:38px;align-items:start}
+.stack{display:flex;gap:22px;flex-wrap:wrap;min-width:0}
+@media(max-width:1080px){.body{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:520px){.wrap{padding:0 8px}.dh{grid-template-columns:40px 1fr;gap:12px}.dn{font-size:30px}}
+.notes dt{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);margin-top:19px}
+.notes dt:first-child{margin-top:0}
+.notes dd{margin:6px 0 0;font-size:14px;color:var(--dim);line-height:1.55}
+.notes dd b{color:var(--ink);font-weight:500}
+.cost{border-left:2px solid var(--line2);padding-left:13px;margin-top:20px;font-size:13.4px;color:var(--faint);font-style:italic}
+
+/* ---------- phone chrome ---------- */
+.phw{flex:1 1 340px;max-width:390px;min-width:0}
+.phone{border-radius:22px;overflow:hidden;border:1px solid var(--line2);box-shadow:0 30px 70px -30px #000;
+  background:var(--bg);width:100%}
+.notch{height:26px;background:#000;display:flex;align-items:center;justify-content:center}
+.notch i{width:56px;height:5px;border-radius:99px;background:#1a1a20}
+.scr{min-height:592px;position:relative;overflow:hidden}
+.bl{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.16em;color:#3f3a4d;text-align:center;
+  margin:10px 0 0;text-transform:uppercase}
+
+/* top bar shared by every screen */
+.vbar{display:flex;align-items:center;gap:11px;padding:13px 15px 12px;border-bottom:1px solid var(--line)}
+.vbar .bk{width:26px;height:26px;border-radius:8px;border:1px solid var(--line2);background:transparent;
+  color:var(--faint);font-size:13px;line-height:1;display:grid;place-items:center;flex:none}
+.vbar .lb{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--dim)}
+.vbar .rt{margin-left:auto;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;color:#4b4560}
+
+/* the enlarged app dial */
+.bigdial{position:relative;display:block}
+.bigdial .bd-v{font-family:'Clash Display',sans-serif;letter-spacing:-.04em;color:#f2ece4;line-height:1;
+  position:absolute;left:0;right:0;text-align:center}
+.bigdial .bd-l{font-family:'Geist Mono',monospace;letter-spacing:.13em;text-transform:uppercase;line-height:1;
+  color:#6b6480;text-shadow:0 1px 0 rgba(255,150,80,.16);position:absolute;left:0;right:0;text-align:center}
+
+/* reason lines shared */
+.why{font-size:13.6px;color:var(--dim);line-height:1.5}
+.why b{color:var(--ink);font-weight:500}
+.cite{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.15em;color:#4b4560;
+  text-transform:uppercase;margin-top:6px}
+
+/* ============================================================
+   01 · THE CHAIN
+   ============================================================ */
+.c1{padding:0 0 18px}
+.c1-hero{padding:20px 16px 15px;text-align:center;position:relative;
+  background:radial-gradient(76% 100% at 50% 0%,rgba(255,107,44,.11),transparent 66%)}
+.c1-big{font-family:'Clash Display',sans-serif;font-size:47px;line-height:.88;letter-spacing:-.045em;color:#f4efe6}
+.c1-sub{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.19em;color:#6d5c3c;
+  text-transform:uppercase;margin-top:9px}
+.c1-dial{margin:12px auto 4px}
+.chain{display:flex;align-items:center;justify-content:center;gap:0;padding:14px 12px 4px;flex-wrap:wrap}
+.lnk{width:31px;height:20px;border-radius:99px;position:relative;margin-right:-7px;flex:none;
+  border:3px solid #4a3a24;background:transparent;
+  box-shadow:inset 0 1px 0 rgba(255,190,120,.3),0 1px 2px rgba(0,0,0,.6)}
+.lnk.on{border-color:var(--gold);
+  box-shadow:inset 0 1px 0 rgba(255,225,180,.5),0 0 7px rgba(224,178,94,.22)}
+.lnk.weld{border-color:var(--ember);background:rgba(255,107,44,.2);
+  box-shadow:inset 0 1px 0 rgba(255,200,140,.5),0 0 13px rgba(255,107,44,.55)}
+.lnk.weld::after{content:'';position:absolute;left:50%;top:-5px;bottom:-5px;width:3px;margin-left:-1.5px;
+  background:repeating-linear-gradient(180deg,var(--hot) 0 2px,transparent 2px 4px);opacity:1}
+.lnk.ghost{border-color:#231e30;border-style:dashed;border-width:2px}
+.lnk.now{border-color:var(--gold);border-style:dashed;animation:lnkPulse 2.4s ease-in-out infinite}
+.lnk.now::after{content:'';position:absolute;left:50%;top:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;
+  border-radius:99px;background:var(--gold);box-shadow:0 0 8px var(--gold)}
+@keyframes lnkPulse{0%,100%{box-shadow:inset 0 1px 0 rgba(255,225,180,.5),0 0 6px rgba(224,178,94,.3)}
+  50%{box-shadow:inset 0 1px 0 rgba(255,225,180,.6),0 0 18px rgba(224,178,94,.75)}}
+.c1-key{display:flex;justify-content:center;gap:13px;padding:9px 12px 0;font-family:'Geist Mono',monospace;
+  font-size:7px;letter-spacing:.12em;color:#4b4560;text-transform:uppercase}
+.c1-key i{display:inline-block;width:7px;height:7px;border-radius:99px;margin-right:4px;vertical-align:-1px}
+.c1-body{padding:16px 15px 0}
+.c1-why{border-left:2px solid rgba(224,178,94,.4);padding-left:12px;margin-bottom:15px}
+.c1-off{border:1px solid rgba(224,178,94,.35);border-radius:12px;padding:12px 13px;
+  background:linear-gradient(150deg,rgba(224,178,94,.09),rgba(224,178,94,.02))}
+.c1-off .k{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.19em;color:var(--gold);text-transform:uppercase}
+.c1-off .t{font-size:14.5px;font-weight:500;margin-top:6px;line-height:1.3}
+.c1-off .d{font-family:'Geist Mono',monospace;font-size:8.5px;color:#6d5c3c;margin-top:5px;letter-spacing:.09em}
+.c1-off .acts{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:11px}
+.mini-btn{border:0;border-radius:9px;padding:11px;font-size:12.5px;font-weight:600;min-height:40px;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204}
+.mini-btn.gh{background:transparent;border:1px solid var(--line2);color:var(--faint);font-weight:500}
+.c1-foot{display:flex;justify-content:space-between;padding:15px 15px 0;margin-top:15px;
+  border-top:1px solid var(--line);font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.1em;color:#4b4560}
+.c1-foot b{color:var(--dim);font-weight:700}
+
+/* ============================================================
+   02 · THE GATE CLOCK
+   ============================================================ */
+.c2-top{display:grid;grid-template-columns:auto 1fr;gap:13px;align-items:center;padding:14px 15px 6px}
+.c2-ring{padding:2px 0 0;display:grid;place-items:center;position:relative}
+.c2-ring svg{display:block}
+.c2-ctr{position:absolute;text-align:center;width:150px}
+.c2-ctr .k{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.19em;color:#6d5c3c;text-transform:uppercase}
+.c2-ctr .n{font-family:'Clash Display',sans-serif;font-size:40px;line-height:.9;letter-spacing:-.045em;
+  color:#f4efe6;margin-top:6px}
+.c2-ctr .n small{font-size:17px;letter-spacing:-.02em;color:var(--warm)}
+.c2-ctr .s{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.15em;color:var(--faint);margin-top:8px}
+.c2-ctr .st{font-family:'Clash Display',sans-serif;font-size:20px;letter-spacing:-.03em;color:var(--gold);margin-top:12px}
+.c2-legend{display:flex;justify-content:center;gap:11px;padding:2px 12px 0;flex-wrap:wrap;
+  font-family:'Geist Mono',monospace;font-size:6.8px;letter-spacing:.11em;color:#4b4560;text-transform:uppercase}
+.c2-legend i{display:inline-block;width:7px;height:3px;border-radius:2px;margin-right:4px;vertical-align:2px}
+.c2-body{padding:12px 15px 18px}
+.c2-flag{border:1px solid rgba(255,107,44,.4);border-radius:12px;padding:11px 12px;margin-bottom:10px;
+  background:linear-gradient(150deg,rgba(255,107,44,.11),rgba(255,107,44,.02))}
+.c2-flag .k{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.19em;color:var(--ember);text-transform:uppercase;
+  display:flex;justify-content:space-between}
+.c2-flag .t{font-size:14px;font-weight:500;margin-top:6px}
+.trk{height:5px;border-radius:99px;background:#191527;overflow:hidden;margin-top:9px;position:relative}
+.trk i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;
+  background:linear-gradient(90deg,#6b2400,var(--ember),#FFC98A);box-shadow:0 0 9px rgba(255,107,44,.5)}
+.trk.g i{background:linear-gradient(90deg,#1c5f38,var(--phos));box-shadow:0 0 9px rgba(74,222,128,.4)}
+.c2-flag .lab{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:7.5px;
+  letter-spacing:.11em;color:#8d6650;margin-top:6px}
+.c2-next{border:1px dashed var(--line2);border-radius:12px;padding:11px 12px;display:grid;
+  grid-template-columns:1fr auto;gap:9px;align-items:center}
+.c2-next .t{font-size:13px;color:var(--dim)}
+.c2-next .t b{color:var(--ink);font-weight:500}
+.c2-next .x{font-family:'Geist Mono',monospace;font-size:8px;color:#4b4560;letter-spacing:.1em;margin-top:3px}
+.c2-why{margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
+
+/* ============================================================
+   03 · THE LEDGER
+   ============================================================ */
+.c3{background:linear-gradient(180deg,#0b0a10,#08070c)}
+.c3-h{padding:16px 16px 13px;border-bottom:1px solid var(--line);display:grid;
+  grid-template-columns:1fr auto;gap:12px;align-items:end}
+.c3-h .acct{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.21em;color:#4b4560;text-transform:uppercase}
+.c3-h .bal{font-family:'Clash Display',sans-serif;font-size:40px;line-height:.9;letter-spacing:-.045em;
+  color:#f4efe6;margin-top:8px}
+.c3-h .bal em{font-style:normal;font-size:15px;color:var(--faint);letter-spacing:0;margin-left:4px}
+.c3-h .sub{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.12em;color:#6d5c3c;margin-top:7px}
+.c3-sec{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.21em;color:#4b4560;text-transform:uppercase;
+  padding:15px 16px 8px;display:flex;justify-content:space-between}
+.ctr-row{margin:0 16px 8px;border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--panel)}
+.ctr-row.signed{border-color:rgba(255,107,44,.38);background:rgba(255,107,44,.05)}
+.ctr-row .top{display:flex;justify-content:space-between;align-items:baseline;gap:9px}
+.ctr-row .nm{font-size:13.5px;font-weight:500}
+.ctr-row .pay{font-family:'Geist Mono',monospace;font-size:12px;font-weight:700;color:var(--gold)}
+.ctr-row .terms{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;color:#5f5872;margin-top:6px}
+.ctr-row .sign{margin-top:10px;width:100%;border:1px solid var(--line2);background:transparent;color:var(--dim);
+  border-radius:8px;padding:9px;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.15em;min-height:38px}
+.ctr-row.signed .sign{border-color:rgba(255,107,44,.4);color:var(--hot)}
+.lgr{margin:0 16px}
+.lgr-hd,.lgr-r{display:grid;grid-template-columns:38px 1fr 46px 44px;gap:8px;align-items:center;
+  font-family:'Geist Mono',monospace;font-size:9px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.lgr-hd{font-size:6.8px;letter-spacing:.17em;color:#4b4560;text-transform:uppercase;border-bottom:1px solid var(--line2)}
+.lgr-r .w{color:#5f5872}
+.lgr-r .e{font-family:'Satoshi',sans-serif;font-size:12.5px;color:var(--dim)}
+.lgr-r .cr{text-align:right;color:var(--phos)}
+.lgr-r .bal{text-align:right;color:var(--ink);font-weight:700}
+.lgr-r.paid .e{color:var(--warm)}
+.lgr-r.paid .cr{color:#6d5c3c}
+.lgr-r.cur{background:rgba(224,178,94,.05)}
+.stamp3{position:absolute;right:14px;top:96px;transform:rotate(-9deg);opacity:.9}
+.c3-clause{margin:16px 16px 0;padding-top:13px;border-top:1px solid var(--line)}
+.c3-clause .cl{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.19em;color:#4b4560;text-transform:uppercase}
+.c3-clause p{margin:7px 0 0;font-size:13.2px;color:var(--dim);line-height:1.5}
+
+/* ============================================================
+   04 · THE QUEST BOARD
+   ============================================================ */
+.c4-ban{padding:13px 15px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;
+  border-bottom:1px solid var(--line);background:linear-gradient(150deg,#171226,#0e0c16)}
+.c4-ban .n{font-family:'Clash Display',sans-serif;font-size:31px;line-height:.9;letter-spacing:-.04em;color:#f4efe6}
+.c4-ban .n em{font-style:normal;font-size:14px;color:var(--faint);letter-spacing:0;margin-left:5px}
+.c4-ban .s{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.14em;color:#6d5c3c;
+  text-transform:uppercase;margin-top:6px}
+.c4-list{padding:13px 14px 0;display:grid;gap:9px}
+.q{border-radius:13px;padding:12px 13px;position:relative;overflow:hidden;border:1px solid var(--line2);background:var(--panel)}
+.q .qk{font-family:'Geist Mono',monospace;font-size:6.8px;letter-spacing:.2em;text-transform:uppercase;
+  color:#5f5872;display:flex;justify-content:space-between;align-items:center}
+.q .qt{font-family:'Clash Display',sans-serif;font-size:17px;letter-spacing:-.025em;margin-top:7px;line-height:1.15}
+.q .qd{font-size:12.4px;color:var(--faint);margin-top:5px;line-height:1.4}
+.q .qp{font-family:'Geist Mono',monospace;font-size:11px;font-weight:700;color:var(--gold)}
+.q.live{border-color:rgba(255,107,44,.45);background:linear-gradient(150deg,rgba(255,107,44,.1),rgba(255,107,44,.02))}
+.q.live .qk{color:var(--ember)}
+.q.claim{border-color:rgba(74,222,128,.5);background:linear-gradient(150deg,rgba(74,222,128,.12),rgba(74,222,128,.02));
+  animation:claimGlow 2.6s ease-in-out infinite}
+@keyframes claimGlow{0%,100%{box-shadow:0 0 0 rgba(74,222,128,0)}50%{box-shadow:0 0 22px -4px rgba(74,222,128,.4)}}
+.q.claim .qk{color:var(--phos)} .q.claim .qp{color:var(--phos)}
+.q.lock{opacity:.62;border-style:dashed}
+.q .qb{margin-top:11px;width:100%;border:1px solid var(--line2);background:transparent;color:var(--dim);
+  border-radius:9px;padding:10px;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.15em;min-height:38px}
+.q.claim .qb{background:linear-gradient(135deg,var(--phos),#2f9e5c);border:0;color:#062010;font-weight:700;
+  font-family:'Satoshi',sans-serif;font-size:13px;letter-spacing:0}
+.q.offer .qb{border-color:rgba(224,178,94,.45);color:var(--gold)}
+.ladder{display:flex;gap:5px;margin-top:9px}
+.ladder i{flex:1;height:3px;border-radius:99px;background:#241f33}
+.ladder i.on{background:var(--gold);box-shadow:0 0 7px rgba(224,178,94,.5)}
+.c4-rec{margin:15px 14px 0;padding-top:13px;border-top:1px solid var(--line)}
+.c4-rec .k{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.2em;color:#4b4560;text-transform:uppercase}
+.medals{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.med{border:1px solid var(--line2);border-radius:9px;padding:7px 9px;text-align:center;background:var(--panel)}
+.med b{display:block;font-family:'Geist Mono',monospace;font-size:13px;color:var(--gold);line-height:1}
+.med span{display:block;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.12em;
+  color:#5f5872;text-transform:uppercase;margin-top:4px}
+.c4-why{margin:14px 14px 18px;font-size:13px;color:var(--faint);line-height:1.5}
+
+/* ============================================================
+   05 · THE TESTIMONY
+   ============================================================ */
+.c5{background:#050409;padding:0 0 22px}
+.c5-in{padding:44px 24px 0;text-align:center}
+.c5-big{font-family:'Clash Display',sans-serif;font-size:60px;line-height:.86;letter-spacing:-.055em;color:#f6f1e8}
+.c5-say{font-size:15px;color:var(--faint);margin-top:14px;line-height:1.5}
+.c5-say b{color:var(--dim);font-weight:500}
+.c5-dial{margin:38px auto 0}
+.c5-scr{margin:40px 22px 0;padding-top:24px;border-top:1px solid #17141f;text-align:center}
+.c5-scr p{margin:0;font-size:15.4px;line-height:1.6;color:#b8b0c4;font-style:italic}
+.c5-ref{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.2em;color:#463f58;
+  text-transform:uppercase;margin-top:13px}
+.c5-off{margin:36px 22px 0;padding-top:17px;border-top:1px solid #17141f;display:grid;
+  grid-template-columns:1fr auto;gap:12px;align-items:center;text-align:left}
+.c5-off .t{font-size:14px;color:var(--dim)}
+.c5-off .t b{color:var(--ink);font-weight:500}
+.c5-off .x{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;color:#463f58;margin-top:4px}
+.c5-off button{border:1px solid rgba(224,178,94,.45);background:transparent;color:var(--gold);border-radius:9px;
+  padding:11px 15px;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.16em;min-height:42px}
+.c5-hist{margin:34px 22px 0;padding-top:16px;border-top:1px solid #17141f}
+.c5-hist .k{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.2em;color:#3b3549;text-transform:uppercase;
+  display:flex;justify-content:space-between;margin-bottom:11px}
+
+/* ============================================================
+   06 · THE FURNACE CHAMBER
+   ============================================================ */
+.c6{position:relative;background:linear-gradient(180deg,#0c0a0e,#08070a 55%,#0a0809)}
+/* the ember field is confined to the fire (hero + coal bed) and masked so embers fade as they
+   rise — otherwise they read as dust drifting over the copy rather than heat coming off the coals */
+.c6-parts{position:absolute;left:0;right:0;top:0;height:340px;z-index:1;pointer-events:none;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.45) 42%,#000 100%);
+  mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.45) 42%,#000 100%)}
+/* clips the animated furnace glow (it scales to 1.06) without killing its downward bleed onto the coals */
+.c6-in{position:relative;z-index:2;overflow:hidden}
+.c6-hero{padding:18px 16px 8px;text-align:center;position:relative}
+.c6-hero::before{content:'';position:absolute;left:0;right:0;top:-30%;height:150%;pointer-events:none;
+  background:radial-gradient(64% 46% at 50% 78%,rgba(255,107,44,.24),rgba(179,42,0,.08) 46%,transparent 72%);
+  animation:furn 5s ease-in-out infinite}
+@keyframes furn{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+.c6-k{position:relative;font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.22em;
+  color:#8d6650;text-transform:uppercase}
+.c6-n{position:relative;font-family:'Clash Display',sans-serif;font-size:52px;line-height:.86;
+  letter-spacing:-.05em;color:#f6ecdf;margin-top:9px;text-shadow:0 0 34px rgba(255,107,44,.4)}
+.c6-n em{font-style:normal;font-size:17px;color:var(--warm);letter-spacing:-.01em;margin-left:5px}
+.c6-s{position:relative;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.16em;
+  color:#8d6650;text-transform:uppercase;margin-top:9px}
+.c6-dial{margin:10px auto 0;position:relative}
+.bed{display:flex;align-items:flex-end;justify-content:center;gap:4px;padding:16px 16px 0;height:74px}
+.coal{flex:1;max-width:26px;border-radius:5px 5px 3px 3px;position:relative;background:#171319;border:1px solid #241d22}
+.coal.lit{background:linear-gradient(180deg,#FFC98A,var(--ember) 42%,#8a2c00);border-color:#a03a06;
+  box-shadow:0 0 13px rgba(255,107,44,.55),inset 0 1px 0 rgba(255,220,180,.6)}
+.coal.ash{background:linear-gradient(180deg,#3a3138,#221c21);border-color:#332a30}
+.coal.ash::after{content:'';position:absolute;left:50%;bottom:3px;width:5px;height:5px;margin-left:-2.5px;
+  border-radius:99px;background:var(--hot);box-shadow:0 0 8px var(--hot)}
+.coal.next{background:transparent;border:1px dashed #2c2430}
+.coal.now{background:linear-gradient(180deg,#231b21 0%,#231b21 46%,var(--ember) 46%,#8a2c00 100%);
+  border-color:#a03a06;animation:coalNow 2.8s ease-in-out infinite}
+@keyframes coalNow{0%,100%{box-shadow:0 0 7px rgba(255,107,44,.3)}50%{box-shadow:0 0 18px rgba(255,107,44,.75)}}
+.c6-parts canvas{width:100%!important;height:100%!important;display:block}
+.bedl{display:flex;justify-content:space-between;padding:9px 16px 0;font-family:'Geist Mono',monospace;
+  font-size:7px;letter-spacing:.13em;color:#5f4a3d;text-transform:uppercase}
+.c6-body{padding:16px 15px 20px}
+.c6-stoke{border:1px solid rgba(255,107,44,.4);border-radius:13px;padding:13px;
+  background:linear-gradient(150deg,rgba(255,107,44,.12),rgba(255,107,44,.02))}
+.c6-stoke .k{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.2em;color:var(--hot);text-transform:uppercase}
+.c6-stoke .t{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;margin-top:7px}
+.c6-stoke .d{font-size:12.6px;color:#a08672;margin-top:5px;line-height:1.4}
+.c6-stoke button{margin-top:11px;width:100%;border:0;border-radius:10px;padding:12px;min-height:44px;
+  background:linear-gradient(135deg,var(--hot),#c25a12);color:#241002;font-size:13.4px;font-weight:700}
+.c6-why{margin-top:15px;padding-top:14px;border-top:1px solid #1c1720}
+
+/* handoff */
+.ho{padding:52px 0 90px}
+.ho h2{font-size:27px;letter-spacing:-.03em;margin-bottom:16px}
+.ho h3{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--faint);margin:30px 0 10px;font-weight:700}
+.ho p,.ho li{color:var(--dim);font-size:14.6px;line-height:1.62;max-width:790px}
+.ho li{margin-bottom:9px}
+.ho b{color:var(--ink);font-weight:500}
+.ho ol.rank li{margin-bottom:14px}
+.ho code{font-family:'Geist Mono',monospace;font-size:12.5px;color:var(--rune);
+  overflow-wrap:anywhere;word-break:break-word}
+.ho .flag{border-left:2px solid var(--blood);padding-left:13px;margin:16px 0;max-width:790px}
+.ho .flag b{color:#ff9a92}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="kick">Burn the Boats · crew 2026-07-25 · agent 5</div>
+  <h1>The vice screens</h1>
+  <p>Tapping a vice today opens a flat sheet with two fields and a button. It records. It does not
+  <b>reward</b>, and it dead-ends. Six directions for turning that tap into a destination: the streak shown
+  grandly, the dial he tapped brought inside at full size, reasons that reconnect the vice to December,
+  and an optional challenge system that makes each vice its own small game.</p>
+  <p>Every screen below is a real rendered mock-up, not a description. Sample state is held identical
+  across all six so they can be compared fairly: <b>smoke — 6 days clean, best 11, 2 slips this run,
+  24h cleared twice</b> · <b>the dishwasher — 4 weeks at or under, best 4, 0 of 1 used this week</b>.</p>
+  <div class="quote">
+    “Whenever I tap the dishwasher and smoke… I want the screen to pop up to show my streak a little bit
+    more grand. You could even just bring that same image that you already have… And then maybe there can be
+    more stuff, like reasons why I should do this. It just feels a little bit dead end right now.”
+    <b>— his brief</b>
+  </div>
+  <nav class="toc">
+    <a href="#mech">The challenge system</a>
+    <a href="#d1">01 · The Chain</a>
+    <a href="#d2">02 · The Gate Clock</a>
+    <a href="#d3">03 · The Ledger</a>
+    <a href="#d4">04 · The Quest Board</a>
+    <a href="#d5">05 · The Testimony</a>
+    <a href="#d6">06 · The Furnace Chamber</a>
+    <a href="#handoff">Hand-off &amp; ranking</a>
+  </nav>
+</header>
+
+<!-- ============================ THE MECHANIC ============================ -->
+<section class="mech" id="mech">
+  <h2>The challenge system</h2>
+  <div class="dm">designed as a mechanic · every direction below draws the same machine</div>
+  <p class="dl" style="max-width:800px">A challenge is a <b>standing offer</b>, not an assignment. The app
+  offers; he accepts or ignores; it tracks itself; he claims. The single most important property is at the
+  end: <b>lapsing costs nothing and is never mentioned again.</b> A challenge that can punish you is just
+  another obligation, and obligations are what he stops opening the app to avoid.</p>
+
+  <div class="flow">
+    <div class="fc offer">
+      <div class="st">1 · Offered</div>
+      <div class="fx">Hold until 2 PM → +35 XP</div>
+      <div class="fy">Surfaced only when it is still winnable from right now. Two taps available:
+      <b>accept</b>, or <b>not today</b> — which dismisses it silently and records nothing.</div>
+    </div>
+    <div class="fc live">
+      <div class="st">2 · Live</div>
+      <div class="fx">Holding until 14:00 · 4h 18m</div>
+      <div class="fy">Tracks itself against the clock and the log. Shows on the vice screen, and as a second
+      hairline on its dial in the gauge strip so it is visible without opening anything.</div>
+    </div>
+    <div class="fc claim">
+      <div class="st">3 · Claimable</div>
+      <div class="fx">You held it. +35 XP</div>
+      <div class="fy">He taps to claim — the tap <i>is</i> the reward moment, same reasoning as the phone-pass
+      tap. Anything unclaimed auto-credits at the evening close-out. Earned XP is never lost.</div>
+    </div>
+    <div class="fc lapse">
+      <div class="st">4 · Lapsed</div>
+      <div class="fx">Offer expired. Nothing lost.</div>
+      <div class="fy">No XP, no HP, no streak effect, no counter, no red. Shown once, then gone. It quietly
+      returns to the offer pool on the next eligible day.</div>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="dslot" id="demoSlot"></div>
+    <button id="demoBtn" type="button">Run the cycle →</button>
+  </div>
+
+  <ul class="rules" style="list-style:none;padding:0;margin-top:26px">
+    <li><b>One live challenge per vice.</b> Depth without overwhelm — you cannot stack four timers.</li>
+    <li><b>Only offered when winnable.</b> Never “hold until 2 PM” at 3 PM. Never the week challenge on Thursday.</li>
+    <li><b>Accepting is the commitment.</b> That deliberate tap is what makes it a game rather than a passive bonus.</li>
+    <li><b>Claiming is a tap, but forgetting is free.</b> Unclaimed XP credits itself at close-out.</li>
+    <li><b>Lapses are never counted.</b> No “failed 3 times” anywhere in the app. This is the nagging guard.</li>
+    <li><b>Escalation is a rank, not a moving goalpost.</b> The ladder is visible from day one, so 24h → 32h
+    reads as a promotion he unlocked.</li>
+    <li><b>A slip during a live challenge ends the challenge only.</b> The slip is handled by the existing
+    make-up mechanic; the challenge just lapses. It never doubles the penalty.</li>
+  </ul>
+
+  <table class="xp">
+    <thead><tr><th>Challenge</th><th>Vice</th><th>Offered</th><th>Pays</th></tr></thead>
+    <tbody>
+      <tr><td class="n">Hold until 14:00</td><td>Smoke</td><td>Daily before noon, if nothing logged</td><td class="p">+35</td></tr>
+      <tr><td class="n">Hold until 17:00</td><td>Smoke</td><td>Once he has cleared 14:00 twice in 7 days</td><td class="p">+60</td></tr>
+      <tr><td class="n">24 hours clean</td><td>Smoke</td><td>Any evening the day has stayed clean</td><td class="p">+120</td></tr>
+      <tr><td class="n">32 hours clean</td><td>Smoke</td><td>Replaces the 24h rung after 3 clears</td><td class="p">+180</td></tr>
+      <tr class="lock"><td class="n">The long dark · 72 hours</td><td>Smoke</td><td>Rare. After two 32h clears</td><td class="p">+400</td></tr>
+      <tr><td class="n">Hold to Thursday</td><td>Dishwasher</td><td>Mondays — the on-ramp week</td><td class="p">+90</td></tr>
+      <tr><td class="n">A week at zero</td><td>Dishwasher</td><td>Mondays only, must be taken by Tuesday</td><td class="p">+250</td></tr>
+    </tbody>
+  </table>
+  <p class="cost" style="max-width:760px">Scaled against what already exists: a clean focus run pays 65, a
+  small win 15–30, a clean vice day 40, clearing a make-up 60. So the daily 2 PM hold at 35 is half a focus
+  run — worth doing, not worth gaming. A 24h clean at 120 is “pays big” without being a shortcut past the
+  work. A zero week at 250 is the largest recurring award in the app, and it should be: <i>a zero week is
+  literally the December behaviour.</i> Ceiling check — even a perfect week only adds ~600 XP from challenges,
+  against roughly 2,000 from blocks.</p>
+</section>
+
+<!-- ============================ 01 · THE CHAIN ============================ -->
+<section class="dir" id="d1">
+  <div class="dh"><div class="dn">01</div><div class="dt">
+    <h2>The Chain</h2>
+    <div class="dm">the streak as a forged object · repairs stay visible</div>
+    <p class="dl">The streak stops being a number and becomes a <b>thing he has made</b>. One link per week
+    (or per day). The point is the welded link: when he slips, the chain does not break — a link is repaired
+    in front of him and <b>the repair stays there forever</b>. That is his own mercy-with-a-price mechanic
+    rendered as an object instead of explained as a sentence. It is also the history view; there is no second
+    list of failures, because the chain already tells the whole truth without a single red mark.</p>
+  </div></div>
+  <div class="body">
+    <div class="stack">
+
+      <figure class="phw" style="margin:0">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr c1">
+          <div class="vbar"><button class="bk" type="button">‹</button><span class="lb">The Dishwasher</span>
+            <span class="rt">Week 18 of 19</span></div>
+          <div class="c1-hero">
+            <div class="c1-big">FOUR WEEKS</div>
+            <div class="c1-sub">at or under · best ever 4</div>
+            <div class="c1-dial" data-dial data-pct=".5" data-color="#FF6B2C" data-val="4w" data-lb="Dishwasher" data-w="176"></div>
+          </div>
+          <div class="chain">
+            <span class="lnk on"></span><span class="lnk weld"></span><span class="lnk on"></span>
+            <span class="lnk on"></span><span class="lnk on"></span><span class="lnk on"></span>
+            <span class="lnk now"></span><span class="lnk ghost"></span>
+          </div>
+          <div class="c1-key">
+            <span><i style="background:var(--gold)"></i>Kept</span>
+            <span><i style="background:var(--ember)"></i>Welded · made up</span>
+            <span><i style="background:#2b2540"></i>Ahead</span>
+          </div>
+          <div class="c1-body">
+            <div class="c1-why">
+              <div class="why">Once a week is the deal you made with yourself. <b>Nobody else is checking.</b></div>
+              <div class="cite">Reason · rotates each open</div>
+            </div>
+            <div class="c1-off">
+              <div class="k">Monday offer · closes tomorrow</div>
+              <div class="t">Forge an extra link — a whole week at zero.</div>
+              <div class="d">+250 XP · optional · lapsing costs nothing</div>
+              <div class="acts">
+                <button class="mini-btn" type="button">Take it</button>
+                <button class="mini-btn gh" type="button">Not this week</button>
+              </div>
+            </div>
+            <div class="c1-foot">
+              <span>Weeks 12–19 · <b>4 kept</b> since the weld</span>
+              <span><b>1</b> welded</span>
+            </div>
+          </div>
+        </div></div>
+        <figcaption class="bl">1a · the dishwasher — links are weeks</figcaption>
+      </figure>
+
+      <figure class="phw" style="margin:0">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr c1">
+          <div class="vbar"><button class="bk" type="button">‹</button><span class="lb">Smoke</span>
+            <span class="rt">Gate 12:00</span></div>
+          <div class="c1-hero">
+            <div class="c1-big">SIX DAYS</div>
+            <div class="c1-sub">clean · best ever 11</div>
+            <div class="c1-dial" data-dial data-pct=".857" data-color="#FF6B2C" data-val="6d" data-lb="Smoke · 2h18" data-w="176"></div>
+          </div>
+          <div class="chain">
+            <span class="lnk weld"></span><span class="lnk on"></span><span class="lnk weld"></span>
+            <span class="lnk on"></span><span class="lnk on"></span><span class="lnk on"></span>
+            <span class="lnk on"></span><span class="lnk on"></span><span class="lnk now"></span>
+            <span class="lnk ghost"></span>
+          </div>
+          <div class="c1-key">
+            <span><i style="background:var(--gold)"></i>Held</span>
+            <span><i style="background:var(--ember)"></i>Welded · made up</span>
+            <span><i style="background:#2b2540"></i>Ahead</span>
+          </div>
+          <div class="c1-body">
+            <div class="c1-why">
+              <div class="why">The first ninety minutes are the hardest — and they are <b>the same ninety
+              minutes the market is open.</b> The gate is not about the smoke. It is about who is at the desk
+              at 6:30.</div>
+              <div class="cite">Reason · rotates each open</div>
+            </div>
+            <div class="c1-off">
+              <div class="k">Live now · offer closes at 12:00</div>
+              <div class="t">Forge an extra link — hold it until 2 PM.</div>
+              <div class="d">+35 XP · optional · lapsing costs nothing</div>
+              <div class="acts">
+                <button class="mini-btn" type="button">Take it</button>
+                <button class="mini-btn gh" type="button">Not today</button>
+              </div>
+            </div>
+            <div class="c1-foot">
+              <span>Gate held <b>12 of the last 14</b></span>
+              <span><b>2</b> welded</span>
+            </div>
+          </div>
+        </div></div>
+        <figcaption class="bl">1b · smoke — links are days</figcaption>
+      </figure>
+
+    </div>
+    <dl class="notes">
+      <dt>What dominates</dt>
+      <dd>The streak object. Everything else is arranged beneath it.</dd>
+      <dt>The dial</dt>
+      <dd>Brought inside at <b>176px</b> — the identical arc, value and engraved label he tapped, roughly
+      four times the size. It sits directly under the headline so the tap feels like a zoom, not a jump.</dd>
+      <dt>History</dt>
+      <dd>The chain <b>is</b> the history. No separate list, no wall of anything — a slip is one amber link
+      with a seam, permanently visible and permanently <i>attached</i>.</dd>
+      <dt>Challenge shape</dt>
+      <dd>“Forge an extra link.” The reward is literal: a link appears that the calendar did not give him.</dd>
+      <dt>Risk</dt>
+      <dd>Links get small past ~14. Needs to collapse to “<b>… + 9 earlier</b>” with a scrollable full chain.
+      Design that before shipping, not after.</dd>
+      <div class="cost">Strongest single idea in the set: it renders the one mechanic that is entirely his own,
+      and it renders it as mercy rather than as damage.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ============================ 02 · THE GATE CLOCK ============================ -->
+<section class="dir" id="d2">
+  <div class="dh"><div class="dn">02</div><div class="dt">
+    <h2>The Gate Clock</h2>
+    <div class="dm">the whole day as one ring · noon at the crown</div>
+    <p class="dl">Both rules are fundamentally about <b>time</b> — one is a clock rule, one is a calendar rule
+    — so time becomes the screen. The waking day is drawn as a 270° arc with <b>noon at the top</b>: the gate
+    is literally the crown of the day, and every hour before it is a climb. His danger windows are shaded on
+    the ring itself, and challenges are <b>flags planted further around the arc</b> — 2 PM, 5 PM, the 24-hour
+    wrap. Accepting one plants the flag; the ember arc grows toward it in real time.</p>
+  </div></div>
+  <div class="body">
+    <div class="stack">
+
+      <figure class="phw" style="margin:0">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr">
+          <div class="vbar"><button class="bk" type="button">‹</button><span class="lb">Smoke</span>
+            <span class="rt">09:42 · Tue</span></div>
+          <div class="c2-top" style="grid-template-columns:1fr">
+            <div class="c2-ring">
+              <div id="ring-smoke"></div>
+              <div class="c2-ctr">
+                <div class="k">Until the gate</div>
+                <div class="n">2<small>h</small> 18<small>m</small></div>
+                <div class="s">6 DAYS CLEAN · BEST 11</div>
+                <div class="st">Hold the line.</div>
+              </div>
+            </div>
+          </div>
+          <div class="c2-legend">
+            <span><i style="background:var(--ember)"></i>Elapsed</span>
+            <span><i style="background:#5a2a10"></i>Danger window</span>
+            <span><i style="background:var(--gold)"></i>The gate</span>
+            <span><i style="background:var(--phos)"></i>Flag</span>
+          </div>
+          <div class="c2-body">
+            <div class="c2-flag">
+              <div class="k"><span>Live challenge</span><span>+35 XP</span></div>
+              <div class="t">Holding until 14:00</div>
+              <div class="trk"><i style="width:63%"></i></div>
+              <div class="lab"><span>06:30 START</span><span>4h 18m to the flag</span></div>
+            </div>
+            <div class="c2-next">
+              <div>
+                <div class="t"><b>24 hours clean</b> — plant the far flag</div>
+                <div class="x">+120 XP · offered tonight if today stays clean · 2 of 3 toward the 32h rung</div>
+              </div>
+              <button class="mini-btn gh" type="button" style="width:auto;padding:10px 13px">See</button>
+            </div>
+            <div class="c2-why">
+              <div class="why">9 AM to noon is the best brain you own. <b>The gate is what buys it.</b></div>
+              <div class="cite">Reason · rotates each open</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption class="bl">2a · smoke — the day ring, gate at the crown</figcaption>
+      </figure>
+
+      <figure class="phw" style="margin:0">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr">
+          <div class="vbar"><button class="bk" type="button">‹</button><span class="lb">The Dishwasher</span>
+            <span class="rt">Tue · week 18</span></div>
+          <div class="c2-top" style="grid-template-columns:1fr">
+            <div class="c2-ring">
+              <div id="ring-dish"></div>
+              <div class="c2-ctr">
+                <div class="k">Allowance</div>
+                <div class="n">1<small> left</small></div>
+                <div class="s">4 WEEKS UNDER · BEST 4</div>
+                <div class="st">5 days to hold.</div>
+              </div>
+            </div>
+          </div>
+          <div class="c2-legend">
+            <span><i style="background:var(--ember)"></i>Days gone</span>
+            <span><i style="background:#2b2540"></i>Days left</span>
+            <span><i style="background:var(--gold)"></i>Allowance</span>
+          </div>
+          <div class="c2-body">
+            <div class="c2-flag" style="border-color:rgba(224,178,94,.4);background:linear-gradient(150deg,rgba(224,178,94,.1),rgba(224,178,94,.02))">
+              <div class="k" style="color:var(--gold)"><span>Live challenge</span><span>+250 XP</span></div>
+              <div class="t">A week at zero — through Sunday</div>
+              <div class="trk g"><i style="width:29%"></i></div>
+              <div class="lab" style="color:#6d5c3c"><span>MON 00:00</span><span>2 of 7 days held</span></div>
+            </div>
+            <div class="c2-next">
+              <div>
+                <div class="t">The dial you tapped, at size</div>
+                <div class="x">Same arc, same value — 4 weeks against the 8-week mark</div>
+              </div>
+              <div class="c1-dial" data-dial data-pct=".5" data-color="#FF6B2C" data-val="4w" data-lb="Dishwasher" data-w="104"></div>
+            </div>
+            <div class="c2-why">
+              <div class="why">“A man without self-control is like a city broken into and left without walls.”</div>
+              <div class="cite">Proverbs 25:28</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption class="bl">2b · the dishwasher — the ring becomes the week</figcaption>
+      </figure>
+
+    </div>
+    <dl class="notes">
+      <dt>What dominates</dt>
+      <dd>Time. The ring answers “where am I in this rule right now?” before he has read a word.</dd>
+      <dt>The dial</dt>
+      <dd>Handled two ways here on purpose. On <b>2a</b> the ring is the enlarged dial — same ember arc, same
+      geometry, grown to fill the screen. On <b>2b</b> the literal small dial is also placed inline at 104px so
+      you can judge whether he needs the exact object or a faithful enlargement of it.</dd>
+      <dt>Danger windows</dt>
+      <dd>The three shaded bands come straight from his interview: the first 90 minutes, the midday break,
+      and late night. Naming them on the ring is information, not moralising — and it is the only screen in
+      the set that shows him <i>when</i> he is about to be tested.</dd>
+      <dt>History</dt>
+      <dd>Deliberately absent from this screen. Time-now is the job; the record lives one tap deeper. Flag as
+      a real gap if the GM wants everything on one page.</dd>
+      <dt>Risk</dt>
+      <dd>The most engineering of the six — the ring has to be right at every hour of the day, including 06:00
+      and 22:00, or it will look broken. And it hard-codes his waking day at 05:00–23:00, which
+      <b>PROFILE §8c lists as unknown</b>. Confirm before building.</dd>
+      <div class="cost">Best answer to “what do I do in the next hour?” Weakest answer to “how has this gone?”</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ============================ 03 · THE LEDGER ============================ -->
+<section class="dir" id="d3">
+  <div class="dh"><div class="dn">03</div><div class="dt">
+    <h2>The Ledger</h2>
+    <div class="dm">an account, contracts, and a balance that only grows</div>
+    <p class="dl">Cold, engraved, mono — a private account book. The streak is a <b>balance</b>. Challenges are
+    <b>contracts you sign</b>, with a term and a payout printed like terms. And the reason this direction earns
+    its place: the ledger is the only history format where a slip can be recorded <b>with total honesty and
+    still not read as failure</b> — it posts as an entry marked <span style="color:var(--warm)">PAID</span>,
+    because he did in fact pay it. Nothing is hidden, nothing is red, and the balance never goes down.</p>
+  </div></div>
+  <div class="body">
+    <div class="stack">
+      <figure class="phw" style="margin:0">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr c3" style="position:relative">
+          <div class="vbar"><button class="bk" type="button">‹</button><span class="lb">Account</span>
+            <span class="rt">Opened 07-27</span></div>
+          <div class="c3-h">
+            <div>
+              <div class="acct">The Dishwasher · weekly threshold 1</div>
+              <div class="bal">4<em>weeks</em></div>
+              <div class="sub">AT OR UNDER · BEST 4 · 0 OF 1 USED</div>
+            </div>
+            <div class="c1-dial" data-dial data-pct=".5" data-color="#FF6B2C" data-val="4w" data-lb="Dishwasher" data-w="112"></div>
+          </div>
+
+          <div class="c3-sec"><span>Open contracts</span><span>optional</span></div>
+          <div class="ctr-row signed">
+            <div class="top"><span class="nm">A week at zero</span><span class="pay">+250</span></div>
+            <div class="terms">TERM MON–SUN · SIGNED MON 08:12 · 2 OF 7 DAYS HELD</div>
+            <button class="sign" type="button">SIGNED — RUNNING</button>
+          </div>
+          <div class="ctr-row">
+            <div class="top"><span class="nm">Hold to Thursday</span><span class="pay">+90</span></div>
+            <div class="terms">TERM MON–THU · THE ON-RAMP · CANNOT RUN WITH THE ABOVE</div>
+            <button class="sign" type="button">SIGN</button>
+          </div>
+
+          <div class="c3-sec"><span>The ledger</span><span>last 6 weeks</span></div>
+          <div class="lgr">
+            <div class="lgr-hd"><span>WK</span><span>ENTRY</span><span>XP</span><span>STREAK</span></div>
+            <div class="lgr-r cur"><span class="w">18</span><span class="e">Running · 0 of 1</span><span class="cr">—</span><span class="bal">4</span></div>
+            <div class="lgr-r"><span class="w">17</span><span class="e">Kept · 1 of 1</span><span class="cr">+40</span><span class="bal">4</span></div>
+            <div class="lgr-r"><span class="w">16</span><span class="e">Kept · 1 of 1</span><span class="cr">+40</span><span class="bal">3</span></div>
+            <div class="lgr-r"><span class="w">15</span><span class="e">Kept · 0 of 1</span><span class="cr">+40</span><span class="bal">2</span></div>
+            <div class="lgr-r"><span class="w">14</span><span class="e">Kept · 1 of 1</span><span class="cr">+40</span><span class="bal">1</span></div>
+            <div class="lgr-r paid"><span class="w">13</span><span class="e">Over by 1 · made up</span><span class="cr">PAID</span><span class="bal">0</span></div>
+          </div>
+
+          <div class="c3-clause">
+            <div class="cl">Clause one</div>
+            <p>Once a week is the deal you made with yourself. Burn the boats —
+            <b style="color:var(--gold);font-weight:500">what is the millionaire version of yourself doing right now?</b></p>
+          </div>
+        </div></div>
+        <figcaption class="bl">3 · the dishwasher — balance, contracts, ledger</figcaption>
+      </figure>
+    </div>
+    <dl class="notes">
+      <dt>What dominates</dt>
+      <dd>The record. This is the only direction where history is the main event rather than a footer.</dd>
+      <dt>The dial</dt>
+      <dd>Set as an embossed plate beside the balance at 112px — smaller than 01 or 05 on purpose, because
+      here it is a seal on a document rather than the hero.</dd>
+      <dt>The honest-history problem, solved</dt>
+      <dd>Week 13 went over. It is <b>right there in the ledger</b>, in sequence, with the streak visibly
+      resetting to 0 in the last column — and it still does not read as a wall, because the entry says
+      <b>made up</b> and the credit column says <b>PAID</b>. Honesty and warmth in the same row.</dd>
+      <dt>Challenge shape</dt>
+      <dd>Contracts with printed terms, and one rule made visible: the on-ramp and the full week
+      <b>cannot both run</b>, which is how “one live challenge per vice” is expressed in this language.</dd>
+      <dt>Risk</dt>
+      <dd>Coldest of the six. A ledger is an accountant’s object and this is supposed to be the most emotional
+      screen in the app. It suits the dishwasher’s weekly rhythm far better than smoking’s daily one.</dd>
+      <div class="cost">Take the ledger component even if the direction loses. It is the best history view here.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ============================ 04 · THE QUEST BOARD ============================ -->
+<section class="dir" id="d4">
+  <div class="dh"><div class="dn">04</div><div class="dt">
+    <h2>The Quest Board</h2>
+    <div class="dm">challenges first · the streak becomes the banner</div>
+    <p class="dl">He asked for the vices to be “<b>their own little game</b>.” This is the direction that takes
+    him at his word: challenges dominate, the streak shrinks to a banner, and all four states of the mechanic
+    are visible at once — one <b>live</b>, one <b>claimable</b>, one <b>offered</b>, one <b>locked</b> with its
+    unlock progress showing. History is reframed entirely as a <b>trophy shelf</b>: things won, never things
+    missed. It is the most fun screen and the one furthest from the app’s restraint.</p>
+  </div></div>
+  <div class="body">
+    <div class="stack">
+      <figure class="phw" style="margin:0">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr">
+          <div class="vbar"><button class="bk" type="button">‹</button><span class="lb">Smoke</span>
+            <span class="rt">Gate 12:00 · held</span></div>
+          <div class="c4-ban">
+            <div>
+              <div class="n">6<em>days clean</em></div>
+              <div class="s">Best 11 · gate held 12 of 14</div>
+            </div>
+            <div class="c1-dial" data-dial data-pct=".857" data-color="#FF6B2C" data-val="6d" data-lb="Smoke" data-w="118"></div>
+          </div>
+          <div class="c4-list">
+            <div class="q claim">
+              <div class="qk"><span>Ready to claim</span><span class="qp">+35 XP</span></div>
+              <div class="qt">You held it until 2 PM.</div>
+              <div class="qd">Taken at 09:12 · cleared at 14:00 · 4h 48m held past the gate.</div>
+              <button class="qb" type="button">Claim +35 XP</button>
+            </div>
+            <div class="q live">
+              <div class="qk"><span>Live · 6h 04m left</span><span class="qp">+120 XP</span></div>
+              <div class="qt">24 hours clean</div>
+              <div class="trk"><i style="width:75%"></i></div>
+              <div class="qd" style="margin-top:8px">18h 00m held. Nothing logged since yesterday 14:00.</div>
+            </div>
+            <div class="q offer">
+              <div class="qk"><span>Offered · closes at 12:00</span><span class="qp">+60 XP</span></div>
+              <div class="qt">Hold until 5 PM</div>
+              <div class="qd">Unlocked because you cleared 2 PM twice this week. Optional — ignoring it costs nothing.</div>
+              <button class="qb" type="button">Take it</button>
+            </div>
+            <div class="q lock">
+              <div class="qk"><span>Locked · rank 3</span><span class="qp">+180 XP</span></div>
+              <div class="qt">32 hours clean</div>
+              <div class="qd">Clear the 24-hour rung once more and this replaces it. The bar rises with you.</div>
+              <div class="ladder"><i class="on"></i><i class="on"></i><i></i></div>
+            </div>
+          </div>
+          <div class="c4-rec">
+            <div class="k">The record · earned, not missed</div>
+            <div class="medals">
+              <div class="med"><b>7</b><span>2 PM holds</span></div>
+              <div class="med"><b>2</b><span>24h clean</span></div>
+              <div class="med"><b>11</b><span>best streak</span></div>
+              <div class="med"><b>2</b><span>made up</span></div>
+            </div>
+          </div>
+          <div class="c4-why">Burn the boats.
+            <b style="color:var(--gold);font-weight:500">What is the millionaire version of yourself doing right now?</b>
+            He is not negotiating with a clock at 9 AM.</div>
+        </div></div>
+        <figcaption class="bl">4 · smoke — all four challenge states at once</figcaption>
+      </figure>
+    </div>
+    <dl class="notes">
+      <dt>What dominates</dt>
+      <dd>The game. Everything is a card that pays.</dd>
+      <dt>The dial</dt>
+      <dd>Only 118px and pushed to the banner — the weakest treatment of the dial in the set, and an honest
+      strike against this direction given he explicitly asked for the image to come with him.</dd>
+      <dt>History</dt>
+      <dd>Trophies. Note the fourth medal: <b>2 made up</b>. Counting his redemptions as a medal rather than
+      hiding them is the most warmth this format can carry, and it stays truthful.</dd>
+      <dt>Risk — the real one</dt>
+      <dd>Four cards is four things asking for a decision. Two of these should be collapsed by default; a
+      board that always has something to accept is a board that eventually feels like <b>nagging</b>. This is
+      the direction most at risk of it.</dd>
+      <div class="cost">If he says “I want it to feel like a game,” this wins outright. If he says “I want it
+      to feel true,” it loses to 01.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ============================ 05 · THE TESTIMONY ============================ -->
+<section class="dir" id="d5">
+  <div class="dh"><div class="dn">05</div><div class="dt">
+    <h2>The Testimony</h2>
+    <div class="dm">almost nothing · one sentence at 60px</div>
+    <p class="dl">The opposite bet. Grandeur through <b>subtraction</b>: the streak is a full sentence in
+    display type, there is a great deal of black, and the only interactive thing on the screen is a single
+    quiet offer. Scripture is given real room instead of being a chip. This is the only direction where the
+    screen would feel <b>reverent</b> — which matters, because the make-up he designed for himself is
+    scriptural, and because a vice screen that shouts is a vice screen he will learn to avoid opening.</p>
+  </div></div>
+  <div class="body">
+    <div class="stack">
+      <figure class="phw" style="margin:0">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr c5">
+          <div class="vbar" style="border-color:#17141f"><button class="bk" type="button">‹</button>
+            <span class="lb">Smoke</span><span class="rt">09:42</span></div>
+          <div class="c5-in">
+            <div class="c5-big">SIX<br>DAYS.</div>
+            <div class="c5-say">Clean. Your best is <b>eleven</b>.<br>The gate holds for another <b>2h 18m</b>.</div>
+            <div class="c5-dial" data-dial data-pct=".857" data-color="#FF6B2C" data-val="6d" data-lb="" data-w="204"></div>
+          </div>
+          <div class="c5-scr">
+            <p>“I discipline my body and keep it under control.”</p>
+            <div class="c5-ref">1 Corinthians 9:27</div>
+          </div>
+          <div class="c5-off">
+            <div>
+              <div class="t">Hold until <b>2 PM</b> today.</div>
+              <div class="x">+35 XP · nothing happens if you don’t</div>
+            </div>
+            <button type="button">TAKE IT</button>
+          </div>
+          <div class="c5-hist">
+            <div class="k"><span>The last fourteen days</span><span>vs the gate</span></div>
+            <div id="hist-smoke"></div>
+          </div>
+        </div></div>
+        <figcaption class="bl">5 · smoke — restraint as grandeur</figcaption>
+      </figure>
+    </div>
+    <dl class="notes">
+      <dt>What dominates</dt>
+      <dd>White space and one sentence. It is the only screen here that would survive being looked at every
+      single day for 91 days without wearing out.</dd>
+      <dt>The dial</dt>
+      <dd><b>204px — the largest in the set</b>, and stripped of its engraved label because at that size the
+      arc speaks for itself. Closest to a literal answer to “bring that same image.”</dd>
+      <dt>History</dt>
+      <dd>The scatter under the fold is the most honest chart in the whole set: each day is a dot placed at
+      the <b>time of first use</b> against the noon line. Clean days sit on the top rail. A day he broke the
+      gate sits low — but you can see it was 11:40, not 7 AM. That is progress a tick-box can never show, and
+      it renders the bad days in ember, never red.</dd>
+      <dt>Risk</dt>
+      <dd>Genuinely thin. One offer visible means the 24-hour challenge has nowhere to live without a second
+      screen. And restraint can read as <b>an empty screen</b> on the day he most needs something to grab.</dd>
+      <div class="cost">Its history chart and its dial size should be lifted into whichever direction wins.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ============================ 06 · THE FURNACE CHAMBER ============================ -->
+<section class="dir" id="d6">
+  <div class="dh"><div class="dn">06</div><div class="dt">
+    <h2>The Furnace Chamber</h2>
+    <div class="dm">the locked header, continued downward · the streak is fuel</div>
+    <p class="dl">The one direction that treats the vice screen as <b>a room inside the furnace</b> he already
+    owns. Weeks kept are coals in the bed; the fire is literally bigger because he held the line. Real embers
+    (tsParticles, not a canvas loop) drift up behind the type. Challenges are “<b>stoke it</b>.” The argument
+    for this direction is continuity: the header is locked and beloved, and this is the only screen that feels
+    like it was cut from the same block rather than bolted on.</p>
+  </div></div>
+  <div class="body">
+    <div class="stack">
+      <figure class="phw" style="margin:0">
+        <div class="phone"><div class="notch"><i></i></div><div class="scr c6">
+          <div class="c6-parts" id="embers"></div>
+          <div class="c6-in">
+            <div class="vbar" style="border-color:#1c1720"><button class="bk" type="button">‹</button>
+              <span class="lb">The Dishwasher</span><span class="rt">Week 18</span></div>
+            <div class="c6-hero">
+              <div class="c6-k">Weeks at or under</div>
+              <div class="c6-n">FOUR<em>best 4</em></div>
+              <div class="c6-s">0 of 1 used · the fire is holding</div>
+              <div class="c6-dial" data-dial data-pct=".5" data-color="#FF6B2C" data-val="4w" data-lb="Dishwasher" data-w="168"></div>
+            </div>
+            <div class="bed">
+              <span class="coal ash" style="height:22px"></span>
+              <span class="coal lit" style="height:34px"></span>
+              <span class="coal lit" style="height:41px"></span>
+              <span class="coal lit" style="height:48px"></span>
+              <span class="coal lit" style="height:56px"></span>
+              <span class="coal now" style="height:62px"></span>
+              <span class="coal next" style="height:30px"></span>
+              <span class="coal next" style="height:30px"></span>
+            </div>
+            <div class="bedl"><span>Week 13</span><span>Ash = made up, re-lit</span><span>Now</span></div>
+            <div class="c6-body">
+              <div class="c6-stoke">
+                <div class="k">Stoke it · Monday offer</div>
+                <div class="t">A week at zero</div>
+                <div class="d">Zero all seven days and the bed takes a coal the calendar never gave you.
+                +250 XP. Let it go and nothing happens at all.</div>
+                <button type="button">Throw it on</button>
+              </div>
+              <div class="c6-why">
+                <div class="why">You burned the boats. There is no version of this where you drift to December
+                and it works out. <b>The fire only gets what you feed it.</b></div>
+                <div class="cite">Reason · rotates each open</div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption class="bl">6 · the dishwasher — weeks as coals, real embers</figcaption>
+      </figure>
+    </div>
+    <dl class="notes">
+      <dt>What dominates</dt>
+      <dd>Atmosphere. It is the only screen with a mood rather than a layout.</dd>
+      <dt>The dial</dt>
+      <dd>168px, sitting in the glow like the gauge on a furnace door. Reads as the same object, in its
+      natural habitat.</dd>
+      <dt>History</dt>
+      <dd>The coal bed. Week 13 is <b>ash with an ember still in it</b> — over, made up, still part of the
+      fire. Same truth as the ledger, told with heat instead of numbers.</dd>
+      <dt>Risk</dt>
+      <dd>Two real ones. Particles on a screen he opens several times a day is a <b>battery cost</b> on an
+      installed PWA — cap it and pause on <code>visibilitychange</code>. And the coal bed is charming at 8
+      weeks and unreadable at 19; it needs to compress into a single wider bar.</dd>
+      <div class="cost">Most likely of the six to be loved on first open and skimmed by week three.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ============================ HAND-OFF ============================ -->
+<section class="ho" id="handoff">
+  <h2>Hand-off — agent 5</h2>
+
+  <h3>What I produced and where</h3>
+  <p>This file — <b>renditions/rend-vices.html</b> — is the whole deliverable. Six full-screen vice
+  treatments rendered as working phone mock-ups, plus a designed challenge mechanic with a live state demo,
+  a proposed XP table, and two reusable components (the dial enlarger and the honest history chart). No other
+  file was touched. <b>index.html was not modified.</b></p>
+
+  <h3>Ranked recommendation</h3>
+  <ol class="rank">
+    <li><b>01 · The Chain — build this.</b> It is the only direction where the streak, the history and the
+    slip mechanic are <i>the same object</i>. That collapses three of his five asks into one visual, which is
+    how you get a grand screen that still reads in under a minute. Crucially it renders the mechanic he
+    invented — never wiped, paid for instead — as a welded link he can see forever, which is warmer and more
+    honest than any sentence explaining it. It also works identically for both vices with only the unit
+    changing, so it is one component, not two screens.</li>
+    <li><b>02 · The Gate Clock — build the smoke half of it.</b> Different question, also worth answering:
+    “what do I do in the next hour?” Its danger-window shading is the only place in the app that would warn
+    him <i>before</i> the hard moment. My recommendation is to ship 01 as the vice screen and fold the ring
+    into it as the smoke-only top slot, rather than treating them as rivals.</li>
+    <li><b>03 · The Ledger — steal the ledger, drop the direction.</b> Too cold to be the emotional centre,
+    but its <span style="color:var(--warm)">PAID</span> row is the single best solution in this whole set to
+    “show history honestly without a wall of red.” Put that row format inside 01’s expanded chain view.</li>
+    <li><b>04 · The Quest Board.</b> The most fun and the most dangerous. Four simultaneous offers is the
+    nagging failure mode wearing a costume. Worth showing him, because if he lights up at it we should
+    know — but ship it with at most two live cards.</li>
+    <li><b>05 · The Testimony.</b> Weak as a whole screen — genuinely thin, and the 24h challenge has nowhere
+    to live on it. Strong in two parts that should be lifted regardless of the winner: the <b>204px dial</b>
+    (the most literal answer to what he asked for) and the <b>time-of-first-use scatter</b>, which is the best
+    honest-history chart I built.</li>
+    <li><b>06 · The Furnace Chamber.</b> Beautiful, on-brand, and the one I trust least over 91 days. Battery
+    cost on a PWA he opens all day, and a coal bed that stops being readable around week 12.</li>
+  </ol>
+
+  <h3>Proposed final XP values</h3>
+  <p>Smoke — <b>hold until 14:00 +35</b> · <b>hold until 17:00 +60</b> · <b>24 hours clean +120</b> ·
+  <b>32 hours clean +180</b> · <b>72 hours +400</b> (rare).<br>
+  Dishwasher — <b>hold to Thursday +90</b> · <b>a week at zero +250</b>.<br>
+  Anchored to what already exists (focus run 65, small win 15–30, clean vice day 40, make-up cleared 60).
+  A perfect week adds roughly 600 XP from challenges against roughly 2,000 from blocks, so challenges are
+  meaningful without becoming the cheapest path to a number.</p>
+
+  <h3>Where this risks feeling like nagging — read this before integrating</h3>
+  <div class="flag">
+    <p><b>1 · Never show more than two offers at once.</b> Direction 04 shows four to prove the states exist;
+    that is a spec drawing, not a shipping default. Every additional visible offer is another unmade decision
+    sitting on his screen.</p>
+    <p><b>2 · Never count lapses. Anywhere.</b> No “offers missed”, no faded ghost of an expired challenge, no
+    weekly summary line about it. The moment a lapse leaves a trace, an optional challenge has become an
+    obligation with extra steps, and the whole mechanic inverts into the wall of failure.</p>
+    <p><b>3 · Do not push-notify a challenge offer.</b> An offer he finds when he opens the app is a game.
+    The same offer arriving unasked at 8 AM is his phone telling him not to smoke. He named notifications as
+    something he wants for the <i>schedule</i> — do not extend that permission to the vices without asking him.</p>
+    <p><b>4 · The reason lines must rotate and stay factual.</b> Every “reason why” I wrote is either his own
+    words, a fact from his own interview (the 90-minute window is the trading window; 9–noon is his peak
+    brain), or scripture presented without commentary. Nothing anywhere says a vice is bad. The instant this
+    copy starts moralising, the screen becomes something he avoids opening.</p>
+    <p><b>5 · One live challenge per vice, enforced in the engine.</b> Not a UI convention — a rule, or he
+    will end up with three timers and a screen that feels like a job.</p>
+  </div>
+
+  <h3>Things I found that were not mine to fix</h3>
+  <ul>
+    <li><b>The gauge arc overstates its own number.</b> In <code>dial()</code> (index.html ~line 928) the
+    dasharray is <code>Math.PI*21</code> but the arc it is drawn on has radius <b>19</b>, so its true length is
+    <code>Math.PI*19</code> ≈ 59.7 while the dash pattern is ≈ 66. At 50% the arc renders about <b>55%</b>
+    full. Same class of bug as the gauge the crew caught before. My enlarged dials use the corrected math, which
+    is why a “4w / 8 weeks” dial here looks slightly emptier than the one in the shipped strip. Fix is one
+    constant.</li>
+    <li><b><code>viceClean('smoke')</code> can be tapped before noon.</b> <code>openVice</code> offers
+    “Clean day · +40 XP” at any hour, so a clean day can be banked at 9 AM and the gate broken at 11.
+    The button should only appear after the gate has actually held — or the credit should settle at
+    close-out.</li>
+    <li><b>The dishwasher dial and the smoke dial use different denominators</b> (streak/8 weeks vs
+    streak/7 days) while sitting side by side in the same strip at the same size. Two adjacent dials that look
+    alike but measure differently is a small honesty problem worth a decision.</li>
+    <li><b>Slips are counted forever and shown as a subtitle.</b> <code>SLIPS THIS RUN · 2</code> is the one
+    place in the current vice sheet that is a pure running tally of failure, sitting directly under the
+    vice’s name. Every direction above deliberately re-frames it (“welded”, “made up”, “PAID”) — worth doing
+    in the shipped sheet even if none of these directions wins.</li>
+    <li><b>The vendored tsParticles bundle paints nothing unless you register it first.</b> Anyone else on
+    this crew reaching for <code>lib/tsparticles/tsparticles.slim.bundle.min.js</code> will hit this:
+    calling <code>tsParticles.load(...)</code> straight away <b>succeeds</b>, the container reports the full
+    particle count, the canvas is created and sized — and the canvas stays completely blank, because the
+    shape drawers are never registered. You must <code>await loadSlim(tsParticles)</code> first. I only
+    caught it by sampling canvas pixels; a screenshot of a dark screen looks the same either way.</li>
+    <li><b>Second tsParticles trap:</b> <code>number.density</code> scales against a 1920×1080 reference, so
+    on a 372px-wide phone canvas a requested 46 particles silently became <b>5</b>. Set
+    <code>density:{enable:false}</code> and the value is literal.</li>
+    <li><b>Renditions live one level down.</b> This file references the shared libraries as
+    <code>../lib/…</code> and <code>../assets/…</code>. If the GM moves it, the fonts and grain go with it.</li>
+  </ul>
+
+  <h3>Honesty note</h3>
+  <p>Six directions, and I would only defend five of them as real candidates — <b>05 · The Testimony is weak
+  as a full screen</b> and I have said so above rather than padding it into a contender. It is here because
+  two of its components are the best in the set and should be harvested. Directions 01, 02, 03, 04 and 06 are
+  genuinely different arguments about what a vice screen is <i>for</i>: an object you have made, a clock you
+  are beating, a record you are keeping, a game you are playing, and a fire you are feeding.</p>
+</section>
+
+</div>
+
+<script src="../lib/tsparticles/tsparticles.slim.bundle.min.js"></script>
+<script>
+/* ------------------------------------------------------------------
+   The enlarged app dial. Same semicircular arc as renderGauges(),
+   drawn with CORRECT arc length (pi * r) rather than the app's pi*21.
+   ------------------------------------------------------------------ */
+(function(){
+  var R = 68, CX = 80, CY = 84, SW = 9, LEN = Math.PI * R;
+  document.querySelectorAll('[data-dial]').forEach(function(el){
+    var pct   = Math.max(0, Math.min(1, parseFloat(el.dataset.pct || '0')));
+    var color = el.dataset.color || '#FF6B2C';
+    var w     = parseFloat(el.dataset.w || '160');
+    var h     = w * (96 / 160);
+    var lb    = el.dataset.lb || '';
+    var lbF   = Math.max(6, w * 0.05);
+    var lbH   = lb ? lbF + 5 : 0;
+    var off   = LEN * (1 - pct);
+    var d     = 'M' + (CX - R) + ' ' + CY + ' A ' + R + ' ' + R + ' 0 0 1 ' + (CX + R) + ' ' + CY;
+    el.classList.add('bigdial');
+    el.style.width  = w + 'px';
+    el.style.height = (h + lbH) + 'px';
+    el.innerHTML =
+      '<svg width="' + w + '" height="' + h + '" viewBox="0 0 160 96" aria-hidden="true">' +
+        '<path d="' + d + '" fill="none" stroke="#1c1a23" stroke-width="' + SW + '" stroke-linecap="round"/>' +
+        '<path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="' + SW + '" stroke-linecap="round" ' +
+          'stroke-dasharray="' + LEN.toFixed(2) + '" stroke-dashoffset="' + off.toFixed(2) + '" ' +
+          'style="filter:drop-shadow(0 0 6px ' + color + 'aa)"/>' +
+      '</svg>' +
+      '<div class="bd-v" style="top:' + (h * 0.44).toFixed(1) + 'px;font-size:' + (w * 0.185).toFixed(1) + 'px">' +
+        (el.dataset.val || '') + '</div>' +
+      (lb ? '<div class="bd-l" style="top:' + (h + 1).toFixed(1) + 'px;font-size:' + lbF.toFixed(1) + 'px">' + lb + '</div>' : '');
+  });
+})();
+
+/* ------------------------------------------------------------------
+   02 — the day ring. 270 degrees, noon at the crown.
+   ------------------------------------------------------------------ */
+(function(){
+  var SZ = 264, C = SZ / 2, R = 100;
+  var DAY_A = 300, DAY_B = 1380, SPAN = DAY_B - DAY_A;     // 05:00 -> 23:00
+  function ang(t){ return 270 + ((t - 720) / SPAN) * 270 } // noon (720) sits at 270deg = top
+  function pt(r, a){ var v = a * Math.PI / 180; return [C + r * Math.cos(v), C + r * Math.sin(v)] }
+  function arc(r, a0, a1, stroke, w, cap, extra){
+    var p0 = pt(r, a0), p1 = pt(r, a1), big = (a1 - a0) > 180 ? 1 : 0;
+    return '<path d="M' + p0[0].toFixed(1) + ' ' + p0[1].toFixed(1) +
+      ' A ' + r + ' ' + r + ' 0 ' + big + ' 1 ' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1) + '" ' +
+      'fill="none" stroke="' + stroke + '" stroke-width="' + w + '" stroke-linecap="' + (cap || 'butt') + '" ' +
+      (extra || '') + '/>';
+  }
+  function tick(t, len, color, w){
+    var a = ang(t), p0 = pt(R - len / 2, a), p1 = pt(R + len / 2, a);
+    return '<line x1="' + p0[0].toFixed(1) + '" y1="' + p0[1].toFixed(1) + '" x2="' + p1[0].toFixed(1) +
+      '" y2="' + p1[1].toFixed(1) + '" stroke="' + color + '" stroke-width="' + (w || 2) + '" stroke-linecap="round"/>';
+  }
+  // labels near the left/right extremes get anchored inward, or they clip off the ring
+  function lab(t, txt, color, r){
+    var a = ang(t), p = pt(r, a), c = Math.cos(a * Math.PI / 180);
+    var anchor = c < -0.35 ? 'start' : c > 0.35 ? 'end' : 'middle';
+    var dx = c < -0.35 ? 3 : c > 0.35 ? -3 : 0;
+    return '<text x="' + (p[0] + dx).toFixed(1) + '" y="' + (p[1] + 3).toFixed(1) + '" fill="' + color +
+      '" font-family="Geist Mono, monospace" font-size="8.5" letter-spacing="1.1" text-anchor="' + anchor + '">' + txt + '</text>';
+  }
+  var host = document.getElementById('ring-smoke');
+  if (host){
+    var NOW = 9 * 60 + 42, s = '';
+    s += arc(R, ang(DAY_A), ang(DAY_B), '#171420', 13, 'round');
+    // danger windows, from his interview
+    [[390, 480], [780, 870], [1290, 1380]].forEach(function(w){
+      s += arc(R, ang(w[0]), ang(w[1]), '#5a2a10', 13);
+    });
+    s += arc(R, ang(DAY_A), ang(NOW), '#FF6B2C', 13, 'round', 'style="filter:drop-shadow(0 0 7px rgba(255,107,44,.75))"');
+    s += tick(720, 30, '#E0B25E', 3);                     // the gate
+    s += tick(840, 22, '#4ADE80', 2.5);                   // the 2 PM flag
+    s += tick(NOW, 21, '#FFF4E2', 2);                     // now
+    s += lab(720, 'GATE', '#E0B25E', R + 25);
+    s += lab(840, '2PM', '#4ADE80', R + 24);
+    s += lab(390, '6:30', '#7d4a2c', R + 25);
+    s += lab(1320, 'NIGHT', '#7d4a2c', R + 27);
+    host.innerHTML = '<svg width="' + SZ + '" height="' + SZ + '" viewBox="0 0 ' + SZ + ' ' + SZ + '" aria-hidden="true">' + s + '</svg>';
+  }
+  var hd = document.getElementById('ring-dish');
+  if (hd){
+    // the same ring, re-read as a week: 7 segments, Mon -> Sun
+    var s2 = '', names = ['M','T','W','T','F','S','S'], held = 2, GAP = 3;
+    for (var i = 0; i < 7; i++){
+      var a0 = 135 + i * (270 / 7) + GAP, a1 = 135 + (i + 1) * (270 / 7) - GAP;
+      var col = i < held ? '#FF6B2C' : '#231f31';
+      s2 += arc(R, a0, a1, col, 13, 'round',
+        i < held ? 'style="filter:drop-shadow(0 0 7px rgba(255,107,44,.6))"' : '');
+      var pm = pt(R + 25, (a0 + a1) / 2);
+      s2 += '<text x="' + pm[0].toFixed(1) + '" y="' + (pm[1] + 3).toFixed(1) + '" fill="' +
+        (i < held ? '#8d6650' : '#4b4560') + '" font-family="Geist Mono, monospace" font-size="9" ' +
+        'text-anchor="middle">' + names[i] + '</text>';
+    }
+    // the single unspent allowance — a token sitting in the ring's own gap, at the bottom
+    s2 += '<circle cx="' + C + '" cy="' + (C + R) + '" r="10" fill="none" stroke="#E0B25E" stroke-width="2.5" ' +
+      'style="filter:drop-shadow(0 0 7px rgba(224,178,94,.65))"/>' +
+      '<text x="' + C + '" y="' + (C + R + 3.5) + '" fill="#E0B25E" font-family="Geist Mono, monospace" ' +
+      'font-size="10" font-weight="700" text-anchor="middle">1</text>' +
+      '<text x="' + C + '" y="' + (C + R + 24) + '" fill="#6d5c3c" font-family="Geist Mono, monospace" ' +
+      'font-size="6.5" letter-spacing="1.4" text-anchor="middle">UNSPENT</text>';
+    hd.innerHTML = '<svg width="' + SZ + '" height="' + SZ + '" viewBox="0 0 ' + SZ + ' ' + SZ + '" aria-hidden="true">' + s2 + '</svg>';
+  }
+})();
+
+/* ------------------------------------------------------------------
+   05 — the honest history chart: time of FIRST USE against the gate.
+   Clean days ride the top rail. Broken-gate days sit low but show
+   HOW low, in ember. Nothing is red and nothing is a cross.
+   ------------------------------------------------------------------ */
+(function(){
+  var host = document.getElementById('hist-smoke');
+  if (!host) return;
+  // null = clean all day; otherwise minutes-of-day of first use
+  var days = [820, null, 760, 905, 700, 725, 940, 690, null, null, null, null, null, null];
+  var W = 300, H = 74, PADT = 8, PADB = 16, GATE = 720, LO = 600, HI = 1320;
+  var innerH = H - PADT - PADB;
+  function y(m){ return PADT + innerH * (1 - (Math.max(LO, Math.min(HI, m)) - LO) / (HI - LO)) }
+  var gy = y(GATE), s = '';
+  s += '<line x1="0" y1="' + PADT + '" x2="' + W + '" y2="' + PADT + '" stroke="#1e1a2b" stroke-width="1"/>';
+  s += '<line x1="0" y1="' + gy.toFixed(1) + '" x2="' + W + '" y2="' + gy.toFixed(1) +
+       '" stroke="#3a3350" stroke-width="1" stroke-dasharray="3 4"/>';
+  s += '<text x="' + W + '" y="' + (gy - 5).toFixed(1) + '" fill="#4b4560" font-family="Geist Mono, monospace" ' +
+       'font-size="7" letter-spacing="1.2" text-anchor="end">THE GATE · NOON</text>';
+  days.forEach(function(m, i){
+    var x = 14 + i * ((W - 24) / (days.length - 1));
+    if (m === null){
+      s += '<circle cx="' + x.toFixed(1) + '" cy="' + PADT + '" r="4" fill="#4ADE80" ' +
+           'style="filter:drop-shadow(0 0 5px rgba(74,222,128,.65))"/>';
+      s += '<circle cx="' + x.toFixed(1) + '" cy="' + PADT + '" r="7.5" fill="none" stroke="#4ADE80" stroke-opacity=".3"/>';
+    } else {
+      var yy = y(m), held = m >= GATE;
+      s += '<line x1="' + x.toFixed(1) + '" y1="' + PADT + '" x2="' + x.toFixed(1) + '" y2="' + yy.toFixed(1) +
+           '" stroke="' + (held ? '#2a2438' : '#3a2418') + '" stroke-width="1.5"/>';
+      s += '<circle cx="' + x.toFixed(1) + '" cy="' + yy.toFixed(1) + '" r="3.6" fill="' +
+           (held ? '#E0B25E' : '#FF6B2C') + '"/>';
+    }
+  });
+  s += '<text x="14" y="' + (H - 3) + '" fill="#3b3549" font-family="Geist Mono, monospace" font-size="7" letter-spacing="1.2">14 DAYS AGO</text>';
+  s += '<text x="' + (W - 14) + '" y="' + (H - 3) + '" fill="#3b3549" font-family="Geist Mono, monospace" ' +
+       'font-size="7" letter-spacing="1.2" text-anchor="end">TODAY</text>';
+  host.innerHTML = '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true">' + s + '</svg>' +
+    '<div style="font-family:Geist Mono,monospace;font-size:7.5px;letter-spacing:.11em;color:#3b3549;' +
+    'margin-top:9px;line-height:1.7">GREEN — CLEAN ALL DAY · GOLD — HELD PAST NOON · EMBER — BEFORE NOON<br>' +
+    'THE DOT IS THE TIME. 11:40 IS NOT 7 AM, AND THE CHART SAYS SO.</div>';
+})();
+
+/* ------------------------------------------------------------------
+   The mechanic demo — steps one challenge through all four states.
+   ------------------------------------------------------------------ */
+(function(){
+  var slot = document.getElementById('demoSlot'), btn = document.getElementById('demoBtn');
+  if (!slot || !btn) return;
+  var STATES = [
+    { cls:'offer', st:'1 · Offered',    x:'Hold until 2 PM → +35 XP',
+      y:'Two taps: <b>take it</b>, or <b>not today</b>. “Not today” records nothing at all.', b:'Accept →' },
+    { cls:'live',  st:'2 · Live',       x:'Holding until 14:00 · 4h 18m',
+      y:'Tracks itself. Also appears as a second hairline on the smoke dial in the gauge strip.', b:'Skip ahead →' },
+    { cls:'claim', st:'3 · Claimable',  x:'You held it. +35 XP',
+      y:'He taps to claim. Forgetting is free — it auto-credits at the evening close-out.', b:'Now show a miss →' },
+    { cls:'lapse', st:'4 · Lapsed',     x:'Offer expired. Nothing lost.',
+      y:'No XP, no HP, no streak change, no counter. Shown once, then gone.', b:'Start again →' }
+  ];
+  var i = 0;
+  function paint(){
+    var s = STATES[i];
+    slot.innerHTML = '<div class="fc ' + s.cls + '" style="border-radius:11px">' +
+      '<div class="st">' + s.st + '</div><div class="fx">' + s.x + '</div><div class="fy">' + s.y + '</div></div>';
+    btn.textContent = s.b;
+  }
+  btn.addEventListener('click', function(){ i = (i + 1) % STATES.length; paint() });
+  paint();
+})();
+
+/* ------------------------------------------------------------------
+   06 — real embers (tsParticles slim, 3.9.1). Capped low on purpose:
+   this would run on an installed PWA he opens all day.
+   ------------------------------------------------------------------ */
+(async function(){
+  if (typeof tsParticles === 'undefined' || !tsParticles.load) return;
+  /* GOTCHA: this vendored slim BUNDLE does not self-register its shape drawers. Without
+     loadSlim() the container reports its full particle count and paints absolutely nothing. */
+  if (typeof loadSlim === 'function') { try { await loadSlim(tsParticles) } catch (e) {} }
+  tsParticles.load({
+    id: 'embers',
+    options: {
+      fullScreen: { enable: false },
+      detectRetina: true,
+      fpsLimit: 30,
+      background: { color: 'transparent' },
+      particles: {
+        /* density OFF on purpose — v3 scales against a 1920x1080 reference, which on a
+           372px-wide phone canvas silently reduced 46 embers to 5. */
+        number: { value: 30, density: { enable: false } },
+        color: { value: ['#FF6B2C', '#FFB25E', '#FFC98A'] },
+        shape: { type: 'circle' },
+        opacity: { value: { min: 0.15, max: 0.9 }, animation: { enable: true, speed: 0.5, sync: false } },
+        size: { value: { min: 1.0, max: 3.2 } },
+        move: {
+          enable: true, direction: 'top', speed: { min: 0.15, max: 0.65 },
+          straight: false, outModes: { default: 'out' },
+          random: true
+        }
+      },
+      interactivity: { events: { onHover: { enable: false }, onClick: { enable: false } } }
+    }
+  }).catch(function(){ /* the page is fully legible without embers */ });
+})();
+</script>
+</body>
+</html>

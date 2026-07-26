@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Burn the Boats — Five Directions</title>
+<link rel="stylesheet" href="lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#070709; --ink:#EDEAE4; --dim:#8b8b96; --faint:#565663;
+  --line:#1c1c22; --line2:#2a2a33;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --ice:#7FB4FF; --rune:#38E1D8; --blood:#FF4D5E;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink)}
+body{font-family:'Satoshi',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99;
+  background-image:url('assets/grain/grain-fine.svg');opacity:.035;mix-blend-mode:overlay}
+.mono{font-family:'Geist Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+
+/* ---- masthead ---- */
+.mast{padding:80px 0 46px;border-bottom:1px solid var(--line)}
+.mast .kick{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.28em;color:var(--faint);text-transform:uppercase;margin-bottom:18px}
+.mast h1{font-size:clamp(38px,6.4vw,68px);line-height:.98;letter-spacing:-.035em;margin-bottom:20px}
+.mast h1 em{font-style:normal;color:var(--faint)}
+.mast p{max-width:660px;color:var(--dim);font-size:16.5px;margin:0}
+.mast p b{color:var(--ink);font-weight:500}
+
+/* ---- direction block ---- */
+.dir{padding:64px 0;border-bottom:1px solid var(--line)}
+.dhead{display:grid;grid-template-columns:74px 1fr;gap:22px;align-items:start;margin-bottom:30px}
+.dnum{font-family:'Clash Display',sans-serif;font-size:56px;line-height:.8;font-weight:700;color:transparent;
+  -webkit-text-stroke:1.2px var(--line2)}
+.dtitle h2{font-size:32px;letter-spacing:-.03em;margin-bottom:5px}
+.dmeta{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.dlede{max-width:640px;color:var(--dim);font-size:15.5px;margin-top:13px}
+.dlede b{color:var(--ink);font-weight:500}
+
+.dbody{display:grid;grid-template-columns:minmax(0,420px) 1fr;gap:40px;align-items:start}
+@media(max-width:860px){.dbody{grid-template-columns:1fr}.dhead{grid-template-columns:52px 1fr;gap:14px}.dnum{font-size:38px}}
+
+.notes dt{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.17em;text-transform:uppercase;color:var(--faint);margin-top:22px}
+.notes dt:first-child{margin-top:0}
+.notes dd{margin:6px 0 0;font-size:14.8px;color:var(--dim);line-height:1.58}
+.notes dd b{color:var(--ink);font-weight:500}
+.cost{border-left:2px solid var(--line2);padding-left:14px;margin-top:24px;font-size:14px;color:var(--faint);font-style:italic}
+
+/* ---- mock frame ---- */
+.mock{border-radius:18px;overflow:hidden;border:1px solid var(--line2);position:relative;
+  box-shadow:0 30px 80px -30px #000}
+.mock .bar{height:30px;display:flex;align-items:center;padding:0 12px;gap:6px;border-bottom:1px solid var(--line)}
+.mock .bar i{width:8px;height:8px;border-radius:99px;background:var(--line2);display:block}
+.mock .bar span{font-family:'Geist Mono',monospace;font-size:9.5px;color:var(--faint);margin-left:8px;letter-spacing:.1em}
+.pane{padding:20px 18px;min-height:430px}
+
+/* ============ 01 LEDGER ============ */
+.m-ledger{background:#050506}
+.m-ledger .bar{background:#08080a}
+.led-h{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #161a16;padding-bottom:9px;margin-bottom:3px}
+.led-h b{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--phos);font-weight:400}
+.led-h span{font-family:'Geist Mono',monospace;font-size:10px;color:#2f3a30}
+.led-row{display:grid;grid-template-columns:52px 1fr auto;gap:9px;padding:5.5px 0;
+  font-family:'Geist Mono',monospace;font-size:11px;border-bottom:1px solid #0e120e}
+.led-row .t{color:#39463a}
+.led-row .d{color:#8e9a8f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.led-row .v{color:var(--phos);font-weight:500}
+.led-row.neg .v{color:var(--blood)}
+.led-row.neg .d{color:#7a5f62}
+.led-row.hd{border-bottom:1px solid #1c221c;color:#2f3a30;font-size:9px;letter-spacing:.14em;padding-bottom:6px}
+.led-foot{margin-top:16px;padding-top:12px;border-top:1px solid #161a16;display:flex;justify-content:space-between}
+.led-foot div{font-family:'Geist Mono',monospace;font-size:9.5px;color:#39463a;letter-spacing:.1em}
+.led-foot b{display:block;font-size:19px;color:var(--phos);margin-top:4px;font-weight:500;letter-spacing:-.02em}
+
+/* ============ 02 ASCENT ============ */
+.m-ascent{background:linear-gradient(180deg,#0d1526 0%,#080a10 55%,#050506 100%)}
+.m-ascent .bar{background:#0a0d16}
+.asc{display:grid;grid-template-columns:38px 1fr;gap:12px;height:430px;position:relative}
+.asc-rule{position:relative;border-right:1px solid #182031}
+.asc-rule i{position:absolute;right:0;width:7px;height:1px;background:#243049}
+.asc-rule u{position:absolute;right:11px;font-family:'Geist Mono',monospace;font-size:8.5px;color:#31405e;
+  text-decoration:none;transform:translateY(-50%)}
+.asc-col{position:relative;display:flex;flex-direction:column-reverse;gap:2px;padding-top:6px}
+.asc-seg{height:8px;border-radius:2px;flex:none}
+.asc-goal{position:absolute;top:2px;left:0;right:0;text-align:center}
+.asc-goal b{font-family:'Clash Display',sans-serif;font-size:12px;letter-spacing:.2em;color:#3d5480;display:block}
+.asc-goal i{display:block;height:1px;background:linear-gradient(90deg,transparent,#2c3d5e,transparent);margin-top:7px}
+.asc-you{position:absolute;left:0;right:0;display:flex;align-items:center;gap:8px}
+.asc-you i{flex:1;height:1px;background:var(--ice);opacity:.55}
+.asc-you b{font-family:'Geist Mono',monospace;font-size:9px;color:var(--ice);letter-spacing:.14em;white-space:nowrap}
+.asc-cap{position:absolute;bottom:8px;left:50px;right:4px;font-family:'Geist Mono',monospace;font-size:9px;color:#31405e;letter-spacing:.13em}
+
+/* ============ 03 CHARACTER SHEET ============ */
+.m-char{background:radial-gradient(120% 90% at 50% 0%,#141122,#08070d 62%)}
+.m-char .bar{background:#0d0b16}
+.ch-top{text-align:center;margin-bottom:12px}
+.ch-top .cls{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.26em;color:var(--faint);text-transform:uppercase}
+.ch-top h3{font-family:'Clash Display',sans-serif;font-size:21px;color:var(--gold);letter-spacing:.01em;margin:5px 0 2px}
+.ch-top .lv{font-family:'Geist Mono',monospace;font-size:10px;color:#5d5470;letter-spacing:.13em}
+.radar{display:block;margin:0 auto 14px}
+.ch-stats{display:grid;gap:7px}
+.ch-st{display:grid;grid-template-columns:66px 1fr 26px;gap:9px;align-items:center}
+.ch-st span{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.11em;color:#6c6380;text-transform:uppercase}
+.ch-st .tr{height:5px;background:#191527;border-radius:99px;overflow:hidden}
+.ch-st .tr i{display:block;height:100%;border-radius:99px}
+.ch-st b{font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink);text-align:right;font-weight:500}
+.ch-perks{display:flex;gap:6px;margin-top:15px;padding-top:14px;border-top:1px solid #1a1626}
+.perk{flex:1;aspect-ratio:1;border:1px solid #241f36;border-radius:8px;display:grid;place-items:center;
+  font-size:15px;color:#2f2947;background:#0f0d18}
+.perk.on{border-color:rgba(224,178,94,.45);color:var(--gold);background:rgba(224,178,94,.07);
+  box-shadow:0 0 18px -6px rgba(224,178,94,.5)}
+
+/* ============ 04 BURN ============ */
+.m-burn{background:radial-gradient(100% 70% at 50% 108%,#2a1004,#0a0503 58%,#060403 100%)}
+.m-burn .bar{background:#0d0705}
+.burn-h{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px}
+.burn-h b{font-family:'Clash Display',sans-serif;font-size:42px;color:var(--ember);line-height:.85;letter-spacing:-.04em;display:block}
+.burn-h span{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.2em;color:#6b4530;text-transform:uppercase}
+.burn-h .r{text-align:right}
+.burn-h .r b{font-size:19px;color:var(--gold)}
+.grid91{display:grid;grid-template-columns:repeat(13,1fr);gap:4px;margin-bottom:16px}
+.tile{aspect-ratio:1;border-radius:2px;background:#171310;border:1px solid #221a15}
+.tile.gold{background:linear-gradient(160deg,var(--gold),#8a6420);border-color:#c8993f;
+  box-shadow:0 0 9px -2px rgba(224,178,94,.75)}
+.tile.char{background:#0a0806;border-color:#1b1310}
+.tile.now{background:var(--ember);border-color:#ff9a5e;box-shadow:0 0 16px -1px var(--ember);animation:emb 1.7s infinite}
+@keyframes emb{0%,100%{opacity:1}50%{opacity:.55}}
+.burn-legend{display:flex;gap:16px;font-family:'Geist Mono',monospace;font-size:9px;color:#6b4530;letter-spacing:.1em}
+.burn-legend i{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:5px;vertical-align:-1px}
+.burn-q{margin-top:18px;padding-top:15px;border-top:1px solid #241610;font-family:'Clash Display',sans-serif;
+  font-size:14.5px;color:#a8785a;line-height:1.35}
+
+/* ============ 05 RIVAL ============ */
+.m-rival{background:linear-gradient(100deg,#0a0908 0%,#08080b 50%,#0a0d14 100%)}
+.m-rival .bar{background:#0a0a0d}
+.rv-h{display:grid;grid-template-columns:1fr 62px 1fr;gap:8px;align-items:center;margin-bottom:14px}
+.rv-h .who{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase}
+.rv-h .you{color:var(--gold);text-align:left}
+.rv-h .gh{color:#4a5872;text-align:right}
+.rv-h .gap{text-align:center}
+.rv-h .gap b{font-family:'Clash Display',sans-serif;font-size:22px;color:var(--ink);display:block;line-height:1;letter-spacing:-.03em}
+.rv-h .gap span{font-family:'Geist Mono',monospace;font-size:8px;color:var(--faint);letter-spacing:.14em}
+.rv-track{display:grid;grid-template-columns:1fr 62px 1fr;gap:8px;align-items:center;padding:4.5px 0}
+.rv-bar{height:11px;border-radius:2px}
+.rv-bar.y{background:linear-gradient(90deg,#6b4f1d,var(--gold));justify-self:end}
+.rv-bar.g{background:transparent;border:1px dashed #3a465e;border-radius:2px}
+.rv-day{font-family:'Geist Mono',monospace;font-size:8.5px;color:#3d3d48;text-align:center;letter-spacing:.06em}
+.rv-foot{margin-top:16px;padding-top:14px;border-top:1px solid #16161c;text-align:center}
+.rv-foot p{font-family:'Clash Display',sans-serif;font-size:14px;color:#6f7787;margin:0;line-height:1.4}
+.rv-foot b{color:var(--gold)}
+
+/* ---- verdict ---- */
+.verdict{padding:66px 0 100px}
+.verdict h2{font-size:27px;margin-bottom:8px}
+.verdict>p{color:var(--dim);max-width:640px;margin:0 0 30px;font-size:15.5px}
+.vrow{display:grid;grid-template-columns:34px 1fr;gap:16px;padding:17px 0;border-top:1px solid var(--line);align-items:start}
+.vrow .n{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);padding-top:3px;letter-spacing:.1em}
+.vrow h3{font-size:16.5px;margin-bottom:4px;font-family:'Satoshi';font-weight:700;letter-spacing:-.01em}
+.vrow p{margin:0;color:var(--dim);font-size:14.5px;line-height:1.55}
+.vrow.pick h3{color:var(--gold)}
+.tagp{display:inline-block;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.14em;
+  padding:2.5px 7px;border-radius:4px;border:1px solid var(--line2);color:var(--faint);margin-left:8px;
+  text-transform:uppercase;vertical-align:2px}
+.tagp.g{border-color:rgba(224,178,94,.45);color:var(--gold)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="mast">
+    <div class="kick">Burn the Boats · Design Directions</div>
+    <h1>Five answers to<br><em>“what is progress?”</em></h1>
+    <p>Each direction is a different <b>organizing principle</b>, not a different skin. The layout, the hierarchy and the emotion all change because the underlying claim about what progress <em>is</em> changes. Same engine underneath — HP, XP, focus runs, the 91 weekdays.</p>
+  </div>
+
+  <!-- ============ 01 ============ -->
+  <section class="dir">
+    <div class="dhead">
+      <div class="dnum">01</div>
+      <div class="dtitle">
+        <h2>The Ledger</h2>
+        <div class="dmeta">Progress = accumulated record · terminal / flight recorder</div>
+        <p class="dlede">An <b>append-only log</b>. Every action prints a timestamped line and nothing is ever cleared. You don't look at a summary of your discipline — you look at the <b>receipts</b>. By December you scroll back through a thousand lines of proof you showed up.</p>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="mock m-ledger">
+        <div class="bar"><i></i><i></i><i></i><span>RECORD — DAY 034</span></div>
+        <div class="pane">
+          <div class="led-h"><b>◤ RUN LEDGER</b><span>SESSION 034 / 091</span></div>
+          <div class="led-row hd"><span class="t">TIME</span><span class="d">ENTRY</span><span class="v">Δ</span></div>
+          <div class="led-row"><span class="t">06:00</span><span class="d">WAKE · on time</span><span class="v">+15</span></div>
+          <div class="led-row"><span class="t">06:31</span><span class="d">MKT OPEN · positions set</span><span class="v">+10</span></div>
+          <div class="led-row"><span class="t">07:48</span><span class="d">PRIORITIES · 3 written</span><span class="v">+10</span></div>
+          <div class="led-row"><span class="t">08:15</span><span class="d">BLOCK 1 · SANO · run start</span><span class="v">——</span></div>
+          <div class="led-row"><span class="t">09:45</span><span class="d">BLOCK 1 · clean · 90m</span><span class="v">+65</span></div>
+          <div class="led-row"><span class="t">10:00</span><span class="d">BLOCK 2 · SANO · run start</span><span class="v">——</span></div>
+          <div class="led-row neg"><span class="t">10:22</span><span class="d">RUN BROKEN · device raised</span><span class="v">−2</span></div>
+          <div class="led-row"><span class="t">11:15</span><span class="d">BLOCK 2 · counted · bonus lost</span><span class="v">+25</span></div>
+          <div class="led-row"><span class="t">12:45</span><span class="d">MKT CLOSE · logged</span><span class="v">+10</span></div>
+          <div class="led-row"><span class="t">13:05</span><span class="d">BLOCK 3 · Fruits · clean</span><span class="v">+65</span></div>
+          <div class="led-row"><span class="t">14:50</span><span class="d">BLOCK 4 · admin · clean</span><span class="v">+65</span></div>
+          <div class="led-row neg"><span class="t">21:00</span><span class="d">RESET · not logged</span><span class="v">−3</span></div>
+          <div class="led-foot">
+            <div>ENTRIES ON RECORD<b>412</b></div>
+            <div style="text-align:center">CLEAN RUNS<b>51</b></div>
+            <div style="text-align:right">TOTAL Δ<b>8,140</b></div>
+          </div>
+        </div>
+      </div>
+      <dl class="notes">
+        <dt>The signature move</dt>
+        <dd>The log <b>never resets</b>. No daily wipe, no fresh start. Scroll depth is the achievement — on day 80 it takes you real time to reach the beginning.</dd>
+        <dt>Why it fits you specifically</dt>
+        <dd>This is <b>your native visual language</b>. You already read a terminal every morning at 6:30. Discipline gets logged the way a fill gets logged — unsentimental, timestamped, permanent.</dd>
+        <dt>Emotional register</dt>
+        <dd>Institutional. Cold. It doesn't congratulate you. It just <b>records</b>, and the record is either long or it isn't.</dd>
+        <div class="cost">The cost: it's the least “fun” of the five. No dopamine, no spectacle. It rewards a personality that finds austerity motivating — and punishes one that needs a lift on a bad morning.</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============ 02 ============ -->
+  <section class="dir">
+    <div class="dhead">
+      <div class="dnum">02</div>
+      <div class="dtitle">
+        <h2>The Ascent</h2>
+        <div class="dmeta">Progress = altitude · time rendered as physical space</div>
+        <p class="dlede">One vertical column that <b>literally grows taller</b> every day. Today sits at the bottom; December is a marker far above you, visible from day one. Each completed day stacks another segment. <b>The page's own scroll height becomes the progress bar.</b></p>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="mock m-ascent">
+        <div class="bar"><i></i><i></i><i></i><span>ALTITUDE — 34 / 91</span></div>
+        <div class="pane">
+          <div class="asc">
+            <div class="asc-rule" id="ascRule"></div>
+            <div class="asc-col" id="ascCol"></div>
+            <div class="asc-goal" style="top:4px"><b>DEC 01</b><i></i></div>
+            <div class="asc-you" id="ascYou"><b>YOU · D34</b><i></i></div>
+            <div class="asc-cap">↓ 34 DAYS OF RECORD BELOW YOU</div>
+          </div>
+        </div>
+      </div>
+      <dl class="notes">
+        <dt>The signature move</dt>
+        <dd>Nothing is abstract. You don't read “37%” — you <b>see how far down the ground is</b>. The distance to December shrinks visibly, week over week.</dd>
+        <dt>What it does to a bad day</dt>
+        <dd>A missed day is a <b>gap in the column</b>, not a red mark. It stays visible forever but it's tiny against everything you did stack. That's the honest emotional weight: it counts, it just doesn't erase.</dd>
+        <dt>Emotional register</dt>
+        <dd>Patient and expansive. Best long-run feeling of the five — the reward genuinely compounds and you can point at it.</dd>
+        <div class="cost">The cost: it's slow to feel good. Week one looks like almost nothing, which is exactly when you're most likely to quit. It needs a strong first-week hook to survive its own honesty.</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============ 03 ============ -->
+  <section class="dir">
+    <div class="dhead">
+      <div class="dnum">03</div>
+      <div class="dtitle">
+        <h2>The Character Sheet</h2>
+        <div class="dmeta">Progress = attributes leveling independently</div>
+        <p class="dlede">Stop tracking a schedule; track <b>a person</b>. Five attributes level separately — Discipline, Focus, Body, Faith, Capital — and the shape at the center shows the truth about you. A <b>lopsided pentagon</b> means you're building a business and neglecting your body, and you can see it in one glance.</p>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="mock m-char">
+        <div class="bar"><i></i><i></i><i></i><span>CHARACTER — LV 6</span></div>
+        <div class="pane">
+          <div class="ch-top">
+            <div class="cls">Operator · Week 07</div>
+            <h3>JASPER</h3>
+            <div class="lv">LV 6 · 8,140 / 10,500 XP</div>
+          </div>
+          <svg class="radar" width="215" height="185" viewBox="0 0 215 185" id="radar"></svg>
+          <div class="ch-stats" id="chStats"></div>
+          <div class="ch-perks">
+            <div class="perk on">◈</div><div class="perk on">✦</div><div class="perk on">◉</div>
+            <div class="perk">▲</div><div class="perk">✕</div><div class="perk">◇</div>
+          </div>
+        </div>
+      </div>
+      <dl class="notes">
+        <dt>The signature move</dt>
+        <dd>The pentagon <b>morphs</b>. Week one it's a spiky, unbalanced shard. By December, if you've done it right, it's a full even solid. <b>Imbalance is impossible to hide from.</b></dd>
+        <dt>Why it answers what you asked for</dt>
+        <dd>You said you want to feel like you're <b>upgrading yourself</b>. This is the only direction where the object being upgraded is literally <em>you</em>, not a chart of your compliance.</dd>
+        <dt>Emotional register</dt>
+        <dd>Game-native and genuinely fun. Perks unlocking at milestones give week-to-week hooks the other four don't have.</dd>
+        <div class="cost">The cost: it's the furthest from serious. There's a real risk it reads as a toy in month three — and toys get abandoned faster than instruments. Needs restraint to stay premium instead of tipping into Xbox.</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============ 04 ============ -->
+  <section class="dir">
+    <div class="dhead">
+      <div class="dnum">04</div>
+      <div class="dtitle">
+        <h2>The Burn</h2>
+        <div class="dmeta">Progress = a finite resource spent well · inverted</div>
+        <p class="dlede">Every other tracker fills up. <b>This one empties.</b> 91 tiles on screen — every weekday you have left. They don't get earned, they get <b>consumed</b>. A day spent well burns gold. A day wasted burns to char. You are not collecting; you are <b>spending something that does not come back</b>.</p>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="mock m-burn">
+        <div class="bar"><i></i><i></i><i></i><span>BURN — 57 REMAIN</span></div>
+        <div class="pane">
+          <div class="burn-h">
+            <div><b>57</b><span>weekdays remain</span></div>
+            <div class="r"><b>29 / 34</b><span>burned gold</span></div>
+          </div>
+          <div class="grid91" id="burnGrid"></div>
+          <div class="burn-legend">
+            <span><i style="background:var(--gold)"></i>SPENT WELL</span>
+            <span><i style="background:#0a0806;border:1px solid #1b1310"></i>WASTED</span>
+            <span><i style="background:#171310"></i>UNSPENT</span>
+          </div>
+          <p class="burn-q">You have 57 of these left.<br>What is the millionaire version of yourself doing with today?</p>
+        </div>
+      </div>
+      <dl class="notes">
+        <dt>The signature move</dt>
+        <dd><b>Inversion.</b> The number that dominates the screen goes <em>down</em>, every single day, whether you earn it or not. Time passes with or without your permission and the page refuses to pretend otherwise.</dd>
+        <dt>Why it fits the name</dt>
+        <dd>You called this <b>Burn the Boats</b>. This is the only direction that takes that literally. There's no accumulating safety net — just fuel, and how well you spent it.</dd>
+        <dt>Emotional register</dt>
+        <dd>Urgent. Confrontational. The highest voltage of the five by a wide margin.</dd>
+        <div class="cost">The honest risk: this is the one that could <b>hurt</b>. On a bad week, a wall of char is brutal, and there's no "but look how far you've come" to soften it. It's the most likely to drive you hard and the most likely to get closed and never reopened.</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============ 05 ============ -->
+  <section class="dir">
+    <div class="dhead">
+      <div class="dnum">05</div>
+      <div class="dtitle">
+        <h2>The Rival</h2>
+        <div class="dmeta">Progress = closing the gap on your own ghost</div>
+        <p class="dlede">Two tracks running down the page. The left is <b>you</b>. The right is <b>the millionaire version of yourself</b> — a ghost who executes 100% every single day and never has an excuse. One number matters: <b>the gap</b>. Your own sentence stops being a slogan and becomes an opponent with a score.</p>
+      </div>
+    </div>
+    <div class="dbody">
+      <div class="mock m-rival">
+        <div class="bar"><i></i><i></i><i></i><span>THE GAP — DAY 034</span></div>
+        <div class="pane">
+          <div class="rv-h">
+            <div class="who you">YOU</div>
+            <div class="gap"><b>−14</b><span>DAY GAP</span></div>
+            <div class="who gh">THE MILLIONAIRE</div>
+          </div>
+          <div id="rvTracks"></div>
+          <div class="rv-foot">
+            <p>He has never missed a morning.<br>You are <b>14 days</b> behind him with <b>57</b> left to close it.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="notes">
+        <dt>The signature move</dt>
+        <dd>The ghost is <b>relentless and unfair on purpose</b>. He doesn't get tired, doesn't get sick, doesn't have a girlfriend to see. The gap only closes on days you're excellent — which is exactly the standard you set when you wrote the sentence.</dd>
+        <dt>The clever part</dt>
+        <dd>It converts a vague aspiration into a <b>live scoreboard</b>. "What is the millionaire version of yourself doing right now?" gets answered on screen, in real time, next to what you're actually doing.</dd>
+        <dt>Emotional register</dt>
+        <dd>Competitive. If you're wired to race, nothing else here will move you like this. Closing a 14-day gap to 3 feels enormous.</dd>
+        <div class="cost">The cost: a perfect rival is a <b>losing race by construction</b>. You will basically always be behind, and for some people that's fuel while for others it's a slow demoralization. This one depends entirely on how you're wired.</div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============ VERDICT ============ -->
+  <section class="verdict">
+    <h2>My read</h2>
+    <p>All five are real and buildable on the engine that already exists. They are not equally right <em>for you</em>, and I'd rather say so than present a neutral menu.</p>
+
+    <div class="vrow pick">
+      <div class="n">01</div>
+      <div><h3>The Ascent, with the Ledger as its second screen <span class="tagp g">my pick</span></h3>
+        <p>You told me the problem is that progress lives in one bar at the top. The Ascent makes progress <em>the entire page</em> — it's the only direction where the thing you're looking at is physically bigger than it was yesterday. Then the Ledger becomes the detail view: tap any segment of the climb and read the receipts for that exact day. You get the feeling <em>and</em> the proof, and they reinforce each other instead of competing.</p></div>
+    </div>
+    <div class="vrow">
+      <div class="n">02</div>
+      <div><h3>The Character Sheet <span class="tagp">strongest week-to-week hook</span></h3>
+        <p>Best at the specific thing you said — <em>feeling like you're upgrading yourself</em>. If daily motivation is the real problem to solve rather than long-run proof, this wins. My hesitation is durability: it's the most fun in month one and the most likely to feel juvenile by month three.</p></div>
+    </div>
+    <div class="vrow">
+      <div class="n">03</div>
+      <div><h3>The Burn <span class="tagp">highest voltage, highest risk</span></h3>
+        <p>The most honest to the name and the most likely to actually change behavior in the next two weeks. It's also the only one I'd genuinely caution you about — five bad days rendered as a wall of char is punishing, and this whole rebuild exists because version one made you feel bad enough to stop opening it.</p></div>
+    </div>
+    <div class="vrow">
+      <div class="n">04</div>
+      <div><h3>The Rival <span class="tagp">depends how you're wired</span></h3>
+        <p>Brilliant if you're competitive, corrosive if you're not. You know which one you are better than I do. Worth noting it also works beautifully as a <em>component</em> inside another direction rather than the whole architecture.</p></div>
+    </div>
+    <div class="vrow">
+      <div class="n">05</div>
+      <div><h3>The Ledger alone <span class="tagp">most serious, least motivating</span></h3>
+        <p>Gorgeous, and completely native to how you already spend your mornings. But on its own it doesn't answer your actual complaint — a log is still a list. It's a superb supporting layer and a slightly cold headline act.</p></div>
+    </div>
+  </section>
+
+</div>
+
+<script src="lib/gsap/gsap.min.js"></script>
+<script>
+/* ---- 02 ASCENT: build the column + altitude rule ---- */
+(function(){
+  const col=document.getElementById('ascCol'), rule=document.getElementById('ascRule');
+  // 34 days climbed, quality varies; a few gaps for missed days
+  const days=[];
+  for(let i=0;i<34;i++){
+    const r=[.92,.78,.85,1,.6,.95,.88,.7,1,.83][i%10];
+    days.push(i===11||i===23 ? 0 : r);   // two missed days = gaps
+  }
+  days.forEach(q=>{
+    const s=document.createElement('div');
+    s.className='asc-seg';
+    if(q===0){ s.style.background='transparent'; s.style.border='1px dashed #1e2637'; }
+    else{
+      const a=.28+q*.6;
+      s.style.background=`linear-gradient(90deg, rgba(127,180,255,${a*.35}), rgba(127,180,255,${a}))`;
+      s.style.width=(52+q*48)+'%';
+    }
+    col.appendChild(s);
+  });
+  // altitude ticks
+  const H=430;
+  for(let i=0;i<=6;i++){
+    const y=H-(i/6)*(H-24)-6;
+    const t=document.createElement('i'); t.style.top=y+'px'; rule.appendChild(t);
+    const u=document.createElement('u'); u.style.top=y+'px'; u.textContent=Math.round(i/6*91); rule.appendChild(u);
+  }
+  // "you are here" line — 34/91 of the way up
+  const you=document.getElementById('ascYou');
+  you.style.bottom=(34/91*(H-40)+10)+'px';
+})();
+
+/* ---- 03 CHARACTER SHEET: pentagon radar ---- */
+(function(){
+  const A=[['DISCIPLINE',.82,'#E0B25E'],['FOCUS',.91,'#38E1D8'],['BODY',.44,'#FF6B2C'],
+           ['FAITH',.68,'#B08CFF'],['CAPITAL',.57,'#7FB4FF']];
+  const cx=107,cy=92,R=68, svg=document.getElementById('radar');
+  const pt=(i,v)=>{const a=(-90+i*72)*Math.PI/180;return [cx+Math.cos(a)*R*v, cy+Math.sin(a)*R*v];};
+  let h='';
+  // web rings
+  [.25,.5,.75,1].forEach(r=>{
+    const p=A.map((_,i)=>pt(i,r).join(',')).join(' ');
+    h+=`<polygon points="${p}" fill="none" stroke="#241f36" stroke-width="1"/>`;
+  });
+  // spokes
+  A.forEach((_,i)=>{const[x,y]=pt(i,1);h+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#241f36" stroke-width="1"/>`;});
+  // the shape
+  const poly=A.map((a,i)=>pt(i,a[1]).join(',')).join(' ');
+  h+=`<defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E0B25E" stop-opacity=".45"/>
+      <stop offset="100%" stop-color="#38E1D8" stop-opacity=".3"/></linearGradient></defs>`;
+  h+=`<polygon points="${poly}" fill="url(#rg)" stroke="#E0B25E" stroke-width="1.6"/>`;
+  A.forEach((a,i)=>{const[x,y]=pt(i,a[1]);h+=`<circle cx="${x}" cy="${y}" r="2.6" fill="${a[2]}"/>`;});
+  // labels
+  A.forEach((a,i)=>{
+    const[x,y]=pt(i,1.28);
+    h+=`<text x="${x}" y="${y}" fill="#5d5470" font-family="Geist Mono" font-size="7.5"
+        letter-spacing="1" text-anchor="middle" dominant-baseline="middle">${a[0].slice(0,4)}</text>`;
+  });
+  svg.innerHTML=h;
+
+  const st=document.getElementById('chStats');
+  st.innerHTML=A.map(a=>`<div class="ch-st"><span>${a[0]}</span>
+    <div class="tr"><i style="width:${a[1]*100}%;background:${a[2]}"></i></div>
+    <b>${Math.round(a[1]*99)}</b></div>`).join('');
+})();
+
+/* ---- 04 BURN: 91 tiles ---- */
+(function(){
+  const g=document.getElementById('burnGrid');
+  let h='';
+  for(let i=0;i<91;i++){
+    let c='tile';
+    if(i<34){ c += (i===11||i===19||i===23||i===28||i===31) ? ' char' : ' gold'; }
+    else if(i===34){ c+=' now'; }
+    h+=`<div class="${c}"></div>`;
+  }
+  g.innerHTML=h;
+})();
+
+/* ---- 05 RIVAL: parallel tracks ---- */
+(function(){
+  const el=document.getElementById('rvTracks');
+  const you=[.95,.7,1,.55,.88,1,.4,.92,.75,1,.6,.85,1,.5];
+  let h='';
+  you.forEach((v,i)=>{
+    h+=`<div class="rv-track">
+      <div class="rv-bar y" style="width:${v*100}%"></div>
+      <div class="rv-day">D${34-you.length+i+1}</div>
+      <div class="rv-bar g" style="width:100%"></div>
+    </div>`;
+  });
+  el.innerHTML=h;
+})();
+</script>
+</body>
+</html>

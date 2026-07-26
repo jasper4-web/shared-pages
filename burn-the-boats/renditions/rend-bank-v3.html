@@ -1,0 +1,2050 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Bank v3 — Fifty Ideas, Ten Rendered</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#0A0908; --line:#211D19; --line2:#312B24;
+  --ink:#EDE7DD; --dim:#9C9285; --faint:#6E655A;
+  --brass:#C9A961; --brass2:#8A6E33; --oxblood:#6E2B26; --green:#4E7A52; --red:#B3452F;
+  --hand:'Marker Felt','Chalkboard SE','Comic Sans MS',cursive;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+button{font-family:inherit;cursor:pointer}
+
+/* ---------- day-one / day-41 state machine ----------
+   Hide-only, and !important on purpose: per-rendition descendant selectors
+   (.x .y>span{display:block}) out-specify a plain class and would otherwise
+   render both states at once. Nothing here sets a display for the SHOWN state,
+   so a shown element keeps its own authored display. */
+body:not(.d1) .v0,body:not(.d1) .b0{display:none !important}
+body.d1 .v41,body.d1 .b41{display:none !important}
+.fl{height:var(--f,0%)}          /* vertical fill  */
+.fw{width:var(--f,0%)}           /* horizontal fill */
+body.d1 .fl{height:0}
+body.d1 .fw{width:0}
+
+/* ---------- gallery chrome (responsive to 390) ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.bar{position:sticky;top:0;z-index:60;background:rgba(10,9,8,.94);backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1180px;margin:0 auto;padding:11px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bar .lb{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase}
+.seg{display:flex;border:1px solid var(--line2);border-radius:9px;overflow:hidden;margin-left:auto}
+.seg button{background:none;border:0;padding:9px 14px;color:var(--dim);font-family:'Geist Mono',monospace;
+  font-size:8.5px;letter-spacing:.14em}
+.seg button.on{background:var(--brass);color:#1C1305;font-weight:700}
+.mast{padding:52px 0 26px;border-bottom:1px solid var(--line)}
+.kick{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.26em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:14px}
+.mast h1{font-size:clamp(28px,4.6vw,44px);line-height:1.03;letter-spacing:-.035em;margin-bottom:15px}
+.mast p{max-width:690px;color:var(--dim);font-size:15px;margin:0 0 11px}
+.mast p b{color:var(--ink);font-weight:500}
+
+.fork{border:1px solid var(--line2);border-radius:14px;padding:20px;margin-top:24px;background:#100E0C}
+.fork h3{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.24em;color:var(--brass);
+  text-transform:uppercase;font-weight:700;margin-bottom:12px}
+.fork p{margin:0 0 10px;font-size:14.2px}
+
+/* ---------- the cull ---------- */
+.cull{padding:44px 0;border-bottom:1px solid var(--line)}
+.cull h2{font-size:26px;letter-spacing:-.03em;margin-bottom:8px}
+.cull .lede{color:var(--dim);font-size:14.6px;max-width:700px;margin:0 0 22px}
+.ctab{width:100%;border-collapse:collapse;font-size:13.2px}
+.ctab th{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.17em;color:var(--faint);
+  text-transform:uppercase;text-align:left;padding:0 9px 9px 0;font-weight:700;border-bottom:1px solid var(--line2)}
+.ctab td{padding:8px 9px 8px 0;border-bottom:1px solid #171412;color:var(--dim);vertical-align:top;line-height:1.5}
+.ctab td:first-child{font-family:'Geist Mono',monospace;font-size:9.5px;color:#4A423A;width:24px}
+.ctab td.w{color:var(--ink);font-weight:500;width:33%}
+.ctab tr.keep td{background:rgba(201,169,97,.055)}
+.ctab tr.keep td.w{color:var(--brass)}
+.tag{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;padding:3px 6px;border-radius:4px;
+  white-space:nowrap;background:#241F1B;color:#7C7166}
+.tag.k{background:rgba(201,169,97,.2);color:var(--brass)}
+@media(max-width:640px){.ctab td.w{width:auto}.ctab td:nth-child(4){display:none}}
+
+.dir{padding:48px 0;border-bottom:1px solid var(--line)}
+.dh{display:grid;grid-template-columns:54px 1fr;gap:16px;align-items:start;margin-bottom:20px}
+.dn{font-family:'Clash Display',sans-serif;font-size:40px;line-height:.8;font-weight:700;
+  color:transparent;-webkit-text-stroke:1.2px var(--line2)}
+.dt h2{font-size:25px;letter-spacing:-.03em;margin-bottom:7px}
+.dm{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--faint);line-height:1.8}
+.dm b{color:#A08A5E;font-weight:400}
+.notx{margin:12px 0 0;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.06em;
+  color:#CDBE9C;border-left:2px solid var(--brass);padding:4px 0 4px 12px}
+.dl{max-width:620px;color:var(--dim);font-size:14.6px;margin-top:12px}
+.dl b{color:var(--ink);font-weight:500}
+.body{display:grid;grid-template-columns:392px minmax(0,1fr);gap:34px;align-items:start}
+.body>*{min-width:0}
+.notes dt{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);margin-top:18px}
+.notes dt:first-child{margin-top:0}
+.notes dd{margin:6px 0 0;font-size:14.2px;color:var(--dim);line-height:1.55}
+.notes dd b{color:var(--ink);font-weight:500}
+.risk{border-left:2px solid #3A2622;padding-left:13px;margin-top:19px;font-size:13.3px;color:var(--faint)}
+
+.p{width:390px;border-radius:22px;overflow:hidden;border:1px solid var(--line2);
+  box-shadow:0 30px 74px -30px #000;background:#000}
+.notch{height:26px;background:#000;display:flex;align-items:center;justify-content:center;flex:none}
+.notch i{width:56px;height:5px;border-radius:99px;background:#1a1a20}
+.pv{height:818px;overflow-y:auto;overflow-x:hidden;position:relative}
+.pv::-webkit-scrollbar{width:0}
+.cap{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.16em;color:#443C34;
+  text-align:center;padding:9px 0 0;width:100%;max-width:390px}
+
+@media(max-width:900px){.body{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:452px){
+  .wrap{padding:0}
+  .bar-in{padding:11px 15px}
+  .mast,.dh,.fork,.cull,.ho{margin-left:15px;margin-right:15px}
+  .dir{padding:32px 0}
+  .notes{padding:0 15px}
+  .p{width:100%;border-radius:0;border-left:0;border-right:0}
+  .body{gap:22px}
+}
+
+/* shared small pieces used across renditions */
+.day1note{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;line-height:1.9}
+
+/* =======================================================================
+   01 · THE COUNTING HOUSE — teller's counter, customer side
+   primitive: a service-counter elevation with stacked functional zones
+   ======================================================================= */
+.c1{background:linear-gradient(180deg,#241812,#1B120D 42%,#150E0A);padding:0 0 26px}
+.c1-plate{margin:14px 12px 0;border-radius:3px;padding:9px 13px;display:flex;justify-content:space-between;
+  align-items:baseline;background:linear-gradient(180deg,#D8BC7C,#9C7C3C);
+  box-shadow:0 4px 12px -6px #000,inset 0 1px 0 rgba(255,244,214,.6)}
+.c1-plate b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:13px;letter-spacing:.04em;color:#3A2A0A}
+.c1-plate span{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.18em;color:#5A431A}
+.c1-win{margin:12px 12px 0;position:relative;border-radius:6px 6px 0 0;overflow:hidden;
+  background:linear-gradient(180deg,#F3EAD6,#E4D8BE);padding:20px 16px 18px;text-align:center;
+  box-shadow:inset 0 0 0 3px #7A5C2A,0 8px 20px -10px #000}
+.c1-bars{position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(90deg,transparent 0 26px,rgba(60,42,14,.5) 26px 30px)}
+.c1-bars::after{content:'';position:absolute;left:0;right:0;top:0;height:9px;
+  background:linear-gradient(180deg,#8A6A2E,#5A431A)}
+.c1-win .k{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.24em;color:#8A7A58}
+.c1-win .n{font-family:'Clash Display',sans-serif;font-weight:700;font-size:52px;letter-spacing:-.05em;
+  color:#2B2114;line-height:.86;margin-top:9px}
+.c1-win .s{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.16em;color:#8A7A58;margin-top:10px}
+.c1-tray{margin:0 12px;background:linear-gradient(180deg,#B99A54,#7E6229);padding:11px 12px 13px;
+  border-radius:0 0 8px 8px;box-shadow:inset 0 4px 10px -4px rgba(0,0,0,.55)}
+.c1-trayl{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.2em;color:#3F2E0C;margin-bottom:9px}
+.c1-toks{display:flex;gap:8px}
+.c1-tok{flex:1;border-radius:50px;padding:11px 8px;text-align:center;
+  background:radial-gradient(circle at 38% 28%,#F6E6BC,#CDA95E 56%,#96773A);
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.05em;color:#3A2C08;line-height:1.5;
+  box-shadow:0 3px 6px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,250,230,.7)}
+.c1-tok.mt{background:none;box-shadow:inset 0 0 0 1.5px rgba(60,42,14,.5);color:#5A4A22}
+.c1-sec{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:#7A6A50;
+  padding:22px 15px 10px;display:flex;justify-content:space-between;align-items:baseline}
+.c1-sec u{text-decoration:none;color:#544838;letter-spacing:.12em}
+.c1-dk{margin:0 12px 7px;background:#F3EAD6;border-radius:2px;padding:12px 13px;position:relative;
+  box-shadow:0 5px 12px -7px #000}
+.c1-dk::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--oxblood)}
+.c1-dk b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:16px;
+  letter-spacing:-.025em;color:#2B2114;line-height:1.06;padding-left:6px}
+.c1-dk em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:7px;
+  letter-spacing:.08em;color:#8A7A58;margin-top:6px;text-transform:uppercase;line-height:1.6;padding-left:6px}
+.c1-dk .row{display:flex;align-items:center;gap:9px;margin-top:11px;padding-left:6px}
+.c1-dk .px{font-family:'Geist Mono',monospace;font-size:11px;color:#5A4A2A}
+.c1-ask{margin-left:auto;border:0;border-radius:4px;padding:10px 13px;background:var(--oxblood);color:#F6EDE2;
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.14em;font-weight:700}
+.c1-short{margin-left:auto;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.11em;color:#A08A5E}
+.c1-dk.soon{background:#E0D5BC}
+.c1-dk.soon::before{background:#9C8C6C}
+.c1-dk.soon b{color:#5E5240}
+.c1-bell{margin:14px 12px 0;display:flex;align-items:center;gap:12px;background:#1E1510;border-radius:9px;
+  padding:12px 13px;box-shadow:inset 0 0 0 1px #33261C}
+.c1-dome{width:44px;height:26px;border-radius:44px 44px 0 0;flex:none;
+  background:radial-gradient(ellipse at 36% 20%,#F6E6BC,#C9A961 52%,#7E6229);
+  box-shadow:0 3px 7px rgba(0,0,0,.6)}
+.c1-bell span{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;color:#A08A5E;line-height:1.8}
+.c1-slips{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 12px}
+.c1-slip{border:0;background:#EFE5CE;border-radius:2px;padding:10px 11px;text-align:left;
+  box-shadow:0 3px 8px -5px #000}
+.c1-slip b{display:block;font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:.06em;color:#2B2114}
+.c1-slip>span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.12em;
+  color:#8A7A58;margin-top:4px}
+.c1-spike{margin:0 12px;position:relative;background:#1E1510;border-radius:6px;padding:13px 13px 12px;
+  box-shadow:inset 0 0 0 1px #33261C}
+.c1-spike .rc{background:#E4D8BE;border-radius:1px;padding:9px 11px;position:relative;
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;color:#5A4A2A;line-height:1.8;
+  transform:rotate(-.8deg)}
+.c1-spike .rc::before{content:'';position:absolute;left:50%;top:-4px;width:2px;height:12px;background:#8A7A58;
+  transform:translateX(-50%)}
+.c1-spike .rc b{color:#2B2114;font-weight:700;display:block;font-size:9px}
+.c1-empty{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.12em;color:#7A6A50;
+  line-height:1.9;padding:2px 2px}
+.c1-empty b{color:var(--brass);font-weight:400}
+
+/* =======================================================================
+   02 · THE BOX ROOM — safe deposit boxes
+   primitive: a repeating array of numbered hinged doors
+   ======================================================================= */
+.c2{background:linear-gradient(180deg,#17191A,#101314);padding:0 0 26px}
+.c2-hd{padding:16px 14px 13px;display:flex;justify-content:space-between;align-items:flex-start;
+  border-bottom:1px solid #23282A}
+.c2-hd .t{font-family:'Clash Display',sans-serif;font-weight:700;font-size:17px;letter-spacing:-.02em;color:#DCE2E4}
+.c2-hd .t>span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.2em;
+  color:#6E787C;margin-top:5px;font-weight:400}
+.c2-hd .n{text-align:right}
+.c2-hd .n b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:28px;letter-spacing:-.04em;
+  color:var(--brass);line-height:1}
+.c2-hd .n>span{display:block;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.16em;
+  color:#6E787C;margin-top:4px}
+.c2-keys{margin:14px 12px 0;background:#1C2022;border-radius:9px;padding:12px 13px;
+  box-shadow:inset 0 0 0 1px #2A3033}
+.c2-keys .l{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.2em;color:#6E787C;margin-bottom:11px}
+.c2-ring{display:flex;gap:10px;align-items:center}
+.c2-key{flex:1;display:flex;align-items:center;gap:9px}
+.c2-kb{width:22px;height:38px;flex:none;border-radius:11px 11px 3px 3px;position:relative;
+  background:linear-gradient(150deg,#E2C888,#B4924C 46%,#7E6229);
+  box-shadow:0 3px 6px rgba(0,0,0,.6)}
+.c2-kb::after{content:'';position:absolute;left:50%;top:9px;width:7px;height:7px;border-radius:50%;
+  background:#2A2010;transform:translateX(-50%)}
+.c2-kb::before{content:'';position:absolute;left:50%;bottom:-9px;width:7px;height:11px;background:#B4924C;
+  transform:translateX(-50%);clip-path:polygon(0 0,100% 0,100% 60%,45% 60%,45% 100%,0 100%)}
+.c2-key span{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.06em;color:#C6CED1;line-height:1.5}
+.c2-kb.mt{background:none;box-shadow:inset 0 0 0 1.5px #3A4245}
+.c2-kb.mt::before{background:#3A4245}
+.c2-kb.mt::after{background:#171A1C}
+.c2-sec{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:#6E787C;
+  padding:22px 14px 10px;display:flex;justify-content:space-between;align-items:baseline}
+.c2-sec u{text-decoration:none;color:#4E585C;letter-spacing:.12em}
+.c2-wall{padding:0 12px;display:grid;gap:8px}
+.c2-box{display:grid;grid-template-columns:74px 1fr;gap:11px;align-items:stretch}
+.c2-door{border-radius:3px;padding:9px 6px;text-align:center;position:relative;
+  background:linear-gradient(160deg,#D8BC7C,#A7863F 52%,#6E5424);
+  box-shadow:inset 0 1px 0 rgba(255,244,214,.55),0 3px 8px -4px #000}
+.c2-door .no{font-family:'Geist Mono',monospace;font-size:12px;font-weight:700;color:#3A2A0A;
+  text-shadow:0 1px 0 rgba(255,244,214,.4)}
+.c2-door .hole{width:11px;height:11px;border-radius:50%;margin:7px auto 0;background:#2A2010;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.9)}
+.c2-door.open{background:linear-gradient(160deg,#2A2E30,#191D1F);box-shadow:inset 0 3px 10px rgba(0,0,0,.8)}
+.c2-door.open .no{color:#5E686C;text-shadow:none}
+.c2-door.open .hole{background:#0C0E10}
+.c2-door.rdy .hole{background:#2E6B3A;box-shadow:0 0 9px rgba(70,190,100,.7)}
+.c2-plate{background:#1C2022;border-radius:3px;padding:10px 12px;box-shadow:inset 0 0 0 1px #2A3033;
+  display:flex;flex-direction:column;justify-content:center}
+.c2-plate b{font-family:'Clash Display',sans-serif;font-weight:600;font-size:15px;letter-spacing:-.025em;
+  color:#DCE2E4;line-height:1.06}
+.c2-plate em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.08em;color:#7E888C;margin-top:6px;text-transform:uppercase;line-height:1.6}
+.c2-plate .r{display:flex;align-items:center;gap:8px;margin-top:9px}
+.c2-plate .px{font-family:'Geist Mono',monospace;font-size:10px;color:#96A0A4}
+.c2-open{margin-left:auto;border:0;border-radius:3px;padding:9px 11px;background:var(--brass);color:#2A2010;
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.13em;font-weight:700}
+.c2-shut{margin-left:auto;font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;color:#6E787C}
+.c2-box.gone .c2-plate b{color:#5E686C}
+.c2-box.gone .c2-plate em{color:#4E585C}
+.c2-slips{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 12px}
+.c2-slip{border:0;background:#1C2022;box-shadow:inset 0 0 0 1px #2A3033;border-radius:5px;padding:11px;
+  text-align:left}
+.c2-slip b{display:block;font-family:'Geist Mono',monospace;font-size:8.5px;color:#C6CED1;letter-spacing:.05em}
+.c2-slip>span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.12em;
+  color:var(--brass);margin-top:5px}
+.c2-note{padding:12px 15px 0;font-size:11.5px;color:#6E787C;line-height:1.55}
+.c2-note b{color:var(--brass);font-weight:400}
+
+/* =======================================================================
+   03 · THE CELLAR — bottles laid down in racks
+   primitive: long horizontal objects lying in cradles
+   ======================================================================= */
+.c3{background:linear-gradient(180deg,#1A1D1A,#131614);padding:0 0 26px}
+.c3-slate{margin:14px 12px 0;background:#22261F;border-radius:4px;padding:14px 15px;
+  box-shadow:inset 0 0 0 1px #2E332A;display:flex;justify-content:space-between;align-items:flex-end}
+.c3-slate .k{font-family:var(--hand);font-size:15px;color:#8FA087;letter-spacing:.02em}
+.c3-slate .n{font-family:var(--hand);font-size:38px;color:#E8E2D2;line-height:.9}
+.c3-slate .s{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.16em;color:#6E7A68;margin-top:5px}
+.c3-sec{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:#6E7A68;
+  padding:22px 14px 10px;display:flex;justify-content:space-between;align-items:baseline}
+.c3-sec u{text-decoration:none;color:#4E5A48;letter-spacing:.12em}
+.c3-rack{margin:0 12px;padding:9px;border-radius:5px;background:#171A16;
+  box-shadow:inset 0 0 0 2px #2A302A}
+.c3-bin{position:relative;display:flex;align-items:center;gap:11px;padding:9px 10px;margin-bottom:7px;
+  border-radius:4px;background:linear-gradient(180deg,#1E221C,#171A16);box-shadow:inset 0 0 0 1px #2A302A}
+.c3-bin:last-child{margin-bottom:0}
+.c3-btl{width:52px;height:34px;flex:none;border-radius:17px 6px 6px 17px;position:relative;
+  background:linear-gradient(180deg,#3E5C3A,#22381F 60%,#16240F);
+  box-shadow:inset 0 2px 0 rgba(180,220,170,.14),0 3px 6px rgba(0,0,0,.6)}
+.c3-btl::after{content:'';position:absolute;left:8px;top:9px;width:26px;height:15px;border-radius:2px;
+  background:#E8E2D2;box-shadow:0 1px 2px rgba(0,0,0,.4)}
+.c3-btl.mt{background:linear-gradient(180deg,#22261F,#1A1E18);box-shadow:inset 0 0 0 1px #2E332A}
+.c3-btl.mt::after{background:none;box-shadow:inset 0 0 0 1px #3A4238}
+.c3-bin .in{min-width:0}
+.c3-bin b{display:block;font-family:'Clash Display',sans-serif;font-weight:600;font-size:15px;
+  letter-spacing:-.025em;color:#E8E2D2;line-height:1.06}
+.c3-bin em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.08em;color:#8FA087;margin-top:6px;text-transform:uppercase;line-height:1.6}
+.c3-bin .r{display:flex;align-items:center;gap:8px;margin-top:8px}
+.c3-bin .px{font-family:'Geist Mono',monospace;font-size:10px;color:#8FA087}
+.c3-draw{margin-left:auto;border:0;border-radius:3px;padding:9px 12px;background:#E8E2D2;color:#22261F;
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.13em;font-weight:700}
+.c3-lay{margin-left:auto;font-family:var(--hand);font-size:13px;color:#B8C4B0;white-space:nowrap}
+.c3-bin.down b{color:#7E8A78}
+.c3-bin.gone{opacity:.72}
+.c3-bin.gone b{color:#6E7A68}
+.c3-tags{display:flex;gap:8px;padding:0 12px}
+.c3-tag{flex:1;background:linear-gradient(180deg,#D8BC7C,#9C7C3C);border-radius:2px;padding:10px 11px;
+  box-shadow:0 3px 8px -4px #000;position:relative}
+.c3-tag::before{content:'';position:absolute;left:9px;top:-4px;width:8px;height:8px;border-radius:50%;
+  background:#171A16;box-shadow:inset 0 0 0 2px #7E6229}
+.c3-tag .k{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.18em;color:#5A431A;margin-left:14px}
+.c3-tag b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:13px;
+  letter-spacing:-.025em;color:#2E2208;line-height:1.08;margin-top:5px}
+.c3-tag.mt{background:none;box-shadow:inset 0 0 0 1.5px #2E332A}
+.c3-tag.mt .k{color:#5E6A58}
+.c3-tag.mt b{color:#5E6A58}
+.c3-lays{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 12px}
+.c3-slip{border:0;background:#1E221C;box-shadow:inset 0 0 0 1px #2A302A;border-radius:4px;padding:11px;
+  text-align:left}
+.c3-slip b{display:block;font-family:'Geist Mono',monospace;font-size:8.5px;color:#D2CCBC;letter-spacing:.05em}
+.c3-slip>span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.12em;
+  color:#8FA087;margin-top:5px}
+.c3-note{padding:12px 15px 0;font-family:var(--hand);font-size:14px;color:#8FA087;line-height:1.5}
+
+/* =======================================================================
+   04 · THE ENVELOPES — cash envelope budgeting
+   primitive: envelopes seen edge-on, thickness carrying the balance
+   ======================================================================= */
+.c4{background:linear-gradient(180deg,#241E17,#1A1611);padding:0 0 26px}
+.c4-drw{margin:14px 12px 0;border-radius:5px;padding:13px 15px;display:flex;justify-content:space-between;
+  align-items:flex-end;background:linear-gradient(180deg,#3A2F22,#2A2119);box-shadow:inset 0 0 0 1px #4A3C2C}
+.c4-drw .k{font-family:var(--hand);font-size:14px;color:#B49E7C}
+.c4-drw .n{font-family:var(--hand);font-size:36px;color:#F0E6D2;line-height:.92;margin-top:3px}
+.c4-drw .s{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.16em;color:#8A7A5E;text-align:right;line-height:1.9}
+.c4-sec{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:#8A7A5E;
+  padding:22px 14px 10px;display:flex;justify-content:space-between;align-items:baseline}
+.c4-sec u{text-decoration:none;color:#635646;letter-spacing:.12em}
+.c4-clip{margin:0 12px;background:#2A2119;border-radius:5px;padding:12px;box-shadow:inset 0 0 0 1px #4A3C2C}
+.c4-vs{display:flex;gap:8px}
+.c4-v{flex:1;background:linear-gradient(180deg,#EFE3C8,#DCCDAA);border-radius:2px;padding:10px 11px;
+  position:relative;box-shadow:0 3px 8px -4px #000}
+.c4-v::before{content:'';position:absolute;left:50%;top:-7px;width:26px;height:9px;border-radius:2px;
+  background:#8A8A92;transform:translateX(-50%);box-shadow:0 2px 3px rgba(0,0,0,.5)}
+.c4-v .k{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.18em;color:#8A7A58}
+.c4-v b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:13px;
+  letter-spacing:-.025em;color:#2B2114;line-height:1.08;margin-top:5px}
+.c4-v.mt{background:none;box-shadow:inset 0 0 0 1.5px #4A3C2C}
+.c4-v.mt .k,.c4-v.mt b{color:#6E6250}
+.c4-envs{padding:0 12px}
+.c4-env{position:relative;margin-bottom:16px;border-radius:2px;padding:14px 14px 13px;
+  background:linear-gradient(178deg,#E8DCC0,#D6C6A2)}
+.c4-env::after{content:'';position:absolute;left:0;right:0;top:0;height:26px;
+  background:linear-gradient(178deg,#DFD2B2,#D2C29C);
+  clip-path:polygon(0 0,100% 0,50% 100%);opacity:.85;z-index:0}
+.c4-env.t4{box-shadow:0 4px 0 #C9B994,0 8px 0 #BCAB85,0 12px 0 #AE9C76,0 16px 0 #9F8D67,0 22px 18px -10px rgba(0,0,0,.7)}
+.c4-env.t3{box-shadow:0 4px 0 #C9B994,0 8px 0 #BCAB85,0 12px 0 #AE9C76,0 18px 16px -10px rgba(0,0,0,.7)}
+.c4-env.t2{box-shadow:0 4px 0 #C9B994,0 8px 0 #BCAB85,0 14px 14px -10px rgba(0,0,0,.7)}
+.c4-env.t1{box-shadow:0 3px 0 #C9B994,0 10px 12px -9px rgba(0,0,0,.7)}
+.c4-env b{position:relative;z-index:1;display:block;font-family:var(--hand);font-size:21px;color:#241C0E;line-height:1.06}
+.c4-env em{position:relative;z-index:1;display:block;font-style:normal;font-family:var(--hand);font-size:14px;
+  color:#3A5A8E;margin-top:7px;line-height:1.3}
+.c4-env .r{position:relative;z-index:1;display:flex;align-items:flex-end;gap:10px;margin-top:12px}
+.c4-env .px{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.09em;color:#7A6A4A;line-height:1.7}
+.c4-env .px b{font-family:'Geist Mono',monospace;font-size:14px;color:#241C0E;display:inline}
+.c4-tear{margin-left:auto;border:0;border-radius:2px;padding:10px 13px;background:#8E3B22;color:#F6EDE2;
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.14em;font-weight:700}
+.c4-need{margin-left:auto;font-family:var(--hand);font-size:14px;color:#8E3B22;white-space:nowrap}
+.c4-env.thin b{color:#4A4030}
+.c4-env.thin em{color:#5E6E8A}
+.c4-flat{position:relative;margin-bottom:14px;border-radius:2px;padding:11px 14px;background:#4A4034;
+  box-shadow:inset 0 0 0 1px #5E5344}
+.c4-flat b{display:block;font-family:var(--hand);font-size:16px;color:#B8AC96;line-height:1.1}
+.c4-flat>span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;
+  color:#8A7E68;margin-top:6px}
+.c4-pay{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 12px}
+.c4-slip{border:0;background:#EFE3C8;border-radius:2px;padding:10px 11px;text-align:left;
+  box-shadow:0 3px 8px -5px #000}
+.c4-slip b{display:block;font-family:var(--hand);font-size:15px;color:#241C0E;line-height:1.1}
+.c4-slip>span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.12em;
+  color:#7A6A4A;margin-top:5px}
+.c4-note{padding:12px 15px 0;font-family:var(--hand);font-size:15px;color:#B49E7C;line-height:1.4}
+
+/* =======================================================================
+   05 · THE LOGBOOK — a pilot's hours and ratings
+   primitive: ruled columnar entries with signature blocks
+   ======================================================================= */
+.c5{background:#151A22;padding:0 0 26px}
+.c5-cov{background:linear-gradient(180deg,#1E3050,#152238);padding:15px 15px 14px;
+  display:flex;justify-content:space-between;align-items:flex-end;box-shadow:inset 0 -3px 0 rgba(0,0,0,.35)}
+.c5-cov .t{font-family:'Clash Display',sans-serif;font-weight:700;font-size:17px;letter-spacing:.01em;color:#E8EEF6}
+.c5-cov .t>span{display:block;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.22em;
+  color:#7E93B4;margin-top:5px;font-weight:400}
+.c5-cov .h{text-align:right}
+.c5-cov .h b{font-family:'Geist Mono',monospace;font-size:26px;font-weight:700;color:#E8EEF6;letter-spacing:.02em}
+.c5-cov .h>span{display:block;font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.16em;color:#7E93B4;margin-top:4px}
+.c5-pg{margin:11px;background:#F6F1E2;border-radius:2px;overflow:hidden;box-shadow:0 8px 20px -10px #000}
+.c5-hdr{display:grid;grid-template-columns:1fr 54px 54px;gap:0;background:#E4DCC4;
+  border-bottom:2px solid #B33A2A}
+.c5-hdr span{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.14em;color:#6A5F44;
+  padding:7px 8px;border-right:1px solid #C9BF9E}
+.c5-hdr span:last-child{border-right:0;text-align:right}
+.c5-hdr span:nth-child(2){text-align:right}
+.c5-row{display:grid;grid-template-columns:1fr 54px 54px;border-bottom:1px solid #DED5BA;min-height:44px}
+.c5-row>div{padding:8px;border-right:1px solid #E8E0C8}
+.c5-row>div:last-child{border-right:0}
+.c5-row b{display:block;font-family:'Clash Display',sans-serif;font-weight:600;font-size:14px;
+  letter-spacing:-.025em;color:#1E2A3A;line-height:1.08}
+.c5-row em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.07em;color:#7A6F52;margin-top:5px;text-transform:uppercase;line-height:1.55}
+.c5-row .hrs{font-family:'Geist Mono',monospace;font-size:11px;color:#1E2A3A;text-align:right;
+  display:flex;align-items:center;justify-content:flex-end}
+.c5-row .st{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.09em;color:#7A6F52;
+  text-align:right;line-height:1.5;display:flex;align-items:center;justify-content:flex-end}
+.c5-row.ok .st{color:#2E6B3A;font-weight:700}
+.c5-row.ok b{color:#152238}
+.c5-row.wait b{color:#6E7789}
+.c5-row.done{background:#EDE6D2}
+.c5-row.done b{color:#8A8272}
+.c5-sig{margin:0 11px;background:#F6F1E2;border-radius:2px;padding:12px 13px;box-shadow:0 6px 16px -10px #000}
+.c5-sigl{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.2em;color:#7A6F52;margin-bottom:10px}
+.c5-end{border-bottom:1px solid #DED5BA;padding-bottom:11px;margin-bottom:11px}
+.c5-end:last-child{border-bottom:0;padding-bottom:0;margin-bottom:0}
+.c5-end b{display:block;font-family:'Clash Display',sans-serif;font-weight:600;font-size:14.5px;
+  letter-spacing:-.025em;color:#1E2A3A}
+.c5-end em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.09em;color:#7A6F52;margin-top:5px;text-transform:uppercase}
+.c5-end .sg{font-family:var(--hand);font-size:19px;color:#2A3E68;margin-top:8px;transform:rotate(-1.6deg);
+  display:inline-block}
+.c5-end.mt b{color:#9A9280}
+.c5-end.mt .sg{color:#B4AC98;font-size:15px}
+.c5-sec{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:#7E93B4;
+  padding:20px 14px 9px;display:flex;justify-content:space-between;align-items:baseline}
+.c5-sec u{text-decoration:none;color:#566A88;letter-spacing:.12em}
+.c5-cred{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 11px}
+.c5-cslip{border:0;background:#1E2A3A;box-shadow:inset 0 0 0 1px #2E3E56;border-radius:3px;padding:11px;
+  text-align:left}
+.c5-cslip b{display:block;font-family:'Geist Mono',monospace;font-size:8.5px;color:#D2DCE8;letter-spacing:.05em}
+.c5-cslip>span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.12em;
+  color:#7E93B4;margin-top:5px}
+.c5-note{padding:12px 15px 0;font-size:11.5px;color:#7E93B4;line-height:1.55}
+.c5-note b{color:#D2DCE8;font-weight:400}
+
+/* =======================================================================
+   06 · THE SHADOW BOARD — a workshop tool board
+   primitive: painted silhouettes marking where each thing lives
+   ======================================================================= */
+.c6{background:
+   repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 1px,transparent 1px 5px),
+   linear-gradient(180deg,#2C3A38,#1E2A28);padding:0 0 26px}
+.c6-hd{padding:16px 14px 12px;display:flex;justify-content:space-between;align-items:flex-start;
+  border-bottom:2px solid rgba(240,232,210,.14)}
+.c6-hd .t{font-family:'Clash Display',sans-serif;font-weight:700;font-size:17px;letter-spacing:.03em;
+  color:#F0E8D2;text-transform:uppercase}
+.c6-hd .t>span{display:block;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.2em;
+  color:#8CA09C;margin-top:5px;font-weight:400;text-transform:none}
+.c6-hd .n{text-align:right}
+.c6-hd .n b{font-family:'Geist Mono',monospace;font-size:26px;font-weight:700;color:#F2C14E;letter-spacing:.01em}
+.c6-hd .n>span{display:block;font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.16em;
+  color:#8CA09C;margin-top:4px}
+.c6-sec{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:#8CA09C;
+  padding:20px 14px 10px;display:flex;justify-content:space-between;align-items:baseline}
+.c6-sec u{text-decoration:none;color:#5E706C;letter-spacing:.12em}
+.c6-board{padding:0 12px;display:grid;gap:9px}
+.c6-sl{position:relative;border-radius:7px;padding:13px 14px;min-height:66px;display:flex;
+  flex-direction:column;justify-content:center}
+.c6-sl.up{background:linear-gradient(178deg,#F0E8D2,#DCD2B6);box-shadow:0 5px 0 #A89C7C,0 12px 18px -10px rgba(0,0,0,.7)}
+.c6-sl.up b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:17px;letter-spacing:-.025em;
+  color:#20302E;line-height:1.05}
+.c6-sl.up em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.08em;color:#6A7A72;margin-top:6px;text-transform:uppercase;line-height:1.6}
+.c6-sl.up .r{display:flex;align-items:center;gap:9px;margin-top:10px}
+.c6-sl.up .px{font-family:'Geist Mono',monospace;font-size:10px;color:#5E6E68}
+.c6-take{margin-left:auto;border:0;border-radius:4px;padding:9px 12px;background:#20302E;color:#F0E8D2;
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.14em;font-weight:700}
+.c6-sl.out{box-shadow:inset 0 0 0 2.5px rgba(240,232,210,.34);
+  background:repeating-linear-gradient(135deg,rgba(240,232,210,.03) 0 6px,transparent 6px 12px)}
+.c6-sl.out b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:17px;letter-spacing:.01em;
+  color:rgba(240,232,210,.5);line-height:1.05;text-transform:uppercase}
+.c6-sl.out em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.09em;color:rgba(240,232,210,.34);margin-top:6px;text-transform:uppercase;line-height:1.6}
+.c6-sl.out .r{display:flex;align-items:center;gap:9px;margin-top:9px}
+.c6-sl.out .px{font-family:'Geist Mono',monospace;font-size:10px;color:rgba(240,232,210,.42)}
+.c6-gap{margin-left:auto;font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;
+  color:#F2C14E}
+.c6-sl.taken{box-shadow:inset 0 0 0 2px rgba(240,232,210,.16)}
+.c6-sl.taken b{color:rgba(240,232,210,.3)}
+.c6-brass{position:absolute;right:11px;bottom:11px;background:linear-gradient(180deg,#D8BC7C,#9C7C3C);
+  border-radius:2px;padding:5px 8px;font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.12em;
+  color:#3A2A0A}
+.c6-tray{margin:0 12px;border-radius:7px;padding:12px 13px;background:rgba(0,0,0,.28);
+  box-shadow:inset 0 0 0 2px rgba(240,232,210,.14)}
+.c6-trayl{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.2em;color:#8CA09C;margin-bottom:11px}
+.c6-tools{display:flex;gap:9px}
+.c6-tool{flex:1;display:flex;align-items:center;gap:9px}
+.c6-th{width:15px;height:44px;flex:none;border-radius:3px;
+  background:linear-gradient(96deg,#8A4A22,#C97A3C 40%,#8A4A22);box-shadow:0 2px 5px rgba(0,0,0,.6)}
+.c6-th::after{content:'';display:block;width:15px;height:16px;border-radius:2px;
+  background:linear-gradient(96deg,#8E9AA0,#D6E0E4 40%,#7E8A90)}
+.c6-tool span{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.05em;color:#DCE6E2;line-height:1.5}
+.c6-th.mt{background:none;box-shadow:inset 0 0 0 1.5px rgba(240,232,210,.24)}
+.c6-th.mt::after{background:none;box-shadow:inset 0 0 0 1.5px rgba(240,232,210,.24)}
+.c6-slips{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 12px}
+.c6-slip{border:0;background:rgba(0,0,0,.24);box-shadow:inset 0 0 0 1px rgba(240,232,210,.16);
+  border-radius:5px;padding:11px;text-align:left}
+.c6-slip b{display:block;font-family:'Geist Mono',monospace;font-size:8.5px;color:#DCE6E2;letter-spacing:.05em}
+.c6-slip>span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.12em;
+  color:#F2C14E;margin-top:5px}
+.c6-note{padding:12px 15px 0;font-size:11.5px;color:#8CA09C;line-height:1.55}
+.c6-note b{color:#F0E8D2;font-weight:400}
+
+/* =======================================================================
+   07 · THE LAYAWAY COUNTER — paying toward a named thing
+   primitive: tickets hanging from a rail of hooks
+   ======================================================================= */
+.c7{background:linear-gradient(180deg,#2A1A1E,#1E1216);padding:0 0 26px}
+.c7-hd{margin:14px 12px 0;background:#F4EDE0;border-radius:3px;padding:13px 15px;
+  display:flex;justify-content:space-between;align-items:flex-end;box-shadow:0 6px 16px -9px #000}
+.c7-hd .t{font-family:'Clash Display',sans-serif;font-weight:700;font-size:15px;letter-spacing:.02em;
+  color:#3A1E22;text-transform:uppercase}
+.c7-hd .t>span{display:block;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.18em;
+  color:#8A6E72;margin-top:5px;font-weight:400;text-transform:none}
+.c7-hd .n{text-align:right}
+.c7-hd .n b{font-family:'Clash Display',sans-serif;font-weight:700;font-size:28px;letter-spacing:-.04em;
+  color:#7A2430;line-height:1}
+.c7-hd .n>span{display:block;font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.15em;
+  color:#8A6E72;margin-top:4px}
+.c7-sec{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:#A88A8E;
+  padding:22px 14px 8px;display:flex;justify-content:space-between;align-items:baseline}
+.c7-sec u{text-decoration:none;color:#7A5E62;letter-spacing:.12em}
+.c7-rail{margin:0 12px;position:relative;padding-top:12px}
+.c7-rail::before{content:'';position:absolute;left:0;right:0;top:4px;height:4px;border-radius:2px;
+  background:linear-gradient(180deg,#C9B08A,#7A6448)}
+.c7-tk{position:relative;margin-bottom:13px;background:#F4EDE0;border-radius:2px;padding:13px 14px 12px;
+  box-shadow:0 6px 14px -8px #000}
+.c7-tk::before{content:'';position:absolute;left:26px;top:-12px;width:11px;height:16px;
+  border:2px solid #8A7458;border-bottom:0;border-radius:6px 6px 0 0}
+.c7-tk .no{position:absolute;right:12px;top:11px;font-family:'Geist Mono',monospace;font-size:7px;
+  letter-spacing:.14em;color:#A89684}
+.c7-tk b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:17px;
+  letter-spacing:-.025em;color:#2A1418;line-height:1.05;padding-right:52px}
+.c7-tk em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.08em;color:#8A6E72;margin-top:6px;text-transform:uppercase;line-height:1.6}
+.c7-bar{margin-top:11px;height:9px;border-radius:2px;background:#DCD0BC;overflow:hidden;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.2)}
+.c7-bar i{display:block;height:100%;background:repeating-linear-gradient(135deg,#7A2430 0 5px,#8E2E3A 5px 10px)}
+.c7-fig{display:flex;justify-content:space-between;margin-top:8px;font-family:'Geist Mono',monospace;
+  font-size:7px;letter-spacing:.11em;color:#8A6E72}
+.c7-fig b{color:#2A1418;font-family:'Geist Mono',monospace;font-size:9px}
+.c7-r{display:flex;align-items:center;gap:9px;margin-top:11px}
+.c7-coll{margin-left:auto;border:0;border-radius:2px;padding:10px 13px;background:#7A2430;color:#F6EDE2;
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.14em;font-weight:700}
+.c7-due{margin-left:auto;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.1em;color:#8A6E72}
+.c7-stamp{position:absolute;right:10px;bottom:9px;transform:rotate(-8deg);border:2px solid rgba(122,36,48,.55);
+  border-radius:3px;padding:4px 7px;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;
+  color:rgba(122,36,48,.7);font-weight:700;line-height:1.4;text-align:center}
+.c7-tk.paid{background:#E8DFCE}
+.c7-tk.paid b{color:#6E5E52}
+.c7-chits{display:flex;gap:8px;padding:0 12px}
+.c7-chit{flex:1;background:linear-gradient(180deg,#E2C888,#B4924C);border-radius:2px;padding:11px 12px;
+  box-shadow:0 4px 10px -5px #000}
+.c7-chit .k{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.18em;color:#5A431A}
+.c7-chit b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:13px;
+  letter-spacing:-.025em;color:#2E2208;line-height:1.08;margin-top:5px}
+.c7-chit.mt{background:none;box-shadow:inset 0 0 0 1.5px #5A4448}
+.c7-chit.mt .k,.c7-chit.mt b{color:#8A6E72}
+.c7-slips{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 12px}
+.c7-slip{border:0;background:#F4EDE0;border-radius:2px;padding:10px 11px;text-align:left;
+  box-shadow:0 3px 8px -5px #000}
+.c7-slip b{display:block;font-family:'Geist Mono',monospace;font-size:8.5px;color:#2A1418;letter-spacing:.05em}
+.c7-slip>span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.12em;
+  color:#7A2430;margin-top:5px}
+.c7-note{padding:12px 15px 0;font-size:11.5px;color:#A88A8E;line-height:1.55}
+.c7-note b{color:#F4EDE0;font-weight:400}
+
+/* =======================================================================
+   08 · THE MANTELPIECE — the shelf everyone who walks past sees
+   primitive: a horizontal shelf with objects standing on it and cards propped behind
+   ======================================================================= */
+.c8{background:linear-gradient(180deg,#2E2A2E,#241F24 46%,#1C181C);padding:0 0 26px}
+.c8-room{padding:15px 14px 10px;display:flex;justify-content:space-between;align-items:flex-start}
+.c8-room .t{font-family:'Clash Display',sans-serif;font-weight:600;font-size:17px;letter-spacing:-.02em;color:#EDE2D2}
+.c8-room .t>span{display:block;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.19em;
+  color:#9A8C86;margin-top:5px;font-weight:400}
+.c8-lab{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:#9A8C86;
+  padding:14px 14px 9px;display:flex;justify-content:space-between;align-items:baseline}
+.c8-lab u{text-decoration:none;color:#6E6360;letter-spacing:.12em}
+/* propped against the mirror */
+.c8-mirror{margin:0 12px;padding:16px 12px 22px;border-radius:4px;position:relative;
+  background:linear-gradient(168deg,rgba(220,230,235,.10),rgba(160,175,185,.045) 60%,rgba(120,130,140,.06));
+  box-shadow:inset 0 0 0 3px rgba(201,169,97,.32)}
+.c8-prop{position:relative;background:#F2E9D8;border-radius:2px;padding:11px 13px 10px;margin-bottom:9px;
+  box-shadow:0 7px 14px -8px rgba(0,0,0,.85)}
+.c8-prop:nth-child(1){transform:rotate(-1.5deg)}
+.c8-prop:nth-child(2){transform:rotate(1.2deg)}
+.c8-prop:nth-child(3){transform:rotate(-.7deg)}
+.c8-prop b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:16px;
+  letter-spacing:-.025em;color:#2A2420;line-height:1.05}
+.c8-prop em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;
+  letter-spacing:.08em;color:#8A7E70;margin-top:6px;text-transform:uppercase;line-height:1.6}
+.c8-prop .r{display:flex;align-items:baseline;gap:9px;margin-top:9px}
+.c8-prop .px{font-family:'Geist Mono',monospace;font-size:10px;color:#6E6258}
+.c8-prop .wh{margin-left:auto;font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;color:#8A6E3C}
+/* the plank */
+.c8-plank{margin:0 6px;height:20px;border-radius:3px;
+  background:linear-gradient(180deg,#7A5E42,#5A4230 55%,#3E2C20);
+  box-shadow:0 9px 18px -8px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,220,180,.28)}
+.c8-on{margin:0 12px;display:flex;gap:9px;align-items:flex-end;padding-top:14px}
+/* standing invitations — the ones he can take */
+.c8-card{flex:1;background:#F7F0E0;border-radius:2px;padding:12px 11px 11px;
+  box-shadow:0 8px 16px -9px rgba(0,0,0,.9);transform:rotate(-.8deg)}
+.c8-card:nth-child(2){transform:rotate(.9deg)}
+.c8-card b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:15px;
+  letter-spacing:-.025em;color:#2A2420;line-height:1.04}
+.c8-card em{display:block;font-style:normal;font-family:'Geist Mono',monospace;font-size:6px;
+  letter-spacing:.08em;color:#8A7E70;margin-top:6px;text-transform:uppercase;line-height:1.6}
+.c8-take{margin-top:10px;width:100%;border:0;border-radius:3px;padding:9px;background:#5A4230;color:#F7F0E0;
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.14em;font-weight:700}
+/* the dish, the plate, the frame */
+.c8-shelf2{margin:14px 12px 0;display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.c8-dish{border-radius:40px 40px 12px 12px;padding:13px 12px 12px;text-align:center;
+  background:radial-gradient(ellipse at 50% 10%,#3E3A3E,#2A262A 70%);
+  box-shadow:inset 0 4px 10px rgba(0,0,0,.7),0 4px 10px -6px #000}
+.c8-dishl{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.18em;color:#9A8C86;margin-bottom:9px}
+.c8-keys{display:flex;gap:6px;justify-content:center}
+.c8-k{width:15px;height:32px;border-radius:8px 8px 2px 2px;position:relative;
+  background:linear-gradient(150deg,#E2C888,#B4924C 46%,#7E6229);box-shadow:0 2px 4px rgba(0,0,0,.7)}
+.c8-k::after{content:'';position:absolute;left:50%;top:7px;width:5px;height:5px;border-radius:50%;
+  background:#2A2010;transform:translateX(-50%)}
+.c8-k.mt{background:none;box-shadow:inset 0 0 0 1.5px rgba(201,169,97,.35)}
+.c8-k.mt::after{background:rgba(0,0,0,.4)}
+.c8-kn{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.08em;color:#C3B49E;
+  margin-top:9px;line-height:1.6}
+.c8-plate{border-radius:3px;padding:13px 12px;text-align:center;
+  background:linear-gradient(180deg,#D8BC7C,#9C7C3C);box-shadow:0 4px 10px -6px #000,inset 0 1px 0 rgba(255,244,214,.6)}
+.c8-plate .k{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.2em;color:#5A431A}
+.c8-plate b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:32px;
+  letter-spacing:-.045em;color:#3A2A0A;line-height:.92;margin-top:6px}
+.c8-plate>span{display:block;font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.14em;
+  color:#5A431A;margin-top:6px}
+.c8-frame{margin:12px 12px 0;background:#F2E9D8;border-radius:2px;padding:5px;
+  box-shadow:0 6px 14px -8px rgba(0,0,0,.9)}
+.c8-frame .in{background:#3E3830;padding:13px 13px;border-radius:1px;text-align:center}
+.c8-frame .in b{display:block;font-family:'Clash Display',sans-serif;font-weight:700;font-size:15px;
+  letter-spacing:-.02em;color:#EDE2D2}
+.c8-frame .in>span{display:block;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.15em;
+  color:#A89A88;margin-top:6px}
+.c8-slips{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 12px}
+.c8-slip{border:0;background:rgba(247,240,224,.08);box-shadow:inset 0 0 0 1px rgba(201,169,97,.28);
+  border-radius:4px;padding:11px;text-align:left}
+.c8-slip b{display:block;font-family:'Geist Mono',monospace;font-size:8.5px;color:#EDE2D2;letter-spacing:.05em}
+.c8-slip>span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.12em;
+  color:var(--brass);margin-top:5px}
+.c8-note{padding:12px 15px 0;font-size:11.5px;color:#9A8C86;line-height:1.55}
+.c8-note b{color:#EDE2D2;font-weight:400}
+
+/* =======================================================================
+   09 · THE JAR SHELF — five jars, five levels
+   primitive: parallel vessels filling at different rates
+   ======================================================================= */
+.c9{background:linear-gradient(180deg,#26221C,#1C1915);padding:0 0 26px}
+.c9-hd{padding:15px 14px 8px;display:flex;justify-content:space-between;align-items:flex-start}
+.c9-hd .t{font-family:'Clash Display',sans-serif;font-weight:600;font-size:17px;letter-spacing:-.02em;color:#EFE6D2}
+.c9-hd .t>span{display:block;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.19em;
+  color:#9A8E76;margin-top:5px;font-weight:400}
+.c9-hd .n{text-align:right}
+.c9-hd .n b{font-family:var(--hand);font-size:32px;color:#EFE6D2;line-height:1}
+.c9-hd .n>span{display:block;font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.15em;
+  color:#9A8E76;margin-top:4px}
+.c9-row{display:flex;gap:5px;padding:12px 12px 0;align-items:flex-end}
+.c9-j{flex:1;text-align:center}
+.c9-glass{position:relative;height:96px;border-radius:5px 5px 9px 9px;overflow:hidden;
+  background:linear-gradient(100deg,rgba(214,226,214,.14),rgba(214,226,214,.05) 38%,rgba(214,226,214,.13));
+  box-shadow:inset 0 0 0 1.5px rgba(222,232,222,.3)}
+.c9-glass::before{content:'';position:absolute;left:0;right:0;top:0;height:8px;
+  background:linear-gradient(180deg,#B4A17A,#8A7A56);box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:3}
+.c9-glass i{position:absolute;left:0;right:0;bottom:0;z-index:1;
+  background:linear-gradient(180deg,#E2C888,#B4924C 60%,#8A6E33);
+  box-shadow:inset 0 2px 0 rgba(255,240,200,.5)}
+.c9-glass u{position:absolute;left:4px;top:12px;bottom:6px;width:5px;border-radius:3px;z-index:2;
+  background:linear-gradient(180deg,rgba(255,255,255,.24),transparent)}
+.c9-tag{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.08em;color:#B8AA8E;
+  margin-top:7px;line-height:1.5}
+.c9-pc{font-family:'Geist Mono',monospace;font-size:8px;color:var(--brass);margin-top:4px}
+.c9-j.gone .c9-glass{transform:rotate(180deg)}
+.c9-j.gone .c9-glass i{display:none}
+.c9-lab{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:#9A8E76;
+  padding:20px 14px 9px;display:flex;justify-content:space-between;align-items:baseline}
+.c9-lab u{text-decoration:none;color:#6E6554;letter-spacing:.12em}
+.c9-lbl{margin:0 12px 7px;background:#EFE3C6;border-radius:2px;padding:11px 12px;position:relative;
+  display:flex;align-items:center;gap:11px;box-shadow:0 4px 10px -6px #000}
+.c9-dot{width:11px;height:11px;border-radius:50%;flex:none;
+  background:linear-gradient(150deg,#E2C888,#8A6E33)}
+.c9-lbl .in{min-width:0;flex:1}
+.c9-lbl b{display:block;font-family:var(--hand);font-size:17px;color:#241E10;line-height:1.08}
+.c9-lbl em{display:block;font-style:normal;font-family:var(--hand);font-size:13px;color:#4A5E8A;
+  margin-top:4px;line-height:1.25}
+.c9-lbl .px{font-family:'Geist Mono',monospace;font-size:9px;color:#7A6E4A;margin-top:6px;letter-spacing:.06em}
+.c9-tk{border:0;border-radius:2px;padding:10px 12px;background:#5E4A22;color:#F4ECD6;
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.13em;font-weight:700;white-space:nowrap}
+.c9-wait{font-family:var(--hand);font-size:13px;color:#8A6E3C;white-space:nowrap;text-align:right;line-height:1.3}
+.c9-lbl.gone{background:#4A4436}
+.c9-lbl.gone b{color:#B0A88E}
+.c9-lbl.gone em{color:#8A8470}
+.c9-dish{margin:0 12px;background:#221E18;border-radius:30px 30px 8px 8px;padding:12px;
+  box-shadow:inset 0 3px 9px rgba(0,0,0,.7)}
+.c9-dishl{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.18em;color:#9A8E76;
+  text-align:center;margin-bottom:10px}
+.c9-toks{display:flex;gap:8px}
+.c9-tok{flex:1;border-radius:50px;padding:11px 8px;text-align:center;
+  background:radial-gradient(circle at 38% 28%,#F6E6BC,#CDA95E 56%,#96773A);
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.04em;color:#3A2C08;line-height:1.5;
+  box-shadow:0 3px 6px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,250,230,.7)}
+.c9-tok.mt{background:none;box-shadow:inset 0 0 0 1.5px rgba(201,169,97,.34);color:#8A7E62}
+.c9-slips{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 12px}
+.c9-slip{border:0;background:#EFE3C6;border-radius:2px;padding:10px 11px;text-align:left;
+  box-shadow:0 3px 8px -5px #000}
+.c9-slip b{display:block;font-family:var(--hand);font-size:15px;color:#241E10;line-height:1.1}
+.c9-slip>span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.12em;
+  color:#7A6E4A;margin-top:5px}
+.c9-note{padding:12px 15px 0;font-family:var(--hand);font-size:15px;color:#B8AA8E;line-height:1.4}
+
+/* =======================================================================
+   10 · THE STRONGBOX — the tin, lid open, seen from above
+   primitive: an open container in plan view with compartments
+   ======================================================================= */
+.c10{background:#14120F;padding:0 0 26px}
+.c10-lid{margin:12px;border-radius:6px 6px 2px 2px;padding:13px;position:relative;
+  background:linear-gradient(178deg,#22201C,#171512);box-shadow:inset 0 0 0 2px #2E2A24}
+.c10-lidl{position:absolute;right:12px;top:11px;font-family:'Geist Mono',monospace;font-size:6px;
+  letter-spacing:.18em;color:#6E6656}
+.c10-past{background:#EDE2C6;border-radius:1px;padding:11px 12px;transform:rotate(-.5deg);
+  box-shadow:0 4px 10px -6px #000}
+.c10-past .k{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.2em;color:#8A7E5E;
+  border-bottom:1px solid #C9BC98;padding-bottom:7px;margin-bottom:8px}
+.c10-pay{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.c10-p{border:0;background:none;box-shadow:inset 0 0 0 1px #C9BC98;border-radius:2px;padding:8px 9px;
+  text-align:left}
+.c10-p b{display:block;font-family:'Geist Mono',monospace;font-size:7.5px;color:#241E10;letter-spacing:.04em}
+.c10-p>span{display:block;font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.1em;
+  color:#7A6E4A;margin-top:4px}
+.c10-tray{margin:0 12px;border-radius:3px;padding:11px;display:grid;grid-template-columns:1.2fr 1fr 1fr;
+  gap:8px;background:linear-gradient(178deg,#3E1F1C,#2A1512);box-shadow:inset 0 3px 10px rgba(0,0,0,.7)}
+.c10-well{border-radius:3px;padding:11px 9px;text-align:center;background:rgba(0,0,0,.32);
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.75)}
+.c10-well .k{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.16em;color:#B08E82;
+  margin-bottom:8px;line-height:1.5}
+.c10-well .n{font-family:'Clash Display',sans-serif;font-weight:700;font-size:29px;letter-spacing:-.045em;
+  color:var(--brass);line-height:.92}
+.c10-well .s{font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.13em;color:#B08E82;margin-top:6px}
+.c10-disc{width:36px;height:36px;border-radius:50%;margin:0 auto;display:grid;place-items:center;
+  background:radial-gradient(circle at 36% 28%,#F6E6BC,#CDA95E 54%,#8A6E33);
+  font-family:'Geist Mono',monospace;font-size:5.5px;letter-spacing:.03em;color:#3A2C08;line-height:1.3;
+  box-shadow:0 3px 6px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,250,230,.7)}
+.c10-disc.mt{background:none;box-shadow:inset 0 0 0 1.5px rgba(201,169,97,.32);color:#8A6E5E}
+.c10-well .tl{font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.05em;color:#DCC6B8;
+  margin-top:8px;line-height:1.5}
+.c10-lab{font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:#8A7E68;
+  padding:20px 14px 9px;display:flex;justify-content:space-between;align-items:baseline}
+.c10-lab u{text-decoration:none;color:#635A4A;letter-spacing:.12em}
+.c10-bun{margin:0 12px 8px;position:relative;background:linear-gradient(178deg,#D6CBA8,#C2B492);
+  border-radius:2px;padding:12px 13px;box-shadow:0 4px 10px -6px #000}
+.c10-band{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none;
+  background:linear-gradient(90deg,transparent 0 62px,rgba(122,36,48,.18) 62px 96px,transparent 96px)}
+.c10-bun b{position:relative;display:block;font-family:'Clash Display',sans-serif;font-weight:700;
+  font-size:16px;letter-spacing:-.025em;color:#241E10;line-height:1.05}
+.c10-bun em{position:relative;display:block;font-style:normal;font-family:'Geist Mono',monospace;
+  font-size:6.5px;letter-spacing:.08em;color:#7A7058;margin-top:6px;text-transform:uppercase;line-height:1.6}
+.c10-bun .r{position:relative;display:flex;align-items:center;gap:9px;margin-top:10px}
+.c10-bun .px{font-family:'Geist Mono',monospace;font-size:10px;color:#5E5642}
+.c10-lift{margin-left:auto;border:0;border-radius:2px;padding:9px 12px;background:#3E1F1C;color:#EDE2C6;
+  font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.13em;font-weight:700}
+.c10-short{margin-left:auto;font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.1em;color:#7A6248}
+.c10-bun.thin{background:linear-gradient(178deg,#57513F,#474234)}
+.c10-bun.thin b{color:#B2AA92}
+.c10-bun.thin em{color:#8A8370}
+.c10-bun.thin .px{color:#9A9280}
+.c10-bun.spent{background:none;box-shadow:inset 0 0 0 1.5px #2E2A24}
+.c10-bun.spent b{color:#6E6656}
+.c10-bun.spent em{color:#57513F}
+.c10-note{padding:12px 15px 0;font-size:11.5px;color:#8A7E68;line-height:1.55}
+.c10-note b{color:#EDE2C6;font-weight:400}
+
+/* hand-off */
+.ho{padding:52px 0 90px}
+.ho h2{font-size:26px;letter-spacing:-.03em;margin-bottom:6px}
+.ho h3{font-size:15px;margin:32px 0 8px;color:var(--brass)}
+.ho p,.ho li{color:var(--dim);font-size:14.6px;line-height:1.62;max-width:780px}
+.ho b{color:var(--ink);font-weight:500}
+.ho ol,.ho ul{padding-left:19px;margin:8px 0}
+.ho li{margin-bottom:10px}
+.ho .rank{border-left:2px solid var(--brass);padding-left:15px;margin:12px 0 20px}
+.ho .regret{border-left:2px solid var(--oxblood);padding-left:15px;margin:12px 0 20px}
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="bar-in">
+  <span class="lb">The Bank · v3 · state</span>
+  <div class="seg">
+    <button id="sgA" class="on" onclick="setDay(41)">DAY 41 · 1,530 XP</button>
+    <button id="sgB" onclick="setDay(1)">DAY ONE · 0 XP</button>
+  </div>
+</div></div>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="kick">Burn the Boats · Agent 6 · Round 3 · Fifty ideas, ten rendered</div>
+  <h1>It is a bank. Fifty candidates,<br>forty killed in writing, ten built.</h1>
+  <p>Round 1 was too austere. Round 2 heard "fun" and went goofy — arcade cabinets and primary colours,
+  a screen visibly trying to cheer him up. <b>Neither is right, and the answer is not the midpoint.</b>
+  The target is the feeling of <b>value held</b>: weight, worth, permanence, and a little ceremony when
+  you take some out.</p>
+  <p>The tuning fork is his own note about the Fridge. A fridge door works because it is
+  <b>a real object that already carries emotional weight</b> — you put things on it you are proud of, and
+  everyone who walks past sees them. It earns its metaphor instead of wearing it as a costume. Every one
+  of the ten below had to clear that bar.</p>
+
+  <div class="fork">
+    <h3>The hardest state — use the switch at the top of this page</h3>
+    <p>Every rendition renders in <b>two states</b>: day 41 with 1,530 XP banked, and <b>day one at zero</b>.
+    Day one is the state that decides whether he opens this tab in week one, and "nothing is affordable yet"
+    must read as promise rather than poverty.</p>
+    <p>The answer I found is the same in all ten, and it is a content decision rather than a visual one:
+    <b>on day one the nearest thing is not a reward — it is his first privilege</b>, which one 85% week
+    buys. Five days, not eleven. So on day one every direction leads with the privilege, and the rewards
+    stand behind it already named, already carrying the conditions he wrote, waiting.</p>
+  </div>
+</header>
+
+<!-- ================= THE CULL ================= -->
+<section class="cull" id="cull">
+  <h2>Step 1 and 2 — fifty candidates, forty killed</h2>
+  <p class="lede">Every one scored against what this tab must actually carry: a balance that only rises and
+  reads at a glance · two currencies, one of them objects you hold · five rewards with prices, his own
+  conditions, and locked/affordable/claimed states · a claim moment · history · all of it on a 390px phone
+  and still good at zero. Most metaphors die on <b>history</b> or on <b>five different prices</b>.</p>
+
+  <table class="ctab">
+    <tr><th></th><th>Candidate</th><th>Verdict</th><th></th></tr>
+
+    <tr class="keep"><td>01</td><td class="w">The counting house — a teller's counter</td><td>Unmistakably a bank, and the counter has natural zones: window, tray, dockets, bell. The bell is a claim moment you can hear.</td><td><span class="tag k">RENDERED</span></td></tr>
+    <tr class="keep"><td>02</td><td class="w">The safe deposit box room</td><td>Two keys turning together is the best literal image of an earned-not-bought privilege in the whole fifty. History is a door left standing open.</td><td><span class="tag k">RENDERED</span></td></tr>
+    <tr class="keep"><td>03</td><td class="w">The cellar — bottles laid down</td><td>"Laying something down until it's ready" is exactly a locked reward, without a shred of refusal in it. Drawing a bottle is a real ceremony.</td><td><span class="tag k">RENDERED</span></td></tr>
+    <tr class="keep"><td>04</td><td class="w">Cash envelopes on a shelf</td><td>People genuinely run their money this way. Thickness carries the balance physically, and his condition is handwritten on the front where it belongs.</td><td><span class="tag k">RENDERED</span></td></tr>
+    <tr class="keep"><td>05</td><td class="w">A pilot's logbook</td><td>Hours accumulate and can never be flown backwards. Ratings are literally permissions someone signs off — the single best fit for privileges found anywhere.</td><td><span class="tag k">RENDERED</span></td></tr>
+    <tr class="keep"><td>06</td><td class="w">A workshop shadow board</td><td>The painted outline of a missing tool is the finest empty state ever designed. At zero XP the board is already fully marked out — everything's place waiting.</td><td><span class="tag k">RENDERED</span></td></tr>
+    <tr class="keep"><td>07</td><td class="w">A layaway counter</td><td>Paying toward a named thing over weeks and collecting it when it clears <em>is</em> the reward mechanic, already existing in the world with real dignity attached.</td><td><span class="tag k">RENDERED</span></td></tr>
+    <tr class="keep"><td>08</td><td class="w">The mantelpiece</td><td>The Fridge's sibling and the only one that solves history properly: claimed things stand on the shelf, and what's coming is propped against the mirror.</td><td><span class="tag k">RENDERED</span></td></tr>
+    <tr class="keep"><td>09</td><td class="w">A shelf of labelled jars</td><td>Five jars at five levels answers "how far away" with no numbers at all, and on day one five empty jars already wear his handwriting.</td><td><span class="tag k">RENDERED</span></td></tr>
+    <tr class="keep"><td>10</td><td class="w">The strongbox, lid open</td><td>A plan view rather than an elevation, which no other survivor uses. Compartments hold the two currencies apart without a word of explanation.</td><td><span class="tag k">RENDERED</span></td></tr>
+
+    <tr><td>11</td><td class="w">Piggy bank</td><td>One vessel, one number. Cannot hold five priced rewards or a second currency. Collapses instantly.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>12</td><td class="w">A single coin jar</td><td>Same collapse — but split into five labelled jars it survives as №09, which is where it went.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>13</td><td class="w">Christmas club / hamper scheme card</td><td>Weekly stamps encode time, not price. A 2,000 reward and a 1,200 reward would look identical.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>14</td><td class="w">Ration book</td><td>Scarcity framing. Rationing is the one feeling this tab must never produce.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>15</td><td class="w">War bonds poster</td><td>Propaganda register — it shouts at him, and he has a header that already does the shouting.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>16</td><td class="w">A share portfolio</td><td>Value that can fall. XP only rises, so the metaphor would be telling him a lie every time the market moved.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>17</td><td class="w">A dividend statement</td><td>Same defect, and it is round 2's Statement again with a different letterhead.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>18</td><td class="w">A pension projection</td><td>The curve becomes the hero and the five rewards shrink to footnotes under it.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>19</td><td class="w">Mortgage amortisation</td><td>It is debt. The value flows the wrong way and the balance falls toward zero as you succeed.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>20</td><td class="w">A pub slate / running a tab</td><td>Debt again, and it implies he owes somebody. He owes nobody here.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>21</td><td class="w">A pawnshop window</td><td>You pawn things when you are desperate. Precisely the wrong emotional weight for a store of value.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>22</td><td class="w">The casino cage</td><td>Chance. Killed in round 2 for destroying the mechanic he cares about, and still dead.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>23</td><td class="w">A poker chip tray</td><td>Chips imply you can lose them at the table. XP cannot be lost, so the object contradicts the rule.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>24</td><td class="w">A treasure chest</td><td>A costume, not a real object. Nobody has ever kept anything that mattered in one.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>25</td><td class="w">Fort Knox / the gold reserve</td><td>No human scale and nothing in it is his. Awe is not the feeling we want.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>26</td><td class="w">The vault door and its wheel</td><td>One dramatic object with nowhere to put five rewards behind it. Great hero shot, no product.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>27</td><td class="w">A combination dial</td><td>A single dial cannot express five different prices at once. Dies on the reward list.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>28</td><td class="w">An ATM screen</td><td>It is the software we are trying not to build, rendered slightly worse.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>29</td><td class="w">A cheque book</td><td>Cheques pay other people. Every reward here he pays to himself.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>30</td><td class="w">A wallet</td><td>Too small an object. No room for conditions, history, or a second currency.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>31</td><td class="w">A passport full of visa stamps</td><td>Visas map beautifully onto privileges — permissions someone grants you. But a passport holds no balance, and the balance is half the tab. Painful kill.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>32</td><td class="w">A departures board</td><td>Used in round 2, and on inspection it is a schedule rather than a store of value. Nothing is <em>kept</em> on it.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>33</td><td class="w">An odometer</td><td>One number, no rewards, no second currency, nothing to claim.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>34</td><td class="w">A fuel gauge</td><td>A balance that falls as you use it. Backwards.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>35</td><td class="w">A battery charging</td><td>Implies depletion and, worse, implies he runs out.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>36</td><td class="w">A reservoir or dam</td><td>Cold engineering, and again a level that drops when you draw on it.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>37</td><td class="w">A whisky cask maturing</td><td>Value from time rather than from work. It would reward him for waiting, which is the opposite of the point.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>38</td><td class="w">A cheese cave</td><td>Same defect as the cask, and unreadable at 390px.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>39</td><td class="w">A sourdough starter</td><td>Charming, but a starter can die. Nothing in this app may ever die.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>40</td><td class="w">A compost heap</td><td>The joke writes itself and he does not need it written.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>41</td><td class="w">An orchard or kitchen garden</td><td>Growth runs on seasons, not on prices. The mapping breaks the moment two rewards cost different amounts.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>42</td><td class="w">Beehive frames</td><td>Honey is produced, not chosen. There is no moment of deliberately spending, which is the whole tab.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>43</td><td class="w">A woodpile laid in for winter</td><td>Superb for "value held" — genuinely one of the best feelings in the fifty — but there is nowhere to put five named rewards. Dies on the list.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>44</td><td class="w">A granary or silo</td><td>One undifferentiated mass against five distinct prices. Same collapse as the woodpile.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>45</td><td class="w">A cairn of stacked stones</td><td>Perfect for a balance that only ever rises, useless for everything else the tab must carry.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>46</td><td class="w">A cathedral built stone by stone</td><td>Ninety-one days is not a cathedral. The scale mocks the effort rather than honouring it.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>47</td><td class="w">A brick wall going up</td><td>Same scale problem, and a wall is the exact thing he hits when he falls behind.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>48</td><td class="w">A quilt sewn square by square</td><td>Beautiful history and genuine warmth, but no forward-looking state at all. It can only show what is done.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>49</td><td class="w">A jigsaw puzzle</td><td>Missing pieces read as failure, which is the one banned feeling in this product.</td><td><span class="tag">KILLED</span></td></tr>
+    <tr><td>50</td><td class="w">Exchequer tally sticks</td><td>The oldest banking record there is, and splitting a tally in two is a gorgeous image of a permission held by two parties. But it needs a history lesson before it reads, and it is illegible at 390px. The one I most regret.</td><td><span class="tag">KILLED</span></td></tr>
+  </table>
+</section>
+
+<!-- ================= 01 · THE COUNTING HOUSE ================= -->
+<section class="dir" id="d1">
+  <div class="dh"><div class="dn">01</div><div class="dt">
+    <h2>The Counting House</h2>
+    <div class="dm">World: <b>a teller's counter, from the customer's side</b><br>
+      Primitive: <b>a service-counter elevation with stacked functional zones</b></div>
+    <p class="notx">This is <b>NOT a screen you operate</b> — it is a place you are served at.</p>
+    <p class="dl">Mahogany, a brass grille, and a ledger turned around to face you. The balance is written in
+    the book on the other side of the glass; the two privileges are lying in the brass tray under the grille
+    where a teller pushes things through. Rewards are <b>dockets on the shelf</b>, and you claim one by
+    <b>ringing the bell</b> — a claim moment with a sound.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv c1">
+        <div class="c1-plate"><b>THE COUNTING HOUSE</b><span>WINDOW 1</span></div>
+
+        <div class="c1-win"><div class="c1-bars"></div>
+          <div class="k">ON DEPOSIT</div>
+          <div class="n"><span class="v41">1,530</span><span class="v0">0</span></div>
+          <div class="s"><span class="v41">+118 PAID IN TODAY</span><span class="v0">ACCOUNT OPENED TODAY</span></div>
+        </div>
+
+        <div class="c1-tray">
+          <div class="c1-trayl b41">IN THE TRAY · PRIVILEGES, YOURS TO SPEND ON THE SCHEDULE</div>
+          <div class="c1-trayl b0">THE TRAY IS EMPTY · YOUR FIRST ONE IS FIVE DAYS OFF</div>
+          <div class="c1-toks b41">
+            <div class="c1-tok">CUT A BLOCK<br>IN HALF</div>
+            <div class="c1-tok">MAKE A BLOCK<br>YOURS</div>
+          </div>
+          <div class="c1-toks b0">
+            <div class="c1-tok mt">ONE 85% WEEK<br>PUTS ONE HERE</div>
+            <div class="c1-tok mt">OR LOG ANY<br>BOOST BELOW</div>
+          </div>
+        </div>
+
+        <div class="c1-sec"><span>On the shelf</span><u>you wrote the terms</u></div>
+
+        <div class="c1-dk"><b>Nice restaurant date</b>
+          <em>Cooked + laundry every night this week</em>
+          <div class="row"><span class="px">1,200</span>
+            <button class="c1-ask v41">ASK FOR IT</button>
+            <span class="c1-short v0">NOT FUNDED YET</span></div></div>
+
+        <div class="c1-dk"><b>A golf day</b>
+          <em>Two SANO push weeks back to back</em>
+          <div class="row"><span class="px">1,500</span>
+            <button class="c1-ask v41">ASK FOR IT</button>
+            <span class="c1-short v0">NOT FUNDED YET</span></div></div>
+
+        <div class="c1-dk soon"><b>A full day off</b>
+          <em>85%+ three weeks running</em>
+          <div class="row"><span class="px">2,000</span>
+            <span class="c1-short v41">470 SHORT · ~4 DAYS</span>
+            <span class="c1-short v0">NOT FUNDED YET</span></div></div>
+
+        <div class="c1-dk soon"><b>That purchase</b>
+          <em>First client signed and paid</em>
+          <div class="row"><span class="px">2,500</span>
+            <span class="c1-short v41">970 SHORT · ~9 DAYS</span>
+            <span class="c1-short v0">NOT FUNDED YET</span></div></div>
+
+        <div class="c1-dk soon"><b>A weekend away</b>
+          <em>Anthony signed, and one more behind him</em>
+          <div class="row"><span class="px">4,000</span>
+            <span class="c1-short v41">2,470 SHORT · ~21 DAYS</span>
+            <span class="c1-short v0">NOT FUNDED YET</span></div></div>
+
+        <div class="c1-bell"><div class="c1-dome"></div>
+          <span class="v41">RING THE BELL AND IT IS<br>COUNTED OUT TO YOU</span>
+          <span class="v0">THE BELL WORKS FROM<br>YOUR VERY FIRST DEPOSIT</span></div>
+
+        <div class="c1-sec"><span>Pay in</span><u>never scored against you</u></div>
+        <div class="c1-slips">
+          <button class="c1-slip"><b>Networking event</b><span>+250 &amp; A TOKEN</span></button>
+          <button class="c1-slip"><b>Golf day</b><span>+150</span></button>
+          <button class="c1-slip"><b>Finances hour</b><span>+90</span></button>
+          <button class="c1-slip"><b>Read tonight</b><span>+60</span></button>
+        </div>
+
+        <div class="c1-sec"><span>Drawn</span><u>the receipt spike</u></div>
+        <div class="c1-spike">
+          <div class="rc b41"><b>A LONG LUNCH</b>DRAWN DAY 26 · 800 · PAID OUT IN FULL</div>
+          <div class="c1-empty b0">THE SPIKE IS EMPTY.<br>
+            <b>THE FIRST RECEIPT ON IT IS THE ONE YOU'LL REMEMBER.</b></div>
+        </div>
+      </div></div>
+      <div class="cap">01 · THE COUNTING HOUSE</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it clears the bar</dt><dd>It is the only direction that is <b>literally the thing</b> rather
+      than a metaphor for it. A counting house is where value is held and counted out, and the counter's
+      real zones — glass, tray, shelf, bell, spike — map onto the four content types with nothing left over
+      and nothing invented.</dd>
+      <dt>The claim moment</dt><dd><b>Ringing the bell.</b> A claim that makes a sound is worth ten that
+      flash. It is also the only claim in the set where something is handed <em>to</em> him rather than
+      unlocked <em>by</em> him — which is the correct power relationship for a reward he has already paid for.</dd>
+      <dt>Day one</dt><dd>The tray is empty and says so plainly, but it says <b>"your first one is five days
+      off"</b> — not "you have none". The dockets all stand on the shelf already carrying his conditions, so
+      the shelf is stocked from the first morning even though nothing is funded.</dd>
+      <div class="risk">Risk: it is the most institutional of the ten, and institutions are exactly what
+      round 1 felt like. It stays warm only because of the mahogany, the handwriting on the dockets and the
+      brass — swap those for greys and it collapses straight back into the austere version.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 02 · THE BOX ROOM ================= -->
+<section class="dir" id="d2">
+  <div class="dh"><div class="dn">02</div><div class="dt">
+    <h2>The Box Room</h2>
+    <div class="dm">World: <b>a safe deposit box room</b><br>
+      Primitive: <b>a repeating array of numbered hinged doors</b></div>
+    <p class="notx">This is <b>NOT a shop</b> — everything behind these doors is already yours.</p>
+    <p class="dl">Nothing here is for sale. Each reward is <b>in a box with his name on it</b>, waiting for
+    the balance that opens it — which is a completely different feeling from a price tag. The privileges are
+    <b>two brass keys on a ring</b>, and a deposit box famously needs two keys turned together, which is the
+    best literal picture of an earned permission in the whole fifty.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv c2">
+        <div class="c2-hd">
+          <div class="t">The Box Room<span>DAY <span class="v41">41</span><span class="v0">1</span> OF 91</span></div>
+          <div class="n"><b><span class="v41">1,530</span><span class="v0">0</span></b>
+            <span><span class="v41">+118 TODAY</span><span class="v0">OPENED TODAY</span></span></div>
+        </div>
+
+        <div class="c2-keys">
+          <div class="l b41">ON THE RING · TWO KEYS, YOURS, NO EXPIRY</div>
+          <div class="l b0">THE RING IS BARE · ONE 85% WEEK CUTS THE FIRST KEY</div>
+          <div class="c2-ring b41">
+            <div class="c2-key"><div class="c2-kb"></div><span>CUT A BLOCK<br>IN HALF</span></div>
+            <div class="c2-key"><div class="c2-kb"></div><span>MAKE A BLOCK<br>YOURS</span></div>
+          </div>
+          <div class="c2-ring b0">
+            <div class="c2-key"><div class="c2-kb mt"></div><span>CUT A BLOCK<br>IN HALF</span></div>
+            <div class="c2-key"><div class="c2-kb mt"></div><span>MAKE A BLOCK<br>YOURS</span></div>
+          </div>
+        </div>
+
+        <div class="c2-sec"><span>The wall</span><u>your name is on all of them</u></div>
+        <div class="c2-wall">
+          <div class="c2-box">
+            <div class="c2-door rdy"><div class="no">01</div><div class="hole"></div></div>
+            <div class="c2-plate"><b>Nice restaurant date</b>
+              <em>Cooked + laundry every night this week</em>
+              <div class="r"><span class="px">1,200</span>
+                <button class="c2-open v41">OPEN IT</button>
+                <span class="c2-shut v0">SEALED</span></div></div></div>
+
+          <div class="c2-box">
+            <div class="c2-door rdy"><div class="no">02</div><div class="hole"></div></div>
+            <div class="c2-plate"><b>A golf day</b>
+              <em>Two SANO push weeks back to back</em>
+              <div class="r"><span class="px">1,500</span>
+                <button class="c2-open v41">OPEN IT</button>
+                <span class="c2-shut v0">SEALED</span></div></div></div>
+
+          <div class="c2-box">
+            <div class="c2-door"><div class="no">03</div><div class="hole"></div></div>
+            <div class="c2-plate"><b>A full day off</b>
+              <em>85%+ three weeks running</em>
+              <div class="r"><span class="px">2,000</span>
+                <span class="c2-shut v41">OPENS IN ~4 DAYS</span>
+                <span class="c2-shut v0">SEALED</span></div></div></div>
+
+          <div class="c2-box">
+            <div class="c2-door"><div class="no">04</div><div class="hole"></div></div>
+            <div class="c2-plate"><b>That purchase</b>
+              <em>First client signed and paid</em>
+              <div class="r"><span class="px">2,500</span>
+                <span class="c2-shut v41">OPENS IN ~9 DAYS</span>
+                <span class="c2-shut v0">SEALED</span></div></div></div>
+
+          <div class="c2-box">
+            <div class="c2-door"><div class="no">05</div><div class="hole"></div></div>
+            <div class="c2-plate"><b>A weekend away</b>
+              <em>Anthony signed, and one more behind him</em>
+              <div class="r"><span class="px">4,000</span>
+                <span class="c2-shut v41">OPENS IN ~21 DAYS</span>
+                <span class="c2-shut v0">SEALED</span></div></div></div>
+
+          <div class="c2-box gone b41">
+            <div class="c2-door open"><div class="no">06</div><div class="hole"></div></div>
+            <div class="c2-plate"><b>A long lunch</b>
+              <em>Drawn day 26 · box standing open</em>
+              <div class="r"><span class="px">800</span><span class="c2-shut">TAKEN</span></div></div></div>
+        </div>
+
+        <div class="c2-note b0">Six doors, all of them yours, none of them open yet.
+          <b>The first key is closer than the first box.</b></div>
+
+        <div class="c2-sec"><span>The deposit slot</span><u>never scored against you</u></div>
+        <div class="c2-slips">
+          <button class="c2-slip"><b>Networking event</b><span>+250 &amp; A KEY</span></button>
+          <button class="c2-slip"><b>Golf day</b><span>+150</span></button>
+          <button class="c2-slip"><b>Finances hour</b><span>+90</span></button>
+          <button class="c2-slip"><b>Read tonight</b><span>+60</span></button>
+        </div>
+      </div></div>
+      <div class="cap">02 · THE BOX ROOM</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it clears the bar</dt><dd>It removes the transaction entirely. <b>He is not buying a day off —
+      he is being let into the box it is already sitting in.</b> That reframes every locked reward from a
+      thing withheld into a thing reserved, which is the single most important sentence in this tab.</dd>
+      <dt>History, solved by the object</dt><dd>Box 06 stands open and empty with its plate still engraved.
+      A claimed reward does not vanish from the wall, it becomes <b>visible evidence</b> — permanently.
+      No other direction gets history this cheaply.</dd>
+      <dt>Day one</dt><dd>All five doors present, engraved and sealed. The ring is bare and says so. The
+      copy underneath does the work: <b>"the first key is closer than the first box."</b></dd>
+      <div class="risk">Risk: brass on steel is one bad decision away from the round-1 vault, and the doors
+      are the closest thing in this set to a grid. It earns its place on the two-key idea; if that idea were
+      cut, this direction should be cut with it.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 03 · THE CELLAR ================= -->
+<section class="dir" id="d3">
+  <div class="dh"><div class="dn">03</div><div class="dt">
+    <h2>The Cellar</h2>
+    <div class="dm">World: <b>a wine cellar and its cellar book</b><br>
+      Primitive: <b>long horizontal objects lying in cradles</b></div>
+    <p class="notx">This is <b>NOT a countdown</b> — nothing here is late, it is laying down.</p>
+    <p class="dl">The best reframing of "locked" in the fifty. A bottle you cannot open yet is not denied
+    you — it is <b>laying down until it is ready</b>, and a cellar is somewhere you deliberately put good
+    things to wait. Ready bottles wear a printed label; the rest are chalked. The empty bin keeps its label
+    so you can see what you drank.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv c3">
+        <div class="c3-slate">
+          <div><div class="k">in store</div>
+            <div class="n"><span class="v41">1,530</span><span class="v0">0</span></div></div>
+          <div class="s"><span class="v41">+118 LAID DOWN TODAY</span><span class="v0">CELLAR OPENED TODAY</span></div>
+        </div>
+
+        <div class="c3-sec"><span>Bin tags</span><u>privileges · yours, no occasion needed</u></div>
+        <div class="c3-tags b41">
+          <div class="c3-tag"><div class="k">TAG 07</div><b>Cut a block in half</b></div>
+          <div class="c3-tag"><div class="k">TAG 08</div><b>Make a block yours</b></div>
+        </div>
+        <div class="c3-tags b0">
+          <div class="c3-tag mt"><div class="k">TAG 07</div><b>One 85% week</b></div>
+          <div class="c3-tag mt"><div class="k">TAG 08</div><b>Or any boost</b></div>
+        </div>
+
+        <div class="c3-sec"><span>The racks</span><u>you wrote the terms</u></div>
+        <div class="c3-rack">
+          <div class="c3-bin"><div class="c3-btl"></div>
+            <div class="in"><b>Nice restaurant date</b>
+              <em>Cooked + laundry every night this week</em>
+              <div class="r"><span class="px">1,200</span>
+                <button class="c3-draw v41">DRAW IT</button>
+                <span class="c3-lay v0">laying down</span></div></div></div>
+
+          <div class="c3-bin"><div class="c3-btl"></div>
+            <div class="in"><b>A golf day</b>
+              <em>Two SANO push weeks back to back</em>
+              <div class="r"><span class="px">1,500</span>
+                <button class="c3-draw v41">DRAW IT</button>
+                <span class="c3-lay v0">laying down</span></div></div></div>
+
+          <div class="c3-bin down"><div class="c3-btl"></div>
+            <div class="in"><b>A full day off</b>
+              <em>85%+ three weeks running</em>
+              <div class="r"><span class="px">2,000</span>
+                <span class="c3-lay v41">ready in ~4 days</span>
+                <span class="c3-lay v0">laying down</span></div></div></div>
+
+          <div class="c3-bin down"><div class="c3-btl"></div>
+            <div class="in"><b>That purchase</b>
+              <em>First client signed and paid</em>
+              <div class="r"><span class="px">2,500</span>
+                <span class="c3-lay v41">ready in ~9 days</span>
+                <span class="c3-lay v0">laying down</span></div></div></div>
+
+          <div class="c3-bin down"><div class="c3-btl"></div>
+            <div class="in"><b>A weekend away</b>
+              <em>Anthony signed, and one more behind him</em>
+              <div class="r"><span class="px">4,000</span>
+                <span class="c3-lay v41">ready in ~21 days</span>
+                <span class="c3-lay v0">laying down</span></div></div></div>
+
+          <div class="c3-bin gone b41"><div class="c3-btl mt"></div>
+            <div class="in"><b>A long lunch</b>
+              <em>Drunk day 26 · the bin keeps the label</em>
+              <div class="r"><span class="px">800</span><span class="c3-lay">drawn</span></div></div></div>
+        </div>
+
+        <div class="c3-note b0">Six bins, all of them filled, none of them ready.
+          A cellar on its first day is supposed to look like this.</div>
+
+        <div class="c3-sec"><span>Laying down</span><u>boosts · never scored against you</u></div>
+        <div class="c3-lays">
+          <button class="c3-slip"><b>Networking event</b><span>+250 &amp; A TAG</span></button>
+          <button class="c3-slip"><b>Golf day</b><span>+150</span></button>
+          <button class="c3-slip"><b>Finances hour</b><span>+90</span></button>
+          <button class="c3-slip"><b>Read tonight</b><span>+60</span></button>
+        </div>
+      </div></div>
+      <div class="cap">03 · THE CELLAR</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it clears the bar</dt><dd>"Laying down" is the only phrase found in three rounds that makes
+      an unaffordable reward sound like <b>good practice rather than failure</b>. You lay a bottle down on
+      purpose. Nobody has ever felt rebuked by a cellar.</dd>
+      <dt>The claim moment</dt><dd>Drawing a bottle — a small, deliberate, slightly ceremonial act you only
+      do when the occasion is right. It matches the weight of spending two thousand XP far better than a
+      button that says CLAIM.</dd>
+      <dt>Day one</dt><dd>The strongest day one of the ten. <b>A cellar on its first day is supposed to look
+      full and unready</b> — that is what a cellar <em>is</em> — so zero XP reads as correct rather than
+      empty. Every bottle is already in its bin with his condition chalked on it.</dd>
+      <div class="risk">Risk: wine carries class associations he may not want, and there is a live question
+      about whether alcohol imagery is right for a man deliberately curbing two vices. That is his call, not
+      mine, and it is the reason this is ranked third rather than first.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 04 · THE ENVELOPES ================= -->
+<section class="dir" id="d4">
+  <div class="dh"><div class="dn">04</div><div class="dt">
+    <h2>The Envelopes</h2>
+    <div class="dm">World: <b>the cash envelope system</b><br>
+      Primitive: <b>envelopes seen edge-on, thickness carrying the balance</b></div>
+    <p class="notx">This is <b>NOT a number pretending to be money</b> — it has a thickness.</p>
+    <p class="dl">Real people genuinely run their money this way: one envelope per thing, the condition
+    written on the front in their own hand, and you can tell how close you are <b>by feel</b>. The fat
+    envelopes are funded. The thin ones are not. His conditions are handwritten where they belong — on the
+    outside, in ink, by him.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv c4">
+        <div class="c4-drw">
+          <div><div class="k">in the drawer</div>
+            <div class="n"><span class="v41">1,530</span><span class="v0">0</span></div></div>
+          <div class="s"><span class="v41">+118 IN TODAY<br>ABOUT 118 A DAY</span>
+            <span class="v0">DRAWER OPENED<br>TODAY</span></div>
+        </div>
+
+        <div class="c4-sec"><span>Clipped to the front</span><u>privileges</u></div>
+        <div class="c4-clip">
+          <div class="c4-vs b41">
+            <div class="c4-v"><div class="k">VOUCHER 07</div><b>Cut a block in half</b></div>
+            <div class="c4-v"><div class="k">VOUCHER 08</div><b>Make a block yours</b></div>
+          </div>
+          <div class="c4-vs b0">
+            <div class="c4-v mt"><div class="k">VOUCHER 07</div><b>One 85% week</b></div>
+            <div class="c4-v mt"><div class="k">VOUCHER 08</div><b>Or any boost</b></div>
+          </div>
+        </div>
+
+        <div class="c4-sec"><span>The envelopes</span><u>you wrote the fronts</u></div>
+        <div class="c4-envs">
+          <div class="c4-env t4"><b>Restaurant date</b>
+            <em>cooked + laundry every night this week</em>
+            <div class="r"><span class="px"><b>1,200</b><br>FULL</span>
+              <button class="c4-tear v41">OPEN IT</button>
+              <span class="c4-need v0">nothing in it yet</span></div></div>
+
+          <div class="c4-env t4"><b>A golf day</b>
+            <em>two SANO push weeks back to back</em>
+            <div class="r"><span class="px"><b>1,500</b><br>FULL</span>
+              <button class="c4-tear v41">OPEN IT</button>
+              <span class="c4-need v0">nothing in it yet</span></div></div>
+
+          <div class="c4-env t3 thin"><b>A full day off</b>
+            <em>85%+ three weeks running</em>
+            <div class="r"><span class="px"><b>2,000</b><br>1,530 IN</span>
+              <span class="c4-need v41">470 to go</span>
+              <span class="c4-need v0">nothing in it yet</span></div></div>
+
+          <div class="c4-env t2 thin"><b>That purchase</b>
+            <em>first client signed and paid</em>
+            <div class="r"><span class="px"><b>2,500</b><br>1,530 IN</span>
+              <span class="c4-need v41">970 to go</span>
+              <span class="c4-need v0">nothing in it yet</span></div></div>
+
+          <div class="c4-env t1 thin"><b>A weekend away</b>
+            <em>Anthony signed, and one more behind him</em>
+            <div class="r"><span class="px"><b>4,000</b><br>1,530 IN</span>
+              <span class="c4-need v41">2,470 to go</span>
+              <span class="c4-need v0">nothing in it yet</span></div></div>
+
+          <div class="c4-flat b41"><b>A long lunch</b>
+            <span>OPENED DAY 26 · 800 · KEPT FLAT AT THE BACK OF THE DRAWER</span></div>
+        </div>
+
+        <div class="c4-note b0">Five envelopes, all addressed, all empty.<br>
+          The writing on them is already true.</div>
+
+        <div class="c4-sec"><span>Paying in</span><u>never scored against you</u></div>
+        <div class="c4-pay">
+          <button class="c4-slip"><b>Networking</b><span>+250 &amp; A VOUCHER</span></button>
+          <button class="c4-slip"><b>Golf day</b><span>+150</span></button>
+          <button class="c4-slip"><b>Finances hr</b><span>+90</span></button>
+          <button class="c4-slip"><b>Read tonight</b><span>+60</span></button>
+        </div>
+      </div></div>
+      <div class="cap">04 · THE ENVELOPES</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it clears the bar</dt><dd>Thickness is the only representation of a balance in the whole set
+      that <b>you understand without reading</b>. A fat envelope and a thin one need no legend, no
+      percentage and no colour coding — and the difference survives being glanced at for half a second.</dd>
+      <dt>The claim moment</dt><dd>Opening it. Tearing an envelope you filled yourself is irreversible in a
+      way a button is not, and the flattened empty one goes to the back of the drawer as history.</dd>
+      <dt>Day one</dt><dd>Five envelopes, all addressed, all empty — and the line that carries it:
+      <b>"the writing on them is already true."</b> He wrote those conditions before he had a single XP,
+      which means the promise exists on day one even though the money doesn't.</dd>
+      <div class="risk">Risk: handwriting everywhere risks reading as the Fridge's cousin rather than its
+      own idea, and envelope budgeting carries a whiff of scarcity — it is a system people use when money is
+      tight. That may be exactly right for him, or exactly wrong.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 05 · THE LOGBOOK ================= -->
+<section class="dir" id="d5">
+  <div class="dh"><div class="dn">05</div><div class="dt">
+    <h2>The Logbook</h2>
+    <div class="dm">World: <b>a pilot's logbook — hours and ratings</b><br>
+      Primitive: <b>ruled columnar entries with signature blocks</b></div>
+    <p class="notx">This is <b>NOT a wallet</b> — nothing in it can be spent by anyone but him.</p>
+    <p class="dl">The best structural fit found in three rounds. Logged hours <b>accumulate and can never be
+    flown backwards</b>, which is exactly the XP rule. And a rating is <b>a permission someone signs off</b> —
+    not bought, earned, and printed with a signature next to it. That is the privilege mechanic already
+    existing in the world, with a hundred years of seriousness attached.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv c5">
+        <div class="c5-cov">
+          <div class="t">PILOT LOG<span>BURN THE BOATS · BOOK 1</span></div>
+          <div class="h"><b><span class="v41">1,530</span><span class="v0">0</span></b>
+            <span><span class="v41">HOURS TO DATE</span><span class="v0">HOURS · BOOK OPENED</span></span></div>
+        </div>
+
+        <div class="c5-sec"><span>Ratings held</span><u>signed off · never bought</u></div>
+        <div class="c5-sig">
+          <div class="c5-sigl">ENDORSEMENTS</div>
+          <div class="c5-end b41"><b>Cut a block in half</b>
+            <em>Bearer may halve any block, any day</em>
+            <div class="sg">— issued on an 85% week</div></div>
+          <div class="c5-end b41"><b>Make a block yours</b>
+            <em>Bearer may replace one block entirely</em>
+            <div class="sg">— issued on an 85% week</div></div>
+          <div class="c5-end mt b0"><b>Cut a block in half</b>
+            <em>Unissued · one 85% week signs it off</em>
+            <div class="sg">— awaiting signature</div></div>
+          <div class="c5-end mt b0"><b>Make a block yours</b>
+            <em>Unissued · or log any boost below</em>
+            <div class="sg">— awaiting signature</div></div>
+        </div>
+
+        <div class="c5-sec"><span>Ratings in progress</span><u>you set the hours</u></div>
+        <div class="c5-pg">
+          <div class="c5-hdr"><span>RATING SOUGHT</span><span>HOURS</span><span>STATUS</span></div>
+
+          <div class="c5-row ok"><div><b>Nice restaurant date</b>
+            <em>Cooked + laundry every night this week</em></div>
+            <div class="hrs">1,200</div>
+            <div class="st"><span class="v41">MET</span><span class="v0">OPEN</span></div></div>
+
+          <div class="c5-row ok"><div><b>A golf day</b>
+            <em>Two SANO push weeks back to back</em></div>
+            <div class="hrs">1,500</div>
+            <div class="st"><span class="v41">MET</span><span class="v0">OPEN</span></div></div>
+
+          <div class="c5-row wait"><div><b>A full day off</b>
+            <em>85%+ three weeks running</em></div>
+            <div class="hrs">2,000</div>
+            <div class="st"><span class="v41">470 SHORT</span><span class="v0">OPEN</span></div></div>
+
+          <div class="c5-row wait"><div><b>That purchase</b>
+            <em>First client signed and paid</em></div>
+            <div class="hrs">2,500</div>
+            <div class="st"><span class="v41">970 SHORT</span><span class="v0">OPEN</span></div></div>
+
+          <div class="c5-row wait"><div><b>A weekend away</b>
+            <em>Anthony signed, and one more behind him</em></div>
+            <div class="hrs">4,000</div>
+            <div class="st"><span class="v41">2,470 SHORT</span><span class="v0">OPEN</span></div></div>
+
+          <div class="c5-row done b41"><div><b>A long lunch</b>
+            <em>Signed off day 26 · entry stands</em></div>
+            <div class="hrs">800</div>
+            <div class="st">TAKEN</div></div>
+        </div>
+
+        <div class="c5-note b0">Every rating open, none met, and the book already knows what he is
+          flying toward. <b>The first endorsement comes before the first rating.</b></div>
+
+        <div class="c5-sec"><span>Creditable hours</span><u>never scored against you</u></div>
+        <div class="c5-cred">
+          <button class="c5-cslip"><b>Networking event</b><span>+250 &amp; AN ENDORSEMENT</span></button>
+          <button class="c5-cslip"><b>Golf day</b><span>+150</span></button>
+          <button class="c5-cslip"><b>Finances hour</b><span>+90</span></button>
+          <button class="c5-cslip"><b>Read tonight</b><span>+60</span></button>
+        </div>
+      </div></div>
+      <div class="cap">05 · THE LOGBOOK</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it clears the bar</dt><dd>It is the only direction where the <b>second currency needs no
+      explanation at all</b>. Everyone understands that a rating is something a person signs off on and that
+      you cannot purchase one. It also makes "XP only rises" a law of the object rather than a rule the app
+      has to enforce.</dd>
+      <dt>History, solved by the object</dt><dd>A logbook entry is never erased. The claimed reward stays on
+      the page in a shaded row marked TAKEN — the record and the reward list are the same document.</dd>
+      <dt>Day one</dt><dd>An empty logbook is not a sad object; it is <b>a book you are about to fill</b>.
+      Every rating is already written in with its hours, and the endorsements sit above them awaiting a
+      signature — which is the one thing a single good week produces.</dd>
+      <div class="risk">Risk: it is the most sober of the ten and the closest to round 1's register. It also
+      borrows authority from aviation that this app has not earned — if it reads as costume rather than
+      structure, it dies exactly the way round 2's arcade did.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 06 · THE SHADOW BOARD ================= -->
+<section class="dir" id="d6">
+  <div class="dh"><div class="dn">06</div><div class="dt">
+    <h2>The Shadow Board</h2>
+    <div class="dm">World: <b>a workshop tool board</b><br>
+      Primitive: <b>painted silhouettes marking where each thing lives</b></div>
+    <p class="notx">This is <b>NOT a list of things you lack</b> — every place is already marked out.</p>
+    <p class="dl">A shadow board paints the outline of every tool so you can see at a glance what is missing.
+    Ordinarily that is an accusation — here it is the opposite, because <b>the outline means the place is
+    already yours</b>, reserved, waiting. This is the strongest answer in the set to the day-one problem:
+    at zero XP the board is fully marked out and nothing is blank.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv c6">
+        <div class="c6-hd">
+          <div class="t">THE BOARD<span>day <span class="v41">41</span><span class="v0">1</span> of 91</span></div>
+          <div class="n"><b><span class="v41">1,530</span><span class="v0">0</span></b>
+            <span><span class="v41">+118 TODAY</span><span class="v0">BOARD HUNG TODAY</span></span></div>
+        </div>
+
+        <div class="c6-sec"><span>Off the board, in your hand</span><u>privileges</u></div>
+        <div class="c6-tray">
+          <div class="c6-trayl b41">TWO TOOLS ARE OUT · USE THEM ON ANY BLOCK</div>
+          <div class="c6-trayl b0">BOTH HOOKS BARE · ONE 85% WEEK PUTS A TOOL IN YOUR HAND</div>
+          <div class="c6-tools b41">
+            <div class="c6-tool"><div class="c6-th"></div><span>CUT A BLOCK<br>IN HALF</span></div>
+            <div class="c6-tool"><div class="c6-th"></div><span>MAKE A BLOCK<br>YOURS</span></div>
+          </div>
+          <div class="c6-tools b0">
+            <div class="c6-tool"><div class="c6-th mt"></div><span>CUT A BLOCK<br>IN HALF</span></div>
+            <div class="c6-tool"><div class="c6-th mt"></div><span>MAKE A BLOCK<br>YOURS</span></div>
+          </div>
+        </div>
+
+        <div class="c6-sec"><span>The board</span><u>every place already marked</u></div>
+        <div class="c6-board">
+          <div class="c6-sl up b41"><b>Nice restaurant date</b>
+            <em>Cooked + laundry every night this week</em>
+            <div class="r"><span class="px">1,200</span><button class="c6-take">TAKE IT DOWN</button></div></div>
+          <div class="c6-sl out b0"><b>Nice restaurant date</b>
+            <em>Cooked + laundry every night this week</em>
+            <div class="r"><span class="px">1,200</span><span class="c6-gap">ITS PLACE IS MARKED</span></div></div>
+
+          <div class="c6-sl up b41"><b>A golf day</b>
+            <em>Two SANO push weeks back to back</em>
+            <div class="r"><span class="px">1,500</span><button class="c6-take">TAKE IT DOWN</button></div></div>
+          <div class="c6-sl out b0"><b>A golf day</b>
+            <em>Two SANO push weeks back to back</em>
+            <div class="r"><span class="px">1,500</span><span class="c6-gap">ITS PLACE IS MARKED</span></div></div>
+
+          <div class="c6-sl out"><b>A full day off</b>
+            <em>85%+ three weeks running</em>
+            <div class="r"><span class="px">2,000</span>
+              <span class="c6-gap v41">470 SHORT · ~4 DAYS</span>
+              <span class="c6-gap v0">ITS PLACE IS MARKED</span></div></div>
+
+          <div class="c6-sl out"><b>That purchase</b>
+            <em>First client signed and paid</em>
+            <div class="r"><span class="px">2,500</span>
+              <span class="c6-gap v41">970 SHORT · ~9 DAYS</span>
+              <span class="c6-gap v0">ITS PLACE IS MARKED</span></div></div>
+
+          <div class="c6-sl out"><b>A weekend away</b>
+            <em>Anthony signed, and one more behind him</em>
+            <div class="r"><span class="px">4,000</span>
+              <span class="c6-gap v41">2,470 SHORT · ~21 DAYS</span>
+              <span class="c6-gap v0">ITS PLACE IS MARKED</span></div></div>
+
+          <div class="c6-sl taken b41"><b>A long lunch</b>
+            <em>Taken down day 26 · the outline stays</em>
+            <div class="c6-brass">TAKEN · DAY 26</div></div>
+        </div>
+
+        <div class="c6-note b0">Nothing on the board yet, and the board is still full —
+          <b>every place is painted, named and spoken for.</b></div>
+
+        <div class="c6-sec"><span>Earn a tool</span><u>never scored against you</u></div>
+        <div class="c6-slips">
+          <button class="c6-slip"><b>Networking event</b><span>+250 &amp; A TOOL</span></button>
+          <button class="c6-slip"><b>Golf day</b><span>+150</span></button>
+          <button class="c6-slip"><b>Finances hour</b><span>+90</span></button>
+          <button class="c6-slip"><b>Read tonight</b><span>+60</span></button>
+        </div>
+      </div></div>
+      <div class="cap">06 · THE SHADOW BOARD</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it clears the bar</dt><dd>It inverts the emptiness problem instead of decorating around it.
+      On every other screen an unearned reward is an absence; here it is <b>a reserved place</b>, painted on
+      in advance by him. The board is never empty even when he owns nothing.</dd>
+      <dt>The claim moment</dt><dd>Taking it down off the hook — and then <b>the outline stays</b>, with a
+      small brass plate recording the date. History is literally the shape of what he took.</dd>
+      <dt>Day one</dt><dd>The best of the ten by some distance. A fully marked-out board with nothing hanging
+      on it reads as <b>a workshop set up and ready</b>, not as poverty. It is the only direction where the
+      zero state is arguably more beautiful than the full one.</dd>
+      <div class="risk">Risk: the metaphor says these are tools — things you use to work — and a restaurant
+      date is not a tool. It fits the privileges perfectly and the rewards only loosely, which is the
+      opposite of most directions here and worth being honest about.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 07 · THE LAYAWAY COUNTER ================= -->
+<section class="dir" id="d7">
+  <div class="dh"><div class="dn">07</div><div class="dt">
+    <h2>The Layaway Counter</h2>
+    <div class="dm">World: <b>paying toward a named thing, week by week</b><br>
+      Primitive: <b>tickets hanging from a rail of hooks</b></div>
+    <p class="notx">This is <b>NOT a price you cannot afford</b> — it is a balance you are paying off.</p>
+    <p class="dl">Layaway is the reward mechanic already existing in the world: you name the thing, you pay
+    toward it over weeks, and you collect it when it clears. Nobody is refused at a layaway counter —
+    <b>the item is already set aside with your name on the ticket</b>. Every locked reward becomes a
+    part-paid ticket rather than a closed door.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv c7">
+        <div class="c7-hd">
+          <div class="t">LAYAWAY<span>counter 1 · day <span class="v41">41</span><span class="v0">1</span></span></div>
+          <div class="n"><b><span class="v41">1,530</span><span class="v0">0</span></b>
+            <span><span class="v41">PAID IN · +118 TODAY</span><span class="v0">ACCOUNT OPENED</span></span></div>
+        </div>
+
+        <div class="c7-sec"><span>In the clip</span><u>privileges · store credit, unexpiring</u></div>
+        <div class="c7-chits b41">
+          <div class="c7-chit"><div class="k">CHIT 07</div><b>Cut a block in half</b></div>
+          <div class="c7-chit"><div class="k">CHIT 08</div><b>Make a block yours</b></div>
+        </div>
+        <div class="c7-chits b0">
+          <div class="c7-chit mt"><div class="k">CHIT 07</div><b>One 85% week</b></div>
+          <div class="c7-chit mt"><div class="k">CHIT 08</div><b>Or any boost</b></div>
+        </div>
+
+        <div class="c7-sec"><span>On the rail</span><u>set aside in your name</u></div>
+        <div class="c7-rail">
+          <div class="c7-tk"><div class="no">No. 041</div>
+            <b>Nice restaurant date</b>
+            <em>Cooked + laundry every night this week</em>
+            <div class="c7-bar"><i class="fw" style="--f:100%"></i></div>
+            <div class="c7-fig"><span>PAID <b class="v41">1,200</b><b class="v0">0</b></span>
+              <span>TOTAL <b>1,200</b></span></div>
+            <div class="c7-r"><span></span>
+              <button class="c7-coll v41">COLLECT IT</button>
+              <span class="c7-due v0">1,200 STILL DUE</span></div></div>
+
+          <div class="c7-tk"><div class="no">No. 042</div>
+            <b>A golf day</b>
+            <em>Two SANO push weeks back to back</em>
+            <div class="c7-bar"><i class="fw" style="--f:100%"></i></div>
+            <div class="c7-fig"><span>PAID <b class="v41">1,500</b><b class="v0">0</b></span>
+              <span>TOTAL <b>1,500</b></span></div>
+            <div class="c7-r"><span></span>
+              <button class="c7-coll v41">COLLECT IT</button>
+              <span class="c7-due v0">1,500 STILL DUE</span></div></div>
+
+          <div class="c7-tk"><div class="no">No. 043</div>
+            <b>A full day off</b>
+            <em>85%+ three weeks running</em>
+            <div class="c7-bar"><i class="fw" style="--f:76%"></i></div>
+            <div class="c7-fig"><span>PAID <b class="v41">1,530</b><b class="v0">0</b></span>
+              <span>TOTAL <b>2,000</b></span></div>
+            <div class="c7-r"><span></span>
+              <span class="c7-due v41">470 STILL DUE · ~4 DAYS</span>
+              <span class="c7-due v0">2,000 STILL DUE</span></div></div>
+
+          <div class="c7-tk"><div class="no">No. 044</div>
+            <b>That purchase</b>
+            <em>First client signed and paid</em>
+            <div class="c7-bar"><i class="fw" style="--f:61%"></i></div>
+            <div class="c7-fig"><span>PAID <b class="v41">1,530</b><b class="v0">0</b></span>
+              <span>TOTAL <b>2,500</b></span></div>
+            <div class="c7-r"><span></span>
+              <span class="c7-due v41">970 STILL DUE · ~9 DAYS</span>
+              <span class="c7-due v0">2,500 STILL DUE</span></div></div>
+
+          <div class="c7-tk"><div class="no">No. 045</div>
+            <b>A weekend away</b>
+            <em>Anthony signed, and one more behind him</em>
+            <div class="c7-bar"><i class="fw" style="--f:38%"></i></div>
+            <div class="c7-fig"><span>PAID <b class="v41">1,530</b><b class="v0">0</b></span>
+              <span>TOTAL <b>4,000</b></span></div>
+            <div class="c7-r"><span></span>
+              <span class="c7-due v41">2,470 STILL DUE · ~21 DAYS</span>
+              <span class="c7-due v0">4,000 STILL DUE</span></div></div>
+
+          <div class="c7-tk paid b41"><div class="no">No. 038</div>
+            <b>A long lunch</b>
+            <em>Collected day 26 · ticket kept</em>
+            <div class="c7-bar"><i style="width:100%"></i></div>
+            <div class="c7-fig"><span>PAID <b>800</b></span><span>TOTAL <b>800</b></span></div>
+            <div class="c7-stamp">PAID<br>IN FULL</div></div>
+        </div>
+
+        <div class="c7-note b0">Five tickets written, nothing paid down yet.
+          <b>Every one of them already has his name on it.</b></div>
+
+        <div class="c7-sec"><span>Pay in</span><u>never scored against you</u></div>
+        <div class="c7-slips">
+          <button class="c7-slip"><b>Networking event</b><span>+250 &amp; A CHIT</span></button>
+          <button class="c7-slip"><b>Golf day</b><span>+150</span></button>
+          <button class="c7-slip"><b>Finances hour</b><span>+90</span></button>
+          <button class="c7-slip"><b>Read tonight</b><span>+60</span></button>
+        </div>
+      </div></div>
+      <div class="cap">07 · THE LAYAWAY COUNTER</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it clears the bar</dt><dd><b>PAID / TOTAL / STILL DUE</b> is the clearest expression of
+      distance in the whole document, and it arrives with dignity already attached — layaway is how people
+      who are careful with money buy good things on purpose.</dd>
+      <dt>The claim moment</dt><dd>The ticket is stamped PAID IN FULL and stays on the rail. The stamp is the
+      ceremony and the history in a single object, which no other direction manages.</dd>
+      <dt>Day one</dt><dd>Five tickets already written out in his name with nothing paid down. That is
+      exactly what a layaway account looks like on the day you open one — <b>correct rather than empty.</b></dd>
+      <div class="risk">Risk: it is the most transactional of the ten, and the paid/due figures reintroduce
+      arithmetic he would otherwise not have to do. It is also the direction most likely to feel like a bill.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 08 · THE MANTELPIECE ================= -->
+<section class="dir" id="d8">
+  <div class="dh"><div class="dn">08</div><div class="dt">
+    <h2>The Mantelpiece</h2>
+    <div class="dm">World: <b>the shelf everyone who walks past sees</b><br>
+      Primitive: <b>a horizontal shelf with objects standing on it and cards propped behind</b></div>
+    <p class="notx">This is <b>NOT private</b> — it is the one surface in a house that faces the room.</p>
+    <p class="dl">The Fridge's grown-up sibling, and the one you told me worked. A mantelpiece is where a
+    household puts <b>what it is proud of and what is coming</b>: invitations propped against the mirror,
+    the good things standing at the front, keys in the dish, and a photograph of something that already
+    happened. It carries history better than any other object in the fifty.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv c8">
+        <div class="c8-room">
+          <div class="t">The Mantelpiece<span>DAY <span class="v41">41</span><span class="v0">1</span> OF 91</span></div>
+        </div>
+
+        <div class="c8-lab"><span>Propped against the mirror</span><u>still to come</u></div>
+        <div class="c8-mirror">
+          <div class="c8-prop"><b>A full day off</b>
+            <em>85%+ three weeks running</em>
+            <div class="r"><span class="px">2,000</span>
+              <span class="wh v41">ABOUT 4 DAYS OFF</span>
+              <span class="wh v0">WHEN YOU'RE READY</span></div></div>
+          <div class="c8-prop"><b>That purchase</b>
+            <em>First client signed and paid</em>
+            <div class="r"><span class="px">2,500</span>
+              <span class="wh v41">ABOUT 9 DAYS OFF</span>
+              <span class="wh v0">WHEN YOU'RE READY</span></div></div>
+          <div class="c8-prop"><b>A weekend away</b>
+            <em>Anthony signed, and one more behind him</em>
+            <div class="r"><span class="px">4,000</span>
+              <span class="wh v41">ABOUT 21 DAYS OFF</span>
+              <span class="wh v0">WHEN YOU'RE READY</span></div></div>
+        </div>
+
+        <div class="c8-lab"><span>Standing at the front</span><u>yours to take</u></div>
+        <div class="c8-on">
+          <div class="c8-card"><b>Nice restaurant date</b>
+            <em>Cooked + laundry every night this week · 1,200</em>
+            <button class="c8-take v41">TAKE IT</button></div>
+          <div class="c8-card"><b>A golf day</b>
+            <em>Two SANO push weeks back to back · 1,500</em>
+            <button class="c8-take v41">TAKE IT</button></div>
+        </div>
+        <div class="c8-plank" style="margin-top:14px"></div>
+
+        <div class="c8-shelf2">
+          <div class="c8-dish">
+            <div class="c8-dishl b41">IN THE DISH · PRIVILEGES</div>
+            <div class="c8-dishl b0">THE DISH IS EMPTY</div>
+            <div class="c8-keys b41"><i class="c8-k"></i><i class="c8-k"></i></div>
+            <div class="c8-keys b0"><i class="c8-k mt"></i><i class="c8-k mt"></i></div>
+            <div class="c8-kn b41">CUT A BLOCK IN HALF<br>MAKE A BLOCK YOURS</div>
+            <div class="c8-kn b0">ONE 85% WEEK<br>PUTS ONE IN IT</div>
+          </div>
+          <div class="c8-plate"><div class="k">ON THE MANTEL</div>
+            <b><span class="v41">1,530</span><span class="v0">0</span></b>
+            <span><span class="v41">+118 TODAY</span><span class="v0">DAY ONE</span></span></div>
+        </div>
+
+        <div class="c8-lab"><span>In the frame</span><u>already taken</u></div>
+        <div class="c8-frame b41"><div class="in"><b>A long lunch</b>
+          <span>DAY 26 · 800 · AND YOU'D EARNED IT</span></div></div>
+        <div class="c8-frame b0"><div class="in"><b>The frame is empty</b>
+          <span>THE FIRST PHOTOGRAPH GOES IN HERE</span></div></div>
+
+        <div class="c8-note b0">Three invitations already propped, two things standing at the front,
+          and an empty frame. <b>Nothing on this shelf is missing — it is early.</b></div>
+
+        <div class="c8-lab"><span>Put something on the shelf</span><u>never scored against you</u></div>
+        <div class="c8-slips">
+          <button class="c8-slip"><b>Networking event</b><span>+250 &amp; A KEY</span></button>
+          <button class="c8-slip"><b>Golf day</b><span>+150</span></button>
+          <button class="c8-slip"><b>Finances hour</b><span>+90</span></button>
+          <button class="c8-slip"><b>Read tonight</b><span>+60</span></button>
+        </div>
+      </div></div>
+      <div class="cap">08 · THE MANTELPIECE</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it clears the bar</dt><dd>It is the only direction where <b>history is the point of the
+      object</b>. Nobody keeps a photograph on a mantelpiece for information. The frame is there because the
+      thing in it mattered — which is exactly what a claimed reward is, and exactly what the shipped app
+      currently throws away.</dd>
+      <dt>The claim moment</dt><dd>Taking the card off the front of the shelf, and later a photograph
+      appearing in the frame. The reward moves from <em>coming</em> to <em>had</em>, and the shelf shows both.</dd>
+      <dt>Day one</dt><dd>Three invitations propped, two cards standing, an empty frame that says
+      <b>"the first photograph goes in here."</b> An empty frame on a mantel is anticipation, not absence.</dd>
+      <div class="risk">Risk: it is the closest of the ten to the Fridge, which is a strength if he liked the
+      Fridge for the right reason and a weakness if it just reads as the same trick indoors. It is also the
+      most layout-fragile — objects standing on a shelf need real space, and 390px is not much room.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 09 · THE JAR SHELF ================= -->
+<section class="dir" id="d9">
+  <div class="dh"><div class="dn">09</div><div class="dt">
+    <h2>The Jar Shelf</h2>
+    <div class="dm">World: <b>five labelled jars on a kitchen shelf</b><br>
+      Primitive: <b>parallel vessels filling at different rates</b></div>
+    <p class="notx">This is <b>NOT five numbers</b> — it is five levels you compare in one look.</p>
+    <p class="dl">The most universal object in the fifty. Five jars, side by side, each with his handwriting
+    on the label, each at a different level. <b>You do not read this screen, you glance at it</b> — which of
+    the five is nearly full and which has barely started is understood before a single word is processed.
+    The empty upturned jar on the end is the one he already spent.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv c9">
+        <div class="c9-hd">
+          <div class="t">The Shelf<span>DAY <span class="v41">41</span><span class="v0">1</span> OF 91</span></div>
+          <div class="n"><b><span class="v41">1,530</span><span class="v0">0</span></b>
+            <span><span class="v41">+118 TODAY</span><span class="v0">DAY ONE</span></span></div>
+        </div>
+
+        <div class="c9-row">
+          <div class="c9-j"><div class="c9-glass"><u></u><i class="fl" style="--f:100%"></i></div>
+            <div class="c9-tag">RESTAURANT<br>DATE</div><div class="c9-pc"><span class="v41">FULL</span><span class="v0">0%</span></div></div>
+          <div class="c9-j"><div class="c9-glass"><u></u><i class="fl" style="--f:100%"></i></div>
+            <div class="c9-tag">GOLF<br>DAY</div><div class="c9-pc"><span class="v41">FULL</span><span class="v0">0%</span></div></div>
+          <div class="c9-j"><div class="c9-glass"><u></u><i class="fl" style="--f:76%"></i></div>
+            <div class="c9-tag">DAY<br>OFF</div><div class="c9-pc"><span class="v41">76%</span><span class="v0">0%</span></div></div>
+          <div class="c9-j"><div class="c9-glass"><u></u><i class="fl" style="--f:61%"></i></div>
+            <div class="c9-tag">THAT<br>PURCHASE</div><div class="c9-pc"><span class="v41">61%</span><span class="v0">0%</span></div></div>
+          <div class="c9-j"><div class="c9-glass"><u></u><i class="fl" style="--f:38%"></i></div>
+            <div class="c9-tag">WEEKEND<br>AWAY</div><div class="c9-pc"><span class="v41">38%</span><span class="v0">0%</span></div></div>
+          <div class="c9-j gone b41"><div class="c9-glass"><u></u></div>
+            <div class="c9-tag">LONG<br>LUNCH</div><div class="c9-pc">SPENT</div></div>
+        </div>
+
+        <div class="c9-lab"><span>The labels</span><u>your handwriting, your terms</u></div>
+
+        <div class="c9-lbl"><i class="c9-dot"></i>
+          <div class="in"><b>Nice restaurant date</b>
+            <em>cooked + laundry every night this week</em>
+            <div class="px">1,200 · <span class="v41">FULL</span><span class="v0">EMPTY</span></div></div>
+          <button class="c9-tk v41">TAKE IT</button>
+          <span class="c9-wait v0">not yet</span></div>
+
+        <div class="c9-lbl"><i class="c9-dot"></i>
+          <div class="in"><b>A golf day</b>
+            <em>two SANO push weeks back to back</em>
+            <div class="px">1,500 · <span class="v41">FULL</span><span class="v0">EMPTY</span></div></div>
+          <button class="c9-tk v41">TAKE IT</button>
+          <span class="c9-wait v0">not yet</span></div>
+
+        <div class="c9-lbl"><i class="c9-dot"></i>
+          <div class="in"><b>A full day off</b>
+            <em>85%+ three weeks running</em>
+            <div class="px">2,000</div></div>
+          <span class="c9-wait v41">470 more<br>~4 days</span>
+          <span class="c9-wait v0">not yet</span></div>
+
+        <div class="c9-lbl"><i class="c9-dot"></i>
+          <div class="in"><b>That purchase</b>
+            <em>first client signed and paid</em>
+            <div class="px">2,500</div></div>
+          <span class="c9-wait v41">970 more<br>~9 days</span>
+          <span class="c9-wait v0">not yet</span></div>
+
+        <div class="c9-lbl"><i class="c9-dot"></i>
+          <div class="in"><b>A weekend away</b>
+            <em>Anthony signed, and one more behind him</em>
+            <div class="px">4,000</div></div>
+          <span class="c9-wait v41">2,470 more<br>~21 days</span>
+          <span class="c9-wait v0">not yet</span></div>
+
+        <div class="c9-lbl gone b41"><i class="c9-dot"></i>
+          <div class="in"><b>A long lunch</b>
+            <em>drunk day 26 · jar kept, label kept</em>
+            <div class="px">800 · SPENT</div></div></div>
+
+        <div class="c9-note b0">Six jars, all empty, every label already written.<br>
+          The labels are the part he did first.</div>
+
+        <div class="c9-lab"><span>On the saucer</span><u>privileges</u></div>
+        <div class="c9-dish">
+          <div class="c9-dishl b41">TWO TOKENS · SPEND ON THE SCHEDULE, NOT THE SHELF</div>
+          <div class="c9-dishl b0">THE SAUCER IS EMPTY · ONE 85% WEEK PUTS A TOKEN ON IT</div>
+          <div class="c9-toks b41">
+            <div class="c9-tok">CUT A BLOCK<br>IN HALF</div>
+            <div class="c9-tok">MAKE A BLOCK<br>YOURS</div>
+          </div>
+          <div class="c9-toks b0">
+            <div class="c9-tok mt">CUT A BLOCK<br>IN HALF</div>
+            <div class="c9-tok mt">MAKE A BLOCK<br>YOURS</div>
+          </div>
+        </div>
+
+        <div class="c9-lab"><span>Drop something in</span><u>never scored against you</u></div>
+        <div class="c9-slips">
+          <button class="c9-slip"><b>Networking</b><span>+250 &amp; A TOKEN</span></button>
+          <button class="c9-slip"><b>Golf day</b><span>+150</span></button>
+          <button class="c9-slip"><b>Finances hr</b><span>+90</span></button>
+          <button class="c9-slip"><b>Read tonight</b><span>+60</span></button>
+        </div>
+      </div></div>
+      <div class="cap">09 · THE JAR SHELF</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it clears the bar</dt><dd>It is the fastest screen in the document. Five levels in a row is a
+      <b>comparison</b>, and a comparison is understood pre-verbally. Every other direction makes him read
+      five separate numbers and hold them in his head to know which is closest.</dd>
+      <dt>The honest caveat</dt><dd>Five jars filling separately implies five separate savings pots, which
+      is not how the balance works — one number funds all five. The labels row underneath states the real
+      figures, but <b>this is the one metaphor in the ten that slightly lies</b>, and it should be said out
+      loud rather than discovered later.</dd>
+      <dt>Day one</dt><dd>Six empty jars and the line that earns it: <b>"the labels are the part he did
+      first."</b> Writing the conditions is real work he has already done, and the jars display that work
+      before they display a single coin.</dd>
+      <div class="risk">Risk: at 390px six jars are 58px wide each, which is why the names are abbreviated
+      above and given in full underneath. That split is a compromise; if the jar row alone had to carry the
+      names it would fail.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 10 · THE STRONGBOX ================= -->
+<section class="dir" id="d10">
+  <div class="dh"><div class="dn">10</div><div class="dt">
+    <h2>The Strongbox</h2>
+    <div class="dm">World: <b>the tin at the back of the wardrobe, lid open</b><br>
+      Primitive: <b>an open container in plan view with compartments</b></div>
+    <p class="notx">This is <b>NOT a wall you look at</b> — it is a box you look down into.</p>
+    <p class="dl">The only direction shot from above rather than face-on, which is why it feels like
+    <b>your own box rather than an institution's</b>. The lift-out tray holds the two currencies apart with
+    no explanation needed: the balance in the deep well, the privileges as two discs in their own recesses.
+    The rewards are banded bundles underneath the tray.</p>
+  </div></div>
+  <div class="body">
+    <div><div class="p"><div class="notch"><i></i></div>
+      <div class="pv c10">
+        <div class="c10-lid"><div class="c10-lidl">INSIDE THE LID</div>
+          <div class="c10-past">
+            <div class="k">WHAT PAYS IN — AND IS NEVER SCORED AGAINST YOU</div>
+            <div class="c10-pay">
+              <button class="c10-p"><b>Networking event</b><span>+250 &amp; A DISC</span></button>
+              <button class="c10-p"><b>Golf day</b><span>+150</span></button>
+              <button class="c10-p"><b>Finances hour</b><span>+90</span></button>
+              <button class="c10-p"><b>Read tonight</b><span>+60</span></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="c10-tray">
+          <div class="c10-well"><div class="k">THE DEEP WELL</div>
+            <div class="n"><span class="v41">1,530</span><span class="v0">0</span></div>
+            <div class="s"><span class="v41">+118 TODAY</span><span class="v0">DAY ONE</span></div></div>
+          <div class="c10-well"><div class="k">RECESS I</div>
+            <div class="c10-disc b41">CUT A<br>BLOCK</div>
+            <div class="c10-disc mt b0">EMPTY</div>
+            <div class="tl">CUT A BLOCK<br>IN HALF</div></div>
+          <div class="c10-well"><div class="k">RECESS II</div>
+            <div class="c10-disc b41">MAKE IT<br>YOURS</div>
+            <div class="c10-disc mt b0">EMPTY</div>
+            <div class="tl">MAKE A BLOCK<br>YOURS</div></div>
+        </div>
+
+        <div class="c10-lab"><span>Under the tray</span><u>you wrote the bands</u></div>
+
+        <div class="c10-bun"><div class="c10-band"></div>
+          <b>Nice restaurant date</b><em>Cooked + laundry every night this week</em>
+          <div class="r"><span class="px">1,200</span>
+            <button class="c10-lift v41">LIFT IT OUT</button>
+            <span class="c10-short v0">BAND STILL SEALED</span></div></div>
+
+        <div class="c10-bun"><div class="c10-band"></div>
+          <b>A golf day</b><em>Two SANO push weeks back to back</em>
+          <div class="r"><span class="px">1,500</span>
+            <button class="c10-lift v41">LIFT IT OUT</button>
+            <span class="c10-short v0">BAND STILL SEALED</span></div></div>
+
+        <div class="c10-bun thin"><div class="c10-band"></div>
+          <b>A full day off</b><em>85%+ three weeks running</em>
+          <div class="r"><span class="px">2,000</span>
+            <span class="c10-short v41">470 SHORT · ~4 DAYS</span>
+            <span class="c10-short v0">BAND STILL SEALED</span></div></div>
+
+        <div class="c10-bun thin"><div class="c10-band"></div>
+          <b>That purchase</b><em>First client signed and paid</em>
+          <div class="r"><span class="px">2,500</span>
+            <span class="c10-short v41">970 SHORT · ~9 DAYS</span>
+            <span class="c10-short v0">BAND STILL SEALED</span></div></div>
+
+        <div class="c10-bun thin"><div class="c10-band"></div>
+          <b>A weekend away</b><em>Anthony signed, and one more behind him</em>
+          <div class="r"><span class="px">4,000</span>
+            <span class="c10-short v41">2,470 SHORT · ~21 DAYS</span>
+            <span class="c10-short v0">BAND STILL SEALED</span></div></div>
+
+        <div class="c10-bun spent b41">
+          <b>A long lunch</b><em>Lifted out day 26 · the band stays in the box</em>
+          <div class="r"><span class="px">800</span><span class="c10-short">SPENT</span></div></div>
+
+        <div class="c10-note b0">The box is empty and the bands are already written.
+          <b>A strongbox on day one is still a strongbox.</b></div>
+      </div></div>
+      <div class="cap">10 · THE STRONGBOX</div>
+    </div>
+    <dl class="notes">
+      <dt>Why it clears the bar</dt><dd>The plan view does something no elevation can: it makes the whole
+      thing feel like <b>his possession rather than a service he visits</b>. You look down into your own box.
+      The compartments also separate the two currencies structurally, so nobody ever has to be told that a
+      privilege is not XP.</dd>
+      <dt>The claim moment</dt><dd>Lifting a bundle out — and the paper band stays in the box. Small, quiet,
+      and irreversible, which is the right weight for spending a fortnight of work.</dd>
+      <dt>Day one</dt><dd><b>"A strongbox on day one is still a strongbox."</b> The object's value does not
+      depend on its contents, which makes it one of only two directions here where zero is not a deficiency.</dd>
+      <div class="risk">Risk: the weakest of the ten and I would not fight for it. It is the closest to
+      round 1's vault register, and the plan view — its one genuine differentiator — is hard to read at
+      390px without more perspective cues than CSS comfortably gives.</div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= HAND-OFF ================= -->
+<section class="ho" id="ho">
+  <div class="kick">Hand-off · Agent 6 · Round 3</div>
+  <h2>Top three, and the one I most regret killing</h2>
+
+  <h3>What this is</h3>
+  <p><b><code>renditions/rend-bank-v3.html</code></b> — fifty candidates written down and visibly culled with
+  a verdict on each, ten rendered, every one carrying all four content types and rendering in
+  <b>two states</b>: day 41 and day one at zero. v1 and v2 are untouched. I did not touch
+  <code>index.html</code> or any other agent's file.</p>
+
+  <h3>Ranked</h3>
+  <div class="rank">
+    <p><b>1 · 03 The Cellar.</b> It solves the hardest problem in the tab with a single word.
+    <b>"Laying down"</b> is the only phrase found across three rounds that makes an unaffordable reward
+    sound like good practice instead of failure — you lay a bottle down deliberately, and nobody has ever
+    felt rebuked by a cellar. It also has the best day-one state by construction: <b>a cellar on its first
+    day is supposed to look full and unready</b>, so zero XP reads as correct rather than poor. One live
+    question, which is his and not mine: whether alcohol is the right imagery for a man deliberately curbing
+    two vices. If the answer is no, take the mechanic and re-skin it — the phrase survives the move.</p>
+    <p><b>2 · 06 The Shadow Board.</b> The best answer to "day one must feel like promise, not poverty" in
+    any round. A painted outline normally accuses you of a missing tool; here it means <b>the place is
+    already yours</b>. At zero XP the board is fully marked out and nothing is blank — it is the only
+    direction where the empty state is arguably better looking than the full one. Its weakness is honest:
+    the metaphor says <em>tools</em>, which fits the privileges perfectly and a restaurant date only loosely.</p>
+    <p><b>3 · 02 The Box Room.</b> Ranked here on one idea that no other candidate produced: a safe deposit
+    box <b>needs two keys turned together</b>, which is the most literal picture of an earned-not-bought
+    permission in the whole fifty. It also reframes the entire tab — he is not buying a day off, he is being
+    let into the box it is already sitting in — and it gets history free, because a claimed box stands open
+    on the wall forever with its plate still engraved.</p>
+  </div>
+
+  <h3>The one I most regret killing</h3>
+  <div class="regret">
+    <p><b>№50 — Exchequer tally sticks.</b> For four hundred years English public finance ran on notched
+    hazel sticks, and the detail that hurts to lose is this: <b>the stick was split lengthwise and each
+    party kept half</b>, so a debt could only be proved when the two halves were matched. That is a perfect
+    physical picture of a privilege — a permission that exists between two parties and cannot be forged.
+    It is also the literal origin of a "stock holder" and of the word "counterfoil".</p>
+    <p>It died on legibility. Notches on a stick cannot express five different prices at 390px, and the
+    whole thing needs a paragraph of history before it means anything — which is the exact opposite of the
+    Fridge test, where the object explains itself instantly. <b>Runner-up regret: №31, the passport.</b>
+    Visas are permissions granted by someone else and stamped in permanently, which is the privilege
+    mechanic exactly — but a passport holds no balance, and the balance is half of this tab.</p>
+  </div>
+
+  <h3>The day-one finding — this matters more than the visual choice</h3>
+  <p>Building all ten at zero surfaced something that applies whichever wins, and it is a content decision
+  rather than a design one. At 0 XP and ~118/day, his cheapest reward is <b>eleven days away</b>, and every
+  direction that leads with rewards on day one reads as a countdown to something distant. But his
+  <b>first privilege is one 85% week away — five days</b>. So on day one the correct headline is the
+  privilege, not the reward. Every rendition here does that, and it turns week one from
+  "nothing for eleven days" into "something by Friday."</p>
+  <p>The corollary: <b>the reward conditions are the day-one asset.</b> He writes those sentences before he
+  has a single XP, so on day one the tab is already full of his own commitments even though it holds no
+  money. Four of the ten say this out loud — "the writing on them is already true", "the labels are the
+  part he did first", "every place is painted, named and spoken for."</p>
+
+  <h3>Verification</h3>
+  <p><code>arsenal-lint</code>: <b>clean ✓</b>. Ten phones rendered headlessly and screenshotted at
+  <b>390×844 in both states</b>, top and scrolled, and I looked at them. No console errors, no failed
+  requests. <b>No horizontal overflow</b>: every phone reports 388/388, and the gallery page itself was
+  tested at a real 390px viewport <b>with <code>overflow-x:hidden</code> disabled</b> so the result could
+  not be masked — 390 of 390.</p>
+  <p>Four defects were caught by looking rather than by reading the CSS. The worst was structural: my
+  day-one state machine set <code>display</code> for both the hidden and the shown state, and per-rendition
+  descendant selectors like <code>.x .t>span{display:block}</code> out-specified it — so several renditions
+  rendered <b>both states at once</b>, showing "1,530" and "0" stacked. The fix was to make the state
+  machine <b>hide-only</b>, so a shown element keeps whatever display its own rule gives it, and to scope
+  six selectors to direct children. The others: the envelope flap painted over three reward titles
+  ("A full day <em>ott</em>"), and two headers wrapped to three lines from the same span bug.</p>
+
+  <h3>For the GM</h3>
+  <ul>
+    <li><b>History is now a hard requirement and the shipped app cannot do it.</b> <code>claim()</code> sets
+    <code>r.done=1</code> and the reward disappears from the list — there is no record of what was taken or
+    when. Every one of these ten renders a claimed item; none of them can be built until a
+    <code>claimed[]</code> record with a date exists.</li>
+    <li><b>Rewards are still one-shot</b> for all 91 days, and <code>S.privileges</code> is still a bare
+    integer with no way to spend one. Both block the two-currency display that every direction here depends on.</li>
+    <li><b>Day-one copy is the real deliverable.</b> Whichever skin wins, the week-one headline should be
+    the privilege at five days, not the cheapest reward at eleven.</li>
+    <li><b>Only the Jar Shelf bends the truth</b> — five jars filling separately implies five pots when
+    there is one balance. It is called out on the page rather than hidden. If it wins, that needs resolving.</li>
+    <li><b>The handwriting is free</b> — Marker Felt and Chalkboard SE are iOS system fonts, verified
+    resolving, used in 03, 04 and 09.</li>
+  </ul>
+</section>
+
+
+</div>
+<script>
+function setDay(d){
+  document.body.classList.toggle('d1', d===1);
+  document.getElementById('sgA').classList.toggle('on', d!==1);
+  document.getElementById('sgB').classList.toggle('on', d===1);
+}
+<!--SCRIPT2-->
+</script>
+</body>
+</html>

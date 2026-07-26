@@ -1,0 +1,1125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Line and The Face — finished</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --ghost:#CFE2FF; --ghost-d:#8FB4E8; --ghost-bg:#070C16; --ghost-line:#1c2c47;
+  --miss:#6b3a44;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99;
+  background-image:url('../assets/grain/grain-fine.svg');opacity:.035;mix-blend-mode:overlay}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+
+/* ---------- page furniture ---------- */
+.mast{padding:58px 0 32px;border-bottom:1px solid var(--line)}
+.kick{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.26em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:14px}
+.mast h1{font-size:clamp(30px,4.6vw,46px);line-height:1.03;letter-spacing:-.035em;margin-bottom:16px;max-width:17ch}
+.mast p{max-width:690px;color:var(--dim);font-size:15.2px;margin:0 0 12px}
+.mast p b{color:var(--ink);font-weight:500}
+.quote{border-left:2px solid var(--gold);padding-left:15px;margin:20px 0;max-width:690px;
+  font-size:15.2px;color:#c5bcae;font-style:italic}
+.quote b{color:var(--gold);font-style:normal;font-weight:500}
+
+.sec{padding:52px 0;border-bottom:1px solid var(--line)}
+.sech{display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:start;margin-bottom:26px}
+.sn{font-family:'Clash Display',sans-serif;font-size:42px;line-height:.8;font-weight:700;color:transparent;
+  -webkit-text-stroke:1.2px var(--line2)}
+.sech h2{font-size:27px;letter-spacing:-.03em;margin-bottom:7px}
+.sech p{max-width:670px;color:var(--dim);font-size:14.9px;margin:9px 0 0}
+.sech p b{color:var(--ink);font-weight:500}
+
+/* the cull */
+.cull{border:1px solid var(--line2);border-radius:15px;background:var(--panel);padding:22px 24px;margin-top:26px}
+.cull h3{font-size:17px;margin-bottom:5px}
+.cull .lead{color:var(--dim);font-size:14.4px;margin:0 0 16px;max-width:70ch}
+.cull .grp{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.19em;color:var(--faint);
+  text-transform:uppercase;margin:20px 0 9px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+.cull .grp:first-of-type{margin-top:0}
+.cd{display:grid;grid-template-columns:34px 1fr 76px;gap:12px;padding:8px 0;border-bottom:1px solid #16141f;
+  align-items:baseline}
+.cd:last-child{border-bottom:0}
+.cd .id{font-family:'Geist Mono',monospace;font-size:9.5px;color:#4f4860}
+.cd .tx{font-size:13.9px;color:var(--dim);line-height:1.5}
+.cd .tx b{color:var(--ink);font-weight:500}
+.cd .vd{font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;text-align:right;
+  color:#6b3a44;text-transform:uppercase;padding-top:2px}
+.cd.live .vd{color:var(--phos)}
+.cd.live .tx b{color:var(--phos)}
+.cull .tally{margin-top:18px;padding-top:14px;border-top:1px solid var(--line2);
+  font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--faint)}
+.cull .tally b{color:var(--ink)}
+
+/* state gallery */
+.gal{display:grid;grid-template-columns:repeat(2,minmax(0,390px));gap:34px 30px;justify-content:start}
+@media(max-width:900px){.gal{grid-template-columns:1fr;overflow-x:auto}}
+.cell{min-width:0}
+.cap{margin-bottom:11px}
+.cap b{display:block;font-family:'Clash Display',sans-serif;font-size:15px;letter-spacing:-.02em}
+.cap span{display:block;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.14em;
+  color:var(--faint);text-transform:uppercase;margin-top:4px}
+.cap em{display:block;font-style:normal;color:var(--dim);font-size:13px;margin-top:6px;line-height:1.45}
+.cap em b{display:inline;font-family:inherit;font-size:inherit;color:var(--ink);font-weight:500}
+
+.phone{width:390px;max-width:100%;border-radius:22px;overflow:hidden;border:1px solid var(--line2);
+  box-shadow:0 26px 64px -30px #000;background:var(--bg);position:relative}
+.stub{background:linear-gradient(180deg,#0c0b10,#09080d);border-bottom:1px solid var(--line);
+  padding:10px 13px;display:flex;align-items:center;justify-content:space-between}
+.stub .s1{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.15em;color:#3d3850;line-height:1.7}
+.stub .s2{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;color:#2f2b3d;text-align:right}
+.stage{position:relative;padding:0 13px 14px}
+.fold{position:absolute;left:0;right:0;top:299px;height:0;border-top:1px dashed rgba(255,77,94,.26);z-index:9;
+  pointer-events:none}
+.fold b{position:absolute;left:1px;top:-8px;font-family:'Geist Mono',monospace;font-size:6px;font-weight:700;
+  color:#7a3b43;line-height:1}
+.foot{padding:8px 13px 10px;border-top:1px solid var(--line);
+  font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;color:#3b3648;text-align:center}
+.mx{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.mxi{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.09em;padding:5px 8px;border-radius:5px;
+  border:1px solid var(--line2);color:var(--faint);text-transform:uppercase}
+.mxi b{color:var(--dim)}
+.mxi.ok{border-color:rgba(74,222,128,.35);color:var(--phos)}
+.mxi.no{border-color:rgba(255,77,94,.35);color:#ff8f80}
+
+.btn{border:0;border-radius:11px;padding:13px 12px;font-size:14px;font-weight:600;min-height:46px;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;cursor:pointer;width:100%;
+  font-family:inherit}
+.btn.gh{background:transparent;border:1px solid var(--line2);color:var(--dim)}
+.btn.sm{padding:10px;font-size:12.5px;min-height:40px;border-radius:9px}
+
+/* ============================================================
+   THE LINE
+   ============================================================ */
+.LN{padding-top:14px;position:relative}
+.LN .top{display:flex;justify-content:space-between;align-items:baseline;padding:0 1px 12px}
+.LN .top b{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.035em;line-height:1}
+.LN .top b i{font-style:normal;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;
+  color:var(--faint);display:block;margin-top:4px}
+.LN .top .dw{text-align:right;font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;color:var(--gold)}
+.LN .top .dw u{display:block;text-decoration:none;color:var(--faint);margin-top:3px}
+.LN .route{position:relative;padding-left:44px}
+.LN .track{position:absolute;left:18px;top:4px;bottom:4px;width:6px;border-radius:99px;background:#16131f}
+.LN .tdone{position:absolute;left:18px;top:4px;width:6px;border-radius:99px;
+  background:linear-gradient(180deg,var(--ember),var(--ghost-d) 30%,var(--rune) 48%,var(--gold));opacity:.9}
+.LN .st{position:relative;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;
+  padding:6px 0;min-height:32px}
+.LN .st::before{content:'';position:absolute;left:-29px;top:50%;transform:translateY(-50%);
+  width:10px;height:10px;border-radius:99px;background:#0d0b13;border:2px solid #332c47;z-index:2}
+.LN .st.done::before{background:var(--phos);border-color:var(--phos);box-shadow:0 0 8px rgba(74,222,128,.5)}
+.LN .st.miss::before{border-color:var(--miss);background:#0d0b13}
+.LN .st .nm{font-size:12.5px;color:var(--dim);line-height:1.25}
+.LN .st .tm{font-family:'Geist Mono',monospace;font-size:8.5px;color:#4f4860}
+.LN .st.done .nm{color:#607367}
+.LN .st.miss .nm{color:#7a6670}
+.LN .st.miss .tm{color:var(--miss)}
+.LN .st .skip{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.13em;color:var(--miss);
+  display:block;margin-top:2px}
+.LN .collapse{position:relative;display:flex;align-items:center;gap:8px;padding:7px 0;cursor:pointer;
+  font-family:'Geist Mono',monospace;font-size:8px;letter-spacing:.13em;color:#5c5570}
+.LN .collapse::before{content:'';position:absolute;left:-28px;top:50%;transform:translateY(-50%);
+  width:8px;height:8px;border-radius:99px;background:#241f33;border:1px solid #332c47;z-index:2}
+.LN .collapse b{color:var(--phos);font-weight:400}
+.LN .collapse u{color:var(--miss);text-decoration:none}
+
+.LN .train{position:relative;margin:8px 0;padding:13px 14px 12px;border-radius:14px;
+  border:1px solid rgba(224,178,94,.5);background:linear-gradient(150deg,#231b2f,#130f1c);
+  box-shadow:0 10px 34px -18px rgba(224,178,94,.55)}
+.LN .train::before{content:'';position:absolute;left:-37px;top:50%;transform:translateY(-50%);
+  width:24px;height:36px;border-radius:8px;background:linear-gradient(180deg,#f0cd8e,#a97c33);
+  box-shadow:0 0 18px rgba(224,178,94,.75);z-index:3}
+.LN .train::after{content:'';position:absolute;left:-31px;top:50%;transform:translateY(-50%);
+  width:12px;height:9px;border-radius:2px;background:#120d05;z-index:4}
+.LN .train .yh{display:flex;justify-content:space-between;align-items:baseline;
+  font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.19em;color:var(--gold);margin-bottom:7px}
+.LN .train .yh u{text-decoration:none;color:var(--faint);letter-spacing:.1em}
+.LN .train h4{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;margin:0 0 4px;line-height:1.12}
+.LN .train .sub{font-size:11.5px;color:var(--dim);margin-bottom:11px;line-height:1.35}
+.LN .train.calm{border-color:var(--line2);background:linear-gradient(150deg,#171425,#0f0d17);box-shadow:none}
+.LN .train.calm::before{background:linear-gradient(180deg,#3b3550,#262035);box-shadow:none}
+.LN .train.calm .yh{color:var(--dim)}
+
+.LN .hop{position:relative;margin:0 0 8px;padding:9px 11px 10px;border-radius:0 0 12px 12px;
+  border:1px solid rgba(74,222,128,.26);border-top:0;background:rgba(74,222,128,.05);margin-top:-9px}
+.LN .hop .hh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;
+  font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.15em;color:#7c9885}
+.LN .hop .hh b{color:var(--phos)}
+.LN .hop .row{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.LN .hop button{border:1px solid rgba(74,222,128,.24);background:rgba(74,222,128,.04);border-radius:8px;
+  padding:7px 5px;cursor:pointer;font-family:inherit;min-height:44px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;color:#8fbf9e;font-size:10.5px;line-height:1.15;text-align:center}
+.LN .hop button .p{display:flex;gap:2.5px}
+.LN .hop button .p i{width:4px;height:4px;border-radius:99px;background:#26302a;display:block}
+.LN .hop button .p i.on{background:var(--phos)}
+.LN .hop button.on{border-color:var(--phos);background:rgba(74,222,128,.14);color:var(--phos)}
+
+.LN .disrupt{position:relative;margin:8px 0;padding:10px 12px;border-radius:11px;
+  border:1px solid rgba(255,77,94,.4);background:rgba(255,77,94,.08)}
+.LN .disrupt::before{content:'';position:absolute;left:-32px;top:50%;transform:translateY(-50%);
+  width:12px;height:12px;border-radius:99px;background:var(--blood);box-shadow:0 0 10px rgba(255,77,94,.7);z-index:3}
+.LN .disrupt b{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.15em;color:var(--blood);display:block}
+.LN .disrupt span{font-size:11.5px;color:#ffd9d2;display:block;margin-top:3px}
+.LN .term{position:relative;margin-top:9px;padding:10px 12px;border-radius:12px;
+  border:1px solid var(--ghost-line);background:var(--ghost-bg)}
+.LN .term::before{content:'';position:absolute;left:-30px;top:50%;margin-top:-5px;
+  width:10px;height:10px;background:var(--ghost-d);border-radius:2px;rotate:45deg;z-index:2}
+.LN .term .th{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.19em;color:var(--ghost-d);margin-bottom:7px}
+.LN .term .plat{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.LN .term .plat span{font-family:'Geist Mono',monospace;font-size:9.5px;color:var(--ghost);text-align:center;
+  border:1px solid var(--ghost-line);border-radius:6px;padding:5px 2px}
+.LN .term .plat span u{display:block;text-decoration:none;font-size:5.5px;letter-spacing:.12em;color:#5d7292;margin-bottom:2px}
+.LN .term .stale{margin-top:7px;font-family:'Geist Mono',monospace;font-size:7.5px;letter-spacing:.08em;color:#ff8f80}
+.LN .offban{border:1px solid rgba(176,140,255,.4);background:rgba(176,140,255,.08);border-radius:11px;
+  padding:10px 12px;margin-bottom:12px}
+.LN .offban b{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.17em;color:var(--violet);display:block}
+.LN .offban span{font-size:12px;color:#d7c9f2;display:block;margin-top:4px}
+.LN.off .route{opacity:.62}
+.LN .rescue{margin:9px 0 0;padding:10px 12px;border-radius:11px;border:1px solid rgba(74,222,128,.3);
+  background:rgba(74,222,128,.06);font-size:12px;color:#a8d4b6;line-height:1.4}
+.LN .rescue b{color:var(--phos);font-weight:500}
+
+/* ============================================================
+   THE FACE
+   ============================================================ */
+.FC{padding-top:12px;display:flex;flex-direction:column;align-items:center}
+.FC .dial{position:relative;width:364px;height:330px;margin-left:-1px}
+.FC .dial svg{position:absolute;left:0;top:0}
+.FC .mid{position:absolute;left:50%;top:176px;transform:translate(-50%,-50%);width:168px;text-align:center}
+.FC .mid .k{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.19em;color:var(--gold);
+  margin-bottom:6px;line-height:1.4}
+.FC .mid h4{font-family:'Clash Display',sans-serif;font-size:17px;letter-spacing:-.032em;line-height:1.1;
+  margin:0 0 7px}
+.FC .mid .sub{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.11em;color:#7d7490;
+  margin-bottom:10px;line-height:1.4}
+.FC .mid .dw{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.13em;color:var(--faint);margin-top:9px}
+.FC .mid .dw b{color:var(--ink);font-weight:400}
+.FC .mid.calm .k{color:var(--dim)}
+.FC .earn{width:100%;margin-top:-4px}
+.FC .earn .eh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;padding:0 2px;
+  font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.15em;color:#7c9885}
+.FC .earn .eh b{color:var(--phos)}
+.FC .earn .row{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.FC .earn button{border:1px solid rgba(74,222,128,.24);background:rgba(74,222,128,.04);border-radius:9px;
+  padding:7px 2px;cursor:pointer;font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.03em;
+  color:#8fbf9e;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;line-height:1.25;text-align:center}
+.FC .earn button .p{display:flex;gap:2px}
+.FC .earn button .p i{width:3.5px;height:3.5px;border-radius:99px;background:#26302a;display:block}
+.FC .earn button .p i.on{background:var(--phos)}
+.FC .earn button.on{border-color:var(--phos);background:rgba(74,222,128,.14);color:var(--phos)}
+.FC .below{width:100%;margin-top:10px}
+.FC .pushrow{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.FC .pushrow span{text-align:center;border:1px solid var(--line);border-radius:8px;padding:6px 3px;
+  background:var(--panel);font-family:'Geist Mono',monospace;font-size:9.5px;color:var(--dim)}
+.FC .pushrow span u{display:block;text-decoration:none;font-size:5.5px;letter-spacing:.13em;color:var(--faint);margin-bottom:2px}
+.FC .pushrow span.hot{border-color:rgba(255,77,94,.35);color:#ff8f80}
+.FC .banner{width:100%;margin-top:9px;border-radius:11px;padding:9px 12px;
+  border:1px solid rgba(255,77,94,.4);background:rgba(255,77,94,.08)}
+.FC .banner b{font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.15em;color:var(--blood);display:block}
+.FC .banner span{font-size:11.5px;color:#ffd9d2;display:block;margin-top:3px}
+.FC .banner.off{border-color:rgba(176,140,255,.4);background:rgba(176,140,255,.08)}
+.FC .banner.off b{color:var(--violet)} .FC .banner.off span{color:#d7c9f2}
+.FC .banner.good{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.06)}
+.FC .banner.good b{color:var(--phos)} .FC .banner.good span{color:#a8d4b6}
+.FC .legend{width:100%;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:9px;
+  font-family:'Geist Mono',monospace;font-size:6px;letter-spacing:.1em;color:#4a4459}
+.FC .legend i{display:inline-block;width:9px;height:3px;border-radius:2px;vertical-align:1px;margin-right:4px}
+
+/* ============================================================
+   FUSIONS
+   ============================================================ */
+.FU{padding-top:14px}
+.FU .hd{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.FU .LN{padding-top:2px}
+.FU .hd .mini{flex:none;position:relative;width:64px;height:64px}
+.FU .hd .mini svg{position:absolute;inset:0}
+.FU .hd .mini .c{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;width:64px}
+.FU .hd .mini .c b{font-family:'Clash Display',sans-serif;font-size:17px;letter-spacing:-.04em;display:block;line-height:1}
+.FU .hd .mini .c span{font-family:'Geist Mono',monospace;font-size:5px;letter-spacing:.13em;color:#7d7490;
+  display:block;margin-top:3px;line-height:1.4}
+.FU .hd .txt{min-width:0}
+.FU .hd .txt .k{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.17em;color:var(--gold);margin-bottom:5px}
+.FU .hd .txt h4{font-family:'Clash Display',sans-serif;font-size:17px;letter-spacing:-.03em;line-height:1.12;margin:0 0 5px}
+.FU .hd .txt .s{font-size:11.5px;color:var(--dim);line-height:1.35}
+.FU .midroute{display:grid;gap:5px;width:168px;margin:0 auto}
+.FU .midroute .r{display:grid;grid-template-columns:9px 1fr auto;gap:6px;align-items:center;text-align:left}
+.FU .midroute .r i{width:7px;height:7px;border-radius:99px;background:#2b2540;display:block}
+.FU .midroute .r.now i{background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.FU .midroute .r.done i{background:var(--phos)}
+.FU .midroute .r .n{font-size:10.5px;color:var(--dim);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.FU .midroute .r.now .n{color:var(--ink);font-weight:500}
+.FU .midroute .r .t{font-family:'Geist Mono',monospace;font-size:7px;color:#4f4860}
+.FU .horizon{position:relative;height:150px;margin:0 -13px}
+.FU .horizon svg{position:absolute;left:0;top:0}
+.FU .horizon .sun{position:absolute;width:15px;height:15px;border-radius:99px;
+  background:radial-gradient(circle,#FFD9A0,var(--gold));box-shadow:0 0 18px rgba(224,178,94,.85);
+  transform:translate(-50%,-50%);z-index:3}
+.FU .horizon .lab{position:absolute;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.1em;
+  color:#4a4459;transform:translateX(-50%)}
+.FU .nowcard{border:1px solid rgba(224,178,94,.45);border-radius:14px;padding:12px 13px;
+  background:linear-gradient(150deg,#231b2f,#130f1c);margin-top:2px}
+.FU .nowcard .k{font-family:'Geist Mono',monospace;font-size:7px;letter-spacing:.18em;color:var(--gold);
+  display:flex;justify-content:space-between;margin-bottom:6px}
+.FU .nowcard .k u{text-decoration:none;color:var(--faint)}
+.FU .nowcard h4{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;line-height:1.1;margin:0 0 9px}
+.FU .after{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.FU .after div{border:1px solid var(--line);border-radius:9px;padding:7px 9px;background:var(--panel)}
+.FU .after div em{font-style:normal;font-family:'Geist Mono',monospace;font-size:6.5px;letter-spacing:.12em;
+  color:var(--faint);display:block;margin-bottom:3px}
+.FU .after div b{font-size:11.5px;font-weight:500;color:var(--dim)}
+.FU .parent{margin-top:14px;border-left:2px solid var(--line2);padding-left:12px;
+  font-size:13.4px;color:var(--dim);line-height:1.55}
+.FU .parent b{color:var(--ink);font-weight:500}
+
+/* verdict / handoff */
+.vr{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:17px 0;border-top:1px solid var(--line);align-items:start}
+.vr .n{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);padding-top:3px}
+.vr h3{font-size:16.5px;margin-bottom:4px;font-family:'Satoshi';font-weight:700}
+.vr p{margin:0;color:var(--dim);font-size:14.3px;line-height:1.55;max-width:76ch}
+.vr.pick h3{color:var(--gold)}
+.tag{display:inline-block;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.13em;
+  padding:2.5px 7px;border-radius:4px;border:1px solid var(--line2);color:var(--faint);margin-left:8px;
+  text-transform:uppercase;vertical-align:2px}
+.tag.g{border-color:rgba(224,178,94,.45);color:var(--gold)}
+.handoff{padding:8px 0 90px}
+.handoff h2{font-size:25px;margin:38px 0 14px}
+.handoff h3{font-size:15px;margin:26px 0 8px;font-family:'Satoshi';font-weight:700}
+.handoff p,.handoff li{color:var(--dim);font-size:14.4px;line-height:1.6;max-width:80ch}
+.handoff b{color:var(--ink);font-weight:500}
+.handoff ul{padding-left:19px;margin:8px 0}
+.handoff li{margin-bottom:7px}
+.against{border:1px solid rgba(255,77,94,.32);background:rgba(255,77,94,.05);border-radius:14px;
+  padding:20px 22px;margin-top:18px}
+.against h3{margin-top:0;color:#ff8f80}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="mast">
+    <div class="kick">Agent 4 · round 3 · finishing the two survivors</div>
+    <h1>The Line, built out. The Face, built properly.</h1>
+
+    <div class="quote">"<b>I like The Line.</b> I can kind of see what's already been done, I can see where
+      I'm at very easily, and kind of how the day is gonna go quite easily — but very emphasis on today.
+      However I don't think it's <b>100% fully built</b>."</div>
+    <div class="quote">"<b>The Face idea is actually really cool</b> — kind of seeing the whole day in one.
+      I just think you kind of made it <b>so sloppy</b> I can't 100% say if I like it."</div>
+
+    <p>No new directions this round. The Line is rendered across <b>all eight states</b>, including the ones
+      that decide whether a design survives contact with a real week — the barely-begun morning, the day
+      gone wrong, the off-script day. The Face is rebuilt from its geometry up, with every piece of
+      sloppiness named and fixed. Then three genuinely different attempts at the seam between them.</p>
+    <p>Both are generated from <b>one shared state table</b>, so the same day produces both designs and the
+      comparison is honest — no cherry-picked data on either side.</p>
+  </div>
+
+  <!-- ====================== THE CULL ====================== -->
+  <section class="sec">
+    <div class="sech"><div class="sn">00</div>
+      <div><h2>The cull</h2>
+        <p>New process, applied before anything was rendered: <b>generate widely, scrutinise on paper, and
+          only build what survives.</b> Twenty-four approaches were written down for this round. Seven
+          survived into the file. The other seventeen died here, in writing, which is a great deal cheaper
+          than dying in a screenshot.</p>
+      </div></div>
+
+    <div class="cull">
+      <h3>24 considered · 7 built</h3>
+      <p class="lead">Grouped by the problem they were trying to solve. Green = built. Everything else was
+        killed for the reason given.</p>
+
+      <div class="grp">Finishing The Line — 8 candidates</div>
+      <div class="cd live"><span class="id">L1</span><span class="tx"><b>Vertical route, all eight states, every element carried</b> — take the sketch to a shippable region rather than redesigning it.</span><span class="vd">built</span></div>
+      <div class="cd"><span class="id">L2</span><span class="tx">Turn the route horizontal and scroll through the day.</span><span class="vd">killed — destroys the "today at a glance" read he praised; forces a scroll to see where you are</span></div>
+      <div class="cd"><span class="id">L3</span><span class="tx">Full transit costume — roundels, tube colours, a proper map key.</span><span class="vd">killed — costume, not clarity; fights the furnace palette and dates instantly</span></div>
+      <div class="cd"><span class="id">L4</span><span class="tx">Multi-line interchange map, one coloured line per domain.</span><span class="vd">killed — six parallel lines at 390px is unreadable, and it splits "today" into six stories</span></div>
+      <div class="cd"><span class="id">L5</span><span class="tx">True-to-scale spacing: distance down the line equals duration.</span><span class="vd">killed on test — a 20-min ritual becomes 8px, lunch becomes a canyon, and the day reads as mostly empty</span></div>
+      <div class="cd live"><span class="id">L6</span><span class="tx"><b>Collapse the past into one pill</b> once it exceeds three stops, so the evening state doesn't need fourteen rows.</span><span class="vd">built</span></div>
+      <div class="cd"><span class="id">L7</span><span class="tx">Live ETA — "start now and you finish at 17:40".</span><span class="vd">killed for now — needs a rule decision about what "finishing" means; parked for the GM</span></div>
+      <div class="cd"><span class="id">L8</span><span class="tx">Always-counts as branches pinned to fixed times (the round-2 version).</span><span class="vd">killed — it was the round-2 flaw: four of the six were unreachable most of the day</span></div>
+      <div class="cd live"><span class="id">L8b</span><span class="tx"><b>Always-counts as a "hop off here" cluster attached to the train</b> — all six reachable from wherever you are on the line.</span><span class="vd">built</span></div>
+
+      <div class="grp">Fixing The Face — 9 candidates</div>
+      <div class="cd"><span class="id">F1</span><span class="tx">Keep the full 360° clock with 06:00 at the top.</span><span class="vd">killed — the wrap puts 21:50 hard against 06:00, implying the day loops; part of why it read as sloppy</span></div>
+      <div class="cd"><span class="id">F2</span><span class="tx">A real 12-hour analogue face with hour numerals.</span><span class="vd">killed — the working day is 15h50m, so it needs two laps of the dial</span></div>
+      <div class="cd live"><span class="id">F3</span><span class="tx"><b>Open C-gauge, 300° with the gap at the bottom</b> — start and end visibly separated.</span><span class="vd">built</span></div>
+      <div class="cd"><span class="id">F4</span><span class="tx">Arcs strictly true-to-duration with no minimum size.</span><span class="vd">killed — the 20-minute market-close block renders as a 4px sliver: invisible and untappable</span></div>
+      <div class="cd live"><span class="id">F4b</span><span class="tx"><b>True-to-duration with an 8° floor</b>, the overflow taken back from the longest segment.</span><span class="vd">built</span></div>
+      <div class="cd"><span class="id">F5</span><span class="tx">Equal-size segments, one per block, ignoring duration.</span><span class="vd">killed — then the marker's position no longer means the time, which is the only reason a dial beats a list</span></div>
+      <div class="cd"><span class="id">F6</span><span class="tx">Labels rotated tangentially around the rim (the round-2 version).</span><span class="vd">killed — this <em>was</em> the sloppiness: 6px vertical text is not readable in one second</span></div>
+      <div class="cd"><span class="id">F7</span><span class="tx">Always-counts as small dots on the rim with labels beside them.</span><span class="vd">killed — 15px targets, and labels only sit legibly at the top and bottom of a circle</span></div>
+      <div class="cd live"><span class="id">F8</span><span class="tx"><b>Always-counts as a row of six pads under the dial's open mouth</b> — horizontal labels, 46px targets, the day pours into them.</span><span class="vd">built</span></div>
+      <div class="cd"><span class="id">F9</span><span class="tx">Put the schedule list inside the dial's centre.</span><span class="vd">killed as a Face — that is a fusion's job, and it is exactly what X2 does</span></div>
+
+      <div class="grp">The seam — 7 candidates</div>
+      <div class="cd live"><span class="id">X1</span><span class="tx"><b>A small dial as the route's header</b> — whole day in one, then the route underneath.</span><span class="vd">built</span></div>
+      <div class="cd live"><span class="id">X2</span><span class="tx"><b>The route inside the dial's centre</b> — now and the next two stops where the instruction was.</span><span class="vd">built</span></div>
+      <div class="cd live"><span class="id">X3</span><span class="tx"><b>The day flattened into a horizon arc</b> with the sun riding it, and only now + next beneath.</span><span class="vd">built</span></div>
+      <div class="cd"><span class="id">X4</span><span class="tx">A dial that unrolls into the route when tapped.</span><span class="vd">killed — a transition, not a layout; it hides one of the two things at all times and can't be judged side by side</span></div>
+      <div class="cd"><span class="id">X5</span><span class="tx">Split screen: dial on the left, route on the right.</span><span class="vd">killed — 390 halved gives a 180px dial and a 180px route; round 2 already proved a 96px column can't carry an objective</span></div>
+      <div class="cd"><span class="id">X6</span><span class="tx">The dial as a faint watermark behind the route.</span><span class="vd">killed — decoration; the day becomes unreadable and the route gains nothing</span></div>
+      <div class="cd"><span class="id">X7</span><span class="tx">One small dial per arc of the day — a morning dial, an afternoon dial.</span><span class="vd">killed — three objects is the opposite of "the whole day in one"</span></div>
+
+      <div class="tally">CONSIDERED <b>24</b> · BUILT <b>7</b> · KILLED IN WRITING <b>17</b> ·
+        KILLED ON TEST <b>2</b> (L5, F4 — both were measured before being rejected)</div>
+    </div>
+  </section>
+
+  <!-- ====================== THE LINE ====================== -->
+  <section class="sec">
+    <div class="sech"><div class="sn">01</div>
+      <div><h2>The Line — fully built</h2>
+        <p>What was missing: the past piled up unbounded, four of the six small wins were unreachable, and
+          it had only ever been drawn mid-morning on a good day. All three are fixed. <b>The past collapses
+          to one pill once it passes three stops</b>, <b>always-counts becomes a "hop off here" cluster
+          welded to the train</b> so all six are reachable from wherever you are, and it is rendered below
+          across every state that matters — including the two that decide whether it survives a real week.</p>
+        <p><b>Misses are drawn as stations the train went past</b> — hollow ring, muted label, the word
+          PASSED — never as red blocks. On the bad-day state the route stays the same shape and a green
+          line appears under the train telling him what is still winnable. That is law #1 handled
+          structurally rather than by softening a colour.</p>
+      </div></div>
+    <div class="gal" id="galLine"></div>
+  </section>
+
+  <!-- ====================== THE FACE ====================== -->
+  <section class="sec">
+    <div class="sech"><div class="sn">02</div>
+      <div><h2>The Face — executed properly</h2>
+        <p><b>What was sloppy, named:</b></p>
+        <p>① The dial was a closed 360° circle, so <b>21:50 sat hard against 06:00</b> and the eye could not
+          find where the day started. ② Six win labels were <b>rotated tangentially</b> — 6px vertical type
+          on the left and right of the circle, unreadable in one second, which is most of what "sloppy"
+          meant. ③ The win dots were <b>15px targets</b>, a third of the minimum. ④ Short blocks were
+          <b>invisible</b>: market-close is twenty minutes, which is 6.3° — a four-pixel sliver.
+          ⑤ There were <b>no hour anchors</b>, so an arc's position told you nothing absolute. ⑥ Past-missed
+          and future-shallow were <b>rendered nearly the same dark colour</b>. ⑦ The now-marker was a dot the
+          same size as a win dot, so <b>the current moment was not unmistakable</b>. ⑧ The centre was a
+          card-language button dropped inside a dial — two visual languages in one object.</p>
+        <p><b>What replaced them:</b> an open 300° gauge with the mouth at the bottom, so the day has a
+          visible start and end; <b>hour anchors at 06 · 09 · 12 · 15 · 18 · 21</b> in horizontal type
+          outside the ring; a duration-true sweep with an <b>8° floor</b> so no block can vanish (the
+          overflow is taken back from the longest segment — the distortion is under 4° across the whole
+          day); the now-marker is a <b>full-width wedge with a glow and an outside pointer</b>, plus the
+          centre carries a progress ring for the block you are in; missed time is a <b>thin dashed
+          outline</b>, distinct from the solid future; and the six wins became a <b>row of 46px pads under
+          the dial's open mouth</b> with horizontal labels — the day pours into them.</p>
+      </div></div>
+    <div class="gal" id="galFace"></div>
+  </section>
+
+  <!-- ====================== FUSIONS ====================== -->
+  <section class="sec">
+    <div class="sech"><div class="sn">03</div>
+      <div><h2>Three attempts at the seam</h2>
+        <p>The Line's clarity about now-and-next, with The Face's whole-day-in-one. Three genuinely
+          different places to put the join — one favours each parent, and one belongs to neither.</p>
+      </div></div>
+    <div class="gal" id="galFuse"></div>
+  </section>
+
+  <!-- ====================== VERDICT ====================== -->
+  <section class="sec">
+    <h2 style="font-size:26px;margin-bottom:10px">My read</h2>
+    <p style="color:var(--dim);max-width:690px;font-size:15px;margin:0 0 20px">
+      Ranked on the thing he actually praised: <b style="color:var(--ink)">can I see what's done, where I
+      am, and how the day will go — in one second, with today emphasised?</b></p>
+
+    <div class="vr pick"><div class="n">1st</div><div>
+      <h3>X1 · The Dial-Head Line <span class="tag g">my pick</span></h3>
+      <p>It keeps everything he said he liked and adds the only thing he said was cool about the other one.
+        The route is unchanged — done behind you, the train where you are, the day ahead in order — and a
+        104px dial sits on top of it answering "how much day is there, and how much of it is left" in a
+        single glance, without him reading a single row. The dial is a <em>summary</em>, which is what a
+        whole-day-in-one object is actually good at; the route is the <em>detail</em>, which is what a line
+        is good at. Neither is asked to do the other's job.</p></div></div>
+
+    <div class="vr"><div class="n">2nd</div><div>
+      <h3>The Line, on its own <span class="tag">the safe answer</span></h3>
+      <p>Now genuinely finished, and it survives all eight states — including the bad day, which it handles
+        better than anything else in three rounds: the shape of the route never changes, misses are just
+        stations you went past, and the hop-off cluster means there is always something to tap. If you want
+        the least risk and the fewest new ideas, ship this and nothing else.</p></div></div>
+
+    <div class="vr"><div class="n">3rd</div><div>
+      <h3>The Face, properly built <span class="tag">much better — and still not first</span></h3>
+      <p>Built right, it is the most striking thing in this document and the whole day genuinely is legible
+        in one object. But see the argument against, below: a dial answers "how much" beautifully and
+        answers "what next" poorly, and "what next" is the question this region exists to answer. It also
+        costs 330px before anything else appears.</p></div></div>
+
+    <div class="vr"><div class="n">4–5</div><div>
+      <h3>X2 Route-in-the-Face · X3 The Horizon</h3>
+      <p><b>X2</b> is the most elegant object here and the one I would build if the Face wins — it uses the
+        dial's dead centre for the three rows that matter instead of one instruction. Its cost is that the
+        centre of a circle is the narrowest place on the screen, so objectives truncate. <b>X3</b> is the
+        cheapest by far, at roughly half the height of any dial, and the sun riding the horizon is the most
+        immediately readable now-marker in three rounds — but flattening the day to an arc loses the block
+        structure, so it tells you <em>when</em> you are without telling you <em>what</em> is left.</p></div></div>
+  </section>
+
+  <!-- ====================== HAND-OFF ====================== -->
+  <section class="handoff">
+    <h2>Hand-off to the GM</h2>
+
+    <h3>What I produced</h3>
+    <p><b>renditions/rend-timeblock-v3.html</b> — The Line and The Face each rendered across the same eight
+      states, three fusions, and a visible cull of 24 candidate approaches with 17 killed in writing.
+      Round 2's file is untouched. Both designs are generated from one shared state table, so neither got
+      favourable data.</p>
+
+    <h3>My pick, and what it costs</h3>
+    <p><b>X1 · The Dial-Head Line.</b> The route he already likes, with a 104px whole-day dial as its
+      header. It is the only option that adds the Face's one real strength — instant "how much day is
+      left" — without asking a circle to do a list's job. It costs ~118px more than the bare Line, which
+      is real but affordable given NEXT UP still clears the fold in every state.</p>
+
+    <div class="against">
+      <h3>The strongest argument against my pick</h3>
+      <p><b>The dial head is decoration and I may be fooling myself.</b> Every fact it carries is already on
+        the screen: the route's coloured track shows what's done, the train shows where he is, and
+        "3h 15m to the terminus" is written in words two rows below. If he never looks at it, I have spent
+        118px — a third of the fold budget — on a graphic that repeats the row underneath it. The test is
+        brutal and cheap: <b>build the bare Line first, live with it for a week, and only add the dial head
+        if he finds himself wanting a summary he doesn't already have.</b> If I am wrong about this, the
+        bare Line (2nd place) is the right answer and the dial belongs in The Record, not on Today.</p>
+      <p style="margin-top:10px">There is a second, sharper version of the same objection: <b>a dial is a
+        "how much is left" instrument, and he is a man who abandons systems when he falls behind.</b> An
+        object whose entire job is to show how much of the day has burned may be exactly the wrong thing to
+        put at the top of the screen at 3pm on a bad day. The Line never shows that; it shows the next stop.
+        That difference is not aesthetic, and it is the reason the bare Line might beat everything here.</p>
+    </div>
+
+    <h3>Honest verdict on The Face at phone size</h3>
+    <p>The brief asked me to say plainly if the concept doesn't hold up once built properly. It holds up —
+      it is legible, the current moment is unmistakable, no label collides with anything, and short blocks
+      survive. <b>But it is the wrong instrument for this particular question.</b> A dial is excellent at
+      proportion ("two thirds of the day is gone") and poor at sequence ("what do I do after this"), and
+      this region exists to answer sequence. My honest read is that the Face's idea deserves to live as a
+      <em>component</em> — the dial head in X1, or the summary object on The Record — rather than as the
+      region itself. That is not a rejection of what he liked; it is where the thing he liked works best.</p>
+
+    <h3>What verification caught in my own work</h3>
+    <p>Six defects, all found by rendering and measuring rather than by reading my own code. Two of them
+      were <b>lies in the mock, not layout bugs</b>, which is worse:</p>
+    <ul>
+      <li><b>The bad-day rescue line asserted "2 deep stops and 6 side stops"</b> when the state it sits in
+        actually has one deep stop and five wins left. It was hardcoded. It is now computed from the state,
+        like everything else on the screen — a mock that lies about its own data is worthless for a decision.</li>
+      <li><b>The Face's inner progress ring swept the whole dial</b> instead of the current block's own arc,
+        so "45 of 75 minutes into Block 2" rendered as a gold arc covering 40% of the day. It read as a
+        completely different — and false — statement. It now spans only the block it describes.</li>
+      <li><b>The off-script banner broke the fold law.</b> Above the instruction it pushed NEXT UP to +332.
+        Moved below the train: nothing but a penance is allowed to push the instruction down.</li>
+      <li><b>My own pick broke the fold law too.</b> The dial head at 104px put NEXT UP at +352. Fixed
+        properly rather than by shrinking type — the dial now <em>replaces</em> the route's text header
+        instead of sitting on top of it, which is also the better idea. <b>All nineteen mocks now clear
+        299.</b></li>
+      <li><b>At 06:05 the wins header read "0 TODAY · +0"</b> — the single most accusatory number on the
+        emptiest screen in the set. It now reads "ALL 6 STILL TO PLAY".</li>
+      <li>A find-and-replace put an apostrophe inside a JS string and <b>broke the entire page</b>. Caught
+        only because the check watches for console errors; every mock was blank and the screenshots would
+        have been of nothing.</li>
+    </ul>
+
+    <h3>Things the GM should know</h3>
+    <ul>
+      <li><b>The eight states are the deliverable, not the decoration.</b> Six of the eight only exist
+        because the brief demanded them, and two of those six changed the design: the evening state forced
+        the collapsing-past pill, and the bad-day state forced the rescue line. A design reviewed only in
+        its happy state is a design that has not been reviewed.</li>
+      <li><b>Saturday is a genuinely different shape</b> and both designs handle it without a special case —
+        six stops instead of fourteen, and the dial's arcs simply get longer. No separate layout needed.</li>
+      <li><b>Off-script deliberately keeps always-counts live</b> while everything else desaturates. An
+        off-script day still lets him put something on the board; that seemed truer to the mechanic than
+        freezing the whole screen.</li>
+      <li><b>The 8° floor on the Face is a small lie about time</b> — about 4° across the whole day, taken
+        out of "Personal life". It is documented in the mock rather than hidden, but if the GM would rather
+        be strictly time-true, the cost is that market-close and Bible become untappable slivers.</li>
+      <li><b>The tsparticles v3 <code>loadSlim</code> bug from round 2 is still open</b> in
+        <code>renditions/rend-bank.html</code> and <code>header-directions.html</code> — particles are
+        created but never painted, silently. Nothing in this file depends on it.</li>
+    </ul>
+  </section>
+
+</div>
+
+<script>
+/* ==================================================================
+   ONE STATE TABLE — both designs render from this, so the comparison
+   is honest and no state exists in one design but not the other.
+   ================================================================== */
+var C = {WORK:'#E0B25E', CAP:'#7FB4FF', BODY:'#FF6B2C', FAITH:'#B08CFF', MIND:'#38E1D8', PEOPLE:'#4ADE80'};
+function mins(t){ var p = t.split(':'); return +p[0] * 60 + +p[1]; }
+function hhmm(m){ return String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0'); }
+function dur(m){ var h = Math.floor(m/60), x = m%60; return h ? (h + 'h ' + (x?x+'m':'')).trim() : x + 'm'; }
+
+var WEEKDAY = [
+  {id:'wake', s:'06:00',e:'06:30',n:'Wake · pre-market',c:C.BODY,k:'ritual'},
+  {id:'open', s:'06:30',e:'08:30',n:'Market open',c:C.CAP,k:'market',obj:'Trade the first two hours · rules only'},
+  {id:'prio', s:'08:30',e:'09:00',n:"Write today's 3 priorities",c:C.MIND,k:'ritual'},
+  {id:'b1',   s:'09:00',e:'10:30',n:'Block 1',c:C.WORK,k:'deep',obj:'Finish the AVRS pitch page'},
+  {id:'b2',   s:'10:45',e:'12:00',n:'Block 2',c:C.WORK,k:'deep',obj:'Send Anthony the AVRS pitch'},
+  {id:'lunch',s:'12:00',e:'13:00',n:'Lunch',c:C.BODY,k:'ritual'},
+  {id:'close',s:'13:00',e:'13:20',n:'Market close · log the day',c:C.CAP,k:'market'},
+  {id:'b3',   s:'13:20',e:'14:35',n:'Block 3',c:C.WORK,k:'deep',obj:'Spanish ad batch · 10 hooks'},
+  {id:'walk', s:'14:35',e:'15:05',n:'Walk the dog',c:C.BODY,k:'body'},
+  {id:'b4',   s:'15:05',e:'16:20',n:'Block 4',c:C.WORK,k:'deep',obj:'LA kitchen follow-up'},
+  {id:'gym',  s:'16:20',e:'17:30',n:'Gym',c:C.BODY,k:'body',opt:1},
+  {id:'life', s:'17:30',e:'21:00',n:'Personal life',c:C.PEOPLE,k:'life'},
+  {id:'reset',s:'21:00',e:'21:30',n:'Clean · prep tomorrow',c:C.MIND,k:'ritual'},
+  {id:'bible',s:'21:30',e:'21:50',n:'Bible · text Kells',c:C.FAITH,k:'ritual',opt:1}
+];
+var SATURDAY = [
+  {id:'wake', s:'08:00',e:'08:45',n:'Slow start',c:C.BODY,k:'ritual'},
+  {id:'hike', s:'09:00',e:'10:30',n:'Long hike with the dog',c:C.BODY,k:'body'},
+  {id:'b1',   s:'11:00',e:'12:15',n:'Block 1',c:C.WORK,k:'deep',obj:'The one that matters'},
+  {id:'mon',  s:'12:30',e:'13:15',n:'Set Monday up',c:C.MIND,k:'ritual'},
+  {id:'life', s:'13:15',e:'21:30',n:'Yours',c:C.PEOPLE,k:'life'},
+  {id:'bible',s:'21:30',e:'21:50',n:'Bible · text Kells',c:C.FAITH,k:'ritual',opt:1}
+];
+var WINS = [
+  {k:'chores', n:'Laundry',   full:'Laundry / dishes',   xp:15, need:0, hits:0},
+  {k:'cooked', n:'Cooked',    full:'Cooked in',          xp:20, need:4, hits:2},
+  {k:'said_no',n:'Said no',   full:'Said no',            xp:25, need:0, hits:0},
+  {k:'bed',    n:'In bed',    full:'In bed on time',     xp:20, need:4, hits:1},
+  {k:'present',n:'Someone',   full:'Real time',          xp:25, need:3, hits:1},
+  {k:'convo',  n:'Convo',     full:'Real convo',         xp:30, need:3, hits:1}
+];
+
+var STATES = [
+  {key:'dawn', day:'WED', shape:'W', t:mins('06:05'),
+   title:'06:05 — the day has barely begun',
+   meta:'almost nothing done · must not read as empty or accusatory',
+   note:'The emptiest state there is. Neither design shows a single failure, because there is nothing to fail yet — the route is <b>full of stops ahead</b> and the dial is <b>full of unburnt day</b>. Emptiness is reframed as supply.',
+   done:{}, miss:{}, wins:[]},
+
+  {key:'live', day:'WED', shape:'W', t:mins('11:15'),
+   title:'11:15 — inside Block 2',
+   meta:'the live state · how he sees it most often',
+   note:'The default. Four stops behind, the train inside the peak window, three deep-work stops ahead. This is the state both designs were originally drawn in.',
+   done:{wake:1,open:1,prio:1,b1:1}, miss:{}, wins:['chores','cooked']},
+
+  {key:'midday', day:'WED', shape:'W', t:mins('13:00'),
+   title:'13:00 — half done, one missed',
+   meta:'the first miss of the day',
+   note:'Priorities never got written. On the route it is a station the train went past — <b>hollow ring, PASSED</b> — not a red block. On the dial it is a thin dashed arc. The first miss should cost a colour, not a mood.',
+   done:{wake:1,open:1,b1:1,b2:1}, miss:{prio:1}, wins:['chores','cooked']},
+
+  {key:'evening', day:'WED', shape:'W', t:mins('21:30'),
+   title:'21:30 — nearly over, mostly done',
+   meta:'the collapsing past · the reward state',
+   note:'Eleven stops are behind him. This state is what forced the <b>collapse pill</b>: without it the route is a fourteen-row wall of things he already did. The dial needed no change — a full day of colour is exactly what it is for, and this is the state where the Face is at its best.',
+   done:{wake:1,open:1,prio:1,b1:1,b2:1,lunch:1,close:1,b3:1,walk:1,b4:1,gym:1,life:1,reset:1}, miss:{},
+   wins:['chores','cooked','present','convo']},
+
+  {key:'wrong', day:'THU', shape:'W', t:mins('15:30'),
+   title:'15:30 — the day went wrong',
+   meta:'four missed · the state law #1 governs',
+   note:'The one that decides everything. Nothing turns red and nothing is scolded: the <b>route keeps its exact shape</b>, the misses are stations passed, and a green line under the train says what is still winnable today. <b>Two deep blocks and six small wins are still on the board</b> — and the hop-off cluster is the nearest thing to the thumb.',
+   done:{wake:1,open:1}, miss:{prio:1,b1:1,b2:1,b3:1}, wins:['chores'], rescue:1},
+
+  {key:'penance', day:'WED', shape:'W', t:mins('11:15'),
+   title:'11:15 — a make-up is owed',
+   meta:'the penance state',
+   note:'The make-up sits <b>on the line itself</b>, as a disruption between where he is and where he is going — it cannot be scrolled past, but it is one row, not a wall. On the dial it is a red marker at the hour it is due plus a banner beneath.',
+   done:{wake:1,open:1,prio:1,b1:1}, miss:{}, wins:['chores','cooked'], penance:1},
+
+  {key:'off', day:'WED', shape:'W', t:mins('11:15'),
+   title:'Off-script — today does not count',
+   meta:'one per month · the denominator shrinks',
+   note:'Everything scored desaturates and the scoring language disappears. <b>Always-counts deliberately stays live</b> — an off-script day should still let him put something on the board. The route is still legible so he can follow the day if he wants to, without being measured by it.',
+   done:{wake:1,open:1}, miss:{}, wins:['chores','cooked'], off:1},
+
+  {key:'sat', day:'SAT', shape:'S', t:mins('11:30'),
+   title:'Saturday — the light shape',
+   meta:'six stops · one work block',
+   note:'A genuinely different day, and <b>neither design needed a special case</b>: the route simply has six stops, and the dial\'s arcs get longer because the blocks are longer. That both designs absorb a different day shape without new code is the strongest structural argument for either of them.',
+   done:{wake:1,hike:1}, miss:{}, wins:['chores']}
+];
+
+/* ---------- shared derivations ---------- */
+function shapeOf(st){ return st.shape === 'S' ? SATURDAY : WEEKDAY; }
+function curIdx(st){
+  var sh = shapeOf(st);
+  for (var i = 0; i < sh.length; i++) if (st.t >= mins(sh[i].s) && st.t < mins(sh[i].e)) return i;
+  return -1;
+}
+function nextIdx(st){
+  var sh = shapeOf(st);
+  for (var i = 0; i < sh.length; i++) if (mins(sh[i].s) > st.t) return i;
+  return -1;
+}
+function deepLeft(st){
+  var sh = shapeOf(st), n = 0;
+  for (var i = 0; i < sh.length; i++){
+    var b = sh[i];
+    if (b.k !== 'deep' || st.done[b.id] || st.miss[b.id]) continue;
+    if (mins(b.e) <= st.t) continue;
+    n += mins(b.e) - Math.max(mins(b.s), st.t);
+  }
+  return n;
+}
+function deepStopsLeft(st){
+  var sh = shapeOf(st), n = 0;
+  for (var i = 0; i < sh.length; i++){
+    var b = sh[i];
+    if (b.k === 'deep' && !st.done[b.id] && !st.miss[b.id] && mins(b.e) > st.t) n++;
+  }
+  return n;
+}
+function winState(st, w){ return st.wins.indexOf(w.k) >= 0; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+/* ==================================================================
+   THE LINE
+   ================================================================== */
+function renderLine(st){
+  var sh = shapeOf(st), ci = curIdx(st), ni = nextIdx(st);
+  var hero = ci >= 0 ? ci : ni;
+  var dl = deepLeft(st), stops = deepStopsLeft(st);
+  var past = [], future = [];
+  for (var i = 0; i < sh.length; i++){
+    if (i === hero) continue;
+    if (mins(sh[i].e) <= st.t || (hero >= 0 && i < hero)) past.push(sh[i]); else future.push(sh[i]);
+  }
+  var doneN = past.filter(function(b){ return st.done[b.id]; }).length;
+  var missN = past.filter(function(b){ return st.miss[b.id]; }).length;
+
+  var h = '<div class="LN' + (st.off ? ' off' : '') + '">';
+
+  /* header: day + deep work left */
+  h += '<div class="top"><b>' + (st.off ? 'Off-script' : (stops ? stops + ' stop' + (stops>1?'s':'') + ' of deep work' : 'The day is done')) +
+       '<i>' + st.day + (st.shape === 'S' ? ' · LIGHT DAY' : '') + ' · ' + hhmm(st.t) + '</i></b>' +
+       '<div class="dw">' + (dl ? dur(dl) + ' LEFT' : 'NO DEEP WORK LEFT') +
+       '<u>TO THE TERMINUS</u></div></div>';
+
+  h += '<div class="route">';
+  /* the track and how far along it you are */
+  var frac = Math.max(0, Math.min(1, (st.t - mins(sh[0].s)) / (mins(sh[sh.length-1].e) - mins(sh[0].s))));
+  h += '<div class="track"></div><div class="tdone" style="height:calc((100% - 8px) * ' + frac.toFixed(3) + ')"></div>';
+
+  /* past — collapse beyond three */
+  if (past.length > 3){
+    h += '<div class="collapse"><span>' + past.length + ' STOPS BEHIND YOU · <b>' + doneN + ' DONE</b>' +
+         (missN ? ' · <u>' + missN + ' PASSED</u>' : '') + ' ▾</span></div>';
+    var lastOne = past[past.length - 1];
+    h += station(st, lastOne);
+  } else {
+    for (var p = 0; p < past.length; p++) h += station(st, past[p]);
+  }
+
+  /* the train — NEXT UP */
+  if (hero >= 0){
+    var b = sh[hero], live = ci >= 0;
+    var left = live ? mins(b.e) - st.t : mins(b.s) - st.t;
+    h += '<div class="train' + (st.off ? ' calm' : '') + '">' +
+      '<div class="yh"><span>' + (st.off ? 'RIGHT NOW' : (live ? 'YOU ARE HERE' : 'NEXT STOP')) + '</span>' +
+      '<u>' + (live ? dur(left) + ' TO THE NEXT STOP' : 'IN ' + dur(left)) + ' · ' + b.s + '–' + b.e + '</u></div>' +
+      '<h4>' + esc(b.obj || b.n) + '</h4>' +
+      '<div class="sub">' + esc(b.obj ? b.n : (b.k === 'deep' ? 'No objective set' : '')) +
+        (b.k === 'deep' ? ' · deep work' : '') + '</div>' +
+      (b.k === 'deep'
+        ? '<button class="btn">Start focus run · ' + (mins(b.e) - mins(b.s)) + 'm</button>'
+        : '<button class="btn gh sm">Open</button>') +
+      '</div>';
+  } else {
+    h += '<div class="train calm"><div class="yh"><span>END OF THE LINE</span><u>' + hhmm(st.t) + '</u></div>' +
+      '<h4>The day is run</h4><div class="sub">Close it out and set tomorrow.</div>' +
+      '<button class="btn gh sm">Close the day</button></div>';
+  }
+
+  /* off-script sits BELOW the instruction, not above it: nothing but a penance is allowed to
+     push NEXT UP down, and putting it on top cost 33px and broke the fold in this state. */
+  if (st.off){
+    h += '<div class="offban"><b>OFF-SCRIPT · TODAY IS NOT SCORED</b>' +
+         '<span>The line still runs. It just cannot hurt you — that was the point.</span></div>';
+  }
+
+  /* rescue line — only on a day that went wrong. Counts are computed, never asserted. */
+  if (st.rescue){
+    var sideLeft = WINS.length - st.wins.length;
+    h += '<div class="rescue">The line still has <b>' + stops + ' deep stop' + (stops === 1 ? '' : 's') +
+         '</b> and <b>' + sideLeft + ' side stops</b> on it. ' +
+         'Nothing today is unrecoverable — get on at the next one.</div>';
+  }
+
+  /* always counts — hop off anywhere, welded under the train */
+  /* on an empty day this must not read as a score of zero — it reads as supply */
+  var earned = st.wins.reduce(function(a,k){
+    var w = WINS.filter(function(x){return x.k===k})[0]; return a + (w ? w.xp : 0); }, 0);
+  h += '<div class="hop"><div class="hh"><span>HOP OFF HERE · ANY TIME, ANY STOP</span><b>' +
+       (st.wins.length ? st.wins.length + ' TODAY · +' + earned
+                       : 'ALL ' + WINS.length + ' STILL TO PLAY') + '</b></div><div class="row">';
+  for (var w = 0; w < WINS.length; w++){
+    var wn = WINS[w], on = winState(st, wn), pips = '';
+    for (var q = 0; q < wn.need; q++) pips += '<i class="' + (q < wn.hits ? 'on' : '') + '"></i>';
+    h += '<button class="' + (on ? 'on' : '') + '">' + wn.n +
+         (wn.need ? '<span class="p">' + pips + '</span>' : '') + '</button>';
+  }
+  h += '</div></div>';
+
+  /* the make-up, on the line */
+  if (st.penance){
+    h += '<div class="disrupt"><b>SERVICE DISRUPTION · MAKE-UP OWED · L1/3</b>' +
+         '<span>Bible 15 min · write out 6 passages · photo as proof</span></div>';
+  }
+
+  /* future stops — cap so the region stays sane, and say so */
+  var shownF = future.slice(0, 4);
+  for (var f = 0; f < shownF.length; f++) h += station(st, shownF[f]);
+  if (future.length > shownF.length){
+    h += '<div class="collapse"><span>' + (future.length - shownF.length) + ' MORE STOPS AHEAD ▾</span></div>';
+  }
+
+  /* terminus */
+  h += '<div class="term"><div class="th">TERMINUS · DEC 1 · 91 WORKDAYS</div>' +
+    '<div class="plat"><span><u>SANO</u>1/3</span><span><u>FUNDED</u>0/3</span><span><u>KITCHEN</u>0/1</span></div>' +
+    (st.off ? '' : '<div class="stale">ANTHONY · PITCH-READY 1 DAY · NOT SENT →</div>') + '</div>';
+
+  h += '</div></div>';
+  return h;
+}
+function station(st, b){
+  var cls = st.done[b.id] ? 'done' : (st.miss[b.id] ? 'miss' : 'future');
+  return '<div class="st ' + cls + '"><span class="nm">' + esc(b.n) +
+    (st.miss[b.id] ? '<span class="skip">PASSED — NOT TAKEN</span>' : '') +
+    '</span><span class="tm">' + b.s + '</span></div>';
+}
+
+/* ==================================================================
+   THE FACE — open 300° gauge with an 8° floor on every block
+   ================================================================== */
+var A0 = -150, SWEEP = 300, MINDEG = 8;
+
+/* build a segment table (blocks AND the gaps between them) with a minimum
+   angular size for blocks, the overflow taken back from the longest segment */
+function segTable(st){
+  var sh = shapeOf(st), s0 = mins(sh[0].s), e0 = mins(sh[sh.length-1].e), span = e0 - s0;
+  var segs = [], cur = s0;
+  for (var i = 0; i < sh.length; i++){
+    var b = sh[i], bs = mins(b.s), be = mins(b.e);
+    if (bs > cur) segs.push({gap:1, s:cur, e:bs});
+    segs.push({gap:0, s:bs, e:be, b:b});
+    cur = be;
+  }
+  segs.forEach(function(sg){ sg.raw = (sg.e - sg.s) / span * SWEEP; sg.deg = sg.raw; });
+  /* floor the blocks */
+  var owed = 0;
+  segs.forEach(function(sg){
+    if (!sg.gap && sg.deg < MINDEG){ owed += MINDEG - sg.deg; sg.deg = MINDEG; }
+  });
+  /* take it back from the longest segment that can afford it */
+  while (owed > 0.01){
+    var big = null;
+    segs.forEach(function(sg){ if ((!big || sg.deg > big.deg) && sg.deg > MINDEG + 1) big = sg; });
+    if (!big) break;
+    var take = Math.min(owed, big.deg - MINDEG - 1);
+    big.deg -= take; owed -= take;
+  }
+  var a = A0;
+  segs.forEach(function(sg){ sg.a0 = a; a += sg.deg; sg.a1 = a; });
+  return segs;
+}
+function angAt(segs, m){
+  for (var i = 0; i < segs.length; i++){
+    var sg = segs[i];
+    if (m >= sg.s && m <= sg.e) return sg.a0 + (sg.e === sg.s ? 0 : (m - sg.s) / (sg.e - sg.s) * sg.deg);
+  }
+  return m < segs[0].s ? A0 : A0 + SWEEP;
+}
+function pol(cx, cy, r, deg){
+  var a = (deg - 90) * Math.PI / 180;
+  return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+}
+function arcD(cx, cy, r, d0, d1){
+  var p0 = pol(cx, cy, r, d0), p1 = pol(cx, cy, r, d1), big = (d1 - d0) > 180 ? 1 : 0;
+  return 'M' + p0[0].toFixed(2) + ' ' + p0[1].toFixed(2) + ' A' + r + ' ' + r + ' 0 ' + big + ' 1 ' +
+         p1[0].toFixed(2) + ' ' + p1[1].toFixed(2);
+}
+
+function faceSVG(st, opt){
+  opt = opt || {};
+  var W = opt.w || 364, cx = W / 2, cy = opt.cy || 176, R = opt.r || 130;
+  var wDeep = opt.wDeep || 16, wThin = opt.wThin || 9;
+  var segs = segTable(st), sh = shapeOf(st);
+  var s = '<svg width="' + W + '" height="' + (opt.h || 330) + '" viewBox="0 0 ' + W + ' ' + (opt.h || 330) + '" aria-hidden="true">';
+  s += '<defs><filter id="gl' + st.key + (opt.id||'') + '" x="-50%" y="-50%" width="200%" height="200%">' +
+       '<feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>';
+  /* the empty channel */
+  s += '<path d="' + arcD(cx, cy, R, A0, A0 + SWEEP) + '" fill="none" stroke="#14111e" stroke-width="' + wDeep + '"/>';
+
+  for (var i = 0; i < segs.length; i++){
+    var sg = segs[i];
+    if (sg.gap) continue;
+    var b = sg.b, done = st.done[b.id], miss = st.miss[b.id], past = st.t >= sg.e;
+    var deep = b.k === 'deep', wdt = deep ? wDeep : wThin;
+    var isNow = st.t >= sg.s && st.t < sg.e;
+    var col, op = 1, dash = '', filt = '';
+    if (done){ col = b.c; }
+    else if (miss){ col = '#6b3a44'; wdt = deep ? 4 : 3; dash = ' stroke-dasharray="2.5 3.5"'; }
+    else if (isNow){ col = '#E0B25E'; filt = ' filter="url(#gl' + st.key + (opt.id||'') + ')"'; }
+    else if (past){ col = '#2a2438'; }
+    else { col = deep ? '#E0B25E' : '#2e2740'; op = deep ? .34 : 1; }
+    if (st.off){ op = op * .45; filt = ''; }
+    s += '<path d="' + arcD(cx, cy, R, sg.a0 + .9, sg.a1 - .9) + '" fill="none" stroke="' + col +
+         '" stroke-width="' + wdt + '" stroke-opacity="' + op + '"' + dash + filt + '/>';
+  }
+
+  /* hour anchors — horizontal type, outside the ring, no rotation ever */
+  var hours = st.shape === 'S' ? [480, 660, 840, 1020, 1200] : [360, 540, 720, 900, 1080, 1260];
+  for (var t = 0; t < hours.length; t++){
+    var hm = hours[t];
+    if (hm < segs[0].s || hm > segs[segs.length-1].e) continue;
+    var d = angAt(segs, hm);
+    var p0 = pol(cx, cy, R + wDeep/2 + 3, d), p1 = pol(cx, cy, R + wDeep/2 + 8, d);
+    s += '<line x1="' + p0[0].toFixed(1) + '" y1="' + p0[1].toFixed(1) + '" x2="' + p1[0].toFixed(1) +
+         '" y2="' + p1[1].toFixed(1) + '" stroke="#3a3350" stroke-width="1.4"/>';
+    if (opt.noLabels) continue;
+    var lp = pol(cx, cy, R + wDeep/2 + 20, d);
+    var anchor = lp[0] < cx - 8 ? 'end' : (lp[0] > cx + 8 ? 'start' : 'middle');
+    s += '<text x="' + lp[0].toFixed(1) + '" y="' + lp[1].toFixed(1) + '" fill="#5c5570" font-size="8.5" ' +
+         'font-family="Geist Mono, monospace" letter-spacing="1" text-anchor="' + anchor +
+         '" dominant-baseline="middle">' + String(Math.floor(hm/60)).padStart(2,'0') + '</text>';
+  }
+
+  /* NOW — a full-width wedge, a glow and an outside pointer. Unmistakable. */
+  if (!opt.noNow){
+    var dn = angAt(segs, st.t);
+    var wp0 = pol(cx, cy, R - wDeep/2 - 2, dn), wp1 = pol(cx, cy, R + wDeep/2 + 2, dn);
+    s += '<line x1="' + wp0[0].toFixed(1) + '" y1="' + wp0[1].toFixed(1) + '" x2="' + wp1[0].toFixed(1) +
+         '" y2="' + wp1[1].toFixed(1) + '" stroke="#E0B25E" stroke-width="3.4" stroke-linecap="round" filter="url(#gl' + st.key + (opt.id||'') + ')"/>';
+    var tp = pol(cx, cy, R + wDeep/2 + 13, dn), tp2 = pol(cx, cy, R + wDeep/2 + 6, dn);
+    s += '<circle cx="' + tp[0].toFixed(1) + '" cy="' + tp[1].toFixed(1) + '" r="3" fill="#E0B25E"/>';
+    s += '<line x1="' + tp[0].toFixed(1) + '" y1="' + tp[1].toFixed(1) + '" x2="' + tp2[0].toFixed(1) +
+         '" y2="' + tp2[1].toFixed(1) + '" stroke="#E0B25E" stroke-width="1.4"/>';
+  }
+
+  /* inner ring: progress through the block you are actually in.
+     It spans ONLY that block's own angles — sweeping it across the whole dial (the first
+     version) read as "40% of the day", which is a different and wrong statement. */
+  var ci = curIdx(st);
+  if (ci >= 0 && !opt.noInner){
+    var b2 = shapeOf(st)[ci], f = (st.t - mins(b2.s)) / (mins(b2.e) - mins(b2.s));
+    var sgc = null;
+    for (var q = 0; q < segs.length; q++) if (!segs[q].gap && segs[q].b.id === b2.id) sgc = segs[q];
+    if (sgc){
+      var rIn = R - wDeep/2 - 7;
+      s += '<path d="' + arcD(cx, cy, rIn, sgc.a0, sgc.a1) + '" fill="none" stroke="#2a2438" stroke-width="3"/>';
+      s += '<path d="' + arcD(cx, cy, rIn, sgc.a0, sgc.a0 + (sgc.a1 - sgc.a0) * Math.max(.04, f)) +
+           '" fill="none" stroke="#E0B25E" stroke-width="3" stroke-linecap="round"/>';
+    }
+  }
+  s += '</svg>';
+  return s;
+}
+
+function renderFace(st){
+  var sh = shapeOf(st), ci = curIdx(st), ni = nextIdx(st), hero = ci >= 0 ? ci : ni;
+  var dl = deepLeft(st);
+  var h = '<div class="FC">';
+  h += '<div class="dial">' + faceSVG(st) + '<div class="mid' + (st.off ? ' calm' : '') + '">';
+  if (hero >= 0){
+    var b = sh[hero], live = ci >= 0;
+    var left = live ? mins(b.e) - st.t : mins(b.s) - st.t;
+    h += '<div class="k">' + (st.off ? 'RIGHT NOW' : (live ? 'NOW · ' + dur(left) + ' LEFT' : 'NEXT · IN ' + dur(left))) + '</div>' +
+      '<h4>' + esc(b.obj || b.n) + '</h4>' +
+      '<div class="sub">' + esc(b.n) + ' · ' + b.s + '–' + b.e + '</div>' +
+      (b.k === 'deep' ? '<button class="btn sm">Start focus run</button>' : '<button class="btn gh sm">Open</button>') +
+      '<div class="dw">' + (dl ? '<b>' + dur(dl) + '</b> OF DEEP WORK LEFT' : 'DEEP WORK DONE') + '</div>';
+  } else {
+    h += '<div class="k">THE DAY IS RUN</div><h4>Close it out</h4>' +
+      '<div class="sub">and set tomorrow</div><button class="btn gh sm">Close the day</button>';
+  }
+  h += '</div></div>';
+
+  /* always counts — the row the day's open mouth pours into */
+  var earnedF = st.wins.reduce(function(a,k){
+    var w = WINS.filter(function(x){return x.k===k})[0]; return a + (w?w.xp:0); }, 0);
+  h += '<div class="earn"><div class="eh"><span>ALWAYS COUNTS · TAP ANY, ANY TIME</span><b>' +
+    (st.wins.length ? st.wins.length + ' · +' + earnedF : 'ALL ' + WINS.length + ' TO PLAY') +
+    '</b></div><div class="row">';
+  for (var i = 0; i < WINS.length; i++){
+    var w = WINS[i], on = winState(st, w), pips = '';
+    for (var q = 0; q < w.need; q++) pips += '<i class="' + (q < w.hits ? 'on' : '') + '"></i>';
+    h += '<button class="' + (on ? 'on' : '') + '">' + w.n.replace(' ', '<br>') +
+      (w.need ? '<span class="p">' + pips + '</span>' : '') + '</button>';
+  }
+  h += '</div></div>';
+
+  h += '<div class="below"><div class="pushrow"><span><u>SANO</u>1/3</span><span><u>FUNDED</u>0/3</span>' +
+    (st.off ? '<span><u>KITCHEN</u>0/1</span>' : '<span class="hot"><u>ANTHONY</u>1D</span>') + '</div></div>';
+
+  if (st.penance) h += '<div class="banner"><b>MAKE-UP OWED · DUE BY 21:50 · L1/3</b>' +
+    '<span>Bible 15 min · 6 passages · photo as proof</span></div>';
+  if (st.off) h += '<div class="banner off"><b>OFF-SCRIPT · NOT SCORED</b>' +
+    '<span>Today cannot hurt you. That was the point.</span></div>';
+  if (st.rescue) h += '<div class="banner good"><b>STILL ON THE BOARD</b>' +
+    '<span>' + deepStopsLeft(st) + ' deep block and ' + (WINS.length - st.wins.length) +
+    ' small wins are still winnable today.</span></div>';
+
+  h += '<div class="legend"><span><i style="background:#4ADE80"></i>DONE</span>' +
+    '<span><i style="background:#E0B25E;opacity:.34"></i>AHEAD</span>' +
+    '<span><i style="background:#6b3a44"></i>PASSED</span>' +
+    '<span><i style="background:#2a2438"></i>SPENT</span></div>';
+  h += '</div>';
+  return h;
+}
+
+/* ==================================================================
+   FUSIONS
+   ================================================================== */
+function fusion1(st){                         /* favours THE LINE */
+  var sh = shapeOf(st), ci = curIdx(st), dl = deepLeft(st), stops = deepStopsLeft(st);
+  var doneN = 0; for (var k in st.done) doneN++;
+  /* the dial REPLACES the Line's text header rather than sitting on top of it — otherwise it
+     costs 118px and pushes the focus button under the tab bar. Measured, not guessed. */
+  var h = '<div class="FU"><div class="hd">';
+  h += '<div class="mini">' + faceSVG(st, {w:64, h:64, cy:32, r:24, wDeep:5.5, wThin:3,
+        noLabels:1, noMouth:1, noInner:1, id:'f1'}) +
+    '<div class="c" style="width:44px"><b style="font-size:12px">' + (dl ? dur(dl).replace(' ','') : '—') +
+    '</b><span>LEFT</span></div></div>';
+  h += '<div class="txt"><div class="k">THE WHOLE DAY · ONE GLANCE</div>' +
+    '<h4>' + stops + ' stops of deep work</h4>' +
+    '<div class="s">' + st.day + ' ' + hhmm(st.t) + ' · ' + doneN + ' done · ' + dur(dl) + ' to the terminus</div>' +
+    '</div></div>';
+  h += renderLine(st).replace('<div class="LN', '<div class="LN nohead').replace(/<div class="top">[\s\S]*?<\/div><\/div>/, '');
+  return h + '</div>';
+}
+function fusion2(st){                         /* favours THE FACE */
+  var sh = shapeOf(st), ci = curIdx(st), hero = ci >= 0 ? ci : nextIdx(st), dl = deepLeft(st);
+  var rows = '';
+  for (var i = hero; i < Math.min(hero + 3, sh.length); i++){
+    var b = sh[i];
+    rows += '<div class="r ' + (i === hero ? 'now' : '') + '"><i></i><span class="n">' +
+      esc(i === hero ? (b.obj || b.n) : b.n) + '</span><span class="t">' + b.s + '</span></div>';
+  }
+  var h = '<div class="FU"><div class="FC" style="padding-top:0">';
+  h += '<div class="dial">' + faceSVG(st, {id:'f2'}) + '<div class="mid" style="width:176px">' +
+    '<div class="k">NOW AND WHAT FOLLOWS</div>' +
+    '<div class="FU midroute">' + rows + '</div>' +
+    '<button class="btn sm" style="margin-top:10px">Start focus run</button>' +
+    '<div class="dw"><b>' + dur(dl) + '</b> OF DEEP WORK LEFT</div>' +
+    '</div></div>';
+  h += '<div class="earn"><div class="eh"><span>ALWAYS COUNTS</span><b>2 · +35</b></div><div class="row">';
+  for (var w = 0; w < WINS.length; w++){
+    var wn = WINS[w], on = winState(st, wn);
+    h += '<button class="' + (on ? 'on' : '') + '">' + wn.n.replace(' ', '<br>') + '</button>';
+  }
+  h += '</div></div></div></div>';
+  return h;
+}
+function fusion3(st){                         /* belongs to neither */
+  var sh = shapeOf(st), ci = curIdx(st), hero = ci >= 0 ? ci : nextIdx(st);
+  var segs = segTable(st), dl = deepLeft(st);
+  var W = 388, H = 150, cx = W/2, cy = 176, R = 150;   /* a very wide, very shallow arc */
+  var s = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '">';
+  s += '<defs><filter id="glh" x="-50%" y="-50%" width="200%" height="200%">' +
+    '<feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>';
+  /* map the day onto a shallow arc from -78° to +78° */
+  function hAng(m){ return -78 + (angAt(segs, m) - A0) / SWEEP * 156; }
+  s += '<path d="' + arcD(cx, cy, R, -78, 78) + '" fill="none" stroke="#14111e" stroke-width="13"/>';
+  for (var i = 0; i < segs.length; i++){
+    var sg = segs[i]; if (sg.gap) continue;
+    var b = sg.b, done = st.done[b.id], miss = st.miss[b.id], past = st.t >= sg.e, deep = b.k === 'deep';
+    var col = done ? b.c : miss ? '#6b3a44' : past ? '#2a2438' : (deep ? '#E0B25E' : '#2e2740');
+    var op = (!done && !miss && !past && deep) ? .34 : 1;
+    s += '<path d="' + arcD(cx, cy, R, hAng(sg.s) + .5, hAng(sg.e) - .5) + '" fill="none" stroke="' + col +
+      '" stroke-width="' + (deep ? 13 : 7) + '" stroke-opacity="' + op + '"/>';
+  }
+  var hrs = st.shape === 'S' ? [480,660,840,1020,1200] : [360,540,720,900,1080,1260];
+  var labs = '';
+  for (var t = 0; t < hrs.length; t++){
+    var p = pol(cx, cy, R + 15, hAng(hrs[t]));
+    labs += '<div class="lab" style="left:' + p[0].toFixed(0) + 'px;top:' + (p[1] - 6).toFixed(0) + 'px">' +
+      String(Math.floor(hrs[t]/60)).padStart(2,'0') + '</div>';
+  }
+  s += '</svg>';
+  var sp = pol(cx, cy, R, hAng(st.t));
+  var b3 = sh[hero];
+  var h = '<div class="FU"><div class="horizon">' + s + labs +
+    '<div class="sun" style="left:' + sp[0].toFixed(0) + 'px;top:' + sp[1].toFixed(0) + 'px"></div></div>';
+  h += '<div class="nowcard"><div class="k"><span>NOW · ' + dur(mins(b3.e) - st.t) + ' LEFT</span>' +
+    '<u>' + dur(dl) + ' OF DEEP WORK LEFT</u></div>' +
+    '<h4>' + esc(b3.obj || b3.n) + '</h4>' +
+    '<button class="btn">Start focus run · ' + (mins(b3.e) - mins(b3.s)) + 'm</button></div>';
+  h += '<div class="after"><div><em>THEN · 12:00</em><b>Lunch</b></div><div><em>AFTER · 13:00</em><b>Market close</b></div></div>';
+  h += '<div class="LN" style="padding-top:12px"><div class="hop" style="margin-top:0;border-top:1px solid rgba(74,222,128,.26);border-radius:12px">' +
+    '<div class="hh"><span>ALWAYS COUNTS · ANY TIME</span><b>2 · +35</b></div><div class="row">';
+  for (var w2 = 0; w2 < WINS.length; w2++){
+    var wn2 = WINS[w2];
+    h += '<button class="' + (winState(st, wn2) ? 'on' : '') + '">' + wn2.n + '</button>';
+  }
+  h += '</div></div></div></div>';
+  return h;
+}
+
+/* ==================================================================
+   PAGE ASSEMBLY
+   ================================================================== */
+function phone(inner, capB, capS, capE, tall){
+  return '<div class="cell"><div class="cap"><b>' + capB + '</b><span>' + capS + '</span>' +
+    (capE ? '<em>' + capE + '</em>' : '') + '</div>' +
+    '<div class="phone"><div class="stub"><div class="s1">FURNACE · GAUGES · GLANCE<br>locked</div>' +
+    '<div class="s2">481 PX<br>SPENT</div></div>' +
+    '<div class="stage"><div class="fold"><b>299</b></div>' + inner + '</div>' +
+    '<div class="foot">— schedule continues —</div></div>' +
+    '<div class="mx" data-mx></div></div>';
+}
+var lineHTML = '', faceHTML = '';
+for (var i = 0; i < STATES.length; i++){
+  var st = STATES[i];
+  lineHTML += phone(renderLine(st), st.title, st.meta, st.note);
+  faceHTML += phone(renderFace(st), st.title, st.meta, st.note);
+}
+document.getElementById('galLine').innerHTML = lineHTML;
+document.getElementById('galFace').innerHTML = faceHTML;
+
+var live = STATES.filter(function(s){ return s.key === 'live'; })[0];
+document.getElementById('galFuse').innerHTML =
+  phone(fusion1(live), 'X1 · The Dial-Head Line', 'favours THE LINE',
+    'Parentage: <b>The Line</b>, unchanged underneath. It inherits from <b>The Face</b> only the summary — a 72px dial that answers "how much day, how much left" without reading a row. The dial deliberately has <b>no hour labels and no mouth text</b>: at that size it is a proportion, not a clock. It <b>replaces</b> the route&rsquo;s text header rather than sitting above it — on top it cost 118px and pushed the focus button under the tab bar.') +
+  phone(fusion2(live), 'X2 · The Route in the Face', 'favours THE FACE',
+    'Parentage: <b>The Face</b>, full size. It inherits from <b>The Line</b> the one thing a dial cannot do — sequence. The dead centre stops holding a single instruction and holds <b>now plus the next two stops</b>, so the object answers "what after this" without leaving the circle.') +
+  phone(fusion3(live), 'X3 · The Horizon', 'belongs to neither parent',
+    'Parentage: <b>neither</b>. The Face flattened until it is no longer a dial — a shallow horizon the sun rides across — with The Line shortened to now plus two. Half the height of any dial, and the most instantly readable now-marker in three rounds; the cost is that <b>the block structure is gone</b>.');
+
+/* every win control is tappable, in all sixteen states */
+document.addEventListener('click', function(ev){
+  var t = ev.target.closest ? ev.target.closest('.hop button, .FC .earn button') : null;
+  if (t) t.classList.toggle('on');
+});
+
+/* measurements — reported, not argued */
+function measure(){
+  var cells = document.querySelectorAll('.cell');
+  for (var i = 0; i < cells.length; i++){
+    var box = cells[i].querySelector('[data-mx]');
+    var stage = cells[i].querySelector('.stage');
+    var nu = cells[i].querySelector('.train, .FC .mid, .nowcard');
+    if (!box || !stage) continue;
+    var sr = stage.getBoundingClientRect();
+    var total = Math.round(sr.height);
+    var end = nu ? Math.round(nu.getBoundingClientRect().bottom - sr.top) : 0;
+    var ok = end > 0 && end <= 299;
+    box.innerHTML = '<span class="mxi">region <b>' + total + ' px</b></span>' +
+      '<span class="mxi">next up ends <b>+' + end + '</b></span>' +
+      '<span class="mxi ' + (ok ? 'ok' : 'no') + '">fold 299 ' + (ok ? '✓' : '✗') + '</span>';
+  }
+}
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure); else measure();
+window.addEventListener('load', measure);
+</script>
+</body>
+</html>
