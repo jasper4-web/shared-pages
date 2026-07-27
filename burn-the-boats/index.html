@@ -628,6 +628,15 @@ h2.sec u{text-decoration:none;color:var(--dim)}
 .g2h{display:flex;align-items:center;gap:10px;min-height:30px;font-size:12.5px;color:var(--dim)}
 .g2h span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
 .g2h b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--ink)}
+.g2ready{margin-top:14px;padding:13px 14px;border-radius:14px;border:1px solid var(--line2);background:var(--panel)}
+.g2ready .k{display:flex;align-items:center;font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.17em;color:var(--faint);margin-bottom:10px}
+.g2ready .k u{margin-left:auto;text-decoration:none;color:var(--dim)}
+.g2ready .ch{display:flex;flex-wrap:wrap;gap:5px}
+.g2ready .rc{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;padding:5px 9px;
+  border-radius:6px;border:1px solid var(--c);color:var(--c)}
+.g2ready .s{margin-top:11px;font-size:12.5px;line-height:1.45;color:var(--faint)}
+
 .g2tabs{display:flex;gap:6px;margin-bottom:14px}
 .g2tab{flex:1;min-height:var(--tap);border:1px solid var(--line2);background:var(--panel);border-radius:10px;
   cursor:pointer;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint)}
@@ -2921,11 +2930,21 @@ const GM=(()=>{
   /* hardening is silent · easing leaves a one-line trail · nothing ever zeroes */
   function editGoal(G,id,patch,day){
     const g=goalOf(G,id);if(!g)return null;const eased=[];
-    if(patch.target!==undefined&&g.target!==null){
-      const from=g.target,to=Number(patch.target);
-      const harder=direction(g)==='down'?to<from:to>from;
-      if(to!==from&&!harder)eased.push({t:'target',from,to});
-      g.target=to;
+    if(patch.target!==undefined&&patch.target!==null){
+      if(g.target===null){
+        /* FIRST number on a goal that had none. The ease check needs a previous
+           value to compare against; guarding on `g.target!==null` meant a goal
+           created from the empty state (title only, no numbers) could NEVER be
+           given one afterwards — it silently refused every time. */
+        g.target=Number(patch.target);
+        if(g.start===null)g.start=Number(patch.start!==undefined&&patch.start!==null?patch.start:(patch.at||0));
+        if(g.at===null)g.at=Number(patch.at!==undefined&&patch.at!==null?patch.at:g.start);
+      }else{
+        const from=g.target,to=Number(patch.target);
+        const harder=direction(g)==='down'?to<from:to>from;
+        if(to!==from&&!harder)eased.push({t:'target',from,to});
+        g.target=to;
+      }
     }
     if(patch.horizonId!==undefined&&patch.horizonId!==g.horizonId){
       const a=horizonById(G,g.horizonId),b=horizonById(G,patch.horizonId);
@@ -3466,9 +3485,23 @@ function g2Empty(areas){
       <input id="g2First" maxlength="90" placeholder="Three clients signed and paying">
     </div>
     <button class="btn" onclick="g2SaveFirst()">Write it down</button>
-    ${areas.length?'':`<button class="btn gh" style="margin-top:10px" onclick="importFromOld()">
+    ${areas.length?g2Ready(areas):`<button class="btn gh" style="margin-top:10px" onclick="importFromOld()">
       Bring in the areas already in this app</button>`}
     <button class="btn gh" style="margin-top:10px" onclick="goalsV2(0)">Back to the old Goals</button>
+  </div>`;
+}
+/* The import brought in seven areas and five dates and the screen looked EXACTLY
+   as it had a second earlier — the only evidence was a toast that fades. He would
+   reasonably conclude the button did nothing. Show the thing that arrived. */
+function g2Ready(areas){
+  const hz=GM.liveHorizons(G);
+  return `<div class="g2ready">
+    <div class="k">READY AND WAITING<u>${areas.length} AREA${areas.length>1?'S':''}${
+      hz.length?` · ${hz.length} DATE${hz.length>1?'S':''}`:''}</u></div>
+    <div class="ch">${areas.map(a=>`<span class="rc" style="--c:${domColour(a.domain)}">${esc(a.name)}</span>`).join('')}</div>
+    ${hz.length?`<div class="ch" style="margin-top:7px">${hz.map(h=>
+      `<span class="rc" style="--c:var(--violet)">${esc(h.label)}</span>`).join('')}</div>`:''}
+    <div class="s">Whatever you write above lands in one of these. You can rename, reorder or delete any of them.</div>
   </div>`;
 }
 /* First goal, zero ceremony: if he has no areas we make one from the goal
