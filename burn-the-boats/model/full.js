@@ -61,7 +61,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
   p=await page('2026-09-16T09:20:00');   // a Wednesday
   await p.evaluate(()=>{
     localStorage.clear();
-    G=GM.empty();G.meta.active=1;
+    G=GM.empty();
     const A={};[['SANO','WORK'],['Trading','CAPITAL'],['Body','BODY']].forEach(([n,d])=>A[n]=GM.addArea(G,{name:n,domain:d}));
     const h=GM.addHorizon(G,{label:'End of Oct',date:'2026-10-30'});
     GM.addGoal(G,{title:'Three clients signed and paying',areaId:A['SANO'].id,horizonId:h.id,start:0,at:1,target:3,unit:' clients',wig:1});
@@ -117,7 +117,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
   p=await page('2026-09-21T09:20:00');   // Monday of the NEXT week
   await p.evaluate(()=>{
     localStorage.clear();
-    G=GM.empty();G.meta.active=1;
+    G=GM.empty();
     const a=GM.addArea(G,{name:'SANO',domain:'WORK'});
     const g1=GM.addGoal(G,{title:'Three clients',areaId:a.id,wig:1});
     const g2=GM.addGoal(G,{title:'The process written down',areaId:a.id});
@@ -172,7 +172,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
   // ============ E · migration =============================================
   p=await page('2026-11-02T09:20:00');
   await p.evaluate(()=>{
-    localStorage.clear();G=GM.empty();G.meta.active=1;
+    localStorage.clear();G=GM.empty();
     const a=GM.addArea(G,{name:'SANO',domain:'WORK'});
     const past=GM.addHorizon(G,{label:'End of Oct',date:'2026-10-30'});
     GM.addHorizon(G,{label:'Dec 25',date:'2026-12-25'});
@@ -205,7 +205,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
   // ============ F · the return path =======================================
   p=await page('2026-10-05T09:20:00');
   await p.evaluate(()=>{
-    localStorage.clear();G=GM.empty();G.meta.active=1;
+    localStorage.clear();G=GM.empty();
     const a=GM.addArea(G,{name:'SANO',domain:'WORK'});
     GM.addGoal(G,{title:'Three clients signed and paying',areaId:a.id,wig:1});
     G.meta.lastSeen='2026-09-27';G.xp=0;gsave();render();go('push');});
@@ -218,6 +218,34 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
   ok('...it restates what is still true',ret&&/still standing|still first/.test(ret.t));
   ok('...and it is the ONLY banner on a return',await p.evaluate(()=>
     !document.querySelector('.g2close')&&!document.querySelector('.g2mig')));
+  ok('a number can be ADDED to a goal that had none',await p.evaluate(()=>{
+    const a=GM.liveAreas(G)[0]||GM.addArea(G,{name:'T',domain:'WORK'});
+    const g=GM.addGoal(G,{title:'No numbers at first',areaId:a.id});
+    GM.editGoal(G,g.id,{start:0,at:1,target:3},1);
+    return GM.progress(g)!==null&&g.target===3&&Math.round(GM.progress(g)*100)===33;}));
+  ok('...and the first number is not logged as an ease',await p.evaluate(()=>{
+    const g=G.goals[G.goals.length-1];return g.history.filter(h=>h.t==='target').length===0}));
+  /* areas-with-no-goals is now only reachable by adding areas by hand (the import
+     always brings at least one goal), so test THAT path — it is the one that
+     produced the invisible-import bug. */
+  ok('areas with no goals yet are VISIBLE on the empty screen',await p.evaluate(()=>{
+    const save=JSON.stringify(G);
+    G=GM.empty();
+    ['SANO','Trading','Body'].forEach(n=>GM.addArea(G,{name:n,domain:'WORK'}));
+    GM.addHorizon(G,{label:'Dec 25',date:'2026-12-25'});
+    render();
+    const ok=!!document.querySelector('.g2empty')&&!!document.querySelector('.g2ready')&&
+      document.querySelectorAll('.g2ready .rc').length===4;
+    G=JSON.parse(save);gsave();render();return ok;}));
+  ok('the real import brings his December targets over',await p.evaluate(()=>{
+    const save=JSON.stringify(G);
+    G=GM.empty();importFromOld();
+    const t=G.goals.map(g=>g.title);
+    const ok=G.goals.length>=7&&t.some(x=>/SANO clients/i.test(x))&&
+      t.some(x=>/185/.test(x))&&t.some(x=>/kitchen/i.test(x));
+    G=JSON.parse(save);gsave();render();return ok;}));
+  ok('dates are named by intent, not by their digits',await p.evaluate(()=>
+    monthEndLabel('2026-08-31')==='End of August'&&monthEndLabel('2026-11-02')==='November 2'));
   ok('a passed date never reads "0 days"',await p.evaluate(()=>{
     const h={date:'2020-01-01'};return hzWhen(h)==='PASSED'&&hzWhen({date:'2030-01-01'}).endsWith('days')}));
   await sweep(p,'return card');
@@ -231,7 +259,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
   // ============ G · by date, and the whole app still works =================
   p=await page('2026-09-16T09:20:00');
   await p.evaluate(()=>{
-    localStorage.clear();G=GM.empty();G.meta.active=1;
+    localStorage.clear();G=GM.empty();
     const a=GM.addArea(G,{name:'SANO',domain:'WORK'});
     const h1=GM.addHorizon(G,{label:'End of Sep',date:'2026-09-30'});
     const h2=GM.addHorizon(G,{label:'Dec 25',date:'2026-12-25'});
@@ -253,14 +281,10 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
       const m={today:'#nextUp',bank:'#bankBody',record:'#recBody'};
       return document.querySelector(m[v]).innerHTML.length>50},t));
     await sweep(p,t+' (v2 on)');}
-  // revert leaves everything intact
-  await p.evaluate(()=>{go('push');goalsV2(0)});await wait(600);
-  ok('revert still works after all of this',await p.evaluate(()=>!!document.querySelector('.sp')));
-  ok('revert kept the goals',await p.evaluate(()=>G.goals.length===3));
   ok('btb3 was never given goal data',await p.evaluate(()=>{
     const s=JSON.parse(localStorage.getItem('btb3')||'{}');
     return s.goals===undefined&&s.areas===undefined&&s.commits===undefined&&s.horizons===undefined}));
-  await sweep(p,'old tab after revert');
+  await sweep(p,'goals tab, final');
   await p.screenshot({path:OUT+'full-final.png'});
   await p.close();
 

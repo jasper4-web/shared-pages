@@ -616,6 +616,7 @@ h2.sec u{text-decoration:none;color:var(--dim)}
 .g2empty .s{font-size:13.5px;line-height:1.5;color:var(--dim)}
 
 .g23{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.g22{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .g2m{display:flex;align-items:center;gap:10px;min-height:var(--tap);padding:6px 10px;margin-bottom:6px;
   border:1px solid var(--line2);border-radius:11px;background:var(--panel)}
 .g2m .d{width:7px;height:7px;border-radius:99px;flex:none}
@@ -1206,21 +1207,6 @@ function week(k){k=k||mondayOf(new Date());
   S.week[k].goals=S.week[k].goals||{};   /* block id -> goal id. The missing link. */
   return S.week[k]}
 /* Which goal a block serves. Day-level override first, then the week's. */
-function goalFor(b){if(!b||!b.id)return null;const w=week(),d=day();
-  const set=(d.goals&&d.goals[b.id])||w.goals[b.id];
-  if(set!==undefined&&set!=='')return set||null;
-  if(set==='')return null;                    /* an explicit "none" is respected */
-  return themeGoal(b);                        /* otherwise fall back to the block's business */
-}
-/* The week already says which business each block serves — use it so the link
-   works on day one without him setting anything. */
-function themeGoal(b){
-  const t=(week().theme||{})[b.id];if(!t)return null;
-  const g=goals().find(x=>x.short.toLowerCase()===String(t).toLowerCase());
-  return g?g.id:null;
-}
-function goalById(id){return goals().find(g=>g.id===id)||null}
-
 function toast(m,kind){const t=$('toast');t.textContent=m;t.className='toast show '+(kind||'');
   clearTimeout(t._h);t._h=setTimeout(()=>t.className='toast',2400);
   if(navigator.vibrate)navigator.vibrate(kind==='bad'?[35,50,35]:16)}
@@ -2070,17 +2056,7 @@ function renderNext(){
 }
 /* THE HANDSHAKE — a block knows which goal it serves, and what it moves.
    Renders nothing when no goal is attached, so it can never be in the way. */
-function goalStrip(b){
-  if(!b)return'';
-  if(gOn())return goalStrip2(b);      /* the new model owns this line once it's on */
-  const gid=goalFor(b);if(!gid)return'';
-  const g=goalById(gid);if(!g)return'';
-  const done=weekBlocksFor(gid),tgt=g.leadTarget||null;
-  return `<div class="nu-goal" style="--gc:${g.c}">
-    <div class="gl"><div class="gk">THIS BLOCK IS FOR</div>
-      <div class="gt">${esc(g.title)}</div></div>
-    <div class="gn">${done}<s>${tgt?'of '+tgt+'<br>this week':'blocks<br>this week'}</s></div></div>`;
-}
+const goalStrip=b=>b?goalStrip2(b):'';
 /* THE DAILY SURFACE. The Goals tab is not a daily screen — this line is, and he
    sees it 110 times. When nothing is committed to this block it offers to commit
    one rather than rendering nothing, because an empty handshake is an invisible
@@ -2107,15 +2083,6 @@ function goalStrip2(b){
     <div class="gn">${n}<s>of ${tot}<br>this week</s></div></div>`;
 }
 /* how many blocks this week carried that goal */
-function weekBlocksFor(gid){
-  const mon=mondayOf(new Date()),w=week();let n=0;
-  for(let i=0;i<7;i++){const dt=new Date(mon+'T00:00:00');dt.setDate(dt.getDate()+i);
-    const r=S.days[iso(dt)];if(!r)continue;
-    ['b1','b2','b3','b4'].forEach(k=>{
-      const gg=(r.goals&&r.goals[k])||w.goals[k];
-      if(gg===gid&&r.done&&r.done[k])n++;});}
-  return n;
-}
 const ARCS=[['Morning',0,3],['Peak — deep work',3,5],['Midday',5,8],['Afternoon',8,11],['Evening',11,99]];
 function renderSched(){
   const sh=shape(),d=day(),ci=curIdx(),host=$('sched');host.innerHTML='';
@@ -2219,13 +2186,25 @@ const PITCH_READY='2026-07-24';
 function daysSincePitchReady(){
   return Math.max(0,Math.floor((new Date(today())-new Date(PITCH_READY))/864e5));
 }
+/* The pipeline strip read S.december directly — three hardcoded businesses. It now
+   shows the three goals YOU rank highest, whatever they are, with the WIG first.
+   A goal with no number shows its area instead of an invented 0. */
 function renderPushStrip(){
-  const g=S.december,stale=daysSincePitchReady();
-  const sent=S.push&&S.push.anthonySent;
+  const stale=daysSincePitchReady(),sent=S.push&&S.push.anthonySent;
+  const gs=GM.liveGoals(G),wig=gs.find(x=>x.wig);
+  const pick=(wig?[wig].concat(gs.filter(x=>x!==wig)):gs).slice(0,3);
+  if(!pick.length){
+    $('pushStrip').innerHTML=`<div class="ps-row">
+      <div class="ps-c" style="flex:1"><div class="k">NOTHING SET</div>
+        <div class="v" style="font-size:15px">Write your first goal →</div></div></div>`;
+    $('pushStrip').onclick=()=>go('push');return;
+  }
   $('pushStrip').innerHTML=`<div class="ps-row">
-      <div class="ps-c"><div class="k">SANO</div><div class="v">${g.WORK.at}/${g.WORK.target}</div></div>
-      <div class="ps-c"><div class="k">Funded</div><div class="v">${g.CAPITAL.at}/${g.CAPITAL.target}</div></div>
-      <div class="ps-c"><div class="k">Kitchen</div><div class="v">${(S.push&&S.push.kitchen)||0}/1</div></div>
+      ${pick.map(g=>{const a=GM.areaById(G,g.areaId)||{};
+        const has=g.target!==null;
+        return `<div class="ps-c"><div class="k">${esc((a.name||'').slice(0,10))}</div>
+          <div class="v"${has?'':' style="font-size:15px"'}>${has?`${fmtN(g.at)}/${fmtN(g.target)}`
+            :esc(g.title.split(' ').slice(0,2).join(' '))}</div></div>`}).join('')}
     </div>
     ${!sent&&stale>=1?`<div class="ps-stale">ANTHONY · PITCH-READY ${stale} DAYS · NOT SENT →</div>`:''}`;
   $('pushStrip').onclick=()=>go('push');
@@ -2311,11 +2290,18 @@ function offScript(){
   toast("Off-script. Today can't hurt you.",'good');
 }
 function clearPenance(){S.penance.done=1;save();render();gainXP(60,'made it up')}
+/* THE BACKUP COVERS BOTH STORES. It only ever saved btb3, which meant every goal,
+   area, date and weekly commitment he typed lived in exactly one place with no
+   copy — fine while the old Goals tab was a live fallback, indefensible once it
+   is deleted. Wrapped in an envelope so old files still restore. */
+const SAVE_FMT=2;
 function exportSave(){
-  const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const payload={fmt:SAVE_FMT,at:today(),s:S,g:G};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download=`burn-the-boats-${today()}.json`;a.click();
-  toast('Backup saved','good');
+  const n=(G.goals||[]).length;
+  toast(`Backup saved · ${Object.keys(S.days).length} days · ${n} goal${n===1?'':'s'}`,'good');
 }
 
 /* ---------- block sheet ---------- */
@@ -2361,8 +2347,8 @@ function openComposer(mode){
 }
 /* one chip per goal, plus a "none" — this is where a block gets its purpose */
 function goalPicker(k,sel){
-  return goals().map(g=>`<button type="button" class="gpx${sel===g.id?' on':''}" data-k="${k}" data-g="${g.id}"
-      style="--gc:${g.c}" onclick="pickGoal(this)">${esc(g.short)}</button>`).join('')
+  return GM.liveGoals(G).map(g=>`<button type="button" class="gpx${sel===g.id?' on':''}" data-k="${k}" data-g="${g.id}"
+      style="--gc:${domColour((GM.areaById(G,g.areaId)||{}).domain)}" onclick="pickGoal(this)">${esc(g.title.slice(0,22))}</button>`).join('')
     +`<button type="button" class="gpx${sel?'':' on'}" data-k="${k}" data-g="" onclick="pickGoal(this)">NONE</button>`;
 }
 function pickGoal(el){
@@ -2378,18 +2364,47 @@ function saveComposer(){
     const sel=document.querySelector('#gp_'+k+' .gpx.on');
     const gid=sel?sel.dataset.g:'';
     d.goals[k]=gid; if(mode!=='monday')w.goals[k]=gid;
+    /* the picker used to write into week().goals, which nothing reads any more.
+       Picking a goal for a block IS a commitment — write the real thing, so it
+       shows on THE WEEK, counts against capacity and closes with the week. */
+    const off=(new Date(key+'T00:00:00').getDay()+6)%7;
+    if(off<=4)setCommitQuiet(mondayOf(new Date(key+'T00:00:00')),off,k,gid||null);
   });
   /* setting Monday up closes Saturday's 'mon' block, not today's 'prio' block */
-  if(mode==='monday'){day().done['mon']=true;save();closeSheet();award('blk:mon',25,'Monday is set');return}
+  if(mode==='monday'){day().done['mon']=true;save();gsave();closeSheet();award('blk:mon',25,'Monday is set');return}
   d.done['prio']=true;
-  save();closeSheet();award('blk:prio',25,'the day is set');
+  save();gsave();closeSheet();award('blk:prio',25,'the day is set');
 }
 $('ovA').onclick=e=>{if(e.target.id==='ovA')closeSheet()};
 
+/* THE ATTRIBUTION. XP was still being keyed to the OLD goal ids even with the new
+   Goals tab on, so the Bank's "what bought this shelf" was fed by a model he no
+   longer used. One function, used by every award() site that names a goal. */
+function goalOf2(b){
+  if(!b||!b.id)return null;
+  const wk=weekKeyNow(),off=(new Date().getDay()+6)%7;
+  const c=off<=4?commitFor(wk,off,b.id):null;
+  if(c)return c.goalId;
+  const w=GM.liveGoals(G).find(x=>x.wig);      /* uncommitted deep work still counts for the one that matters */
+  return (w&&DEEP_BLOCKS.indexOf(b.id)>=0)?w.id:null;
+}
+/* Which goal a block answers to, in the new model. Returns the same {lag,lead}
+   shape the old sheet expected so the markup below did not have to change. */
+function blkGoal2(b){
+  const wk=weekKeyNow(),off=(new Date().getDay()+6)%7;
+  const c=(b&&off<=4)?commitFor(wk,off,b.id):null;
+  const g=c?GM.goalOf(G,c.goalId):(GM.liveGoals(G).find(x=>x.wig)||null);
+  if(!g)return null;
+  return {lag:g.title,lead:g.lead?`${g.lead.name} · ${g.lead.target} a week`
+    :(GM.areaById(G,g.areaId)||{}).name||'—'};
+}
 function openBlk(id){
   const b=shape().find(x=>x.id===id);if(!b)return;
   if(b.writes)return openComposer();
-  const d=day(),t=tacticFor(b),biz=bizFor(b),g=S.december[b.dom[0]];
+  /* the block sheet used to quote the hardcoded December goal for the block's
+     domain; it now quotes the goal actually committed to this block, and falls
+     back to the WIG so the line is never empty */
+  const d=day(),t=tacticFor(b),biz=bizFor(b),g=blkGoal2(b);
   sheet(`
     <div class="sh-k">${b.s} – ${b.e} · ${mins(b.e)-mins(b.s)} MIN</div>
     <div class="sh-t">${esc(b.n)}${biz?' · '+esc(biz):''}</div>
@@ -2424,7 +2439,7 @@ function lastProduced(id){
   return null;
 }
 function markDone(id){const d=day();d.done[id]=true;delete d.miss[id];delete d.wait[id];save();closeSheet();
-  const _b=shape().find(x=>x.id===id),_g=_b?goalFor(_b):null;
+  const _b=shape().find(x=>x.id===id),_g=_b?goalOf2(_b):null;
   if(!award('blk:'+id,25,'block done',_g))render();}
 /* A miss must never be a terminal red row with no way out. */
 function markMiss(id){
@@ -2516,7 +2531,7 @@ function finishRun(){
 function shipIt(id){
   const v=($('shipIn')||{}).value||'';
   if(v.trim()){day().produced[id]=v.trim();save();
-    const _b=shape().find(x=>x.id===id);award('ship:'+id,25,'shipped',_b?goalFor(_b):null)}
+    const _b=shape().find(x=>x.id===id);award('ship:'+id,25,'shipped',_b?goalOf2(_b):null)}
   closeRun();
 }
 function closeRun(){
@@ -2596,13 +2611,21 @@ function renderChar(){
   const s=domainStats();
   $('cvStats').innerHTML=DOMAINS.map(d=>{
     const v=s[d.k];
-    return `<div class="srow" onclick="openGoal('${d.k}')"><span class="n">${d.label}</span>
+    return `<div class="srow"><span class="n">${d.label}</span>
       <span class="t"><i data-bar style="width:${v}%;background:${d.c}"></i></span>
       <span class="v" data-val>${v}</span><span class="d">+${HIM-v}</span></div>`}).join('');
-  $('cvGoals').innerHTML=DOMAINS.map(d=>{
-    const g=S.december[d.k];
-    return `<div class="gchip" onclick="openGoal('${d.k}')"><div class="gl">${d.label}</div>
-      <div class="gp" style="color:${d.c}">${esc(g.at)}<span style="font-size:11px;color:#7a7191">/${esc(g.target)}</span></div></div>`}).join('');
+  /* was the six hardcoded December goals; now his own, WIG first, tapping through
+     to the goal itself rather than to a dead editor */
+  const cg=GM.liveGoals(G);
+  const cw=cg.find(x=>x.wig), cl=(cw?[cw].concat(cg.filter(x=>x!==cw)):cg).slice(0,6);
+  $('cvGoals').innerHTML=cl.length?cl.map(g=>{
+    const a=GM.areaById(G,g.areaId)||{},c=domColour(a.domain);
+    return `<div class="gchip" onclick="$('charv').classList.remove('on');go('push');setTimeout(()=>g2Open('${g.id}'),420)">
+      <div class="gl">${esc((a.name||'').slice(0,12))}</div>
+      <div class="gp" style="color:${c}">${g.target!==null?`${fmtN(g.at)}<span style="font-size:11px;color:#7a7191">/${fmtN(g.target)}</span>`
+        :'<span style="font-size:12px">set</span>'}</div></div>`}).join('')
+    :`<div class="gchip" onclick="$('charv').classList.remove('on');go('push')">
+        <div class="gl">NO GOALS YET</div><div class="gp" style="font-size:13px;color:var(--gold)">Write one</div></div>`;
   $('cvExtra').innerHTML=`<div class="stat"><span>Clean streak · smoke</span><b style="color:var(--phos)">${S.vices.smoke.cleanStreak}d</b></div>
     <div class="stat"><span>${esc(S.vices.dish.label)} this week</span><b>${S.vices.dish.week} / ${S.vices.dish.allow}</b></div>
     <div class="stat"><span>Slips this run</span><b>${S.vices.dish.slips+S.vices.smoke.slips}</b></div>`;
@@ -2660,26 +2683,6 @@ hb.addEventListener('pointerdown',e=>{e.preventDefault();held=true;hb.classList.
 window.addEventListener('pointerup',()=>{if(held){held=false;hb.classList.remove('on');collapse()}});
 
 /* ---------- goals ---------- */
-function openGoal(k){
-  const d=DOMAINS.find(x=>x.k===k),g=S.december[k];
-  sheet(`<div class="sh-k">DECEMBER GOAL</div>
-    <div class="sh-t" style="color:${d.c}">${d.label}</div>
-    <div class="sh-sub">LAG = the result · LEAD = what you control</div>
-    <div class="fld"><label>Lag — the December result</label><input id="gLag" value="${esc(g.lag)}"></div>
-    <div class="fld"><label>Lead — the weekly behaviour</label><input id="gLead" value="${esc(g.lead)}"></div>
-    <div class="fld"><label>Where you are now (${esc(g.unit)})</label><input id="gAt" type="text" inputmode="decimal" value="${esc(g.at)}"></div>
-    <div class="chain"><div><div class="cl">Why lead measures</div>
-      <div class="cv">You can't control whether they sign. You can control the conversations.
-      <b>Score execution, not results.</b></div></div></div>
-    <button class="btn" onclick="saveGoal('${k}')">Save</button>`);
-}
-function saveGoal(k){
-  const g=S.december[k];
-  g.lag=$('gLag').value;g.lead=$('gLead').value;
-  const n=parseFloat($('gAt').value);if(!isNaN(n))g.at=n;
-  save();closeSheet();render();
-}
-
 /* ---------- notifications ---------- */
 function notify(title,body){
   if(!('Notification'in window)||Notification.permission!=='granted')return;
@@ -2734,7 +2737,7 @@ function ccMark(id,how){
   const d=day();
   delete d.done[id];delete d.miss[id];delete d.wait[id];
   if(how==='done'){d.done[id]=true;
-    const _b=shape().find(x=>x.id===id);award('blk:'+id,25,'marked done',_b?goalFor(_b):null)}
+    const _b=shape().find(x=>x.id===id);award('blk:'+id,25,'marked done',_b?goalOf2(_b):null)}
   else if(how==='miss')d.miss[id]=true; else d.wait[id]={who:'someone',since:today()};
   save();render();
 }
@@ -2797,41 +2800,6 @@ const LANDMARKS=(()=>{
 
 /* The seven goals. Ranked, with a WIG. Habit goals carry no milestones by design
    (spec §3: 0 milestones for habit goals) — a quota is not a ladder. */
-function goals(){
-  const g=S.december,p=S.push||{},ms=S.ms||{};
-  const M=(id,i,fallback)=>({...(fallback||{}),...((ms[id]||[])[i]||{})});
-  const gateHit=GATE.every(x=>p.gate&&p.gate[x.k]);
-  return [
-   {id:'sano',rank:1,short:'SANO',c:'#E0B25E',kind:'outcome',wig:1,
-    title:g.WORK.lag,lead:g.WORK.lead,at:g.WORK.at,target:g.WORK.target,unit:g.WORK.unit,
-    ms:[M('sano',0,{t:'The six things checked and I signed off on each',learn:1,
-                    hit:gateHit?'HIT':null,checks:GATE.map(x=>x.n)}),
-        M('sano',1),M('sano',2),M('sano',3)]},
-   {id:'trade',rank:2,short:'TRADING',c:'#7FB4FF',kind:'outcome',
-    title:g.CAPITAL.lag,lead:g.CAPITAL.lead,at:g.CAPITAL.at,target:g.CAPITAL.target,unit:g.CAPITAL.unit,
-    ms:[M('trade',0,{t:'Rules written down · 20 sessions logged against them',learn:1}),
-        M('trade',1),M('trade',2),M('trade',3)]},
-   /* the first visible cost of domain-as-tag: SANO and LA Edible are both WORK and
-      therefore both gold. The rank numeral and a dashed rail distinguish them. */
-   {id:'edible',rank:3,short:'LA EDIBLE',c:'#E0B25E',dash:1,kind:'outcome',
-    title:'In talks with a local kitchen',lead:'Kitchens contacted',
-    at:p.kitchen||0,target:1,unit:'kitchen',
-    ms:[M('edible',0,{t:'Ten kitchens with a name and a number'}),
-        M('edible',1),M('edible',2),M('edible',3)]},
-   /* THE FOURTH THREAD IS PERSONAL, not BODY. Three business goals and one personal one —
-      that is the whole shape of the run. Body, faith, people and mind are not four separate
-      races he can lose four times; they are one life, and they ride together as its quotas. */
-   {id:'personal',rank:4,short:'PERSONAL',c:'#FF6B2C',kind:'outcome',
-    title:g.BODY.lag,lead:'Body · faith · people · mind',
-    at:g.BODY.at,target:g.BODY.target,unit:g.BODY.unit,
-    ms:[M('personal',0),M('personal',1),M('personal',2),M('personal',3)],
-    quotas:[['Gym',`${weekCount(['gym'])} of 2`],
-            ['Walks',`${weekCount(['walk','hike'])} of 3`],
-            ['Bible + Kells',`${weekCount(['bible'])} of 3`],
-            ['Real time with someone',`${weekWins('present')} of 3`],
-            ['Phone away by 21:00',`${weekCount(['reset'])} of 5`]]},
-  ];
-}
 function weekWins(k){
   const mon=mondayOf(new Date());let n=0;
   for(let i=0;i<7;i++){const dt=new Date(mon+'T00:00:00');dt.setDate(dt.getDate()+i);
@@ -3040,11 +3008,10 @@ const GM=(()=>{
 let G=(()=>{try{const r=localStorage.getItem(GKEY);if(r)return Object.assign(GM.empty(),JSON.parse(r))}
   catch(e){}return GM.empty()})();
 function gsave(){try{localStorage.setItem(GKEY,JSON.stringify(G))}catch(e){}}
-/* The new Goals IS the Goals tab — he asked for it to take over, not to be an
-   opt-in. It was behind a button at the bottom of the old screen, which meant he
-   opened the app and saw no change at all. The escape hatch is still one tap and
-   still remembered; it is just no longer the default. */
-const gOn=()=>!(G.meta&&G.meta.optedOut);
+/* The old Goals model was deleted 2026-07-26. gOn() stays as a constant so every
+   call site reads the same, and so a save carrying optedOut:1 from the opt-in
+   period cannot strand him on a screen that no longer exists. */
+const gOn=()=>true;
 const WEEK_BLOCKS=WEEKDAY.filter(b=>b.kind==='deep').length*5;   /* 4 deep × 5 days = 20 */
 
 /* ---- the week engine ----------------------------------------------------
@@ -3067,9 +3034,13 @@ function syncCommits(wk){
 function commitFor(wk,off,block){
   return GM.commitsOfWeek(G,wk).find(c=>c.day===off&&c.block===block)||null;
 }
+function setCommitQuiet(wk,off,block,goalId){
+  if(!goalId){G.commits=G.commits.filter(c=>!(c.weekKey===wk&&c.day===off&&c.block===block));return}
+  if(!GM.goalOf(G,goalId))return;          /* a stale id from an old save must not throw */
+  GM.commit(G,{goalId,weekKey:wk,day:off,block});
+}
 function setCommit(wk,off,block,goalId){
-  if(!goalId){G.commits=G.commits.filter(c=>!(c.weekKey===wk&&c.day===off&&c.block===block));}
-  else GM.commit(G,{goalId,weekKey:wk,day:off,block});
+  setCommitQuiet(wk,off,block,goalId);
   gsave();render();
 }
 
@@ -3114,12 +3085,18 @@ function daysTo(iso2){return Math.max(0,Math.round((new Date(iso2+'T00:00:00')-n
 /* ---- turning it on, and off again ---------------------------------------
    Nothing is destroyed either way.  btb3 is never touched; flipping this back
    restores the old Goals tab exactly as it was. */
-function goalsV2(on){
-  G.meta.optedOut=on?0:1;gsave();render();
-  toast(on?'New Goals on':'Reverted — nothing lost',on?'good':'bad');
-}
+
 /* AREAS ONLY, never the goals.  If he imports everything he never exercises
    the authoring path, which is the one thing no human has tested. */
+/* Dates named by INTENT, not by their own digits. "AUG 31" told him nothing;
+   "End of August" is a thing you can aim at. */
+const monthEndLabel=isoD=>{
+  const d=new Date(isoD+'T00:00:00'),m=d.toLocaleDateString('en-US',{month:'long'});
+  return d.getDate()>=24?`End of ${m}`:`${m} ${d.getDate()}`;
+};
+/* Brings the areas, the dates AND the December targets he had written into the
+   old model. Areas-only was right while the old tab was still there to read from;
+   once it is deleted, "areas only" just means his content is lost. */
 function importFromOld(){
   const areas=[
     {name:'SANO',     domain:'WORK'},
@@ -3130,10 +3107,43 @@ function importFromOld(){
     {name:'Mind',     domain:'MIND'},
     {name:'People',   domain:'PEOPLE'},
   ];
-  const horizons=LANDMARKS.map(l=>({label:l.label,date:l.iso}))
-    .concat([{label:END_LABEL_U,date:iso(RUN_LAST)}]);
-  GM.importAreas(G,{areas,horizons});
-  gsave();render();toast('Seven areas and five dates brought in','good');
+  const horizons=LANDMARKS.map(l=>({label:monthEndLabel(l.iso),date:l.iso}))
+    .concat([{label:END_LABEL,date:iso(RUN_LAST)}]);
+  const r=GM.importAreas(G,{areas,horizons});
+  if(r.skipped){toast('Already brought in','bad');return}
+  const A=n=>(GM.liveAreas(G).find(a=>a.name===n)||{}).id;
+  const end=GM.liveHorizons(G)[GM.liveHorizons(G).length-1];
+  const D=S.december||{};
+  /* WORK->SANO, CAPITAL->Trading, and PERSONAL's four domains to their own areas.
+     LA Edible had no december entry at all in the old model — it is carried from
+     what the old goals() actually showed on screen. */
+  const map=[
+    ['WORK','SANO',1],['CAPITAL','Trading',0],['BODY','Body',0],
+    ['FAITH','Faith',0],['MIND','Mind',0],['PEOPLE','People',0],
+  ];
+  let n=0;
+  map.forEach(([k,areaName,wig])=>{
+    const g=D[k],aid=A(areaName);if(!g||!aid||!g.lag)return;
+    GM.addGoal(G,{title:g.lag,areaId:aid,horizonId:end?end.id:null,
+      start:g.at,at:g.at,target:g.target,unit:g.unit&&g.unit!=='%'?' '+g.unit:(g.unit==='%'?'%':''),
+      lead:g.lead?{name:g.lead,target:0}:null,wig});
+    n++;
+  });
+  const le=A('LA Edible');
+  if(le){GM.addGoal(G,{title:'In talks with a local kitchen',areaId:le,horizonId:end?end.id:null,
+    start:0,at:(S.push&&S.push.kitchen)||0,target:1,unit:''});n++}
+  /* only milestones he actually typed — the hardcoded fallbacks are not his */
+  Object.keys(S.ms||{}).forEach(id=>{
+    (S.ms[id]||[]).forEach((m,i)=>{
+      if(!m||!m.t||!LANDMARKS[i])return;
+      const hz=GM.liveHorizons(G).find(h=>h.date===LANDMARKS[i].iso);
+      const aid=A({sano:'SANO',trade:'Trading',edible:'LA Edible',personal:'Body'}[id]||'SANO');
+      if(!aid)return;
+      GM.addGoal(G,{title:m.t,areaId:aid,horizonId:hz?hz.id:null});n++;
+    });
+  });
+  gsave();render();
+  toast(`${GM.liveAreas(G).length} areas · ${GM.liveHorizons(G).length} dates · ${n} goals brought in`,'good');
 }
 
 /* ================= THE GOALS TAB, v2 =================
@@ -3177,7 +3187,7 @@ function renderGoals2(){
 }
 const g2Foot=()=>`<button class="btn" style="margin-top:14px" onclick="g2New()">+ Add a goal</button>
   <button class="btn gh" style="margin-top:8px" onclick="g2Manage()">Areas and dates</button>
-  <button class="btn gh" style="margin-top:8px" onclick="goalsV2(0)">Back to the old Goals</button>`;
+`;
 function g2View(v){G.meta.view=v;gsave();render()}
 
 /* ---- the two banners that sit above everything ------------------------- */
@@ -3491,7 +3501,6 @@ function g2Empty(areas){
     <button class="btn" onclick="g2SaveFirst()">Write it down</button>
     ${areas.length?g2Ready(areas):`<button class="btn gh" style="margin-top:10px" onclick="importFromOld()">
       Bring in the areas already in this app</button>`}
-    <button class="btn gh" style="margin-top:10px" onclick="goalsV2(0)">Back to the old Goals</button>
   </div>`;
 }
 /* The import brought in seven areas and five dates and the screen looked EXACTLY
@@ -3560,14 +3569,21 @@ function g2Form(title,chk,g){
       ${hz.map(h=>`<button class="chip tap seg${GB.horizonId===h.id?' on':''}" data-h="${h.id}"
         onclick="g2Pick('h','${h.id}')">${esc(h.label)}</button>`).join('')}
       <button class="chip tap" onclick="g2NewDate()">+ NEW DATE</button></div></div>
-    <div class="fld"><label>A number, if it has one <span style="text-transform:none;letter-spacing:0">— optional</span></label>
-      <div class="g23"><input id="g2S" inputmode="decimal" placeholder="from" value="${g&&g.start!==null?g.start:''}">
-        <input id="g2C" inputmode="decimal" placeholder="now" value="${g&&g.at!==null?g.at:''}">
-        <input id="g2G" inputmode="decimal" placeholder="to" value="${g&&g.target!==null?g.target:''}"></div>
-      <input id="g2U" maxlength="12" style="margin-top:7px" placeholder="clients · lbs · $ — the unit" value="${g?esc(g.unit):''}">
-      <div class="hintline">Going down is fine — put 212 in "from" and 185 in "to".</div></div>
-    <div class="fld"><label>What would prove it <span style="text-transform:none;letter-spacing:0">— optional</span></label>
-      <input id="g2E" maxlength="120" placeholder="Three signed agreements and three payments" value="${g?esc(g.evidence):''}"></div>
+    <button class="btn gh sm" id="g2MoreB" onclick="g2More()" style="margin-bottom:14px">${
+      g?'Hide the number and the evidence':'Add a number or your evidence'}</button>
+    <div id="g2Extra" style="${g?'':'display:none'}">
+    <div class="fld"><label>Where it stands</label>
+      <div class="g22"><input id="g2C" inputmode="decimal" placeholder="where you are now" value="${g&&g.at!==null?g.at:''}">
+        <input id="g2G" inputmode="decimal" placeholder="where you're going" value="${g&&g.target!==null?g.target:''}"></div>
+      <input id="g2U" maxlength="12" style="margin-top:7px" placeholder="clients · lbs · % — the unit" value="${g?esc(g.unit):''}">
+      <div class="hintline">Leave both empty if this one has no number — it'll be done when the evidence says so.
+        Going down is fine: 198 now, 185 to go to.</div>
+      ${g&&g.start!==null?`<div class="fld" style="margin-top:11px"><label>Started at
+        <span style="text-transform:none;letter-spacing:0">— what the bar measures from</span></label>
+        <input id="g2S" inputmode="decimal" value="${g.start}"></div>`:''}</div>
+    <div class="fld"><label>What would prove it</label>
+      <input id="g2E" maxlength="120" placeholder="What you'd point at to say it's done" value="${g?esc(g.evidence):''}"></div>
+    </div>
     <button class="btn" onclick="g2Save()">${g?'Save it':'Add it'}</button>
     ${g?`<div class="g23" style="margin-top:8px">
       <button class="btn gh sm" onclick="g2State('${g.id}','parked')">Park</button>
@@ -3585,6 +3601,9 @@ function g2Trail(g){
   return `<h2 class="sec" style="margin-top:20px"><span>What you've changed</span><u>kept, never counted</u></h2>
     <div class="card">${L}</div>`;
 }
+function g2More(){const e=$('g2Extra'),on=e.style.display==='none';
+  e.style.display=on?'block':'none';
+  $('g2MoreB').textContent=on?'Hide the number and the evidence':'Add a number or your evidence'}
 function g2Pick(k,v){
   if(k==='a'){GB.areaId=v;$('g2A').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',e.dataset.a===v))}
   else{GB.horizonId=v||null;$('g2H').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',(e.dataset.h||'')===v))}
@@ -3592,8 +3611,12 @@ function g2Pick(k,v){
 function g2Save(){
   const t=$('g2T').value.trim();if(!t){toast('Give it a title','bad');return}
   if(!GB.areaId){toast('Pick an area','bad');return}
-  const num=v=>{const s=$(v).value.trim();return s===''?null:Number(s)};
-  const tg=num('g2G'),st=num('g2S'),at=num('g2C');
+  const num=v=>{const e=$(v);if(!e)return null;const s=e.value.trim();return s===''?null:Number(s)};
+  const tg=num('g2G'),at=num('g2C');
+  /* CAPTURED, not typed. On day one "started at" and "where you are" are the same
+     number, so asking for both was asking him to type it twice — and "from" was
+     the field nobody understood. It only becomes editable once it exists. */
+  const st=num('g2S')!==null?num('g2S'):(GB.id?undefined:at);
   const patch={title:t,areaId:GB.areaId,horizonId:GB.horizonId,unit:$('g2U').value.trim(),
     evidence:$('g2E').value.trim()};
   if(GB.id){
@@ -3681,137 +3704,9 @@ function g2DropDate(id){
   toast(freed?`Date removed — ${freed} goal${freed>1?'s':''} kept`:'Date removed','bad');
 }
 
-function renderPush(){
-  if(gOn())return renderGoals2();
-  S.push=S.push||{gate:{},anthonySent:0,kitchen:0,rules:{}};
-  S.ms=S.ms||{};
-  const p=S.push,G=goals(),focus=p.focus||null,zoom=p.zoom||null;
-  const gf=focus?G.find(x=>x.id===focus):null;
-  $('pushHorizon').textContent=`${workdaysLeft()} TO ${END_LABEL_U} · INCOME BY MAR`;
-
-  const burn=Math.round((1-workdaysLeft()/TOTAL_DAYS)*100);
-
-  /* T0 · the horizon. Identical at every altitude — it never changes with zoom. */
-  const hz=`<div class="hz"><div><span class="th">BURN THE BOATS</span>
-      <span class="ln">become someone who executes</span></div>
-    <span class="cd"><b>${END_LABEL_U} · ${workdaysLeft()}</b><br>INCOME BY MAR 1</span></div>`;
-
-  /* the week node — always at the top of the spine */
-  const tac=week().tactics||{},committed=['b1','b2','b3','b4'].filter(k=>tac[k]).length;
-  const commits=G.filter(x=>x.kind==='outcome'&&tac['b1']||true).slice(0,4);
-  const peek=['b1','b2','b3','b4'].map(k=>{
-    const t=tac[k];
-    return `<div class="pk"><i class="dot" style="background:${t?'#E0B25E':'#3a3350'}"></i>
-      <span>${t?esc(t):'<span style="color:#4b445e">Nothing set</span>'}</span>
-      <b>${k.toUpperCase()}</b></div>`}).join('');
-  const wk=`<div class="stn now"><div class="nd"></div>
-    <button class="sh" onclick="pushZoom()"><b>This week</b>
-      <span>WEEK ${weekNo()} · ${zoom==='week'?'OPEN':'TAP TO OPEN'}</span></button>
-    <div class="wkbox">
-      <div class="peek">${peek}
-        <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:#4b445e;margin-top:3px">
-          TAP TO OPEN THE WEEK</div></div>
-      <div class="full">${weekFull(G)}</div>
-    </div></div>`;
-
-  /* one station per landmark; the threads are the goals with a milestone there */
-  const stations=LANDMARKS.map((lm,i)=>{
-    const rows=G.filter(x=>x.ms.length).map(x=>{
-      const m=x.ms[i],st=msState(m,i),on=focus===x.id?'on':'';
-      const kick=st==='hit'?'HIT':st==='passed'?'PASSED':st==='next'?'NEXT':st==='stub'?'—':'';
-      return `<div class="thr ${st==='stub'?'stub':''} ${on}" style="--c:${x.c}"
-          role="button" tabindex="0" onclick="pushFocus('${x.id}')">
-        <i class="dot" style="background:${x.c}"></i>
-        <span><span class="tn">${esc(x.short)}</span>
-          <div class="tt">${m&&m.t?esc(m.t):'Nothing set'}</div>
-          <div class="deep"><div class="dchips">
-            ${st==='hit'?`<span class="chip" style="border-color:rgba(74,222,128,.4);color:var(--phos)">HIT</span>`:''}
-            ${st==='passed'?`<span class="chip" style="border-color:rgba(224,178,94,.45);color:var(--gold)">PASSED · NOT HIT</span>
-              <button class="chip tap" onclick="event.stopPropagation();pushMilestone('${x.id}',${i})">PUSH IT →</button>`:''}
-            ${st==='next'?`<span class="chip" style="border-color:rgba(224,178,94,.45);color:var(--gold)">NEXT UP</span>
-              <button class="chip tap" onclick="event.stopPropagation();hitMilestone('${x.id}',${i})">MARK HIT</button>`:''}
-            ${st==='stub'?`<button class="chip tap" onclick="event.stopPropagation();setMilestone('${x.id}',${i})">+ SET ONE</button>`:''}
-            ${m&&m.t&&st!=='stub'?`<button class="chip tap" onclick="event.stopPropagation();setMilestone('${x.id}',${i})">EDIT</button>`:''}
-            ${m&&m.learn?`<span class="chip">LEARNING MILESTONE</span>`:''}
-          </div>${m&&m.checks?gateChecks():''}</div>
-        </span>
-        <span class="tx">${kick}</span></div>`}).join('');
-    const hitN=G.filter(x=>x.ms[i]&&x.ms[i].hit).length;
-    const past=iso(new Date())>lm.iso;
-    return `<div class="stn ${past?'past':''}"><div class="nd"></div>
-      <button class="sh"><b>${lm.label}</b><span>${past?`${hitN} HIT`:`WEEK ${lm.week}`}</span></button>
-      <div class="thrs">${rows}</div></div>`;
-  }).join('');
-
-  /* the finish line — every goal, outcome and habit alike */
-  const dec=`<div class="stn end"><div class="nd"></div>
-    <button class="sh"><b>${END_LABEL}</b><span>THE END OF THE RUN</span></button>
-    <div class="thrs">${G.map(x=>`
-      <div class="thr ${focus===x.id?'on':''}" style="--c:${x.c}" role="button" tabindex="0" onclick="pushFocus('${x.id}')">
-        <i class="dot" style="background:${x.c};${x.dash?'outline:1px dashed '+x.c+';outline-offset:2px':''}"></i>
-        <span><span class="tn">RANK ${x.rank} · ${esc(x.short)}${x.wig?' · THE WIG':''}</span>
-          <div class="tt">${esc(x.title)}</div>
-          <div class="deep"><div class="dchips">
-            <span class="chip">LEAD — ${esc(x.lead)}</span>
-            ${x.parked?`<span class="chip" style="border-color:rgba(176,140,255,.4);color:var(--violet)">${esc(x.parked)}</span>`:''}
-            ${x.quotas?x.quotas.map(q=>`<span class="chip">${esc(q[0])} ${esc(q[1])}</span>`).join(''):''}
-          </div>
-          <div class="confrow"><span class="cl">CONFIDENCE</span>
-            <span class="pips">${[1,2,3,4,5].map(n=>`<button class="${n<=((S.conf||{})[x.id]||0)?'on':''}"
-              aria-label="Confidence ${n} of 5"
-              onclick="event.stopPropagation();setConf('${x.id}',${n})"><i></i></button>`).join('')}</span></div>
-          </div></span>
-        <span class="tx">${x.kind==='habit'?'QUOTA':x.at+'/'+x.target}</span></div>`).join('')}</div></div>`;
-
-  const crumbs=[['run','THE RUN']];
-  if(gf)crumbs.push(['goal',gf.short]);
-  if(zoom==='week')crumbs.push(['week','THIS WEEK']);
-
-  const pill = crumbs.length>1
-    ? `<div class="zpill">${crumbs.map((c,i)=>
-        `<button class="${i===0?'home':''}" onclick="pushCrumb('${c[0]}')">${i?'› ':'⌂ '}${esc(c[1])}</button>`).join('')}</div>`
-    : '';
-  $('pushBody').innerHTML=pill+hz+
-    `<div class="sp" style="--burn:${burn}%"${focus?` data-focus="${focus}"`:''}${zoom==='week'?' data-zoom="week"':''}>`+
-      wk+stations+dec+`</div>`+
-    /* the door to the new model. Nothing here is replaced until he opens it,
-       and one tap in there brings this screen straight back. */
-    `<div class="g2door">
-      <div class="k">NEW · YOUR OWN GOALS</div>
-      <div class="t">Everything on this screen is written into the app. The new one is yours to fill.</div>
-      <div class="s">Add an area, a date, a goal — any number of them. Nothing here is deleted and one tap brings this back.</div>
-      <button class="btn" style="margin-top:13px" onclick="goalsV2(1)">Open the new Goals</button>
-    </div>`;
-}
-
+function renderPush(){ return renderGoals2() }
 /* T3 · the week, opened. Capacity is a FRIDAY-only number (spec §4.3) — it appears
    on no Tuesday screen, because mid-week it is a stick to beat himself with. */
-function weekFull(G){
-  const tac=week().tactics||{},d=day();
-  const isFri=new Date().getDay()===5;
-  const rows=['b1','b2','b3','b4'].map(k=>{
-    const t=tac[k],g=G[0];
-    return `<div class="cmt" style="--c:${t?'#E0B25E':'#3a3350'}${t?'':';'}">
-      <div class="ck">${k.toUpperCase()} · ${t?'COMMITTED':'OPEN'}</div>
-      <div class="ct">${t?esc(t):'Nothing committed to this block'}</div>
-      <div class="cw">${d.done[k]?'DONE TODAY':d.wait[k]?'WAITING':'NOT YET'}</div></div>`;
-  }).join('');
-  const committed=['b1','b2','b3','b4'].filter(k=>tac[k]).length;
-  /* the orphan check: a ranked goal with nothing on it this week */
-  const orphans=G.filter(x=>x.kind==='outcome'&&!Object.values(tac).some(t=>t&&t.toLowerCase().includes(x.short.toLowerCase().split(' ')[0])));
-  return rows+
-    `<button class="cmt slack" onclick="openComposer()"><div class="ck">EDIT</div>
-      <div class="ct">Set this week's blocks</div></button>`+
-    (orphans.length?`<div class="ask" style="border:1px dashed #3a3350;border-radius:12px;padding:12px;margin-top:6px">
-      <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold)">THE ORPHAN CHECK</div>
-      <div style="font-size:13px;color:var(--dim);margin-top:7px;line-height:1.4">Nothing on
-        <b style="color:var(--ink)">${orphans.map(o=>esc(o.short)).join(' · ')}</b> this week. That is allowed —
-        but it should be a decision, not an accident.</div></div>`:'')+
-    (isFri?`<div class="capline"><span class="cv">${committed}</span>
-      <span class="cl2">OF 20 BLOCKS<br>COMMITTED</span>
-      <span class="cbar"><i style="width:${Math.min(100,committed/20*100)}%"></i></span></div>`:'');
-}
-
 /* The Anthony gate IS SANO's first milestone — six checks and the one action that
    matters most in the app right now. It lives inside that milestone rather than in a
    card of its own, and the text button is a real sms: deep link. */
@@ -3832,45 +3727,6 @@ function gateChecks(){
       href="sms:&body=${encodeURIComponent('Anthony — got something built for AVRS I want to show you. Free to look this week?')}"
       onclick="event.stopPropagation();markSent()">TEXT ANTHONY NOW →</a>`}
   </div>`;
-}
-function pushFocus(id){S.push.focus=(S.push.focus===id&&!S.push.zoom)?null:id;S.push.zoom=null;save();renderPush()}
-function pushZoom(){S.push.zoom=S.push.zoom==='week'?null:'week';save();renderPush()}
-function pushCrumb(k){
-  if(k==='run'){S.push.focus=null;S.push.zoom=null}
-  else if(k==='goal'){S.push.zoom=null}
-  save();renderPush();
-}
-function setConf(id,n){S.conf=S.conf||{};S.conf[id]=S.conf[id]===n?0:n;save();renderPush()}
-function hitMilestone(id,i){
-  S.ms[id]=S.ms[id]||[];S.ms[id][i]={...(S.ms[id][i]||{}),hit:today()};
-  save();renderPush();gainXP(150,'landmark hit');
-}
-/* pushing a passed milestone moves it to the next landmark. It is never a miss. */
-function pushMilestone(id,i){
-  const cur=(S.ms[id]&&S.ms[id][i])||{};
-  if(i>=LANDMARKS.length-1){toast('No landmark left to push it to','bad');return}
-  S.ms[id]=S.ms[id]||[];
-  S.ms[id][i+1]={...(S.ms[id][i+1]||{}),t:cur.t};
-  S.ms[id][i]={...cur,t:''};
-  save();renderPush();toast(`Moved to ${LANDMARKS[i+1].label}`,'good');
-}
-function setMilestone(id,i){
-  const cur=((S.ms[id]||[])[i])||{};
-  const g=goals().find(x=>x.id===id);
-  sheet(`<div class="sh-k">${LANDMARKS[i].label} · WEEK ${LANDMARKS[i].week}</div>
-    <div class="sh-t">${esc(g.short)}</div>
-    <div class="sh-sub">ONE THING THAT IS TRUE BY THAT DATE</div>
-    <div class="fld"><label>The milestone</label>
-      <input id="msIn" value="${esc(cur.t||'')}" placeholder="What is true by ${LANDMARKS[i].label}"></div>
-    <div class="chain"><div><div class="cl">Why a date</div>
-      <div class="cv">A milestone without a date is a wish. If it passes unhit it is
-      <b>never a miss</b> — you push it, and the app says so.</div></div></div>
-    <button class="btn" onclick="saveMilestone('${id}',${i})">Set it</button>`);
-}
-function saveMilestone(id,i){
-  const v=$('msIn').value.trim();
-  S.ms[id]=S.ms[id]||[];S.ms[id][i]={...(S.ms[id][i]||{}),t:v};
-  save();closeSheet();renderPush();
 }
 function tickGate(k){S.push.gate[k]=!S.push.gate[k];save();render()}
 function markSent(){S.push.anthonySent=today();save();setTimeout(render,400);gainXP(300,'you sent it')}
@@ -4043,15 +3899,20 @@ function renderBank(){
 /* WHAT BOUGHT THE SHELF — the bullion stops being a generic score.
    Reads only what award() already recorded; adds no new counter. */
 function xpAttribution(){
-  const m=S.xpByGoal||{},rows=goals().map(g=>({g,n:m[g.id]||0})).filter(r=>r.n>0)
+  const m=S.xpByGoal||{};
+  /* keyed by GM goal id now. Old btb3 keys ('sano'/'trade'/...) simply find no
+     match and drop out — no crash, no phantom row. */
+  const rows=GM.liveGoals(G).map(g=>({g,n:m[g.id]||0})).filter(r=>r.n>0)
     .sort((a,b)=>b.n-a.n);
   if(!rows.length)return'';
   const top=rows[0].n;
   return `<h2 class="sec"><span>What bought this shelf</span><u>attributed</u></h2>
-    <div class="card">${rows.map(r=>`<div class="attr">
-      <span class="an">${esc(r.g.short)}</span>
-      <span class="at"><i style="width:${Math.round(r.n/top*100)}%;background:${r.g.c}"></i></span>
-      <span class="av">${r.n.toLocaleString()}</span></div>`).join('')}</div>`;
+    <div class="card">${rows.map(r=>{
+      const a=GM.areaById(G,r.g.areaId)||{},c=domColour(a.domain);
+      return `<div class="attr">
+        <span class="an">${esc(r.g.title)}</span>
+        <span class="at"><i style="width:${Math.round(r.n/top*100)}%;background:${c}"></i></span>
+        <span class="av">${r.n.toLocaleString()}</span></div>`}).join('')}</div>`;
 }
 /* Log-tap and edit-tap are two different intents on one row, so they are two real
    buttons — a long-press would have hidden editing from him entirely. */
@@ -4301,9 +4162,19 @@ function saveNextWeek(){
 function restoreSave(inp){
   const f=inp.files[0];if(!f)return;const r=new FileReader();
   r.onload=()=>{try{const j=JSON.parse(r.result);
-    const days=Object.keys(j.days||{}).length;
-    if(!confirm(`Restore ${days} days and ${(j.xp||0).toLocaleString()} XP? This replaces what is here.`))return;
-    S=merge(JSON.parse(JSON.stringify(DEFAULT)),j);save();render();toast('Restored','good');
+    /* fmt 2 is the envelope {s,g}; anything without it is a pre-goals backup and
+       is still a valid save of btb3 — restoring one must not wipe his goals. */
+    const two=j&&j.fmt>=2&&j.s;
+    const sPart=two?j.s:j, gPart=two?j.g:null;
+    const days=Object.keys((sPart&&sPart.days)||{}).length;
+    const nG=gPart&&Array.isArray(gPart.goals)?gPart.goals.length:null;
+    const what=`${days} days · ${((sPart&&sPart.xp)||0).toLocaleString()} XP`+
+      (nG===null?'\n\nThis is an older backup with no goals in it — your goals will be left as they are.'
+                :`\n${nG} goal${nG===1?'':'s'} · ${(gPart.areas||[]).length} areas`);
+    if(!confirm(`Restore ${what}\n\nThis replaces what is here.`))return;
+    S=merge(JSON.parse(JSON.stringify(DEFAULT)),sPart);save();
+    if(gPart){G=Object.assign(GM.empty(),gPart);gsave()}
+    render();toast('Restored','good');
   }catch(e){toast('That file could not be read','bad')}};
   r.readAsText(f);
 }
