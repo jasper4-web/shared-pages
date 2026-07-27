@@ -2866,7 +2866,7 @@ const GM=(()=>{
   const KINDS=['outcome','learning'];   /* no 'habit' — an area standard IS the habit */
   const STATES=['active','parked','done','dropped'];
 
-  const empty=()=>({v:1,areas:[],horizons:[],goals:[],commits:[],meta:{imported:0,softCap:5,active:0}});
+  const empty=()=>({v:1,areas:[],horizons:[],goals:[],commits:[],meta:{imported:0,softCap:5,optedOut:0}});
 
   function addArea(G,{name,domain,colour,standards}={}){
     if(!name||!String(name).trim())throw new Error('an area needs a name');
@@ -3040,7 +3040,11 @@ const GM=(()=>{
 let G=(()=>{try{const r=localStorage.getItem(GKEY);if(r)return Object.assign(GM.empty(),JSON.parse(r))}
   catch(e){}return GM.empty()})();
 function gsave(){try{localStorage.setItem(GKEY,JSON.stringify(G))}catch(e){}}
-const gOn=()=>!!(G.meta&&G.meta.active);
+/* The new Goals IS the Goals tab — he asked for it to take over, not to be an
+   opt-in. It was behind a button at the bottom of the old screen, which meant he
+   opened the app and saw no change at all. The escape hatch is still one tap and
+   still remembered; it is just no longer the default. */
+const gOn=()=>!(G.meta&&G.meta.optedOut);
 const WEEK_BLOCKS=WEEKDAY.filter(b=>b.kind==='deep').length*5;   /* 4 deep × 5 days = 20 */
 
 /* ---- the week engine ----------------------------------------------------
@@ -3111,7 +3115,7 @@ function daysTo(iso2){return Math.max(0,Math.round((new Date(iso2+'T00:00:00')-n
    Nothing is destroyed either way.  btb3 is never touched; flipping this back
    restores the old Goals tab exactly as it was. */
 function goalsV2(on){
-  G.meta.active=on?1:0;gsave();render();
+  G.meta.optedOut=on?0:1;gsave();render();
   toast(on?'New Goals on':'Reverted — nothing lost',on?'good':'bad');
 }
 /* AREAS ONLY, never the goals.  If he imports everything he never exercises
