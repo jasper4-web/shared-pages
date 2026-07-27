@@ -38,14 +38,16 @@ const OUT=process.env.SP+'/';
   };
 
   // ---- 1 · the old tab is untouched, and the door is there
-  await p.evaluate(()=>go('push'));await wait(600);
-  ok('old Goals still renders',await p.evaluate(()=>!!document.querySelector('.sp')));
-  ok('the door is visible',await p.evaluate(()=>!!document.querySelector('.g2door .btn')));
-  ok('G shadowing did not break gOn()',await p.evaluate(()=>gOn()===false));
-  await sweep('old tab');
+  await p.evaluate(()=>go('push'));await wait(900);
+  ok('the OLD Goals tab is gone entirely',await p.evaluate(()=>
+    !document.querySelector('.sp')&&!document.querySelector('.g2door')));
+  ok('there is no revert button left',await p.evaluate(()=>
+    !/Back to the old Goals/.test(document.body.textContent)));
+  ok('gOn is a constant now',await p.evaluate(()=>gOn()===true&&typeof goalsV2==='undefined'));
+  await sweep('goals tab');
 
-  // ---- 2 · turn it on -> empty state asks for a GOAL, not a taxonomy
-  await p.evaluate(()=>goalsV2(1));await wait(600);
+  // ---- 2 · empty state asks for a GOAL
+  await wait(200);
   const emp=await p.evaluate(()=>{const e=document.querySelector('.g2empty');
     return e?{t:e.textContent.replace(/\s+/g,' ').trim(),input:!!document.getElementById('g2First')}:null});
   ok('empty state shown',!!emp);
@@ -82,7 +84,9 @@ const OUT=process.env.SP+'/';
   const imp=await p.evaluate(()=>({areas:G.areas.length,goals:G.goals.length,hz:G.horizons.length,
     names:G.areas.map(a=>a.name)}));
   ok('import added 7 areas',imp.areas===8,JSON.stringify(imp.areas));   // 1 Unsorted + 7
-  ok('import added NO goals',imp.goals===1,'goals='+imp.goals);
+  ok('import brings the December targets across',imp.goals===8,'goals='+imp.goals);
+  ok('...including LA Edible, which had no december entry',
+     await p.evaluate(()=>!!G.goals.find(g=>/kitchen/i.test(g.title))));
   ok('PERSONAL was split into four',['Body','Faith','Mind','People'].every(n=>imp.names.includes(n)),imp.names.join(','));
   ok('import added the dates',imp.hz===5,'hz='+imp.hz);
   ok('import cannot run twice',await p.evaluate(()=>{const n=G.areas.length;importFromOld();return G.areas.length===n}));
@@ -102,10 +106,10 @@ const OUT=process.env.SP+'/';
   await sweep('six goals');
 
   // ---- 7 · decreasing target renders forwards, not backwards
-  await p.evaluate(()=>{GM.addGoal(G,{title:'Down to 185 lbs',areaId:G.areas.find(a=>a.name==='Body').id,
+  await p.evaluate(()=>{GM.addGoal(G,{title:'DECTEST cut to 185',areaId:G.areas.find(a=>a.name==='Body').id,
     start:212,at:198,target:185,unit:' lbs'});gsave();render()});
   await wait(400);
-  const dec=await p.evaluate(()=>{const g=G.goals.find(x=>/185/.test(x.title));
+  const dec=await p.evaluate(()=>{const g=G.goals.find(x=>/DECTEST/.test(x.title));
     return{p:Math.round(GM.progress(g)*100),dir:GM.direction(g)}});
   ok('212->198->185 reads 52%, not 107%',dec.p===52&&dec.dir==='down',dec.p+'% '+dec.dir);
 
@@ -118,7 +122,7 @@ const OUT=process.env.SP+'/';
 
   // ---- 9 · easing leaves a trail, hardening is silent
   const trail=await p.evaluate(()=>{
-    const g=G.goals.find(x=>/185/.test(x.title));const n0=g.history.length;
+    const g=G.goals.find(x=>/DECTEST/.test(x.title));const n0=g.history.length;
     GM.editGoal(G,g.id,{target:180},dayNo());               // harder (down = lower)
     const afterHard=g.history.length;
     GM.editGoal(G,g.id,{target:195},dayNo());               // easier
@@ -146,14 +150,6 @@ const OUT=process.env.SP+'/';
   ok('deleting a date keeps every goal',mg.kept,'had '+mg.on+' on it');
   ok('no goal left pointing at the dead date',!mg.dangling);
 
-  // ---- 11 · revert puts the old screen back, losing nothing
-  await p.evaluate(()=>closeSheet());await wait(300);
-  const beforeRevert=await p.evaluate(()=>G.goals.length);
-  await p.evaluate(()=>goalsV2(0));await wait(600);
-  ok('revert restores the old Goals',await p.evaluate(()=>!!document.querySelector('.sp')));
-  ok('revert kept every goal',await p.evaluate(()=>G.goals.length)===beforeRevert,'n='+beforeRevert);
-  await p.evaluate(()=>goalsV2(1));await wait(600);
-  ok('turning it back on restores the new one',await p.evaluate(()=>!!document.querySelector('.g2wig')));
 
   // ---- 12 · the other three tabs still work
   for(const t of ['today','bank','record']){
