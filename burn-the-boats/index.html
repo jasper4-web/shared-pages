@@ -628,6 +628,59 @@ h2.sec u{text-decoration:none;color:var(--dim)}
 .g2h{display:flex;align-items:center;gap:10px;min-height:30px;font-size:12.5px;color:var(--dim)}
 .g2h span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
 .g2h b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--ink)}
+.g2tabs{display:flex;gap:6px;margin-bottom:14px}
+.g2tab{flex:1;min-height:var(--tap);border:1px solid var(--line2);background:var(--panel);border-radius:10px;
+  cursor:pointer;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint)}
+.g2tab.on{border-color:var(--gold);color:var(--gold);background:rgba(224,178,94,.08)}
+
+/* the three banners. None of them is ever red, and none of them counts a loss. */
+.g2ret,.g2close,.g2mig{border-radius:14px;padding:14px;margin-bottom:12px;width:100%;text-align:left;
+  border:1px solid var(--line2);background:var(--panel);cursor:pointer;display:block}
+.g2ret{border-color:rgba(74,222,128,.35);cursor:default}
+.g2close{border-color:rgba(56,225,216,.32)}
+.g2mig{border-color:rgba(224,178,94,.4)}
+.g2ret .k,.g2close .k,.g2mig .k{display:flex;align-items:center;font-family:'Geist Mono',monospace;
+  font-size:11px;letter-spacing:.19em;margin-bottom:8px}
+.g2ret .k{color:var(--phos)} .g2close .k{color:var(--rune)} .g2mig .k{color:var(--gold)}
+.g2ret .k u,.g2close .k u,.g2mig .k u{margin-left:auto;text-decoration:none}
+.g2ret .t,.g2close .t,.g2mig .t{font-size:15px;line-height:1.32;color:var(--ink);margin-bottom:5px}
+.g2ret .s,.g2close .s,.g2mig .s{font-size:12.5px;line-height:1.45;color:var(--faint)}
+.g2ret .one{margin-top:11px;padding:11px 12px;border-radius:11px;background:rgba(74,222,128,.07);
+  border:1px solid rgba(74,222,128,.25);font-size:14px;line-height:1.3;color:var(--ink)}
+
+.g2day{display:flex;align-items:center;gap:9px;margin:16px 0 7px;padding:0 2px}
+.g2day span{font-family:'Clash Display',sans-serif;font-size:15px;letter-spacing:.02em}
+.g2day u{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);text-decoration:none}
+.g2day b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--gold)}
+.g2day.now span{color:var(--gold)}
+.g2slot{display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:10px;width:100%;
+  text-align:left;cursor:pointer;min-height:var(--tap);padding:9px 11px;margin-bottom:5px;
+  border:1px solid var(--line);border-radius:11px;background:var(--panel)}
+.g2slot.on{border-color:var(--line2)}
+.g2slot.done{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.06)}
+.g2slot .sk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
+.g2slot .sk u{display:block;text-decoration:none;margin-top:2px;font-size:11px}
+.g2slot .sg{font-size:13.5px;line-height:1.3;color:var(--ink);min-width:0}
+.g2slot .sg i{color:var(--faint);font-style:normal;font-size:12.5px}
+.g2slot .sa{grid-column:2;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em}
+.g2slot .sd{font-size:15px;color:var(--phos)}
+
+.g2rv{display:grid;grid-template-columns:1fr auto;gap:4px 10px;width:100%;text-align:left;cursor:pointer;
+  min-height:var(--tap);padding:9px 12px;margin-bottom:5px;border:1px solid var(--line);
+  border-radius:11px;background:var(--panel);align-items:center}
+.g2rv.on{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.06)}
+.g2rv .rt{font-size:13.5px;color:var(--ink);line-height:1.3}
+.g2rv .rm{grid-column:1;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--faint)}
+.g2rv .rc{grid-row:1/3;grid-column:2;font-size:16px;color:var(--faint)}
+.g2rv.on .rc{color:var(--phos)}
+.g2cf{margin-bottom:12px}
+.g2cf>span{display:block;font-size:13.5px;color:var(--ink);margin-bottom:7px;line-height:1.3}
+.g2cf .cb{display:flex;gap:5px;flex-wrap:wrap}
+.g2mg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.nu-gb{flex:none;min-height:44px;padding:0 14px;border-radius:9px;border:1px solid var(--line2);
+  background:transparent;color:var(--gold);cursor:pointer;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em}
+
 .g2door{margin-top:22px;padding:15px;border-radius:16px;border:1px dashed rgba(176,140,255,.4);
   background:linear-gradient(150deg,#161222,#0e0c16)}
 .g2door .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.19em;color:var(--violet);margin-bottom:9px}
@@ -1719,11 +1772,22 @@ function badges(){
   const set=(t,on,red)=>{const b=document.querySelector(`.tabs button[data-t="${t}"]`);if(!b)return;
     b.querySelector('.badge')?.remove();
     if(on){const i=document.createElement('span');i.className='badge'+(red?' red':'');b.appendChild(i)}};
-  set('today',owed,true); set('bank',bank); set('record',rec); set('push',stale,true);
+  /* The close banner and the migration prompt live on the Goals tab, so without
+     this he would never learn either one had happened unless he happened to open
+     it. Amber, not red — neither of these is a failure, and a red dot would make
+     "your week closed itself" read as bad news. */
+  const g2=gOn()&&(!!freshClose()||g2NeedsDecision().length>0||daysGone()>=3);
+  set('today',owed,true); set('bank',bank); set('record',rec);
+  set('push',gOn()?g2:stale,gOn()?false:true);
 }
 
 let sabOff=false;   /* dismissed for this session only — returns next visit */
 function render(){
+  /* THE WEEK CLOSES ITSELF — so this cannot live inside the Goals tab. It ran
+     there first, which meant the close, the carry and the return-path clock all
+     silently depended on him opening one particular screen. It also runs BEFORE
+     the Sabbath return below, or a Sunday-only visit would close nothing. */
+  autoCloseWeeks();
   if(dow()===0&&!sabOff){$('sabbath').classList.add('on');
     const w=week(mondayOf(new Date(Date.now()-864e5)));
     const p=w.due?Math.round(w.done/w.due*100):0;
@@ -1999,6 +2063,7 @@ function renderNext(){
    Renders nothing when no goal is attached, so it can never be in the way. */
 function goalStrip(b){
   if(!b)return'';
+  if(gOn())return goalStrip2(b);      /* the new model owns this line once it's on */
   const gid=goalFor(b);if(!gid)return'';
   const g=goalById(gid);if(!g)return'';
   const done=weekBlocksFor(gid),tgt=g.leadTarget||null;
@@ -2006,6 +2071,31 @@ function goalStrip(b){
     <div class="gl"><div class="gk">THIS BLOCK IS FOR</div>
       <div class="gt">${esc(g.title)}</div></div>
     <div class="gn">${done}<s>${tgt?'of '+tgt+'<br>this week':'blocks<br>this week'}</s></div></div>`;
+}
+/* THE DAILY SURFACE. The Goals tab is not a daily screen — this line is, and he
+   sees it 110 times. When nothing is committed to this block it offers to commit
+   one rather than rendering nothing, because an empty handshake is an invisible
+   feature and that mistake has already been made once on this project. */
+function goalStrip2(b){
+  if(!b||DEEP_BLOCKS.indexOf(b.id)<0)return'';
+  const wk=weekKeyNow(),off=(new Date().getDay()+6)%7;
+  if(off>4)return'';                                   /* weekend — no deep slots */
+  const c=commitFor(wk,off,b.id);
+  if(!c){
+    if(!GM.liveGoals(G).length)return'';
+    return `<div class="nu-goal" style="--gc:var(--faint)">
+      <div class="gl"><div class="gk">NOTHING ON THIS BLOCK</div>
+        <div class="gt" style="font-size:13px;color:var(--dim)">Give it a goal and it counts toward one.</div></div>
+      <button class="nu-gb" onclick="g2Slot('${wk}',${off},'${b.id}')">PICK</button></div>`;
+  }
+  const g=GM.goalOf(G,c.goalId);if(!g)return'';
+  const a=GM.areaById(G,g.areaId)||{},col=domColour(a.domain);
+  const n=GM.commitsOfWeek(G,wk).filter(x=>x.goalId===g.id&&x.done).length;
+  const tot=GM.commitsOfWeek(G,wk).filter(x=>x.goalId===g.id).length;
+  return `<div class="nu-goal" style="--gc:${col}">
+    <div class="gl"><div class="gk">THIS BLOCK IS FOR${g.wig?' · THE ONE':''}</div>
+      <div class="gt">${esc(g.title)}</div></div>
+    <div class="gn">${n}<s>of ${tot}<br>this week</s></div></div>`;
 }
 /* how many blocks this week carried that goal */
 function weekBlocksFor(gid){
@@ -2934,6 +3024,67 @@ function gsave(){try{localStorage.setItem(GKEY,JSON.stringify(G))}catch(e){}}
 const gOn=()=>!!(G.meta&&G.meta.active);
 const WEEK_BLOCKS=WEEKDAY.filter(b=>b.kind==='deep').length*5;   /* 4 deep × 5 days = 20 */
 
+/* ---- the week engine ----------------------------------------------------
+   A commit IS a block: {weekKey, day 0-4, block b1-b4}. `day` is an OFFSET, not
+   a date, so carrying work into next week is a copy rather than a date rewrite.
+   Whether it got DONE is never stored twice — it is read from the day records
+   the app already keeps. Asking him to re-tick what the app watched him do all
+   week is double entry, and it teaches him the system isn't paying attention. */
+const DEEP_BLOCKS=WEEKDAY.filter(b=>b.kind==='deep').map(b=>b.id);
+const DAY_NAMES=['MON','TUE','WED','THU','FRI'];
+const weekKeyNow=()=>mondayOf(new Date());
+function dateOfSlot(wk,off){const d=new Date(wk+'T00:00:00');d.setDate(d.getDate()+off);return iso(d)}
+function slotDone(wk,off,block){const r=S.days[dateOfSlot(wk,off)];return !!(r&&r.done&&r.done[block])}
+/* pull the truth in from the day records before anything reads c.done */
+function syncCommits(wk){
+  let ch=0;
+  GM.commitsOfWeek(G,wk).forEach(c=>{const d=slotDone(wk,c.day,c.block)?1:0;if(c.done!==d){c.done=d;ch=1}});
+  return ch;
+}
+function commitFor(wk,off,block){
+  return GM.commitsOfWeek(G,wk).find(c=>c.day===off&&c.block===block)||null;
+}
+function setCommit(wk,off,block,goalId){
+  if(!goalId){G.commits=G.commits.filter(c=>!(c.weekKey===wk&&c.day===off&&c.block===block));}
+  else GM.commit(G,{goalId,weekKey:wk,day:off,block});
+  gsave();render();
+}
+
+/* THE WEEK CLOSES ITSELF. This is the fix for the single point of failure: the
+   rendition hung next week's draft, the confidence trend AND the migration off a
+   three-step Friday ritual — the most-abandoned ritual in the industry. Now the
+   close happens whether or not he shows up, and the review is an optional richer
+   editor of a draft that already exists. Skipping it costs nothing. */
+function autoCloseWeeks(){
+  if(!gOn())return;
+  const cur=weekKeyNow();
+  G.weeks=G.weeks||{};
+  const open=[...new Set(G.commits.map(c=>c.weekKey))].filter(k=>k<cur).sort();
+  let changed=0;
+  open.forEach(wk=>{
+    if(G.weeks[wk])return;
+    syncCommits(wk);
+    const sum=GM.closeWeek(G,wk,null);
+    G.weeks[wk]=sum;
+    /* never a blank form — the carry happens with or without him */
+    if(wk===open[open.length-1])GM.draftWeek(G,wk,cur);
+    changed=1;
+  });
+  if(syncCommits(cur))changed=1;
+  /* how long he's been gone, for the return path. Written to btb4, never btb3. */
+  const t=today();
+  if(G.meta.lastSeen!==t){G.meta.awayFrom=G.meta.lastSeen||null;G.meta.lastSeen=t;changed=1}
+  if(changed)gsave();
+}
+const daysGone=()=>{const f=G.meta&&G.meta.awayFrom;if(!f)return 0;
+  return Math.max(0,Math.round((new Date(today()+'T00:00:00')-new Date(f+'T00:00:00'))/864e5))};
+/* the most recent closed week he has not acknowledged */
+function freshClose(){
+  const ks=Object.keys(G.weeks||{}).sort();
+  for(let i=ks.length-1;i>=0;i--){const s=G.weeks[ks[i]];if(!s.seen)return s}
+  return null;
+}
+
 /* days from today to an ISO date — the number that makes a horizon feel real */
 function daysTo(iso2){return Math.max(0,Math.round((new Date(iso2+'T00:00:00')-new Date(today()+'T00:00:00'))/864e5))}
 
@@ -2981,9 +3132,16 @@ function renderGoals2(){
 
   if(!goals.length){$('pushBody').innerHTML=g2Empty(areas);return}
 
+  const view=G.meta.view||'area';
+  const tabs=`<div class="g2tabs">${[['area','BY AREA'],['date','BY DATE'],['week','THE WEEK']]
+    .map(([k,l])=>`<button class="g2tab${view===k?' on':''}" onclick="g2View('${k}')">${l}</button>`).join('')}</div>`;
+
+  if(view==='week'){$('pushBody').innerHTML=g2Banners()+tabs+g2Week()+g2Foot();return}
+  if(view==='date'){$('pushBody').innerHTML=g2Banners()+tabs+g2ByDate()+g2Foot();return}
+
   const wig=goals.find(g=>g.wig)||(goals.length===1?goals[0]:null);
   const rest=goals.filter(g=>g!==wig);
-  $('pushBody').innerHTML=g2Capacity(goals.length)+
+  $('pushBody').innerHTML=g2Banners()+g2Capacity(goals.length)+tabs+
     (wig?g2Wig(wig):g2PickWig(goals))+
     /* Grouped BY AREA, and every goal has exactly ONE home on this screen.
        An undated goal used to render twice — once under its area and again in a
@@ -2992,9 +3150,233 @@ function renderGoals2(){
        different view, not a second copy on this one. */
     (rest.length?`<h2 class="sec"><span>Everything else</span><u>${rest.length}</u></h2>
        ${areas.map(a=>g2Area(a)).filter(Boolean).join('')}`:'')+
-    `<button class="btn" style="margin-top:14px" onclick="g2New()">+ Add a goal</button>
-     <button class="btn gh" style="margin-top:8px" onclick="g2Manage()">Areas and dates</button>
-     <button class="btn gh" style="margin-top:8px" onclick="goalsV2(0)">Back to the old Goals</button>`;
+    g2Foot();
+}
+const g2Foot=()=>`<button class="btn" style="margin-top:14px" onclick="g2New()">+ Add a goal</button>
+  <button class="btn gh" style="margin-top:8px" onclick="g2Manage()">Areas and dates</button>
+  <button class="btn gh" style="margin-top:8px" onclick="goalsV2(0)">Back to the old Goals</button>`;
+function g2View(v){G.meta.view=v;gsave();render()}
+
+/* ---- the two banners that sit above everything ------------------------- */
+/* ONE message on a return. Stacking "nothing was lost" on top of "0%" and a
+   queue of decisions undoes the reassurance in the same glance — which is the
+   exact failure this app exists to avoid. The other two are not urgent; they
+   keep until the next visit, and the tab badge stays lit meanwhile. */
+function g2Banners(){
+  const ret=g2Return();
+  return ret||(g2CloseBanner()+g2MigrateBanner());
+}
+/* a horizon that has already gone by must never read "0 days" */
+function hzWhen(h){return h.date<today()?'PASSED':daysTo(h.date)+' days'}
+/* THE RETURN PATH. The governing law of this app is "never render a wall of
+   failure", and its stated failure mode is that he stops opening it when behind.
+   So the screen he meets after a gap states what is STILL TRUE — never what he
+   missed. There is no count of lost days anywhere in here on purpose. */
+function g2Return(){
+  const n=daysGone();
+  if(n<3)return'';
+  const goals=GM.liveGoals(G),wig=goals.find(g=>g.wig)||goals[0];
+  return `<div class="g2ret">
+    <div class="k">WELCOME BACK</div>
+    <div class="t">Nothing was lost while you were gone.</div>
+    <div class="s">Your XP is where you left it. No streak was wiped. ${goals.length} goal${goals.length>1?'s are':' is'} still standing${
+      wig?`, and this one is still first:`:'.'}</div>
+    ${wig?`<div class="one">${esc(wig.title)}</div>`:''}
+    <button class="btn sm" style="margin-top:12px;width:auto;padding:0 16px" onclick="g2Seen('ret')">Pick it back up</button>
+  </div>`;
+}
+function g2Seen(k){
+  if(k==='ret')G.meta.awayFrom=null;
+  if(k==='close'){const s=freshClose();if(s)s.seen=1}
+  gsave();render();
+}
+/* The week already closed itself. This is the OFFER to look at it, not a gate. */
+function g2CloseBanner(){
+  const s=freshClose();if(!s||!s.committed)return'';
+  const pct=s.pct===null?'—':s.pct+'%';
+  return `<div class="g2close" onclick="g2Review()">
+    <div class="k">LAST WEEK CLOSED ITSELF<u>${pct}</u></div>
+    <div class="t">${s.done} of ${s.committed} done${s.missed?` · ${s.missed} carried into this week`:''}</div>
+    <div class="s">Already handled. Tap if you want to walk through it.</div>
+  </div>`;
+}
+/* Confidence has exactly one job and this is it — two drops pulls a goal into
+   migration EARLY, which also drains the end-of-horizon pile-up so the turn is
+   one or two items instead of six. */
+function g2MigrateBanner(){
+  const due=g2NeedsDecision();
+  if(!due.length)return'';
+  return `<div class="g2mig" onclick="g2Migrate()">
+    <div class="k">NEEDS A DECISION<u>${due.length}</u></div>
+    <div class="t">${due.length===1?esc(due[0].title):due.length+' goals have stopped moving'}</div>
+    <div class="s">Not a failure — a signal. Carry it, change it, park it or drop it.</div>
+  </div>`;
+}
+function g2NeedsDecision(){
+  const t=today();
+  return GM.liveGoals(G).filter(g=>{
+    if(GM.needsEarly(g))return true;
+    const h=g.horizonId?GM.horizonById(G,g.horizonId):null;
+    if(!h||h.date>=t)return false;
+    const p=GM.progress(g);return p===null||p<1;      /* past its date and not landed */
+  });
+}
+
+/* ---- THE WEEK: 20 slots, each a goal and a day ------------------------- */
+function g2Week(){
+  const wk=weekKeyNow();syncCommits(wk);
+  const cap=GM.capacity(G,wk,WEEK_BLOCKS);
+  const orphan=cap.orphanAreas.map(id=>(GM.areaById(G,id)||{}).name).filter(Boolean);
+  let out=`<div class="g2cap${cap.committed>=WEEK_BLOCKS?' tight':''}">
+      <b>${cap.committed}</b><span>of ${WEEK_BLOCKS} committed</span><i></i>
+      <b>${cap.free}</b><span>still open</span></div>`;
+  if(orphan.length)out+=`<div class="g2warn">Nothing on ${esc(orphan.join(' · '))} this week. Allowed — but make it a decision, not an accident.</div>`;
+  for(let d=0;d<5;d++){
+    const date=dateOfSlot(wk,d),isToday=date===today();
+    out+=`<div class="g2day${isToday?' now':''}"><span>${DAY_NAMES[d]}</span><u>${date.slice(5)}</u>${isToday?'<b>TODAY</b>':''}</div>`;
+    DEEP_BLOCKS.forEach(bid=>{
+      const blk=WEEKDAY.find(b=>b.id===bid),c=commitFor(wk,d,bid);
+      const g=c?GM.goalOf(G,c.goalId):null,a=g?GM.areaById(G,g.areaId):null;
+      const done=c&&c.done;
+      out+=`<button class="g2slot${g?' on':''}${done?' done':''}" onclick="g2Slot('${wk}',${d},'${bid}')">
+        <span class="sk">${bid.toUpperCase()}<u>${blk?blk.s:''}</u></span>
+        <span class="sg">${g?esc(g.title):'<i>Open — tap to commit it</i>'}</span>
+        ${g?`<span class="sa" style="color:${domColour((a||{}).domain)}">${esc((a||{}).name||'')}${
+          c.carried?' · CARRIED '+c.carried+'×':''}</span>`:''}
+        ${done?'<span class="sd">✓</span>':''}</button>`;
+    });
+  }
+  return out;
+}
+function g2Slot(wk,d,bid){
+  const c=commitFor(wk,d,bid),goals=GM.liveGoals(G);
+  sheet(`<div class="sh-k">${DAY_NAMES[d]} · ${bid.toUpperCase()}</div>
+    <div class="sh-t">What is this block for?</div>
+    <div class="sh-sub">ONE BLOCK, ONE GOAL. THAT LINK IS THE WHOLE POINT.</div>
+    <div class="chips" style="margin-top:14px">
+      ${goals.map(g=>`<button class="chip tap seg${c&&c.goalId===g.id?' on':''}"
+        onclick="setCommit('${wk}',${d},'${bid}','${g.id}');closeSheet()">${esc(g.title.slice(0,34))}</button>`).join('')}
+    </div>
+    ${c?`<button class="btn gh" style="margin-top:14px" onclick="setCommit('${wk}',${d},'${bid}',null);closeSheet()">Leave it open</button>`:''}`);
+}
+
+/* ---- BY DATE. Here the undated bucket is CORRECT — it is the date view. --- */
+function g2ByDate(){
+  const hs=GM.liveHorizons(G),t=today();
+  let out='';
+  hs.forEach(h=>{
+    const gs=GM.goalsAt(G,h.id);if(!gs.length)return;
+    const past=h.date<t;
+    out+=`<div class="g2area"><div class="ah"><i style="background:${past?'var(--blood)':'var(--violet)'}"></i>
+      <span>${esc(h.label)}</span><u>${hzWhen(h)}</u></div>
+      ${gs.map(g=>g2Row(g,domColour((GM.areaById(G,g.areaId)||{}).domain))).join('')}</div>`;
+  });
+  const un=GM.undated(G);
+  if(un.length)out+=`<div class="g2area"><div class="ah"><i style="background:var(--faint)"></i>
+    <span>No date yet</span><u>${un.length}</u></div>
+    ${un.map(g=>g2Row(g,'var(--faint)')).join('')}</div>`;
+  return out||`<div class="card" style="color:var(--dim);font-size:13.5px">
+    No dates yet. Add one from "Areas and dates" — monthly, two-month, past the end of the run, anything.</div>`;
+}
+
+/* ---- the optional deep review ------------------------------------------
+   Three things the rendition asked for, minus the one it should never have:
+   it does NOT ask him to re-tick what got done. The app states it; he corrects
+   it if it is wrong. */
+function g2Review(){
+  const s=freshClose();if(!s)return;
+  const cs=GM.commitsOfWeek(G,s.weekKey);
+  const near=g2ConfGoals();
+  sheet(`<div class="sh-k">ALREADY CLOSED · NOTHING TO FILL IN</div>
+    <div class="sh-t">Week of ${s.weekKey.slice(5)}</div>
+    <div class="sh-sub">${s.done} OF ${s.committed} · ${s.pct===null?'—':s.pct+'%'}</div>
+    <h2 class="sec" style="margin-top:18px"><span>What happened</span><u>correct anything</u></h2>
+    ${cs.map(c=>{const g=GM.goalOf(G,c.goalId);
+      return `<button class="g2rv${c.done?' on':''}" onclick="g2Flip('${c.id}')">
+        <span class="rt">${esc(g?g.title:'—')}</span>
+        <span class="rm">${DAY_NAMES[c.day]} · ${c.block.toUpperCase()}${c.carried?' · CARRIED':''}</span>
+        <span class="rc">${c.done?'✓':'○'}</span></button>`}).join('')||
+      '<div class="card" style="color:var(--dim);font-size:13.5px">Nothing was committed that week.</div>'}
+    ${s.repeatMisses.length?`<div class="g2warn" style="margin-top:12px">
+      ${s.repeatMisses.length} goal${s.repeatMisses.length>1?'s'
+      :''} missed twice. Not a failure — a signal. Shrink it, move it, or park it.</div>`:''}
+    ${near.length?`<h2 class="sec" style="margin-top:20px"><span>Will it land?</span><u>never scored</u></h2>
+      ${near.map(g=>`<div class="g2cf"><span>${esc(g.title.slice(0,38))}</span>
+        <span class="cb">${[[3,'ON TRACK'],[2,'WOBBLING'],[1,'NOT HAPPENING']].map(([v,l])=>{
+          const cur=g.confidence.length&&g.confidence[g.confidence.length-1];
+          const on=cur&&cur.week===weekNo()&&cur.v===v;
+          return `<button class="chip tap${on?' seg on':''}" onclick="g2Conf('${g.id}',${v})">${l}</button>`}).join('')}</span></div>`).join('')}`:''}
+    <h2 class="sec" style="margin-top:20px"><span>This week</span><u>already drafted</u></h2>
+    <div class="card" style="color:var(--dim);font-size:13.5px">
+      ${GM.commitsOfWeek(G,weekKeyNow()).length} block${GM.commitsOfWeek(G,weekKeyNow()).length===1?'':'s'} carried in.
+      Change any of them on THE WEEK.</div>
+    <button class="btn" style="margin-top:14px" onclick="g2Seen('close');closeSheet()">Done</button>`);
+}
+/* only goals near a horizon get asked — nine taps a week is how an input dies */
+function g2ConfGoals(){
+  const t=today();
+  return GM.liveGoals(G).filter(g=>{
+    if(g.wig)return true;
+    const h=g.horizonId?GM.horizonById(G,g.horizonId):null;
+    return !!h&&daysTo(h.date)<=42;
+  }).slice(0,5);
+}
+function g2Conf(id,v){GM.setConf(G,id,v,weekNo());gsave();g2Review()}
+function g2Flip(cid){
+  const c=G.commits.find(x=>x.id===cid);if(!c)return;
+  c.done=c.done?0:1;
+  /* correcting the close must also correct the day record it was read from,
+     or the next sync silently reverts him */
+  const d=day(dateOfSlot(c.weekKey,c.day));
+  if(c.done)d.done[c.block]=true;else delete d.done[c.block];
+  const s=G.weeks[c.weekKey];
+  if(s){const cs=GM.commitsOfWeek(G,c.weekKey);s.done=cs.filter(x=>x.done).length;
+    s.missed=cs.length-s.done;s.pct=cs.length?Math.round(s.done/cs.length*100):null}
+  save();gsave();g2Review();
+}
+
+/* ---- the migration: one goal at a time, four choices, nothing auto-rolls -- */
+function g2Migrate(){
+  const due=g2NeedsDecision();if(!due.length){closeSheet();return}
+  const g=due[0],h=g.horizonId?GM.horizonById(G,g.horizonId):null;
+  const carried=g.history.filter(x=>x.t==='date').length;
+  const conf=g.confidence.slice(-3).map(c=>c.v).join(' → ');
+  sheet(`<div class="sh-k">${due.length} TO DECIDE · ONE AT A TIME</div>
+    <div class="sh-t">This one has stopped moving.</div>
+    <div class="sh-sub">THAT IS ALLOWED. IT JUST DOESN'T MOVE BY ITSELF.</div>
+    <div class="card" style="margin-top:14px">
+      <div style="font-size:16px;line-height:1.3;margin-bottom:7px">${esc(g.title)}</div>
+      <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--faint)">
+        ${esc((GM.areaById(G,g.areaId)||{}).name||'')}${h?` · ${esc(h.label)} · ${hzWhen(h)}`:' · no date'}${
+        conf?` · CONFIDENCE ${conf}`:''}</div>
+    </div>
+    ${carried>=2?`<div class="g2warn" style="margin-top:12px">Moved ${carried} times already. Moving it again is fine — just say it out loud.</div>`:''}
+    <div class="g2mg">
+      <button class="btn gh sm" onclick="g2Mig('${g.id}','carry')">Carry it</button>
+      <button class="btn gh sm" onclick="g2Mig('${g.id}','change')">Change it</button>
+      <button class="btn gh sm" onclick="g2Mig('${g.id}','park')">Park it</button>
+      <button class="btn gh sm" onclick="g2Mig('${g.id}','drop')">Drop it</button>
+    </div>`);
+}
+function g2Mig(id,act){
+  const g=GM.goalOf(G,id);if(!g)return;
+  if(act==='change'){closeSheet();setTimeout(()=>g2Open(id),240);return}
+  if(act==='park'){GM.setState(G,id,'parked',dayNo(),'stopped moving')}
+  else if(act==='drop'){GM.setState(G,id,'dropped',dayNo(),'stopped moving')}
+  else{
+    /* carry = push to the next horizon after this one; that IS an ease, so it
+       leaves a trail. Confidence resets so it gets a clean run at it. */
+    const hs=GM.liveHorizons(G),i=g.horizonId?hs.findIndex(h=>h.id===g.horizonId):-1;
+    const next=hs.slice(i+1).find(h=>h.date>today());
+    if(next)GM.editGoal(G,id,{horizonId:next.id},dayNo());
+    else g.history.push({t:'state',from:'carried',to:'no later date',day:dayNo()});
+    g.confidence=[];
+  }
+  if(g.wig&&g.state!=='active'){g.wig=0;const n=GM.liveGoals(G);if(n.length===1)n[0].wig=1}
+  gsave();closeSheet();render();
+  const left=g2NeedsDecision().length;
+  toast(act==='carry'?'Carried':act==='park'?'Parked, not lost':'Dropped',act==='drop'?'bad':'good');
+  if(left)setTimeout(()=>g2Migrate(),420);
 }
 
 /* The line that argues against sprawl. Permanent, never hidden.
@@ -3019,7 +3401,7 @@ function g2Wig(g){
   return `<div class="g2wig" style="--c:${c}" onclick="g2Open('${g.id}')">
     <div class="k"><i></i><span>THE ONE THAT MATTERS</span>${goals2Conf(g)}</div>
     <div class="t">${esc(g.title)}</div>
-    <div class="m">${esc(a.name||'')}${h?` · ${esc(h.label)} · ${daysTo(h.date)} days`:' · no date yet'}</div>
+    <div class="m">${esc(a.name||'')}${h?` · ${esc(h.label)} · ${hzWhen(h)}`:' · no date yet'}</div>
     ${g2Bar(g,p,c)}
     ${g.lead?`<div class="lead"><span>${esc(g.lead.name)}</span><b>${g.lead.target} a week</b></div>`:''}
   </div>`;
@@ -3069,7 +3451,7 @@ function g2Row(g,c){
   const h=g.horizonId?GM.horizonById(G,g.horizonId):null,p=GM.progress(g);
   return `<button class="g2row" onclick="g2Open('${g.id}')">
     <span class="gt">${esc(g.title)}</span>
-    <span class="gm">${h?esc(h.label)+' · '+daysTo(h.date)+'d':'no date'}${
+    <span class="gm">${h?esc(h.label)+' · '+hzWhen(h):'no date'}${
       p!==null?` · ${Math.round(p*100)}%`:''}${GM.needsEarly(g)?' · <b style="color:var(--gold)">NEEDS A DECISION</b>':''}</span>
   </button>`;
 }
@@ -3803,8 +4185,25 @@ function saveReward(){
 }
 
 /* ================= THE RECORD ================= */
+/* The quota board was rendering RAW INTERNAL IDS — "bible", "convo", "bed".
+   The labels already exist on the blocks and the wins; nobody had joined them up. */
+function quotaLabel(q){
+  if(q.src==='win'){const w=WINS.find(x=>x.k===q.id);return w?w.n:q.id}
+  const b=WEEKDAY.concat(SATURDAY).find(x=>x.id===q.id);
+  return b?b.n:q.id;
+}
 function renderRecord(){
-  const w=week(),p=w.due?Math.round(w.done/w.due*100):0;
+  /* This screen was painting a FULL-WEEK VERDICT IN BLOOD RED off a three-hour
+     sample. At 09:20 on a Monday two blocks have ended, so 0/2 is honest — but
+     0% in the failure colour, as the first thing on the page, is a wall of
+     failure built out of almost no data. Two guards, and neither one lies:
+       · nothing due yet  -> "—", no number invented
+       · fewer than 5 due -> the real number, but no verdict colour yet
+     The verdict arrives when there is enough week to judge. */
+  const EARLY=5;
+  const w=week(),p=w.due?Math.round(w.done/w.due*100):null;
+  const settled=w.due>=EARLY;
+  const pc=(p===null||!settled)?'var(--faint)':p>=85?'var(--phos)':p>=70?'var(--gold)':'var(--blood)';
   $('recWk').textContent=`WK ${pad(weekNo())}`;
   const mon=mondayOf(new Date());
   const weekHits=(src,id)=>{let n=0;for(let i=0;i<6;i++){const t=new Date(mon+'T00:00:00');t.setDate(t.getDate()+i);
@@ -3814,16 +4213,17 @@ function renderRecord(){
     const r=S.days[k];Object.keys(r.produced||{}).forEach(id=>{if(r.produced[id])produced.push({k,t:r.produced[id]})})});
   $('recBody').innerHTML=`
     <div class="card">
-      <div class="ws-h"><b style="color:${p>=85?'var(--phos)':p>=70?'var(--gold)':'var(--blood)'}">${p}%</b>
-        <span>${w.done} / ${w.due} TACTICS</span></div>
-      <div class="ws-t"><i style="width:${Math.min(100,p)}%;background:${p>=85?'var(--phos)':p>=70?'var(--gold)':'var(--blood)'}"></i><u></u></div>
-      <div class="ws-l"><span>WEEKLY EXECUTION</span><span>85% = ROUND WON</span></div>
+      <div class="ws-h"><b style="color:${pc}">${p===null?'—':p+'%'}</b>
+        <span>${p===null?'NOTHING DUE YET':`${w.done} / ${w.due} TACTICS`}</span></div>
+      <div class="ws-t"><i style="width:${p===null?0:Math.min(100,p)}%;background:${pc}"></i><u></u></div>
+      <div class="ws-l"><span>WEEKLY EXECUTION</span><span>${
+        p===null?'IT STARTS WHEN YOU COMMIT ONE':settled?'85% = ROUND WON':'TOO EARLY TO CALL'}</span></div>
     </div>
 
     <h2 class="sec">Quota board</h2>
     <div class="card">
       ${QUOTAS.map(q=>{const h=weekHits(q.src,q.id),met=h>=q.n;
-        return `<div class="stat"><span>${esc(q.id.replace('_',' '))} <span style="color:var(--faint);font-size:11px">· ${q.dom}</span></span>
+        return `<div class="stat"><span>${esc(quotaLabel(q))} <span style="color:var(--faint);font-size:11px">· ${q.dom}</span></span>
           <b style="color:${met?'var(--phos)':'var(--faint)'}">${h} / ${q.n}</b></div>`}).join('')}
     </div>
 
