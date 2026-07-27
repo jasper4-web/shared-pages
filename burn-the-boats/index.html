@@ -1250,6 +1250,12 @@ function recount(){
     const k=iso(dt); if(k>tk)continue;
     const sh=dt.getDay()===6?SATURDAY:WEEKDAY, rec=S.days[k];
     if(rec&&rec.off)continue;                              // an off-script day owes nothing
+    /* A DAY THE APP NEVER WATCHED IS NOT A DAY IT GETS TO SCORE. With no record
+       at all, this loop used to charge every scored block and credit none — so
+       three days too ill to open the phone arrived as 27 invisible debits and a
+       19% in blood red. Absence is a third state, not a pile of misses. It is
+       also the honest reading: we have no evidence either way. */
+    if(!rec&&k!==tk)continue;
     sh.filter(SCORED).forEach(b=>{
       if(b.opt)return;                                      // weekly-threshold items aren't daily tactics
       if(k===tk&&mins(b.e)>nm)return;                        // the future owes you nothing
@@ -1785,8 +1791,11 @@ function render(){
   autoCloseWeeks();
   if(dow()===0&&!sabOff){$('sabbath').classList.add('on');
     const w=week(mondayOf(new Date(Date.now()-864e5)));
-    const p=w.due?Math.round(w.done/w.due*100):0;
-    $('sabRead').textContent=`LAST WEEK · ${p}% EXECUTION · ${p>=85?'ROUND WON':'ROUND LOST'}`;
+    const p=w.due?Math.round(w.done/w.due*100):null;
+    $('sabRead').textContent = p===null ? 'LAST WEEK · NOTHING RECORDED'
+      : w.due<5 ? `LAST WEEK · ${w.done} OF ${w.due}`
+      : p>=85 ? `LAST WEEK · ${p}% · ROUND WON`
+      : `LAST WEEK · ${p}% · ${w.done} OF ${w.due} DONE`;
     return;}
   $('sabbath').classList.remove('on');document.body.classList.remove('noTabs');
   autoMark(); recount(); badges();
@@ -1845,9 +1854,14 @@ function renderGauges(){
     hot:gateOK&&v.smoke.cleanStreak>0,color:gateOK?'#FF6B2C':'#FF4D5E'});
   $('ggB').onclick=()=>openVice('smoke');
 
-  const p=w.due?w.done/w.due:0;
-  dial($('ggC'),{pct:p,val:w.due?Math.round(p*100)+'%':'—',label:'This week',
-    hot:p>=.85,color:p>=.85?'#4ADE80':p>=.7?'#FFB25E':'#FF4D5E'});
+  /* Same guard as the Record page: no verdict colour until there is enough week
+     to judge. This dial was painting a full-week verdict in blood red at 09:00
+     on a Monday off a two-block sample — on the tab he opens most. */
+  const p=w.due?w.done/w.due:0, settledW=w.due>=5;
+  dial($('ggC'),{pct:w.due?p:0,val:w.due?Math.round(p*100)+'%':'—',
+    label:settledW?'This week':'This week · early',
+    hot:settledW&&p>=.85,
+    color:!settledW?'#6b6480':p>=.85?'#4ADE80':p>=.7?'#FFB25E':'#FF4D5E'});
   $('ggC').onclick=()=>go('record');
 }
 /* Top-of-page snapshot: where you are, on one small graph, with the date you hit 99. */
@@ -1877,7 +1891,8 @@ function renderGlance(){
   const pr=projection(),el=$('proj');
   if(!pr.date){el.innerHTML=`<span>NO PACE YET</span><b class="warn">START TODAY</b>`;return}
   const y=pr.date.getFullYear(),md=pr.date.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-  const cls=pr.date<=new Date('2026-12-01T23:59:59')?'good':pr.date<=new Date('2026-12-31T23:59:59')?'warn':'bad';
+  const cls=pr.date<=new Date(iso(RUN_LAST)+'T23:59:59')?'good'
+           :pr.date<=new Date(iso(RUN_LAST)+'T23:59:59').getTime()+21*864e5?'warn':'bad';
   el.innerHTML=`<span>AT THIS PACE · 99 OVR ON</span><b class="${cls}">${md}${y>2026?" '"+String(y).slice(2):''}</b>`;
 }
 function renderRail(){
@@ -2073,7 +2088,8 @@ function goalStrip2(b){
         <div class="gt" style="font-size:13px;color:var(--dim)">Give it a goal and it counts toward one.</div></div>
       <button class="nu-gb" onclick="g2Slot('${wk}',${off},'${b.id}')">PICK</button></div>`;
   }
-  const g=GM.goalOf(G,c.goalId);if(!g)return'';
+  const g=GM.goalOf(G,c.goalId);
+  if(!g||g.state!=='active')return'';               /* same rule on the daily surface */
   const a=GM.areaById(G,g.areaId)||{},col=domColour(a.domain);
   const n=GM.commitsOfWeek(G,wk).filter(x=>x.goalId===g.id&&x.done).length;
   const tot=GM.commitsOfWeek(G,wk).filter(x=>x.goalId===g.id).length;
@@ -2206,7 +2222,8 @@ function renderPushStrip(){
           <div class="v"${has?'':' style="font-size:15px"'}>${has?`${fmtN(g.at)}/${fmtN(g.target)}`
             :esc(g.title.split(' ').slice(0,2).join(' '))}</div></div>`}).join('')}
     </div>
-    ${!sent&&stale>=1?`<div class="ps-stale">ANTHONY · PITCH-READY ${stale} DAYS · NOT SENT →</div>`:''}`;
+    ${!sent&&stale>=1?`<div class="ps-stale" onclick="event.stopPropagation();markSent()">
+        ANTHONY · PITCH-READY ${stale} DAYS · NOT SENT · TAP WHEN DONE →</div>`:''}`;
   $('pushStrip').onclick=()=>go('push');
 }
 function renderPenance(){
@@ -2384,16 +2401,18 @@ function goalOf2(b){
   if(!b||!b.id)return null;
   const wk=weekKeyNow(),off=(new Date().getDay()+6)%7;
   const c=off<=4?commitFor(wk,off,b.id):null;
-  if(c)return c.goalId;
-  const w=GM.liveGoals(G).find(x=>x.wig);      /* uncommitted deep work still counts for the one that matters */
-  return (w&&DEEP_BLOCKS.indexOf(b.id)>=0)?w.id:null;
+  if(!c)return null;        /* if the card says nothing is on this block, nothing is charged for it */
+  const g=GM.goalOf(G,c.goalId);
+  return (g&&g.state==='active')?g.id:null;
 }
 /* Which goal a block answers to, in the new model. Returns the same {lag,lead}
    shape the old sheet expected so the markup below did not have to change. */
 function blkGoal2(b){
   const wk=weekKeyNow(),off=(new Date().getDay()+6)%7;
   const c=(b&&off<=4)?commitFor(wk,off,b.id):null;
-  const g=c?GM.goalOf(G,c.goalId):(GM.liveGoals(G).find(x=>x.wig)||null);
+  let g=c?GM.goalOf(G,c.goalId):null;
+  if(g&&g.state!=='active')g=null;                 /* a set-down goal never nags from the live card */
+  if(!g)g=GM.liveGoals(G).find(x=>x.wig)||null;
   if(!g)return null;
   return {lag:g.title,lead:g.lead?`${g.lead.name} · ${g.lead.target} a week`
     :(GM.areaById(G,g.areaId)||{}).name||'—'};
@@ -2517,7 +2536,14 @@ function finishRun(){
   if(!run)return;clearInterval(run.t);
   const d=day(),b=run.b;
   d.done[b.id]=true;d.focus[b.id]=run.broken?'broke':'clean';
-  const xp=run.broken?25:65;S.xp+=xp;
+  const xp=run.broken?25:65;
+  const key='run:'+b.id+':'+today();
+  if(!d.credited[key]){
+    d.credited[key]=xp;S.xp+=xp;
+    const gid=goalOf2(b);
+    if(gid){S.xpByGoal=S.xpByGoal||{};S.xpByGoal[gid]=(S.xpByGoal[gid]||0)+xp;
+      d.xpByGoal=d.xpByGoal||{};d.xpByGoal[gid]=(d.xpByGoal[gid]||0)+xp}
+  }
   save();recount();
   $('runTime').textContent=run.broken?'TIME':'DONE';
   $('runMult').textContent=run.broken?`BLOCK COUNTED · +${xp} XP`:`CLEAN RUN · +${xp} XP`;
@@ -3066,8 +3092,19 @@ function autoCloseWeeks(){
   });
   if(syncCommits(cur))changed=1;
   /* how long he's been gone, for the return path. Written to btb4, never btb3. */
-  const t=today();
-  if(G.meta.lastSeen!==t){G.meta.awayFrom=G.meta.lastSeen||null;G.meta.lastSeen=t;changed=1}
+  /* Track the last day he actually DID something, separately from the last day he
+     looked. The return card used to key off "seen", so glancing at the app while
+     ill silently cancelled the only kind screen in the product. */
+  const t=today(),d=S.days[t];
+  /* autoMark() ticks wake and lunch off the clock whether or not he was there, so
+     those must NOT count as evidence of a day lived — otherwise a phone left on a
+     bedside table looks like a day worked and cancels the return card. */
+  const AUTO=WEEKDAY.concat(SATURDAY).filter(b=>b.auto).map(b=>b.id);
+  const lived=!!(d&&(
+    (d.done&&Object.keys(d.done).some(k=>AUTO.indexOf(k)<0))||
+    (d.wins&&Object.keys(d.wins).length)));
+  if(lived&&G.meta.lastLived!==t){G.meta.lastLived=t;changed=1}
+  if(G.meta.lastSeen!==t){G.meta.awayFrom=G.meta.lastLived||G.meta.lastSeen||null;G.meta.lastSeen=t;changed=1}
   if(changed)gsave();
 }
 const daysGone=()=>{const f=G.meta&&G.meta.awayFrom;if(!f)return 0;
@@ -3145,6 +3182,18 @@ function importFromOld(){
   gsave();render();
   toast(`${GM.liveAreas(G).length} areas · ${GM.liveHorizons(G).length} dates · ${n} goals brought in`,'good');
 }
+/* The import used to be a one-way door. Snapshot first, offer it straight back. */
+function importFromOldSafe(){
+  G.meta.preImport=JSON.stringify({areas:G.areas,horizons:G.horizons,goals:G.goals,commits:G.commits});
+  importFromOld();
+}
+function undoImport(){
+  const snap=G.meta&&G.meta.preImport;if(!snap)return;
+  const p=JSON.parse(snap);
+  G.areas=p.areas;G.horizons=p.horizons;G.goals=p.goals;G.commits=p.commits;
+  G.meta.imported=0;delete G.meta.preImport;
+  gsave();render();toast('Undone — back to how it was','bad');
+}
 
 /* ================= THE GOALS TAB, v2 =================
    Three things the rendition got wrong, fixed here:
@@ -3183,7 +3232,29 @@ function renderGoals2(){
        different view, not a second copy on this one. */
     (rest.length?`<h2 class="sec"><span>Everything else</span><u>${rest.length}</u></h2>
        ${areas.map(a=>g2Area(a)).filter(Boolean).join('')}`:'')+
+    g2Quiet()+
     g2Foot();
+}
+/* Parked and dropped goals had NO screen anywhere and no way back — the only
+   recovery was hand-editing a backup file. "Parked, not lost" was false. */
+function g2Quiet(){
+  const q=G.goals.filter(g=>g.state==='parked'||g.state==='dropped');
+  if(!q.length)return'';
+  return `<h2 class="sec"><span>Set down</span><u>${q.length} · still here</u></h2>
+    <div class="g2area">${q.map(g=>{
+      const a=GM.areaById(G,g.areaId)||{};
+      return `<div class="g2m">
+        <span class="d" style="background:${g.state==='parked'?'var(--violet)':'var(--faint)'}"></span>
+        <span class="n">${esc(g.title)}<u>${g.state==='parked'?'PARKED':'DROPPED'}${
+          a.name?' · '+esc(a.name):''}</u></span>
+        <button class="mb" style="width:auto;padding:0 12px;color:var(--phos);
+          font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em"
+          onclick="g2Wake('${g.id}')">WAKE</button></div>`}).join('')}</div>`;
+}
+function g2Wake(id){
+  const g=GM.goalOf(G,id);if(!g)return;
+  GM.setState(G,id,'active',dayNo(),'picked back up');
+  gsave();render();toast('Back on the board','good');
 }
 const g2Foot=()=>`<button class="btn" style="margin-top:14px" onclick="g2New()">+ Add a goal</button>
   <button class="btn gh" style="margin-top:8px" onclick="g2Manage()">Areas and dates</button>
@@ -3499,7 +3570,7 @@ function g2Empty(areas){
       <input id="g2First" maxlength="90" placeholder="Three clients signed and paying">
     </div>
     <button class="btn" onclick="g2SaveFirst()">Write it down</button>
-    ${areas.length?g2Ready(areas):`<button class="btn gh" style="margin-top:10px" onclick="importFromOld()">
+    ${areas.length?g2Ready(areas):`<button class="btn gh" style="margin-top:10px" onclick="importFromOldSafe()">
       Bring in the areas already in this app</button>`}
   </div>`;
 }
@@ -3515,6 +3586,8 @@ function g2Ready(areas){
     ${hz.length?`<div class="ch" style="margin-top:7px">${hz.map(h=>
       `<span class="rc" style="--c:var(--violet)">${esc(h.label)}</span>`).join('')}</div>`:''}
     <div class="s">Whatever you write above lands in one of these. You can rename, reorder or delete any of them.</div>
+    ${G.meta&&G.meta.preImport?`<button class="btn gh sm" style="margin-top:11px" onclick="undoImport()">
+      Undo — I didn't mean to bring these in</button>`:''}
   </div>`;
 }
 /* First goal, zero ceremony: if he has no areas we make one from the goal
@@ -3644,7 +3717,8 @@ function g2NewArea(){
       <div class="chips" id="g2AD">${DOMAINS.map((d,i)=>
         `<button class="chip tap seg${i===0?' on':''}" data-d="${d.k}" onclick="g2PickDom('${d.k}')"
           style="${''}">${esc(d.label.replace('THE ',''))}</button>`).join('')}</div>
-      <div class="hintline">This is how blocks for this area move your overall rating. Six parts, fixed — your areas are not.</div></div>
+      <div class="hintline">Which part of life this area belongs to. Sets its colour throughout the app.
+        <b style="color:var(--gold)">It does not yet feed your rating</b> — that's coming with the day system.</div></div>
     <button class="btn" onclick="g2SaveArea()">Add it</button>`);
   GB.dom='WORK';
 }
@@ -3730,6 +3804,8 @@ function gateChecks(){
 }
 function tickGate(k){S.push.gate[k]=!S.push.gate[k];save();render()}
 function markSent(){S.push.anthonySent=today();save();setTimeout(render,400);gainXP(300,'you sent it')}
+/* gateChecks() below is orphaned — kept only because its six-item checklist is
+   content, not code, and deleting it would lose the list. Nothing calls it. */
 function openTrade(){
   const t=day().trade||{};
   sheet(`<div class="sh-k">13:00 · MARKET CLOSE</div><div class="sh-t">Log the session</div>
@@ -3902,7 +3978,9 @@ function xpAttribution(){
   const m=S.xpByGoal||{};
   /* keyed by GM goal id now. Old btb3 keys ('sano'/'trade'/...) simply find no
      match and drop out — no crash, no phantom row. */
-  const rows=GM.liveGoals(G).map(g=>({g,n:m[g.id]||0})).filter(r=>r.n>0)
+  /* every goal that ever earned, not just the live ones — finishing a goal used
+     to erase it from this shelf, which is exactly backwards */
+  const rows=G.goals.map(g=>({g,n:m[g.id]||0})).filter(r=>r.n>0)
     .sort((a,b)=>b.n-a.n);
   if(!rows.length)return'';
   const top=rows[0].n;
@@ -3910,7 +3988,7 @@ function xpAttribution(){
     <div class="card">${rows.map(r=>{
       const a=GM.areaById(G,r.g.areaId)||{},c=domColour(a.domain);
       return `<div class="attr">
-        <span class="an">${esc(r.g.title)}</span>
+        <span class="an">${esc(r.g.title)}${r.g.state==='done'?' <b style="color:var(--phos);font-size:11px">DONE</b>':''}</span>
         <span class="at"><i style="width:${Math.round(r.n/top*100)}%;background:${c}"></i></span>
         <span class="av">${r.n.toLocaleString()}</span></div>`}).join('')}</div>`;
 }
@@ -3983,16 +4061,25 @@ const boostDone=b=>b.repeat!=='any'&&boostHits(b)>0;
 /* clamp lives in ONE place — the composer, the pool and any future import all pass through it */
 function boostClamp(xp,size){const s=BOOST_SIZE[size]||BOOST_SIZE.gesture;
   return Math.max(s.min,Math.min(s.max,Math.round(Number(xp)||s.min)))}
+const BOOST_DAY_CAP=250;   /* a strong weekday pays ~445 — boosts can never out-earn the work */
+const boostXpToday=()=>boostLog().filter(e=>e.date===today()).reduce((a,e)=>a+(e.xp||0),0);
 function logBoost(id){
   const b=boostById(id);if(!b)return;
   if(boostDone(b)){toast(`Already logged ${b.repeat==='week'?'this week':'today'}`,'bad');return}
   const xp=boostClamp(b.xp,b.size);
-  const n=boostLog().filter(e=>e.id===id&&e.date===today()).length;   /* 'any' can pay twice in a day */
-  boostLog().push({id,date:today(),xp,day:dayNo()});
-  const priv=b.size==='event';
-  if(priv)S.privileges=(S.privileges||0)+1;
+  /* THE DAILY CEILING. Per-item caps were never enough: a repeat:'any' boost had
+     no bound at all and the award key included the tap count, so it re-paid every
+     press. This is the backstop that makes the economy actually closed. */
+  const spent=boostXpToday();
+  if(spent>=BOOST_DAY_CAP){toast('Boosts are capped for today — go earn it','bad');return}
+  const pay=Math.min(xp,BOOST_DAY_CAP-spent);
+  const n=boostLog().filter(e=>e.id===id&&e.date===today()).length;
+  boostLog().push({id,date:today(),xp:pay,day:dayNo()});
+  /* one token a day, not one per tap */
+  const priv=b.size==='event'&&!boostLog().some(e=>e.date===today()&&e.tok);
+  if(priv){S.privileges=(S.privileges||0)+1;boostLog()[boostLog().length-1].tok=1}
   save();
-  if(!award('boost:'+id+':'+today()+':'+n,xp,b.n+(priv?' · +1 privilege':'')))render();
+  if(!award('boost:'+id+':'+today()+':'+n,pay,b.n+(priv?' · +1 privilege':'')))render();
 }
 function undoBoost(id){
   const L=boostLog();

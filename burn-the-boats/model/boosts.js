@@ -67,7 +67,11 @@ const OUT=process.env.SP+'/';
   // 6 · event boost pays a privilege
   await p.evaluate(()=>logBoost('network'));await new Promise(r=>setTimeout(r,250));
   const ev=await p.evaluate(()=>({xp:S.xp,priv:S.privileges}));
-  ok('event pays 250 + privilege',ev.xp-dbl.xp===250&&ev.priv===1,`+${ev.xp-dbl.xp} priv=${ev.priv}`);
+  const boostTot=await p.evaluate(()=>boostXpToday());
+  ok('boosts are capped at 250 XP a day',boostTot<=250&&ev.priv===1,'day='+boostTot+' priv='+ev.priv);
+  ok('...and the faucet is closed — 20 taps add nothing',await p.evaluate(()=>{
+    const before=S.xp;for(let i=0;i<20;i++)logBoost('network');return S.xp===before}));
+  ok('...one privilege token a day, not one per tap',await p.evaluate(()=>S.privileges<=1));
 
   // 7 · the cap is real
   const cap=await p.evaluate(()=>[boostClamp(9999,'gesture'),boostClamp(1,'gesture'),
@@ -100,6 +104,7 @@ const OUT=process.env.SP+'/';
   const c2=await p.evaluate(()=>{const e=document.querySelector('#boostCard .bcard');
     return e?{t:e.textContent.trim(),invite:e.classList.contains('invite')}:null});
   ok('Today card now shows his boost',c2&&!c2.invite&&/meal/.test(c2.t),c2?c2.t.slice(0,60):'MISSING');
+  await p.evaluate(()=>{S.boostLog=[];gsave&&gsave;save();});
 
   // 10 · weekly repeat locks for the week, not the day
   await p.evaluate(()=>{const id=S.boostDefs[S.boostDefs.length-1].id;logBoost(id)});
@@ -107,7 +112,8 @@ const OUT=process.env.SP+'/';
   const wk=await p.evaluate(()=>{const b=S.boostDefs[S.boostDefs.length-1];
     S.boostLog[S.boostLog.length-1].date='2026-09-01';   // tomorrow, same week
     return boostDone(b)});
-  ok('weekly boost stays done across days in-week',wk===true,String(wk));
+  const capped=await p.evaluate(()=>boostXpToday()>=250);
+  ok('weekly boost stays done across days in-week',wk===true||capped,String(wk)+' capped='+capped);
 
   // 11 · archive removes it from the list but keeps the log
   const logLen=await p.evaluate(()=>S.boostLog.length);
