@@ -2299,7 +2299,11 @@ function renderPushStrip(){
   $('pushStrip').innerHTML=`<div class="ps-row">
       ${pick.map(g=>{const a=GM.areaById(G,g.areaId)||{};
         const has=g.target!==null;
-        return `<div class="ps-c"><div class="k">${esc((a.name||'').slice(0,10))}</div>
+        /* an auto-created holder is not a name — show his own words instead */
+        const lab=(a.auto||a.name==='Unsorted')?g.title.split(' ').slice(0,2).join(' '):(a.name||'');
+        /* trim on a word, never mid-word — "Three client" is worse than no label */
+        const cut=lab.length<=14?lab:lab.slice(0,14).replace(/\s+\S*$/,'');
+        return `<div class="ps-c"><div class="k">${esc(cut)}</div>
           <div class="v"${has?'':' style="font-size:15px"'}>${has?`${fmtN(g.at)}/${fmtN(g.target)}`
             :esc(g.title.split(' ').slice(0,2).join(' '))}</div></div>`}).join('')}
     </div>
@@ -3349,7 +3353,20 @@ function g2View(v){G.meta.view=v;gsave();render()}
    keep until the next visit, and the tab badge stays lit meanwhile. */
 function g2Banners(){
   const ret=g2Return();
-  return ret||(g2CloseBanner()+g2MigrateBanner());
+  return ret||(g2NameArea()+g2CloseBanner()+g2MigrateBanner());
+}
+/* If the app had to invent a holder for his first goal, say so once and offer to
+   fix it — rather than leaving "Unsorted" as the headline on his home screen. */
+function g2NameArea(){
+  const a=GM.liveAreas(G).find(x=>x.auto||x.name==='Unsorted');
+  if(!a)return'';
+  const n=GM.goalsOfArea(G,a.id).length;
+  return `<div class="g2mig" onclick="g2EditArea('${a.id}')">
+    <div class="k">NEEDS A NAME<u>1</u></div>
+    <div class="t">${n} goal${n===1?'':'s'} landed in a holder called "${esc(a.name)}"</div>
+    <div class="s">I made that up so your first sentence wasn't blocked by a form. Give it a real
+      name — a business, or a part of your life.</div>
+  </div>`;
 }
 /* a horizon that has already gone by must never read "0 days" */
 function hzWhen(h){return h.date<today()?'PASSED':daysTo(h.date)+' days'}
@@ -3676,7 +3693,9 @@ function g2Ready(areas){
 function g2SaveFirst(){
   const t=$('g2First').value.trim();if(!t){toast('Write one line','bad');return}
   let a=GM.liveAreas(G)[0];
-  if(!a)a=GM.addArea(G,{name:'Unsorted',domain:'WORK'});
+  /* a holder so the first sentence is never blocked by a form — flagged, because
+     an invented name must never end up being the label on his home screen */
+  if(!a){a=GM.addArea(G,{name:'Unsorted',domain:'WORK'});a.auto=1}
   const g=GM.addGoal(G,{title:t,areaId:a.id,wig:1});
   gsave();render();toast('That is the one','good');
   setTimeout(()=>g2Open(g.id),260);
@@ -3790,6 +3809,18 @@ function g2State(id,st){
   gsave();closeSheet();render();
   toast(st==='done'?'Done — that one is yours':st==='parked'?'Parked, not lost':'Dropped',st==='done'?'good':'bad');
 }
+function g2EditArea(id){
+  const a=GM.areaById(G,id);if(!a)return;
+  GB.dom=a.domain;GB.areaEdit=id;
+  sheet(`<div class="sh-k">AN AREA NEVER ENDS</div><div class="sh-t">${esc(a.name)}</div>
+    <div class="sh-sub">${GM.goalsOfArea(G,id).length} GOAL${GM.goalsOfArea(G,id).length===1?'':'S'} IN IT</div>
+    <div class="fld"><label>Name</label><input id="g2AN" maxlength="40" value="${esc(a.name)}"></div>
+    <div class="fld"><label>Which part of life it belongs to</label>
+      <div class="chips" id="g2AD">${DOMAINS.map(d=>
+        `<button class="chip tap seg${d.k===a.domain?' on':''}" data-d="${d.k}" onclick="g2PickDom('${d.k}')">${esc(d.label.replace('THE ',''))}</button>`).join('')}</div>
+      <div class="hintline">Blocks pointed at this area now credit this part of your rating.</div></div>
+    <button class="btn" onclick="g2SaveArea()">Save it</button>`);
+}
 function g2NewArea(){
   sheet(`<div class="sh-k">AN AREA NEVER ENDS</div><div class="sh-t">New area</div>
     <div class="sh-sub">A BUSINESS, OR A PART OF YOUR LIFE</div>
@@ -3806,6 +3837,11 @@ function g2NewArea(){
 function g2PickDom(k){GB.dom=k;$('g2AD').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',e.dataset.d===k))}
 function g2SaveArea(){
   const n=$('g2AN').value.trim();if(!n){toast('Name it','bad');return}
+  if(GB.areaEdit){                       /* renaming an existing one */
+    const a=GM.areaById(G,GB.areaEdit);
+    if(a){a.name=n;a.domain=GB.dom||a.domain;delete a.auto}
+    GB.areaEdit=null;gsave();closeSheet();render();toast('Saved','good');return;
+  }
   const a=GM.addArea(G,{name:n,domain:GB.dom||'WORK'});
   GB.areaId=a.id;gsave();closeSheet();render();toast('Area added','good');
   setTimeout(()=>{GB.id?g2Open(GB.id):g2New()},240);
@@ -3834,7 +3870,7 @@ function g2Manage(){
     <h2 class="sec"><span>Areas</span><u>never end</u></h2>
     ${A.length?A.map((a,i)=>`<div class="g2m">
       <span class="d" style="background:${domColour(a.domain)}"></span>
-      <span class="n">${esc(a.name)}<u>${GM.goalsOfArea(G,a.id).length} goal${GM.goalsOfArea(G,a.id).length===1?'':'s'} · ${a.domain}</u></span>
+      <span class="n" style="cursor:pointer" onclick="g2EditArea('${a.id}')">${esc(a.name)}<u>${GM.goalsOfArea(G,a.id).length} goal${GM.goalsOfArea(G,a.id).length===1?'':'s'} · ${a.domain} · TAP TO RENAME</u></span>
       <button class="mb" onclick="g2Move('${a.id}',-1)" ${i===0?'disabled':''}>↑</button>
       <button class="mb" onclick="g2Move('${a.id}',1)" ${i===A.length-1?'disabled':''}>↓</button>
       <button class="mb" onclick="g2DropArea('${a.id}')">✕</button></div>`).join('')
