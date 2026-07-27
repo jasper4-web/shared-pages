@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Day System — v2, after the investigation</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --blue:#7FB4FF; --tap:44px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#08070c;color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.028em;margin:0}
+
+.wrap{max-width:1180px;margin:0 auto;padding:44px 20px 90px}
+.lede{max-width:680px;margin-bottom:34px}
+.lede .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold);margin-bottom:12px}
+.lede h1{font-size:36px;line-height:1.08;margin-bottom:14px}
+.lede p{color:var(--dim);font-size:15px;margin:0 0 10px}
+.lede b{color:var(--ink)}
+
+.changed{border:1px solid var(--line2);border-radius:14px;background:var(--panel);padding:4px 0;margin:22px 0 8px;max-width:760px}
+.ch{display:grid;grid-template-columns:150px 1fr;gap:14px;padding:11px 16px;border-bottom:1px solid var(--line)}
+.ch:last-child{border-bottom:0}
+.ch .w{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint)}
+.ch .v{font-size:13.5px;color:var(--dim);line-height:1.45}
+.ch .v b{color:var(--ink)}
+.ch .v s{color:var(--faint);text-decoration:line-through}
+
+.sec{margin:56px 0 20px;max-width:720px}
+.sec .n{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--faint);margin-bottom:9px}
+.sec h2{font-size:25px;line-height:1.15;margin-bottom:9px}
+.sec p{color:var(--dim);font-size:14.5px;margin:0 0 8px}
+.sec p em{color:var(--rune);font-style:normal}
+.sec p b{color:var(--ink)}
+
+.row{display:flex;gap:22px;overflow-x:auto;padding-bottom:14px;align-items:flex-start}
+.col{flex:none;width:330px}
+.cap{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--faint);margin-bottom:9px}
+.cap.bad{color:var(--blood)} .cap.good{color:var(--phos)}
+.note{margin-top:10px;font-size:12.5px;line-height:1.5;color:var(--faint)}
+.note b{color:var(--dim)}
+
+.ph{width:330px;border:1px solid var(--line2);border-radius:26px;background:var(--bg);
+  padding:15px 14px 18px;box-shadow:0 24px 60px -30px #000}
+.hd{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:13px;
+  padding-bottom:10px;border-bottom:1px solid var(--line)}
+.hd b{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em}
+.hd span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint)}
+
+.card{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:12px 13px;margin-bottom:9px}
+.card.live{border-color:rgba(224,178,94,.45);background:linear-gradient(150deg,#1b1526,#110e1a 62%,#0d0b14)}
+.card.ok{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.06)}
+.card.warnc{border-color:rgba(224,178,94,.42);background:rgba(224,178,94,.05)}
+.card.rune{border-color:rgba(56,225,216,.35);background:rgba(56,225,216,.04)}
+.card.dead{border-color:rgba(255,77,94,.3);background:rgba(255,77,94,.04)}
+.k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.17em;color:var(--gold);margin-bottom:7px;
+  display:flex;align-items:center;gap:7px}
+.k i{width:6px;height:6px;border-radius:99px;background:var(--gold);box-shadow:0 0 8px var(--gold);flex:none}
+.k u{margin-left:auto;text-decoration:none;color:var(--faint)}
+.k.v{color:var(--violet)} .k.v i{background:var(--violet);box-shadow:0 0 8px var(--violet)}
+.k.r{color:var(--rune)}   .k.r i{background:var(--rune);box-shadow:0 0 8px var(--rune)}
+.k.g{color:var(--phos)}   .k.g i{background:var(--phos);box-shadow:0 0 8px var(--phos)}
+.k.b{color:var(--blood)}  .k.b i{background:var(--blood);box-shadow:0 0 8px var(--blood)}
+.t{font-family:'Clash Display',sans-serif;font-size:18px;letter-spacing:-.025em;line-height:1.16;margin-bottom:5px}
+.t.sm{font-size:15px;font-family:'Satoshi',sans-serif;letter-spacing:0;line-height:1.3}
+.s{font-size:12.5px;line-height:1.45;color:var(--faint)}
+.s.dim{color:var(--dim)}
+
+.btn{display:block;width:100%;text-align:center;border-radius:11px;padding:12px;margin-top:10px;
+  font-size:14px;font-weight:600;background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204}
+.btn.gh{background:transparent;border:1px solid var(--line2);color:var(--dim);font-weight:500}
+.btn.sm{padding:9px;font-size:12.5px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.two .btn{margin-top:0}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.three .btn{margin-top:0}
+
+.slot{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;
+  border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:9px 11px;margin-bottom:6px}
+.slot.now{border-color:rgba(224,178,94,.5);background:rgba(224,178,94,.05)}
+.slot.done{border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.05)}
+.slot.free{border-style:dashed;background:transparent;border-color:var(--line2)}
+.slot .tm{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);line-height:1.35}
+.slot .nm{font-size:13.5px;line-height:1.25}
+.slot .nm u{display:block;text-decoration:none;font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.07em;color:var(--faint);margin-top:2px}
+.slot .rt{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em}
+.grab{color:var(--faint);font-size:15px}
+.arc{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--faint);
+  margin:14px 0 7px;display:flex}
+.arc u{margin-left:auto;text-decoration:none}
+
+.chip{display:inline-flex;align-items:center;font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.1em;padding:6px 10px;border-radius:7px;border:1px solid var(--line2);color:var(--dim);margin:0 5px 5px 0}
+.chip.on{border-color:var(--violet);color:var(--violet);background:rgba(176,140,255,.1)}
+.chip.gold{border-color:var(--gold);color:var(--gold);background:rgba(224,178,94,.08)}
+.chip.green{border-color:rgba(74,222,128,.5);color:var(--phos);background:rgba(74,222,128,.07)}
+.chip.red{border-color:rgba(255,77,94,.5);color:var(--blood)}
+.lab{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.17em;color:var(--faint);
+  margin:13px 0 7px;display:block}
+.fld{border:1px solid var(--line2);border-radius:10px;background:var(--panel2);padding:11px;font-size:14px;color:var(--ink)}
+
+.meter{height:7px;border-radius:99px;background:#221d33;overflow:hidden;margin:9px 0 6px}
+.meter i{display:block;height:100%;border-radius:99px}
+.mrow{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint)}
+
+.dials{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);margin-bottom:9px;
+  border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.dials div{background:var(--bg);padding:11px 4px;text-align:center}
+.dials b{display:block;font-family:'Clash Display',sans-serif;font-size:17px}
+.dials span{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint)}
+.radarbox{border:1px solid var(--line2);border-radius:14px;background:var(--panel);padding:13px;margin-bottom:9px}
+.bar{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.bar span{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);width:56px}
+.bar i{flex:1;height:4px;border-radius:99px;background:#221d33;position:relative;overflow:hidden}
+.bar i b{position:absolute;left:0;top:0;bottom:0;border-radius:99px}
+.bar u{font-family:'Geist Mono',monospace;font-size:11px;color:var(--dim);text-decoration:none;width:20px;text-align:right}
+
+.q{border-left:2px solid var(--gold);padding-left:14px;margin:16px 0;color:var(--dim);font-size:14.5px;max-width:660px}
+.q b{color:var(--ink)}
+.plan{max-width:760px;border:1px solid var(--line2);border-radius:14px;overflow:hidden;margin-top:8px}
+.pl{display:grid;grid-template-columns:140px 1fr;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.pl:last-child{border-bottom:0}
+.pl .w{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--gold)}
+.pl .v{font-size:13.5px;color:var(--dim);line-height:1.5}
+.pl .v b{color:var(--ink)}
+@media(max-width:700px){.wrap{padding:30px 14px 70px}.lede h1{font-size:28px}.sec h2{font-size:21px}
+  .ch,.pl{grid-template-columns:1fr;gap:5px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="lede">
+  <div class="k">BURN THE BOATS · DAY SYSTEM v2 · STILL NOT BUILT</div>
+  <h1>What changed after<br>six people used it</h1>
+  <p>Four agents walked ten days as you — through a new commitment, a collapse, a big win, and slow
+     drift. Two more used it as strangers with no idea who it was built for.</p>
+  <p>They found <b>fourteen real defects</b>, which are now fixed and live. They also disagreed with
+     four things in the first proposal. <b>This is v1 with their objections applied and your answers
+     locked in.</b></p>
+</div>
+
+<div class="changed">
+  <div class="ch"><div class="w">FRIDAY PLANNER</div>
+    <div class="v"><s>Three steps</s> → <b>one screen.</b> All four agents cut it independently. You
+      keep the ritual; the wizard around it goes.</div></div>
+  <div class="ch"><div class="w">PLANNING XP</div>
+    <div class="v"><s>+50 XP</s> → <b>nothing.</b> "Paying to plan is how the 08:30 composer became
+      something you tap through."</div></div>
+  <div class="ch"><div class="w">BUFFER</div>
+    <div class="v"><s>Dashed empty slots</s> → <b>elastic block lengths.</b> Your point, and all four
+      agreed: air in the day, not holes on the screen.</div></div>
+  <div class="ch"><div class="w">LIBRARY</div>
+    <div class="v"><b>Cut.</b> 1 of 22 apps ships it. Instead: <b>restore any past week</b> — free,
+      because history already stores the shape you lived.</div></div>
+  <div class="ch"><div class="w">RUN MODES</div>
+    <div class="v"><s>Two</s> → <b>three.</b> Locked · Phone · <b>Away</b>. The third is what stops you
+      lying with "Waiting on someone."</div></div>
+  <div class="ch"><div class="w">NEW · FIRST</div>
+    <div class="v"><b>Two invisible foundations</b> that have to exist before any of this is safe.
+      Section 01.</div></div>
+</div>
+
+<!-- 01 -->
+<div class="sec">
+  <div class="n">01 · THE PART WITH NO SCREEN</div>
+  <h2>Two things that must exist first</h2>
+  <p>Neither is visible. Neither changes anything you can see. <em>Nothing else can safely ship
+     before them.</em></p>
+</div>
+<div class="row">
+  <div class="col"><div class="cap bad">TODAY · WITHOUT THE SNAPSHOT</div>
+    <div class="ph">
+      <div class="card dead">
+        <div class="k b"><i></i>WHAT WOULD HAPPEN</div>
+        <div class="t sm">You change your day in October.</div>
+        <div class="s" style="margin-bottom:9px">The app rebuilds every past week by running
+          <b style="color:var(--ink)">today's</b> shape over old records.</div>
+        <div class="s">So September re-scores itself. Your rating moves for a week you already lived.</div>
+      </div>
+      <div class="card">
+        <div class="k" style="color:var(--faint)">SEPTEMBER, BEFORE THE EDIT</div>
+        <div class="bar"><span>WK 06</span><i><b style="width:78%;background:var(--phos)"></b></i><u>78</u></div>
+        <div class="bar"><span>WK 07</span><i><b style="width:84%;background:var(--phos)"></b></i><u>84</u></div>
+      </div>
+      <div class="card dead">
+        <div class="k b"><i></i>SEPTEMBER, AFTER</div>
+        <div class="bar"><span>WK 06</span><i><b style="width:61%;background:var(--blood)"></b></i><u>61</u></div>
+        <div class="bar"><span>WK 07</span><i><b style="width:66%;background:var(--blood)"></b></i><u>66</u></div>
+      </div>
+    </div>
+    <div class="note"><b>Screen 04 promised</b> "weeks 1–13 keep the shape they were lived with."
+      That promise cannot be kept on the current engine — <b>recount, domainProgress and dueSoFar all
+      reconstruct history from the current array.</b></div>
+  </div>
+
+  <div class="col"><div class="cap good">THE FIX · INVISIBLE</div>
+    <div class="ph">
+      <div class="card ok">
+        <div class="k g"><i></i>STAMP THE DAY</div>
+        <div class="t sm">Each morning, the app writes down the shape it's about to run.</div>
+        <div class="s">Past days are scored against <b style="color:var(--ink)">what they were</b>.
+          Today is scored against today. Editing the future can never move the past.</div>
+      </div>
+      <div class="card">
+        <div class="k" style="color:var(--faint)">WHAT GETS STORED</div>
+        <div class="s" style="line-height:2;font-family:'Geist Mono',monospace;font-size:11px">
+          SEP&nbsp;08 &nbsp;b1 09:00 90m WORK<br>
+          SEP&nbsp;08 &nbsp;b2 10:45 75m WORK<br>
+          <span style="color:var(--gold)">NOV&nbsp;03 &nbsp;b1 11:00 60m MIND</span><br>
+          <span style="color:var(--gold)">NOV&nbsp;03 &nbsp;b2 13:00 75m WORK</span>
+        </div>
+      </div>
+      <div class="s" style="padding:2px">Roughly forty bytes a day. You will never see it. It is the
+        only reason the rest is safe.</div>
+    </div>
+    <div class="note">Every past week keeps its own verdict, permanently. This is what makes
+      <b>"forward-only"</b> a fact rather than a slogan.</div>
+  </div>
+
+  <div class="col"><div class="cap good">AND · THE DOMAIN FOLLOWS THE WORK</div>
+    <div class="ph">
+      <div class="card dead">
+        <div class="k b"><i></i>NOW</div>
+        <div class="s dim" style="margin-bottom:8px">Block 1 is tagged <b style="color:var(--ink)">WORK</b>
+          in the code, permanently.</div>
+        <div class="s">Two and a half hours of Spanish credits <b style="color:var(--ink)">THE WORK</b>.
+          MIND doesn't move.</div>
+      </div>
+      <div class="card ok">
+        <div class="k g"><i></i>AFTER</div>
+        <div class="s dim" style="margin-bottom:9px">A block has no domain. It inherits whatever it
+          points at.</div>
+        <div class="bar"><span>SANO</span><i><b style="width:100%;background:var(--gold)"></b></i><u>→</u></div>
+        <div class="s" style="margin:-2px 0 8px 64px">credits THE WORK</div>
+        <div class="bar"><span>SPANISH</span><i><b style="width:100%;background:var(--rune)"></b></i><u>→</u></div>
+        <div class="s" style="margin:-2px 0 8px 64px">credits MIND</div>
+        <div class="bar"><span>KELLS</span><i><b style="width:100%;background:var(--violet)"></b></i><u>→</u></div>
+        <div class="s" style="margin:-2px 0 0 64px">credits FAITH</div>
+      </div>
+    </div>
+    <div class="note">The agents found something neither of us knew: <b>MIND, FAITH and PEOPLE are
+      currently only reachable by tapping buttons.</b> No block of real work can credit them at all.
+      This fixes three of your six stats.</div>
+  </div>
+</div>
+
+<!-- 02 -->
+<div class="sec">
+  <div class="n">02 · THE DAILY PAGE</div>
+  <h2>Six pictures of one slow number</h2>
+  <p>Both strangers and two of your four said the same thing unprompted. <b>A perfect day moves your
+     rating by 0.45 points.</b> Everything above the live block is a month-scale instrument on a
+     day-scale screen — <em>and on a bad morning, all of it is an accusation.</em></p>
+</div>
+<div class="row">
+  <div class="col"><div class="cap bad">NOW · BEFORE THE LIVE BLOCK</div>
+    <div class="ph">
+      <div style="text-align:center;font-family:'Clash Display',sans-serif;font-size:20px;color:var(--gold);
+        opacity:.5;margin-bottom:10px">THE BOATS HAVE BEEN BURNED</div>
+      <div class="card" style="display:flex;align-items:center;gap:12px">
+        <b style="font-family:'Clash Display',sans-serif;font-size:30px">110</b>
+        <div class="s">WORKDAYS TO DEC 25</div></div>
+      <div class="radarbox">
+        <div class="bar"><span>WORK</span><i><b style="width:50%;background:var(--gold)"></b></i><u>50</u></div>
+        <div class="bar"><span>CAPITAL</span><i><b style="width:50%;background:var(--blue)"></b></i><u>50</u></div>
+        <div class="bar"><span>BODY</span><i><b style="width:50%;background:var(--ember)"></b></i><u>50</u></div>
+        <div class="bar"><span>FAITH</span><i><b style="width:50%;background:var(--violet)"></b></i><u>50</u></div>
+        <div class="bar"><span>MIND</span><i><b style="width:50%;background:var(--rune)"></b></i><u>50</u></div>
+        <div class="bar"><span>PEOPLE</span><i><b style="width:50%;background:var(--phos)"></b></i><u>50</u></div>
+        <div style="display:flex;align-items:baseline;gap:9px;margin-top:11px;padding-top:11px;
+          border-top:1px solid var(--line)">
+          <b style="font-family:'Clash Display',sans-serif;font-size:26px;color:var(--gold)">50</b>
+          <span class="s">OVERALL</span>
+          <span class="s" style="margin-left:auto">GAP TO HIM <b style="color:var(--blue)">49</b></span></div>
+        <div class="s" style="margin-top:9px;color:var(--blood)">AT THIS PACE · 99 OVR ON APR 13 '27</div>
+      </div>
+      <div class="card" style="padding:9px"><div class="s">SANO 1/3 &nbsp;·&nbsp; FUNDED 0/3 &nbsp;·&nbsp; KITCHEN 0/1</div></div>
+      <div class="dials">
+        <div><b>0w</b><span>DISHWASHER</span></div>
+        <div><b>0d</b><span>SMOKE · 2H40</span></div>
+        <div><b style="color:var(--blood)">0%</b><span>THIS WEEK</span></div>
+      </div>
+      <div class="s" style="text-align:center;padding:8px 0">↓ the live block is down here ↓</div>
+    </div>
+    <div class="note">Nine separate readouts, none of which can change today, before you reach the
+      thing you're supposed to do at 09:00.</div>
+  </div>
+
+  <div class="col"><div class="cap good">AFTER · ONE TAP AWAY</div>
+    <div class="ph">
+      <div style="text-align:center;font-family:'Clash Display',sans-serif;font-size:20px;color:var(--gold);
+        opacity:.5;margin-bottom:12px">THE BOATS HAVE BEEN BURNED</div>
+      <div class="card" style="display:flex;align-items:center;gap:11px;padding:10px 13px">
+        <b style="font-family:'Clash Display',sans-serif;font-size:24px">110</b>
+        <div class="s">WORKDAYS TO DEC 25</div>
+        <div class="s" style="margin-left:auto;color:var(--gold)">OVR 50 ▸</div></div>
+      <div class="card live">
+        <div class="k"><i></i>NOW<u>09:00–10:30 · 90m</u></div>
+        <div class="t">Block 1 · SANO</div>
+        <div class="s dim" style="margin-bottom:10px">Call ten owners from the list</div>
+        <div style="border-top:1px solid rgba(255,255,255,.08);padding-top:10px">
+          <div class="k" style="margin-bottom:4px">THIS BLOCK IS FOR</div>
+          <div class="s dim">Three clients signed and paying</div></div>
+        <div class="btn">Start focus run · 90m · locked</div>
+        <div class="two" style="margin-top:8px">
+          <div class="btn gh">Waiting on someone</div><div class="btn gh">Detail</div></div>
+        <div class="btn gh" style="margin-top:8px;border-style:dashed;color:var(--gold)">
+          See the whole day · 3 of 11 ▾</div>
+      </div>
+      <div class="s" style="text-align:center;padding:6px 0">Always counts · the day · close it out</div>
+    </div>
+    <div class="note">The rating, the radar, the gap and the projection move behind
+      <b>"OVR 50 ▸"</b>. Same data, one tap, on a page where a 0.45-a-day curve makes sense.
+      <b>This costs no data model and it's the thing you'd feel tomorrow morning.</b></div>
+  </div>
+
+  <div class="col"><div class="cap">OPENED · THE WHOLE DAY</div>
+    <div class="ph">
+      <div class="hd"><b>Wednesday</b><span>3 OF 11 · 7 AHEAD</span></div>
+      <div class="arc">PEAK — DEEP WORK<u>2.8H</u></div>
+      <div class="slot now"><span class="tm">09:00</span><span class="nm">Block 1 · SANO<u>LOCKED · 90M</u></span><span class="rt" style="color:var(--gold)">NOW</span></div>
+      <div class="slot"><span class="tm">10:45</span><span class="nm">Block 2 · SANO<u>LOCKED · 60–75M</u></span><span class="grab">⋮⋮</span></div>
+      <div class="arc">MIDDAY<u>2.6H</u></div>
+      <div class="slot"><span class="tm">12:00</span><span class="nm">Lunch</span><span class="grab">⋮⋮</span></div>
+      <div class="slot"><span class="tm">13:20</span><span class="nm">Block 3 · Reyes calls<u>PHONE · 45M</u></span><span class="grab">⋮⋮</span></div>
+      <div class="arc">AFTERNOON<u>2.9H</u></div>
+      <div class="slot"><span class="tm">14:00</span><span class="nm">Spanish class<u>AWAY · 150M · MIND</u></span><span class="grab">⋮⋮</span></div>
+      <div class="btn gh">Arrange today</div>
+    </div>
+    <div class="note">Every row states its rule before you start. Note Block 2 reads
+      <b>60–75M</b> — that's the buffer, and it's a property of the block rather than an empty row
+      on your schedule.</div>
+  </div>
+</div>
+
+<!-- 03 -->
+<div class="sec">
+  <div class="n">03 · THE SLOT · YOUR FAVOURITE SCREEN</div>
+  <h2>Four things, and one of them is new</h2>
+  <p>Unchanged from v1 except the length, which is now a <b>range</b>, and the rules, which are now
+     <b>three</b>. <em>The block keeps its identity forever — so B1 can stop being SANO and become
+     something else without losing a single day of history.</em></p>
+</div>
+<div class="row">
+  <div class="col"><div class="cap">EDITING B1</div>
+    <div class="ph">
+      <div class="hd"><b>Block 1</b><span>DEEP · SACRED</span></div>
+      <span class="lab">WHAT IT'S FOR</span>
+      <span class="chip gold">SANO</span><span class="chip">TRADING</span><span class="chip">SPANISH</span><span class="chip">+ NEW</span>
+      <span class="lab">WHEN IT MAY SIT</span>
+      <div class="fld">08:30 &nbsp;→&nbsp; 12:00 &nbsp;&nbsp;<span style="color:var(--faint)">· ideally 09:00</span></div>
+      <span class="lab">HOW LONG · MINIMUM AND IDEAL</span>
+      <div class="fld">45m &nbsp;→&nbsp; 90m</div>
+      <div class="s" style="margin-top:7px">Finish at 45 and the block is <b style="color:var(--phos)">done</b>,
+        not half-failed. This is where the air in your day comes from.</div>
+      <span class="lab">THE RULE</span>
+      <span class="chip on">LOCKED</span><span class="chip">PHONE</span><span class="chip">AWAY</span>
+      <div class="btn" style="margin-top:14px">Save for next week</div>
+      <div class="btn gh" style="margin-top:8px">Make this the standard from now on</div>
+    </div>
+    <div class="note">That last line is the whole recurring-change mechanism. Tap it on a Tuesday for
+      Spanish and Tue/Thu change <b>from that day forward</b> — last week stays exactly as it was.</div>
+  </div>
+
+  <div class="col"><div class="cap good">THE SAME SLOT IN NOVEMBER</div>
+    <div class="ph">
+      <div class="hd"><b>Block 1</b><span>DEEP · SACRED</span></div>
+      <div class="card warnc">
+        <div class="k">CHANGED · WEEK 14</div>
+        <div class="t sm">SANO → Client calls</div>
+        <div class="s">Phone <b style="color:var(--gold)">allowed</b> · 45–60m · sits 10:00–14:00</div>
+      </div>
+      <div class="card">
+        <div class="k" style="color:var(--faint)">WHAT THIS SLOT HAS BEEN</div>
+        <div class="s" style="line-height:1.9">
+          <span style="color:var(--dim)">WK 1–13</span> &nbsp;SANO · locked · 90m<br>
+          <span style="color:var(--dim)">WK 14–</span> &nbsp;&nbsp;&nbsp;Client calls · phone · 60m
+        </div>
+      </div>
+      <div class="card ok">
+        <div class="k g"><i></i>NOTHING MOVED</div>
+        <div class="s">Weeks 1–13 keep their shape, their score and their XP. That's the snapshot in
+          section 01 doing its job.</div>
+      </div>
+    </div>
+    <div class="note">One agent wanted this history panel cut as "nobody reads a changelog of their own
+      calendar." <b>I've kept it small</b> — it's the only proof on screen that the past is safe.</div>
+  </div>
+
+  <div class="col"><div class="cap">WHEN THE DAY GOES SIDEWAYS</div>
+    <div class="ph">
+      <div class="hd"><b>Arrange</b><span>WEDNESDAY</span></div>
+      <div class="card rune">
+        <div class="k r"><i></i>THERE'S ROOM FOR ONE MORE</div>
+        <div class="t sm">Which one is it?</div>
+        <div class="s" style="margin-bottom:11px">Whatever you don't pick is <b>dropped</b> —
+          a decision, not a miss. It won't count against the week.</div>
+        <span class="chip on">BLOCK 1 · SANO</span>
+        <span class="chip">BLOCK 2 · SANO</span>
+        <span class="chip">NEITHER</span>
+      </div>
+      <div class="btn">Set the rest of the day</div>
+    </div>
+    <div class="note">v1 opened this with <i>"It's 14:20 and two deep blocks haven't started."</i>
+      An agent called that <b>"the app narrating my failure back to me before offering help."</b>
+      Same three buttons, different first line.</div>
+  </div>
+</div>
+
+<!-- 04 -->
+<div class="sec">
+  <div class="n">04 · THE RUN · NOW THREE MODES</div>
+  <h2>The third one is what stops the lying</h2>
+  <p>Your attestation, exactly as you described it. <b>Same XP, claimed after, asked once.</b> But the
+     agents found the bigger hole: <em>a class, a client call or an appointment can't be completed at
+     all today</em> — the only exit is "Waiting on someone", which is a lie you'd tell three times a
+     week for nineteen weeks.</p>
+</div>
+<div class="row">
+  <div class="col"><div class="cap">LOCKED · THE DEFAULT</div>
+    <div class="ph" style="padding-top:22px">
+      <div style="text-align:center;padding:12px 0 18px">
+        <div class="k" style="justify-content:center;margin-bottom:12px">FOCUS RUN · 90M</div>
+        <div style="font-family:'Clash Display',sans-serif;font-size:48px;letter-spacing:-.04em">47:12</div>
+        <div class="s" style="margin-top:6px">Block 1 · SANO</div>
+        <div class="chip red" style="margin-top:14px">PHONE LOCKED</div>
+        <div class="s" style="margin-top:12px;padding:0 8px">Screen off is fine. Another app for more
+          than 10s breaks it.</div>
+      </div>
+      <div class="two"><div class="btn gh">Step away · 4</div><div class="btn gh">End</div></div>
+    </div>
+    <div class="note">Unchanged. Still the default, because most deep work isn't phone work.</div>
+  </div>
+
+  <div class="col"><div class="cap">PHONE · SET IN ADVANCE</div>
+    <div class="ph" style="padding-top:22px">
+      <div style="text-align:center;padding:12px 0 12px">
+        <div class="k" style="justify-content:center;margin-bottom:12px">FOCUS RUN · 45M</div>
+        <div style="font-family:'Clash Display',sans-serif;font-size:48px;letter-spacing:-.04em">DONE</div>
+        <div class="s" style="margin-top:6px">Block 3 · Reyes calls</div>
+      </div>
+      <div class="card warnc">
+        <div class="k">ONE QUESTION</div>
+        <div class="t sm">Was that the work?</div>
+        <div class="s" style="margin-bottom:10px">You set this block to phone-allowed on Friday. Same
+          XP either way — this just has to be you saying it.</div>
+        <div class="two"><div class="btn sm">Yes · +65</div><div class="btn gh sm">No</div></div>
+      </div>
+    </div>
+    <div class="note">Your mechanic. <b>"If you're gonna try to finesse the system, at least think
+      about what you're doing — and you have one chance."</b> Cheap when honest: two taps, warm
+      wording, never an accusation.</div>
+  </div>
+
+  <div class="col"><div class="cap good">AWAY · THE NEW ONE</div>
+    <div class="ph" style="padding-top:22px">
+      <div style="text-align:center;padding:12px 0 16px">
+        <div class="k g" style="justify-content:center;margin-bottom:12px">NO TIMER</div>
+        <div style="font-family:'Clash Display',sans-serif;font-size:30px;letter-spacing:-.03em;line-height:1.15">
+          Spanish class</div>
+        <div class="s" style="margin-top:8px">14:00 – 16:30 · counts as a deep block</div>
+        <div class="chip green" style="margin-top:14px">CREDITS MIND</div>
+      </div>
+      <div class="two"><div class="btn">I was there</div><div class="btn gh">Didn't go</div></div>
+      <div class="s" style="margin-top:11px;padding:0 4px">Pays the block, not the clean-run bonus —
+        there was no run to keep clean.</div>
+    </div>
+    <div class="note">This is the one that lets you schedule your <b>life</b> and not just your desk.
+      A class, a school run, a site visit, a funeral. And it means <b>"Waiting on someone" goes back
+      to meaning what it says.</b></div>
+  </div>
+</div>
+
+<!-- 05 -->
+<div class="sec">
+  <div class="n">05 · FRIDAY · ONE SCREEN NOW</div>
+  <h2>Your ritual, minus the wizard</h2>
+  <p>All four agents cut v1's three steps to one, independently. <em>Capacity was already a permanent
+     line on the Goals tab — showing it again inside a wizard is the same fact twice.</em> And the
+     XP is gone.</p>
+</div>
+<div class="row">
+  <div class="col"><div class="cap">THE WHOLE THING</div>
+    <div class="ph">
+      <div class="hd"><b>Next week</b><span>~30 SECONDS</span></div>
+      <div class="card">
+        <div class="k">CARRIED FROM THIS WEEK<u>17 OF 20</u></div>
+        <div class="s dim" style="margin-bottom:10px">Change what's different. Leave the rest.</div>
+        <div class="slot"><span class="tm">B1<br>09:00</span><span class="nm">SANO<u>LOCKED · 45–90M</u></span><span class="rt" style="color:var(--faint)">KEEP</span></div>
+        <div class="slot"><span class="tm">B2<br>10:45</span><span class="nm">SANO<u>LOCKED · 45–75M</u></span><span class="rt" style="color:var(--faint)">KEEP</span></div>
+        <div class="slot now"><span class="tm">B3<br>13:20</span><span class="nm">LA Edible → <b style="color:var(--gold)">Reyes calls</b><u>PHONE · 45M</u></span><span class="rt" style="color:var(--gold)">EDIT</span></div>
+        <div class="slot"><span class="tm">B4<br>15:05</span><span class="nm">Admin<u>LOCKED · 45–75M</u></span><span class="rt" style="color:var(--faint)">KEEP</span></div>
+      </div>
+      <div class="s" style="padding:0 2px 10px">Trading and Faith have nothing on them next week.
+        Allowed — but make it a decision.</div>
+      <div class="btn">That's the week</div>
+      <div class="btn gh" style="margin-top:8px">Don't ask me again for 3 weeks</div>
+      <div class="btn gh" style="margin-top:8px">Start from an older week instead ▸</div>
+    </div>
+    <div class="note">Skip it entirely and next week is simply this week again. <b>The ritual improves
+      the plan; it never creates it.</b> No XP — paying to plan is how the 08:30 composer became
+      something you tap through without reading.</div>
+  </div>
+
+  <div class="col"><div class="cap good">YOUR PIN — WITH THE TRAP REMOVED</div>
+    <div class="ph">
+      <div class="card ok">
+        <div class="k g"><i></i>QUIET UNTIL WEEK 11</div>
+        <div class="t sm">Friday won't ask again.</div>
+        <div class="s">You can still change any day, any time.</div>
+      </div>
+      <div class="card warnc">
+        <div class="k">BUT IT STILL WATCHES</div>
+        <div class="t sm">Block 3 says LA Edible.</div>
+        <div class="s" style="margin-bottom:9px">The last four times you ran it you wrote:
+          <i style="color:var(--dim)">"mapped the scraper", "scraper — auth", "scraper", "rate limits".</i></div>
+        <div class="s">Is B3 still LA Edible?</div>
+        <div class="two" style="margin-top:10px"><div class="btn gh sm">Keep it</div><div class="btn gh sm">Rename it</div></div>
+      </div>
+    </div>
+    <div class="note">An agent found the flaw in the pin: combined with "skipping means carry
+      forward", <b>a drifted week gets auto-renewed forever and the system guarantees it never
+      asks.</b> So the pin silences the <i>prompt</i> — never the <i>watching</i>. The app quotes you
+      back to yourself instead.</div>
+  </div>
+
+  <div class="col"><div class="cap good">INSTEAD OF A LIBRARY</div>
+    <div class="ph">
+      <div class="hd"><b>Older weeks</b><span>ALREADY STORED</span></div>
+      <div class="slot"><span class="tm">SEP<br>08</span><span class="nm">4 SANO · 1 kitchen<u>YOUR BEST WEEK · 92%</u></span><span class="rt" style="color:var(--phos)">USE</span></div>
+      <div class="slot"><span class="tm">OCT<br>06</span><span class="nm">2 SANO · 2 Spanish<u>78%</u></span><span class="rt" style="color:var(--faint)">USE</span></div>
+      <div class="slot"><span class="tm">OCT<br>20</span><span class="nm">3 Reyes · 1 admin<u>84%</u></span><span class="rt" style="color:var(--faint)">USE</span></div>
+      <div class="s" style="margin-top:11px;padding:0 2px">No arrangements to name, save or maintain.
+        These are just weeks you actually lived.</div>
+    </div>
+    <div class="note">Question 3, answered from the research: <b>1 of 22 apps ships a template
+      library</b>, and it's the one famous for overwhelming people. A saved arrangement goes stale the
+      moment your areas change. <b>This costs nothing — the snapshot in section 01 already stores it.</b></div>
+  </div>
+</div>
+
+<!-- 06 -->
+<div class="sec">
+  <div class="n">06 · HOW IT LANDS</div>
+  <h2>And what I'd deliberately not build yet</h2>
+</div>
+<div class="plan">
+  <div class="pl"><div class="w">BEFORE AUG 1</div>
+    <div class="v"><b>The two invisible foundations</b> · the daily-page declutter ·
+      <b>"See the whole day"</b>. Nothing changes how you work. Day 1 opens on a clean surface.</div></div>
+  <div class="pl"><div class="w">WEEK 1</div>
+    <div class="v"><b>The slot editor</b> and <b>the three run modes</b> — the two you responded to
+      most. By then you'll have a week of real use telling me where I'm wrong.</div></div>
+  <div class="pl"><div class="w">WEEK 2</div>
+    <div class="v"><b>The one-screen Friday planner</b>, elastic block lengths, restore-an-older-week.</div></div>
+  <div class="pl"><div class="w">NOT YET</div>
+    <div class="v">The planner comes <b>after</b> you've lived a week — deliberately. A planning
+      ritual designed for a week I've only imagined is exactly the thing the research says gets
+      abandoned by Wednesday.</div></div>
+</div>
+
+<div class="q" style="margin-top:34px"><b>The one thing worth knowing.</b> Three agents said the app's
+  ethics — never punish absence, never wipe a streak, never fake a number, never render a wall of
+  failure — are better than almost anything shipped. And that the model underneath contradicts them
+  on four screens out of five. <b>Closing that gap is the actual project.</b> The day system is how.</div>
+
+</div>
+</body>
+</html>
