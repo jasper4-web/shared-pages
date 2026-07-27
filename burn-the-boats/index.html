@@ -568,6 +568,72 @@ h2.sec u{text-decoration:none;color:var(--dim)}
 .chip.seg.on{border-color:var(--violet);color:var(--violet);background:rgba(176,140,255,.1)}
 .hintline{margin-top:7px;font-size:11.5px;line-height:1.4;color:var(--faint)}
 
+/* ---------- the goals tab, v2 ----------
+   The capacity line is first and never moves; the WIG is the screen, not a tag. */
+.g2cap{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;padding:11px 13px;margin-bottom:14px;
+  border:1px solid var(--line2);border-radius:12px;background:var(--panel)}
+.g2cap b{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;color:var(--ink);line-height:1}
+.g2cap span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
+.g2cap i{flex:none;width:1px;height:13px;background:var(--line2);margin:0 3px}
+.g2cap.tight{border-color:rgba(224,178,94,.4)}
+.g2cap.tight b{color:var(--gold)}
+.g2warn{font-size:12.5px;line-height:1.45;color:var(--gold);margin:-6px 0 14px;padding:0 2px}
+
+.g2wig{position:relative;overflow:hidden;border-radius:16px;padding:15px;cursor:pointer;
+  border:1px solid var(--c);background:linear-gradient(150deg,#1b1526,#110e1a 62%,#0d0b14)}
+.g2wig:active{transform:scale(.995)}
+.g2wig.ask{border-style:dashed;cursor:default}
+.g2wig .k{display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.g2wig .k i{width:6px;height:6px;border-radius:99px;background:var(--c);box-shadow:0 0 8px var(--c)}
+.g2wig .k span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.19em;color:var(--c)}
+.g2wig .k u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;text-decoration:none}
+.g2wig .t{font-family:'Clash Display',sans-serif;font-size:22px;letter-spacing:-.028em;line-height:1.14;margin-bottom:7px}
+.g2wig .m{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--faint);margin-bottom:12px}
+.g2wig .lead{display:flex;align-items:center;gap:9px;margin-top:11px;padding-top:11px;
+  border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;color:var(--dim)}
+.g2wig .lead b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--c)}
+.g2pick{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.g2bar{height:7px;border-radius:99px;background:#221d33;overflow:hidden}
+.g2bar i{display:block;height:100%;border-radius:99px;transition:width .45s}
+.g2num{display:flex;justify-content:space-between;margin-top:6px;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--faint)}
+.g2none{font-size:12.5px;line-height:1.45;color:var(--faint)}
+
+.g2area{margin-bottom:12px}
+.g2area .ah{display:flex;align-items:center;gap:9px;min-height:34px;padding:0 2px}
+.g2area .ah i{width:7px;height:7px;border-radius:99px;flex:none}
+.g2area .ah span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.17em;color:var(--dim);text-transform:uppercase}
+.g2area .ah u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);text-decoration:none}
+.g2row{display:flex;flex-direction:column;gap:3px;width:100%;text-align:left;cursor:pointer;
+  min-height:var(--tap);justify-content:center;padding:9px 12px;margin-top:5px;
+  border:1px solid var(--line);border-radius:11px;background:var(--panel)}
+.g2row .gt{font-size:13.5px;color:var(--ink);line-height:1.3}
+.g2row .gm{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.07em;color:var(--faint)}
+
+.g2empty{padding:8px 0 4px}
+.g2empty .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.19em;color:var(--faint);margin-bottom:14px}
+.g2empty .t{font-family:'Clash Display',sans-serif;font-size:27px;letter-spacing:-.032em;line-height:1.14;margin-bottom:10px}
+.g2empty .s{font-size:13.5px;line-height:1.5;color:var(--dim)}
+
+.g23{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.g2m{display:flex;align-items:center;gap:10px;min-height:var(--tap);padding:6px 10px;margin-bottom:6px;
+  border:1px solid var(--line2);border-radius:11px;background:var(--panel)}
+.g2m .d{width:7px;height:7px;border-radius:99px;flex:none}
+.g2m .n{flex:1;min-width:0;font-size:13.5px;color:var(--ink);line-height:1.25}
+.g2m .n u{display:block;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.06em;
+  color:var(--faint);text-decoration:none;margin-top:2px}
+.g2m .mb{flex:none;width:38px;min-height:var(--tap);border:0;background:none;cursor:pointer;
+  color:var(--dim);font-size:15px}
+.g2m .mb[disabled]{opacity:.25}
+.g2h{display:flex;align-items:center;gap:10px;min-height:30px;font-size:12.5px;color:var(--dim)}
+.g2h span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
+.g2h b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--ink)}
+.g2door{margin-top:22px;padding:15px;border-radius:16px;border:1px dashed rgba(176,140,255,.4);
+  background:linear-gradient(150deg,#161222,#0e0c16)}
+.g2door .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.19em;color:var(--violet);margin-bottom:9px}
+.g2door .t{font-size:15px;line-height:1.35;color:var(--ink);margin-bottom:6px}
+.g2door .s{font-size:12.5px;line-height:1.45;color:var(--faint)}
+
 /* ---------- score ---------- */
 .card{border-radius:14px;border:1px solid var(--line);background:var(--panel);padding:13px 14px}
 .ws-h{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:9px}
@@ -2685,7 +2751,519 @@ function msState(m,i){
   return i===firstOpen?'next':'ahead';
 }
 
+/* ==========================================================================
+   THE GOAL MODEL — v2.  Four objects: AREA · HORIZON · GOAL · COMMIT.
+   Namespaced so nothing here can ever collide with the old engine, and stored
+   under its OWN key (btb4).  btb3 is never read or written by any of this.
+   Proven before it was wired: model/profiles.js — 16 profiles × 20 screens.
+   ========================================================================== */
+const GKEY='btb4';
+const GM=(()=>{
+  let _seq=0;
+  const uid=(p)=>{_seq++;return p+Date.now().toString(36)+_seq.toString(36)};
+  const byRank=(a,b)=>(a.rank||0)-(b.rank||0);
+  const cl01=n=>Math.max(0,Math.min(1,n));
+  const DOMAIN_KEYS=DOMAINS.map(d=>d.k);
+  const KINDS=['outcome','learning'];   /* no 'habit' — an area standard IS the habit */
+  const STATES=['active','parked','done','dropped'];
+
+  const empty=()=>({v:1,areas:[],horizons:[],goals:[],commits:[],meta:{imported:0,softCap:5,active:0}});
+
+  function addArea(G,{name,domain,colour,standards}={}){
+    if(!name||!String(name).trim())throw new Error('an area needs a name');
+    const a={id:uid('a'),name:String(name).trim(),
+      domain:DOMAIN_KEYS.includes(domain)?domain:'WORK',colour:colour||null,
+      rank:G.areas.length+1,standards:Array.isArray(standards)?standards.slice():[],archived:0};
+    G.areas.push(a);return a;
+  }
+  const liveAreas=G=>G.areas.filter(a=>!a.archived).sort(byRank);
+  const areaById=(G,id)=>G.areas.find(a=>a.id===id)||null;
+  function archiveArea(G,id){const a=areaById(G,id);if(!a)return null;a.archived=1;return a}
+  /* renumber every live area or two share a rank and the order looks random */
+  function reorderArea(G,id,dir){
+    const L=liveAreas(G),i=L.findIndex(a=>a.id===id);if(i<0)return false;
+    const j=i+(dir<0?-1:1);if(j<0||j>=L.length)return false;
+    [L[i],L[j]]=[L[j],L[i]];L.forEach((a,k)=>a.rank=k+1);return true;
+  }
+
+  function addHorizon(G,{label,date}={}){
+    if(!date||!/^\d{4}-\d{2}-\d{2}$/.test(date))throw new Error('a horizon needs a date');
+    const h={id:uid('h'),label:(label||date).trim(),date,archived:0};G.horizons.push(h);return h;
+  }
+  const liveHorizons=G=>G.horizons.filter(h=>!h.archived).sort((a,b)=>a.date<b.date?-1:1);
+  const horizonById=(G,id)=>G.horizons.find(h=>h.id===id)||null;
+  /* deleting a date must NEVER delete a goal — it sets them loose */
+  function removeHorizon(G,id){
+    let freed=0;G.goals.forEach(g=>{if(g.horizonId===id){g.horizonId=null;freed++}});
+    G.horizons=G.horizons.filter(x=>x.id!==id);return freed;
+  }
+
+  function addGoal(G,{title,areaId,horizonId,kind,start,at,target,unit,evidence,obstacle,lead,wig}={}){
+    if(!title||!String(title).trim())throw new Error('a goal needs a title');
+    if(!areaById(G,areaId))throw new Error('a goal needs a real area');
+    const nums=target!==undefined&&target!==null&&target!=='';
+    const g={id:uid('g'),areaId,horizonId:horizonById(G,horizonId)?horizonId:null,parentId:null,
+      title:String(title).trim(),kind:KINDS.includes(kind)?kind:'outcome',
+      start:nums?Number(start!==undefined&&start!==null&&start!==''?start:(at||0)):null,
+      at:nums?Number(at||0):null,target:nums?Number(target):null,unit:unit||'',
+      evidence:evidence||'',obstacle:obstacle||'',
+      lead:lead&&lead.name?{name:lead.name,target:Number(lead.target)||0}:null,
+      wig:wig?1:0,rank:G.goals.length+1,state:'active',confidence:[],history:[]};
+    G.goals.push(g);return g;
+  }
+  const goalOf=(G,id)=>G.goals.find(g=>g.id===id)||null;
+  const liveGoals=G=>G.goals.filter(g=>g.state==='active').sort(byRank);
+  const goalsOfArea=(G,id)=>liveGoals(G).filter(g=>g.areaId===id);
+  const goalsAt=(G,id)=>liveGoals(G).filter(g=>g.horizonId===id);
+  const undated=G=>liveGoals(G).filter(g=>!g.horizonId);
+
+  /* THE PROGRESS TRAP: the old engine assumed the number goes UP, so anyone
+     losing weight or paying down debt watched every bar EMPTY as they won.
+     A `start` baseline fixes both directions with one formula and no flag.
+     null means "no number" — render a state, never a 0% bar. */
+  function progress(g){
+    if(g.start===null||g.target===null)return null;
+    if(g.target===g.start)return g.at>=g.target?1:0;
+    return cl01((g.at-g.start)/(g.target-g.start));
+  }
+  const direction=g=>(g.start===null||g.target===null)?null:(g.target<g.start?'down':'up');
+
+  /* hardening is silent · easing leaves a one-line trail · nothing ever zeroes */
+  function editGoal(G,id,patch,day){
+    const g=goalOf(G,id);if(!g)return null;const eased=[];
+    if(patch.target!==undefined&&g.target!==null){
+      const from=g.target,to=Number(patch.target);
+      const harder=direction(g)==='down'?to<from:to>from;
+      if(to!==from&&!harder)eased.push({t:'target',from,to});
+      g.target=to;
+    }
+    if(patch.horizonId!==undefined&&patch.horizonId!==g.horizonId){
+      const a=horizonById(G,g.horizonId),b=horizonById(G,patch.horizonId);
+      if(a&&b&&b.date>a.date)eased.push({t:'date',from:a.label,to:b.label});
+      g.horizonId=patch.horizonId;
+    }
+    ['title','evidence','obstacle','unit','kind','wig','areaId','at','start'].forEach(k=>{
+      if(patch[k]!==undefined)g[k]=patch[k]});
+    if(patch.lead!==undefined){
+      if(g.lead&&patch.lead&&Number(patch.lead.target)<g.lead.target)
+        eased.push({t:'lead',from:g.lead.target,to:Number(patch.lead.target)});
+      g.lead=patch.lead;
+    }
+    eased.forEach(e=>g.history.push({...e,day:day||0}));
+    return g;
+  }
+  function setState(G,id,st,day,note){
+    const g=goalOf(G,id);if(!g||!STATES.includes(st))return null;
+    if(g.state!==st)g.history.push({t:'state',from:g.state,to:st,day:day||0,note:note||''});
+    g.state=st;return g;
+  }
+  /* confidence has EXACTLY ONE JOB: two drops pulls a goal into migration early */
+  function setConf(G,id,v,wk){
+    const g=goalOf(G,id);if(!g)return null;
+    const n=Math.max(1,Math.min(3,Number(v)||1)),last=g.confidence[g.confidence.length-1];
+    if(last&&last.week===wk)last.v=n;else g.confidence.push({week:wk,v:n});return g;
+  }
+  function needsEarly(g){
+    const c=g.confidence;if(c.length<3)return false;
+    const[a,b,d]=c.slice(-3);return b.v<a.v&&d.v<b.v;
+  }
+
+  function commit(G,{goalId,text,weekKey,day,block}={}){
+    if(!goalOf(G,goalId))throw new Error('a commit needs a real goal');
+    const ex=G.commits.find(c=>c.weekKey===weekKey&&c.day===day&&c.block===block);
+    if(ex){ex.goalId=goalId;if(text)ex.text=text;return ex}
+    const c={id:uid('c'),goalId,text:text||'',weekKey,day,block,done:0,carried:0};
+    G.commits.push(c);return c;
+  }
+  const commitsOfWeek=(G,wk)=>G.commits.filter(c=>c.weekKey===wk);
+
+  /* capacity is the only honest scarcity in the app — it is what makes a goal
+     COST something, which is why it lives at the TOP of the screen, always */
+  function capacity(G,wk,total){
+    total=total||20;
+    const cs=commitsOfWeek(G,wk),live=liveGoals(G).length;
+    return {total,committed:cs.length,free:Math.max(0,total-cs.length),liveGoals:live,
+      blocksEach:live?Math.round(total/live*10)/10:null,
+      orphanAreas:liveAreas(G).filter(a=>!cs.some(c=>(goalOf(G,c.goalId)||{}).areaId===a.id)).map(a=>a.id)};
+  }
+  /* the SOFT cap: it argues, it never blocks (owner decision 2026-07-26) */
+  function capCheck(G,total){
+    const live=liveGoals(G).length,cap=G.meta.softCap||5;
+    if(live<cap)return{over:false,live,cap};
+    return{over:true,live,cap,blocksEach:Math.round((total||20)/(live+1)*10)/10,
+      suggest:liveGoals(G).slice().sort((a,b)=>{
+        const cv=g=>g.confidence.length?g.confidence[g.confidence.length-1].v:9;
+        return cv(a)-cv(b)}).slice(0,3).map(g=>g.id)};
+  }
+  /* pct is null, NEVER 0, when nothing was committed — a 0% is a wall of
+     failure drawn by accident, which is the live bug on the Record page */
+  function closeWeek(G,wk,doneMap){
+    const cs=commitsOfWeek(G,wk);
+    if(doneMap)cs.forEach(c=>{const k=c.block+':'+c.day;if(doneMap[k]!==undefined)c.done=doneMap[k]?1:0});
+    const done=cs.filter(c=>c.done),missed=cs.filter(c=>!c.done),byGoal={};
+    missed.forEach(c=>byGoal[c.goalId]=(byGoal[c.goalId]||0)+1);
+    return{weekKey:wk,committed:cs.length,done:done.length,missed:missed.length,
+      pct:cs.length?Math.round(done.length/cs.length*100):null,
+      repeatMisses:Object.keys(byGoal).filter(k=>byGoal[k]>=2),carry:missed.map(c=>c.id)};
+  }
+  function draftWeek(G,from,to){
+    const made=[];
+    commitsOfWeek(G,from).filter(c=>!c.done).forEach(c=>{
+      const g=goalOf(G,c.goalId);if(!g||g.state!=='active')return;   /* never resurrect dropped work */
+      const n=commit(G,{goalId:c.goalId,text:c.text,weekKey:to,day:c.day,block:c.block});
+      n.carried=(c.carried||0)+1;made.push(n);
+    });
+    return made;
+  }
+  function importAreas(G,{areas,horizons}={}){
+    if(G.meta.imported)return{skipped:true};
+    (areas||[]).forEach(a=>addArea(G,a));
+    (horizons||[]).forEach(h=>addHorizon(G,h));
+    G.meta.imported=1;return{skipped:false};
+  }
+  return{empty,KINDS,STATES,DOMAIN_KEYS,addArea,liveAreas,areaById,archiveArea,reorderArea,
+    addHorizon,liveHorizons,horizonById,removeHorizon,addGoal,goalOf,liveGoals,goalsOfArea,
+    goalsAt,undated,progress,direction,editGoal,setState,setConf,needsEarly,commit,
+    commitsOfWeek,capacity,capCheck,closeWeek,draftWeek,importAreas};
+})();
+
+/* ---- the v2 store.  Separate key, separate object, one-tap revert. -------- */
+let G=(()=>{try{const r=localStorage.getItem(GKEY);if(r)return Object.assign(GM.empty(),JSON.parse(r))}
+  catch(e){}return GM.empty()})();
+function gsave(){try{localStorage.setItem(GKEY,JSON.stringify(G))}catch(e){}}
+const gOn=()=>!!(G.meta&&G.meta.active);
+const WEEK_BLOCKS=WEEKDAY.filter(b=>b.kind==='deep').length*5;   /* 4 deep × 5 days = 20 */
+
+/* days from today to an ISO date — the number that makes a horizon feel real */
+function daysTo(iso2){return Math.max(0,Math.round((new Date(iso2+'T00:00:00')-new Date(today()+'T00:00:00'))/864e5))}
+
+/* ---- turning it on, and off again ---------------------------------------
+   Nothing is destroyed either way.  btb3 is never touched; flipping this back
+   restores the old Goals tab exactly as it was. */
+function goalsV2(on){
+  G.meta.active=on?1:0;gsave();render();
+  toast(on?'New Goals on':'Reverted — nothing lost',on?'good':'bad');
+}
+/* AREAS ONLY, never the goals.  If he imports everything he never exercises
+   the authoring path, which is the one thing no human has tested. */
+function importFromOld(){
+  const areas=[
+    {name:'SANO',     domain:'WORK'},
+    {name:'Trading',  domain:'CAPITAL'},
+    {name:'LA Edible',domain:'WORK'},
+    {name:'Body',     domain:'BODY'},
+    {name:'Faith',    domain:'FAITH'},
+    {name:'Mind',     domain:'MIND'},
+    {name:'People',   domain:'PEOPLE'},
+  ];
+  const horizons=LANDMARKS.map(l=>({label:l.label,date:l.iso}))
+    .concat([{label:END_LABEL_U,date:iso(RUN_LAST)}]);
+  GM.importAreas(G,{areas,horizons});
+  gsave();render();toast('Seven areas and five dates brought in','good');
+}
+
+/* ================= THE GOALS TAB, v2 =================
+   Three things the rendition got wrong, fixed here:
+   1. CAPACITY was buried on the third tab. It is the only honest scarcity in
+      the app — the thing that makes a goal cost something — so it is the first
+      line on the screen and it never moves.
+   2. THE WIG rendered as a small grey tag beside eight peers. 4DX across 1,500+
+      teams: 1-2 wildly important goals ~80% achieved, 4-10 ~zero. So the WIG is
+      the screen, and everything else sits below a divider.
+   3. ONBOARDING taught a four-object taxonomy before it let him type. If a
+      model needs a legend it is leaking. It now asks for one goal, in words.
+   ==================================================== */
+function renderGoals2(){
+  const areas=GM.liveAreas(G),goals=GM.liveGoals(G);
+  $('pushHorizon').textContent=goals.length
+    ? `${goals.length} GOAL${goals.length>1?'S':''} · ${areas.length} AREA${areas.length>1?'S':''}`
+    : 'NOTHING SET YET';
+
+  if(!goals.length){$('pushBody').innerHTML=g2Empty(areas);return}
+
+  const wig=goals.find(g=>g.wig)||(goals.length===1?goals[0]:null);
+  const rest=goals.filter(g=>g!==wig);
+  $('pushBody').innerHTML=g2Capacity(goals.length)+
+    (wig?g2Wig(wig):g2PickWig(goals))+
+    /* Grouped BY AREA, and every goal has exactly ONE home on this screen.
+       An undated goal used to render twice — once under its area and again in a
+       "no date yet" bucket — which reads as the app double-counting. It shows
+       under its area, with "no date" in its own line. The date-first cut is a
+       different view, not a second copy on this one. */
+    (rest.length?`<h2 class="sec"><span>Everything else</span><u>${rest.length}</u></h2>
+       ${areas.map(a=>g2Area(a)).filter(Boolean).join('')}`:'')+
+    `<button class="btn" style="margin-top:14px" onclick="g2New()">+ Add a goal</button>
+     <button class="btn gh" style="margin-top:8px" onclick="g2Manage()">Areas and dates</button>
+     <button class="btn gh" style="margin-top:8px" onclick="goalsV2(0)">Back to the old Goals</button>`;
+}
+
+/* The line that argues against sprawl. Permanent, never hidden.
+   ONE threshold, not two: it goes amber at exactly the point the soft cap starts
+   arguing. Two different numbers for the same idea reads as the app changing its
+   mind about what "too many" means. */
+function g2Capacity(n){
+  const each=Math.round(WEEK_BLOCKS/n*10)/10;
+  const tight=n>=(G.meta.softCap||5);
+  return `<div class="g2cap${tight?' tight':''}">
+    <b>${n}</b><span>goal${n>1?'s':''}</span>
+    <i></i>
+    <b>${WEEK_BLOCKS}</b><span>deep blocks a week</span>
+    <i></i>
+    <b>${each}</b><span>each</span>
+  </div>${tight?`<div class="g2warn">${each} blocks each. That's ${each<3?'not a plan, it\'s a wish list':'thin'} — one of these being first would change the week.</div>`:''}`;
+}
+
+function g2Wig(g){
+  const a=GM.areaById(G,g.areaId)||{},h=g.horizonId?GM.horizonById(G,g.horizonId):null;
+  const p=GM.progress(g),c=domColour(a.domain);
+  return `<div class="g2wig" style="--c:${c}" onclick="g2Open('${g.id}')">
+    <div class="k"><i></i><span>THE ONE THAT MATTERS</span>${goals2Conf(g)}</div>
+    <div class="t">${esc(g.title)}</div>
+    <div class="m">${esc(a.name||'')}${h?` · ${esc(h.label)} · ${daysTo(h.date)} days`:' · no date yet'}</div>
+    ${g2Bar(g,p,c)}
+    ${g.lead?`<div class="lead"><span>${esc(g.lead.name)}</span><b>${g.lead.target} a week</b></div>`:''}
+  </div>`;
+}
+/* No WIG chosen and more than one goal — the single most useful question the
+   app can ask, so it asks it rather than picking for him. */
+function g2PickWig(goals){
+  return `<div class="g2wig ask" style="--c:var(--gold)">
+    <div class="k"><i></i><span>NAME THE ONE</span></div>
+    <div class="t">Which of these actually matters most?</div>
+    <div class="m">Everything moves faster when one thing is first. You can change it any week.</div>
+    <div class="g2pick">${goals.slice(0,6).map(g=>
+      `<button class="chip tap" onclick="g2SetWig('${g.id}')">${esc(g.title.slice(0,32))}</button>`).join('')}</div>
+  </div>`;
+}
+/* The unit is HIS word, so it can never be singularised safely — "1 clients"
+   is what naive interpolation gives you. Putting the unit once, on the pair,
+   sidesteps it entirely and reads better in both directions. */
+function g2Bar(g,p,c){
+  if(p===null)return `<div class="g2none">No number on this one — it's done when the evidence says so.</div>`;
+  const d=GM.direction(g),u=esc(g.unit);
+  return `<div class="g2bar"><i style="width:${Math.round(p*100)}%;background:${c}"></i></div>
+    <div class="g2num">${d==='down'
+      ? `<span>${fmtN(g.at)}${u}</span><span>down to ${fmtN(g.target)}${u}</span>`
+      : `<span>${fmtN(g.at)} of ${fmtN(g.target)}${u}</span><span>${Math.round(p*100)}%</span>`}</div>`;
+}
+const fmtN=n=>(n===null||n===undefined)?'':Number(n).toLocaleString();
+const domColour=k=>{const d=DOMAINS.find(x=>x.k===k);return d?d.c:'var(--gold)'};
+function goals2Conf(g){
+  if(!g.confidence.length)return'';
+  const v=g.confidence[g.confidence.length-1].v;
+  const L={3:'ON TRACK',2:'WOBBLING',1:'NOT HAPPENING'};
+  return `<u style="color:${v===3?'var(--phos)':v===2?'var(--gold)':'var(--blood)'}">${L[v]}</u>`;
+}
+
+function g2Area(a){
+  const gs=GM.goalsOfArea(G,a.id).filter(g=>!g.wig);
+  const std=(a.standards||[]).length;
+  if(!gs.length&&!std)return '';
+  const c=domColour(a.domain);
+  return `<div class="g2area">
+    <div class="ah" onclick="g2Area1('${a.id}')"><i style="background:${c}"></i>
+      <span>${esc(a.name)}</span><u>${gs.length?gs.length+' goal'+(gs.length>1?'s':''):std+' standard'+(std>1?'s':'')}</u></div>
+    ${gs.map(g=>g2Row(g,c)).join('')}</div>`;
+}
+function g2Row(g,c){
+  const h=g.horizonId?GM.horizonById(G,g.horizonId):null,p=GM.progress(g);
+  return `<button class="g2row" onclick="g2Open('${g.id}')">
+    <span class="gt">${esc(g.title)}</span>
+    <span class="gm">${h?esc(h.label)+' · '+daysTo(h.date)+'d':'no date'}${
+      p!==null?` · ${Math.round(p*100)}%`:''}${GM.needsEarly(g)?' · <b style="color:var(--gold)">NEEDS A DECISION</b>':''}</span>
+  </button>`;
+}
+
+/* Day one. Asks for a GOAL in plain words — not an area, and no legend. */
+function g2Empty(areas){
+  return `<div class="g2empty">
+    <div class="k">DAY ${dayNo()} OF ${TOTAL_DAYS}</div>
+    <div class="t">What do you want to be true<br>by ${END_LABEL}?</div>
+    <div class="s">Write it the way you'd say it out loud. One line. You can change every word of it later.</div>
+    <div class="fld" style="margin-top:16px">
+      <input id="g2First" maxlength="90" placeholder="Three clients signed and paying">
+    </div>
+    <button class="btn" onclick="g2SaveFirst()">Write it down</button>
+    ${areas.length?'':`<button class="btn gh" style="margin-top:10px" onclick="importFromOld()">
+      Bring in the areas already in this app</button>`}
+    <button class="btn gh" style="margin-top:10px" onclick="goalsV2(0)">Back to the old Goals</button>
+  </div>`;
+}
+/* First goal, zero ceremony: if he has no areas we make one from the goal
+   itself and let him rename it later. Never block the first sentence. */
+function g2SaveFirst(){
+  const t=$('g2First').value.trim();if(!t){toast('Write one line','bad');return}
+  let a=GM.liveAreas(G)[0];
+  if(!a)a=GM.addArea(G,{name:'Unsorted',domain:'WORK'});
+  const g=GM.addGoal(G,{title:t,areaId:a.id,wig:1});
+  gsave();render();toast('That is the one','good');
+  setTimeout(()=>g2Open(g.id),260);
+}
+function g2SetWig(id){
+  GM.liveGoals(G).forEach(g=>g.wig=0);
+  const g=GM.goalOf(G,id);if(g)g.wig=1;
+  gsave();render();toast('That is the one','good');
+}
+
+/* ---- add / edit a goal --------------------------------------------------
+   Title and area are enough to save. Everything else can be filled in later
+   and NOTHING here ever blocks the save — that rule is why goals get written
+   down at all. `kind` is not asked for: nobody can classify a goal before
+   they've lived with it a week. */
+let GB={};
+function g2New(){
+  const chk=GM.capCheck(G,WEEK_BLOCKS);
+  GB={areaId:(GM.liveAreas(G)[0]||{}).id||null,horizonId:null,id:null};
+  sheet(g2Form('New goal',chk));
+}
+function g2Open(id){
+  const g=GM.goalOf(G,id);if(!g)return;
+  GB={areaId:g.areaId,horizonId:g.horizonId,id:g.id};
+  sheet(g2Form('The goal',null,g));
+}
+function g2Form(title,chk,g){
+  const areas=GM.liveAreas(G),hz=GM.liveHorizons(G);
+  const cap=chk&&chk.over?`<div class="g2warn" style="margin-bottom:14px">
+    You'd have ${chk.live+1} live goals against ${WEEK_BLOCKS} blocks a week — ${chk.blocksEach} each.
+    Adding it is fine. Just know what it costs the others.</div>`:'';
+  return `<div class="sh-k">${g?'EDIT · NOTHING IS PERMANENT':'TITLE AND AREA ARE ENOUGH'}</div>
+    <div class="sh-t">${title}</div>
+    ${cap}
+    <div class="fld"><label>The goal</label>
+      <input id="g2T" maxlength="90" placeholder="Three clients signed and paying" value="${g?esc(g.title):''}"></div>
+    <div class="fld"><label>Area</label><div class="chips" id="g2A">
+      ${areas.map(a=>`<button class="chip tap seg${GB.areaId===a.id?' on':''}" data-a="${a.id}"
+        onclick="g2Pick('a','${a.id}')">${esc(a.name)}</button>`).join('')}
+      <button class="chip tap" onclick="g2NewArea()">+ NEW AREA</button></div></div>
+    <div class="fld"><label>Due by <span style="text-transform:none;letter-spacing:0">— optional</span></label>
+      <div class="chips" id="g2H">
+      <button class="chip tap seg${!GB.horizonId?' on':''}" data-h="" onclick="g2Pick('h','')">NO DATE</button>
+      ${hz.map(h=>`<button class="chip tap seg${GB.horizonId===h.id?' on':''}" data-h="${h.id}"
+        onclick="g2Pick('h','${h.id}')">${esc(h.label)}</button>`).join('')}
+      <button class="chip tap" onclick="g2NewDate()">+ NEW DATE</button></div></div>
+    <div class="fld"><label>A number, if it has one <span style="text-transform:none;letter-spacing:0">— optional</span></label>
+      <div class="g23"><input id="g2S" inputmode="decimal" placeholder="from" value="${g&&g.start!==null?g.start:''}">
+        <input id="g2C" inputmode="decimal" placeholder="now" value="${g&&g.at!==null?g.at:''}">
+        <input id="g2G" inputmode="decimal" placeholder="to" value="${g&&g.target!==null?g.target:''}"></div>
+      <input id="g2U" maxlength="12" style="margin-top:7px" placeholder="clients · lbs · $ — the unit" value="${g?esc(g.unit):''}">
+      <div class="hintline">Going down is fine — put 212 in "from" and 185 in "to".</div></div>
+    <div class="fld"><label>What would prove it <span style="text-transform:none;letter-spacing:0">— optional</span></label>
+      <input id="g2E" maxlength="120" placeholder="Three signed agreements and three payments" value="${g?esc(g.evidence):''}"></div>
+    <button class="btn" onclick="g2Save()">${g?'Save it':'Add it'}</button>
+    ${g?`<div class="g23" style="margin-top:8px">
+      <button class="btn gh sm" onclick="g2State('${g.id}','parked')">Park</button>
+      <button class="btn gh sm" onclick="g2State('${g.id}','done')">Done</button>
+      <button class="btn gh sm" onclick="g2State('${g.id}','dropped')">Drop</button></div>
+      ${g2Trail(g)}`:''}`;
+}
+/* the easing trail — every time he made it easier, remembered, never punished */
+function g2Trail(g){
+  if(!g.history.length)return'';
+  const L=g.history.slice(-6).map(h=>{
+    const w={target:'TARGET',date:'DATE',lead:'WEEKLY',state:'STATE'}[h.t]||h.t.toUpperCase();
+    return `<div class="g2h"><span>DAY ${h.day} · ${w}</span><b>${esc(String(h.from))} → ${esc(String(h.to))}</b></div>`;
+  }).join('');
+  return `<h2 class="sec" style="margin-top:20px"><span>What you've changed</span><u>kept, never counted</u></h2>
+    <div class="card">${L}</div>`;
+}
+function g2Pick(k,v){
+  if(k==='a'){GB.areaId=v;$('g2A').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',e.dataset.a===v))}
+  else{GB.horizonId=v||null;$('g2H').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',(e.dataset.h||'')===v))}
+}
+function g2Save(){
+  const t=$('g2T').value.trim();if(!t){toast('Give it a title','bad');return}
+  if(!GB.areaId){toast('Pick an area','bad');return}
+  const num=v=>{const s=$(v).value.trim();return s===''?null:Number(s)};
+  const tg=num('g2G'),st=num('g2S'),at=num('g2C');
+  const patch={title:t,areaId:GB.areaId,horizonId:GB.horizonId,unit:$('g2U').value.trim(),
+    evidence:$('g2E').value.trim()};
+  if(GB.id){
+    const g=GM.goalOf(G,GB.id);
+    /* target goes through editGoal so easing leaves its trail; start/at do not */
+    GM.editGoal(G,GB.id,{...patch,start:st,at:at},dayNo());
+    if(tg!==null)GM.editGoal(G,GB.id,{target:tg},dayNo());else if(g)g.target=null;
+  }else{
+    GM.addGoal(G,{...patch,start:st,at:at,target:tg,wig:GM.liveGoals(G).length===0?1:0});
+  }
+  gsave();closeSheet();render();toast(GB.id?'Saved':'Added','good');
+}
+function g2State(id,st){
+  GM.setState(G,id,st,dayNo());
+  const g=GM.goalOf(G,id);
+  if(g&&g.wig&&st!=='active'){g.wig=0;const n=GM.liveGoals(G);if(n.length===1)n[0].wig=1}
+  gsave();closeSheet();render();
+  toast(st==='done'?'Done — that one is yours':st==='parked'?'Parked, not lost':'Dropped',st==='done'?'good':'bad');
+}
+function g2NewArea(){
+  sheet(`<div class="sh-k">AN AREA NEVER ENDS</div><div class="sh-t">New area</div>
+    <div class="sh-sub">A BUSINESS, OR A PART OF YOUR LIFE</div>
+    <div class="fld"><label>Name</label><input id="g2AN" maxlength="40" placeholder="SANO"></div>
+    <div class="fld"><label>Which part of the rating does it feed</label>
+      <div class="chips" id="g2AD">${DOMAINS.map((d,i)=>
+        `<button class="chip tap seg${i===0?' on':''}" data-d="${d.k}" onclick="g2PickDom('${d.k}')"
+          style="${''}">${esc(d.label.replace('THE ',''))}</button>`).join('')}</div>
+      <div class="hintline">This is how blocks for this area move your overall rating. Six parts, fixed — your areas are not.</div></div>
+    <button class="btn" onclick="g2SaveArea()">Add it</button>`);
+  GB.dom='WORK';
+}
+function g2PickDom(k){GB.dom=k;$('g2AD').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',e.dataset.d===k))}
+function g2SaveArea(){
+  const n=$('g2AN').value.trim();if(!n){toast('Name it','bad');return}
+  const a=GM.addArea(G,{name:n,domain:GB.dom||'WORK'});
+  GB.areaId=a.id;gsave();closeSheet();render();toast('Area added','good');
+  setTimeout(()=>{GB.id?g2Open(GB.id):g2New()},240);
+}
+function g2NewDate(){
+  sheet(`<div class="sh-k">A DATE, NOTHING MORE</div><div class="sh-t">New date</div>
+    <div class="sh-sub">MONTHLY · TWO-MONTH · PAST THE END OF THE RUN · ANYTHING</div>
+    <div class="fld"><label>Call it</label><input id="g2HN" maxlength="24" placeholder="End of September"></div>
+    <div class="fld"><label>The date</label><input id="g2HD" type="date" value="${iso(RUN_LAST)}"></div>
+    <button class="btn" onclick="g2SaveDate()">Add it</button>`);
+}
+function g2SaveDate(){
+  const d=$('g2HD').value;if(!/^\d{4}-\d{2}-\d{2}$/.test(d)){toast('Pick a date','bad');return}
+  const lbl=$('g2HN').value.trim()||new Date(d+'T00:00:00')
+    .toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const h=GM.addHorizon(G,{label:lbl,date:d});
+  GB.horizonId=h.id;gsave();closeSheet();render();toast('Date added','good');
+  setTimeout(()=>{GB.id?g2Open(GB.id):g2New()},240);
+}
+
+/* ---- manage: areas and dates ------------------------------------------- */
+function g2Manage(){
+  const A=GM.liveAreas(G),H=GM.liveHorizons(G);
+  sheet(`<div class="sh-k">THE FOUR OBJECTS, TWO OF THEM YOURS</div>
+    <div class="sh-t">Areas and dates</div>
+    <h2 class="sec"><span>Areas</span><u>never end</u></h2>
+    ${A.length?A.map((a,i)=>`<div class="g2m">
+      <span class="d" style="background:${domColour(a.domain)}"></span>
+      <span class="n">${esc(a.name)}<u>${GM.goalsOfArea(G,a.id).length} goal${GM.goalsOfArea(G,a.id).length===1?'':'s'} · ${a.domain}</u></span>
+      <button class="mb" onclick="g2Move('${a.id}',-1)" ${i===0?'disabled':''}>↑</button>
+      <button class="mb" onclick="g2Move('${a.id}',1)" ${i===A.length-1?'disabled':''}>↓</button>
+      <button class="mb" onclick="g2DropArea('${a.id}')">✕</button></div>`).join('')
+      :'<div class="card" style="color:var(--dim);font-size:13.5px">No areas yet.</div>'}
+    <button class="btn gh sm" style="margin-top:10px" onclick="g2NewArea()">+ New area</button>
+    <h2 class="sec" style="margin-top:22px"><span>Dates</span><u>deleting one never deletes a goal</u></h2>
+    ${H.length?H.map(h=>`<div class="g2m">
+      <span class="d" style="background:var(--violet)"></span>
+      <span class="n">${esc(h.label)}<u>${h.date} · ${daysTo(h.date)} days · ${GM.goalsAt(G,h.id).length} on it</u></span>
+      <button class="mb" onclick="g2DropDate('${h.id}')">✕</button></div>`).join('')
+      :'<div class="card" style="color:var(--dim);font-size:13.5px">No dates yet.</div>'}
+    <button class="btn gh sm" style="margin-top:10px" onclick="g2NewDate()">+ New date</button>`);
+}
+function g2Move(id,d){GM.reorderArea(G,id,d);gsave();g2Manage();render()}
+function g2DropArea(id){
+  const n=GM.goalsOfArea(G,id).length;
+  if(n){toast(`${n} goal${n>1?'s':''} still in it — move them first`,'bad');return}
+  GM.archiveArea(G,id);gsave();g2Manage();render();toast('Area removed','bad');
+}
+function g2DropDate(id){
+  const freed=GM.removeHorizon(G,id);gsave();g2Manage();render();
+  toast(freed?`Date removed — ${freed} goal${freed>1?'s':''} kept`:'Date removed','bad');
+}
+
 function renderPush(){
+  if(gOn())return renderGoals2();
   S.push=S.push||{gate:{},anthonySent:0,kitchen:0,rules:{}};
   S.ms=S.ms||{};
   const p=S.push,G=goals(),focus=p.focus||null,zoom=p.zoom||null;
@@ -2777,7 +3355,14 @@ function renderPush(){
   $('pushBody').innerHTML=pill+hz+
     `<div class="sp" style="--burn:${burn}%"${focus?` data-focus="${focus}"`:''}${zoom==='week'?' data-zoom="week"':''}>`+
       wk+stations+dec+`</div>`+
-    '';
+    /* the door to the new model. Nothing here is replaced until he opens it,
+       and one tap in there brings this screen straight back. */
+    `<div class="g2door">
+      <div class="k">NEW · YOUR OWN GOALS</div>
+      <div class="t">Everything on this screen is written into the app. The new one is yours to fill.</div>
+      <div class="s">Add an area, a date, a goal — any number of them. Nothing here is deleted and one tap brings this back.</div>
+      <button class="btn" style="margin-top:13px" onclick="goalsV2(1)">Open the new Goals</button>
+    </div>`;
 }
 
 /* T3 · the week, opened. Capacity is a FRIDAY-only number (spec §4.3) — it appears
