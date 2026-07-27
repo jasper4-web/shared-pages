@@ -629,6 +629,24 @@ h2.sec u{text-decoration:none;color:var(--dim)}
 .g2h{display:flex;align-items:center;gap:10px;min-height:30px;font-size:12.5px;color:var(--dim)}
 .g2h span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
 .g2h b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--ink)}
+/* the rating, the radar, the gap and the projection collapse to one line —
+   month-scale instruments do not belong on a day-scale screen */
+.nu-door{display:block;width:100%;margin-top:10px;min-height:var(--tap);cursor:pointer;
+  border:1px dashed rgba(224,178,94,.4);border-radius:11px;background:transparent;color:var(--gold);
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;padding:12px}
+#sched.flash{animation:schedflash 1.4s ease-out}
+@keyframes schedflash{0%{box-shadow:0 0 0 2px rgba(224,178,94,.5)}100%{box-shadow:0 0 0 2px rgba(224,178,94,0)}}
+
+.ovrpeek{display:flex;align-items:center;gap:10px;width:100%;text-align:left;cursor:pointer;
+  margin-top:13px;padding:11px 14px;border:1px solid var(--line2);border-radius:12px;
+  background:var(--panel);min-height:var(--tap);font-family:'Geist Mono',monospace;
+  font-size:11px;letter-spacing:.14em;color:var(--faint)}
+.ovrpeek b{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;color:var(--ink)}
+.ovrpeek u{margin-left:auto;text-decoration:none;color:var(--gold)}
+body.glanceOpen .ovrpeek{border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0}
+.glance{display:none}
+body.glanceOpen .glance{display:block}
+
 .g2ready{margin-top:14px;padding:13px 14px;border-radius:14px;border:1px solid var(--line2);background:var(--panel)}
 .g2ready .k{display:flex;align-items:center;font-family:'Geist Mono',monospace;font-size:11px;
   letter-spacing:.17em;color:var(--faint);margin-bottom:10px}
@@ -904,6 +922,7 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
        furnace. Then the day rail, the pipeline and the vice dials. Deep-work-left and
        the live-block card move DOWN, so the top of the screen is never "Done" and
        "Day complete" — the two lines that read as dead weight on a finished day. -->
+  <button class="ovrpeek" id="ovrPeek" onclick="toggleGlance()"></button>
   <div class="glance" id="glance">
     <svg class="mini" id="miniRadar" width="104" height="104" viewBox="0 0 104 104"></svg>
     <div class="mini-stats" id="miniStats"></div>
@@ -1136,6 +1155,23 @@ const dow=()=>new Date().getDay();
 const monthKey=()=>today().slice(0,7);
 function mondayOf(d){const x=new Date(d);const w=(x.getDay()+6)%7;x.setDate(x.getDate()-w);return iso(x)}
 function shape(){const d=dow();return d===0?[]:d===6?SATURDAY:WEEKDAY}
+/* The fields that decide scoring. Stored per day, ~40 bytes, never shown. */
+const SHAPE_KEYS=['id','s','e','kind','dom','opt','auto','focus','writes'];
+const stampOf=sh=>sh.map(b=>{const o={};SHAPE_KEYS.forEach(k=>{if(b[k]!==undefined)o[k]=b[k]});return o});
+/* The shape a given day WAS lived with. Days recorded before this existed fall
+   back to the constant, which is correct — that IS what they were lived with. */
+function shapeFor(k){
+  const r=S.days[k];
+  if(r&&Array.isArray(r.shape)&&r.shape.length)return r.shape;
+  const g=new Date(k+'T00:00:00').getDay();
+  return g===0?[]:g===6?SATURDAY:WEEKDAY;
+}
+/* Written once, on the first render of a day the app is actually present for. */
+function stampToday(){
+  const g=dow();if(g===0)return;
+  const d=day(),cur=stampOf(shape());
+  if(!Array.isArray(d.shape)||!d.shape.length){d.shape=cur;save()}
+}
 function workdaysLeft(){
   const b=new Date(RUN_END+'T00:00:00');let n=0;const c=new Date();c.setHours(0,0,0,0);
   while(c<b){const g=c.getDay();if(g>0&&g<6)n++;c.setDate(c.getDate()+1)}return n;
@@ -1248,7 +1284,7 @@ function recount(){
   for(let i=0;i<6;i++){
     const dt=new Date(mon+'T00:00:00');dt.setDate(dt.getDate()+i);
     const k=iso(dt); if(k>tk)continue;
-    const sh=dt.getDay()===6?SATURDAY:WEEKDAY, rec=S.days[k];
+    const sh=shapeFor(k), rec=S.days[k];
     if(rec&&rec.off)continue;                              // an off-script day owes nothing
     /* A DAY THE APP NEVER WATCHED IS NOT A DAY IT GETS TO SCORE. With no record
        at all, this loop used to charge every scored block and credit none — so
@@ -1287,6 +1323,20 @@ const QUOTAS=[
   {src:'win',   id:'bed',     dom:'BODY',   n:4},
 ];
 
+/* Which domains a block credits ON A GIVEN DAY. Deep blocks follow the goal that
+   was committed to them; everything else keeps the domain it was stamped with. */
+function blockDomains(k,b){
+  if(b.kind==='deep'){
+    const dt=new Date(k+'T00:00:00'),off=(dt.getDay()+6)%7;
+    if(off<=4){
+      const c=(G.commits||[]).find(x=>x.weekKey===mondayOf(dt)&&x.day===off&&x.block===b.id);
+      const g=c?(G.goals||[]).find(x=>x.id===c.goalId):null;
+      const a=g?(G.areas||[]).find(x=>x.id===g.areaId):null;
+      if(a&&a.domain)return [a.domain];
+    }
+  }
+  return b.dom||[];
+}
 /* Recomputed from the stored day records every time — self-healing, cannot drift.
    Scored a week at a time so daily blocks and weekly quotas can live on the same scale. */
 function domainProgress(){
@@ -1306,7 +1356,7 @@ function domainProgress(){
 
     weeks[wk].sort().forEach(k=>{
       const rec=S.days[k]; if(rec.off)return;
-      const g=new Date(k+'T00:00:00').getDay(), sh=g===6?SATURDAY:WEEKDAY;
+      const sh=shapeFor(k);
       elapsed++;
       sh.filter(SCORED).forEach(b=>{
         if(b.opt)return;                                   // quota items handled below
@@ -1316,7 +1366,11 @@ function domainProgress(){
            otherwise he could blow an account and watch the stat rise. His own definition of a won
            month is "stuck to the rules and did not double-back trade", never P&L. */
         const ruled = b.kind==='market' ? !!(rec.trade&&rec.trade.rules&&rec.trade.nodb) : true;
-        b.dom.forEach(dk=>{avail[dk]++; if(rec.done[b.id]&&ruled)earned[dk]++});
+        /* a deep block has no domain of its own — it inherits whatever it was
+           pointed at, so an hour of Spanish credits MIND and an hour on SANO
+           credits THE WORK, from the same slot on different days */
+        const doms=blockDomains(k,b);
+        doms.forEach(dk=>{avail[dk]++; if(rec.done[b.id]&&ruled)earned[dk]++});
       });
     });
 
@@ -1800,6 +1854,7 @@ function render(){
   $('sabbath').classList.remove('on');document.body.classList.remove('noTabs');
   autoMark(); recount(); badges();
   if(VIEW==='today'){
+    stampToday();
     document.body.classList.toggle('offday',!!day().off);
     renderStatus(); renderGauges(); renderGlance(); renderRail();
     renderPushStrip(); renderPenance(); renderNext(); renderBoostCard();
@@ -1865,7 +1920,18 @@ function renderGauges(){
   $('ggC').onclick=()=>go('record');
 }
 /* Top-of-page snapshot: where you are, on one small graph, with the date you hit 99. */
+/* one tap, remembered for the session only — it should be closed every morning */
+let glanceOpen=false;
+function toggleGlance(){glanceOpen=!glanceOpen;
+  document.body.classList.toggle('glanceOpen',glanceOpen);renderGlance()}
 function renderGlance(){
+  const o=ovr(),pr=projection();
+  $('ovrPeek').innerHTML=`<b>${o}</b><span>OVERALL · GAP TO HIM ${Math.max(0,HIM-o)}</span>`+
+    `<u>${glanceOpen?'HIDE':'SEE THE RUN ▸'}</u>`;
+  if(!glanceOpen)return;
+  _renderGlanceFull();
+}
+function _renderGlanceFull(){
   const s=domainStats(),p=domainProgress();
   const n=DOMAINS.length,C=52,RD=38;
   const pt2=(i,v)=>{const a=(-90+i*(360/n))*Math.PI/180;return[C+Math.cos(a)*RD*v,C+Math.sin(a)*RD*v]};
@@ -2067,7 +2133,8 @@ function renderNext(){
     <div class="nu-t">${b.kind==='deep'&&t?esc(t):title}</div>
     <div class="nu-obj">${sub}</div>
     ${goalStrip(b)}
-    ${actionRow(b,state)}`;
+    ${actionRow(b,state)}
+    ${dayDoor()}`;
 }
 /* THE HANDSHAKE — a block knows which goal it serves, and what it moves.
    Renders nothing when no goal is attached, so it can never be in the way. */
@@ -2097,6 +2164,20 @@ function goalStrip2(b){
     <div class="gl"><div class="gk">THIS BLOCK IS FOR${g.wig?' · THE ONE':''}</div>
       <div class="gt">${esc(g.title)}</div></div>
     <div class="gn">${n}<s>of ${tot}<br>this week</s></div></div>`;
+}
+/* The whole day is already on the page — it just wasn't reachable from the card
+   you're actually looking at. One dashed line. */
+function dayDoor(){
+  const sh=shape();if(!sh.length)return'';
+  const d=day();
+  const scored=sh.filter(b=>SCORED(b)&&!b.opt);
+  const done=scored.filter(b=>d.done[b.id]).length;
+  return `<button class="nu-door" onclick="openDay()">See the whole day · ${done} of ${scored.length} ▾</button>`;
+}
+function openDay(){
+  const el=$('sched');if(!el)return;
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+  el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1400);
 }
 /* how many blocks this week carried that goal */
 const ARCS=[['Morning',0,3],['Peak — deep work',3,5],['Midday',5,8],['Afternoon',8,11],['Evening',11,99]];
