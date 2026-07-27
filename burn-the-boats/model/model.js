@@ -166,11 +166,20 @@ function editGoal(G, id, patch, {day=0}={}){
   const g = goalById(G,id); if(!g) return null;
   const eased = [];
 
-  if(patch.target !== undefined && g.target !== null){
-    const from = g.target, to = Number(patch.target);
-    const harder = direction(g)==='down' ? to < from : to > from;
-    if(to !== from && !harder) eased.push({t:'target', from, to});
-    g.target = to;
+  if(patch.target !== undefined && patch.target !== null){
+    if(g.target === null){
+      /* FIRST number on a goal that had none. The ease check needs a previous value
+         to compare against; guarding on `g.target !== null` meant a goal created
+         from the empty state (title only) could NEVER be given a number afterwards. */
+      g.target = Number(patch.target);
+      if(g.start === null) g.start = Number(patch.start !== undefined && patch.start !== null ? patch.start : (patch.at||0));
+      if(g.at === null)    g.at    = Number(patch.at !== undefined && patch.at !== null ? patch.at : g.start);
+    } else {
+      const from = g.target, to = Number(patch.target);
+      const harder = direction(g)==='down' ? to < from : to > from;
+      if(to !== from && !harder) eased.push({t:'target', from, to});
+      g.target = to;
+    }
   }
   if(patch.horizonId !== undefined && patch.horizonId !== g.horizonId){
     const a = horizonById(G,g.horizonId), b = horizonById(G,patch.horizonId);
