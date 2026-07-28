@@ -6,10 +6,32 @@ deeper history.
 
 > ⭐ **READ `NORTH-STAR.md` FIRST — it outranks this file and every other document.**
 > It is the owner's full vision in his own words (Q&A 2026-07-28). Then read
-> `MENTOR-VERDICT.md` — the architecture verdict (the "funerals problem") and the phased
-> plan, as adjusted by the north star's §4. The next work is **Phase 0: the funerals**,
-> which now also deletes the day rail and the weekly review, and puts the Set-next-week
-> door on the Sabbath screen. **He has not yet said "go" — do not start without him.**
+> `MENTOR-VERDICT.md` — the architecture verdict (the "funerals problem") and the phases.
+
+## ✅ PHASE 0 — THE FUNERALS: BUILT, LIVE AND GREEN (sw **btb-v30**, commit `92bf42d`)
+
+He said "go" and it shipped 2026-07-28. Buried, each with a kill-test in **`model/funeral.js`
+(25 checks — run it in every future session; it fails if a grave reopens):**
+
+- **`d.goals`/`w.goals`** — composer no longer writes them, fallback read deleted. Commits only.
+- **`S.week[].theme`** — block suffix is now the committed goal's AREA. "One card, two truths"
+  is dead: commit Spanish → the card says Spanish, never SANO. Uncommitted → no suffix.
+- **The Record second planner** ("Set next week · +75 XP") — deleted; Record links to THE WEEK.
+- **`S.december` in DEFAULT** — fresh installs inherit no placeholder goals; old saves still
+  import theirs (importFromOld reads storage, not the seed).
+- **The day rail** — deleted (his call). Deep-work-left survives via `renderTimeLeft()`.
+- **The confidence questions** — deleted (his call). **The correction list (g2Flip) survives** —
+  it is the only way to fix a mis-recorded day after a week closes.
+- **Opened:** the Sabbath screen carries **SET NEXT WEEK ▸** (Sunday is when he plans). Pays 0.
+
+Harness strata buried too: **goals2 59/59** (was 56), **area 11/11** (was crashing),
+full 126/126 with the review-questions test inverted. All verified against the LIVE url:
+funeral 25 · stage1-4 · full · goals2 · qc3 · stress 360 — green.
+
+**NEXT — PHASE 1 · ONE ECONOMY DOOR:** the XP ledger, route `finishRun`/`gainXP` through
+`award()`, and the correction window app-wide (un-tap refunds while the day is open, seals at
+close — his accidental-tap bug, fixed by architecture). Then Phase 2 (WINS/QUOTAS → owned
+stores), Phase 3 (day as data), Phase 4 (the planner), Phase 5 (XP redesign WITH him).
 
 ---
 
