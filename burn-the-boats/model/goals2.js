@@ -67,20 +67,33 @@ const OUT=process.env.SP+'/';
   ok('it became the WIG automatically',g1.wig===1);
   ok('kind defaulted, never asked',g1.kind==='outcome');
 
-  // ---- 4 · the WIG is the screen
-  const wig=await p.evaluate(()=>{const e=document.querySelector('.g2wig');
+  // ---- 4 · the apex is the screen (the WIG card was replaced by the three tiers;
+  //          these asserts were stale against a design deliberately deleted)
+  const apx=await p.evaluate(()=>{const e=document.querySelector('.g2apex');
     if(!e)return null;const r=e.getBoundingClientRect();
-    return{t:e.textContent.replace(/\s+/g,' ').trim(),top:Math.round(r.top),h:Math.round(r.height)}});
-  ok('WIG card rendered',!!wig,wig&&wig.t.slice(0,46));
-  ok('capacity line sits above it',await p.evaluate(()=>{
-    const c=document.querySelector('.g2cap'),w=document.querySelector('.g2wig');
-    return !!c&&!!w&&c.getBoundingClientRect().top<w.getBoundingClientRect().top}));
+    return{t:e.textContent.replace(/\s+/g,' ').trim(),top:Math.round(r.top)}});
+  ok('the apex card rendered (WIG card is gone for good)',!!apx&&await p.evaluate(()=>!document.querySelector('.g2wig')),
+     apx&&apx.t.slice(0,46));
+  ok('capacity line sits below the apex, above the tiers',await p.evaluate(()=>{
+    const c=document.querySelector('.g2cap'),a=document.querySelector('.g2apex');
+    return !!c&&!!a&&a.getBoundingClientRect().top<c.getBoundingClientRect().top}));
   ok('a goal with no number shows no 0% bar',await p.evaluate(()=>
-    !document.querySelector('.g2wig .g2bar')&&!!document.querySelector('.g2none')));
+    !!document.querySelector('.g2none')));
   await sweep('one goal');
 
-  // ---- 5 · the import brings AREAS only
-  await p.evaluate(()=>{G.meta.imported=0;importFromOld()});await wait(600);
+  // ---- 5 · the import, from an OLD SAVE. DEFAULT.december is buried (funeral
+  //          2026-07-28): a fresh install has nothing to import and gets no placeholder
+  //          goals — correct. The import path serves saves that CARRY december, so the
+  //          test now seeds one the way an old device actually has it.
+  await p.evaluate(()=>{
+    S.december={
+      WORK:   {lag:'3 SANO clients — at least one at full freight', lead:'Outreach conversations', at:1, target:3, unit:'clients'},
+      CAPITAL:{lag:'3 live funded accounts',  lead:'Rules followed · no double-back', at:0, target:3, unit:'accounts'},
+      BODY:   {lag:'185 lbs',                 lead:'Gym 2× · walks 3× weekly',        at:177, target:185, unit:'lbs'},
+      FAITH:  {lag:'Reading with Kells, consistently', lead:'Bible 3× a week + text Kells', at:30, target:100, unit:'%'},
+      MIND:   {lag:'Sharper — Spanish + guitar once SANO allows', lead:'Reading nights', at:50, target:100, unit:'%'},
+      PEOPLE: {lag:'Nobody got the leftovers', lead:'Real presence, phone down',       at:60, target:100, unit:'%'},
+    };save();G.meta.imported=0;importFromOld()});await wait(600);
   const imp=await p.evaluate(()=>({areas:G.areas.length,goals:G.goals.length,hz:G.horizons.length,
     names:G.areas.map(a=>a.name)}));
   ok('import added 7 areas',imp.areas===8,JSON.stringify(imp.areas));   // 1 Unsorted + 7
@@ -96,13 +109,20 @@ const OUT=process.env.SP+'/';
     for(let i=0;i<5;i++)GM.addGoal(G,{title:'Extra goal '+(i+1),areaId:a,horizonId:h,start:0,at:i,target:10,unit:'x'});
     gsave();render();});
   await wait(500);
-  const cap=await p.evaluate(()=>{const c=GM.capCheck(G,WEEK_BLOCKS);
+  const cap=await p.evaluate(async()=>{const c=GM.capCheck(G,WEEK_BLOCKS);
     const before=G.goals.length;GM.addGoal(G,{title:'Added anyway',areaId:G.areas[1].id});
     const blocked=G.goals.length===before;G.goals.pop();
-    return{over:c.over,live:c.live,each:c.blocksEach,blocked,warn:!!document.querySelector('.g2warn'),tight:!!document.querySelector('.g2cap.tight')}});
+    /* capacity counts COMMITTED blocks now (locked decision) — owning six goals is a
+       menu, not a load. Commit blocks across six goals to make the line go tight. */
+    const wk=weekKeyNow(),six=GM.liveGoals(G).slice(0,6);
+    six.forEach((g,i)=>GM.commit(G,{goalId:g.id,weekKey:wk,day:Math.min(4,i),block:'b'+(i%4+1)}));
+    gsave();render();await new Promise(r=>setTimeout(r,450));
+    return{over:c.over,live:c.live,each:c.blocksEach,blocked,warn:!!document.querySelector('.g2warn'),
+      tight:!!document.querySelector('.g2cap.tight'),
+      cleanup:(G.commits=G.commits.filter(x=>x.weekKey!==wk),gsave(),render(),true)}});
   ok('soft cap fires past 5 goals',cap.over,'live='+cap.live);
   ok('soft cap NEVER blocks a save',!cap.blocked);
-  ok('capacity goes amber at the same point the cap argues',cap.warn&&cap.tight,'warn='+cap.warn+' tight='+cap.tight);
+  ok('capacity goes amber when six goals share the committed blocks',cap.warn&&cap.tight,'warn='+cap.warn+' tight='+cap.tight);
   await sweep('six goals');
 
   // ---- 7 · decreasing target renders forwards, not backwards

@@ -21,12 +21,16 @@ const T=[];const ok=(n,c,d)=>T.push({n,c:!!c,d:d===undefined?'':String(d)});
   ok('reproduced the holder area',await p.evaluate(()=>{
     const a=GM.liveAreas(G)[0];return a.name==='Unsorted'&&a.auto===1}));
 
-  // the strip must not lead with the invented name
+  // the invented name must never be shown to him as if it were his
+  // (#pushStrip is a dead surface — the live card is where words reach him now)
   await p.evaluate(()=>go('today'));await wait(900);
-  const strip=await p.evaluate(()=>{const e=document.querySelector('#pushStrip .ps-c');
+  const card=await p.evaluate(()=>{const e=document.getElementById('nextUp');
     return e?e.textContent.replace(/\s+/g,' ').trim():null});
-  ok('the strip no longer says UNSORTED',strip&&!/UNSORTED/i.test(strip),strip);
-  ok('...it uses his own words',strip&&/Three clients/i.test(strip),strip);
+  ok('Today never says UNSORTED',card&&!/UNSORTED/i.test(card),card&&card.slice(0,60));
+  // his words reach him on the Goals tab (the live card only names goals on deep blocks)
+  await p.evaluate(()=>go('push'));await wait(700);
+  ok('...his own words lead the Goals tab',await p.evaluate(()=>
+    /Three clients/i.test(document.getElementById('pushBody').textContent)));
 
   // the Goals page asks him to name it
   await p.evaluate(()=>go('push'));await wait(900);
@@ -46,9 +50,14 @@ const T=[];const ok=(n,c,d)=>T.push({n,c:!!c,d:d===undefined?'':String(d)});
   ok('the area is renamed',after.name==='SANO',after.name);
   ok('...its goals came with it',after.goals===1,'goals='+after.goals);
   ok('...and the prompt is gone',!after.nag);
-  await p.evaluate(()=>go('today'));await wait(800);
-  ok('the strip now shows the real name',await p.evaluate(()=>
-    /SANO/.test(document.querySelector('#pushStrip .ps-c').textContent)));
+  /* #pushStrip died in a redesign and this harness kept asserting its ghost — it
+     crashed on null and covered nothing. The rename's visible surface is the Goals
+     tab's section header now. */
+  await p.evaluate(()=>go('push'));await wait(800);
+  ok('the Goals tab shows the real name',await p.evaluate(()=>
+    /SANO/.test(document.getElementById('pushBody').textContent)));
+  ok('...and no ghost of the old strip remains',await p.evaluate(()=>
+    !document.querySelector('#pushStrip')));
   ok('no JS errors',errs.length===0,errs.slice(0,2).join(' | '));
 
   const f=T.filter(t=>!t.c);
