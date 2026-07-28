@@ -41,18 +41,38 @@ its "Today shows a boost card / card clears 44px" assertions were guarding a thi
 removed. They now assert the opposite (Today must NOT show it) plus the new line's floor and that it
 never shows a shortfall. The 44px floor for boosts is still covered, in the Bank, at `boosts.js:56–60`.
 
-### ⚠ STILL OPEN — one schema decision, asked and not yet answered
+### REWARD REQUIREMENTS — ASKED, ANSWERED, BUILT AND LIVE (`sw btb-v23`)
 
-He wants **each Bank reward to require specific wins, N times.** Today `rewards[]` has
-`condition:'Cooked + laundry every night this week'` — **a free-text string that is displayed and never
-checked.** Making it real needs `req:[{k:'cooked',n:4},…]` and answers to:
+**His two answers, 2026-07-27 — treat as locked:**
+1. **A requirement GATES the reward. The XP price still applies.** Both must be true.
+2. **The window is THIS WEEK, resetting Monday.** A bad week costs nothing; it starts again.
 
-1. **Does a requirement GATE the reward (XP cost still applies) or REPLACE the cost?**
-2. **What is the counting window** — this week, or cumulative since he started saving for it?
+Implemented:
 
-Do not guess these. He said the economy is the thing that does not bend; picking wrong means
-re-pricing his ladder. **Ask, then build, then migrate `condition` → `req` keeping the old string
-visible until it has been converted.**
+- `req:[{src:'win'|'block', id, n}]` on every reward — **the same shape as `QUOTAS`**, so his existing
+  weekly standards drop straight onto a reward. Wins *and* the two block standards (gym, bible).
+- `reqHits()` walks Monday→Saturday of the current week. `reqState()` returns per-row hits/need/met.
+- `claim()` checks requirements **first**, then XP. The toast names **whichever single thing is in the
+  way** — never a list of everything undone.
+- **`req` arrives EMPTY everywhere**, in `DEFAULT.rewards` *and* in `migrate()`. A reward with no
+  requirements behaves exactly as it did before this existed, so **nothing on his ladder was re-priced
+  or made harder by the update.** His written `condition` prose still shows on rewards with no terms.
+- **The terms picker needs no keyboard**: tap a line to cycle — × → ×1 → ×2 … ×5 → cleared.
+  Reachable from every reward row via **SET THE TERMS**.
+- Row meta reads `900 · PAID FOR · 2 TO GO THIS WEEK` when the XP is there but the terms aren't.
+
+**`model/rewardreq.js` is new — 31 checks.** Verified on the LIVE url alongside everything else:
+rewardreq 31/31 · extras 33/33 · qc3 51/51 · vanish 32/32 · tiers 28/28 · full 124/124 · phase1 24/24 ·
+boosts 37/37 · backup 13/13 · profiles 320/320 · **stress 360/360**.
+
+**Three bugs this round were caught by LOOKING, not by tests** — the §6 lesson, again, three times:
+1. A **fresh install** had rewards with **no `req` field at all** (only migrated saves got one) — the
+   two code paths disagreed. Caught because the harness crashed on `r.req.length`.
+2. The requirement **pips were invisible**: every `.pips` rule in the app is scoped to
+   `.win` / `.quota` / `.confrow`, so the `<i>`s inside `.rq` had no size. The test counted four
+   elements and passed. It now **measures** them.
+3. **SET THE TERMS was clipped to "TER"** — it sat in `.blk`'s 20px last column and `.blk` is
+   `overflow:hidden`. It now lives in the content cell, and the test asserts it isn't clipped.
 
 ---
 
@@ -340,6 +360,8 @@ node phase1.js   [url]              #  24 · shape stamp, domain-follows-work, d
 node area.js     [url]              #  10 · area rename + the "Unsorted" placeholder
 node boosts.js   [url]              #  34 · the boost economy and its ceilings
 node backup.js   [url]              #  13 · backup/restore round trip, both stores
+node extras.js   [url]              #  33 · the extras move: off Today, asked at run-end, home in the Bank
+node rewardreq.js [url]             #  31 · reward requirements — the gate, the weekly window, the picker
 node stress.js   [url]              # 360 · 6 widths × 5 clocks × 4 views × 3 states
 ```
 
