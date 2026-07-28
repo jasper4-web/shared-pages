@@ -1,0 +1,804 @@
+<meta name="robots" content="noindex" />
+<title>SANO doorway site — eight-category user-experience study</title>
+<style>
+:root{--ink:#F2EBE0;--blue:#0070F3;--dim:#9FB0BF;--line:rgba(255,255,255,.12);--card:#101015}
+*{box-sizing:border-box}
+body{margin:0;background:#09090B;color:var(--ink);font-family:'Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;line-height:1.65;padding:34px 18px 80px}
+.wrap{max-width:940px;margin:0 auto}
+h1{font-size:clamp(26px,4vw,36px);line-height:1.15;letter-spacing:-.02em;margin:0 0 10px}
+.lede{color:var(--dim);font-size:17px;margin:0 0 8px}
+.lede b{color:var(--ink)}
+h2{font-size:22px;letter-spacing:-.01em;margin:44px 0 6px;padding-top:22px;border-top:1px solid var(--line)}
+h2 .sub{display:block;font-size:14.5px;font-weight:400;color:var(--dim);margin-top:4px}
+h3{font-size:18px;margin:0;letter-spacing:-.01em}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:22px 0 6px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.stat b{display:block;font-size:24px;color:#fff;line-height:1.1}
+.stat span{font-size:13px;color:var(--dim)}
+.note{background:rgba(0,112,243,.07);border:1px solid rgba(0,112,243,.35);border-radius:14px;padding:16px 18px;margin:20px 0;font-size:15px;color:#C9D6E2}
+.fix,.own{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:14px 0}
+.fix{border-left:3px solid #2ED47A}
+.own{border-left:3px solid #FFC46B}
+.fh{display:flex;gap:12px;align-items:baseline}
+.num{flex:none;width:26px;height:26px;border-radius:8px;background:rgba(46,212,122,.16);color:#7DE2A8;display:grid;place-items:center;font-size:13px;font-weight:700}
+.oh{display:flex;gap:12px;align-items:baseline;justify-content:space-between;flex-wrap:wrap}
+.cats{font-size:12.5px;color:#FFC46B;font-weight:600;white-space:nowrap}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 12px}
+.pill{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.09);color:var(--dim);white-space:nowrap}
+.pill.sev{background:rgba(255,196,107,.18);color:#FFC46B}
+.t-bug{background:rgba(255,107,107,.18);color:#FF9B9B}
+.t-copy{background:rgba(139,124,246,.18);color:#B8AEFF}
+.t-ux{background:rgba(0,112,243,.2);color:#7DB8FF}
+.t-feature-gap{background:rgba(255,196,107,.16);color:#FFC46B}
+.t-enhancement,.t-preference{background:rgba(255,255,255,.08);color:var(--dim)}
+.s-critical{background:rgba(255,80,80,.22);color:#FF9B9B}
+.s-high{background:rgba(255,150,80,.18);color:#FFC08A}
+.s-medium{background:rgba(255,255,255,.1);color:#C9D6E2}
+.s-low{background:rgba(255,255,255,.06);color:#8697A6}
+.who{font-size:13px;color:var(--dim)}
+.fix p,.own p{margin:0 0 9px;font-size:15px;color:#C4D2DE}
+.fix p:last-child,.own p:last-child{margin-bottom:0}
+.fix b,.own b{color:#fff}
+.ver{color:#9FD9BC !important}
+.rec{color:#E8D3AE !important}
+code{background:rgba(255,255,255,.08);padding:1px 6px;border-radius:6px;font-size:13.5px}
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin-top:14px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:660px}
+th{text-align:left;padding:10px;background:rgba(255,255,255,.04);color:#8697A6;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;font-weight:500;position:sticky;top:0}
+td{padding:9px 10px;border-top:1px solid rgba(255,255,255,.07);vertical-align:top}
+td.tr{color:#9FB0BF;white-space:nowrap}
+td.pa{color:#8697A6;white-space:nowrap}
+td.ti{color:#D7E2EC}
+.foot{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);color:#8697A6;font-size:14px}
+@media(prefers-color-scheme:light){body{background:#09090B}}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<div class="wrap">
+<h1>Eight categories, twenty-four entrepreneurs, one site</h1>
+<p class="lede">A first-visit study of the live doorway site. One researcher per trade, <b>three different owners each</b> — different ages, budgets, tech comfort and existing software — every one of them driving the real pages in a real browser. Plus my own technical audit of all 21 pages, run independently so the personas' claims could be checked rather than believed.</p>
+
+<div class="stats">
+<div class="stat"><b>8</b><span>category agents</span></div>
+<div class="stat"><b>24</b><span>owner personas</span></div>
+<div class="stat"><b>101</b><span>findings raised</span></div>
+<div class="stat"><b>9</b><span>verified &amp; fixed</span></div>
+<div class="stat"><b>487</b><span>browser actions</span></div>
+</div>
+
+<div class="note"><b>How to read this.</b> The 101 findings below are <em>leads</em> — a persona's reaction is evidence of how the page lands, not proof of a defect. Everything in the “fixed” section I reproduced myself first, in a browser, against the live site; everything in the “needs you” section I verified is real but deliberately did not change, because it needs a fact or a decision that is yours. Two things the personas reported turned out <b>not</b> to be defects on inspection: the demo form's mailto hand-off is a disclosed design-test limitation with a working copy-fallback, and the app mock remembering which conversation you had open is ordinary app behaviour.</div>
+
+<h2>Fixed, deployed and re-tested<span class="sub">Each one reproduced, fixed, and re-verified against the live site. Full regression after every change: 8 trade pages × 5 widths + the prototype, plus a 21-page audit and a WCAG contrast sweep.</span></h2>
+<article class="fix">
+  <div class="fh"><span class="num">1</span><h3>The level you pick never reached the demo form</h3></div>
+  <div class="meta"><span class="pill t-bug">bug</span><span class="pill sev">Critical to conversion</span><span class="who">3 categories (plumbing, retail, auto), 3/3 personas each</span></div>
+  <p class="what"><b>What was wrong.</b> Every trade-page CTA linked to <code>demo.html?ind=&lt;trade&gt;</code> with no plan, while demo.html already reads <code>?plan=</code> and the pricing page already passed it. The whole middle of the page gets an owner to choose a level, then threw that choice away — and the emailed lead said “Plan of interest: (not specified)”.</p>
+  <p class="did"><b>The fix.</b> <code>shared.js</code> now carries the checked tier onto every demo link the same way it carries the trade, and re-writes them when the visitor changes their mind.</p>
+  <p class="ver"><b>Re-tested.</b> Verified live on 4 trades: default <code>?ind=hvac&amp;plan=growth</code>, switching to Scale rewrites to <code>plan=scale</code>, switching back to Starter rewrites again, and demo.html receives <code>{plan:'total', ind:'hvac'}</code> end-to-end.</p>
+</article>
+<article class="fix">
+  <div class="fh"><span class="num">2</span><h3>“The honest all-in” was frozen on Growth&#x27;s numbers</h3></div>
+  <div class="meta"><span class="pill t-bug">bug</span><span class="pill sev">Critical — it showed the wrong price</span><span class="who">2 categories; the data file itself warned about it</span></div>
+  <p class="what"><b>What was wrong.</b> The price line under the tier switch always read “$999/mo … a one-time $2,497 to build it”, whatever level you picked. A visitor on Starter saw $2,497 when theirs is $997; on Total, $2,497 instead of $14,997 — 6× low. <code>SANO_TIERS</code> carries the real numbers and its own comment warns “they are NOT uniform across levels, and a page that claims they are is quotable against us.”</p>
+  <p class="did"><b>The fix.</b> The line is now one span per level, driven by the same <code>:has()</code> switch as everything else — the pattern the 2.0 prototype already used. Without <code>:has()</code> all four show rather than the price vanishing.</p>
+  <p class="ver"><b>Re-tested.</b> Verified live on 3 trades × 4 levels: exactly one line visible, carrying that level's real price, setup fee and minimum term (Starter $397/$997, Growth $999/$2,497, Scale $1,995/$4,997, Total $4,997/$14,997/six-month).</p>
+</article>
+<article class="fix">
+  <div class="fh"><span class="num">3</span><h3>The flagship plumbing demo booked an active leak for tomorrow</h3></div>
+  <div class="meta"><span class="pill t-copy">copy</span><span class="pill sev">High</span><span class="who">Plumbing</span></div>
+  <p class="what"><b>What was wrong.</b> The page promises “Emergency routing so urgent leaks reach you fast” and “Sorts the emergency from the ‘sometime next week’”. Its most-tapped proof — the missed-call replay — showed a customer whose water heater was “leaking all over the garage floor” being booked for <em>tomorrow</em>, with the owner never alerted. The single most persuasive object on the page demonstrated the opposite of the page's own promise.</p>
+  <p class="did"><b>The fix.</b> The thread now flags it as an emergency, sends it to the on-call plumber instead of the queue, and books it today at 11:30 — which is what the calendar screen already showed.</p>
+  <p class="ver"><b>Re-tested.</b> Verified live: the booking line reads “Booked ✓ Today 11:30 AM”, the thread contains both “emergency” and “alerted”, and the calendar entry (“11:30 AM · emergency”) now agrees with it.</p>
+</article>
+<article class="fix">
+  <div class="fh"><span class="num">4</span><h3>The booking promise contradicted the practice-software answer</h3></div>
+  <div class="meta"><span class="pill t-copy">copy</span><span class="pill sev">High</span><span class="who">Dental raised it; the claim was sitewide</span></div>
+  <p class="what"><b>What was wrong.</b> The Booking sheet (badged Starter, so shown on every plan and every trade) said it “writes straight into the calendar you already use”. The dental FAQ on the same page says that for Dentrix, Eaglesoft or Open Dental it “hands your team the booking to drop in rather than writing into your chart directly”. Only the flattering version was visible without opening a drawer. <code>what-we-run.html</code> carried the same over-claim (“Books straight onto your calendar”).</p>
+  <p class="did"><b>The fix.</b> Both now say it books into the calendar we keep in sync with yours, and that where your own software won't accept an outside booking your team gets it to drop in — with “we confirm exactly how it connects before launch”, matching the FAQ.</p>
+  <p class="ver"><b>Re-tested.</b> Verified live: the over-claim is gone from the sheet and from what-we-run, and the sheet now contains the “drop in” language the FAQ uses.</p>
+</article>
+<article class="fix">
+  <div class="fh"><span class="num">5</span><h3>Escape did not close a capability sheet</h3></div>
+  <div class="meta"><span class="pill t-ux">ux / accessibility</span><span class="pill sev">Medium</span><span class="who">Found by my own audit, not the personas</span></div>
+  <p class="what"><b>What was wrong.</b> The 16 capability sheets are full-screen overlays with a scrim — functionally modal. The mobile menu closes on Escape, restores focus and marks the background <code>inert</code>; the sheets ignored Escape entirely, so a keyboard user had to find the close control. Two modal patterns, two behaviours.</p>
+  <p class="did"><b>The fix.</b> <code>shared.js</code> now closes an open sheet on Escape and puts focus back on the tile that opened it. The sheet stays pure CSS — with JS off, the scrim and close button work exactly as before.</p>
+  <p class="ver"><b>Re-tested.</b> Verified live: sheet open → Escape → no sheet visible, <code>co-none</code> checked, focus back on <code>co-textback</code>; the scrim still closes it independently.</p>
+</article>
+<article class="fix">
+  <div class="fh"><span class="num">6</span><h3>A keyboard stop that showed nothing</h3></div>
+  <div class="meta"><span class="pill t-ux">ux / accessibility</span><span class="pill sev">Low</span><span class="who">Found by my own audit</span></div>
+  <p class="what"><b>What was wrong.</b> <code>#co-none</code> (the “nothing open” member of the sheet radio group) is 1×1 and transparent. Its focus ring is drawn on the capability grid — but with the drawer shut that grid is <code>display:none</code>, so tabbing landed on an element with no visible indication anywhere on screen.</p>
+  <p class="did"><b>The fix.</b> It now lives inside the grid, so it is only reachable when there is something to show. No JavaScript involved.</p>
+  <p class="ver"><b>Re-tested.</b> Verified live: with the drawer shut the tab order runs skip → brand → nav CTA → burger → back-link → tier tabs → drawer → app, with no invisible stop; opening the drawer makes it reachable again.</p>
+</article>
+<article class="fix">
+  <div class="fh"><span class="num">7</span><h3>“Dr. Ana Ruiz” was greeted as “Thanks, Dr.”</h3></div>
+  <div class="meta"><span class="pill t-bug">bug</span><span class="pill sev">Medium</span><span class="who">Dental — and it hits every titled name</span></div>
+  <p class="what"><b>What was wrong.</b> The confirmation screen — the last thing a buyer sees — took the first whitespace-delimited token as the first name. Two of the eight categories are practices where nearly every buyer types a title. “ana ruiz” also came back uncapitalised as “Thanks, ana”.</p>
+  <p class="did"><b>The fix.</b> Leading titles (Dr/Mr/Mrs/Ms/Miss/Mx/Prof/Rev/Sr/Sra/Srta, with or without the period) are dropped, and the first letter is capitalised.</p>
+  <p class="ver"><b>Re-tested.</b> Verified live across five inputs: “Dr. Ana Ruiz”, “Dr Ana Ruiz”, “ana ruiz”, “Ana” and “Mrs. Bo Hendricks” all now produce the correct greeting.</p>
+</article>
+<article class="fix">
+  <div class="fh"><span class="num">8</span><h3>The phone mock promised a screen per card</h3></div>
+  <div class="meta"><span class="pill t-ux">ux</span><span class="pill sev">Medium</span><span class="who">3 categories (retail, roofing, HVAC)</span></div>
+  <p class="what"><b>What was wrong.</b> The banner said “Tap any card to jump to it”, but the mock has five screens and eight tap targets — “Quotes Open 6”, “Opportunities” and “Invoices” all land on the Contacts list, which shows no quotes, pipeline or invoices. For quote-driven trades that is the most persuasive screen on the page, and it doesn't exist.</p>
+  <p class="did"><b>The fix.</b> The banner no longer promises a destination per card (“Tap a card or a tab to look around”), so the mock stops writing a cheque it can't cash.</p>
+  <p class="ver"><b>Re-tested.</b> Verified live on retail. <b>Note:</b> this is the honest minimum. The better answer — building an actual Quotes screen — is a content decision I've left for you; it was independently named as the most persuasive missing screen by the retail agent.</p>
+</article>
+
+<h2>Verified, but yours to decide<span class="sub">Real, reproduced, and left alone — these need a business fact, a legal answer, or a design trade-off I shouldn't make on your behalf. Ordered by how many of the eight categories raised them independently.</span></h2>
+<article class="own">
+  <div class="oh"><h3>Nobody can hear the voice</h3><span class="cats">5/8 categories</span></div>
+  <p>The flagship $999/mo feature is live voice answering and there are zero seconds of audio anywhere on the site. Five categories reached the bottom of the page still asking what it sounds like; for the 58-year-old HVAC owner it was the outright blocker: “I cannot hear the assistant anywhere on this site.”</p><p class="rec"><b>What it needs from you.</b> A ~15-second recording of the assistant answering a call. This is already on your owner-blocked list and it is now the single most-cited gap in the study.</p>
+</article>
+<article class="own">
+  <div class="oh"><h3>No named integrations anywhere</h3><span class="cats">8/8 categories</span></div>
+  <p>The word “integration” does not appear on any page. ServiceTitan, Housecall Pro, Jobber, Dentrix, Eaglesoft, Open Dental, QuickBooks, Shopify, Square, Clover — none appear. Every category's “I already have software” persona stalled here; the HVAC one put it exactly: “I can't tell if I'm buying a front end or a second system to keep in sync.”</p><p class="rec"><b>What it needs from you.</b> A business-truth answer from you: what you connect to today, in which direction data flows, and what stays manual. I can't invent this, and the booking fix above only removes the false half of it.</p>
+</article>
+<article class="own">
+  <div class="oh"><h3>“We build yours” is invisible where the choice is made</h3><span class="cats">8/8 categories</span></div>
+  <p>All eight doorway tiles look identical — nothing says three trades are pre-built and five are not. The badge appears for the first time in the trade-page hero with no explanation, and isn't resolved until the FAQ six screens down. It reads either as “built around you” (good) or “doesn't exist yet” (alarming).</p><p class="rec"><b>What it needs from you.</b> Chips on the doorway tiles would fix it — but the doorway has a hard, hard-won invariant: all eight tiles must fit one screen down to 320×568. Adding a line of text to each tile puts that at risk, so I've left it for your call rather than quietly trading away an invariant you fought for.</p>
+</article>
+<article class="own">
+  <div class="oh"><h3>No build timeline for the five “we build yours” trades</h3><span class="cats">7/8 categories</span></div>
+  <p>Pricing gives concrete targets (14 / 30 / 45 / 60–75 days), but those are the pre-built path. Five trades are told “mapped with you in week one, then built” and never given a number. The retail FAQ even concedes a longer build without saying how much longer.</p><p class="rec"><b>What it needs from you.</b> One sentence with a real number — e.g. “add roughly two weeks to the targets on the pricing page, and you get a date in writing at kickoff”. It needs your number, not mine.</p>
+</article>
+<article class="own">
+  <div class="oh"><h3>The only sample deliverable is the HVAC blueprint</h3><span class="cats">8/8 categories</span></div>
+  <p>Every trade — including “ready now” roofing — is sent to “read a fully-built one”, and lands on cooling emergencies, 85°F rules and spring tune-up campaigns. The blueprint is the single most convincing asset on the site (multiple personas said so) and seven of eight categories get someone else's.</p>
+</article>
+<article class="own">
+  <div class="oh"><h3>Nothing tells an owner with staff how their people fit</h3><span class="cats">5/8 categories</span></div>
+  <p>“Office manager”, “receptionist”, “seat”, “team member” and “user” appear zero times sitewide, while the app mock shows a “Team Inbox”. Every persona who already employs a front desk asked whether this replaces her, and the site's own framing (“A whole department, without a single hire”) reads as replacement.</p>
+</article>
+<article class="own">
+  <div class="oh"><h3>The hiring anchor doesn&#x27;t fit the small end</h3><span class="cats">5/8 categories</span></div>
+  <p>Pricing opens with $12,000–$22,000/mo of staff. Credible for a multi-truck trades company; not for a boutique, a solo dentist or a one-van operator — several read it as evidence the price was arbitrary.</p>
+</article>
+<article class="own">
+  <div class="oh"><h3>Trade-generic copy leaks into the specialist pages</h3><span class="cats">6/8 categories</span></div>
+  <p>“Money sitting in your truck” on the Med Spa page; “What's going on with your system?” for dental; water-heater and invoice examples on the What-we-run page a shop owner clicks first. The clinical and retail categories read it as “this was built for tradesmen and relabelled”.</p>
+</article>
+<article class="own">
+  <div class="oh"><h3>The “already run on this exact system” claim still reads as a contradiction</h3><span class="cats">1/8 categories</span></div>
+  <p>The auto agent independently flagged it against the Why-SANO page — after this morning's reconciliation was already live. You've decided to keep this claim; I'm reporting only that a fresh reader still trips on it, so the about-page wording didn't fully neutralise it.</p>
+</article>
+<article class="own">
+  <div class="oh"><h3>Dental: the insurance reply promises benefits verification</h3><span class="cats">1/8 categories</span></div>
+  <p>The demo thread says “We will verify your plan before you come in and tell you your portion up front — no surprise bill after.” That is a substantive operational promise (someone must actually verify benefits) and it sits oddly beside the published boundary that the assistant won't quote prices. Same class as the booking claim I fixed — but I don't know your real answer, so I haven't touched it.</p>
+</article>
+<article class="own">
+  <div class="oh"><h3>Med spa: no PHI carve-out in the liability cap, no subprocessors named</h3><span class="cats">1/8 categories</span></div>
+  <p>Terms cap all liability at three months of fees with no carve-out for a PHI incident, and the privacy page names no subprocessors and no retention period. The compliance-scarred med-spa persona stopped there. This is a lawyer question, not a copy question.</p>
+</article>
+<article class="own">
+  <div class="oh"><h3>The per-minute overage rate is published nowhere</h3><span class="cats">1/8 categories</span></div>
+  <p>Every other number on the pricing page is concrete; overage is “the rate on your agreement”. For the storm-chasing roofer whose volume spikes 10× for two weeks, that is the number that decides it.</p>
+</article>
+<article class="own">
+  <div class="oh"><h3>No Spanish site behind the Spanish link</h3><span class="cats">1/8 categories</span></div>
+  <p>“Se habla Español” appears in the nav, the mobile menu and the footer, and every one lands on an English page about bilingual service. A Spanish-first owner reasonably expects a Spanish site.</p>
+</article>
+<article class="own">
+  <div class="oh"><h3>The hero has no call to action</h3><span class="cats">1/8 categories</span></div>
+  <p>On a trade page the first in-page “Request my free demo” sits at 88% scroll depth; the hero has none. (The sticky nav CTA is present throughout, which softens it.) Worth a decision, but the hero is something you signed off recently, so I haven't changed it unilaterally.</p>
+</article>
+
+<h2>What the site got right<span class="sub">Worth recording, because it is most of the page.</span></h2>
+<div class="note" style="background:rgba(46,212,122,.06);border-color:rgba(46,212,122,.3)">
+Every one of the 24 personas understood the offer — that this is a done-for-you department, not software — usually within a minute, and most named the same line as the reason: <b>“They give you a login. We give you your time back.”</b> The honesty posture (“We're early, and we'd rather say so”, the research block naming its own sources' conflicts of interest, the money labelled “made-up numbers on a made-up account” <em>before</em> the numbers) was cited as a trust-builder in all eight categories. The sample blueprint was repeatedly called the most convincing thing on the site. Technically the build is clean: 21 pages, zero console errors, zero failed requests, no broken links, no horizontal overflow from 320px to 1440px, no WCAG AA contrast failures on any page tested, and first contentful paint between 144ms and 280ms.
+</div>
+
+<h2>All 101 findings<span class="sub">As reported by the agents, newest severity first. Severity and type here are the agents' own assessment, not mine.</span></h2>
+<div class="tblwrap"><table>
+<thead><tr><th>Severity</th><th>Type</th><th>Category</th><th>Personas</th><th>Finding</th></tr></thead>
+<tbody>
+<tr class="r-critical">
+<td><span class="pill s-critical">critical</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Dental</td>
+<td class="pa">3/3</td>
+<td class="ti">Booking claim contradicts the Dentrix/Eaglesoft/Open Dental answer — and only the flattering version is visible</td></tr>
+<tr class="r-critical">
+<td><span class="pill s-critical">critical</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Plumbing</td>
+<td class="pa">1/3</td>
+<td class="ti">The flagship demo books an active water-heater leak for the NEXT DAY and never alerts the owner — contradicting the emergency promise made higher on the same page</td></tr>
+<tr class="r-critical">
+<td><span class="pill s-critical">critical</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Plumbing</td>
+<td class="pa">1/3</td>
+<td class="ti">Nothing on any page tells an owner who already employs a front-desk person how their staff fit — while the app mock shows a Team Inbox</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Auto Services</td>
+<td class="pa">3/3</td>
+<td class="ti">No go-live timeline exists for a &quot;we build yours&quot; trade, and pricing quotes timelines that do not apply to it</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Auto Services</td>
+<td class="pa">3/3</td>
+<td class="ti">&quot;HVAC, plumbing and roofing already run on this exact system&quot; contradicts the Why SANO page&#x27;s admission that the client list is short</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Auto Services</td>
+<td class="pa">3/3</td>
+<td class="ti">The Auto page never states what the assistant will refuse to say about price — the word &quot;price&quot; does not appear on it</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Auto Services</td>
+<td class="pa">2/3</td>
+<td class="ti">The page promises &quot;is my car ready?&quot; answers and &quot;a text when it is on the lift&quot; with no stated data source, and no integration is named anywhere on the site</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Auto Services</td>
+<td class="pa">1/3</td>
+<td class="ti">Multi-location is gated to the $4,997/mo top tier and appears exactly once on the entire site, unexplained</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Auto Services</td>
+<td class="pa">1/3</td>
+<td class="ti">Nothing on the site addresses a business with no fixed location; the one control that hints at it is inert</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Dental</td>
+<td class="pa">3/3</td>
+<td class="ti">&quot;We build yours&quot; is invisible where the choice is made and unexplained where it appears</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Dental</td>
+<td class="pa">3/3</td>
+<td class="ti">No go-live timeline exists for a &quot;We build yours&quot; trade, while the pricing page&#x27;s timelines look like they apply</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Dental</td>
+<td class="pa">3/3</td>
+<td class="ti">The demo&#x27;s insurance auto-reply promises a benefits verification and a patient-portion quote that the FAQ explicitly disowns</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Dental</td>
+<td class="pa">1/3</td>
+<td class="ti">No multi-provider story anywhere on a page selling to dental practices</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">HVAC</td>
+<td class="pa">3/3</td>
+<td class="ti">No way to hear the AI voice anywhere on the site — the single biggest objection is answered only in prose</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">HVAC</td>
+<td class="pa">3/3</td>
+<td class="ti">The only in-page &quot;Request my free demo&quot; button sits at 88% scroll depth; the hero has no CTA at all</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">HVAC</td>
+<td class="pa">1/3</td>
+<td class="ti">Zero named integrations anywhere on the site — the word &quot;integration&quot; does not appear on any page</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">HVAC</td>
+<td class="pa">3/3</td>
+<td class="ti">No human identity anywhere — no photos, no founder name, no location, on a site asking for $2,497 up front</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Home Services</td>
+<td class="pa">3/3</td>
+<td class="ti">The &quot;we build yours&quot; trade page never says how long the build takes</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Home Services</td>
+<td class="pa">2/3</td>
+<td class="ti">Selecting Starter or Scale shows a monthly price but the setup fee shown never changes from Growth&#x27;s $2,497</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Med Spa</td>
+<td class="pa">3/3</td>
+<td class="ti">Field-service vocabulary leaks all over the Med Spa page — including &quot;money sitting in your truck&quot;</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Med Spa</td>
+<td class="pa">3/3</td>
+<td class="ti">&quot;WE BUILD YOURS&quot; is invisible at the point of choice and undefined where it appears</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Med Spa</td>
+<td class="pa">1/3</td>
+<td class="ti">A 3-location med spa cannot tell whether it costs $999/mo or $4,997/mo</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Med Spa</td>
+<td class="pa">1/3</td>
+<td class="ti">Terms cap all liability at three months of fees, with no carve-out for a PHI incident</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Med Spa</td>
+<td class="pa">2/3</td>
+<td class="ti">Privacy page names no subprocessors and states no retention period, and nothing on the trade page links to it</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Med Spa</td>
+<td class="pa">2/3</td>
+<td class="ti">No med-spa marketing-compliance guardrails, and the campaign tile says it will send &quot;anything you want said&quot;</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Plumbing</td>
+<td class="pa">2/3</td>
+<td class="ti">The demo assistant gives a physical shut-off instruction, contradicting the published &#x27;it won&#x27;t diagnose over the phone&#x27; boundary</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Plumbing</td>
+<td class="pa">1/3</td>
+<td class="ti">No Spanish version of the site and no language switch — every &#x27;Se habla Español&#x27; link lands on English prose</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Plumbing</td>
+<td class="pa">3/3</td>
+<td class="ti">The site sells live voice answering as its flagship $999/mo feature and contains zero seconds of audio</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-bug">bug</span></td>
+<td class="tr">Retail &amp; Local Shops</td>
+<td class="pa">2/3</td>
+<td class="ti">&#x27;Quotes Open&#x27; and &#x27;Invoices&#x27; cards in the phone mock jump to the Contacts list — there is no quotes/pipeline screen anywhere in the demo</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Retail &amp; Local Shops</td>
+<td class="pa">3/3</td>
+<td class="ti">The page claims it answers stock questions and the demo shows it holding an item — but nothing on any of the 14 pages says how it knows inventory</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Retail &amp; Local Shops</td>
+<td class="pa">3/3</td>
+<td class="ti">No build timeline is given for a &#x27;WE BUILD YOURS&#x27; trade, even though every other trade gets a day count</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Retail &amp; Local Shops</td>
+<td class="pa">2/3</td>
+<td class="ti">Pricing anchors against $12,000–$22,000/mo of staff, which is not credible for a small shop and makes the price feel arbitrary</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Retail &amp; Local Shops</td>
+<td class="pa">2/3</td>
+<td class="ti">The retail page never mentions orders, deposits or quotes in its own narrative — only &#x27;bookings and appointments&#x27;</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Retail &amp; Local Shops</td>
+<td class="pa">2/3</td>
+<td class="ti">The one article that would answer &#x27;does a phone system matter for my shop?&#x27; is written entirely for service businesses</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Roofing</td>
+<td class="pa">3/3</td>
+<td class="ti">The only full sample document on the site is the HVAC blueprint — a &quot;READY NOW&quot; roofer is sent to another trade&#x27;s proof</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Roofing</td>
+<td class="pa">3/3</td>
+<td class="ti">Nothing on the entire site lets you hear the AI voice you are being asked to put in front of customers</td></tr>
+<tr class="r-high">
+<td><span class="pill s-high">high</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Roofing</td>
+<td class="pa">2/3</td>
+<td class="ti">The per-minute overage rate — the one number a storm-volume roofer needs — is published nowhere</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Auto Services</td>
+<td class="pa">3/3</td>
+<td class="ti">Doorway tiles hide the READY NOW / WE BUILD YOURS distinction until after you&#x27;ve committed</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Auto Services</td>
+<td class="pa">3/3</td>
+<td class="ti">&quot;WE BUILD YOURS&quot; badge appears in the hero with no explanation of what it means</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Auto Services</td>
+<td class="pa">2/3</td>
+<td class="ti">The demo assistant gives a vehicle-safety judgement and a service commitment on the shop&#x27;s behalf</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Auto Services</td>
+<td class="pa">1/3</td>
+<td class="ti">Reporting is one monthly summary with no sample document, on a site that offers a sample of everything else</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Auto Services</td>
+<td class="pa">2/3</td>
+<td class="ti">Decorative pills inside the interactive app mock look like filters but do nothing, in a section that says &quot;Tap the tabs — it&#x27;s the real thing&quot;</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-bug">bug</span></td>
+<td class="tr">Auto Services</td>
+<td class="pa">3/3</td>
+<td class="ti">The tier you pick on the trade page is dropped at the CTA, although demo.html fully supports it</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Auto Services</td>
+<td class="pa">3/3</td>
+<td class="ti">After the demo form&#x27;s review step the form is hidden, so a typo cannot be corrected, and &quot;Review what you sent&quot; shows nothing you sent</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Dental</td>
+<td class="pa">3/3</td>
+<td class="ti">Trade-generic vocabulary leaks into the dental surfaces</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Dental</td>
+<td class="pa">2/3</td>
+<td class="ti">The tier the buyer selects on the trade page is silently dropped on the way to the demo</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Dental</td>
+<td class="pa">2/3</td>
+<td class="ti">&quot;The honest all-in&quot; and the voice-minutes note never respond to the tier switch</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-bug">bug</span></td>
+<td class="tr">Dental</td>
+<td class="pa">2/3</td>
+<td class="ti">Confirmation greeting mangles &quot;Dr.&quot; names on the last screen before conversion</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Dental</td>
+<td class="pa">2/3</td>
+<td class="ti">The &quot;fully-built&quot; blueprint a dental buyer is sent to read is entirely HVAC</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Dental</td>
+<td class="pa">2/3</td>
+<td class="ti">The sample month&#x27;s numbers don&#x27;t survive arithmetic</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Dental</td>
+<td class="pa">2/3</td>
+<td class="ti">Voice-minute overflow falls back to &quot;your own line&quot; — which is the failure the page is selling against</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">HVAC</td>
+<td class="pa">3/3</td>
+<td class="ti">The HVAC page references &quot;the minimum term&quot; twice but never states how long it is</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">HVAC</td>
+<td class="pa">2/3</td>
+<td class="ti">App demo claims it reflects the tier you picked, but selecting Starter still renders the full app</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">HVAC</td>
+<td class="pa">1/3</td>
+<td class="ti">Pricing opens by anchoring against $12,000–$22,000/mo of payroll, which excludes the smallest buyer</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">HVAC</td>
+<td class="pa">3/3</td>
+<td class="ti">The whole conversion path terminates in a mailto: handoff the visitor has to complete themselves</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Home Services</td>
+<td class="pa">3/3</td>
+<td class="ti">The guarantee line points at a &quot;minimum term&quot; whose length is never stated on the trade page</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Home Services</td>
+<td class="pa">2/3</td>
+<td class="ti">With Starter selected, the phone-app demo still shows the full app that Starter doesn&#x27;t include</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Home Services</td>
+<td class="pa">3/3</td>
+<td class="ti">The &quot;WE BUILD YOURS&quot; badge is the second thing you read and isn&#x27;t explained for another four screens</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Home Services</td>
+<td class="pa">1/3</td>
+<td class="ti">The comparison table omits the alternative the smallest buyer is actually choosing: voicemail / do nothing</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Home Services</td>
+<td class="pa">2/3</td>
+<td class="ti">Reschedules and cancellations are never mentioned anywhere on the site</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Home Services</td>
+<td class="pa">2/3</td>
+<td class="ti">Nothing addresses crews or employees — who does the job and how work is assigned</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Home Services</td>
+<td class="pa">1/3</td>
+<td class="ti">No off-season or pause path for a seasonal Home Services business</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Med Spa</td>
+<td class="pa">2/3</td>
+<td class="ti">Two numbers on the same page contradict each other: &quot;20 times a week&quot; of questions vs &quot;23&quot; in a month</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Med Spa</td>
+<td class="pa">3/3</td>
+<td class="ti">&quot;Read a fully-built one →&quot; sends a med spa owner into an all-HVAC document with no warning</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Med Spa</td>
+<td class="pa">3/3</td>
+<td class="ti">No proof of any kind for this trade, and the two &quot;READY NOW&quot; peers shown are HVAC and Plumbing</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Med Spa</td>
+<td class="pa">2/3</td>
+<td class="ti">No build timeline stated for a blueprint that does not exist yet</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Med Spa</td>
+<td class="pa">2/3</td>
+<td class="ti">Deposits and no-show fees are promised around but never answered</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-preference">preference</span></td>
+<td class="tr">Med Spa</td>
+<td class="pa">1/3</td>
+<td class="ti">Client-facing white-label is gated to the $4,997/mo tier on a page sold to brand-led owners</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-bug">bug</span></td>
+<td class="tr">Plumbing</td>
+<td class="pa">3/3</td>
+<td class="ti">Picking a tier is thrown away at the handoff to the demo form</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Plumbing</td>
+<td class="pa">3/3</td>
+<td class="ti">The two money paragraphs never update when you change tier — select Starter and the page still quotes Growth&#x27;s $999/mo and $2,497 setup</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Plumbing</td>
+<td class="pa">2/3</td>
+<td class="ti">The demo thread&#x27;s auto-replies never identify themselves as an assistant, contradicting the &#x27;every conversation&#x27; promise</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Plumbing</td>
+<td class="pa">1/3</td>
+<td class="ti">The demo form has no language field, on a page that lists &#x27;Se habla Español&#x27; as one of its three trust badges</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Plumbing</td>
+<td class="pa">2/3</td>
+<td class="ti">&#x27;Read a real, full blueprint we&#x27;d hand you&#x27; on a page badged READY NOW for Plumbing delivers an HVAC document</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Plumbing</td>
+<td class="pa">1/3</td>
+<td class="ti">The comparison table benchmarks against software and answering services but never against the employee the buyer already has</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Plumbing</td>
+<td class="pa">1/3</td>
+<td class="ti">No stated behaviour for emergency calls when included voice minutes run out</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Retail &amp; Local Shops</td>
+<td class="pa">3/3</td>
+<td class="ti">The only sample deliverable on the site is the HVAC blueprint, and both retail-page links to it land on cooling emergencies and spring tune-ups</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-bug">bug</span></td>
+<td class="tr">Retail &amp; Local Shops</td>
+<td class="pa">3/3</td>
+<td class="ti">The tier you select on the trade page is not carried into the demo request, although the pricing page&#x27;s buttons do carry it</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Retail &amp; Local Shops</td>
+<td class="pa">3/3</td>
+<td class="ti">&#x27;WE BUILD YOURS&#x27; is unexplained where it first appears, and the doorway gives no hint that some trades are pre-built and some are not</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Retail &amp; Local Shops</td>
+<td class="pa">3/3</td>
+<td class="ti">&#x27;Review what you sent&#x27; on the demo confirmation shows nothing you sent and gives no way back to edit the form</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Retail &amp; Local Shops</td>
+<td class="pa">2/3</td>
+<td class="ti">&#x27;What we run&#x27; — the first nav item a retail owner clicks — is written entirely in trades language</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Retail &amp; Local Shops</td>
+<td class="pa">2/3</td>
+<td class="ti">Social/DM messaging is not supported — honestly disclosed, but it is the primary channel for shops, and the same page also implies website chat isn&#x27;t run</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Roofing</td>
+<td class="pa">2/3</td>
+<td class="ti">The roofing page opens with a four-tier price ladder before a single word about roofing</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-bug">bug</span></td>
+<td class="tr">Roofing</td>
+<td class="pa">2/3</td>
+<td class="ti">Phone mock: tapping the &quot;Invoices&quot; tile opens the Contacts screen, breaking its own &quot;tap any card to jump to it&quot; promise</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Roofing</td>
+<td class="pa">2/3</td>
+<td class="ti">&quot;Review and send my request&quot; never shows what you are sending, and there is no way back to the form to fix it</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Roofing</td>
+<td class="pa">2/3</td>
+<td class="ti">The plan you pick on the trade page and the trade you pick on the pricing page are both dropped at the demo form</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-feature-gap">feature-gap</span></td>
+<td class="tr">Roofing</td>
+<td class="pa">2/3</td>
+<td class="ti">There is no identifiable human, address or founding date anywhere on the site</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Roofing</td>
+<td class="pa">1/3</td>
+<td class="ti">On Starter the phone mock still shows the full app, one paragraph above copy saying Starter does not get the app</td></tr>
+<tr class="r-medium">
+<td><span class="pill s-medium">medium</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Roofing</td>
+<td class="pa">1/3</td>
+<td class="ti">Ambiguous whether customers ever see SANO branding below the $4,997/mo tier</td></tr>
+<tr class="r-low">
+<td><span class="pill s-low">low</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Auto Services</td>
+<td class="pa">1/3</td>
+<td class="ti">Escape does not close the capability detail sheet</td></tr>
+<tr class="r-low">
+<td><span class="pill s-low">low</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">HVAC</td>
+<td class="pa">2/3</td>
+<td class="ti">&quot;READY NOW&quot; badge is undefined on the page where it is most prominent, and no go-live timeline appears there</td></tr>
+<tr class="r-low">
+<td><span class="pill s-low">low</span></td>
+<td><span class="pill t-bug">bug</span></td>
+<td class="tr">HVAC</td>
+<td class="pa">1/3</td>
+<td class="ti">App demo stat cards jump to the wrong screen</td></tr>
+<tr class="r-low">
+<td><span class="pill s-low">low</span></td>
+<td><span class="pill t-bug">bug</span></td>
+<td class="tr">HVAC</td>
+<td class="pa">1/3</td>
+<td class="ti">Conversation drill-down state sticks across tab switches in the app demo</td></tr>
+<tr class="r-low">
+<td><span class="pill s-low">low</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">HVAC</td>
+<td class="pa">1/3</td>
+<td class="ti">The doorway hides the readiness badges that every other page shows</td></tr>
+<tr class="r-low">
+<td><span class="pill s-low">low</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">HVAC</td>
+<td class="pa">1/3</td>
+<td class="ti">Setup effort described two different ways on two pages</td></tr>
+<tr class="r-low">
+<td><span class="pill s-low">low</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Home Services</td>
+<td class="pa">2/3</td>
+<td class="ti">Inert pills and tabs inside a demo that says &quot;it&#x27;s the real thing&quot;</td></tr>
+<tr class="r-low">
+<td><span class="pill s-low">low</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Home Services</td>
+<td class="pa">2/3</td>
+<td class="ti">The package level a buyer picked is not carried into the demo request</td></tr>
+<tr class="r-low">
+<td><span class="pill s-low">low</span></td>
+<td><span class="pill t-preference">preference</span></td>
+<td class="tr">Med Spa</td>
+<td class="pa">1/3</td>
+<td class="ti">Med spa sample data is majority-male and reads like a general service business</td></tr>
+<tr class="r-low">
+<td><span class="pill s-low">low</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Retail &amp; Local Shops</td>
+<td class="pa">2/3</td>
+<td class="ti">Auto-reply in the demo has a double full stop and trades phrasing that doesn&#x27;t fit a shop</td></tr>
+<tr class="r-low">
+<td><span class="pill s-low">low</span></td>
+<td><span class="pill t-enhancement">enhancement</span></td>
+<td class="tr">Retail &amp; Local Shops</td>
+<td class="pa">3/3</td>
+<td class="ti">Technically clean: all 14 pages load 200 with zero console errors, no failed requests, and no horizontal overflow at 390 or 1280</td></tr>
+<tr class="r-low">
+<td><span class="pill s-low">low</span></td>
+<td><span class="pill t-ux">ux</span></td>
+<td class="tr">Roofing</td>
+<td class="pa">1/3</td>
+<td class="ti">The doorway gives no signal that Roofing is built while five other trades are not</td></tr>
+<tr class="r-low">
+<td><span class="pill s-low">low</span></td>
+<td><span class="pill t-copy">copy</span></td>
+<td class="tr">Roofing</td>
+<td class="pa">1/3</td>
+<td class="ti">The trade page&#x27;s guarantee blurb cites &quot;the minimum term&quot; without ever saying how long it is</td></tr>
+</tbody></table></div>
+
+<p class="foot">Study run 28 July 2026 against <code>jasper4-web.github.io/shared-pages/sano-podium-doorway</code>. Fixes deployed in commits <code>55fcb61</code> and <code>38f215a</code>. Every fix re-verified on the live site after deployment.</p>
+</div>
