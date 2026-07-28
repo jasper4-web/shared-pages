@@ -245,7 +245,12 @@
     document.getElementById('ok-send').setAttribute('href',
       'mailto:hello@sanosystems.com?subject=' + encodeURIComponent('Demo request — ' + val('business')) +
       '&body=' + encodeURIComponent(body));
-    var first = val('name').split(' ')[0];
+    /* "Dr. Ana Ruiz" was greeting her as "Thanks, Dr." on the last screen before
+       she converts — and half our categories are practices. Drop a leading title,
+       and fix the casing so "ana" comes back as "Ana". */
+    var parts = val('name').split(/\s+/).filter(Boolean);
+    if (parts.length > 1 && /^(dr|mr|mrs|ms|miss|mx|prof|rev|sr|sra|srta)\.?$/i.test(parts[0])) parts.shift();
+    var first = (parts[0] || '').replace(/^[a-z]/, function (c) { return c.toUpperCase(); });
     document.getElementById('ok-title').textContent = 'Thanks' + (first ? ', ' + first : '') + ' — one tap left';
     document.getElementById('demo-form-wrap').style.display = 'none';
     ok.style.display = 'block';
