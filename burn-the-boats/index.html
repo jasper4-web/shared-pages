@@ -498,6 +498,14 @@ button{font-family:inherit}
 h2.sec{font-size:11px;font-family:'Geist Mono',monospace;letter-spacing:.19em;text-transform:uppercase;
   color:var(--faint);margin:22px 0 8px;font-weight:700;display:flex;justify-content:space-between;align-items:baseline}
 h2.sec u{text-decoration:none;color:var(--dim)}
+/* THE GOALS TAB HAD THREE NEAR-COPIES OF THIS HEADER (.g2tier .tr-h, .g2area .ah,
+   .g2ready .k) with four different tracking values and the <u> colour inverted in two
+   of them. One class now, with the domain colour moved OFF a 7px dot and ONTO a rule,
+   so the header and the card beneath it say the same thing the same way. */
+h2.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var(--line2));margin:24px 0 8px}
+/* A date that has gone by is a fact about the calendar, not a miss. Red belongs to
+   .blk.miss, where he actually skipped something. */
+.passed{color:var(--faint)}
 
 /* ---------- schedule ---------- */
 .arc{margin-bottom:13px}
@@ -579,19 +587,10 @@ h2.sec u{text-decoration:none;color:var(--dim)}
 .g2cap.tight b{color:var(--gold)}
 .g2warn{font-size:12.5px;line-height:1.45;color:var(--gold);margin:-6px 0 14px;padding:0 2px}
 
-.g2wig{position:relative;overflow:hidden;border-radius:16px;padding:15px;cursor:pointer;
-  border:1px solid var(--c);background:linear-gradient(150deg,#1b1526,#110e1a 62%,#0d0b14)}
-.g2wig:active{transform:scale(.995)}
-.g2wig.ask{border-style:dashed;cursor:default}
-.g2wig .k{display:flex;align-items:center;gap:7px;margin-bottom:10px}
-.g2wig .k i{width:6px;height:6px;border-radius:99px;background:var(--c);box-shadow:0 0 8px var(--c)}
-.g2wig .k span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.19em;color:var(--c)}
-.g2wig .k u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;text-decoration:none}
-.g2wig .t{font-family:'Clash Display',sans-serif;font-size:22px;letter-spacing:-.028em;line-height:1.14;margin-bottom:7px}
-.g2wig .m{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.09em;color:var(--faint);margin-bottom:12px}
-.g2wig .lead{display:flex;align-items:center;gap:9px;margin-top:11px;padding-top:11px;
-  border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;color:var(--dim)}
-.g2wig .lead b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--c)}
+/* .g2wig is GONE. It was a second lit component — the identical gradient and glow as
+   .g2apex — sitting in the stylesheet for markup that no renderer has emitted since the
+   three tiers shipped. Lighting is scarce in this app: Today lights ONE card out of
+   eleven blocks. The Goals tab now lights one too, and it is the apex. */
 .g2pick{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
 .g2bar{height:7px;border-radius:99px;background:#221d33;overflow:hidden}
 .g2bar i{display:block;height:100%;border-radius:99px;transition:width .45s}
@@ -600,15 +599,20 @@ h2.sec u{text-decoration:none;color:var(--dim)}
 .g2none{font-size:12.5px;line-height:1.45;color:var(--faint)}
 
 .g2area{margin-bottom:12px}
-.g2area .ah{display:flex;align-items:center;gap:9px;min-height:34px;padding:0 2px}
-.g2area .ah i{width:7px;height:7px;border-radius:99px;flex:none}
-.g2area .ah span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.17em;color:var(--dim);text-transform:uppercase}
-.g2area .ah u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);text-decoration:none}
+/* BY DATE was seven separate floating cards, all the same size, all reading
+   "Dec 25 · 150 days · 0%". Record's QUOTA BOARD already solved exactly this shape —
+   ONE panel, hairline rows inside it — and it is the calmest screen in the app. */
+.g2board{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:0 13px}
 .g2row{display:flex;flex-direction:column;gap:3px;width:100%;text-align:left;cursor:pointer;
   min-height:var(--tap);justify-content:center;padding:9px 12px;margin-top:5px;
   border:1px solid var(--line);border-radius:11px;background:var(--panel)}
-.g2row .gt{font-size:13.5px;color:var(--ink);line-height:1.3}
+.g2board .g2row{border:0;border-radius:0;border-bottom:1px solid var(--line);margin:0;
+  padding:11px 0;background:none;min-height:var(--tap)}
+.g2board .g2row:last-child{border-bottom:0}
+.g2row .gt{font-size:13.5px;color:var(--ink);line-height:1.3;overflow-wrap:anywhere}
 .g2row .gm{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.07em;color:var(--faint)}
+/* the area, printed the way Record prints a domain: a small grey mono suffix */
+.g2row .ga{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
 
 .g2empty{padding:8px 0 4px}
 .g2empty .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.19em;color:var(--faint);margin-bottom:14px}
@@ -711,29 +715,59 @@ body.glanceOpen .ovrpeek{border-bottom-left-radius:0;border-bottom-right-radius:
 .glance{display:none}
 body.glanceOpen .glance{display:block}
 
-/* ---------- the three tiers ---------- */
+/* ---------- the three tiers ----------------------------------------------
+   THE BLUR TEST. Squint and three tiers must be visible without reading a word.
+   Hue cannot rank — six domain colours are peers by construction — so the tier
+   signal is WEIGHT, descending with type:
+
+     1 · APEX      Clash 27   gold @40% + the app's ONLY glow   full card
+     2 · DECEMBER  Clash 19   3px left rule, --c @100%          --panel
+     3 · WORKING   Satoshi 13.5  2px left rule, --c @40%        --panel, indented
+
+   Before this, tier 2 out-shouted tier 1: the apex carried gold at 40% while each
+   December card carried its domain colour at 100% on all four sides — seven equal
+   shouts, ~1,000px of accent perimeter each. The colour is now a 133px rule, which
+   is what Today's .blk .dom and every Bank reward row have always been. */
 .g2apex{border:1px solid rgba(224,178,94,.4);border-radius:16px;padding:15px;margin-bottom:16px;
-  background:linear-gradient(150deg,#1b1526,#110e1a 62%,#0d0b14)}
-.g2apex .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.19em;color:var(--gold);margin-bottom:9px}
+  background:linear-gradient(150deg,#1b1526,#110e1a 62%,#0d0b14);
+  box-shadow:0 8px 36px -18px rgba(224,178,94,.5)}
+.g2apex .k{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.19em;color:var(--gold);margin-bottom:9px}
+.g2apex .k u{text-decoration:none;color:var(--faint);letter-spacing:.1em;flex:none}
 .g2apex .t{font-family:'Clash Display',sans-serif;font-size:27px;letter-spacing:-.03em;line-height:1.1;margin-bottom:12px}
 .g2apex .ap-n{display:flex;align-items:baseline;gap:7px}
 .g2apex .ap-n b{font-family:'Clash Display',sans-serif;font-size:30px;letter-spacing:-.035em;line-height:1}
 .g2apex .ap-n span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint)}
 .g2apex .ap-n i{flex:1}
 .g2apex .ap-s{margin-top:9px;font-size:12.5px;line-height:1.45;color:var(--faint)}
+/* THE SEAM — Today's exact construction, and the reason this page finally has an
+   entry point. A hairline, one lit line, a hairline, and one gold button. It is also
+   where "make this the one that matters" finally goes: the flag had nowhere to be
+   drawn, so setting it changed nothing on any screen. */
+.g2apex .sm{display:flex;align-items:center;gap:9px;margin-top:12px;padding-top:11px;
+  border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;color:var(--dim);line-height:1.35}
+.g2apex .sm+.sm{border-top:1px solid rgba(255,255,255,.08);margin-top:9px;padding-top:9px}
+.g2apex .sm span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;
+  color:var(--faint);flex:none;width:74px}
+.g2apex .sm em{font-style:normal;min-width:0;overflow-wrap:anywhere}
+.g2apex .sm b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.1em;color:var(--gold);flex:none}
+.g2apex .apb{width:100%;margin-top:11px;min-height:var(--tap)}
 
-.g2tier{margin-bottom:20px}
-.g2tier .tr-h{display:flex;align-items:center;gap:9px;min-height:32px;padding:0 2px;margin-bottom:8px}
-.g2tier .tr-h i{width:7px;height:7px;border-radius:99px;flex:none}
-.g2tier .tr-h span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.17em;color:var(--dim);text-transform:uppercase}
-.g2tier .tr-h u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);text-decoration:none}
-.g2anc{border:1px solid var(--c);border-radius:14px;padding:13px 14px;cursor:pointer;background:var(--panel)}
+.g2tier{margin-bottom:24px}
+.g2anc{border:1px solid var(--line);border-left:3px solid var(--c);border-radius:0 14px 14px 0;
+  padding:13px 14px;cursor:pointer;background:var(--panel)}
 .g2anc .k{display:flex;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--c);margin-bottom:7px}
 .g2anc .k u{margin-left:auto;text-decoration:none}
-.g2anc .t{font-size:16px;line-height:1.3;color:var(--ink);margin-bottom:9px}
-.g2sub{border:1px solid var(--line);border-left:2px solid var(--line2);border-radius:0 11px 11px 0;
+/* the only card headline in the app that was set in body type, and it sat BELOW the
+   capacity line above it (Clash 19). The December goal is the most consequential
+   object on this tab; it is display type now, like every other card headline. */
+.g2anc .t{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;
+  line-height:1.22;color:var(--ink);margin-bottom:9px;overflow-wrap:anywhere}
+.g2sub{border:1px solid var(--line);border-left:2px solid color-mix(in srgb,var(--c,var(--line2)) 40%,transparent);
+  border-radius:0 11px 11px 0;
   margin:6px 0 0 16px;padding:9px 12px;cursor:pointer;background:var(--panel)}
-.g2sub .sb-t{font-size:13.5px;line-height:1.3;color:var(--dim)}
+.g2sub .sb-t{font-size:13.5px;line-height:1.3;color:var(--dim);overflow-wrap:anywhere}
 .g2sub .sb-m{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.07em;color:var(--faint);margin-top:2px}
 .g2facts{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:7px;
   font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--dim)}
@@ -741,7 +775,9 @@ body.glanceOpen .glance{display:block}
 .g2addanc,.g2addsub{display:block;width:100%;min-height:var(--tap);cursor:pointer;text-align:left;
   border:1px dashed var(--line2);border-radius:11px;background:transparent;color:var(--faint);
   font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;padding:12px}
-.g2addsub{margin:6px 0 0 16px;border-radius:0 11px 11px 0;border-left-width:2px}
+/* width:100% plus margin-left:16px ran this button 16px past the bezel — measured
+   left:29 right:393 at a 393px viewport while every card beside it stopped at 377. */
+.g2addsub{width:calc(100% - 16px);margin:6px 0 0 16px;border-radius:0 11px 11px 0;border-left-width:2px}
 
 .g2ready{margin-top:14px;padding:13px 14px;border-radius:14px;border:1px solid var(--line2);background:var(--panel)}
 .g2ready .k{display:flex;align-items:center;font-family:'Geist Mono',monospace;font-size:11px;
@@ -755,7 +791,10 @@ body.glanceOpen .glance{display:block}
 .g2tabs{display:flex;gap:6px;margin-bottom:14px}
 .g2tab{flex:1;min-height:var(--tap);border:1px solid var(--line2);background:var(--panel);border-radius:10px;
   cursor:pointer;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint)}
-.g2tab.on{border-color:var(--gold);color:var(--gold);background:rgba(224,178,94,.08)}
+/* A view switch is navigation, not urgency. Bank's segmented picker settled this
+   convention already and it isn't gold — gold on this tab carried EIGHT meanings on
+   one screen, which is why the apex and SANO's December card read as the same object. */
+.g2tab.on{border-color:var(--violet);color:var(--violet);background:rgba(176,140,255,.1)}
 
 /* the three banners. None of them is ever red, and none of them counts a loss. */
 .g2ret,.g2close,.g2mig{border-radius:14px;padding:14px;margin-bottom:12px;width:100%;text-align:left;
@@ -772,14 +811,27 @@ body.glanceOpen .glance{display:block}
 .g2ret .one{margin-top:11px;padding:11px 12px;border-radius:11px;background:rgba(74,222,128,.07);
   border:1px solid rgba(74,222,128,.25);font-size:14px;line-height:1.3;color:var(--ink)}
 
-.g2day{display:flex;align-items:center;gap:9px;margin:16px 0 7px;padding:0 2px}
-.g2day span{font-family:'Clash Display',sans-serif;font-size:15px;letter-spacing:.02em}
-.g2day u{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);text-decoration:none}
+/* the day header is h2.sec now (it carries .g2day as a hook). TODAY stays gold —
+   on this screen it is the only gold thing, which is what gold means everywhere else. */
+.g2day{margin:18px 0 7px}
+.g2day span{font-family:'Geist Mono',monospace;letter-spacing:.19em}
+/* margin-right:auto, not margin-left — h2.sec is space-between, so without this the
+   date sat beside the day name on TODAY (three children) and jumped to the far edge on
+   every other day (two children) */
+.g2day u{margin:0 auto 0 9px;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);text-decoration:none}
 .g2day b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--gold)}
 .g2day.now span{color:var(--gold)}
-.g2slot{display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:10px;width:100%;
+/* THE WEEK inverted Today's own vocabulary: it wrote the domain as an amber caps
+   STRING in the content cell (in the same amber for Trading, Body and Faith alike)
+   and drew no bar and no checkbox. Today draws the domain as a 2.5px bar and the
+   done-state as an 18px box. Same grid, same parts, same meaning. */
+.g2slot{display:grid;grid-template-columns:42px 1fr 20px;align-items:center;gap:10px;width:100%;
   text-align:left;cursor:pointer;min-height:var(--tap);padding:9px 11px;margin-bottom:5px;
-  border:1px solid var(--line);border-radius:11px;background:var(--panel)}
+  border:1px solid var(--line);border-radius:11px;background:var(--panel);
+  position:relative;overflow:hidden}
+.g2slot .dom{position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--c)}
+.g2slot .bc{width:18px;height:18px;border-radius:5px;border:1.5px solid #362f47;justify-self:end}
+.g2slot.done .bc{background:var(--phos);border-color:var(--phos)}
 .g2slot.on{border-color:var(--line2)}
 /* a day already lived: readable, quiet, and not an invitation. Never red, never a cross —
    an empty past slot is a thing that didn't happen, not a thing he failed. */
@@ -796,7 +848,9 @@ body.glanceOpen .glance{display:block}
 .g2slot .sk u{display:block;text-decoration:none;margin-top:2px;font-size:11px}
 .g2slot .sg{font-size:13.5px;line-height:1.3;color:var(--ink);min-width:0}
 .g2slot .sg i{color:var(--faint);font-style:normal;font-size:12.5px}
-.g2slot .sa{grid-column:2;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em}
+/* was the area name in amber caps — the domain is the bar now, so the only text left
+   on this line is why it moved, and nothing competes with it for the same eye */
+.g2slot .sa{grid-column:2;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--faint)}
 .g2slot .sd{font-size:15px;color:var(--phos)}
 
 .g2rv{display:grid;grid-template-columns:1fr auto;gap:4px 10px;width:100%;text-align:left;cursor:pointer;
@@ -2755,7 +2809,7 @@ function goalPicker(k,sel){
   const cur=sel&&!live.some(g=>g.id===sel)?GM.goalOf(G,sel):null;
   return (cur?[cur].concat(live):live).map(g=>`<button type="button" class="gpx${sel===g.id?' on':''}${
       g.state&&g.state!=='active'?' rest':''}" data-k="${k}" data-g="${g.id}"
-      style="--gc:${domColour((GM.areaById(G,g.areaId)||{}).domain)}" onclick="pickGoal(this)">${esc(g.title.slice(0,22))}</button>`).join('')
+      style="--gc:${domColour((GM.areaById(G,g.areaId)||{}).domain)}" onclick="pickGoal(this)">${esc(cut(g.title,22))}</button>`).join('')
     +`<button type="button" class="gpx${sel?'':' on'}" data-k="${k}" data-g="" onclick="pickGoal(this)">NONE</button>`;
 }
 function pickGoal(el){
@@ -3790,20 +3844,86 @@ function g2Apex(){
   /* count the ones he actually FINISHED, which leave the active list entirely */
   const hit=G.goals.filter(g=>g.anchor&&g.state==='done').length
     +anc.filter(g=>{const p=GM.progress(g);return p!==null&&p>=1}).length;
+  /* the date every December goal shares, said ONCE, here — not seven times below */
+  /* the LABEL only — measured: his kicker is 243px at 390 and the card's inside is 328,
+     so a countdown here costs him a second line, and that sentence is the one thing on
+     this card nobody gets to edit. The countdown lives on the BY DATE header, once. */
+  const sh=commonAnchorHorizon(),shz=sh?GM.horizonById(G,sh):null;
   return `<div class="g2apex">
-    <div class="k">THE WHOLE POINT OF THIS PAGE</div>
+    <div class="k">THE WHOLE POINT OF THIS PAGE${
+      shz?`<u>${shz.date<today()?'<span class="passed">':''}${esc(shz.label).toUpperCase()}${
+        shz.date<today()?'</span>':''}</u>`:''}</div>
     <div class="t">Be him.</div>
     <div class="ap-n"><b>${o}</b><span>OVERALL</span><i></i><b>${gap}</b><span>TO GO</span></div>
     <div class="g2bar" style="margin-top:10px"><i style="width:${Math.max(0,Math.min(100,pct))}%;background:var(--gold)"></i></div>
     <div class="ap-s">${anc.length
       ? `You get there by clearing the ${anc.length} below${hit?` · ${hit} already done`:''}.`
       : 'Give each part of your life one December goal. Those are the way there.'}</div>
+    ${apexSeam()}
   </div>`;
 }
+/* ═══ THE SEAM ═══════════════════════════════════════════════════════════════
+   This page had no entry point. It opened with a banner, restated the OVR strip
+   Today already shows, and put its one gold button 2,151px down, where it said
+   "add more goals" on a tab whose own capacity line warns him at five.
+   Today solved this shape long ago: one lit card carrying the thing before and the
+   thing after, and ONE button. Same construction here — the one that matters, the
+   next block that is free, and the single tap that joins them.
+   It is also the answer to a flag that had nowhere to go: "make this the one that
+   matters" set g.wig and NO renderer read it, so choosing changed nothing at all. */
+function wigGoal(){return GM.liveGoals(G).find(g=>g.wig)||null}
+function nextOpenSlot(){
+  const wk=weekKeyNow();
+  for(let d=0;d<5;d++){
+    if(gone(wk,d))continue;
+    for(let i=0;i<DEEP_BLOCKS.length;i++){
+      const bid=DEEP_BLOCKS[i];
+      if(!commitFor(wk,d,bid))return{wk,d,bid,blk:WEEKDAY.find(b=>b.id===bid)||{}};
+    }
+  }
+  return null;
+}
+function apexSeam(){
+  const live=GM.liveGoals(G);
+  if(!live.length)return'';
+  const w=wigGoal(),slot=nextOpenSlot();
+  /* NOTHING IS FIRST YET. An invitation, not a deficit — no count, no colour. */
+  if(!w){
+    if(live.length<2)return'';
+    return `<div class="sm"><span>FIRST</span><em style="color:var(--faint)">Nothing is first yet</em></div>
+      <button class="btn gh apb" onclick="g2PickWig()">Choose the one that matters</button>`;
+  }
+  const where=slot?`${DAY_NAMES[slot.d]} · ${slot.bid.toUpperCase()} · ${slot.blk.s||''}`:null;
+  return `<div class="sm"><span>FIRST</span><em>${esc(w.title)}</em></div>
+    <div class="sm"><span>NEXT OPEN</span><em style="color:var(--faint)">${
+      where||'Every block this week is spoken for'}</em></div>
+    ${slot?`<button class="btn apb" onclick="seamCommit()">Put it on ${DAY_NAMES[slot.d]} · ${slot.bid.toUpperCase()}</button>`:''}`;
+}
+function seamCommit(){
+  const w=wigGoal(),slot=nextOpenSlot();
+  if(!w||!slot){render();return}
+  setCommit(slot.wk,slot.d,slot.bid,w.id);
+  toast(`${DAY_NAMES[slot.d]} ${slot.bid.toUpperCase()} is on it`,'good');
+}
+function g2PickWig(){
+  const live=GM.liveGoals(G);
+  sheet(`<div class="sh-k">THE ONE THAT MATTERS</div>
+    <div class="sh-t">Which one is first?</div>
+    <div class="sh-sub">IT GETS THE NEXT FREE BLOCK. YOU CAN CHANGE IT ANY TIME.</div>
+    <div class="chips" style="margin-top:14px">
+      ${live.map(g=>`<button class="chip tap seg${g.wig?' on':''}"
+        style="--gc:${domColour((GM.areaById(G,g.areaId)||{}).domain)}"
+        onclick="g2SetWig('${g.id}');closeSheet()">${esc(cut(g.title,34))}</button>`).join('')}
+    </div>`);
+}
+/* a hard slice reads as a rendering fault; an ellipsis reads as a shortening.
+   Three different lengths were in use (34 / 22 / 38) and none of them said "…". */
+const cut=(s,n)=>{s=String(s||'');return s.length>n?s.slice(0,n-1)+'…':s};
 /* every area, its December goal, and the working goals under it */
 function g2Tiers(){
   const areas=GM.liveAreas(G);
   if(!areas.length)return'';
+  const shared=commonAnchorHorizon();
   return areas.map(a=>{
     const anc=GM.anchorOf(G,a.id);
     /* membership, not lineage — a goal cannot fall out of a view it belongs to
@@ -3815,9 +3935,9 @@ function g2Tiers(){
       .sort((x,y)=>(x.rank||0)-(y.rank||0));
     const c=domColour(a.domain);
     return `<div class="g2tier">
-      <div class="tr-h"><i style="background:${c}"></i><span>${esc(a.name)}</span>
-        <u>${anc?`${under.length} under it`:`${under.length} goal${under.length===1?'':'s'}`}</u></div>
-      ${anc?g2AnchorCard(anc,c):`<button class="g2addanc" onclick="g2NewGoal('${a.id}',1)">
+      <h2 class="sec g2sec tr-h" style="--c:${c}"><span>${esc(a.name)}</span>
+        <u>${anc?`${under.length} under it`:`${under.length} goal${under.length===1?'':'s'}`}</u></h2>
+      ${anc?g2AnchorCard(anc,c,shared):`<button class="g2addanc" onclick="g2NewGoal('${a.id}',1)">
         + Give ${esc(a.name)} a December goal</button>`}
       ${under.map(g=>g2Read(g,c)).join('')}
       ${anc?`<button class="g2addsub" onclick="g2NewGoal('${a.id}',0,'${anc.id}')">+ Add one under this</button>`:''}
@@ -3830,16 +3950,29 @@ function g2Orphans(){
   const live=GM.liveAreas(G).map(a=>a.id);
   const lost=G.goals.filter(g=>g.state==='active'&&live.indexOf(g.areaId)<0);
   if(!lost.length)return'';
-  return `<div class="g2tier"><div class="tr-h"><i style="background:var(--blood)"></i>
-      <span>No area</span><u>${lost.length} · needs a home</u></div>
+  return `<div class="g2tier"><h2 class="sec g2sec tr-h" style="--c:var(--faint)">
+      <span>No area</span><u>${lost.length} · needs a home</u></h2>
     ${lost.map(g=>g2Read(g,'var(--faint)')).join('')}</div>`;
 }
-function g2AnchorCard(g,c){
+/* THE REPEATED STRING. "DECEMBER · Dec 25 · 150 days" rendered verbatim on every
+   anchor card — seven identical labels in the highest-contrast slot on the tab, which
+   do not distinguish seven things, they blend into a texture that reads "these are all
+   the same". DECEMBER is implied by the tier: every card at this level IS the December
+   goal, that is the definition of the tier. The shared date is hoisted once, into the
+   apex. A goal with its OWN date is the delta, and it keeps the kicker. */
+function commonAnchorHorizon(){
+  const n={};GM.anchors(G).forEach(g=>{if(g.horizonId)n[g.horizonId]=(n[g.horizonId]||0)+1});
+  let best=null,c=0;
+  Object.keys(n).forEach(k=>{if(n[k]>c){c=n[k];best=k}});
+  return c>=2?best:null;        /* said once, it is information; said seven times, it is noise */
+}
+function g2AnchorCard(g,c,shared){
   const h=g.horizonId?GM.horizonById(G,g.horizonId):null,p=GM.progress(g);
-  const st=goalStats(g);
+  const st=goalStats(g),own=h&&g.horizonId!==shared;
+  const done=p!==null&&p>=1;
   return `<div class="g2anc" style="--c:${c}" onclick="g2Open('${g.id}')">
-    <div class="k">DECEMBER${h?` · ${esc(h.label)} · ${hzWhen(h)}`:''}${
-      p!==null&&p>=1?'<u style="color:var(--phos)">DONE</u>':''}</div>
+    ${own||done?`<div class="k">${own?`${esc(h.label)} · ${hzWhenH(h)}`:''}${
+      done?'<u style="color:var(--phos)">DONE</u>':''}</div>`:''}
     <div class="t">${esc(g.title)}</div>
     ${g2Bar(g,p,c)}
     ${g2Facts(st)}
@@ -3848,10 +3981,10 @@ function g2AnchorCard(g,c){
 function g2Read(g,c){
   const h=g.horizonId?GM.horizonById(G,g.horizonId):null,p=GM.progress(g);
   const st=goalStats(g);
-  return `<div class="g2sub" onclick="g2Open('${g.id}')">
+  return `<div class="g2sub" style="--c:${c}" onclick="g2Open('${g.id}')">
     <div class="sb-t">${esc(g.title)}${g.anchor?' <b style="color:var(--gold)">ALSO A DECEMBER GOAL</b>':''}${
       GM.needsEarly(g)?' <b style="color:var(--gold)">NEEDS A DECISION</b>':''}</div>
-    <div class="sb-m">${h?esc(h.label)+' · '+hzWhen(h):'no date'}${
+    <div class="sb-m">${h?esc(h.label)+' · '+hzWhenH(h):'no date'}${
       p!==null?` · ${Math.round(p*100)}%`:' · no number'}</div>
     ${g2Facts(st)}
   </div>`;
@@ -3898,7 +4031,11 @@ function g2NewGoal(areaId,anchor,parentId){
       anchorFor:anchor?areaId:null};    /* the area he ASKED to anchor, not whatever he ends on */
   sheet(g2Form(anchor?'The December goal':'A goal under it',GM.capCheck(G,WEEK_BLOCKS,weekKeyNow())));
 }
-const g2Foot=()=>`<button class="btn" style="margin-top:14px" onclick="g2New()">+ Add a goal</button>
+/* Bank ends with two .btn.gh and nothing lit. On a tab whose own capacity line warns
+   him at five goals, the one gold thing on the screen should not say "add more" — and
+   it certainly should not sit 2,151px down where he will never see it. The gold moved
+   up into the apex seam, where it puts the one that matters on a real block. */
+const g2Foot=()=>`<button class="btn gh" style="margin-top:14px" onclick="g2New()">+ Add a goal</button>
   <button class="btn gh" style="margin-top:8px" onclick="g2Manage()">Areas and dates</button>
 `;
 function g2View(v){G.meta.view=v;gsave();render()}
@@ -3927,6 +4064,9 @@ function g2NameArea(){
 }
 /* a horizon that has already gone by must never read "0 days" */
 function hzWhen(h){return h.date<today()?'PASSED':daysTo(h.date)+' days'}
+/* the same fact, drawn. A date going by is not a miss — .blk.miss on Today is a miss,
+   and that is the only place in this app that is allowed to be red. */
+const hzWhenH=h=>h.date<today()?'<span class="passed">PASSED</span>':hzWhen(h);
 /* THE RETURN PATH. The governing law of this app is "never render a wall of
    failure", and its stated failure mode is that he stops opening it when behind.
    So the screen he meets after a gap states what is STILL TRUE — never what he
@@ -4042,13 +4182,34 @@ function g2Week(){
      first move. */
   const underway=cap.committed>0&&dow()>=3;
   if(orphan.length&&underway){
-    out+=`<div class="g2warn">Nothing on ${esc(orphan.join(' · '))} this week. Allowed — but make it a decision, not an accident.</div>`;
+    /* .hintline, not .g2warn — full gold at 12.5px gave this the same weight as a real
+       capacity warning. It is an aside about shape, not an alarm. */
+    out+=`<div class="hintline" style="margin:-2px 0 12px;padding:0 2px">Nothing on ${esc(orphan.join(' · '))} this week. Allowed — but make it a decision, not an accident.</div>`;
   }else if(!cap.committed){
     out+=g2FirstMove();
   }
+  /* ═══ THE DOOR ═══════════════════════════════════════════════════════════
+     Twenty slots at 52px each pushed the footer past 1,400px, and nothing was
+     prioritised: Wednesday's TODAY marker weighed the same as Friday's date.
+     Today already invented the fix for exactly this — .nu-door, one dashed line
+     that folds nine blocks away. The days already lived go behind it.
+     THEY STAY IN THE DOM. Every renderer, every harness and every count still
+     addresses all twenty; the door hides them, it does not delete them. And a
+     closed door IS the read-only past state — drawn with a component we ship. */
+  const pastN=[0,1,2,3,4].filter(d=>gone(wk,d));
+  const doorable=pastN.length>0&&pastN.length<5;
+  if(doorable){
+    const cm=pastN.reduce((n,d)=>n+DEEP_BLOCKS.filter(b=>commitFor(wk,d,b)).length,0);
+    out+=`<button class="nu-door" onclick="toggleWkPast()">${
+      pastN.map(d=>DAY_NAMES[d]).join(' · ')} — ALREADY LIVED · ${cm} COMMITTED ${WK_PAST_OPEN?'▴':'▾'}</button>`;
+  }
   for(let d=0;d<5;d++){
     const date=dateOfSlot(wk,d),isToday=date===today();
-    out+=`<div class="g2day${isToday?' now':''}"><span>${DAY_NAMES[d]}</span><u>${date.slice(5)}</u>${isToday?'<b>TODAY</b>':''}</div>`;
+    const hide=doorable&&!WK_PAST_OPEN&&gone(wk,d);
+    out+=`<div class="wkd"${hide?' hidden':''}>`;
+    out+=`<h2 class="sec g2sec g2day${isToday?' now':''}" style="--c:${
+      isToday?'var(--gold)':'var(--line2)'}"><span>${DAY_NAMES[d]}</span><u>${date.slice(5)}</u>${
+      isToday?'<b>TODAY</b>':''}</h2>`;
     DEEP_BLOCKS.forEach(bid=>{
       const blk=WEEKDAY.find(b=>b.id===bid),c=commitFor(wk,d,bid);
       const g=c?GM.goalOf(G,c.goalId):null,a=g?GM.areaById(G,g.areaId):null;
@@ -4060,16 +4221,22 @@ function g2Week(){
          the model. */
       const past=gone(wk,d);
       out+=`<button class="g2slot${g?' on':''}${done?' done':''}${past&&!g?' settled':''}"
+        ${g?`style="--c:${domColour((a||{}).domain)}"`:''}
         onclick="${past?`g2Past(${d})`:`g2Slot('${wk}',${d},'${bid}')`}">
+        ${g?'<span class="dom"></span>':''}
         <span class="sk">${bid.toUpperCase()}<u>${blk?blk.s:''}</u></span>
         <span class="sg">${g?esc(g.title):past?'<i>Nothing was on this one</i>':'<i>Open — tap to commit it</i>'}</span>
-        ${g?`<span class="sa" style="color:${domColour((a||{}).domain)}">${esc((a||{}).name||'')}${
-          c.carried?' · CARRIED '+c.carried+'×':''}</span>`:''}
-        ${done?'<span class="sd">✓</span>':''}</button>`;
+        ${g&&c.carried?`<span class="sa">CARRIED ${c.carried}×</span>`:''}
+        ${g?`<span class="bc"></span>`:''}</button>`;
     });
+    out+='</div>';
   }
   return out;
 }
+/* deliberately NOT persisted — every fresh open of the app shows the week ahead,
+   the same rule as Today's day door */
+let WK_PAST_OPEN=false;
+function toggleWkPast(){WK_PAST_OPEN=!WK_PAST_OPEN;render()}
 function g2Slot(wk,d,bid){
   const c=commitFor(wk,d,bid),goals=GM.liveGoals(G);
   sheet(`<div class="sh-k">${DAY_NAMES[d]} · ${bid.toUpperCase()}</div>
@@ -4077,7 +4244,7 @@ function g2Slot(wk,d,bid){
     <div class="sh-sub">ONE BLOCK, ONE GOAL. THAT LINK IS THE WHOLE POINT.</div>
     <div class="chips" style="margin-top:14px">
       ${goals.map(g=>`<button class="chip tap seg${c&&c.goalId===g.id?' on':''}"
-        onclick="setCommit('${wk}',${d},'${bid}','${g.id}');closeSheet()">${esc(g.title.slice(0,34))}</button>`).join('')}
+        onclick="setCommit('${wk}',${d},'${bid}','${g.id}');closeSheet()">${esc(cut(g.title,34))}</button>`).join('')}
     </div>
     ${c?`<button class="btn gh" style="margin-top:14px" onclick="setCommit('${wk}',${d},'${bid}',null);closeSheet()">Leave it open</button>`:''}`);
 }
@@ -4086,16 +4253,21 @@ function g2Slot(wk,d,bid){
 function g2ByDate(){
   const hs=GM.liveHorizons(G),t=today();
   let out='';
+  /* Record's QUOTA BOARD, literally: a header with a rule, then ONE panel of hairline
+     rows. It shows the same six domains this view shows and it is the calmest screen
+     in the app. The old red dot on a passed date is gone with it — see hzWhenH. */
   hs.forEach(h=>{
     const gs=GM.goalsAt(G,h.id);if(!gs.length)return;
     const past=h.date<t;
-    out+=`<div class="g2area"><div class="ah"><i style="background:${past?'var(--blood)':'var(--violet)'}"></i>
-      <span>${esc(h.label)}</span><u>${hzWhen(h)}</u></div>
+    out+=`<h2 class="sec g2sec ah" style="--c:${past?'var(--line2)':'var(--violet)'}">
+      <span>${esc(h.label)}</span><u>${hzWhenH(h)}</u></h2>
+      <div class="g2area g2board">
       ${gs.map(g=>g2Row(g,domColour((GM.areaById(G,g.areaId)||{}).domain))).join('')}</div>`;
   });
   const un=GM.undated(G);
-  if(un.length)out+=`<div class="g2area"><div class="ah"><i style="background:var(--faint)"></i>
-    <span>No date yet</span><u>${un.length}</u></div>
+  if(un.length)out+=`<h2 class="sec g2sec ah" style="--c:var(--line2)">
+    <span>No date yet</span><u>${un.length}</u></h2>
+    <div class="g2area g2board">
     ${un.map(g=>g2Row(g,'var(--faint)')).join('')}</div>`;
   return out||`<div class="card" style="color:var(--dim);font-size:13.5px">
     No dates yet. Add one from "Areas and dates" — monthly, two-month, past the end of the run, anything.</div>`;
@@ -4123,7 +4295,7 @@ function g2Review(){
       ${s.repeatMisses.length} goal${s.repeatMisses.length>1?'s'
       :''} missed twice. Not a failure — a signal. Shrink it, move it, or park it.</div>`:''}
     ${near.length?`<h2 class="sec" style="margin-top:20px"><span>Will it land?</span><u>never scored</u></h2>
-      ${near.map(g=>`<div class="g2cf"><span>${esc(g.title.slice(0,38))}</span>
+      ${near.map(g=>`<div class="g2cf"><span>${esc(cut(g.title,38))}</span>
         <span class="cb">${[[3,'ON TRACK'],[2,'WOBBLING'],[1,'NOT HAPPENING']].map(([v,l])=>{
           const cur=g.confidence.length&&g.confidence[g.confidence.length-1];
           const on=cur&&cur.week===weekNo()&&cur.v===v;
@@ -4257,12 +4429,19 @@ const fmtN=n=>(n===null||n===undefined||isNaN(n))?'—':Number(n).toLocaleString
 /* imported units arrive with a leading space, typed ones don't — normalise once */
 const fmtU=u=>{u=(u||'').trim();return u?(u==='%'?u:' '+u):''};
 const domColour=k=>{const d=DOMAINS.find(x=>x.k===k);return d?d.c:'var(--gold)'};
+/* BY DATE rendered NO area at all, so it read as seven consecutive rows of
+   "Dec 25 · 150 days · 0%" distinguishable only by title. Record prints the domain as
+   a small grey mono suffix on the row itself — so does this now. */
 function g2Row(g,c){
-  const h=g.horizonId?GM.horizonById(G,g.horizonId):null,p=GM.progress(g);
+  const p=GM.progress(g),a=GM.areaById(G,g.areaId);
+  /* the date is NOT repeated on the row: this view is grouped BY date and the header
+     above already carries it. Six rows of "Dec 25 · 100 days · 0%" under a heading that
+     says DEC 25 · 100 DAYS is the same repeated string, one level down. */
+  const meta=[p!==null?`${Math.round(p*100)}%`:'',
+    GM.needsEarly(g)?'<b style="color:var(--gold)">NEEDS A DECISION</b>':''].filter(Boolean).join(' · ');
   return `<button class="g2row" onclick="g2Open('${g.id}')">
-    <span class="gt">${esc(g.title)}</span>
-    <span class="gm">${h?esc(h.label)+' · '+hzWhen(h):'no date'}${
-      p!==null?` · ${Math.round(p*100)}%`:''}${GM.needsEarly(g)?' · <b style="color:var(--gold)">NEEDS A DECISION</b>':''}</span>
+    <span class="gt">${esc(g.title)}${a?` <span class="ga">· ${esc(a.name).toUpperCase()}</span>`:''}</span>
+    ${meta?`<span class="gm">${meta}</span>`:''}
   </button>`;
 }
 
