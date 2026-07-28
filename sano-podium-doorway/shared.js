@@ -19,13 +19,13 @@
     '<header><div class="wrap nav">' +
       '<a href="index.html" class="brand" aria-label="SANO Systems — home"><img src="sano-logo.png" alt="" width="30" height="30"/><span class="bt">SANO Systems</span></a>' +
       '<nav aria-label="Main"><ul class="nav-links">' +
-        '<li class="' + (page === 'product' ? 'active' : '') + '"><a href="ai-employee.html"' + (page === 'product' ? (here('ai-employee.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>What we run ' + caret + '</a>' +
+        '<li class="' + (page === 'product' ? 'active' : '') + '"><a href="what-we-run.html"' + (page === 'product' ? (here('what-we-run.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>What we run ' + caret + '</a>' +
           '<div class="dropdown">' +
-            '<a href="ai-employee.html#frontdesk"><b>The front desk</b><span>Calls, texts &amp; booking, around the clock</span></a>' +
-            '<a href="ai-employee.html#followup"><b>The follow-up</b><span>Chased until you get an answer</span></a>' +
-            '<a href="ai-employee.html#reviews"><b>Reviews</b><span>Asked for after every job</span></a>' +
-            '<a href="ai-employee.html#marketing"><b>Marketing &amp; payments</b><span>Campaigns, follow-up, pay-by-text</span></a>' +
-            '<a href="ai-employee.html#command"><b>Your monthly report</b><span>What happened, in plain English</span></a>' +
+            '<a href="what-we-run.html#frontdesk"><b>The front desk</b><span>Calls, texts &amp; booking, around the clock</span></a>' +
+            '<a href="what-we-run.html#followup"><b>The follow-up</b><span>Chased until you get an answer</span></a>' +
+            '<a href="what-we-run.html#reviews"><b>Reviews</b><span>Asked for after every job</span></a>' +
+            '<a href="what-we-run.html#marketing"><b>Marketing &amp; payments</b><span>Campaigns, follow-up, pay-by-text</span></a>' +
+            '<a href="what-we-run.html#command"><b>Your monthly report</b><span>What happened, in plain English</span></a>' +
             '<a href="sample-blueprint.html"><b>See a sample blueprint</b><span>The document a client actually approves</span></a>' +
           '</div>' +
         '</li>' +
@@ -46,7 +46,7 @@
     '<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu">' +
       '<button class="mm-close" aria-label="Close menu">&times;</button>' +
       '<a href="index.html" class="mm-home"><img src="sano-logo.png" alt="" width="26" height="26"/> SANO Systems</a>' +
-      '<a href="ai-employee.html"' + (page === 'product' ? ' class="mm-on" aria-current="' + (here('ai-employee.html') ? 'page' : 'true') + '"' : '') + '>What we run</a>' +
+      '<a href="what-we-run.html"' + (page === 'product' ? ' class="mm-on" aria-current="' + (here('what-we-run.html') ? 'page' : 'true') + '"' : '') + '>What we run</a>' +
       '<a href="industries.html"' + (page === 'industries' ? ' class="mm-on" aria-current="' + (here('industries.html') ? 'page' : 'true') + '"' : '') + '>Industries</a>' +
       '<a href="pricing.html"' + (page === 'pricing' ? ' class="mm-on" aria-current="' + (here('pricing.html') ? 'page' : 'true') + '"' : '') + '>Pricing</a>' +
       '<a href="resources.html"' + (page === 'resources' ? ' class="mm-on" aria-current="' + (here('resources.html') ? 'page' : 'true') + '"' : '') + '>Resources</a>' +
@@ -65,13 +65,13 @@
       '<nav aria-label="Footer"><div class="foot-grid">' +
         '<div class="foot-brand">' +
           '<div class="brand"><img src="sano-logo.png" alt="" width="30" height="30"/> SANO Systems</div>' +
-          '<p>You run your business. We run the AI.</p>' +
+          '<p>You run your business. We run the systems.</p>' +
           '<a href="tel:' + PHONE + '" class="c">' + PHONE_D + '</a>' +
           '<a href="mailto:' + EMAIL + '" class="c">' + EMAIL + '</a>' +
         '</div>' +
         '<div class="foot-col"><h2 class="foot-col-h">What we run</h2>' +
-          '<a href="ai-employee.html#frontdesk">The front desk</a><a href="ai-employee.html#reviews">Reviews</a>' +
-          '<a href="ai-employee.html#marketing">Marketing &amp; payments</a><a href="sample-blueprint.html">Sample blueprint</a></div>' +
+          '<a href="what-we-run.html#frontdesk">The front desk</a><a href="what-we-run.html#reviews">Reviews</a>' +
+          '<a href="what-we-run.html#marketing">Marketing &amp; payments</a><a href="sample-blueprint.html">Sample blueprint</a></div>' +
         '<div class="foot-col"><h2 class="foot-col-h">Industries</h2>' + indFoot + '</div>' +
         '<div class="foot-col"><h2 class="foot-col-h">Company</h2>' +
           '<a href="about.html">Why SANO</a><a href="resources.html">Resources</a><a href="pricing.html">Pricing</a>' +
