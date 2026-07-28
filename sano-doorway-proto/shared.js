@@ -147,11 +147,52 @@
     carryInd(true);
   };
 
+  /* The trade page spends its whole middle section getting the owner to choose a
+     level, then threw that choice away at the handoff: every CTA linked to
+     demo.html?ind=<trade> with no plan, while demo.html already reads ?plan= and
+     the pricing page already passes it. Carry it exactly the way we carry the
+     industry. No-op on pages without a tier switch, so pricing.html keeps the
+     plan its own buttons set. */
+  function carryPlan() {
+    var picked = document.querySelector('.tier-radio:checked');
+    if (!picked) return;
+    var plan = picked.id.replace(/^t-/, '');
+    document.querySelectorAll('a[href^="demo.html"]').forEach(function (a) {
+      var h = a.getAttribute('href') || '';
+      var hash = h.indexOf('#') > -1 ? h.slice(h.indexOf('#')) : '';
+      var base = hash ? h.slice(0, h.indexOf('#')) : h;
+      var bits = base.split('?');
+      var sp = new URLSearchParams(bits[1] || '');
+      sp.set('plan', plan);
+      a.setAttribute('href', bits[0] + '?' + sp.toString() + hash);
+    });
+  }
+
   var navMount = document.getElementById('site-nav');
   var footMount = document.getElementById('site-footer');
   if (navMount) navMount.innerHTML = nav;
   if (footMount) footMount.innerHTML = foot;
   carryInd();
+  carryPlan();
+  /* the visitor can change level any number of times before they click */
+  document.querySelectorAll('.tier-radio').forEach(function (r) {
+    r.addEventListener('change', carryPlan);
+  });
+
+  /* Escape closes an open capability sheet, the way it already closes the mobile
+     menu. The sheet is pure CSS (a radio group), so this is the one thing it
+     cannot do for itself; with JS off, the scrim and the close button still
+     close it, exactly as before. */
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var open = document.querySelector('input[name="capopen"]:checked');
+    var none = document.getElementById('co-none');
+    if (!open || !none || open === none) return;
+    none.checked = true;
+    /* put focus back on the tile that was opened, not adrift at the top */
+    var tile = document.getElementById(open.id.replace(/^co-x-/, 'co-'));
+    if (tile) { try { tile.focus(); } catch (err) {} }
+  });
 
   document.querySelectorAll('.nav-links > li').forEach(function (li) {
     var trigger = li.querySelector('a'); var dd = li.querySelector('.dropdown');
