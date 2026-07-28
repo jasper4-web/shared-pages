@@ -1,11 +1,74 @@
 # RESUME HERE — BURN THE BOATS
 
-**Written 2026-07-27, mid-conversation.** Read this top to bottom before touching anything.
-It is the single entry point. `HANDOFF-GOALS.md` is the deeper history; this file is where we are.
+**Updated 2026-07-28 13:0x, after the session window closed mid-run.** Read this top to bottom
+before touching anything. It is the single entry point. `HANDOFF-GOALS.md` is the deeper history.
 
 ---
 
-## 0 · WHERE WE ARE — the GOALS TAB AUDIT is done. Three blockers found. He picks a stage.
+## 0 · WHERE WE ARE — STAGES 1, 2 AND 3 ARE BUILT, LIVE AND GREEN. **Stage 4 is next.**
+
+**The session ended between stage 3 shipping and stage 4 starting.** Nothing was left half-written:
+`index.html.bak-stage6-124930` (12:49) is **byte-identical** to `index.html`, i.e. it is the
+pre-stage-4 snapshot, and the working copy is **byte-identical to what is live**.
+
+- **Live:** commit deployed, service worker **btb-v28** (§2's "btb-v18" below is historical).
+- **Local `index.html` == live `index.html`** — verified by `cmp`, 306,161 bytes both sides.
+
+### Re-verified against the LIVE url just now (2026-07-28, fresh session)
+
+| harness | result |
+|---|---|
+| `stage1.js` | **29/29** — the three blockers, plus the two breaks the V1 verifier found |
+| `stage2.js` | **24/24** — the four wall-of-failure screens |
+| `stage3.js` | **30/30** — dates: edit, confirmed delete, a carry that really moves |
+| `qc3.js` | 51/51 |
+| `vanish.js` | 32/32 |
+| `full.js` | **126/126** (was 124 — the stage work added two) |
+| `goals2.js` | **56/59 — the SAME three pre-existing failures** as round 4 (`WIG card rendered`, `capacity line sits above it`, `capacity goes amber`). Stale harness: the WIG card was replaced by the three-tier design. **Not caused by the stage work.** Still owed: fix or retire those three assertions. |
+
+`full.js` and `goals2.js` need `SP=<dir>` in the environment or they crash on the final screenshot
+(`path: 'undefined/full-final.png'`). Not a product bug — a harness requirement. Example:
+`SP=/tmp/shots node full.js <url>`.
+
+### What each stage actually shipped
+
+- **Stage 1 · stop the damage** — F2-1 (composer wipe), F2-2 (commit born `done:1`), F3-1 (moving a
+  goal re-scored lived days). Also fixed the two breaks a hostile verifier found afterwards:
+  a **parked/dropped** goal is still drawn in the picker (it used to select nothing and wipe all
+  four blocks for +25 XP), and `draftWeek()` no longer drafts onto days already lived.
+- **Stage 2 · stop the accusations** — Monday no longer names the areas he is "neglecting" (it
+  offers to place the first block instead); the return banner after a gap no longer stacks a column
+  of "moved 21d ago"; eight overdue goals now read as **ONE DECISION** naming a single goal and
+  counting the rest quietly.
+- **Stage 3 · dates** — a date can now be **edited** (`g2EditDate` / `g2SaveEditDate`), deleting one
+  asks first and says what happens to the goals, and **"Carry it" really moves the goal** to a date
+  that exists in the future, creating one rather than lying. A pile-up converges (4 rounds → 0).
+
+### The two loose ends from the closed session
+
+1. **`agent-briefs/goals-ux-2026-07-28/verify-stage-1.md` is STALE — read it as history, not status.**
+   It says **FAIL**, but it measured the **12:14 live build** and says so itself
+   (*"re-verify after the next deploy"*). Both breaks it reported are now fixed and guarded in
+   `stage1.js`.
+2. **A second verifier (V2) died mid-run when the window closed.** Its screenshots are on disk
+   (`V2-c1-*` … `V2-c4-07`, 12:39–12:45) but **it never wrote its verdict file.** Nobody has read
+   those 25 images. If a hostile re-verify of stages 1–3 matters, re-run it rather than trusting the
+   green harnesses alone — §6's lesson.
+
+### NEXT — stage 4, unless he re-picks
+
+**Stage 4 · the look** — build lens 4's redesign, LIVE at
+`.../renditions/rend-goals-aesthetic.html`. It closes nine usability findings that were really
+drawing problems, including the three structural ones confirmed in source: `.g2apex`'s border is
+gold at **40%** while `.g2anc` is at **100%** (tier 2 out-shouts tier 1); `.g2anc .t` is the app's
+only card headline in body font; `--d-work` is literally the same hex as `--gold`.
+
+**Stage 5 · the long tail** is still untouched — the seventh vanish (sticky view hides parked
+goals), no way to plan next week, "the one that matters" doing nothing, anchor cannot be demoted.
+
+---
+
+### 0-prev · The audit that produced those stages (2026-07-28 morning)
 
 **2026-07-28.** He asked for three UX agents over the whole goal experience plus one fresh aesthetics
 agent afterwards. Done. **44 findings, 112 screenshots**, all in
@@ -49,7 +112,8 @@ https://jasper4-web.github.io/shared-pages/burn-the-boats/renditions/rend-goals-
 5. **The long tail** — the seventh vanish (sticky view hides parked goals), no way to plan next week,
    "the one that matters" doing nothing, anchor cannot be demoted, etc.
 
-**NOTHING HAS BEEN BUILT. Nothing in `index.html` changed for this audit.**
+**Stages 1, 2 and 3 of that plan have since been BUILT AND SHIPPED — see §0 above.**
+(This paragraph used to read "nothing has been built." That was true at 11:36 and is no longer.)
 
 ---
 
@@ -318,7 +382,7 @@ Mon 2026-07-27 → Fri 2026-12-25**. Installed on his iPhone home screen.
 - **Live:** https://jasper4-web.github.io/shared-pages/burn-the-boats/
 - **Source:** `~/Documents/burn-the-boats/index.html` (one file, ~4,400 lines)
 - **Deploy:** the `jasper4-web/shared-pages` repo, folder `burn-the-boats/`
-- **Currently live:** commit `f6c1c61`, service worker **btb-v18**
+- **Currently live:** service worker **btb-v28** (stages 1–3 of the goals audit)
 - **Who he is:** `PROFILE.md`. Non-technical. 2–3 productive hours a day. **Pacific time.**
 
 ---
@@ -327,7 +391,7 @@ Mon 2026-07-27 → Fri 2026-12-25**. Installed on his iPhone home screen.
 
 1. **A change is not done until it is LIVE and verified.** Never ask "want me to deploy?"
    He reviews on his phone; a local edit is an invisible edit.
-2. **Bump `const CACHE` in `sw.js` every single deploy.** Currently **btb-v18**.
+2. **Bump `const CACHE` in `sw.js` every single deploy.** Currently **btb-v28**.
 3. **Verify the LIVE url, not the local file.** Poll it (~40–60s), then run the harnesses against it.
 4. **Never render a wall of failure.** When he falls behind he stops opening it — that killed the
    previous version. Everything is subordinate to this.
@@ -410,10 +474,16 @@ node boosts.js   [url]              #  34 · the boost economy and its ceilings
 node backup.js   [url]              #  13 · backup/restore round trip, both stores
 node extras.js   [url]              #  33 · the extras move: off Today, asked at run-end, home in the Bank
 node rewardreq.js [url]             #  31 · reward requirements — the gate, the weekly window, the picker
+node stage1.js   [url]              #  29 · stop the damage — the three blockers + the two V1 breaks
+node stage2.js   [url]              #  24 · stop the accusations — the four wall-of-failure screens
+node stage3.js   [url]              #  30 · dates — edit, confirmed delete, a carry that really moves
 node stress.js   [url]              # 360 · 6 widths × 5 clocks × 4 views × 3 states
 ```
 
-**All green as of `f6c1c61`.** `arsenal-lint`: `node ~/build-arsenal/bin/arsenal-lint.js index.html`.
+⚠ **`full.js` and `goals2.js` require `SP=<screenshot dir>`** or they crash at the end on
+`undefined/full-final.png`. `SP=/tmp/shots node full.js <url>`.
+
+**Green as of btb-v28**, except `goals2.js` 56/59 — three stale assertions, see §0. `arsenal-lint`: `node ~/build-arsenal/bin/arsenal-lint.js index.html`.
 
 ### The lesson this session keeps teaching
 
