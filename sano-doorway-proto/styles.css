@@ -887,6 +887,19 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
 
 .cap-foot{max-width:780px;margin:30px auto 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px 20px;font-size:15px;line-height:1.6;color:#B8C7D4;text-align:left}
 .cap-foot strong{color:#fff}
+/* The all-in line used to be frozen on Growth's numbers while the switch above it
+   changed level — so a visitor who picked Starter read "$2,497 to build it" when
+   theirs is $997, and Total read 6x low. SANO_TIERS already carries the real
+   setup and minimum per level (its own comment warns they are not uniform), so
+   the line now follows the pick, the same way the prototype already did it. */
+.cap-foot .mn{display:none}
+.cap-band:has(#t-starter:checked) .mn-starter,
+.cap-band:has(#t-growth:checked)  .mn-growth,
+.cap-band:has(#t-scale:checked)   .mn-scale,
+.cap-band:has(#t-total:checked)   .mn-total{display:block}
+/* without :has() the switch cannot drive anything, so show all four rather than
+   collapse the price to nothing — the same honest-degrade the board already uses */
+@supports not (selector(:has(*))){ .cap-foot .mn{display:block} .cap-foot .mn + .mn{margin-top:10px} }
 
 @media(max-width:1100px){ .cap-grid{grid-template-columns:repeat(3,minmax(0,1fr))} }
 @media(max-width:820px){
