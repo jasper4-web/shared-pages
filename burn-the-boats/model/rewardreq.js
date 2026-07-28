@@ -99,14 +99,30 @@ const T=[];const ok=(n,c,d)=>T.push({n,c:!!c,d:d===undefined?'':String(d)});
     return {n:rs.length,txt,gen,
             accuses:gen.some(t=>/missed|failed|behind|broken|lost|didn't|haven't/i.test(t)),
             pips:document.querySelectorAll('.rq .pips i').length,
+            /* EXISTING is not VISIBLE. The first cut rendered these <i>s with no CSS at all
+               (every .pips rule was scoped to .win/.quota), so this counted 4 invisible dots
+               and passed. Measure them. */
+            pipsInvisible:[...document.querySelectorAll('.rq .pips i')]
+              .filter(e=>{const r=e.getBoundingClientRect();return r.width<3||r.height<3}).length,
+            pipsFilled:[...document.querySelectorAll('.rq .pips i.full')].length,
             setBtns:sets.length,
-            setUnder44:sets.filter(e=>e.getBoundingClientRect().height<44).length};
+            setUnder44:sets.filter(e=>e.getBoundingClientRect().height<44).length,
+            /* .blk is overflow:hidden — a control in the 20px last column gets sliced. */
+            setClipped:sets.filter(e=>{const r=e.getBoundingClientRect(),
+              row=e.closest('.blk').getBoundingClientRect();
+              return r.right>row.right-1||r.width<40}).length,
+            setLabels:sets.map(e=>e.textContent.trim())};
   });
   ok('the reward rows render',rows.n>0,'rows='+rows.n);
   ok('the terms show as pips',rows.pips>0,'pips='+rows.pips);
   ok('no app-written text says missed / failed / behind',!rows.accuses,rows.gen.join(' || ').slice(0,110));
-  ok('every row has a TERMS control',rows.setBtns>0,'n='+rows.setBtns);
+  ok('the pips are actually VISIBLE, not just present',rows.pipsInvisible===0,
+     rows.pipsInvisible+' of '+rows.pips+' render at zero size');
+  ok('a done count fills its pips',rows.pipsFilled>0,'filled='+rows.pipsFilled);
+  ok('every row has a terms control',rows.setBtns>0,'n='+rows.setBtns);
   ok('...and every one clears 44px',rows.setUnder44===0,rows.setUnder44+' under');
+  ok('...and none of them is clipped by the row',rows.setClipped===0,
+     rows.setClipped+' clipped · '+rows.setLabels.join(','));
 
   // ── 5 · HE CAN SET THE TERMS HIMSELF, WITHOUT A KEYBOARD
   const picker=await p.evaluate(async()=>{
