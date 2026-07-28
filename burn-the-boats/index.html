@@ -623,8 +623,13 @@ h2.sec u{text-decoration:none;color:var(--dim)}
 .g2m .n{flex:1;min-width:0;font-size:13.5px;color:var(--ink);line-height:1.25}
 .g2m .n u{display:block;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.06em;
   color:var(--faint);text-decoration:none;margin-top:2px}
-.g2m .mb{flex:none;width:38px;min-height:var(--tap);border:0;background:none;cursor:pointer;
-  color:var(--dim);font-size:15px}
+/* 38px was under the app's own 48px floor, on a control that used to delete a date with
+   no confirmation. Both halves of that are fixed: it clears the floor, and it opens an
+   editor rather than destroying anything. */
+.g2m .mb{flex:none;width:var(--tap);min-width:var(--tap);min-height:var(--tap);border:0;
+  background:none;cursor:pointer;color:var(--dim);font-size:15px}
+.g2m .mb.wide{width:auto;min-width:var(--tap);padding:0 12px;border:1px solid var(--line2);
+  border-radius:9px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.11em}
 .g2m .mb[disabled]{opacity:.25}
 .g2h{display:flex;align-items:center;gap:10px;min-height:30px;font-size:12.5px;color:var(--dim)}
 .g2h span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
@@ -4153,6 +4158,7 @@ function g2Migrate(){
 }
 function g2Mig(id,act){
   const g=GM.goalOf(G,id);if(!g)return;
+  let carriedTo='';
   if(act==='change'){closeSheet();setTimeout(()=>g2Open(id),240);return}
   if(act==='park'){GM.setState(G,id,'parked',dayNo(),'stopped moving')}
   else if(act==='drop'){GM.setState(G,id,'dropped',dayNo(),'stopped moving')}
@@ -4162,13 +4168,26 @@ function g2Mig(id,act){
     const hs=GM.liveHorizons(G),i=g.horizonId?hs.findIndex(h=>h.id===g.horizonId):-1;
     const next=hs.slice(i+1).find(h=>h.date>today());
     if(next)GM.editGoal(G,id,{horizonId:next.id},dayNo());
-    else g.history.push({t:'state',from:'carried',to:'no later date',day:dayNo()});
+    else{
+      /* CARRY WITH NOWHERE TO CARRY TO. This used to write a history line, say "Carried",
+         move nothing, and re-open the same sheet — forever, on a loop, guaranteed the day
+         his last date passes. A carry needs a destination, so if none exists the app makes
+         one rather than lying: the goal moves to a fresh date a month out, named for the
+         month it lands in. He can rename or move it like any other date. */
+      const t=new Date(today()+'T00:00:00');t.setMonth(t.getMonth()+1);
+      const nd=iso(t);
+      const made=GM.addHorizon(G,{label:t.toLocaleDateString('en-US',{month:'long'}),date:nd});
+      GM.editGoal(G,id,{horizonId:made.id},dayNo());
+      g.history.push({t:'date',from:'no later date',to:nd,day:dayNo()});
+      carriedTo=made.label;
+    }
     g.confidence=[];
   }
   if(g.wig&&g.state!=='active'){g.wig=0;const n=GM.liveGoals(G);if(n.length===1)n[0].wig=1}
   gsave();closeSheet();render();
   const left=g2NeedsDecision().length;
-  toast(act==='carry'?'Carried':act==='park'?'Parked, not lost':'Dropped',act==='drop'?'bad':'good');
+  toast(act==='carry'?(carriedTo?`Carried to ${carriedTo}`:'Carried')
+    :act==='park'?'Parked, not lost':'Dropped',act==='drop'?'bad':'good');
   if(left)setTimeout(()=>g2Migrate(),420);
 }
 
@@ -4478,8 +4497,8 @@ function g2Manage(){
     <h2 class="sec" style="margin-top:22px"><span>Dates</span><u>deleting one never deletes a goal</u></h2>
     ${H.length?H.map(h=>`<div class="g2m">
       <span class="d" style="background:var(--violet)"></span>
-      <span class="n">${esc(h.label)}<u>${h.date} · ${daysTo(h.date)} days · ${GM.goalsAt(G,h.id).length} on it</u></span>
-      <button class="mb" onclick="g2DropDate('${h.id}')">✕</button></div>`).join('')
+      <span class="n" style="cursor:pointer" onclick="g2EditDate('${h.id}')">${esc(h.label)}<u>${h.date} · ${daysTo(h.date)} days · ${GM.goalsAt(G,h.id).length} on it · TAP TO EDIT</u></span>
+      <button class="mb wide" onclick="g2EditDate('${h.id}')">EDIT</button></div>`).join('')
       :'<div class="card" style="color:var(--dim);font-size:13.5px">No dates yet.</div>'}
     <button class="btn gh sm" style="margin-top:10px" onclick="g2NewDate()">+ New date</button>`);
 }
@@ -4489,8 +4508,49 @@ function g2DropArea(id){
   if(n){toast(`${n} goal${n>1?'s':''} still in it — move them first`,'bad');return}
   GM.archiveArea(G,id);gsave();g2Manage();render();toast('Area removed','bad');
 }
+/* ═══════════ A DATE IS EDITABLE ═══════════
+   It was not. The only control on a date row was an unconfirmed 38px ✕ — so the sole way
+   to fix a typo, or move a deadline by a day, was to destroy the date and rebuild it, and
+   destroying it was one mis-tap with no undo. Now the row opens an editor, and deleting
+   lives inside it behind a confirmation that says exactly what will happen. */
+function g2EditDate(id){
+  const h=GM.horizonById(G,id);if(!h)return;
+  const on=GM.goalsAt(G,id).length;
+  sheet(`<div class="sh-k">A DATE, NOTHING MORE</div><div class="sh-t">${esc(h.label)}</div>
+    <div class="sh-sub">${on} GOAL${on===1?'':'S'} ON IT · CHANGING THE DAY MOVES NONE OF THEM OFF</div>
+    <div class="fld"><label>Call it</label>
+      <input id="g2HN" maxlength="24" value="${esc(h.label)}"></div>
+    <div class="fld"><label>The date</label>
+      <input id="g2HD" type="date" value="${esc(h.date)}"></div>
+    <button class="btn" onclick="g2SaveEditDate('${id}')">Save it</button>
+    <button class="btn gh" style="margin-top:8px" onclick="g2AskDropDate('${id}')">Delete this date</button>`);
+}
+function g2SaveEditDate(id){
+  const h=GM.horizonById(G,id);if(!h)return;
+  const d=$('g2HD').value;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d)){toast('Pick a date','bad');return}
+  const lbl=$('g2HN').value.trim()||h.label;
+  const was=h.date;
+  h.label=lbl;h.date=d;
+  /* a date moving is an ease, and every ease leaves a trail — same law as a target change */
+  if(was!==d)GM.goalsAt(G,id).forEach(g=>g.history.push(
+    {t:'date',from:was,to:d,day:dayNo()}));
+  gsave();closeSheet();render();setTimeout(g2Manage,220);
+  toast(was!==d?`Moved to ${d}`:'Renamed','good');
+}
+/* deleting asks first, and the question names the consequence */
+function g2AskDropDate(id){
+  const h=GM.horizonById(G,id);if(!h)return;
+  const on=GM.goalsAt(G,id).length;
+  sheet(`<div class="sh-k">THIS CANNOT BE UNDONE</div>
+    <div class="sh-t">Delete "${esc(h.label)}"?</div>
+    <div class="sh-sub">${on?`THE ${on} GOAL${on===1?'':'S'} ON IT STAY — THEY JUST STOP HAVING A DATE`
+      :'NOTHING IS ON THIS DATE'}</div>
+    <button class="btn" onclick="closeSheet();setTimeout(g2Manage,200)">Keep it</button>
+    <button class="btn gh" style="margin-top:8px" onclick="g2DropDate('${id}')">Delete the date</button>`);
+}
 function g2DropDate(id){
-  const freed=GM.removeHorizon(G,id);gsave();g2Manage();render();
+  const freed=GM.removeHorizon(G,id);gsave();closeSheet();render();setTimeout(g2Manage,220);
   toast(freed?`Date removed — ${freed} goal${freed>1?'s':''} kept`:'Date removed','bad');
 }
 
