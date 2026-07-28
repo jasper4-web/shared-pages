@@ -1,7 +1,15 @@
 # RESUME HERE — BURN THE BOATS
 
-**Updated 2026-07-28, after stage 4 shipped.** Read this top to bottom before touching anything.
-It is the single entry point. `HANDOFF-GOALS.md` is the deeper history.
+**Updated 2026-07-28, after stage 4 shipped AND after the vision Q&A.** Read this top to
+bottom before touching anything. It is the single entry point. `HANDOFF-GOALS.md` is the
+deeper history.
+
+> ⭐ **READ `NORTH-STAR.md` FIRST — it outranks this file and every other document.**
+> It is the owner's full vision in his own words (Q&A 2026-07-28). Then read
+> `MENTOR-VERDICT.md` — the architecture verdict (the "funerals problem") and the phased
+> plan, as adjusted by the north star's §4. The next work is **Phase 0: the funerals**,
+> which now also deletes the day rail and the weekly review, and puts the Set-next-week
+> door on the Sabbath screen. **He has not yet said "go" — do not start without him.**
 
 ---
 
