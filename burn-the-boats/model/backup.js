@@ -37,7 +37,7 @@ const T=[];const ok=(n,c,d)=>T.push({n,c:!!c,d:d===undefined?'':String(d)});
     const before={goals:G.goals.length,xp:S.xp};
     const j=pl,two=j&&j.fmt>=2&&j.s;
     const sPart=two?j.s:j,gPart=two?j.g:null;
-    S=merge(JSON.parse(JSON.stringify(DEFAULT)),sPart);save();
+    S=merge(JSON.parse(JSON.stringify(DEFAULT)),sPart);seedOwned();save();
     if(gPart){G=Object.assign(GM.empty(),gPart);gsave()}
     render();
     return{before,goals:G.goals.length,xp:S.xp,commits:G.commits.length,
@@ -53,7 +53,7 @@ const T=[];const ok=(n,c,d)=>T.push({n,c:!!c,d:d===undefined?'':String(d)});
     const j={v:5,xp:999,days:{},week:{},rewards:[],december:{}};   // fmt-1 file
     const two=j&&j.fmt>=2&&j.s;
     const sPart=two?j.s:j,gPart=two?j.g:null;
-    S=merge(JSON.parse(JSON.stringify(DEFAULT)),sPart);save();
+    S=merge(JSON.parse(JSON.stringify(DEFAULT)),sPart);seedOwned();save();
     if(gPart){G=Object.assign(GM.empty(),gPart);gsave()}
     render();
     return{xp:S.xp,goals:G.goals.length};});
