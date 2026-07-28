@@ -75,9 +75,15 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
   ok('today is marked',await p.evaluate(()=>!!document.querySelector('.g2day.now')));
   await sweep(p,'the week (empty)');
   // commit some blocks
+  /* 2026-07-28 · A DAY ALREADY LIVED NO LONGER ACCEPTS A NEW COMMITMENT — one used to be
+     born done:1 and score itself, which let the week's % be inflated at will. Mon and Tue
+     are behind this clock, so they are seeded as HISTORY at the model level; setCommit()
+     is the live door and is exercised (and asserted) below on days that are still ahead. */
   await p.evaluate(()=>{const wk=weekKeyNow(),gs=GM.liveGoals(G);
-    setCommit(wk,0,'b1',gs[0].id);setCommit(wk,0,'b2',gs[0].id);
-    setCommit(wk,1,'b1',gs[1].id);setCommit(wk,2,'b1',gs[0].id);});
+    GM.commit(G,{goalId:gs[0].id,weekKey:wk,day:0,block:'b1'});
+    GM.commit(G,{goalId:gs[0].id,weekKey:wk,day:0,block:'b2'});
+    GM.commit(G,{goalId:gs[1].id,weekKey:wk,day:1,block:'b1'});
+    setCommit(wk,2,'b1',gs[0].id);gsave();});
   await wait(600);
   const capw=await p.evaluate(()=>{const c=GM.capacity(G,weekKeyNow(),WEEK_BLOCKS);
     return{committed:c.committed,free:c.free,orphan:c.orphanAreas.length,
@@ -86,8 +92,18 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
   ok('free blocks correct',capw.free===16);
   ok('orphan areas flagged',capw.orphan===1,'orphan='+capw.orphan);
   ok('one slot cannot hold two goals',await p.evaluate(()=>{
-    const wk=weekKeyNow();const gs=GM.liveGoals(G);setCommit(wk,0,'b1',gs[2].id);
-    return GM.commitsOfWeek(G,wk).filter(c=>c.day===0&&c.block==='b1').length===1}));
+    const wk=weekKeyNow();const gs=GM.liveGoals(G);setCommit(wk,3,'b1',gs[2].id);
+    setCommit(wk,3,'b1',gs[0].id);
+    return GM.commitsOfWeek(G,wk).filter(c=>c.day===3&&c.block==='b1').length===1}));
+  /* the new rule, asserted where it lives */
+  ok('a day already lived refuses a NEW commitment',await p.evaluate(()=>{
+    const wk=weekKeyNow(),gs=GM.liveGoals(G);
+    const n=GM.commitsOfWeek(G,wk).filter(c=>c.day===0&&c.block==='b4').length;
+    setCommit(wk,0,'b4',gs[0].id);
+    return GM.commitsOfWeek(G,wk).filter(c=>c.day===0&&c.block==='b4').length===n}));
+  ok('...while a day still ahead accepts one',await p.evaluate(()=>{
+    const wk=weekKeyNow(),gs=GM.liveGoals(G);setCommit(wk,4,'b4',gs[0].id);
+    return !!commitFor(wk,4,'b4')}));
   ok('clearing a slot removes the commit',await p.evaluate(()=>{
     const wk=weekKeyNow(),n=GM.commitsOfWeek(G,wk).length;setCommit(wk,2,'b1',null);
     return GM.commitsOfWeek(G,wk).length===n-1}));

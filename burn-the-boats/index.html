@@ -776,6 +776,9 @@ body.glanceOpen .glance{display:block}
   text-align:left;cursor:pointer;min-height:var(--tap);padding:9px 11px;margin-bottom:5px;
   border:1px solid var(--line);border-radius:11px;background:var(--panel)}
 .g2slot.on{border-color:var(--line2)}
+/* a day already lived: readable, quiet, and not an invitation. Never red, never a cross —
+   an empty past slot is a thing that didn't happen, not a thing he failed. */
+.g2slot.settled{opacity:.45;border-style:dashed;cursor:default}
 .g2slot.done{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.06)}
 .g2slot .sk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
 .g2slot .sk u{display:block;text-decoration:none;margin-top:2px;font-size:11px}
@@ -1406,6 +1409,44 @@ function autoMark(){
   const d=day(),m=nowMin();let changed=0;
   shape().forEach(b=>{ if(b.auto&&!d.done[b.id]&&m>=mins(b.e)){d.done[b.id]=true;stampDom(d,today(),b.id);changed=1;} });
   if(changed)save();
+  sealPast();
+}
+/* ═══════════ SEALING A DAY THAT IS OVER ═══════════
+   A block he COMPLETED froze what it credited, the moment it was completed. A block he
+   MISSED never froze anything — so blockDomains() re-derived it live from whatever area
+   the goal sits in today, and moving a goal silently re-scored every past miss along with
+   it. Measured: 25 lived days, one edit, WORK 55 -> 56. The score went UP because he
+   tidied his goals.
+   The rule the app already believed it had: a day, once past, does not change. So seal
+   every scored block of every finished day — done or not — with the domain that was true
+   while it was live. Only days that HAVE a record are sealed; absence stays a third state
+   and no record is invented. Runs once per day, tracked by _sealed. */
+function sealPast(){
+  const tk=today(),nm=nowMin();
+  let changed=0;
+  /* Whole days behind us. The seal is marked ON THE DAY RECORD, not on a global "already
+     did today" flag — that flag gets set by the first render of the day, so any record that
+     ARRIVES afterwards (an import, a restore, the midnight rollover) would slip past the
+     sweep forever and keep re-deriving. Per-record is the only version that can't be
+     out-raced. */
+  Object.keys(S.days).forEach(k=>{
+    if(k>=tk)return;
+    const rec=S.days[k]; if(!rec||rec.off||rec.sealed)return;  /* off-script owes nothing */
+    shapeFor(k).filter(SCORED).forEach(b=>{
+      if(b.opt)return;
+      rec.dom=rec.dom||{};
+      if(!rec.dom[b.id])rec.dom[b.id]=blockDomains(k,b);
+    });
+    rec.sealed=1;changed=1;
+  });
+  /* TODAY IS DELIBERATELY NOT SEALED, not even the blocks whose clock has already run out.
+     I tried it the other way first and it broke "the domain follows the work": at 14:20 you
+     could no longer point this morning's block at the goal it actually served, because the
+     seal had already frozen it. Within the day a block can still be completed late, marked
+     as waiting, or attributed for the first time — that is the whole point of the feature.
+     The day boundary is the honest line, and it is the one that closes the measured bug. */
+  if(changed)save();
+  return changed;
 }
 function recount(){
   const w=week(),mon=mondayOf(new Date()),tk=today(),nm=nowMin();
@@ -2669,11 +2710,26 @@ function openComposer(mode){
     <div class="sh-sub">${carry?'PRE-FILLED FROM YOUR LAST SET — EDIT WHAT CHANGED':'WRITE THEM ONCE — THEY FILL THE DAY'}</div>
     ${slots.map(([k,lab],i)=>`<div class="fld"><label>${lab}</label>
       <input id="cp_${k}" value="${esc((carry&&carry[i])||(d.prio&&d.prio[i])||w.tactics[k]||'')}" placeholder="The one thing this block produces">
-      <div class="gpick" id="gp_${k}">${goalPicker(k,(d.goals&&d.goals[k])||w.goals[k]||'')}</div></div>`).join('')}
+      <div class="gpick" id="gp_${k}">${goalPicker(k,composerSel(key,k))}</div></div>`).join('')}
     <div class="chain"><div><div class="cl">Why here</div>
       <div class="cv">These become the objective line inside each block. Until they're written those
       blocks show <b>no objective set</b> — a visible hole at 09:00.</div></div></div>
     <button class="btn" onclick="saveComposer()">${mode==='monday'?'Set Monday':'Set the day'}</button>`);
+}
+/* THE COMMITMENT IS THE TRUTH. This used to read `d.goals`/`w.goals` — the maps the
+   commitment model replaced. The composer's WRITE side was migrated to real commits and
+   its READ side was not, so every picker opened on NONE and saving wrote null over the
+   week he had already planned. Four commits in, zero out, +25 XP for the trouble.
+   Read the commit first; fall back to the legacy maps only for days that predate them. */
+function composerSel(key,k){
+  const dt=new Date(key+'T00:00:00'),off=(dt.getDay()+6)%7;
+  if(off<=4){
+    const c=commitFor(mondayOf(dt),off,k);
+    if(c&&c.goalId&&GM.goalOf(G,c.goalId))return c.goalId;
+    if(c)return '';                       /* an explicit "leave it open" is an answer, not a gap */
+  }
+  const d=day(key),w=week();
+  return (d.goals&&d.goals[k])||w.goals[k]||'';
 }
 /* one chip per goal, plus a "none" — this is where a block gets its purpose */
 function goalPicker(k,sel){
@@ -3477,10 +3533,23 @@ function syncCommits(wk){
 function commitFor(wk,off,block){
   return GM.commitsOfWeek(G,wk).find(c=>c.day===off&&c.block===block)||null;
 }
+/* is this slot's day already behind us? */
+function gone(wk,off){
+  const d=dateOfSlot(wk,off);
+  return d<today();
+}
 function setCommitQuiet(wk,off,block,goalId){
   if(!goalId){G.commits=G.commits.filter(c=>!(c.weekKey===wk&&c.day===off&&c.block===block));return}
   if(!GM.goalOf(G,goalId))return;          /* a stale id from an old save must not throw */
+  /* THE MODEL ENFORCES IT TOO, not just the screen. A commitment made after the day it
+     names would inherit that day's completion and score itself — so it is refused at the
+     only door that creates one. */
+  if(gone(wk,off))return;
   GM.commit(G,{goalId,weekKey:wk,day:off,block});
+}
+/* tapping a settled slot explains itself rather than doing nothing */
+function g2Past(off){
+  toast(`${DAY_NAMES[off]} is done — the past doesn't change`,'');
 }
 function setCommit(wk,off,block,goalId){
   setCommitQuiet(wk,off,block,goalId);
@@ -3874,9 +3943,16 @@ function g2Week(){
       const blk=WEEKDAY.find(b=>b.id===bid),c=commitFor(wk,d,bid);
       const g=c?GM.goalOf(G,c.goalId):null,a=g?GM.areaById(G,g.areaId):null;
       const done=c&&c.done;
-      out+=`<button class="g2slot${g?' on':''}${done?' done':''}" onclick="g2Slot('${wk}',${d},'${bid}')">
+      /* A DAY ALREADY LIVED IS SETTLED. This slot used to keep offering "Open — tap to
+         commit it" on Monday when it was Friday, and taking that offer created a commitment
+         that was born complete — retroactive credit, and the week's % freely inflatable.
+         The past is readable, never editable. Forward-only, on the surface as well as in
+         the model. */
+      const past=gone(wk,d);
+      out+=`<button class="g2slot${g?' on':''}${done?' done':''}${past&&!g?' settled':''}"
+        onclick="${past?`g2Past(${d})`:`g2Slot('${wk}',${d},'${bid}')`}">
         <span class="sk">${bid.toUpperCase()}<u>${blk?blk.s:''}</u></span>
-        <span class="sg">${g?esc(g.title):'<i>Open — tap to commit it</i>'}</span>
+        <span class="sg">${g?esc(g.title):past?'<i>Nothing was on this one</i>':'<i>Open — tap to commit it</i>'}</span>
         ${g?`<span class="sa" style="color:${domColour((a||{}).domain)}">${esc((a||{}).name||'')}${
           c.carried?' · CARRIED '+c.carried+'×':''}</span>`:''}
         ${done?'<span class="sd">✓</span>':''}</button>`;
