@@ -783,6 +783,7 @@ body.glanceOpen .glance{display:block}
 .g2first{border:1px solid rgba(74,222,128,.3);border-radius:12px;background:rgba(74,222,128,.05);
   padding:13px 14px;margin-bottom:10px}
 .g2first .t{font-size:14px;color:var(--ink);line-height:1.35}
+.g2fg{font-size:13px;color:var(--dim);margin-top:9px;line-height:1.3}
 .g2first .s{font-size:12.5px;color:var(--faint);line-height:1.45;margin-top:5px}
 .g2first .g2fb{width:100%;margin-top:11px;min-height:var(--tap)}
 .g2slot.done{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.06)}
@@ -3970,7 +3971,7 @@ function g2FirstMove(){
   const lw=S.week&&S.week[lastWk];
   const pct=lw&&lw.due?Math.round(lw.done/lw.due*100):null;
   const carried=GM.commitsOfWeek(G,wk).filter(c=>c.carried).length;
-  const head = pct===null ? 'A fresh week. Twenty blocks, all yours.'
+  const head = pct===null ? 'A fresh week.'
     : pct>=85 ? `Last week closed at ${pct}%. ${carried?carried+' carried in.':'Nothing carried in.'}`
     : `Last week is closed. ${carried?carried+' carried in.':'Nothing carried in.'}`;
   /* the anchor of his highest-ranked area, and the first slot still ahead */
@@ -3981,11 +3982,15 @@ function g2FirstMove(){
     if(gone(wk,d))continue;
     for(const bid of DEEP_BLOCKS){ if(!commitFor(wk,d,bid)){slot={d,bid};break} }
   }
+  /* The goal is NAMED ON ITS OWN LINE, never inside the button. Putting it in the button
+     meant truncating a real title to 22 characters mid-word — "Put SANO — the December on
+     on MON B1" — which is the kind of thing every test passes and every eye catches. */
   return `<div class="g2first">
     <div class="t">${esc(head)}</div>
     <div class="s">Twenty blocks, all yours. Put the first one down.</div>
-    ${g&&slot?`<button class="btn sm g2fb" onclick="setCommit('${wk}',${slot.d},'${slot.bid}','${g.id}')">
-      Put ${esc(g.title.slice(0,22))} on ${DAY_NAMES[slot.d]} ${slot.bid.toUpperCase()}</button>`:''}
+    ${g&&slot?`<div class="g2fg">${esc(g.title)}</div>
+      <button class="btn sm g2fb" onclick="setCommit('${wk}',${slot.d},'${slot.bid}','${g.id}')">
+        Put it on ${DAY_NAMES[slot.d]} ${slot.bid.toUpperCase()}</button>`:''}
   </div>`;
 }
 /* ---- THE WEEK: 20 slots, each a goal and a day ------------------------- */
