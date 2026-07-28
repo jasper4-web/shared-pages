@@ -155,15 +155,9 @@ button{font-family:inherit}
 .proj b{font-size:12px;letter-spacing:-.01em}
 .proj .good{color:var(--phos)} .proj .warn{color:var(--gold)} .proj .bad{color:var(--blood)}
 
-/* ---------- rail ---------- */
-.rail-wrap{padding:15px 2px 2px}
-.rail{height:9px;border-radius:3px;background:#141120;position:relative;overflow:hidden;display:flex;gap:1px}
-.rail i{height:100%;display:block}
-.rail .now{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--gold);
-  box-shadow:0 0 8px var(--gold);border-radius:2px;z-index:2}
-.rail-l{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:11px;
-  letter-spacing:.1em;color:var(--faint);margin-top:6px}
-/* deep-work-left now stands on its own below the dials, not inside the rail block */
+/* FUNERAL 2026-07-28: the day rail (the time bar between the OVR glance and the vice
+   dials) is buried — his call: "that just seems random and like an overbuild."
+   Deep-work-left survives it, standing on its own below the dials. */
 .timeleft{margin-top:20px;display:flex;align-items:baseline;gap:8px}
 .timeleft b{font-family:'Clash Display',sans-serif;font-size:27px;letter-spacing:-.035em;line-height:1}
 .timeleft span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint)}
@@ -1078,8 +1072,8 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
     </div>
   </div>
 
-  <!-- ORDER (owner's call, 2026-07-25): the radar + OVR card sits directly under the
-       furnace. Then the day rail, the pipeline and the vice dials. Deep-work-left and
+  <!-- ORDER (owner's call, 2026-07-25; day rail buried 2026-07-28): the radar + OVR card
+       sits directly under the furnace. Then the vice dials. Deep-work-left and
        the live-block card move DOWN, so the top of the screen is never "Done" and
        "Day complete" — the two lines that read as dead weight on a finished day. -->
   <button class="ovrpeek" id="ovrPeek" onclick="toggleGlance()"></button>
@@ -1089,12 +1083,6 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
     <div class="ovrbox" id="ovrBox"></div>
     <div class="proj" id="proj"></div>
   </div>
-
-  <div class="rail-wrap">
-    <div class="rail" id="rail"><div class="now" id="railNow"></div></div>
-    <div class="rail-l"><span id="railS">—</span><span id="railE">—</span></div>
-  </div>
-
 
   <div class="gauges">
     <div class="gg" id="ggA"></div>
@@ -1186,6 +1174,9 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
   <p style="color:#414963">Six days you burn the boats. The seventh you don't.</p>
   <div class="rd" id="sabRead"></div>
   <button id="sabLook">LOOK BACK AT THE WEEK</button>
+  <!-- Sunday is when he plans next week (his call, 2026-07-28) — so the one door to the
+       planner lives here. Rest, then set the week. It pays nothing, like all planning. -->
+  <button id="sabPlan">SET NEXT WEEK ▸</button>
 </div>
 
 <div class="vicev" id="vicev"><div id="viceBody"></div></div>
@@ -1267,14 +1258,9 @@ const WINS=[
 
 const DEFAULT={
   v:4, xp:0,
-  december:{
-    WORK:   {lag:'3 SANO clients — at least one at full freight', lead:'Outreach conversations', at:1, target:3, unit:'clients'},
-    CAPITAL:{lag:'3 live funded accounts',  lead:'Rules followed · no double-back', at:0, target:3, unit:'accounts'},
-    BODY:   {lag:'185 lbs',                 lead:'Gym 2× · walks 3× weekly',        at:177, target:185, unit:'lbs'},
-    FAITH:  {lag:'Reading with Kells, consistently', lead:'Bible 3× a week + text Kells', at:30, target:100, unit:'%'},
-    MIND:   {lag:'Sharper — Spanish + guitar once SANO allows', lead:'Reading nights', at:50, target:100, unit:'%'},
-    PEOPLE: {lag:'Nobody got the leftovers', lead:'Real presence, phone down',       at:60, target:100, unit:'%'},
-  },
+  /* FUNERAL 2026-07-28: the `december` seed is buried — that model was replaced by the
+     Goals tab (btb4) in July. An OLD save still carrying S.december keeps it in storage,
+     and importFromOld() still reads it from there; a fresh install starts without it. */
   vices:{
     dish:{label:'THE DISHWASHER', mode:'weekly', allow:1, week:0, weekKey:null,
           streak:0, streakBest:0, lastSlip:null, slips:0, hist:{}, ch:null, chDone:{}, chLapsed:null},
@@ -1437,8 +1423,9 @@ function save(){try{localStorage.setItem('btb3',JSON.stringify(S))}catch(e){}}
 function day(k){k=k||today();if(!S.days[k])S.days[k]={done:{},miss:{},wait:{},produced:{},focus:{},prio:[],wins:{},off:0,credited:{}};
   if(!S.days[k].credited)S.days[k].credited={};return S.days[k]}
 function week(k){k=k||mondayOf(new Date());
-  if(!S.week[k])S.week[k]={theme:{b1:'SANO',b2:'SANO',b3:'LA Edible',b4:'Admin + follow-ups'},tactics:{},due:0,done:0};
-  S.week[k].goals=S.week[k].goals||{};   /* block id -> goal id. The missing link. */
+  /* FUNERAL 2026-07-28: the `theme` seed (his business names, hardcoded) and the
+     `goals` map are buried. A block's label and its goal both come from G.commits now. */
+  if(!S.week[k])S.week[k]={tactics:{},due:0,done:0};
   return S.week[k]}
 /* Which goal a block serves. Day-level override first, then the week's. */
 function toast(m,kind){const t=$('toast');t.textContent=m;t.className='toast show '+(kind||'');
@@ -1462,12 +1449,23 @@ function award(key,n,label,goalId){
 /* ---------- the cascade ---------- */
 function tacticFor(b){
   if(b.kind!=='deep')return null;
-  const d=day(),w=week(),idx={b1:0,b2:1,b3:2,b4:3}[b.id];
-  if(d.prio&&d.prio[idx])return d.prio[idx];
+  const d=day(),w=week(),idx=DEEP_BLOCKS.indexOf(b.id);
+  if(idx>=0&&d.prio&&d.prio[idx])return d.prio[idx];
   if(w.tactics&&w.tactics[b.id])return w.tactics[b.id];
   return null;
 }
-const bizFor=b=>(b.kind==='deep'&&week().theme[b.id])||null;
+/* The block's suffix used to be S.week[].theme — a hardcoded business label that went on
+   saying "SANO" after the block was committed to something else entirely (one card, two
+   truths). Buried. The suffix is now the committed goal's AREA: one truth, and a block
+   with nothing on it claims nothing. */
+function bizFor(b){
+  if(!b||b.kind!=='deep')return null;
+  const wk=weekKeyNow(),off=(new Date().getDay()+6)%7;
+  const c=off<=4?commitFor(wk,off,b.id):null;
+  const g=c?GM.goalOf(G,c.goalId):null;
+  const a=g?GM.areaById(G,g.areaId):null;
+  return a?a.name:null;
+}
 
 /* Only the timer completes a deep block. Rituals with auto:1 complete on the clock. */
 const SCORED=b=>b.kind==='deep'||b.kind==='market'||b.kind==='body'||(b.kind==='ritual'&&!b.auto);
@@ -2108,7 +2106,7 @@ function render(){
   if(VIEW==='today'){
     stampToday();
     document.body.classList.toggle('offday',!!day().off);
-    renderStatus(); renderGauges(); renderGlance(); renderRail();
+    renderStatus(); renderGauges(); renderGlance(); renderTimeLeft();
     renderPenance(); renderNext(); renderBoostCard();
     renderWins(); renderExtrasLine(); renderSched(); renderClose(); renderRunStrip();
     $('foot').innerHTML=`BURN THE BOATS · DAY ${dayNo()} / ${TOTAL_DAYS}<br>WHAT IS THE MILLIONAIRE VERSION OF YOURSELF DOING RIGHT NOW?`;
@@ -2213,20 +2211,11 @@ function _renderGlanceFull(){
            :pr.date<=new Date(iso(RUN_LAST)+'T23:59:59').getTime()+21*864e5?'warn':'bad';
   el.innerHTML=`<span>AT THIS PACE · 99 OVR ON</span><b class="${cls}">${md}${y>2026?" '"+String(y).slice(2):''}</b>`;
 }
-function renderRail(){
+/* was renderRail — the rail itself is buried (funeral 2026-07-28); the deep-work-left
+   line it also computed survives, because that one answers a question he asks. */
+function renderTimeLeft(){
   const sh=shape();if(!sh.length)return;
-  const rail=$('rail'),s0=mins(sh[0].s),e0=mins(sh[sh.length-1].e),span=e0-s0,d=day();
-  [...rail.querySelectorAll('i')].forEach(x=>x.remove());
-  sh.forEach(b=>{
-    const seg=document.createElement('i');
-    seg.style.width=((mins(b.e)-mins(b.s))/span*100)+'%';
-    const dm=DOMAINS.find(x=>x.k===b.dom[0]);
-    const done=d.done[b.id],past=nowMin()>=mins(b.e);
-    seg.style.background=done?dm.c:past?'#2a2438':b.kind==='deep'?'rgba(224,178,94,.28)':'#1f1a2b';
-    rail.insertBefore(seg,$('railNow'));
-  });
-  $('railNow').style.left=Math.max(0,Math.min(100,(nowMin()-s0)/span*100))+'%';
-  $('railS').textContent=sh[0].s;$('railE').textContent=sh[sh.length-1].e;
+  const d=day();
   const left=sh.filter(b=>b.kind==='deep'&&!d.done[b.id]&&mins(b.e)>nowMin())
     .reduce((a,b)=>a+(mins(b.e)-Math.max(mins(b.s),nowMin())),0);
   $('tlBig').textContent=left>0?`${Math.floor(left/60)}h ${left%60}m`:'Done';
@@ -2785,20 +2774,17 @@ function openComposer(mode){
       blocks show <b>no objective set</b> — a visible hole at 09:00.</div></div></div>
     <button class="btn" onclick="saveComposer()">${mode==='monday'?'Set Monday':'Set the day'}</button>`);
 }
-/* THE COMMITMENT IS THE TRUTH. This used to read `d.goals`/`w.goals` — the maps the
-   commitment model replaced. The composer's WRITE side was migrated to real commits and
-   its READ side was not, so every picker opened on NONE and saving wrote null over the
-   week he had already planned. Four commits in, zero out, +25 XP for the trouble.
-   Read the commit first; fall back to the legacy maps only for days that predate them. */
+/* THE COMMITMENT IS THE ONLY TRUTH. The `d.goals`/`w.goals` maps this used to fall back
+   on are BURIED (funeral, 2026-07-28): the fallback manufactured commitments he never
+   made — Monday's plan silently pre-selected onto Tuesday. A day with no commitment now
+   opens on NONE, which is the honest answer. */
 function composerSel(key,k){
   const dt=new Date(key+'T00:00:00'),off=(dt.getDay()+6)%7;
   if(off<=4){
     const c=commitFor(mondayOf(dt),off,k);
     if(c&&c.goalId&&GM.goalOf(G,c.goalId))return c.goalId;
-    if(c)return '';                       /* an explicit "leave it open" is an answer, not a gap */
   }
-  const d=day(key),w=week();
-  return (d.goals&&d.goals[k])||w.goals[k]||'';
+  return '';
 }
 /* one chip per goal, plus a "none" — this is where a block gets its purpose */
 function goalPicker(k,sel){
@@ -2819,7 +2805,7 @@ function pickGoal(el){
 }
 function saveComposer(){
   const key=S._composeFor||today(),mode=S._composeMode||'';
-  const d=day(key),w=week();d.prio=d.prio||[];d.goals=d.goals||{};
+  const d=day(key),w=week();d.prio=d.prio||[];
   ['b1','b2','b3','b4'].forEach((k,i)=>{
     const v=$('cp_'+k).value.trim();
     d.prio[i]=v; if(v&&mode!=='monday')w.tactics[k]=v;
@@ -2833,9 +2819,9 @@ function saveComposer(){
     if(!host||host.dataset.touched!=='1')return;
     const sel=host.querySelector('.gpx.on');
     const gid=sel?sel.dataset.g:'';
-    d.goals[k]=gid; if(mode!=='monday')w.goals[k]=gid;
     /* Picking a goal for a block IS a commitment — write the real thing, so it shows on
-       THE WEEK, counts against capacity and closes with the week. */
+       THE WEEK, counts against capacity and closes with the week. The legacy
+       d.goals/w.goals maps are buried; nothing writes them, nothing reads them. */
     const off=(new Date(key+'T00:00:00').getDay()+6)%7;
     if(off<=4)setCommitQuiet(mondayOf(new Date(key+'T00:00:00')),off,k,gid||null);
   });
@@ -4277,10 +4263,13 @@ function g2ByDate(){
    Three things the rendition asked for, minus the one it should never have:
    it does NOT ask him to re-tick what got done. The app states it; he corrects
    it if it is wrong. */
+/* FUNERAL 2026-07-28: the confidence questions ("Will it land? ON TRACK / WOBBLING /
+   NOT HAPPENING") are buried — his call: "weekly review questions don't need to be
+   there." What SURVIVES is the correction list below: it is the only way to fix a
+   mis-recorded day after a week closes, and honesty outranks tidiness. */
 function g2Review(){
   const s=freshClose();if(!s)return;
   const cs=GM.commitsOfWeek(G,s.weekKey);
-  const near=g2ConfGoals();
   sheet(`<div class="sh-k">ALREADY CLOSED · NOTHING TO FILL IN</div>
     <div class="sh-t">Week of ${s.weekKey.slice(5)}</div>
     <div class="sh-sub">${s.done} OF ${s.committed} · ${s.pct===null?'—':s.pct+'%'}</div>
@@ -4294,28 +4283,14 @@ function g2Review(){
     ${s.repeatMisses.length?`<div class="g2warn" style="margin-top:12px">
       ${s.repeatMisses.length} goal${s.repeatMisses.length>1?'s'
       :''} missed twice. Not a failure — a signal. Shrink it, move it, or park it.</div>`:''}
-    ${near.length?`<h2 class="sec" style="margin-top:20px"><span>Will it land?</span><u>never scored</u></h2>
-      ${near.map(g=>`<div class="g2cf"><span>${esc(cut(g.title,38))}</span>
-        <span class="cb">${[[3,'ON TRACK'],[2,'WOBBLING'],[1,'NOT HAPPENING']].map(([v,l])=>{
-          const cur=g.confidence.length&&g.confidence[g.confidence.length-1];
-          const on=cur&&cur.week===weekNo()&&cur.v===v;
-          return `<button class="chip tap${on?' seg on':''}" onclick="g2Conf('${g.id}',${v})">${l}</button>`}).join('')}</span></div>`).join('')}`:''}
     <h2 class="sec" style="margin-top:20px"><span>This week</span><u>already drafted</u></h2>
     <div class="card" style="color:var(--dim);font-size:13.5px">
       ${GM.commitsOfWeek(G,weekKeyNow()).length} block${GM.commitsOfWeek(G,weekKeyNow()).length===1?'':'s'} carried in.
       Change any of them on THE WEEK.</div>
     <button class="btn" style="margin-top:14px" onclick="g2Seen('close');closeSheet()">Done</button>`);
 }
-/* only goals near a horizon get asked — nine taps a week is how an input dies */
-function g2ConfGoals(){
-  const t=today();
-  return GM.liveGoals(G).filter(g=>{
-    if(g.wig)return true;
-    const h=g.horizonId?GM.horizonById(G,g.horizonId):null;
-    return !!h&&daysTo(h.date)<=42;
-  }).slice(0,5);
-}
-function g2Conf(id,v){GM.setConf(G,id,v,weekNo());gsave();g2Review()}
+/* (g2ConfGoals / g2Conf buried with the confidence questions. GM.setConf stays in the
+   model — old saves carry confidence history and needsEarly still reads it.) */
 function g2Flip(cid){
   const c=G.commits.find(x=>x.id===cid);if(!c)return;
   c.done=c.done?0:1;
@@ -5244,15 +5219,14 @@ function renderRecord(){
         :'<div style="padding:14px 0;color:var(--faint);font-size:13px">Nothing logged yet. Finish a focus run and write what came out of it.</div>'}
     </div>
 
-    ${[5,6].includes(dow())?`
-    <h2 class="sec">Set next week <u>tweak, don't start over</u></h2>
-    <div class="card">
-      ${['b1','b2','b3','b4'].map(k=>`<div class="theme-row" style="display:grid;grid-template-columns:52px 1fr;gap:9px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)">
-        <label style="font-family:'Geist Mono';font-size:11px;color:var(--faint);letter-spacing:.1em">${k.toUpperCase()}</label>
-        <select id="nx_${k}">${['SANO','TRADING','LA Edible','Admin + follow-ups'].map(o=>
-          `<option ${nextWeek().theme[k]===o?'selected':''}>${o}</option>`).join('')}</select></div>`).join('')}
-      <div style="padding:11px 0 2px"><button class="btn" onclick="saveNextWeek()">Lock next week · +75 XP</button></div>
-    </div>`:''}
+    <!-- FUNERAL 2026-07-28: the second planner that lived here — theme dropdowns limited
+         to four hardcoded businesses, paying +75 XP for tapping them — is buried. It
+         violated his own locked rule (the planner pays ZERO), and THE WEEK replaced it.
+         One planner now, one door to it: -->
+    <h2 class="sec">Next week</h2>
+    <div class="card" style="padding:12px">
+      <button class="btn gh" onclick="go('push');g2View('week')">Plan the week · THE WEEK ▸</button>
+    </div>
 
     <h2 class="sec">Data</h2>
     <div class="card"><div class="stat" style="border-bottom:0;gap:8px">
@@ -5261,15 +5235,7 @@ function renderRecord(){
       <input type="file" id="restoreIn" accept=".json" style="display:none" onchange="restoreSave(this)">
     </div></div>`;
 }
-function nextWeek(){
-  const m=new Date(mondayOf(new Date()));m.setDate(m.getDate()+7);
-  return week(iso(m));
-}
-function saveNextWeek(){
-  const w=nextWeek();
-  ['b1','b2','b3','b4'].forEach(k=>{const el=$('nx_'+k);if(el)w.theme[k]=el.value});
-  save();award('setweek:'+mondayOf(new Date()),75,'next week is set');
-}
+/* (nextWeek / saveNextWeek buried with the second planner — planning pays nothing.) */
 function restoreSave(inp){
   const f=inp.files[0];if(!f)return;const r=new FileReader();
   r.onload=()=>{try{const j=JSON.parse(r.result);
@@ -5395,6 +5361,8 @@ var HDR = (function () {
 /* ---------- boot ---------- */
 $('sabLook').onclick=()=>{sabOff=true;$('sabbath').classList.remove('on');
   document.body.classList.remove('noTabs');render()};
+$('sabPlan').onclick=()=>{sabOff=true;$('sabbath').classList.remove('on');
+  document.body.classList.remove('noTabs');G.meta.view='week';gsave();go('push')};
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 document.addEventListener('click',askNotify,{once:true});
 recount();

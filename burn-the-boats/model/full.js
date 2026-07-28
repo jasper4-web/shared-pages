@@ -175,12 +175,12 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
   ok('...and survives the next sync',await p.evaluate(()=>{
     syncCommits('2026-09-14');const c=G.commits.find(x=>x.weekKey==='2026-09-14'&&x.day===0&&x.block==='b1');
     return G.commits.filter(x=>x.weekKey==='2026-09-14'&&x.done).length===2}));
-  // confidence in the review
-  ok('confidence is 3 states on near goals only',await p.evaluate(()=>{
-    const rows=document.querySelectorAll('.g2cf');
-    return rows.length>0&&rows.length<=5&&rows[0].querySelectorAll('.chip').length===3}));
-  await p.evaluate(()=>{const g=GM.liveGoals(G)[0];g2Conf(g.id,2)});await wait(500);
-  ok('confidence records',await p.evaluate(()=>GM.liveGoals(G)[0].confidence.length>0));
+  // the confidence QUESTIONS are buried (funeral 2026-07-28, his call) — the review
+  // must never ask them again. The model's confidence field survives for old saves.
+  ok('the review never asks the confidence questions',await p.evaluate(()=>
+    document.querySelectorAll('.g2cf').length===0&&!/Will it land/.test(document.getElementById('sheetA').innerText)));
+  ok('the model still carries confidence for old saves',await p.evaluate(()=>{
+    const g=GM.liveGoals(G)[0];GM.setConf(G,g.id,2,weekNo());return g.confidence.length>0}));
   await p.evaluate(()=>{g2Seen('close');closeSheet()});await wait(500);
   ok('marking it seen dismisses the banner',await p.evaluate(()=>!document.querySelector('.g2close')));
   await p.close();
@@ -253,8 +253,19 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
     const ok=!!document.querySelector('.g2empty')&&!!document.querySelector('.g2ready')&&
       document.querySelectorAll('.g2ready .rc').length===4;
     G=JSON.parse(save);gsave();render();return ok;}));
+  /* DEFAULT.december is buried (funeral 2026-07-28) — a fresh install imports no
+     placeholder goals. The import path serves OLD SAVES, so the test seeds S.december
+     the way his device actually carries it. */
   ok('the real import brings his December targets over',await p.evaluate(()=>{
     const save=JSON.stringify(G);
+    S.december={
+      WORK:{lag:'3 SANO clients — at least one at full freight',lead:'Outreach conversations',at:1,target:3,unit:'clients'},
+      CAPITAL:{lag:'3 live funded accounts',lead:'Rules',at:0,target:3,unit:'accounts'},
+      BODY:{lag:'185 lbs',lead:'Gym 2×',at:177,target:185,unit:'lbs'},
+      FAITH:{lag:'Reading with Kells, consistently',lead:'Bible 3×',at:30,target:100,unit:'%'},
+      MIND:{lag:'Sharper — Spanish + guitar once SANO allows',lead:'Reading',at:50,target:100,unit:'%'},
+      PEOPLE:{lag:'Nobody got the leftovers',lead:'Presence',at:60,target:100,unit:'%'},
+    };  /* in-memory only — importFromOld reads S directly */
     G=GM.empty();importFromOld();
     const t=G.goals.map(g=>g.title);
     const ok=G.goals.length>=7&&t.some(x=>/SANO clients/i.test(x))&&
