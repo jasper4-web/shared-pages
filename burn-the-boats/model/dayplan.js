@@ -103,9 +103,10 @@ async function boot(clock,pre){
   const src=await p.evaluate(()=>document.documentElement.outerHTML);
   const uses=(src.match(/\bWEEKDAY\b/g)||[]).length+(src.match(/\bSATURDAY\b/g)||[]).length;
   /* the complete legitimate census: 2 const defs + 4 comment mentions + 2 in the seed
-     line + 1 sheet-title string + WEEK_BLOCKS + DEEP_BLOCKS = 11. One more anywhere
-     means someone wrote a new direct reader — that is the thing this guard exists for. */
-  ok('no new direct reader of the day constants',uses<=11,'mentions='+uses);
+     line + WEEK_BLOCKS + DEEP_BLOCKS + 3 user-facing STRINGS that say the word
+     ("SATURDAY · SETTING MONDAY UP", the planner's kicker and its normal-day label)
+     = 13. One more anywhere means someone wrote a new direct reader. */
+  ok('no new direct reader of the day constants',uses<=13,'mentions='+uses);
   ok('shape() is data-driven',/S\.dayPlan&&S\.dayPlan\[k\]/.test(src)&&/S\.templates\.weekday/.test(src));
   await b.close();
 
