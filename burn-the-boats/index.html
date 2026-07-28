@@ -643,9 +643,16 @@ h2.sec u{text-decoration:none;color:var(--dim)}
 .rq-r.met .rq-n{color:var(--phos)}
 .rq-r .rq-c{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);flex:none}
 .rq-r.met .rq-c{color:var(--phos)}
-.rq-set{align-self:center;min-height:var(--tap);padding:0 11px;cursor:pointer;
-  border:1px solid var(--line2);border-radius:9px;background:transparent;color:var(--faint);
-  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em}
+/* the pips were invisible: every existing .pips rule is scoped to .win / .quota / .confrow,
+   so the <i>s inside .rq had no size at all. Green tests, empty dots. */
+.rq .pips{display:flex;gap:3px;flex:none}
+.rq .pips i{width:5px;height:5px;border-radius:99px;background:#2a2438;display:block}
+.rq .pips i.full{background:var(--phos)}
+/* NOT in the .blk grid's 20px last column — that column clips (`.blk` is overflow:hidden),
+   which cut this control down to the word "TER". It lives in the content cell instead. */
+.rq-set{display:inline-flex;align-items:center;margin-top:8px;min-height:var(--tap);padding:0 13px;
+  cursor:pointer;border:1px solid var(--line2);border-radius:9px;background:transparent;
+  color:var(--faint);font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em}
 .rw-reqs{display:flex;flex-direction:column;gap:6px}
 .rw-pick{display:flex;align-items:center;gap:9px;width:100%;min-height:var(--tap);padding:10px 12px;
   cursor:pointer;border:1px solid var(--line2);border-radius:10px;background:transparent;
@@ -4503,10 +4510,10 @@ function renderBank(){
         <div class="bn">${esc(r.n)}</div>
         ${r.condition&&!rq.rows.length?`<div class="bo">${esc(r.condition)}</div>`:''}
         ${reqRows}
-        <div class="bd">${meta}</div></div>
-      ${r.done?'<div class="bc"></div>'
-        :`<button class="rq-set" onclick="event.stopPropagation();editRewardReq(${i})"
-            aria-label="Set the terms for ${esc(r.n)}">TERMS</button>`}</div>`;
+        <div class="bd">${meta}</div>
+        ${r.done?'':`<button class="rq-set" onclick="event.stopPropagation();editRewardReq(${i})"
+            aria-label="Set the terms for ${esc(r.n)}">SET THE TERMS</button>`}</div>
+      <div class="bc"></div></div>`;
   }).join('');
 
   $('bankBody').innerHTML=head+dials+
