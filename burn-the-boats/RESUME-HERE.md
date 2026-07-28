@@ -8,6 +8,29 @@ deeper history.
 > It is the owner's full vision in his own words (Q&A 2026-07-28). Then read
 > `MENTOR-VERDICT.md` — the architecture verdict (the "funerals problem") and the phases.
 
+## ✅ PHASES 0–4 ALL BUILT, LIVE AND GREEN (sw **btb-v34**). Phase 5 is OWNER-GATED.
+
+**2026-07-28, one session.** Each phase shipped behind its own QC gate harness, and the
+full suite (22 harnesses, ~1,290 checks) ran green against the LIVE url at the end.
+
+| Phase | What | Gate |
+|---|---|---|
+| 1 · One economy door | `S.ledger`; award() in / refund() out; gainXP + finishRun's inline copy bricked; **every undo returns XP while the day is open, seals at midnight** (his accidental-tap bug, dead everywhere); spends are entries; old save opens with its balance | `ledger.js` 24/24 |
+| 2 · Ownership | `WINS`→`S.winDefs`, `QUOTAS`→`S.quotaDefs` (seeds, like boostDefs); Bank editors: rename/re-price/retire/invent wins (5–100 band), THE STANDARDS with tap-to-cycle counts, standards on anything he invents | `owned.js` 20/20 |
+| 3 · Day as data | `S.templates.{weekday,saturday}` + `S.dayPlan[date]`; shape(date); pixel-identical day one; forward-only proven under hostile template edits; `seedOwned()` runs at boot AND restore | `dayplan.js` 20/20 |
+| 4 · The planner | THE WEEK: THIS/NEXT toggle, **PLAN ▸ doors on days ahead** (today locked by his own rule, Sunday Sabbath, **Saturday joined the week**); the day editor 06:00→bed (deep blocks SACRED, undeletable, survive hostile writes); free-type + emoji presets + memory chips; **★ Make it count**; Back-to-normal / Make-this-my-normal; Sabbath door lands on NEXT week; **the Today widget** (extras line → time-ranked quick-log, refundable) | `planner.js` 33/33 |
+
+**NEXT — PHASE 5, and it starts with HIM, not code:** he lives one real planned day in the
+new planner and hands it over; THEN the XP-system design session (his locked sequencing),
+then AWAY mode + appointments, then recurrence. **Do not design the economy without him.**
+
+Suite as of btb-v34 (all green vs live): planner 33 · dayplan 20 · owned 20 · ledger 24 ·
+funeral 25 · stage1-4 29/24/30/52 · qc3 51 · full 126 · phase1 24 · extras 33 · boosts 37 ·
+rewardreq 31 · backup 13 · vanish 32 · tiers 28 · goals2 59 · area 11 · profiles 320 ·
+stress 360. Note: the week now has SIX day headers (Saturday) — full.js/stage4.js assert 6.
+
+---
+
 ## ✅ PHASE 0 — THE FUNERALS: BUILT, LIVE AND GREEN (sw **btb-v30**, commit `92bf42d`)
 
 He said "go" and it shipped 2026-07-28. Buried, each with a kill-test in **`model/funeral.js`
