@@ -28,13 +28,24 @@ const OUT=process.env.SP+'/';
   ok('furnace says TO DEC 25',/DEC 25/.test(meta.fTo),meta.fTo);
   ok('4 landmarks spread',meta.lm.length===4,meta.lm.join(' '));
 
-  // 2 · Today boost card exists and is tappable
+  // 2 · The boost card is NO LONGER a section on Today — his call, 2026-07-27. The extras
+  //     are captured at the end of a run and live in the Bank. The card still renders (the
+  //     Bank reads the same markup) but Today must not show it, and Today must instead carry
+  //     exactly one line pointing at where they went. The 44px floor moved to the Bank list,
+  //     asserted in section 3 — it is not dropped, only relocated.
   const card=await p.evaluate(()=>{const e=document.querySelector('#boostCard .bcard');
     if(!e)return null;const r=e.getBoundingClientRect();
-    return{t:e.textContent.trim(),h:r.height,invite:e.classList.contains('invite')}});
-  ok('Today shows a boost card',!!card,card?card.t.slice(0,60):'MISSING');
-  ok('card clears 44px',card&&card.h>=44,card?card.h:'-');
+    return{t:e.textContent.trim(),h:r.height,invite:e.classList.contains('invite'),
+           shown:!document.getElementById('boostCard').hidden}});
+  ok('the boost card still renders',!!card,card?card.t.slice(0,60):'MISSING');
+  ok('but Today does NOT show it',card&&!card.shown,card?('shown='+card.shown):'-');
   ok('empty state is an invitation',card&&card.invite,card?('invite='+card.invite):'-');
+  const xl=await p.evaluate(()=>{const e=document.getElementById('extrasLine');
+    if(!e)return null;const r=e.getBoundingClientRect();
+    return{t:e.textContent.trim(),h:r.height}});
+  ok('Today carries one line to the Bank instead',!!xl&&/Bank|also today/.test(xl.t),xl?xl.t:'MISSING');
+  ok('that line clears 44px',xl&&xl.h>=44,xl?xl.h:'-');
+  ok('and it never shows a shortfall',!!xl&&!/\b0 of\b|left|missed|short/i.test(xl.t),xl?xl.t:'-');
 
   // 3 · Bank list renders the four seeds with edit buttons
   await p.evaluate(()=>go('bank'));await new Promise(r=>setTimeout(r,350));

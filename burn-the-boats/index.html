@@ -635,6 +635,24 @@ h2.sec u{text-decoration:none;color:var(--dim)}
   border:1px dashed rgba(224,178,94,.4);border-radius:11px;background:transparent;color:var(--gold);
   font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;padding:12px}
 
+/* The one line the extras leave on Today. A total, never a shortfall. */
+.extras-line{display:flex;align-items:center;gap:10px;width:100%;margin-top:12px;min-height:var(--tap);
+  padding:12px 14px;cursor:pointer;border:1px solid var(--line);border-radius:12px;
+  background:var(--panel);text-align:left}
+.extras-line .xl-x{font-family:'Geist Mono',monospace;font-size:14px;color:var(--phos);flex:none}
+.extras-line .xl-n{font-size:13px;color:var(--dim);flex:1;min-width:0}
+.extras-line .xl-n.dim{color:var(--faint)}
+.extras-line .xl-go{font-family:'Geist Mono',monospace;font-size:14px;color:var(--faint);flex:none}
+
+/* "Anything else happen in there?" — the last step of a focus run. */
+.else-q{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;color:var(--ink);
+  margin:2px 0 12px;line-height:1.15}
+.else-o{display:flex;align-items:center;gap:9px;width:100%;min-height:var(--tap);margin-bottom:7px;
+  padding:11px 13px;cursor:pointer;border:1px solid var(--line2);border-radius:11px;
+  background:transparent;color:var(--dim);font-size:14px;text-align:left}
+.else-o u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--phos);
+  text-decoration:none;flex:none}
+
 /* THE SEAM — the one before and the one after, inside the live card.
    Deliberately quiet: these are for orientation, not for doing. */
 .seam{display:flex;align-items:center;gap:9px;width:100%;text-align:left;cursor:pointer;
@@ -991,10 +1009,17 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
   <div class="timeleft"><b id="tlBig">—</b><span>OF DEEP WORK LEFT</span><span class="dow" id="tlDow">—</span></div>
   <div id="penanceBanner"></div>
   <div class="nextup" id="nextUp"></div>
-  <div id="boostCard"></div>
+  <div id="boostCard" hidden></div>
 
-  <h2 class="sec">Always counts <u id="winTally"></u></h2>
-  <div class="wins" id="wins"></div>
+  <!-- HIS CALL: these two stop being sections on the daily page. They are captured in the
+       moment a block ends ("anything else happen in there?") and they LIVE in the Bank.
+       The nodes stay in the DOM — every renderer and harness still addresses them — but the
+       wrapper is hidden, so the Today page no longer carries a checklist. -->
+  <div id="extrasWrap" hidden>
+    <h2 class="sec">Always counts <u id="winTally"></u></h2>
+    <div class="wins" id="wins"></div>
+  </div>
+  <button id="extrasLine" class="extras-line" onclick="go('bank')"></button>
 
   <div id="dayWrap" hidden>
     <h2 class="sec">Today <u id="schCount"></u></h2>
@@ -1939,7 +1964,7 @@ function render(){
     document.body.classList.toggle('offday',!!day().off);
     renderStatus(); renderGauges(); renderGlance(); renderRail();
     renderPenance(); renderNext(); renderBoostCard();
-    renderWins(); renderSched(); renderClose(); renderRunStrip();
+    renderWins(); renderExtrasLine(); renderSched(); renderClose(); renderRunStrip();
     $('foot').innerHTML=`BURN THE BOATS · DAY ${dayNo()} / ${TOTAL_DAYS}<br>WHAT IS THE MILLIONAIRE VERSION OF YOURSELF DOING RIGHT NOW?`;
   }
   else if(VIEW==='push') renderPush();
@@ -2398,6 +2423,40 @@ function renderWins(){
       ${need?`<span class="wtop" style="gap:6px">${pips}<b style="margin-left:auto;font-size:11px">${hits}/${need}</b></span>`:''}
     </button>`}).join('');
 }
+/* ═══ THE BANK IS WHERE THEY LIVE NOW ═══
+   The run-end question catches them in the moment; this is the place he can browse them,
+   see the weekly standard each one carries, and tap one the question never asked about.
+   Same store, same XP, same tapWin() — a second surface, not a second feature. */
+function winsPaidToday(){const d=day();
+  return '+'+WINS.filter(w=>d.wins[w.k]).reduce((a,w)=>a+w.xp,0)}
+function winsBankList(){
+  const d=day(),mon=mondayOf(new Date());
+  const weekHits=k=>{let n=0;for(let i=0;i<6;i++){const t=new Date(mon+'T00:00:00');t.setDate(t.getDate()+i);
+    const r=S.days[iso(t)];if(r&&r.wins&&r.wins[k])n++}return n};
+  return `<div class="wins">`+WINS.map(w=>{
+    const q=QUOTAS.find(x=>x.src==='win'&&x.id===w.k);
+    const hits=weekHits(w.k),need=q?q.n:0,met=need&&hits>=need;
+    const pips=need?`<span class="pips">${Array.from({length:need},(_,i)=>
+      `<i class="${i<hits?(met?'full':'on'):''}"></i>`).join('')}</span>`:'';
+    return `<button class="win${d.wins[w.k]?' on':''}" onclick="tapWin('${w.k}')">
+      <span class="wtop">${esc(w.n)}<b>+${w.xp}</b></span>
+      ${need?`<span class="wtop" style="gap:6px">${pips}<b style="margin-left:auto;font-size:11px">${hits}/${need} this week</b></span>`:''}
+    </button>`}).join('')+`</div>`;
+}
+/* The single trace the two sections leave on Today: a total that only ever goes up, and a
+   door to where they now live. Never a count of what he hasn't done. */
+function renderExtrasLine(){
+  const el=$('extrasLine');if(!el)return;
+  const d=day();
+  const n=WINS.filter(w=>d.wins[w.k]).length;
+  const xp=WINS.filter(w=>d.wins[w.k]).reduce((a,w)=>a+w.xp,0)
+         +boostDefs().filter(b=>boostDone(b)).reduce((a,b)=>a+b.xp,0);
+  const nb=boostDefs().filter(b=>boostDone(b)).length;
+  const tot=n+nb;
+  el.innerHTML = tot
+    ? `<span class="xl-x">+${xp}</span><span class="xl-n">also today · ${tot} thing${tot>1?'s':''}</span><span class="xl-go">→</span>`
+    : `<span class="xl-n dim">The small stuff lives in the Bank</span><span class="xl-go">→</span>`;
+}
 function tapWin(k){
   const d=day(),w=WINS.find(x=>x.k===k);
   if(d.wins[k]){                      // untap corrects the quota only — XP never goes backwards
@@ -2736,20 +2795,73 @@ function finishRun(){
   $('runWarn').innerHTML=`<input id="shipIn" placeholder="What came out of this?"
       style="margin-bottom:9px" value="${esc(d.produced[id]||'')}">`;
   $('runStep').textContent='SHIP IT';$('runStep').onclick=()=>shipIt(id);
-  $('runEnd').textContent='Skip';
+  /* Skip must not skip the question — it skips the SHIP field, then still asks. */
+  $('runEnd').textContent='Skip';$('runEnd').onclick=()=>elseStep(id);
 }
 function shipIt(id){
   const v=($('shipIn')||{}).value||'';
   if(v.trim()){day().produced[id]=v.trim();save();
     const _b=shape().find(x=>x.id===id);award('ship:'+id,25,'shipped',_b?goalOf2(_b):null)}
-  closeRun();
+  elseStep(id);
+}
+/* ═══════════ "ANYTHING ELSE HAPPEN IN THERE?" ═══════════
+   His decision: the small good things are no longer a section on the daily page. They are
+   asked for HERE — the one moment the app already owns and nothing competes — and they LIVE
+   in the Bank. Three rules this has to obey:
+     · the refusal is a first-class answer, the same size as the others, and costs nothing
+     · it offers three, not six. Six is a checklist; three is a question
+     · it is asked once per run and never again for that block
+   Plausibility, not randomness: a win scores on the domain of the block that just ended and
+   on the time of day. "In bed on time" must never be offered at ten in the morning. */
+function elseCands(bid){
+  const d=day(),b=shape().find(x=>x.id===bid),m=nowMin();
+  const doms=b?b.dom:[];
+  return WINS.filter(w=>!d.wins[w.k])
+    .map(w=>{
+      let s=0;
+      if(doms.indexOf(w.dom)>=0)s+=3;                    /* same domain as the work just done */
+      if(w.k==='bed')       s+= m>=20*60?4:-99;          /* only ever late */
+      if(w.k==='cooked')    s+= m>=17*60?3:-99;          /* only after cooking hours start */
+      if(w.k==='present')   s+= m>=16*60?2:0;
+      if(w.k==='chores')    s+= m>=18*60?1:0;
+      if(w.k==='convo'||w.k==='said_no') s+=1;           /* plausible any time of day */
+      return {w,s};
+    })
+    .filter(x=>x.s>-50).sort((a,b2)=>b2.s-a.s).slice(0,3).map(x=>x.w);
+}
+function elseStep(bid){
+  const c=elseCands(bid);
+  if(!c.length)return closeRun();                        /* nothing left to ask — don't ask */
+  $('runTime').textContent='ALSO';
+  $('runMult').textContent='NEVER SCORED AGAINST YOU';
+  $('runWarn').innerHTML=`<div class="else-q">Anything else happen in there?</div>`+
+    c.map(w=>`<button class="else-o" onclick="elseTap('${w.k}','${bid}')">
+      ${esc(w.n)}<u>+${w.xp}</u></button>`).join('');
+  $('runStep').textContent='Nothing · carry on';$('runStep').onclick=()=>closeRun();
+  $('runEnd').textContent='Done';$('runEnd').onclick=()=>closeRun();
+}
+/* tapping one banks it and re-asks with what's left, so two things can be logged without
+   the sheet turning into a form. */
+function elseTap(k,bid){
+  const w=WINS.find(x=>x.k===k);if(!w)return;
+  const d=day();if(d.wins[k])return;
+  d.wins[k]=1;save();
+  award('win:'+k,w.xp,w.n);
+  const left=elseCands(bid);
+  if(!left.length)return closeRun();
+  elseStep(bid);
 }
 function closeRun(){
   if(run&&run.t)clearInterval(run.t);
   if(run&&run.lock)try{run.lock.release()}catch(e){}
-  run=null;S.activeRun=null;save();$('run').className='run';document.body.classList.remove('noTabs');render();
+  run=null;S.activeRun=null;save();$('run').className='run';document.body.classList.remove('noTabs');
+  /* the end-of-run steps rebind these two buttons — hand them back, or the NEXT run's
+     "give up" button is still wired to the last run's "carry on". */
+  $('runEnd').textContent='End';$('runEnd').onclick=runEndDefault;
+  render();
 }
-$('runEnd').onclick=()=>{if(run&&!run.broken&&run.left>0){day().focus[run.b.id]='quit';save()}closeRun()};
+function runEndDefault(){if(run&&!run.broken&&run.left>0){day().focus[run.b.id]='quit';save()}closeRun()}
+$('runEnd').onclick=runEndDefault;
 function stepAway(){
   if(!run||run.paused)return;
   if(run.passes<=0){toast('No passes left on this block','bad');return}
@@ -4320,6 +4432,8 @@ function renderBank(){
       <h2 class="sec"><span>Rewards</span><u>you set the terms</u></h2>
       ${blks}
       ${xpAttribution()}
+      <h2 class="sec"><span>Always counts</span><u>${winsPaidToday()} today</u></h2>
+      ${winsBankList()}
       <h2 class="sec"><span>Boosts</span><u>never scored against you</u></h2>
       ${boostList()}
       <button class="btn gh" style="margin-top:12px" onclick="editBoost(null)">+ Write a boost</button>
