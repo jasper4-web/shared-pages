@@ -71,7 +71,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
   });await wait(900);await p.evaluate(()=>render());await wait(400);
   ok('THE WEEK renders 20 slots',await p.evaluate(()=>document.querySelectorAll('.g2slot').length)===20,
      await p.evaluate(()=>document.querySelectorAll('.g2slot').length));
-  ok('five day headers',await p.evaluate(()=>document.querySelectorAll('.g2day').length)===5);
+  ok('six day headers — Saturday joined the week (Phase 4)',await p.evaluate(()=>document.querySelectorAll('.g2day').length)===6);
   ok('today is marked',await p.evaluate(()=>!!document.querySelector('.g2day.now')));
   await sweep(p,'the week (empty)');
   // commit some blocks

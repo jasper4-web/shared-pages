@@ -243,7 +243,7 @@ const view=async(p,l)=>{await p.evaluate(l=>{
      'distinct='+wkv.distinctBarColours);
   ok('the area is no longer written in amber caps',wkv.amberText===0,'amber='+wkv.amberText);
   ok('a committed slot draws a checkbox, like Today',wkv.boxes===wkv.bars,`${wkv.boxes}/${wkv.bars}`);
-  ok('five day headers, still',wkv.days===5,'days='+wkv.days);
+  ok('six day headers — Saturday joined the week (Phase 4)',wkv.days===6,'days='+wkv.days);
   ok('the days already lived are behind a door',wkv.hiddenDays===2,'hidden='+wkv.hiddenDays);
   ok('...and the door says what is behind it',/ALREADY LIVED/.test(wkv.door)&&/COMMITTED/.test(wkv.door),
      wkv.door.trim());

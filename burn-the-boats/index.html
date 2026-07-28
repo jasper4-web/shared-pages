@@ -489,14 +489,17 @@ button{font-family:inherit}
 .quota .pips i.on{background:var(--phos)}
 .quota b{color:var(--dim);font-weight:400}
 
-h2.sec{font-size:11px;font-family:'Geist Mono',monospace;letter-spacing:.19em;text-transform:uppercase;
+h2.sec,button.sec{font-size:11px;font-family:'Geist Mono',monospace;letter-spacing:.19em;text-transform:uppercase;
   color:var(--faint);margin:22px 0 8px;font-weight:700;display:flex;justify-content:space-between;align-items:baseline}
-h2.sec u{text-decoration:none;color:var(--dim)}
+h2.sec u,button.sec u{text-decoration:none;color:var(--dim)}
+/* a section header that is also a door (the planner's day headers) */
+button.sec{background:none;border:0;cursor:pointer;width:100%;text-align:left;
+  min-height:var(--tap);align-items:center;padding-top:0;padding-bottom:0}
 /* THE GOALS TAB HAD THREE NEAR-COPIES OF THIS HEADER (.g2tier .tr-h, .g2area .ah,
    .g2ready .k) with four different tracking values and the <u> colour inverted in two
    of them. One class now, with the domain colour moved OFF a 7px dot and ONTO a rule,
    so the header and the card beneath it say the same thing the same way. */
-h2.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var(--line2));margin:24px 0 8px}
+h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var(--line2));margin:24px 0 8px}
 /* A date that has gone by is a fact about the calendar, not a miss. Red belongs to
    .blk.miss, where he actually skipped something. */
 .passed{color:var(--faint)}
@@ -1103,7 +1106,9 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
     <h2 class="sec">Always counts <u id="winTally"></u></h2>
     <div class="wins" id="wins"></div>
   </div>
-  <button id="extrasLine" class="extras-line" onclick="go('bank')"></button>
+  <!-- the widget (Phase 4): tap = log a good thing right now, ranked by the clock;
+       the Bank stays one tap further -->
+  <button id="extrasLine" class="extras-line" onclick="quickLog()"></button>
 
   <div id="dayWrap" hidden>
     <h2 class="sec">Today <u id="schCount"></u></h2>
@@ -4311,10 +4316,17 @@ function g2FirstMove(){
 }
 /* ---- THE WEEK: 20 slots, each a goal and a day ------------------------- */
 function g2Week(){
-  const wk=weekKeyNow();syncCommits(wk);
+  /* PHASE 4: the week he VIEWS — this one, or the one he is setting up. Sunday's
+     planning ritual lands on NEXT (sabPlan sets it); not persisted, so every fresh
+     open shows the week he is actually in. */
+  const wk=WK_VIEW?(k=>{const m=new Date(k+'T00:00:00');m.setDate(m.getDate()+7);return iso(m)})(weekKeyNow()):weekKeyNow();
+  if(!WK_VIEW)syncCommits(wk);
   const cap=GM.capacity(G,wk,WEEK_BLOCKS);
   const orphan=cap.orphanAreas.map(id=>(GM.areaById(G,id)||{}).name).filter(Boolean);
-  let out=`<div class="g2cap${cap.committed>=WEEK_BLOCKS?' tight':''}">
+  let out=`<div class="g2tabs" style="margin-bottom:10px">
+      <button class="g2tab${WK_VIEW?'':' on'}" onclick="wkView(0)">THIS WEEK</button>
+      <button class="g2tab${WK_VIEW?' on':''}" onclick="wkView(1)">NEXT WEEK</button></div>`;
+  out+=`<div class="g2cap${cap.committed>=WEEK_BLOCKS?' tight':''}">
       <b>${cap.committed}</b><span>of ${WEEK_BLOCKS} committed</span><i></i>
       <b>${cap.free}</b><span>still open</span></div>`;
   /* ═══════════ NOT ON MONDAY ═══════════
@@ -4326,12 +4338,12 @@ function g2Week(){
      CHOICE he has made — so: not before Wednesday, and not until he has actually
      committed something. Before that the same space says what is true and offers the
      first move. */
-  const underway=cap.committed>0&&dow()>=3;
+  const underway=!WK_VIEW&&cap.committed>0&&dow()>=3;
   if(orphan.length&&underway){
     /* .hintline, not .g2warn — full gold at 12.5px gave this the same weight as a real
        capacity warning. It is an aside about shape, not an alarm. */
     out+=`<div class="hintline" style="margin:-2px 0 12px;padding:0 2px">Nothing on ${esc(orphan.join(' · '))} this week. Allowed — but make it a decision, not an accident.</div>`;
-  }else if(!cap.committed){
+  }else if(!cap.committed&&!WK_VIEW){
     out+=g2FirstMove();
   }
   /* ═══ THE DOOR ═══════════════════════════════════════════════════════════
@@ -4352,10 +4364,18 @@ function g2Week(){
   for(let d=0;d<5;d++){
     const date=dateOfSlot(wk,d),isToday=date===today();
     const hide=doorable&&!WK_PAST_OPEN&&gone(wk,d);
+    const plannable=date>today();
     out+=`<div class="wkd"${hide?' hidden':''}>`;
-    out+=`<h2 class="sec g2sec g2day${isToday?' now':''}" style="--c:${
-      isToday?'var(--gold)':'var(--line2)'}"><span>${DAY_NAMES[d]}</span><u>${date.slice(5)}</u>${
-      isToday?'<b>TODAY</b>':''}</h2>`;
+    /* a day still ahead is a DOOR into its planner — his whole ask. Today is
+       deliberately not: "changing my day on the spot is me trying to get out of
+       my duties." The lived past explains itself, as before. */
+    out+=plannable
+      ?`<button class="sec g2sec g2day wkgo" style="--c:${S.dayPlan[date]?'var(--violet)':'var(--line2)'}"
+          onclick="planDay('${date}')"><span>${DAY_NAMES[d]}</span><u>${date.slice(5)}${
+          S.dayPlan[date]?' · its own plan':''}</u><b style="color:var(--violet)">PLAN ▸</b></button>`
+      :`<h2 class="sec g2sec g2day${isToday?' now':''}" style="--c:${
+          isToday?'var(--gold)':'var(--line2)'}"><span>${DAY_NAMES[d]}</span><u>${date.slice(5)}</u>${
+          isToday?'<b>TODAY</b>':''}</h2>`;
     DEEP_BLOCKS.forEach(bid=>{
       const blk=S.templates.weekday.find(b=>b.id===bid),c=commitFor(wk,d,bid);
       const g=c?GM.goalOf(G,c.goalId):null,a=g?GM.areaById(G,g.areaId):null;
@@ -4377,11 +4397,165 @@ function g2Week(){
     });
     out+='</div>';
   }
+  /* SATURDAY — his half day. No goal slots (commits are Mon–Fri), but the day itself
+     is his to plan, so it gets the same door. */
+  {const sat=dateOfSlot(wk,5),satToday=sat===today();
+  out+=sat>today()
+    ?`<button class="sec g2sec g2day wkgo" style="--c:${S.dayPlan[sat]?'var(--violet)':'var(--line2)'}"
+        onclick="planDay('${sat}')"><span>SAT</span><u>${sat.slice(5)}${
+        S.dayPlan[sat]?' · its own plan':''} · half day</u><b style="color:var(--violet)">PLAN ▸</b></button>`
+    :`<h2 class="sec g2sec g2day${satToday?' now':''}" style="--c:${satToday?'var(--gold)':'var(--line2)'}">
+        <span>SAT</span><u>${sat.slice(5)} · half day</u>${satToday?'<b>TODAY</b>':''}</h2>`;}
   return out;
 }
 /* deliberately NOT persisted — every fresh open of the app shows the week ahead,
    the same rule as Today's day door */
 let WK_PAST_OPEN=false;
+let WK_VIEW=0;
+function wkView(v){WK_VIEW=v?1:0;WK_PAST_OPEN=false;render()}
+
+/* ═══ PHASE 4 · THE DAY PLANNER ════════════════════════════════════════════════
+   Tap Tuesday, get Tuesday — 06:00 to bed, every row his. The rules, all his:
+   · only days AHEAD are editable ("changing my day on the spot is me trying to
+     get out of my duties") — today and the past refuse, kindly
+   · the four deep blocks are FIXTURES on Mon–Fri: rename, retime, but never
+     delete — you cannot fail to plan them, so nothing needs docking
+   · planning pays NOTHING; a planned row is structure, not a score
+   · every day starts from his normal day, never from a blank screen            */
+function planDay(date){
+  if(date<=today()){toast(date===today()
+    ?"Today is lived, not edited — plan tomorrow onward":"The past doesn't change",'bad');return}
+  const dw=new Date(date+'T00:00:00').getDay();
+  if(dw===0){toast('Sunday is the Sabbath — rest is the plan','bad');return}
+  const rows=shape(date),own=!!S.dayPlan[date];
+  const label=['SUN','MON','TUE','WED','THU','FRI','SAT'][dw];
+  sheet(`<div class="sh-k">${label} · ${date.slice(5)}${own?' · ITS OWN PLAN':' · YOUR NORMAL '+(dw===6?'SATURDAY':'DAY')}</div>
+    <div class="sh-t">The day, yours to shape</div>
+    <div class="sh-sub">TAP A ROW TO CHANGE IT · PLANNING PAYS NOTHING — DOING DOES</div>
+    <div style="margin-top:12px">${rows.map((b,i)=>`
+      <button class="g2m" style="width:100%;text-align:left" onclick="planRow('${date}',${i})">
+        <span class="d" style="background:${domColour((b.dom||[])[0])}"></span>
+        <span class="n">${esc(b.n)}${b.kind==='deep'?' <b style="color:var(--gold);font-size:11px">SACRED</b>':''}
+          <u>${b.s}–${b.e}${b.kind==='deep'?' · never deleted':''}</u></span>
+        <b style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint)">${mins(b.e)-mins(b.s)}m</b>
+      </button>`).join('')}</div>
+    <button class="btn gh" style="margin-top:10px" onclick="planAdd('${date}')">+ Add something</button>
+    ${own?`<button class="btn gh" style="margin-top:8px" onclick="planReset('${date}')">Back to my normal ${dw===6?'Saturday':'day'}</button>`:''}
+    <button class="btn gh" style="margin-top:8px" onclick="planAsNormal('${date}')">Make this my normal ${dw===6?'Saturday':'weekday'}</button>`);
+}
+function planRows(date){return shape(date).map(b=>({...b}))}
+function planWrite(date,rows){
+  rows.sort((a,b)=>mins(a.s)-mins(b.s));
+  /* the fixtures cannot be lost, whatever path wrote the plan */
+  const dw=new Date(date+'T00:00:00').getDay();
+  if(dw>=1&&dw<=5)DEEP_BLOCKS.forEach(id=>{
+    if(!rows.some(b=>b.id===id))rows.push({...S.templates.weekday.find(b=>b.id===id)});});
+  rows.sort((a,b)=>mins(a.s)-mins(b.s));
+  S.dayPlan[date]=rows;save();
+}
+function planRow(date,i){
+  const rows=planRows(date),b=rows[i];if(!b)return;
+  sheet(`<div class="sh-k">${esc(b.n).toUpperCase()}${b.kind==='deep'?' · SACRED':''}</div>
+    <div class="sh-t">Change it</div>
+    <div class="fld" style="margin-top:12px"><label>What</label>
+      <input id="prN" maxlength="48" value="${esc(b.n)}"></div>
+    <div class="g22">
+      <div class="fld"><label>Starts</label><input id="prS" type="time" value="${b.s}"></div>
+      <div class="fld"><label>Minutes</label><input id="prL" type="number" inputmode="numeric" value="${mins(b.e)-mins(b.s)}"></div>
+    </div>
+    <button class="btn" onclick="planRowSave('${date}',${i})">Save</button>
+    ${b.kind==='deep'
+      ?`<div class="hintline" style="margin-top:9px">A deep block is sacred — move it, rename it, but it stays on the day.</div>`
+      :`<button class="btn gh" style="margin-top:8px" onclick="planRowDrop('${date}',${i})">Take it off this day</button>`}`);
+}
+function planRowSave(date,i){
+  const rows=planRows(date),b=rows[i];if(!b)return;
+  const n=$('prN').value.trim()||b.n;
+  const s=$('prS').value||b.s;
+  const len=Math.max(5,Math.min(600,Math.round(Number($('prL').value)||mins(b.e)-mins(b.s))));
+  const e=(m=>`${pad(Math.floor(m/60)%24)}:${pad(m%60)}`)(mins(s)+len);
+  Object.assign(b,{n,s,e});
+  planWrite(date,rows);closeSheet();toast('Changed — planning pays nothing, doing does','good');
+  planDay(date);
+}
+function planRowDrop(date,i){
+  const rows=planRows(date);if(!rows[i]||rows[i].kind==='deep')return;
+  rows.splice(i,1);planWrite(date,rows);closeSheet();toast('Off the day','bad');planDay(date);
+}
+/* the ADD sheet — a MEMORY, not a menu. He types anything; the chips only save typing.
+   Presets are life with an emoji on it; the second row is what he has added before. */
+const PLAN_PRESETS=[['🧺','Laundry'],['🧹','Clean the house'],['🍳','Cook dinner'],['🚶','Walk'],
+  ['📞','Call someone'],['🛒','Errands'],['📖','Read'],['🙏','Pray']];
+function planMemory(){
+  const seen=new Set(),out=[];
+  Object.keys(S.dayPlan).sort().reverse().forEach(k=>S.dayPlan[k].forEach(b=>{
+    if(b.id&&String(b.id)[0]==='p'&&!seen.has(b.n)){seen.add(b.n);out.push(b.n)}}));
+  return out.slice(0,4);
+}
+let PA={count:0};
+function planAdd(date){
+  PA={count:0};
+  const mem=planMemory();
+  sheet(`<div class="sh-k">ADD TO ${date.slice(5)}</div>
+    <div class="sh-t">What else is that day for?</div>
+    <div class="sh-sub">ANYTHING. IT GOES ON THE DAY AND PAYS NOTHING — IT'S STRUCTURE, NOT A SCORE.</div>
+    <div class="fld" style="margin-top:12px"><label>What</label>
+      <input id="paN" maxlength="48" placeholder="Dentist · groceries · her recital"></div>
+    <div class="chips" style="margin-top:8px">${PLAN_PRESETS.map(([e,n])=>
+      `<button class="chip tap" onclick="$('paN').value='${n}'">${e} ${n}</button>`).join('')}</div>
+    ${mem.length?`<div class="hintline" style="margin:8px 0 2px">You've added before:</div>
+      <div class="chips">${mem.map(n=>`<button class="chip tap seg" onclick="$('paN').value='${esc(n)}'">${esc(n)}</button>`).join('')}</div>`:''}
+    <div class="g22" style="margin-top:10px">
+      <div class="fld"><label>Starts</label><input id="paS" type="time" value="17:30"></div>
+      <div class="fld"><label>Minutes</label><input id="paL" type="number" inputmode="numeric" value="45"></div>
+    </div>
+    <button class="chip tap" id="paCount" style="margin-top:4px" onclick="PA.count=PA.count?0:1;this.classList.toggle('seg');this.classList.toggle('on')">★ Make it count — joins Always counts, pays when you log it</button>
+    <button class="btn" style="margin-top:12px" onclick="planAddSave('${date}')">Put it on the day</button>`);
+}
+function planAddSave(date){
+  const n=$('paN').value.trim();if(!n){toast('Name it first','bad');return}
+  const s=$('paS').value||'17:30';
+  const len=Math.max(5,Math.min(600,Math.round(Number($('paL').value)||45)));
+  const e=(m=>`${pad(Math.floor(m/60)%24)}:${pad(m%60)}`)(mins(s)+len);
+  const rows=planRows(date);
+  rows.push({id:'p'+Date.now().toString(36),s,e,n,dom:['MIND'],kind:'plan'});
+  planWrite(date,rows);
+  /* "make it count" — HIS idea: the thing he just planned can join Always counts.
+     Creating a def pays nothing; the tap pays, later, like every win. */
+  if(PA.count&&!S.winDefs.some(w=>!w.arc&&w.n.toLowerCase()===n.toLowerCase())){
+    S.winDefs.push({k:'w'+Date.now().toString(36),n,xp:15,dom:'MIND'});save();
+    toast(`On the day — and "${n}" counts now (+15 when you log it)`,'good');
+  }else toast('On the day','good');
+  closeSheet();planDay(date);
+}
+function planReset(date){
+  delete S.dayPlan[date];save();closeSheet();render();
+  toast('Back to your normal day','good');planDay(date);
+}
+function planAsNormal(date){
+  const dw=new Date(date+'T00:00:00').getDay();
+  const rows=planRows(date);
+  if(dw===6)S.templates.saturday=rows;else S.templates.weekday=rows;
+  delete S.dayPlan[date];                 /* it IS the normal day now */
+  save();closeSheet();render();
+  toast(dw===6?'That is your Saturday now':'That is your normal day now — the lived past keeps its shape','good');
+}
+
+/* ═══ the Today widget — log a good thing the moment it happens ═══════════════
+   His §8: on the page, good-looking, easy — plus mid-block, so a win isn't
+   forgotten by waiting for the block to end. Ranked by the same time-aware
+   scorer the run-end question uses; three chips, then the Bank. */
+function quickLog(){
+  const ci=curIdx(),bid=ci>=0?shape()[ci].id:DEEP_BLOCKS[0];
+  const c=elseCands(bid);
+  if(!c.length){go('bank');return}
+  sheet(`<div class="sh-k">RIGHT NOW</div>
+    <div class="sh-t">Log a good thing</div>
+    <div class="sh-sub">NEVER SCORED AGAINST YOU — AND UN-TAPPABLE WHILE THE DAY IS OPEN</div>
+    <div style="margin-top:12px">${c.map(w=>`
+      <button class="else-o" onclick="tapWin('${w.k}');closeSheet()">${esc(w.n)}<u>+${w.xp}</u></button>`).join('')}</div>
+    <button class="btn gh" style="margin-top:10px" onclick="closeSheet();go('bank')">Everything else · the Bank →</button>`);
+}
 function toggleWkPast(){WK_PAST_OPEN=!WK_PAST_OPEN;render()}
 function g2Slot(wk,d,bid){
   const c=commitFor(wk,d,bid),goals=GM.liveGoals(G);
@@ -5529,7 +5703,9 @@ var HDR = (function () {
 $('sabLook').onclick=()=>{sabOff=true;$('sabbath').classList.remove('on');
   document.body.classList.remove('noTabs');render()};
 $('sabPlan').onclick=()=>{sabOff=true;$('sabbath').classList.remove('on');
-  document.body.classList.remove('noTabs');G.meta.view='week';gsave();go('push')};
+  document.body.classList.remove('noTabs');G.meta.view='week';gsave();
+  WK_VIEW=1;                      /* Sunday plans the week AHEAD, not the one behind */
+  go('push')};
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 document.addEventListener('click',askNotify,{once:true});
 recount();
