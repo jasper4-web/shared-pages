@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Today page — five new directions</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --blue:#7FB4FF; --paper:#F3EEE3; --tap:44px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#08070c;color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.028em;margin:0}
+
+.wrap{max-width:1240px;margin:0 auto;padding:44px 20px 90px}
+.lede{max-width:720px;margin-bottom:26px}
+.lede .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold);margin-bottom:12px}
+.lede h1{font-size:36px;line-height:1.08;margin-bottom:14px}
+.lede p{color:var(--dim);font-size:15px;margin:0 0 10px}
+.lede b{color:var(--ink)}
+
+.asks{border:1px solid var(--line2);border-radius:14px;background:var(--panel);margin:22px 0 8px;max-width:820px}
+.ask{display:grid;grid-template-columns:96px 1fr;gap:14px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.ask:last-child{border-bottom:0}
+.ask .n{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--gold)}
+.ask .n.r{color:var(--blood)}.ask .n.y{color:var(--dim)}
+.ask .v{font-size:13.5px;color:var(--dim);line-height:1.5}
+.ask .v b{color:var(--ink)}
+
+.cull{max-width:820px;border-left:2px solid var(--line2);padding-left:16px;margin:26px 0 8px}
+.cull .row2{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:7px 0;border-bottom:1px solid var(--line)}
+.cull .row2:last-child{border-bottom:0}
+.cull .nm{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
+.cull .why{font-size:13px;color:var(--dim);line-height:1.5}
+.cull .why b{color:var(--ink)}
+
+.opt{margin:64px 0 18px;max-width:780px}
+.opt .n{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--faint);margin-bottom:9px}
+.opt h2{font-size:27px;line-height:1.12;margin-bottom:10px}
+.opt .idea{font-size:15.5px;color:var(--ink);margin:0 0 9px;line-height:1.45}
+.opt p{color:var(--dim);font-size:14px;margin:0 0 8px}
+.opt p b{color:var(--ink)}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 0}
+.tag{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;padding:6px 9px;border-radius:6px;
+  border:1px solid var(--line2);color:var(--dim)}
+.tag.keep{border-color:rgba(74,222,128,.4);color:var(--phos)}
+.tag.win{border-color:rgba(224,178,94,.4);color:var(--gold)}
+
+.row{display:flex;gap:20px;overflow-x:auto;padding-bottom:14px;align-items:flex-start}
+.col{flex:none;width:320px}
+.cap{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--faint);margin-bottom:9px}
+.note{margin-top:10px;font-size:12.5px;line-height:1.55;color:var(--faint)}
+.note b{color:var(--dim)}
+
+.ph{width:320px;border:1px solid var(--line2);border-radius:26px;background:var(--bg);
+  padding:14px 13px 16px;box-shadow:0 24px 60px -30px #000;overflow:hidden}
+.hdr{display:flex;align-items:baseline;gap:9px;margin-bottom:11px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+.hdr b{font-family:'Clash Display',sans-serif;font-size:22px;letter-spacing:-.035em}
+.hdr span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint)}
+.hdr u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--gold);text-decoration:none}
+
+.k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.17em;color:var(--gold);display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.k i{width:6px;height:6px;border-radius:99px;background:var(--gold);box-shadow:0 0 8px var(--gold);flex:none}
+.k u{margin-left:auto;text-decoration:none;color:var(--faint)}
+.t{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.028em;line-height:1.15;margin-bottom:5px}
+.t.sm{font-family:'Satoshi',sans-serif;font-size:14.5px;letter-spacing:0;line-height:1.3}
+.s{font-size:12.5px;line-height:1.5;color:var(--faint)}
+.s.dim{color:var(--dim)}
+.card{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:12px 13px;margin-bottom:8px}
+.card.live{border-color:rgba(224,178,94,.45);background:linear-gradient(150deg,#1b1526,#110e1a 62%,#0d0b14)}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:var(--tap);text-align:center;
+  border-radius:11px;padding:9px 11px;margin-top:9px;font-size:13.5px;font-weight:600;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204}
+.btn.gh{background:transparent;border:1px solid var(--line2);color:var(--dim);font-weight:500}
+.btn.sm{min-height:36px;font-size:12.5px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:7px}.two .btn{margin-top:0}
+.pill{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.06em;padding:6px 8px;
+  border-radius:6px;border:1px solid var(--line2);color:var(--dim)}
+.pill.on{border-color:rgba(74,222,128,.5);color:var(--phos);background:rgba(74,222,128,.07)}
+.pill.x{border-color:rgba(176,140,255,.45);color:var(--violet)}
+
+/* ════ E · THE NOTEBOOK ════ */
+.book{border:1px solid var(--line2);border-radius:12px;background:#0b0912;overflow:hidden}
+.bkhd{display:flex;align-items:baseline;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);
+  background:var(--panel2)}
+.bkhd b{font-family:'Clash Display',sans-serif;font-size:16px}
+.bkhd span{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);margin-left:auto}
+.leaf{display:grid;grid-template-columns:1fr 46px}
+.body{padding:4px 0 8px}
+.marg{border-left:1px solid var(--line);padding:10px 0 0}
+.mtick{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;min-height:var(--tap);
+  justify-content:center;border-bottom:1px solid rgba(255,255,255,.04)}
+.mtick b{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);line-height:1}
+.mtick span{font-size:11px;color:#4b445e;line-height:1.1;text-align:center;letter-spacing:.02em}
+.mtick.on b{color:var(--phos)}
+.entry{padding:9px 12px 10px;border-bottom:1px solid rgba(255,255,255,.045)}
+.entry:last-child{border-bottom:0}
+.eh{display:flex;align-items:baseline;gap:8px;margin-bottom:3px}
+.eh b{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint)}
+.eh span{font-size:13px;color:var(--dim);letter-spacing:-.01em}
+.eh u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);text-decoration:none}
+.hand{font-size:13.5px;line-height:1.6;color:var(--ink);padding-left:1px}
+.hand em{color:var(--faint);font-style:normal}
+.entry.now{background:rgba(224,178,94,.06);border-left:2px solid var(--gold)}
+.entry.now .eh b{color:var(--gold)}
+.entry.now .eh span{color:var(--ink);font-size:14px}
+.blank{color:#4b445e;font-size:13px;font-style:italic}
+.kb{margin-top:9px;border:1px solid var(--line2);border-radius:11px;background:var(--panel2);padding:9px 11px}
+.kb .cur{display:inline-block;width:2px;height:15px;background:var(--gold);vertical-align:-2px;margin-left:1px}
+
+/* ════ F · ONE THING ════ */
+.full{border-radius:20px;border:1px solid rgba(224,178,94,.4);
+  background:linear-gradient(165deg,#1e1729,#120f1c 55%,#0a0810);padding:18px 15px;min-height:420px;
+  display:flex;flex-direction:column}
+.full .dom{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;color:var(--gold)}
+.full h3{font-size:29px;line-height:1.06;letter-spacing:-.035em;margin:10px 0 8px}
+.full .obj{font-size:14.5px;color:var(--dim);line-height:1.45}
+.clock{font-family:'Geist Mono',monospace;font-size:44px;letter-spacing:-.03em;color:var(--ink);margin:auto 0 4px}
+.meter{height:5px;border-radius:99px;background:#221c33;overflow:hidden;margin-bottom:12px}
+.meter i{display:block;height:100%;width:44%;background:linear-gradient(90deg,#b8873a,var(--gold))}
+.doorbar{display:flex;align-items:center;gap:8px;margin-top:10px;padding:12px 12px;min-height:var(--tap);
+  border:1px solid var(--line2);border-radius:11px;background:rgba(255,255,255,.02)}
+.doorbar b{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint)}
+.doorbar span{font-size:12.5px;color:var(--dim);margin-left:auto}
+.backside{border-radius:20px;border:1px solid rgba(176,140,255,.45);background:rgba(176,140,255,.06);
+  padding:16px 14px;min-height:420px;display:flex;flex-direction:column}
+.thread{border-top:1px solid rgba(255,255,255,.09);margin-top:auto;padding-top:10px}
+.thr{display:grid;grid-template-columns:52px 1fr;gap:9px;padding:5px 0;font-size:12.5px;color:var(--faint)}
+.thr b{font-family:'Geist Mono',monospace;font-size:11px;color:#4b445e}
+.close{border:1px solid rgba(74,222,128,.3);border-radius:16px;background:rgba(74,222,128,.05);padding:15px 13px}
+
+/* ════ G · THE LOG ════ */
+.log{position:relative;padding-left:20px}
+.log:before{content:'';position:absolute;left:5px;top:6px;bottom:22px;width:1px;background:var(--line2)}
+.ev{position:relative;margin-bottom:11px}
+.ev:before{content:'';position:absolute;left:-18px;top:6px;width:9px;height:9px;border-radius:99px;
+  background:#2a2438;border:2px solid var(--bg)}
+.ev.good:before{background:var(--phos)}
+.ev.win:before{background:var(--phos);width:7px;height:7px;left:-17px;top:8px}
+.ev.now:before{background:var(--gold);box-shadow:0 0 9px var(--gold)}
+.ev .tm{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint);margin-bottom:3px}
+.bub{border:1px solid var(--line);border-radius:12px;border-top-left-radius:4px;background:var(--panel);
+  padding:10px 12px;font-size:13.5px;color:var(--ink);line-height:1.4}
+.bub .sub{font-size:12.5px;color:var(--faint);margin-top:3px}
+.bub.thin{background:transparent;border-style:dashed;color:var(--dim);font-size:12.5px;padding:8px 11px}
+.bub.now{border-color:rgba(224,178,94,.45);background:linear-gradient(150deg,#1b1526,#0f0d18)}
+.reply{margin:6px 0 0 14px;border:1px solid rgba(176,140,255,.35);border-radius:12px;border-top-right-radius:4px;
+  background:rgba(176,140,255,.06);padding:9px 11px;font-size:13px;color:var(--ink);line-height:1.5}
+.reply .who{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--violet);margin-bottom:4px}
+.reply .old{border-top:1px solid rgba(255,255,255,.08);margin-top:7px;padding-top:6px;font-size:12.5px;color:var(--faint)}
+.winline{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--phos)}
+.winline u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);text-decoration:none}
+.composer{display:flex;align-items:center;gap:9px;margin-top:12px;padding:11px 12px;min-height:var(--tap);
+  border:1px solid var(--line2);border-radius:22px;background:var(--panel2)}
+.composer span{font-size:13px;color:#4b445e}
+.composer b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--gold)}
+.next{display:flex;align-items:center;gap:8px;margin-top:10px;padding:11px 12px;min-height:var(--tap);
+  border:1px dashed var(--line2);border-radius:12px}
+.next b{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint)}
+.next span{font-size:13px;color:var(--dim)}
+
+/* ════ H · THE LEDGER ════ */
+.big{font-family:'Geist Mono',monospace;font-size:40px;letter-spacing:-.03em;color:var(--gold);line-height:1}
+.bigsub{font-size:12.5px;color:var(--faint);margin-top:5px}
+.led{margin-top:12px;border-top:1px solid var(--line2)}
+.li{display:grid;grid-template-columns:46px 1fr auto;gap:9px;align-items:center;padding:10px 2px;
+  border-bottom:1px solid rgba(255,255,255,.05);min-height:var(--tap)}
+.li .tm{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint)}
+.li .nm{font-size:13px;color:var(--dim);line-height:1.25}
+.li .nm em{font-style:normal;color:#4b445e;font-size:11px;font-family:'Geist Mono',monospace;letter-spacing:.08em}
+.li .amt{font-family:'Geist Mono',monospace;font-size:13px;color:var(--phos)}
+.li.block .nm{color:var(--ink);font-size:14px}
+.li.block .amt{color:var(--phos);font-size:14px}
+.li.small .amt{color:#7ea88c}
+.li.now{background:rgba(224,178,94,.06);border-radius:10px;padding:11px 8px;margin:3px -6px;
+  border-bottom-color:transparent}
+.li.now .nm{color:var(--ink);font-size:14px}
+.li.now .amt{color:var(--gold)}
+.li.open{border-bottom:0}
+.memo{border:1px solid rgba(176,140,255,.35);border-radius:11px;background:rgba(176,140,255,.05);
+  padding:10px 11px;margin:0 0 8px}
+.memo .k{color:var(--violet)}.memo .k i{background:var(--violet);box-shadow:0 0 8px var(--violet)}
+.foot{display:flex;align-items:center;gap:8px;margin-top:11px;padding-top:10px;border-top:1px solid var(--line2)}
+.foot b{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint)}
+.foot u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--gold);text-decoration:none}
+
+/* ════ I · TWO-SIDED ════ */
+.flipbar{display:flex;gap:6px;padding:5px;border:1px solid var(--line2);border-radius:12px;
+  background:var(--panel2);margin-bottom:10px}
+.flipbar div{flex:1;text-align:center;padding:10px 6px;min-height:var(--tap);display:flex;align-items:center;
+  justify-content:center;border-radius:9px;font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.14em;color:var(--faint)}
+.flipbar div.on{background:rgba(224,178,94,.14);color:var(--gold)}
+.flipbar div.onv{background:rgba(176,140,255,.16);color:var(--violet)}
+.seam{display:flex;align-items:center;gap:9px;padding:11px 12px;min-height:var(--tap);border:1px solid var(--line);
+  border-radius:12px;background:var(--panel);margin-top:8px}
+.seam b{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint)}
+.seam span{font-size:13px;color:var(--dim)}
+.seam u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);text-decoration:none}
+.sheetpg{border:1px solid rgba(176,140,255,.3);border-radius:14px;background:rgba(176,140,255,.04);padding:12px}
+.sb{padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.sb:last-child{border-bottom:0}
+.sb .h{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.sb .h b{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--violet)}
+.sb .h span{font-size:12.5px;color:var(--faint)}
+.sb .txt{font-size:13.5px;color:var(--ink);line-height:1.5}
+.sb .txt em{font-style:normal;color:var(--faint)}
+.tuck{margin-top:11px;padding-top:10px;border-top:1px solid rgba(255,255,255,.09)}
+
+.tbl{width:100%;min-width:820px;border-collapse:collapse;font-size:13.5px}
+.tblwrap{overflow-x:auto;margin-top:26px;max-width:1080px}
+.tbl th{text-align:left;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;
+  color:var(--faint);padding:9px 10px;border-bottom:1px solid var(--line2);font-weight:400}
+.tbl td{padding:11px 10px;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+.tbl td b{color:var(--ink)}
+.tbl tr td:first-child{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--gold);white-space:nowrap}
+.q{border-left:2px solid var(--gold);padding-left:14px;margin:20px 0;color:var(--dim);font-size:14.5px;max-width:720px;line-height:1.6}
+.q b{color:var(--ink)}
+.hr{height:1px;background:var(--line);max-width:1080px;margin:56px 0 0}
+@media(max-width:700px){.wrap{padding:28px 14px 70px}.lede h1{font-size:27px}.opt h2{font-size:22px}
+  .ask{grid-template-columns:1fr;gap:4px}.cull .row2{grid-template-columns:1fr;gap:2px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="lede">
+  <div class="k">THE TODAY PAGE · FIVE NEW DIRECTIONS · NOTHING BUILT</div>
+  <h1>Five new shapes.<br>None of them is a deck.</h1>
+  <p>You said the deck is the one you like most and you still don't love it. So it isn't here —
+     not as a variant, not in disguise. <b>The one thing you did like, the notes on the back of the
+     card, is in all five</b>, and in three of them it stopped being a "back" and became the main event.</p>
+  <p>Every screen below is a drawing. Nothing has been built into the app.</p>
+</div>
+
+<div class="asks">
+  <div class="ask"><div class="n">KEEP</div><div class="v"><b>Notes that belong to the block.</b>
+    Write into the block, the last time you ran it is underneath, nothing is a separate screen.
+    <b>Present in all five.</b></div></div>
+  <div class="ask"><div class="n r">CUT</div><div class="v"><b>Wins as a card in the deck.</b> Gone.
+    You said it might just be a small side section — <b>so one of these makes it exactly that, and one
+    removes wins from the daily screen entirely.</b> Five directions, five different answers.</div></div>
+  <div class="ask"><div class="n y">GONE</div><div class="v"><b>A, C, D and the deck itself.</b>
+    Not re-served, not recombined.</div></div>
+</div>
+
+<div class="cull">
+  <div class="cap" style="margin-bottom:8px">NINE WERE DRAWN UP · FOUR KILLED HERE FIRST</div>
+  <div class="row2"><div class="nm">THE CLOCK</div><div class="why">The day as a ring, wins as marks on it.
+    Killed: <b>it's the rail bent into a circle.</b> Same abstraction you'd have to learn, less legible, harder to build.</div></div>
+  <div class="row2"><div class="nm">THE FILMSTRIP</div><div class="why">Live block on top, swipeable cards below.
+    Killed: <b>that's the deck lying on its side.</b> You told me not to give you five decks.</div></div>
+  <div class="row2"><div class="nm">THE SPINE</div><div class="why">A timeline down the left edge, echoing the Goals page.
+    Killed: <b>it's One Column with a rail — the hybrid I already offered and you didn't take.</b></div></div>
+  <div class="row2"><div class="nm">THE ROOM</div><div class="why">The block on a table, everything else in drawers at the edges.
+    Killed: <b>it hides the day behind gestures you'd have to remember.</b> Wrong for a phone you open half-awake.</div></div>
+</div>
+
+<!-- ══════════ E ══════════ -->
+<div class="opt">
+  <div class="n">DIRECTION E</div>
+  <h2>The Notebook</h2>
+  <div class="idea">Today is one page you write on. The blocks are the headings; your notes are the page.</div>
+  <p>This takes the only thing you liked and makes it the whole architecture. <b>The notes aren't behind
+     anything</b> — there is no back to flip to, because the writing <i>is</i> the surface. Each block is a
+     small heading with a time; underneath it is empty ruled space that becomes what you wrote. A day you
+     worked hard is a full page. A day you didn't is a short one — <b>not a red one.</b></p>
+  <p>Wins are <b>ticks in the margin</b>, the narrow strip down the right edge. Literally the "small little
+     side section" you described. You never visit them; you flick them as you pass.</p>
+  <div class="tags"><span class="tag keep">NOTES ARE THE PAGE</span><span class="tag win">WINS · MARGIN TICKS</span>
+    <span class="tag">NO CARDS AT ALL</span></div>
+</div>
+<div class="row">
+  <div class="col"><div class="cap">MID-DAY · THE PAGE SO FAR</div>
+    <div class="ph">
+      <div class="book">
+        <div class="bkhd"><b>Wednesday</b><span>DAY 37 · 3 / 11</span></div>
+        <div class="leaf">
+          <div class="body">
+            <div class="entry"><div class="eh"><b>06:30</b><span>Market open</span><u>✓</u></div>
+              <div class="hand">Held the rules. No double-back.</div></div>
+            <div class="entry"><div class="eh"><b>08:30</b><span>Today's three</span><u>✓</u></div>
+              <div class="hand">Ten owners. Cypress quote. <em>Call Kells.</em></div></div>
+            <div class="entry now"><div class="eh"><b>09:00</b><span>Block 1 · SANO</span><u>NOW · 90m</u></div>
+              <div class="hand">Ten called. Two booked.<br><em>— Reyes wants Thursday<br>— ask about the tunnel</em></div>
+              <div class="btn sm" style="margin-top:9px">Start focus run · 90m</div></div>
+            <div class="entry"><div class="eh"><b>10:45</b><span>Block 2 · SANO</span><u>75m</u></div>
+              <div class="blank">not written yet</div></div>
+            <div class="entry"><div class="eh"><b>12:00</b><span>Lunch</span></div></div>
+          </div>
+          <div class="marg">
+            <div class="mtick on"><b>✓</b><span>cook</span></div>
+            <div class="mtick on"><b>✓</b><span>bed</span></div>
+            <div class="mtick"><b>○</b><span>chore</span></div>
+            <div class="mtick"><b>○</b><span>no</span></div>
+            <div class="mtick"><b>○</b><span>time</span></div>
+            <div class="mtick"><b>+</b><span>extra</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="s" style="padding:11px 2px 0">One page. Scroll it like paper.</div>
+    </div>
+    <div class="note">The whole day is <b>one object and one margin</b>. Nothing is wedged between
+      anything, because there are no sections — only headings on a page.</div>
+  </div>
+
+  <div class="col"><div class="cap">WRITING INTO THE LIVE BLOCK</div>
+    <div class="ph">
+      <div class="book">
+        <div class="bkhd"><b>Block 1 · SANO</b><span>09:00–10:30</span></div>
+        <div class="body">
+          <div class="entry now"><div class="eh"><b>BY THE END</b><u>SAVED</u></div>
+            <div class="hand">Ten called. Two booked.<br><em>— Reyes wants Thursday<br>— Cypress quote<span class="cur"></span></em></div>
+          </div>
+          <div class="entry"><div class="eh"><b>LAST TIME</b><span>Fri</span></div>
+            <div class="hand" style="color:var(--faint)">"Six calls, one no-show. Start earlier."</div></div>
+        </div>
+      </div>
+      <div class="kb"><div class="s" style="color:var(--dim)">Saves as you type · no Done button</div></div>
+      <div class="two" style="margin-top:9px"><div class="btn gh">Back to the page</div><div class="btn">Start · 90m</div></div>
+    </div>
+    <div class="note">Tap a heading and you're writing in it. <b>The last time you ran this same block
+      is quoted underneath</b> — the block accumulates a thread across the run. That's your idea, kept whole.</div>
+  </div>
+
+  <div class="col"><div class="cap">A THIN DAY · AND THE MARGIN</div>
+    <div class="ph">
+      <div class="book">
+        <div class="bkhd"><b>Thursday</b><span>DAY 38 · 1 / 11</span></div>
+        <div class="leaf">
+          <div class="body">
+            <div class="entry"><div class="eh"><b>09:00</b><span>Block 1 · SANO</span><u>✓</u></div>
+              <div class="hand">Two calls. Kid was sick.</div></div>
+            <div class="entry"><div class="eh"><b>10:45</b><span>Block 2</span></div>
+              <div class="blank">not written yet</div></div>
+            <div class="entry"><div class="eh"><b>15:05</b><span>Block 4 · Admin</span></div>
+              <div class="blank">not written yet</div></div>
+          </div>
+          <div class="marg">
+            <div class="mtick on"><b>✓</b><span>cook</span></div>
+            <div class="mtick on"><b>✓</b><span>time</span></div>
+            <div class="mtick"><b>○</b><span>bed</span></div>
+            <div class="mtick"><b>○</b><span>chore</span></div>
+            <div class="mtick"><b>+</b><span>extra</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="s" style="padding:11px 2px 0">A short page is a short page. Nothing is red, nothing is counted against you.</div>
+    </div>
+    <div class="note"><b>This is why the notebook is safe on a bad day.</b> An unwritten heading looks
+      unwritten, not failed. Two margin ticks still say the day wasn't nothing.</div>
+  </div>
+</div>
+
+<div class="hr"></div>
+
+<!-- ══════════ F ══════════ -->
+<div class="opt">
+  <div class="n">DIRECTION F</div>
+  <h2>One Thing</h2>
+  <div class="idea">The screen shows the block you are in. That's the entire page. Wins don't exist until the day closes.</div>
+  <p>The most extreme answer to "things feel thrown on": <b>there is nothing to throw anything onto.</b>
+     No list, no rail, no tray, no strip. Open the app and it tells you what you are doing right now,
+     in type you can read from across the room. The whole day is behind one door you have to choose to open.</p>
+  <p>Tap the block and it turns over — <b>that's the flip you liked, applied to the whole screen instead of
+     a card.</b> Wins appear once, at 21:30, on the closing screen. During the day they are not on your phone
+     at all.</p>
+  <div class="tags"><span class="tag keep">THE WHOLE SCREEN FLIPS</span><span class="tag win">WINS · ABSENT UNTIL NIGHT</span>
+    <span class="tag">ONE OBJECT, FULL BLEED</span></div>
+</div>
+<div class="row">
+  <div class="col"><div class="cap">09:40 · THE ONLY SCREEN</div>
+    <div class="ph">
+      <div class="full">
+        <div class="dom">SANO · BLOCK 1 OF 4</div>
+        <h3>Call ten owners<br>from the list</h3>
+        <div class="obj">Two booked by 10:30.</div>
+        <div class="clock">51:12</div>
+        <div class="meter"><i></i></div>
+        <div class="btn">Running · phone down</div>
+        <div class="doorbar"><b>THE WHOLE DAY</b><span>3 done · next 10:45 ›</span></div>
+      </div>
+    </div>
+    <div class="note"><b>Nothing competes.</b> One domain, one objective, one clock, one door.
+      The day is one tap away and never in the way.</div>
+  </div>
+
+  <div class="col"><div class="cap">TAPPED · THE SCREEN TURNED OVER</div>
+    <div class="ph">
+      <div class="backside">
+        <div class="k" style="color:var(--violet)"><i style="background:var(--violet);box-shadow:0 0 8px var(--violet)"></i>BLOCK 1 · SANO<u>SAVED</u></div>
+        <div style="font-size:15px;color:var(--ink);line-height:1.6;padding:8px 0 4px">
+          Ten called. Two booked.<br>
+          <span style="color:var(--faint)">— Reyes wants Thursday<br>— Cypress quote by Friday<br>— ask about the tunnel</span></div>
+        <div class="thread">
+          <div class="s" style="margin-bottom:6px">THIS BLOCK, EARLIER IN THE RUN</div>
+          <div class="thr"><b>FRI</b><span>Six calls, one no-show. Start earlier.</span></div>
+          <div class="thr"><b>WED</b><span>Good list. Nobody picked up before 10.</span></div>
+        </div>
+        <div class="btn gh" style="margin-top:11px">Turn back</div>
+      </div>
+    </div>
+    <div class="note">Same idea as the back of the card, <b>except the whole page is the card</b>, so
+      there's no third gesture to learn and no stack to manage. The block's history is right there.</div>
+  </div>
+
+  <div class="col"><div class="cap">21:30 · THE ONE TIME WINS APPEAR</div>
+    <div class="ph">
+      <div class="close">
+        <div class="k" style="color:var(--phos)"><i style="background:var(--phos);box-shadow:0 0 8px var(--phos)"></i>THE DAY IS CLOSED<u>DAY 37</u></div>
+        <div class="t" style="margin:4px 0 8px">Three deep blocks.<br>Two owners booked.</div>
+        <div class="s dim" style="margin-bottom:11px">Anything else happen? Tap what's true. Nothing here
+          is ever scored against you.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="pill on">✓ COOKED</span><span class="pill">CHORES</span>
+          <span class="pill">SAID NO</span><span class="pill">REAL TIME</span>
+          <span class="pill">IN BED ON TIME</span><span class="pill x">+ READ TONIGHT</span></div>
+        <div class="btn gh" style="margin-top:11px">Close the day</div>
+      </div>
+      <div class="s" style="padding:11px 2px 0">One screen a day, at night, then it's gone.</div>
+    </div>
+    <div class="note">Wins become a <b>30-second review, not furniture.</b> This is the option that
+      takes your "or I don't know" seriously: maybe they don't belong on the day surface at all.</div>
+  </div>
+</div>
+
+<div class="hr"></div>
+
+<!-- ══════════ G ══════════ -->
+<div class="opt">
+  <div class="n">DIRECTION G</div>
+  <h2>The Log</h2>
+  <div class="idea">The day writes to you and you write back. Only what already happened is on screen.</div>
+  <p>A thread, like a conversation. When a block ends it <b>posts itself</b> — "Block 1 finished. 90 minutes
+     clean." Your notes are a <b>reply underneath it</b>, with your last reply to the same block quoted at the
+     bottom. Nothing about the future is on screen except one line: what's next.</p>
+  <p>This is the honest version of "a by-product of a good day": <b>wins post themselves into the thread at the
+     hour they happen</b> and then scroll away upward. They aren't a checklist you visit — they're things that
+     appeared because they occurred. At the end of the day the thread <i>is</i> the record of the day.</p>
+  <div class="tags"><span class="tag keep">NOTES ARE REPLIES</span><span class="tag win">WINS · EVENTS IN THE THREAD</span>
+    <span class="tag">NO FUTURE ON SCREEN</span></div>
+</div>
+<div class="row">
+  <div class="col"><div class="cap">14:20 · THE THREAD SO FAR</div>
+    <div class="ph">
+      <div class="hdr"><b>Wednesday</b><span>DAY 37</span><u>+235 XP</u></div>
+      <div class="log">
+        <div class="ev good"><div class="tm">08:30</div>
+          <div class="bub">Today's three are written.<div class="sub">Ten owners · Cypress quote · call Kells</div></div></div>
+        <div class="ev good"><div class="tm">10:30</div>
+          <div class="bub">Block 1 finished. 90 minutes, phone down.<div class="sub">SANO · +65 XP</div></div>
+          <div class="reply"><div class="who">YOU WROTE</div>Ten called. Two booked. Reyes wants Thursday.</div></div>
+        <div class="ev win"><div class="tm">12:40</div>
+          <div class="bub thin"><div class="winline">Cooked instead of ordering<u>+20</u></div></div></div>
+        <div class="ev now"><div class="tm">13:00</div>
+          <div class="bub now">Block 3 is running.<div class="sub">Fruits · 43 minutes left</div>
+            <div class="btn sm" style="margin-top:9px">Phone down</div></div></div>
+      </div>
+      <div class="next"><b>NEXT</b><span>15:05 · Block 4 · Admin</span></div>
+      <div class="composer"><span>Write into Block 3…</span><b>REPLY</b></div>
+    </div>
+    <div class="note">The future is <b>one line</b>. Everything above you actually did.
+      A win is an event in the same stream as a block — smaller, quieter, unranked.</div>
+  </div>
+
+  <div class="col"><div class="cap">REPLYING TO A BLOCK</div>
+    <div class="ph">
+      <div class="log">
+        <div class="ev good"><div class="tm">10:30</div>
+          <div class="bub">Block 1 finished. 90 minutes, phone down.<div class="sub">SANO · +65 XP</div></div>
+          <div class="reply"><div class="who">YOU WROTE · SAVING</div>
+            Ten called. Two booked.<br>Reyes wants Thursday.<br>Cypress quote by Friday<span style="display:inline-block;width:2px;height:14px;background:var(--violet);vertical-align:-2px;margin-left:2px"></span>
+            <div class="old">FRI · "Six calls, one no-show. Start earlier."</div></div></div>
+      </div>
+      <div class="composer" style="border-color:rgba(176,140,255,.4)"><span style="color:var(--ink)">Cypress quote by Friday</span><b style="color:var(--violet)">SAVED</b></div>
+      <div class="s" style="padding:11px 2px 0">Replies attach to the block, not to the day. The same
+        block's last reply is quoted underneath.</div>
+    </div>
+    <div class="note"><b>Your keeper, in conversation form.</b> You never open a notes screen — you reply
+      to the thing that just happened, which is when you actually have something to say.</div>
+  </div>
+
+  <div class="col"><div class="cap">EVENING · WINS ARRIVING ON THEIR OWN</div>
+    <div class="ph">
+      <div class="log">
+        <div class="ev good"><div class="tm">16:20</div><div class="bub">Gym done.<div class="sub">BODY · +65 XP</div></div></div>
+        <div class="ev win"><div class="tm">19:10</div><div class="bub thin"><div class="winline">Real time with someone<u>+25</u></div></div></div>
+        <div class="ev win"><div class="tm">20:05</div><div class="bub thin"><div class="winline">Read tonight<u>+60</u></div></div></div>
+        <div class="ev"><div class="tm">21:30</div>
+          <div class="bub">That's the day. <div class="sub">Three blocks, four small things, 355 XP.</div>
+            <div class="btn sm gh" style="margin-top:9px">Read the day back</div></div></div>
+      </div>
+      <div class="composer"><span>Anything else happen?</span><b>+ ADD</b></div>
+    </div>
+    <div class="note">The wins <b>show up where they happened and then scroll away.</b> No section, no
+      tray, no card — and the whole thread is already the day's record, so Record has something real to read.</div>
+  </div>
+</div>
+
+<div class="hr"></div>
+
+<!-- ══════════ H ══════════ -->
+<div class="opt">
+  <div class="n">DIRECTION H</div>
+  <h2>The Ledger</h2>
+  <div class="idea">Today is an account, not a schedule. One number at the top, and every line is a credit.</div>
+  <p>The economy is the part you said doesn't bend — so here it's the interface. The top of the page is what
+     today has earned. Under it, every line that paid: a clean block is <b>+65</b>, cooking dinner is <b>+20</b>.
+     They sit in the <i>same column</i>, and that is precisely what makes wins minor — <b>you can see they're
+     rounding.</b> No argument needed, the arithmetic says it.</p>
+  <p><b>There are no debits.</b> Nothing on this page is ever negative or red. A block you missed simply never
+     posted a line. Notes are the <b>memo on a line</b> — tap a line, write on it.</p>
+  <div class="tags"><span class="tag keep">NOTES · MEMO ON A LINE</span><span class="tag win">WINS · SMALL CREDITS, SAME COLUMN</span>
+    <span class="tag">CREDITS ONLY, NEVER DEBITS</span></div>
+</div>
+<div class="row">
+  <div class="col"><div class="cap">14:20 · TODAY'S ACCOUNT</div>
+    <div class="ph">
+      <div class="hdr"><b>Wednesday</b><span>DAY 37</span><u>OVR 61</u></div>
+      <div class="big">+235</div>
+      <div class="bigsub">earned today · a strong weekday is about 445</div>
+      <div class="led">
+        <div class="li"><span class="tm">06:30</span><span class="nm">Market open <em>· RULES HELD</em></span><span class="amt">+25</span></div>
+        <div class="li"><span class="tm">08:30</span><span class="nm">Today's three</span><span class="amt">+20</span></div>
+        <div class="li block"><span class="tm">09:00</span><span class="nm">Block 1 · SANO <em>· CLEAN</em></span><span class="amt">+65</span></div>
+        <div class="li block"><span class="tm">10:45</span><span class="nm">Block 2 · SANO <em>· PICKED UP THE PHONE</em></span><span class="amt">+25</span></div>
+        <div class="li small"><span class="tm">12:40</span><span class="nm">Cooked instead of ordering</span><span class="amt">+20</span></div>
+        <div class="li now"><span class="tm">13:00</span><span class="nm">Block 3 · Fruits<br><span class="s">43 minutes left</span></span><span class="amt">65?</span></div>
+      </div>
+      <div class="foot"><b>STILL AVAILABLE TODAY</b><u>+210</u></div>
+    </div>
+    <div class="note"><b>Wins are 20 next to 65.</b> Nothing has to say "these are extra" — the number
+      says it. And "still available" turns the rest of the day into upside, not obligation.</div>
+  </div>
+
+  <div class="col"><div class="cap">TAPPED A LINE · THE MEMO</div>
+    <div class="ph">
+      <div class="led" style="border-top:0">
+        <div class="li block open"><span class="tm">09:00</span><span class="nm">Block 1 · SANO <em>· CLEAN</em></span><span class="amt">+65</span></div>
+      </div>
+      <div class="memo">
+        <div class="k"><i></i>MEMO<u>SAVED</u></div>
+        <div style="font-size:13.5px;color:var(--ink);line-height:1.55">Ten called. Two booked.<br>
+          <span style="color:var(--faint)">— Reyes wants Thursday<br>— Cypress quote by Friday</span></div>
+        <div class="s" style="border-top:1px solid rgba(255,255,255,.08);margin-top:9px;padding-top:8px">
+          FRI · <span style="color:var(--dim)">"Six calls, one no-show."</span></div>
+      </div>
+      <div class="li block"><span class="tm">10:45</span><span class="nm">Block 2 · SANO</span><span class="amt">+25</span></div>
+      <div class="li small"><span class="tm">12:40</span><span class="nm">Cooked instead of ordering</span><span class="amt">+20</span></div>
+      <div class="s" style="padding:11px 2px 0">The memo pushes the ledger down. Nothing covers anything.</div>
+    </div>
+    <div class="note">Your keeper as a <b>memo field on a transaction</b> — and because every line has one,
+      the wins can carry notes too ("cooked — the short-rib thing worked").</div>
+  </div>
+
+  <div class="col"><div class="cap">A BAD DAY · WHY THIS CAN'T GO RED</div>
+    <div class="ph">
+      <div class="hdr"><b>Thursday</b><span>DAY 38</span><u>OVR 61</u></div>
+      <div class="big" style="color:var(--dim)">+45</div>
+      <div class="bigsub">earned today · the day is still open</div>
+      <div class="led">
+        <div class="li small"><span class="tm">07:10</span><span class="nm">Cooked instead of ordering</span><span class="amt">+20</span></div>
+        <div class="li small"><span class="tm">11:00</span><span class="nm">Real time with someone</span><span class="amt">+25</span></div>
+        <div class="li now"><span class="tm">15:05</span><span class="nm">Block 4 · Admin<br><span class="s">starts in 40 minutes</span></span><span class="amt">65?</span></div>
+      </div>
+      <div class="foot"><b>STILL AVAILABLE TODAY</b><u>+130</u></div>
+      <div class="s" style="padding:12px 2px 0">Two blocks didn't happen. There is no line for them,
+        no zero, and no red.</div>
+    </div>
+    <div class="note"><b>The absence of a line is the whole trick.</b> A missed block leaves a gap you
+      have to look for, while the two small things you did are the only things printed.</div>
+  </div>
+</div>
+
+<div class="hr"></div>
+
+<!-- ══════════ I ══════════ -->
+<div class="opt">
+  <div class="n">DIRECTION I</div>
+  <h2>The Two-Sided Day</h2>
+  <div class="idea">Your one liked idea, promoted: the whole Today page has a front and a back. Front is doing. Back is writing.</div>
+  <p>Front: the live block and the seam either side of it. That's all — no wins, no tray, no extras.
+     <b>Everything that isn't "what am I doing right now" moved to the back.</b> One flip, not one per card.</p>
+  <p>The back is <b>today's sheet</b>: every block's notes as one continuous page you can read top to bottom,
+     which means at 21:30 you already have the day written up. <b>Wins are tucked at the foot of the back</b> —
+     off the doing surface entirely, but not exiled to a different tab.</p>
+  <div class="tags"><span class="tag keep">FRONT / BACK IS THE ARCHITECTURE</span><span class="tag win">WINS · FOOT OF THE BACK</span>
+    <span class="tag">CHEAPEST TO BUILD</span></div>
+</div>
+<div class="row">
+  <div class="col"><div class="cap">FRONT · DOING</div>
+    <div class="ph">
+      <div class="flipbar"><div class="on">DOING</div><div>WRITING</div></div>
+      <div class="seam" style="opacity:.55;margin-top:0"><b>08:30</b><span>Today's three</span><u>✓</u></div>
+      <div class="card live" style="margin-top:8px">
+        <div class="k"><i></i>NOW<u>09:00–10:30 · 90m</u></div>
+        <div class="t">Block 1 · SANO</div>
+        <div class="s dim">Call ten owners from the list</div>
+        <div class="btn">Start focus run · 90m</div>
+        <div class="two" style="margin-top:7px"><div class="btn gh">Whole day</div><div class="btn gh">Detail</div></div>
+      </div>
+      <div class="seam"><b>10:45</b><span>Block 2 · SANO</span><u>NEXT</u></div>
+      <div class="s" style="padding:12px 2px 0">Two seams, one card, one switch. Nothing else is on this side.</div>
+    </div>
+    <div class="note">This is what you were reaching for when you said the sections feel wedged:
+      <b>the front only has room for one thing, so nothing can be wedged into it.</b></div>
+  </div>
+
+  <div class="col"><div class="cap">BACK · TODAY'S SHEET</div>
+    <div class="ph">
+      <div class="flipbar"><div>DOING</div><div class="onv">WRITING</div></div>
+      <div class="sheetpg">
+        <div class="sb"><div class="h"><b>BLOCK 1 · SANO</b><span>09:00 · clean</span></div>
+          <div class="txt">Ten called. Two booked.<br><em>— Reyes wants Thursday<br>— Cypress quote by Friday</em></div></div>
+        <div class="sb"><div class="h"><b>BLOCK 2 · SANO</b><span>10:45 · phone</span></div>
+          <div class="txt">Follow-ups only. <em>Nobody picks up before 10.</em></div></div>
+        <div class="sb"><div class="h"><b>BLOCK 3 · FRUITS</b><span>13:00 · running</span></div>
+          <div class="txt" style="color:var(--faint)">Tap to write…<span style="display:inline-block;width:2px;height:14px;background:var(--violet);vertical-align:-2px;margin-left:2px"></span></div></div>
+        <div class="sb"><div class="h"><b>BLOCK 4 · ADMIN</b><span>15:05</span></div>
+          <div class="txt" style="color:#4b445e">—</div></div>
+      </div>
+      <div class="s" style="padding:11px 2px 0">One page, every block, in order. Yesterday is one swipe left.</div>
+    </div>
+    <div class="note"><b>The day writes itself up as you go.</b> This is the version of your idea where
+      the notes are also the Record entry — no separate journaling step at night, ever.</div>
+  </div>
+
+  <div class="col"><div class="cap">BACK · THE FOOT OF THE PAGE</div>
+    <div class="ph">
+      <div class="flipbar"><div>DOING</div><div class="onv">WRITING</div></div>
+      <div class="sheetpg" style="opacity:.45">
+        <div class="sb"><div class="h"><b>BLOCK 4 · ADMIN</b><span>15:05 · clean</span></div>
+          <div class="txt">Invoices out. Insurance call Monday.</div></div>
+      </div>
+      <div class="tuck">
+        <div class="k" style="color:var(--phos)"><i style="background:var(--phos);box-shadow:0 0 8px var(--phos)"></i>ALSO TODAY<u>+65</u></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
+          <span class="pill on">✓ COOKED</span><span class="pill on">✓ IN BED ON TIME</span>
+          <span class="pill">CHORES</span><span class="pill">SAID NO</span>
+          <span class="pill">REAL TIME</span><span class="pill x">+ READ TONIGHT</span></div>
+        <div class="s" style="margin-top:10px">Never scored against you. Two taps, at the bottom of the
+          page you're already on.</div>
+      </div>
+    </div>
+    <div class="note">Wins live <b>after everything you actually wrote</b> — so they read as a footnote to
+      the day, which is what they are. And they're never on screen while you're working.</div>
+  </div>
+</div>
+
+<!-- ══════════ compare ══════════ -->
+<div class="opt" style="margin-top:70px">
+  <div class="n">SIDE BY SIDE</div>
+  <h2>What each one costs you</h2>
+</div>
+<div class="tblwrap">
+<table class="tbl">
+  <tr><th></th><th>E · NOTEBOOK</th><th>F · ONE THING</th><th>G · THE LOG</th><th>H · THE LEDGER</th><th>I · TWO-SIDED</th></tr>
+  <tr><td>THE DAY IS</td><td>a written page</td><td>invisible — one block at a time</td><td>a thread of what happened</td><td>an account of credits</td><td>a front you do, a back you write</td></tr>
+  <tr><td>NOTES</td><td><b>are the page itself</b></td><td>the whole screen turns over</td><td>a reply to the block</td><td>a memo on the line</td><td>one running sheet on the back</td></tr>
+  <tr><td>WINS</td><td>ticks in the margin</td><td><b>absent all day</b>, once at 21:30</td><td>events that post themselves</td><td>small credits in the same column</td><td>a footnote at the foot of the back</td></tr>
+  <tr><td>BEST AT</td><td><b>meaning.</b> In December you have 110 written pages, not 110 scores</td>
+      <td><b>focus.</b> Nothing on the phone but the work</td>
+      <td><b>truth.</b> Only what happened is on screen</td>
+      <td><b>clarity.</b> Wins are minor and you can prove it</td>
+      <td><b>calm.</b> Working and reflecting never share a screen</td></tr>
+  <tr><td>COSTS YOU</td><td>you must write something, or the page is empty</td>
+      <td>you can't see what's coming without a tap; planning-in-the-moment gets harder</td>
+      <td>you can't look ahead at all — a bad fit for the Friday planner's day</td>
+      <td>everything becomes points; the day starts to read as money</td>
+      <td>two half-pages instead of one; the back can go unvisited for days</td></tr>
+  <tr><td>RISK</td><td>an empty page could feel like an accusation on a rough day</td>
+      <td>the door gets ignored and you lose the sense of the day's shape</td>
+      <td>the thread grows long; days blur without hard day boundaries</td>
+      <td><b>XP becomes the point instead of the work</b> — the one thing the app must never do</td>
+      <td>it's the safest and therefore the least new</td></tr>
+  <tr><td>BUILD</td><td>medium — the margin and per-block writing are new</td>
+      <td>medium — mostly deletion, plus the close-of-day screen</td>
+      <td>large — events, replies, a real timeline store</td>
+      <td>medium — the numbers already exist; this is a new view of them</td>
+      <td><b>small</b> — the pieces exist, they get sorted onto two sides</td></tr>
+</table>
+</div>
+
+<div class="q"><b>My read, since you'll ask.</b> <b>E · The Notebook</b> is the one I'd build. It takes the
+  only thing you liked and makes it the architecture instead of a feature, it puts wins exactly where
+  your own instinct put them ("a small little side section"), and it's the only option where a hard day
+  produces something worth keeping — <b>110 written pages by December 25</b> rather than 110 percentages.
+  It also can't go red, which matters more than anything else on this page.</div>
+<div class="q"><b>The one to be careful of is H · The Ledger.</b> It's the most immediately impressive and
+  it answers your complaint with arithmetic — but it turns your day into a scoreboard, and you have
+  said the number must never become the point. I drew it because it's genuinely different and it
+  solves the wins problem cleanly. I don't think you should ship it.</div>
+<div class="q"><b>If you want the cheap win instead:</b> <b>I · Two-Sided</b> is a week of work, not three,
+  and it kills the wedged-in feeling immediately. It's the least exciting and the most likely to just
+  be right.</div>
+<div class="q">Pick one, or say "E's page with F's block screen" and I'll draw that properly.
+  <b>Nothing goes into the app until you choose.</b></div>
+
+</div>
+</body>
+</html>
