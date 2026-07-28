@@ -35,7 +35,7 @@
 .stage-side .kick{margin-bottom:12px}
 .stage-side h2{font-size:clamp(26px,3.2vw,38px);color:#fff;line-height:1.1;letter-spacing:-.02em;text-wrap:balance}
 .stage-sub{margin-top:14px;font-size:16px;line-height:1.6;color:#9FB0BF;max-width:46ch}
-.stage-side .tier-switch{justify-content:flex-start;margin:24px 0 0;max-width:none}
+.stage-side .tier-switch{margin:24px 0 0;max-width:none}
 .stage-side .cap-count{text-align:left;margin-top:14px;font-size:15px}
 .stage-note{margin-top:22px;padding:16px 18px;border-radius:14px;font-size:15px;line-height:1.6;
   color:#C3D2DE;background:rgba(0,112,243,.12);border:1px solid rgba(0,112,243,.3);max-width:46ch}
@@ -129,7 +129,7 @@
 @media(max-width:1000px){
   .stage-grid{grid-template-columns:minmax(0,1fr);gap:32px;padding-top:56px;max-width:560px}
   .stage-side{text-align:center}
-  .stage-side .tier-switch{justify-content:center}
+  .stage-side .tier-switch{max-width:440px;margin-inline:auto}
   .stage-side .cap-count{text-align:center}
   .stage-sub,.stage-note{margin-inline:auto}
   .fr-scroll{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -275,9 +275,11 @@ html:has(.cap-radio:not(#co-none):checked) body{overflow:hidden}
 .appdemo .bc{display:grid;grid-template-rows:1fr auto;align-items:end}
 .appdemo .bc .b{align-self:end}
 
-/* forced-colors: all four tier pills rendered identically, so the selection was invisible */
+/* forced-colors: all four tier controls rendered identically, so the selection was
+   invisible. As tabs the blue underline is dropped too, hence the explicit border. */
 @media (forced-colors: active){
-  .tier-radio:checked + .tier-lab{border-width:3px;outline:3px solid CanvasText;outline-offset:2px}
+  .tier-radio:checked + .tier-tab{border-bottom-width:4px;border-bottom-color:CanvasText;
+    outline:2px solid CanvasText;outline-offset:2px}
 }
 .capset{border:0;padding:0;margin:0}
 

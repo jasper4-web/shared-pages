@@ -751,15 +751,24 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
    every tier chip visible, which is still true and still legible. */
 .cap-band .sec-head p{color:#9FB0BF;max-width:64ch;margin-inline:auto}
 
-/* --- the level switch --- */
-.tier-switch{border:0;padding:0;margin:26px auto 0;display:flex;justify-content:center;flex-wrap:wrap;gap:8px;max-width:760px}
+/* --- the level switch. Four tabs on one hairline, not four filled pills: a
+   solid-blue pill reads as a primary button, and with the drawer under it that
+   put two "click me" objects between the heading and the phone that actually
+   sells. Type carries the state instead — white label over a blue underline —
+   so the only saturated blue left in the band belongs to the app. --- */
+.tier-switch{border:0;padding:0;margin:30px auto 0;max-width:680px}
 .tier-radio{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-.tier-lab{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:132px;padding:11px 18px;border:1.5px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(255,255,255,.04);color:#D7E2EC;font-family:var(--disp);font-weight:600;font-size:15px;cursor:pointer;transition:background .18s,border-color .18s,color .18s}
-.tier-lab span{font-size:12.5px;font-weight:500;color:#8FA3B4;letter-spacing:.01em}
-.tier-lab:hover{border-color:rgba(77,155,255,.55);background:rgba(255,255,255,.07)}
-.tier-radio:checked + .tier-lab{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 6px 22px rgba(0,112,243,.32)}
-.tier-radio:checked + .tier-lab span{color:rgba(255,255,255,.86)}
-.tier-radio:focus-visible + .tier-lab{outline:3px solid #4D9BFF;outline-offset:3px}
+.tier-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:1px solid rgba(255,255,255,.13)}
+.tier-tab{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;
+  padding:10px 6px 13px;margin-bottom:-1px;border-bottom:2px solid transparent;
+  color:#9FB0BF;font-family:var(--disp);transition:color .16s,border-color .16s}
+.tier-tab b{font-size:15px;font-weight:600}
+.tier-tab i{font-style:normal;font-size:12.5px;color:#7E90A1}
+.tier-tab:hover{color:#E8F1F8}
+.tier-radio:checked + .tier-tab{color:#fff;border-bottom-color:var(--blue)}
+.tier-radio:checked + .tier-tab i{color:#9EC9FF}
+.tier-radio:focus-visible + .tier-tab{outline:3px solid #4D9BFF;outline-offset:-2px}
+@media(max-width:430px){ .tier-tab b{font-size:13.5px} .tier-tab i{font-size:11.5px} }
 
 /* --- the running count --- */
 .cap-count{text-align:center;margin-top:16px;font-size:15.5px;color:#9FB0BF;min-height:1.5em}
@@ -792,24 +801,25 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
 
 /* --- the drawer. The 16 tiles were 950px of spec sheet sitting between the tier
    switch and the app demo, so the app — the thing that actually sells — did not
-   appear until ~2,175px on a phone. They now collapse behind one bar. The live
-   count above it and the "16" badge carry the scale, so the breadth is still
-   stated even while the list is shut. No JS: a checkbox plus :has(), same as the
-   tier switch. --- */
+   appear until ~2,175px on a phone. They now collapse behind one control. It is
+   a LINE OF TEXT, not a bar: the tier tabs above it and the app below are the
+   two objects that matter, and a third bordered box between them was the reason
+   the area felt bolted on. The live count above carries the scale, so the
+   breadth is still stated while the list is shut. No JS: a checkbox plus :has(),
+   same as the tier switch. --- */
 .caps-chk{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-.drawer{margin-top:20px}
-.drw-bar{display:flex;align-items:center;gap:14px;cursor:pointer;max-width:520px;margin:0 auto;
-  padding:15px 18px;border-radius:16px;border:1.5px solid rgba(0,112,243,.45);
-  background:rgba(0,112,243,.10);transition:background .18s,border-color .18s}
-.drw-bar:hover{background:rgba(0,112,243,.18);border-color:#0070F3}
-.drw-n{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:12px;
-  background:rgba(0,112,243,.24);color:#8FC2FF;font-family:var(--disp);font-weight:700;font-size:19px}
-.drw-t{display:flex;flex-direction:column;gap:2px;text-align:left;flex:1 1 auto;min-width:0}
-.drw-t b{font-family:var(--disp);font-size:15.5px;color:#E8F1F8;font-weight:600;line-height:1.3}
-.drw-sub{font-style:normal;font-size:13px;color:#9FB0BF;line-height:1.4}
+.drawer{margin-top:12px;text-align:center}
+.drw-link{display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  color:#8FC2FF;font-family:var(--disp);font-weight:600;font-size:14.5px;
+  border-bottom:1px solid rgba(143,194,255,.35);padding-bottom:2px;
+  transition:color .16s,border-color .16s;text-align:center;max-width:100%}
+/* in the prototype's narrower rail the label wraps, and an inline-flex child
+   left-aligns its own wrapped lines while the chevron floats beside them */
+.drw-link > span{text-align:center}
+.drw-link:hover{color:#BBDBFF;border-bottom-color:#8FC2FF}
 .drw-shut{display:none}
-.drw-cv{flex:none;color:#8FC2FF;transition:transform .2s}
-.caps-chk:focus-visible + .drawer .drw-bar{outline:3px solid #4D9BFF;outline-offset:3px}
+.drw-cv{flex:none;color:currentColor;transition:transform .2s}
+.caps-chk:focus-visible + .drawer .drw-link{outline:3px solid #4D9BFF;outline-offset:3px}
 .cap-band .cap-grid{display:none}
 .cap-band:has(.caps-chk:checked) .cap-grid{display:grid;margin-top:16px}
 .cap-band:has(.caps-chk:checked) .drw-cv{transform:rotate(180deg)}
@@ -882,8 +892,7 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
 @media(max-width:820px){
   .cap-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
   .cap{padding:16px 15px}
-  .tier-lab{min-width:0;flex:1 1 calc(50% - 8px);padding:10px 12px;font-size:14px}
-  .tier-switch{gap:7px}
+  .tier-tab{padding:9px 4px 11px}
 }
 @media(max-width:480px){
   .cap-grid{gap:9px}
@@ -1098,12 +1107,14 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
 .cap:active{transform:scale(.97);background:#1B1B24;border-color:#4D9BFF}
 .cap-hint{margin:0 0 14px;color:#93A5B6}
 
-/* C. The tier switch is a CONTROL, not a surface. Folding it into the card
-      recipe would drop the three unselected pills to 1.21:1 and turn the best
-      moment on the page into one button and three ghosts. */
-.tier-lab{border-color:rgba(255,255,255,.30);background:rgba(255,255,255,.06)}
-.tier-lab:active{transform:scale(.97)}
-.tier-radio:checked + .tier-lab{transform:none}
+/* C. The tier switch is a CONTROL, not a surface. As tabs it carries state in
+      type rather than fill, so the old worry — three unselected pills dimmed to
+      1.21:1 — is gone: an unselected label is #9FB0BF (>7:1) and its price
+      #7E90A1 (6.0:1). What a tab loses is the pressed feel of a button, so keep
+      an explicit active state and a hairline the tab row sits on. */
+.tier-tab:active{color:#fff}
+.tier-tab:active b{transform:translateY(1px)}
+.tier-radio:checked + .tier-tab:active b{transform:none}
 
 /* D. KEYBOARD (WCAG 2.4.7). The 16-tile grid was one tab stop landing on a
       1x1 radio with no visible partner, and the sheet close was a label —
@@ -1130,7 +1141,9 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
 /* ============ AESTHETIC PASS — round 3: the reconciled set ============
    Where the three lenses disagreed, the winner and the reason:
    - .cap border: TYPOGRAPHY. The file already runs a two-tier convention —
-     table.cmp/.feat-dark at .09 (static surface), .tier-lab at .16 (control).
+     table.cmp/.feat-dark at .09 (static surface), controls at .16 (the tier
+     switch ran at .16 until it became an underlined tab row and dropped its
+     border entirely; .cap still carries the convention).
      .cap is a <label> that opens a modal, so it is a control. This also hands
      the interaction reviewer the affordance it wanted at no extra cost.
    - .cap-tier: both converged DOWN to 10px. 9px was under the legibility floor,
@@ -1225,8 +1238,10 @@ section.band{padding:96px 0}
   .appdemo .bc .b{transform:scaleY(1)!important}
 }
 
-/* "$999/mo" on the SELECTED package measured 3.76:1 — primary chrome, not mockup. */
-.tier-radio:checked + .tier-lab span{color:#fff}
+/* "$999/mo" on the SELECTED package measured 3.76:1 as a pill — primary chrome,
+   not mockup. On the tab it is #9EC9FF on near-black (11.8:1); the rule stays so
+   the selected price can never fall back to the muted unselected colour. */
+.tier-radio:checked + .tier-tab i{color:#9EC9FF}
 
 /* contrast inside the mockup: 1.4.3 applies to rendered text regardless of whether
    assistive tech is told to skip it */
