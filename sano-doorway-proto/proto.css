@@ -310,3 +310,19 @@ html:has(.cap-radio:not(#co-none):checked) a.skip,
 html:has(.cap-radio:not(#co-none):checked) #site-footer{visibility:hidden}
 html:has(.cap-radio:not(#co-none):checked) .capset,
 html:has(.cap-radio:not(#co-none):checked) .cap-radio:checked + .cap-sheet{visibility:visible}
+
+/* --- the drawer, matched to the live trade pages so the two builds behave the
+   same. .drw-* live in styles.css; only the rail's own display values are
+   prototype-specific, and .fr-scroll is grid on desktop / flex on phones, so
+   both states have to be restored explicitly. Specificity beats the media
+   query below, which is why these can sit at the end of the file. --- */
+.fasttrack .fr-scroll{display:none}
+.fasttrack:has(.caps-chk:checked) .fr-scroll{display:grid}
+.fasttrack .drawer{margin-top:0}
+@media (max-width:820px){
+  .fasttrack:has(.caps-chk:checked) .fr-scroll{display:flex}
+}
+@supports not (selector(:has(*))){
+  .fasttrack .fr-scroll{display:grid}
+  .fasttrack .drawer{display:none}
+}
