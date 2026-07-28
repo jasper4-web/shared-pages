@@ -5,7 +5,47 @@ It is the single entry point. `HANDOFF-GOALS.md` is the deeper history; this fil
 
 ---
 
-## 0 · WHERE WE ARE — the seam is BUILT AND LIVE. A merge pick is still owed.
+## 0 · WHERE WE ARE — TWO picks owed: a merge, and an extras direction.
+
+**2026-07-27, round 5.** *"There's just something about those two sections that I just feel like don't
+fit on the page properly. They just feel like weird little afterthoughts… what are ways we could really
+integrate this into the page that we're not thinking about."*
+
+**LIVE:** https://jasper4-web.github.io/shared-pages/burn-the-boats/renditions/rend-extras.html
+(source `renditions/rend-extras.html`, commit `53e503d`; clean at 375/390/440/1280)
+
+### The finding that should drive this — read before proposing anything
+
+**"Always counts" and "Something extra" are not extras. They are already load-bearing, and the screen
+never says so.** The `QUOTAS` table (index.html, ~line 1119) holds six weekly standards. **Four are
+wins**, each carrying a domain: *real time with someone* → PEOPLE 3×, *cooked* → BODY 4×,
+*in bed on time* → BODY 4×, *a real conversation* → WORK 3×. PEOPLE's December goal
+("Nobody got the leftovers") has **literally nothing else in the app feeding it.**
+They are the lead measures for the half of his life deep blocks can't reach, presented as a strip of
+nice-to-haves under the real work. **They're mislabelled, not misplaced.**
+
+Diagnosis of why restyling keeps failing: they are the **only two things on Today not anchored to
+anything** — no time, no owner, no consequence. Everything else is pinned to the clock.
+
+### The five (each attaches them to something different)
+
+- **X1** they're the standards for your areas — both sections replaced by areas + December goal + the lever under each
+- **X2** they're what you're paying with — anchored to the named Bank reward, whose conditions already name the wins
+- **X3** they belong to the block that just ended — **zero footprint**, one sheet at `finishRun()`
+- **X4** "Something extra" **makes the day longer** — a boost becomes a real line in the shape, so the 250/day cap enforces itself
+- **X5** not a Today feature at all — both move to the Bank; Today keeps one total at the foot
+
+Six more were killed in writing on the page (hour-rows, close-of-day-only, margin/row/spine/seam as
+"placements not integrations", a second header gauge, streaks, and a layout editor).
+
+**My recommendation: X3 first, then X1 on the GOALS tab, not Today** — X3 is what he actually asked for
+(the page stops having the problem) and is the smallest build; X1 is the true answer but makes them
+*bigger*, so it belongs where "my areas and what feeds them" already lives. **X4 can ship on its own
+regardless.** Argued against **X2** — it turns the day into a scoreboard.
+
+---
+
+### 0-prev · Round 4 — the seam is BUILT AND LIVE
 
 **2026-07-27, round 4 — the first thing from this design cycle actually shipped.**
 His push-back on the outside rendition: *"the thread shouldn't be so super long. I still like how on
