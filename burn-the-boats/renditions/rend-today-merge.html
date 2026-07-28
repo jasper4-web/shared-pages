@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Today page — the merge, five ways</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --blue:#7FB4FF; --tap:44px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#08070c;color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.028em;margin:0}
+
+.wrap{max-width:1240px;margin:0 auto;padding:44px 20px 90px}
+.lede{max-width:730px;margin-bottom:26px}
+.lede .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold);margin-bottom:12px}
+.lede h1{font-size:36px;line-height:1.08;margin-bottom:14px}
+.lede p{color:var(--dim);font-size:15px;margin:0 0 10px}
+.lede b{color:var(--ink)}
+
+.asks{border:1px solid var(--line2);border-radius:14px;background:var(--panel);margin:22px 0 8px;max-width:830px}
+.ask{display:grid;grid-template-columns:118px 1fr;gap:14px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.ask:last-child{border-bottom:0}
+.ask .n{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--phos)}
+.ask .n.v{color:var(--violet)}.ask .n.q{color:var(--gold)}
+.ask .v{font-size:13.5px;color:var(--dim);line-height:1.5}
+.ask .v b{color:var(--ink)}
+.ask .v i{color:var(--faint);font-style:normal}
+
+.opt{margin:64px 0 18px;max-width:790px}
+.opt .n{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--faint);margin-bottom:9px}
+.opt h2{font-size:27px;line-height:1.12;margin-bottom:10px}
+.opt .idea{font-size:15.5px;color:var(--ink);margin:0 0 9px;line-height:1.45}
+.opt p{color:var(--dim);font-size:14px;margin:0 0 8px}
+.opt p b{color:var(--ink)}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 0}
+.tag{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;padding:6px 9px;border-radius:6px;
+  border:1px solid var(--line2);color:var(--dim)}
+.tag.a{border-color:rgba(74,222,128,.4);color:var(--phos)}
+.tag.b{border-color:rgba(176,140,255,.45);color:var(--violet)}
+.tag.c{border-color:rgba(224,178,94,.4);color:var(--gold)}
+
+.row{display:flex;gap:20px;overflow-x:auto;padding-bottom:14px;align-items:flex-start}
+.col{flex:none;width:320px}
+.cap{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--faint);margin-bottom:9px}
+.note{margin-top:10px;font-size:12.5px;line-height:1.55;color:var(--faint)}
+.note b{color:var(--dim)}
+
+.ph{width:320px;border:1px solid var(--line2);border-radius:26px;background:var(--bg);
+  padding:14px 13px 16px;box-shadow:0 24px 60px -30px #000;overflow:hidden;position:relative}
+.hdr{display:flex;align-items:baseline;gap:9px;margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+.hdr b{font-family:'Clash Display',sans-serif;font-size:20px;letter-spacing:-.035em}
+.hdr span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint)}
+.hdr u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--gold);text-decoration:none}
+
+.k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.17em;color:var(--gold);display:flex;
+  align-items:center;gap:7px;margin-bottom:7px}
+.k i{width:6px;height:6px;border-radius:99px;background:var(--gold);box-shadow:0 0 8px var(--gold);flex:none}
+.k u{margin-left:auto;text-decoration:none;color:var(--faint)}
+.t{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.028em;line-height:1.15;margin-bottom:5px}
+.s{font-size:12.5px;line-height:1.5;color:var(--faint)}
+.s.dim{color:var(--dim)}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:var(--tap);text-align:center;
+  border-radius:11px;padding:9px 11px;margin-top:9px;font-size:13.5px;font-weight:600;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204}
+.btn.gh{background:transparent;border:1px solid var(--line2);color:var(--dim);font-weight:500}
+.btn.vi{background:transparent;border:1px solid rgba(176,140,255,.45);color:var(--violet);font-weight:500}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:7px}.two .btn{margin-top:0}
+.pill{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.06em;padding:7px 9px;
+  border-radius:6px;border:1px solid var(--line2);color:var(--dim)}
+.pill.on{border-color:rgba(74,222,128,.5);color:var(--phos);background:rgba(74,222,128,.07)}
+.pill.x{border-color:rgba(176,140,255,.45);color:var(--violet)}
+
+/* ─── the checklist front (shared by all five) ─── */
+.sheet{border:1px solid var(--line2);border-radius:13px;background:#0b0912;overflow:hidden}
+.chk{display:grid;grid-template-columns:44px 1fr 26px;align-items:center;gap:8px;padding:7px 9px;min-height:var(--tap);
+  border-bottom:1px solid rgba(255,255,255,.045)}
+.chk:last-child{border-bottom:0}
+.chk .tm{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:.02em}
+.chk .nm{font-size:13.5px;color:var(--dim);line-height:1.25}
+.chk .nm em{font-style:normal;color:#4b445e;font-size:11px;font-family:'Geist Mono',monospace;letter-spacing:.06em}
+.chk .bx{width:20px;height:20px;border-radius:5px;border:1px solid var(--line2);justify-self:end;
+  display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--faint)}
+.chk.done .nm{color:var(--faint)}
+.chk.done .bx{border-color:rgba(74,222,128,.5);background:rgba(74,222,128,.1);color:var(--phos)}
+.chk.now{background:rgba(224,178,94,.07);border-left:2px solid var(--gold);padding:10px 9px}
+.chk.now .tm{color:var(--gold)}
+.chk.now .nm{color:var(--ink);font-size:14.5px}
+.chk.now .bx{border-color:rgba(224,178,94,.55);color:var(--gold)}
+.chk .go{justify-self:end;font-size:13px;color:#4b445e}
+.chk.wrote .nm:after{content:' ✎';color:var(--violet);font-size:11px}
+
+/* the side strip, in its several forms */
+.leaf{display:grid;grid-template-columns:1fr 48px}
+.marg{border-left:1px solid var(--line);display:flex;flex-direction:column}
+.mt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  min-height:var(--tap);padding:4px 2px;border-bottom:1px solid rgba(255,255,255,.04)}
+.mt b{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);line-height:1}
+.mt span{font-size:11px;color:#4b445e;line-height:1.05;text-align:center}
+.mt.on b{color:var(--phos)}
+.mt.plus b{color:var(--violet)}
+.railb{display:flex;gap:5px;align-items:center;padding:8px 9px;margin-top:9px;min-height:var(--tap);
+  border:1px solid var(--line);border-radius:11px;background:var(--panel);overflow:hidden}
+.railb .lb{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:.1em;margin-right:2px}
+.dotk{width:22px;height:22px;border-radius:6px;border:1px solid var(--line2);display:flex;align-items:center;
+  justify-content:center;font-size:11px;color:var(--faint);flex:none}
+.dotk.on{border-color:rgba(74,222,128,.5);background:rgba(74,222,128,.1);color:var(--phos)}
+.dotk.plus{border-color:rgba(176,140,255,.45);color:var(--violet)}
+.railb u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);text-decoration:none}
+
+/* the back page (depth), shared */
+.back{border:1px solid rgba(176,140,255,.4);border-radius:14px;background:rgba(176,140,255,.05);padding:12px 13px}
+.back .bh{display:flex;align-items:baseline;gap:8px;padding-bottom:9px;margin-bottom:9px;
+  border-bottom:1px solid rgba(255,255,255,.09)}
+.back .bh b{font-family:'Clash Display',sans-serif;font-size:17px;letter-spacing:-.03em}
+.back .bh span{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);margin-left:auto}
+.fld{margin-bottom:11px}
+.fld .lb{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--violet);margin-bottom:5px}
+.fld .val{font-size:13.5px;color:var(--ink);line-height:1.5}
+.fld .val em{font-style:normal;color:var(--faint)}
+.fld .val.write{border:1px solid rgba(176,140,255,.3);border-radius:9px;background:rgba(0,0,0,.25);padding:9px 10px}
+.cur{display:inline-block;width:2px;height:14px;background:var(--violet);vertical-align:-2px;margin-left:2px}
+.feeds{border:1px solid var(--line2);border-radius:10px;background:rgba(0,0,0,.3);padding:9px 10px}
+.feeds .g{font-size:13px;color:var(--ink);line-height:1.35;margin-bottom:6px}
+.feeds .mt2{display:flex;gap:6px;flex-wrap:wrap}
+.chipn{font-family:'Geist Mono',monospace;font-size:11px;padding:5px 7px;border-radius:5px;
+  border:1px solid var(--line2);color:var(--faint)}
+.chipn b{color:var(--dim);font-weight:400}
+.thr{display:grid;grid-template-columns:44px 1fr;gap:9px;padding:5px 0;font-size:12.5px;color:var(--faint);line-height:1.45}
+.thr b{font-family:'Geist Mono',monospace;font-size:11px;color:#4b445e}
+.worth{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:9px;
+  background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.25)}
+.worth b{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--phos)}
+.worth span{margin-left:auto;font-size:12.5px;color:var(--dim)}
+
+/* M2 · the switch */
+.sw{display:flex;gap:6px;padding:5px;border:1px solid var(--line2);border-radius:12px;background:var(--panel2);margin-bottom:10px}
+.sw div{flex:1;text-align:center;padding:9px 6px;min-height:var(--tap);display:flex;align-items:center;
+  justify-content:center;border-radius:9px;font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.14em;color:var(--faint)}
+.sw div.on{background:rgba(224,178,94,.14);color:var(--gold)}
+.sw div.onv{background:rgba(176,140,255,.16);color:var(--violet)}
+.dsheet .blk{padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.dsheet .blk:last-child{border-bottom:0}
+.dsheet .bt{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.dsheet .bt b{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--violet)}
+.dsheet .bt span{font-size:12.5px;color:var(--faint);margin-left:auto}
+.dsheet .bd{font-size:13.5px;color:var(--ink);line-height:1.5}
+.dsheet .bd em{font-style:normal;color:var(--faint)}
+
+/* M3 · the drawer */
+.dim2{filter:saturate(.5);opacity:.4}
+.drawer{border:1px solid rgba(176,140,255,.45);border-radius:16px 16px 12px 12px;
+  background:linear-gradient(180deg,#1a1526,#120f1c);padding:12px 13px;margin-top:-10px;position:relative;
+  box-shadow:0 -18px 40px -18px #000}
+.grab{width:38px;height:4px;border-radius:99px;background:var(--line2);margin:0 auto 10px}
+
+/* M4 · spine */
+.spine{position:absolute;top:14px;right:0;bottom:16px;width:34px;border-left:1px solid var(--line2);
+  background:linear-gradient(90deg,rgba(176,140,255,.03),rgba(176,140,255,.12));
+  display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:6px}
+.spine .tabx{writing-mode:vertical-rl;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;
+  color:var(--violet);margin-top:auto;padding:8px 0}
+.spine .st{width:22px;height:22px;border-radius:6px;border:1px solid var(--line2);display:flex;align-items:center;
+  justify-content:center;font-size:11px;color:var(--faint);flex:none}
+.spine .st.on{border-color:rgba(74,222,128,.5);background:rgba(74,222,128,.1);color:var(--phos)}
+.spine .st.plus{border-color:rgba(176,140,255,.45);color:var(--violet)}
+.inset{padding-right:40px}
+.slidein{border:1px solid rgba(176,140,255,.5);border-radius:14px 0 0 14px;
+  background:linear-gradient(270deg,#1b1628,#120f1c);padding:12px 13px;margin-right:-13px}
+
+/* M5 · split */
+.split{display:flex;flex-direction:column;gap:0}
+.topd{max-height:196px;overflow:hidden;position:relative}
+.topd:after{content:'';position:absolute;left:0;right:0;bottom:0;height:26px;
+  background:linear-gradient(180deg,transparent,#07060b)}
+.seamrow{display:flex;gap:5px;align-items:center;padding:8px 6px;border-top:1px solid var(--line2);
+  border-bottom:1px solid var(--line2);min-height:var(--tap);overflow:hidden}
+.seamrow .lb{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:.1em}
+.livepanel{padding-top:10px}
+
+.tblwrap{overflow-x:auto;margin-top:26px;max-width:1120px}
+.tbl{width:100%;min-width:860px;border-collapse:collapse;font-size:13.5px}
+.tbl th{text-align:left;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;
+  color:var(--faint);padding:9px 10px;border-bottom:1px solid var(--line2);font-weight:400}
+.tbl td{padding:11px 10px;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+.tbl td b{color:var(--ink)}
+.tbl tr td:first-child{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--gold);white-space:nowrap}
+.q{border-left:2px solid var(--gold);padding-left:14px;margin:20px 0;color:var(--dim);font-size:14.5px;max-width:730px;line-height:1.6}
+.q b{color:var(--ink)}
+.hr{height:1px;background:var(--line);max-width:1120px;margin:56px 0 0}
+@media(max-width:700px){.wrap{padding:28px 14px 70px}.lede h1{font-size:27px}.opt h2{font-size:22px}
+  .ask{grid-template-columns:1fr;gap:4px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="lede">
+  <div class="k">THE TODAY PAGE · THE MERGE · FIVE WAYS · NOTHING BUILT</div>
+  <h1>The checklist and the<br>side strip, joined to<br>the back page.</h1>
+  <p>You picked two things: <b>the Notebook's checklist and the little strip beside it</b>, and
+     <b>the Two-Sided Day's back page — where the depth lives.</b> All five below have exactly those
+     two things. What changes is <b>what the back page is attached to and how you get to it</b> —
+     and, because you said the side strip isn't all the way there yet, <b>the strip is drawn five
+     different ways so you can point at one.</b></p>
+  <p>Every screen is a drawing. Nothing has been built into the app.</p>
+</div>
+
+<div class="asks">
+  <div class="ask"><div class="n">FROM E</div><div class="v"><b>The checklist front.</b> Time, name, a box.
+    The whole day is one object with the live block sitting in it — <i>no separate NOW card, nothing wedged.</i></div></div>
+  <div class="ask"><div class="n">FROM E</div><div class="v"><b>The side strip.</b> Your wins, small, off to
+    the side, tapped in passing. <i>"Not all the way out but it's cool"</i> — so five treatments below,
+    from a full margin to a single row.</div></div>
+  <div class="ask v"><div class="n v">FROM I</div><div class="v"><b>The back page.</b> The depth: what
+    you're doing, what you wrote, the last time you ran it, the goal it feeds, what it pays.
+    <i>Never on the front.</i></div></div>
+  <div class="ask"><div class="n q">THE QUESTION</div><div class="v">Is the back page <b>per block</b>
+    (five different backs, one per line) or <b>per day</b> (one back for the whole day)?
+    <b>M1, M3 and M4 say per block. M2 says per day. M5 says don't flip at all.</b></div></div>
+</div>
+
+<!-- ══════════ M1 ══════════ -->
+<div class="opt">
+  <div class="n">MERGE 1</div>
+  <h2>Every line has a back</h2>
+  <div class="idea">The checklist is the whole front. Tap any line and it turns over into its own page of depth.</div>
+  <p>The simplest join, and the closest to both things you liked. Front: the day as a checklist with the
+     margin down the right. <b>Every row is a door</b> — the live one, the ones behind you, the ones ahead.
+     Tap 15:05 at nine in the morning and you're writing the objective for a block that hasn't started.</p>
+  <p>The back holds everything the front can't: the objective, your notes, <b>the last two times you ran
+     this same block</b>, the goal it feeds and how far along that goal is, and what a clean run pays.
+     The front stays a checklist forever because <b>all the depth has somewhere else to live.</b></p>
+  <div class="tags"><span class="tag a">CHECKLIST FRONT</span><span class="tag b">BACK PER BLOCK</span>
+    <span class="tag c">STRIP · FULL MARGIN</span></div>
+</div>
+<div class="row">
+  <div class="col"><div class="cap">FRONT · THE WHOLE DAY</div>
+    <div class="ph">
+      <div class="hdr"><b>Wednesday</b><span>DAY 37</span><u>3 / 11</u></div>
+      <div class="sheet">
+        <div class="leaf">
+          <div>
+            <div class="chk done"><span class="tm">06:30</span><span class="nm">Market open</span><span class="bx">✓</span></div>
+            <div class="chk done wrote"><span class="tm">08:30</span><span class="nm">Today's three</span><span class="bx">✓</span></div>
+            <div class="chk now wrote"><span class="tm">09:00</span>
+              <span class="nm">Block 1 · SANO<br><em>CALL TEN OWNERS · 90M</em></span><span class="go">›</span></div>
+            <div class="chk"><span class="tm">10:45</span><span class="nm">Block 2 · SANO <em>· 75M</em></span><span class="go">›</span></div>
+            <div class="chk"><span class="tm">12:00</span><span class="nm">Lunch</span><span class="go">›</span></div>
+            <div class="chk"><span class="tm">13:00</span><span class="nm">Block 3 · Fruits <em>· 75M</em></span><span class="go">›</span></div>
+            <div class="chk"><span class="tm">15:05</span><span class="nm">Block 4 · Admin <em>· NO OBJECTIVE</em></span><span class="go">›</span></div>
+            <div class="chk"><span class="tm">16:20</span><span class="nm">Gym</span><span class="go">›</span></div>
+          </div>
+          <div class="marg">
+            <div class="mt on"><b>✓</b><span>cook</span></div>
+            <div class="mt on"><b>✓</b><span>bed</span></div>
+            <div class="mt"><b>○</b><span>chore</span></div>
+            <div class="mt"><b>○</b><span>no</span></div>
+            <div class="mt"><b>○</b><span>time</span></div>
+            <div class="mt plus"><b>+</b><span>extra</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="btn">Start focus run · 90m</div>
+    </div>
+    <div class="note">One list, one margin, one button. <b>The ✎ marks the lines you've written on</b> —
+      so the front quietly tells you where the depth already is.</div>
+  </div>
+
+  <div class="col"><div class="cap">BACK · TAPPED THE LIVE LINE</div>
+    <div class="ph">
+      <div class="back">
+        <div class="bh"><b>Block 1 · SANO</b><span>09:00–10:30</span></div>
+        <div class="fld"><div class="lb">BY THE END OF THIS BLOCK</div>
+          <div class="val write">Two booked, ten called.<span class="cur"></span></div></div>
+        <div class="fld"><div class="lb">NOTES</div>
+          <div class="val">Reyes wants Thursday.<br><em>— Cypress quote by Friday<br>— ask about the tunnel</em></div></div>
+        <div class="fld"><div class="lb">WHAT THIS FEEDS</div>
+          <div class="feeds"><div class="g">3 SANO clients — at least one at full freight</div>
+            <div class="mt2"><span class="chipn">WORK · DECEMBER</span><span class="chipn"><b>1 of 3</b></span>
+              <span class="chipn">14 BLOCKS IN</span></div></div></div>
+        <div class="fld"><div class="lb">LAST TWO TIMES</div>
+          <div class="thr"><b>FRI</b><span>Six calls, one no-show. Start earlier.</span></div>
+          <div class="thr"><b>WED</b><span>Good list. Nobody picks up before 10.</span></div></div>
+        <div class="worth"><b>CLEAN RUN</b><span>+65 · phone picked up +25</span></div>
+        <div class="two" style="margin-top:11px"><div class="btn gh">Back to the day</div><div class="btn">Start · 90m</div></div>
+      </div>
+    </div>
+    <div class="note">This is the <b>"in-depth stuff on what you're doing"</b> — objective, notes, the
+      thread, the goal, the price. It only exists here, so the front never gets heavy.</div>
+  </div>
+
+  <div class="col"><div class="cap">BACK · A LINE YOU HAVEN'T REACHED</div>
+    <div class="ph">
+      <div class="back" style="border-color:rgba(127,180,255,.4);background:rgba(127,180,255,.05)">
+        <div class="bh"><b>Block 4 · Admin</b><span>15:05–16:20</span></div>
+        <div class="fld"><div class="lb" style="color:var(--blue)">BY THE END OF THIS BLOCK</div>
+          <div class="val write" style="border-color:rgba(127,180,255,.3);color:var(--faint)">
+            Write what "done" looks like…<span class="cur" style="background:var(--blue)"></span></div></div>
+        <div class="fld"><div class="lb" style="color:var(--blue)">WHAT THIS FEEDS</div>
+          <div class="feeds"><div class="g" style="color:var(--faint)">Not pointed at a goal yet</div>
+            <div class="mt2"><span class="chipn">PICK AN AREA</span></div></div></div>
+        <div class="fld"><div class="lb" style="color:var(--blue)">LAST TIME</div>
+          <div class="thr"><b>MON</b><span>Invoices out. Insurance call Monday.</span></div></div>
+        <div class="s">Writing this now is how the 08:30 planning block actually gets used.</div>
+        <div class="two" style="margin-top:11px"><div class="btn gh">Back to the day</div><div class="btn gh">Make it now</div></div>
+      </div>
+    </div>
+    <div class="note"><b>You can prepare a block hours before it starts.</b> Nothing on this page says
+      you're behind — a blank objective is blank, not late.</div>
+  </div>
+</div>
+
+<div class="hr"></div>
+
+<!-- ══════════ M2 ══════════ -->
+<div class="opt">
+  <div class="n">MERGE 2</div>
+  <h2>One back for the whole day</h2>
+  <div class="idea">The switch at the top: DOING is the checklist, WRITING is the whole day's depth as one page.</div>
+  <p>Instead of five separate backs, <b>the day has one back</b> — every block in order, each with its
+     objective and what you wrote, on one page you can read top to bottom. You write into it in place.</p>
+  <p>The advantage over M1 is real: <b>at 21:30 the day is already written up.</b> You don't visit five
+     backs to see what happened — you flip once and read. Record gets a real entry for free. The cost is
+     that the depth for the block you're in is one flip away rather than on the line you just tapped.</p>
+  <div class="tags"><span class="tag a">CHECKLIST FRONT</span><span class="tag b">ONE BACK PER DAY</span>
+    <span class="tag c">STRIP · MARGIN ON THE FRONT</span></div>
+</div>
+<div class="row">
+  <div class="col"><div class="cap">FRONT · DOING</div>
+    <div class="ph">
+      <div class="sw"><div class="on">DOING</div><div>WRITING · 3</div></div>
+      <div class="sheet">
+        <div class="leaf">
+          <div>
+            <div class="chk done"><span class="tm">06:30</span><span class="nm">Market open</span><span class="bx">✓</span></div>
+            <div class="chk done"><span class="tm">08:30</span><span class="nm">Today's three</span><span class="bx">✓</span></div>
+            <div class="chk now"><span class="tm">09:00</span>
+              <span class="nm">Block 1 · SANO<br><em>CALL TEN OWNERS · 90M</em></span><span class="bx">○</span></div>
+            <div class="chk"><span class="tm">10:45</span><span class="nm">Block 2 · SANO</span><span class="bx">○</span></div>
+            <div class="chk"><span class="tm">12:00</span><span class="nm">Lunch</span><span class="bx">○</span></div>
+            <div class="chk"><span class="tm">13:00</span><span class="nm">Block 3 · Fruits</span><span class="bx">○</span></div>
+            <div class="chk"><span class="tm">15:05</span><span class="nm">Block 4 · Admin</span><span class="bx">○</span></div>
+          </div>
+          <div class="marg">
+            <div class="mt on"><b>✓</b><span>cook</span></div>
+            <div class="mt on"><b>✓</b><span>bed</span></div>
+            <div class="mt"><b>○</b><span>chore</span></div>
+            <div class="mt"><b>○</b><span>no</span></div>
+            <div class="mt"><b>○</b><span>time</span></div>
+            <div class="mt plus"><b>+</b><span>extra</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="btn">Start focus run · 90m</div>
+    </div>
+    <div class="note">The switch carries a count — <b>"WRITING · 3"</b> means three blocks have notes on
+      them today. It's the only thing on the front that hints at the back.</div>
+  </div>
+
+  <div class="col"><div class="cap">BACK · THE WHOLE DAY, WRITTEN</div>
+    <div class="ph">
+      <div class="sw"><div>DOING</div><div class="onv">WRITING · 3</div></div>
+      <div class="back">
+        <div class="dsheet">
+          <div class="blk"><div class="bt"><b>BLOCK 1 · SANO</b><span>09:00 · clean</span></div>
+            <div class="bd">Two booked, ten called.<br><em>— Reyes wants Thursday<br>— Cypress quote by Friday</em></div></div>
+          <div class="blk"><div class="bt"><b>BLOCK 2 · SANO</b><span>10:45 · phone</span></div>
+            <div class="bd">Follow-ups only. <em>Nobody picks up before 10.</em></div></div>
+          <div class="blk"><div class="bt"><b>BLOCK 3 · FRUITS</b><span>13:00 · running</span></div>
+            <div class="bd" style="color:var(--faint)">Tap to write…<span class="cur"></span></div></div>
+          <div class="blk"><div class="bt"><b>BLOCK 4 · ADMIN</b><span>15:05</span></div>
+            <div class="bd" style="color:#4b445e">—</div></div>
+        </div>
+      </div>
+      <div class="btn vi" style="margin-top:9px">Yesterday's page ‹</div>
+    </div>
+    <div class="note"><b>One page, the whole day, in order.</b> This is the version where the notes
+      double as the Record entry — no separate journaling step at night, ever.</div>
+  </div>
+
+  <div class="col"><div class="cap">BACK · THE DEPTH ON ONE BLOCK</div>
+    <div class="ph">
+      <div class="sw"><div>DOING</div><div class="onv">WRITING · 3</div></div>
+      <div class="back">
+        <div class="bh"><b>Block 1 · SANO</b><span>09:00 · CLEAN</span></div>
+        <div class="fld"><div class="lb">BY THE END</div>
+          <div class="val write">Two booked, ten called.<span class="cur"></span></div></div>
+        <div class="fld"><div class="lb">WHAT THIS FEEDS</div>
+          <div class="feeds"><div class="g">3 SANO clients — one at full freight</div>
+            <div class="mt2"><span class="chipn"><b>1 of 3</b></span><span class="chipn">14 BLOCKS IN</span></div></div></div>
+        <div class="fld"><div class="lb">LAST TIME</div>
+          <div class="thr"><b>FRI</b><span>Six calls, one no-show. Start earlier.</span></div></div>
+        <div class="btn gh">Back to the day's page</div>
+      </div>
+    </div>
+    <div class="note">Tapping a block <i>on the back</i> expands it to full depth. <b>The back has two
+      depths</b>: skim the day, or open one block all the way.</div>
+  </div>
+</div>
+
+<div class="hr"></div>
+
+<!-- ══════════ M3 ══════════ -->
+<div class="opt">
+  <div class="n">MERGE 3</div>
+  <h2>The back comes up as a drawer</h2>
+  <div class="idea">You never leave the checklist. The back rises from the bottom over it, still attached to the line you tapped.</div>
+  <p>M1's per-block depth, but <b>nothing ever replaces the day.</b> Tap a line and the back slides up over
+     the lower half; the checklist stays visible above it, dimmed, with your line still highlighted.
+     Push it back down with a thumb. <b>There is no "where am I" moment</b> — you can always see you're on
+     the Today page, which matters when you open this half-awake.</p>
+  <p>Because the drawer's edge lives at the bottom, <b>the side strip moves out of the margin and becomes
+     one row under the day.</b> This is the tightest treatment of the wins: six little boxes, one line,
+     no column stealing width from the block names.</p>
+  <div class="tags"><span class="tag a">CHECKLIST FRONT</span><span class="tag b">BACK AS A DRAWER</span>
+    <span class="tag c">STRIP · ONE ROW, NOT A MARGIN</span></div>
+</div>
+<div class="row">
+  <div class="col"><div class="cap">FRONT · FULL WIDTH, STRIP UNDERNEATH</div>
+    <div class="ph">
+      <div class="hdr"><b>Wednesday</b><span>DAY 37</span><u>3 / 11</u></div>
+      <div class="sheet">
+        <div class="chk done"><span class="tm">06:30</span><span class="nm">Market open</span><span class="bx">✓</span></div>
+        <div class="chk done wrote"><span class="tm">08:30</span><span class="nm">Today's three</span><span class="bx">✓</span></div>
+        <div class="chk now wrote"><span class="tm">09:00</span>
+          <span class="nm">Block 1 · SANO<br><em>CALL TEN OWNERS FROM THE LIST</em></span><span class="go">›</span></div>
+        <div class="chk"><span class="tm">10:45</span><span class="nm">Block 2 · SANO <em>· 75M</em></span><span class="go">›</span></div>
+        <div class="chk"><span class="tm">12:00</span><span class="nm">Lunch</span><span class="go">›</span></div>
+        <div class="chk"><span class="tm">13:00</span><span class="nm">Block 3 · Fruits <em>· 75M</em></span><span class="go">›</span></div>
+        <div class="chk"><span class="tm">15:05</span><span class="nm">Block 4 · Admin</span><span class="go">›</span></div>
+        <div class="chk"><span class="tm">16:20</span><span class="nm">Gym</span><span class="go">›</span></div>
+      </div>
+      <div class="railb"><span class="lb">ALSO</span>
+        <span class="dotk on">✓</span><span class="dotk on">✓</span><span class="dotk">○</span>
+        <span class="dotk">○</span><span class="dotk">○</span><span class="dotk plus">+</span><u>+40</u></div>
+      <div class="btn">Start focus run · 90m</div>
+    </div>
+    <div class="note"><b>Full-width block names</b> — the margin was eating 48px of a 390px screen.
+      The strip is one row labelled ALSO, tapped in passing, holding its own total.</div>
+  </div>
+
+  <div class="col"><div class="cap">TAPPED A LINE · THE DRAWER IS UP</div>
+    <div class="ph">
+      <div class="sheet dim2">
+        <div class="chk done"><span class="tm">06:30</span><span class="nm">Market open</span><span class="bx">✓</span></div>
+        <div class="chk done"><span class="tm">08:30</span><span class="nm">Today's three</span><span class="bx">✓</span></div>
+        <div class="chk now"><span class="tm">09:00</span><span class="nm">Block 1 · SANO</span><span class="go">›</span></div>
+        <div class="chk"><span class="tm">10:45</span><span class="nm">Block 2 · SANO</span><span class="go">›</span></div>
+      </div>
+      <div class="drawer">
+        <div class="grab"></div>
+        <div class="bh" style="display:flex;align-items:baseline;gap:8px;padding-bottom:9px;margin-bottom:9px;border-bottom:1px solid rgba(255,255,255,.09)">
+          <b style="font-family:'Clash Display',sans-serif;font-size:17px">Block 1 · SANO</b>
+          <span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);margin-left:auto">09:00–10:30</span></div>
+        <div class="fld"><div class="lb">BY THE END</div>
+          <div class="val write">Two booked, ten called.<span class="cur"></span></div></div>
+        <div class="fld"><div class="lb">LAST TIME · FRI</div>
+          <div class="val" style="color:var(--faint);font-size:13px">"Six calls, one no-show. Start earlier."</div></div>
+        <div class="worth"><b>CLEAN RUN</b><span>+65 · feeds 3 SANO clients</span></div>
+        <div class="btn" style="margin-top:11px">Start focus run · 90m</div>
+      </div>
+    </div>
+    <div class="note"><b>The day never disappears.</b> You can see the line you're editing in place above
+      the drawer — no flip, no back button, no lost place.</div>
+  </div>
+
+  <div class="col"><div class="cap">DRAWER PULLED ALL THE WAY UP</div>
+    <div class="ph">
+      <div class="sheet dim2" style="max-height:56px;overflow:hidden">
+        <div class="chk done"><span class="tm">06:30</span><span class="nm">Market open</span><span class="bx">✓</span></div>
+      </div>
+      <div class="drawer">
+        <div class="grab"></div>
+        <div class="bh" style="display:flex;align-items:baseline;gap:8px;padding-bottom:9px;margin-bottom:9px;border-bottom:1px solid rgba(255,255,255,.09)">
+          <b style="font-family:'Clash Display',sans-serif;font-size:17px">Block 1 · SANO</b>
+          <span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);margin-left:auto">FULL DEPTH</span></div>
+        <div class="fld"><div class="lb">NOTES</div>
+          <div class="val">Reyes wants Thursday.<br><em>— Cypress quote by Friday<br>— ask about the tunnel<br>— he mentioned two other shops</em></div></div>
+        <div class="fld"><div class="lb">WHAT THIS FEEDS</div>
+          <div class="feeds"><div class="g">3 SANO clients — one at full freight</div>
+            <div class="mt2"><span class="chipn"><b>1 of 3</b></span><span class="chipn">14 BLOCKS IN</span>
+              <span class="chipn">910 XP</span></div></div></div>
+        <div class="fld"><div class="lb">THE THREAD</div>
+          <div class="thr"><b>FRI</b><span>Six calls, one no-show.</span></div>
+          <div class="thr"><b>WED</b><span>Nobody picks up before 10.</span></div>
+          <div class="thr"><b>MON</b><span>First ten from the Cypress list.</span></div></div>
+      </div>
+    </div>
+    <div class="note">Two heights: <b>a peek for the objective, a full pull for the thread and the goal.</b>
+      Same gesture, one drag, nothing to learn.</div>
+  </div>
+</div>
+
+<div class="hr"></div>
+
+<!-- ══════════ M4 ══════════ -->
+<div class="opt">
+  <div class="n">MERGE 4</div>
+  <h2>The strip is the door</h2>
+  <div class="idea">The side strip becomes a proper edge: your wins live on it, and pulling it opens the back page.</div>
+  <p>This is the answer to <i>"the side strip isn't all the way there yet."</i> Instead of a passive margin,
+     <b>the right edge becomes a working spine.</b> The wins sit on it as small boxes. At the bottom of it is
+     a tab. Drag the spine left and the back page slides in over the day.</p>
+  <p><b>One edge does two jobs</b>, so the front is a clean full-width checklist and there's no switch at the
+     top eating a row. The risk is honest: it's a gesture, and gestures have to be discovered. So the tab is
+     always visible and always says what it is.</p>
+  <div class="tags"><span class="tag a">CHECKLIST FRONT</span><span class="tag b">BACK SLIDES IN FROM THE EDGE</span>
+    <span class="tag c">STRIP · A WORKING SPINE</span></div>
+</div>
+<div class="row">
+  <div class="col"><div class="cap">FRONT · THE SPINE ON THE RIGHT</div>
+    <div class="ph">
+      <div class="inset">
+        <div class="hdr"><b>Wednesday</b><span>DAY 37</span><u>3 / 11</u></div>
+        <div class="sheet">
+          <div class="chk done"><span class="tm">06:30</span><span class="nm">Market open</span><span class="bx">✓</span></div>
+          <div class="chk done wrote"><span class="tm">08:30</span><span class="nm">Today's three</span><span class="bx">✓</span></div>
+          <div class="chk now wrote"><span class="tm">09:00</span>
+            <span class="nm">Block 1 · SANO<br><em>CALL TEN OWNERS · 90M</em></span><span class="go">›</span></div>
+          <div class="chk"><span class="tm">10:45</span><span class="nm">Block 2 · SANO</span><span class="go">›</span></div>
+          <div class="chk"><span class="tm">12:00</span><span class="nm">Lunch</span><span class="go">›</span></div>
+          <div class="chk"><span class="tm">13:00</span><span class="nm">Block 3 · Fruits</span><span class="go">›</span></div>
+          <div class="chk"><span class="tm">15:05</span><span class="nm">Block 4 · Admin</span><span class="go">›</span></div>
+        </div>
+        <div class="btn">Start focus run · 90m</div>
+      </div>
+      <div class="spine">
+        <div class="st on">✓</div><div class="st on">✓</div><div class="st">○</div>
+        <div class="st">○</div><div class="st">○</div><div class="st plus">+</div>
+        <div class="tabx">‹ WRITING</div>
+      </div>
+    </div>
+    <div class="note">Six boxes and a tab on one 34px edge. <b>The wins are on the way to the back page</b> —
+      you brush past them every time you go to write.</div>
+  </div>
+
+  <div class="col"><div class="cap">PULLED · THE BACK SLIDES IN</div>
+    <div class="ph">
+      <div class="sheet dim2" style="max-height:120px;overflow:hidden">
+        <div class="chk done"><span class="tm">06:30</span><span class="nm">Market open</span><span class="bx">✓</span></div>
+        <div class="chk now"><span class="tm">09:00</span><span class="nm">Block 1 · SANO</span><span class="go">›</span></div>
+      </div>
+      <div class="slidein" style="margin-top:9px">
+        <div class="bh" style="display:flex;align-items:baseline;gap:8px;padding-bottom:9px;margin-bottom:9px;border-bottom:1px solid rgba(255,255,255,.09)">
+          <b style="font-family:'Clash Display',sans-serif;font-size:17px">Block 1 · SANO</b>
+          <span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);margin-left:auto">09:00–10:30</span></div>
+        <div class="fld"><div class="lb">BY THE END</div>
+          <div class="val write">Two booked, ten called.<span class="cur"></span></div></div>
+        <div class="fld"><div class="lb">NOTES</div>
+          <div class="val">Reyes wants Thursday.<br><em>— Cypress quote by Friday</em></div></div>
+        <div class="fld"><div class="lb">FEEDS · 3 SANO CLIENTS</div>
+          <div class="mt2"><span class="chipn"><b>1 of 3</b></span><span class="chipn">14 BLOCKS IN</span></div></div>
+        <div class="worth"><b>CLEAN RUN</b><span>+65</span></div>
+      </div>
+      <div class="s" style="padding:10px 2px 0">Push the edge back right, or tap the day behind it.</div>
+    </div>
+    <div class="note">The back arrives <b>from the same edge every time</b>, so it always comes from the
+      direction you pulled — the one thing that makes a gesture stick.</div>
+  </div>
+
+  <div class="col"><div class="cap">THE SPINE, TAPPED</div>
+    <div class="ph">
+      <div class="inset">
+        <div class="hdr"><b>Wednesday</b><span>DAY 37</span><u>3 / 11</u></div>
+        <div class="sheet dim2" style="max-height:120px;overflow:hidden">
+          <div class="chk done"><span class="tm">06:30</span><span class="nm">Market open</span><span class="bx">✓</span></div>
+          <div class="chk now"><span class="tm">09:00</span><span class="nm">Block 1 · SANO</span><span class="go">›</span></div>
+        </div>
+        <div class="back" style="margin-top:9px">
+          <div class="k" style="color:var(--phos);margin-bottom:8px"><i style="background:var(--phos);box-shadow:0 0 8px var(--phos)"></i>ALSO TODAY<u>+40</u></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span class="pill on">✓ COOKED</span><span class="pill on">✓ IN BED ON TIME</span>
+            <span class="pill">CHORES</span><span class="pill">SAID NO</span>
+            <span class="pill">REAL TIME</span><span class="pill x">+ READ TONIGHT</span></div>
+          <div class="s" style="margin-top:10px">Never scored against you. Tap the edge again to close.</div>
+        </div>
+      </div>
+      <div class="spine">
+        <div class="st on">✓</div><div class="st on">✓</div><div class="st">○</div>
+        <div class="st">○</div><div class="st">○</div><div class="st plus">+</div>
+        <div class="tabx">‹ WRITING</div>
+      </div>
+    </div>
+    <div class="note">The six boxes are the fast path; <b>tapping the spine opens their names</b> when you
+      can't remember which box is which. The strip is a control, not decoration.</div>
+  </div>
+</div>
+
+<div class="hr"></div>
+
+<!-- ══════════ M5 ══════════ -->
+<div class="opt">
+  <div class="n">MERGE 5</div>
+  <h2>Both halves, always on</h2>
+  <div class="idea">No flip, no drawer, no gesture. The day is the top of the screen and the depth of the live block is the bottom.</div>
+  <p>The version with <b>nothing to open.</b> The top ~40% is the checklist, compressed and scrollable —
+     you can see where you are in the day. The bottom is <b>permanently the back page of whatever block you're
+     in</b>: objective, notes, thread, what it feeds. Both things you liked, on screen at the same time,
+     for the price of each being smaller.</p>
+  <p>The wins live <b>on the seam</b> between the two halves — one row, six boxes, the quietest place on the
+     screen. Tap a different line up top and the bottom half becomes that block's depth. <b>Nothing appears
+     or disappears, ever.</b></p>
+  <div class="tags"><span class="tag a">CHECKLIST · TOP HALF</span><span class="tag b">BACK PAGE · ALWAYS OPEN</span>
+    <span class="tag c">STRIP · ON THE SEAM</span></div>
+</div>
+<div class="row">
+  <div class="col"><div class="cap">THE WHOLE SCREEN · NOTHING TO OPEN</div>
+    <div class="ph">
+      <div class="split">
+        <div class="topd">
+          <div class="sheet" style="border:0;border-radius:0">
+            <div class="chk done"><span class="tm">06:30</span><span class="nm">Market open</span><span class="bx">✓</span></div>
+            <div class="chk done"><span class="tm">08:30</span><span class="nm">Today's three</span><span class="bx">✓</span></div>
+            <div class="chk now"><span class="tm">09:00</span><span class="nm">Block 1 · SANO</span><span class="go">›</span></div>
+            <div class="chk"><span class="tm">10:45</span><span class="nm">Block 2 · SANO</span><span class="go">›</span></div>
+            <div class="chk"><span class="tm">12:00</span><span class="nm">Lunch</span><span class="go">›</span></div>
+          </div>
+        </div>
+        <div class="seamrow"><span class="lb">ALSO</span>
+          <span class="dotk on">✓</span><span class="dotk on">✓</span><span class="dotk">○</span>
+          <span class="dotk">○</span><span class="dotk">○</span><span class="dotk plus">+</span></div>
+        <div class="livepanel">
+          <div class="k"><i></i>BLOCK 1 · SANO<u>09:00–10:30</u></div>
+          <div class="fld" style="margin-bottom:9px"><div class="lb" style="color:var(--gold)">BY THE END</div>
+            <div class="val write" style="border-color:rgba(224,178,94,.3)">Two booked, ten called.<span class="cur" style="background:var(--gold)"></span></div></div>
+          <div class="fld" style="margin-bottom:9px"><div class="lb" style="color:var(--gold)">LAST TIME · FRI</div>
+            <div class="val" style="font-size:13px;color:var(--faint)">"Six calls, one no-show."</div></div>
+          <div class="btn">Start focus run · 90m</div>
+        </div>
+      </div>
+    </div>
+    <div class="note"><b>One screen, three zones, no navigation.</b> The day above, the wins on the seam,
+      the depth below — and the depth follows whichever line you tap.</div>
+  </div>
+
+  <div class="col"><div class="cap">TAPPED A LINE AHEAD · BOTTOM FOLLOWS</div>
+    <div class="ph">
+      <div class="split">
+        <div class="topd">
+          <div class="sheet" style="border:0;border-radius:0">
+            <div class="chk done"><span class="tm">08:30</span><span class="nm">Today's three</span><span class="bx">✓</span></div>
+            <div class="chk now"><span class="tm">09:00</span><span class="nm">Block 1 · SANO</span><span class="go">›</span></div>
+            <div class="chk" style="background:rgba(127,180,255,.07);border-left:2px solid var(--blue)">
+              <span class="tm" style="color:var(--blue)">15:05</span><span class="nm" style="color:var(--ink)">Block 4 · Admin</span><span class="go">›</span></div>
+            <div class="chk"><span class="tm">16:20</span><span class="nm">Gym</span><span class="go">›</span></div>
+          </div>
+        </div>
+        <div class="seamrow"><span class="lb">ALSO</span>
+          <span class="dotk on">✓</span><span class="dotk on">✓</span><span class="dotk">○</span>
+          <span class="dotk">○</span><span class="dotk">○</span><span class="dotk plus">+</span></div>
+        <div class="livepanel">
+          <div class="k" style="color:var(--blue)"><i style="background:var(--blue);box-shadow:0 0 8px var(--blue)"></i>BLOCK 4 · ADMIN<u>LOOKING AHEAD</u></div>
+          <div class="fld" style="margin-bottom:9px"><div class="lb" style="color:var(--blue)">BY THE END</div>
+            <div class="val write" style="border-color:rgba(127,180,255,.3);color:var(--faint)">
+              Write what "done" looks like…<span class="cur" style="background:var(--blue)"></span></div></div>
+          <div class="fld" style="margin-bottom:9px"><div class="lb" style="color:var(--blue)">NOT POINTED AT A GOAL</div>
+            <div class="mt2"><span class="chipn">PICK AN AREA</span></div></div>
+          <div class="two"><div class="btn gh">Back to now</div><div class="btn gh">Make it now</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="note">Looking ahead <b>changes colour, not position</b> — you're never lost, because the
+      layout doesn't move. The gold NOW line stays visible above.</div>
+  </div>
+
+  <div class="col"><div class="cap">A THIN DAY</div>
+    <div class="ph">
+      <div class="split">
+        <div class="topd" style="max-height:150px">
+          <div class="sheet" style="border:0;border-radius:0">
+            <div class="chk done"><span class="tm">09:00</span><span class="nm">Block 1 · SANO</span><span class="bx">✓</span></div>
+            <div class="chk"><span class="tm">10:45</span><span class="nm">Block 2 · SANO</span><span class="go">›</span></div>
+            <div class="chk now"><span class="tm">15:05</span><span class="nm">Block 4 · Admin</span><span class="go">›</span></div>
+          </div>
+        </div>
+        <div class="seamrow"><span class="lb">ALSO</span>
+          <span class="dotk on">✓</span><span class="dotk">○</span><span class="dotk on">✓</span>
+          <span class="dotk">○</span><span class="dotk">○</span><span class="dotk plus">+</span></div>
+        <div class="livepanel">
+          <div class="k"><i></i>BLOCK 4 · ADMIN<u>STARTS IN 40 MIN</u></div>
+          <div class="fld" style="margin-bottom:9px"><div class="lb" style="color:var(--gold)">BY THE END</div>
+            <div class="val write" style="border-color:rgba(224,178,94,.3);color:var(--faint)">Tap to write…</div></div>
+          <div class="s">Two blocks didn't happen today. There's nothing here about them.</div>
+          <div class="btn">Start when you're ready</div>
+        </div>
+      </div>
+    </div>
+    <div class="note"><b>The missed lines just sit there unticked.</b> No red, no count of what you lost,
+      and the bottom half is already pointed at the next thing you could do.</div>
+  </div>
+</div>
+
+<!-- ══════════ the strip ══════════ -->
+<div class="opt" style="margin-top:70px">
+  <div class="n">THE PART YOU SAID ISN'T ALL THE WAY THERE</div>
+  <h2>The side strip, five ways</h2>
+  <p>Same six things every time — cooked · in bed on time · chores · said no · real time with someone ·
+     plus one optional extra. <b>Point at the one that feels right and it goes into whichever merge you pick</b>
+     — they're interchangeable.</p>
+</div>
+<div class="tblwrap">
+<table class="tbl">
+  <tr><th></th><th>WHERE IT LIVES</th><th>WHAT IT COSTS</th><th>BEST WHEN</th></tr>
+  <tr><td>M1 · MARGIN</td><td>a 48px column down the right of the day</td><td>48px of a 390px screen — block names get cramped</td><td>you want them permanently in the corner of your eye</td></tr>
+  <tr><td>M2 · MARGIN</td><td>same, but only on the DOING side</td><td>same width cost; invisible while you're writing</td><td>you never want them near the writing</td></tr>
+  <tr><td>M3 · ONE ROW</td><td>a single row under the day, labelled ALSO, with its own total</td><td>you have to look down for it — it's not peripheral</td><td><b>you want the day full-width.</b> Tightest of the five</td></tr>
+  <tr><td>M4 · SPINE</td><td>a working right edge that also opens the back</td><td>it's a gesture; six unlabelled boxes until you tap</td><td>you want one edge to do everything</td></tr>
+  <tr><td>M5 · SEAM</td><td>the divider between the day and the depth</td><td>the quietest — easy to forget entirely</td><td><b>you genuinely want them minor.</b> Closest to "or I don't know"</td></tr>
+</table>
+</div>
+
+<!-- ══════════ compare ══════════ -->
+<div class="opt" style="margin-top:60px">
+  <div class="n">SIDE BY SIDE</div>
+  <h2>What each merge costs you</h2>
+</div>
+<div class="tblwrap">
+<table class="tbl">
+  <tr><th></th><th>M1 · LINE HAS A BACK</th><th>M2 · ONE BACK PER DAY</th><th>M3 · DRAWER</th><th>M4 · SPINE</th><th>M5 · BOTH HALVES</th></tr>
+  <tr><td>THE BACK IS</td><td>per block, replaces the day</td><td>per day, one long page</td><td>per block, over the day</td><td>per block, in from the edge</td><td>per block, always open</td></tr>
+  <tr><td>HOW YOU GET THERE</td><td>tap a line</td><td>a switch at the top</td><td>tap a line, drag to close</td><td>drag the right edge</td><td><b>you're already there</b></td></tr>
+  <tr><td>THE STRIP</td><td>full margin</td><td>margin, front only</td><td>one row under the day</td><td>the spine itself</td><td>on the seam</td></tr>
+  <tr><td>BEST AT</td><td><b>depth.</b> Every block gets a real page</td>
+      <td><b>the night.</b> The day is written up for free</td>
+      <td><b>never being lost.</b> The day never leaves the screen</td>
+      <td><b>economy.</b> One edge, no switch, full-width day</td>
+      <td><b>no navigation at all.</b> Nothing to discover</td></tr>
+  <tr><td>COSTS YOU</td><td>the day disappears while you write</td>
+      <td>the block you're in is a flip away</td>
+      <td>the drawer covers the lower half of the day</td>
+      <td>a gesture has to be learned</td>
+      <td>both halves are small; long days scroll in a box</td></tr>
+  <tr><td>RISK</td><td>you tap in, write, and lose your sense of the day</td>
+      <td>the back goes unvisited for days, then feels like homework</td>
+      <td>two drag heights is one more thing than one</td>
+      <td>six unlabelled boxes on an edge could stay a mystery</td>
+      <td>at 375px the top half shows only three or four lines</td></tr>
+  <tr><td>BUILD</td><td>medium</td><td>medium</td><td>medium + gesture work</td><td><b>largest</b> — a real edge interaction</td><td>small–medium</td></tr>
+</table>
+</div>
+
+<div class="q"><b>My read.</b> <b>M3 · The drawer</b> is the one I'd build. It gives you the per-block depth
+  you actually want to write into, it keeps the day on screen the entire time — which is the thing that
+  kills "where am I" on a phone you open half-awake — and its side-strip treatment is the only one that
+  lets block names use the full width of the screen. <b>M5</b> is the safest and needs no gestures at all,
+  but at 375px the top half only ever shows three or four lines of your day, and that's a real loss.</div>
+<div class="q"><b>On the strip specifically:</b> you said it isn't all the way there. I think that's because
+  a margin of six unlabelled ticks is <i>decoration</i> — it doesn't do anything. <b>M3's one row and M4's
+  spine are the two that make it a control.</b> If you want the wins genuinely minor, M5's seam is the
+  quietest place on the screen.</div>
+<div class="q">There's also <b>an independent take coming from an outside designer</b> who has never seen
+  this project — briefed only on what you're building, what you didn't like, and the rules.
+  It'll be a separate page.</div>
+<div class="q">Pick a merge and a strip — they're independent choices, e.g. <b>"M1 with M3's strip."</b>
+  <b>Nothing goes into the app until you do.</b></div>
+
+</div>
+</body>
+</html>
