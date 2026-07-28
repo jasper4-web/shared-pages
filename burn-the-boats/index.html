@@ -1258,6 +1258,11 @@ const WINS=[
 
 const DEFAULT={
   v:4, xp:0,
+  /* THE LEDGER (Phase 1, 2026-07-28). Every XP movement is an entry: {k,xp,d,g,t}.
+     S.xp stays the running balance every screen reads; the ledger is what makes a
+     movement REVERSIBLE — his accidental-tap bug, fixed by architecture. The rule:
+     an entry can be refunded only on the day it was written; midnight seals it. */
+  ledger:[],
   /* FUNERAL 2026-07-28: the `december` seed is buried — that model was replaced by the
      Goals tab (btb4) in July. An OLD save still carrying S.december keeps it in storage,
      and importFromOld() still reads it from there; a fresh install starts without it. */
@@ -1301,6 +1306,13 @@ const DEFAULT={
 };
 
 let S=load(), run=null;
+/* a save from before the ledger opens with one entry carrying its whole balance,
+   so from this day forward the ledger always sums to S.xp
+   (date inlined — today() is declared in the utils block below this line) */
+S.ledger=S.ledger||[];
+if(S.xp>0&&!S.ledger.length){const _d=new Date(),_p=n=>String(n).padStart(2,'0');
+  S.ledger.push({k:'opening',xp:S.xp,d:`${_d.getFullYear()}-${_p(_d.getMonth()+1)}-${_p(_d.getDate())}`,
+    g:null,t:'balance before the ledger'})}
 
 /* ---------- utils ---------- */
 const $=id=>document.getElementById(id);
@@ -1430,20 +1442,43 @@ function week(k){k=k||mondayOf(new Date());
 /* Which goal a block serves. Day-level override first, then the week's. */
 function toast(m,kind){const t=$('toast');t.textContent=m;t.className='toast show '+(kind||'');
   clearTimeout(t._h);t._h=setTimeout(()=>t.className='toast',2400);
-  if(navigator.vibrate)navigator.vibrate(kind==='bad'?[35,50,35]:16)}
-function gainXP(n,label){S.xp+=n;save();toast(`+${n} XP · ${label}`,'good');render()}
+  /* only after a real interaction — browsers block (and log) the call before one */
+  if(navigator.vibrate&&navigator.userActivation&&navigator.userActivation.hasBeenActive)
+    navigator.vibrate(kind==='bad'?[35,50,35]:16)}
+/* (gainXP buried, Phase 1 — it paid XP with no record and no dedup. One door: award.) */
 /* XP buys real-world rewards, so it must be unfakeable and one-directional.
    Every award is keyed and recorded; a second tap pays nothing. */
+/* ═══ ONE DOOR IN, ONE DOOR OUT ═══════════════════════════════════════════
+   award() is the only way XP arrives (finishRun and gainXP used to bypass it —
+   funeral'd in Phase 1). refund() is the only way a payment comes back, and it
+   only works on the day the entry was written: while the day is open every tap
+   is correctable, and once the day is over the record is permanent. */
 function award(key,n,label,goalId){
   const d=day();
   if(d.credited[key])return false;
   d.credited[key]=n;S.xp+=n;
+  S.ledger=S.ledger||[];
+  S.ledger.push({k:key,xp:n,d:today(),g:goalId||null,t:label});
   /* attribution: same XP, same rules — it just now records what earned it */
   if(goalId){S.xpByGoal=S.xpByGoal||{};S.xpByGoal[goalId]=(S.xpByGoal[goalId]||0)+n;
     d.xpByGoal=d.xpByGoal||{};d.xpByGoal[goalId]=(d.xpByGoal[goalId]||0)+n;}
   save();
   toast(`+${n} XP · ${label}`,'good');render();
   return true;
+}
+function refund(key){
+  const d=day();
+  if(!d.credited||!d.credited[key])return 0;         /* not paid today under this key */
+  const sig=key+'|'+today();
+  const i=(S.ledger||[]).map(e=>e.k+'|'+e.d).lastIndexOf(sig);
+  if(i<0)return 0;                                    /* written on an earlier day — sealed */
+  const e=S.ledger[i];
+  S.ledger.splice(i,1);S.xp-=e.xp;
+  if(e.g){if(S.xpByGoal)S.xpByGoal[e.g]=Math.max(0,(S.xpByGoal[e.g]||0)-e.xp);
+    if(d.xpByGoal)d.xpByGoal[e.g]=Math.max(0,(d.xpByGoal[e.g]||0)-e.xp);}
+  delete d.credited[key];                             /* the key is free — an honest re-tap pays again */
+  save();
+  return e.xp;
 }
 
 /* ---------- the cascade ---------- */
@@ -2594,8 +2629,13 @@ function renderExtrasLine(){
 }
 function tapWin(k){
   const d=day(),w=WINS.find(x=>x.k===k);
-  if(d.wins[k]){                      // untap corrects the quota only — XP never goes backwards
-    delete d.wins[k];save();render();toast('Removed — XP kept','bad');return}
+  if(d.wins[k]){
+    /* HIS BUG, fixed by architecture: an accidental tap is now fully reversible while
+       the day is open — the ledger entry comes out and the XP comes back with it.
+       A win from a day already sealed keeps its XP, because the past doesn't change. */
+    delete d.wins[k];
+    const back=refund('win:'+k);
+    save();render();toast(back?`Removed — ${back} XP returned`:'Removed — XP kept','bad');return}
   d.wins[k]=1;save();
   if(!award('win:'+k,w.xp,w.n))render();
 }
@@ -2692,6 +2732,8 @@ function claim(i){
   if(S.xp<r.cost){toast(`${(r.cost-S.xp).toLocaleString()} XP short`,'bad');return}
   /* the register cannot exist without the day it was drawn */
   S.xp-=r.cost;r.done=1;r.claimedOn=dayNo();
+  S.ledger=S.ledger||[];
+  S.ledger.push({k:'spend:'+dayNo(),xp:-r.cost,d:today(),g:null,t:r.n});
   save();closeSheet();render();toast(`Withdrawn: ${r.n}`,'good');
 }
 function renderRun(){
@@ -2716,7 +2758,7 @@ function offScript(){
   S.offScript[m]=(S.offScript[m]||0)+1;day().off=1;save();render();
   toast("Off-script. Today can't hurt you.",'good');
 }
-function clearPenance(){S.penance.done=1;save();render();gainXP(60,'made it up')}
+function clearPenance(){S.penance.done=1;save();render();award('penance:'+today(),60,'made it up')}
 /* THE BACKUP COVERS BOTH STORES. It only ever saved btb3, which meant every goal,
    area, date and weekly commitment he typed lived in exactly one place with no
    copy — fine while the old Goals tab was a live fallback, indefensible once it
@@ -2910,7 +2952,11 @@ function markMiss(id){
     <button class="btn" onclick="closeSheet();render()">Leave it missed</button>`);
 }
 function unMiss(id){const d=day();delete d.miss[id];save();closeSheet();render()}
-function unDone(id){const d=day();delete d.done[id];save();closeSheet();render()}
+function unDone(id){const d=day();delete d.done[id];
+  /* undoing a block returns whatever it paid today — the tap route and the run route */
+  const back=refund('blk:'+id)+refund('run:'+id+':'+today());
+  save();closeSheet();render();
+  if(back)toast(`Undone — ${back} XP returned`,'bad')}
 function unWait(id){const d=day();delete d.wait[id];save();closeSheet();render();toast('Unblocked','good')}
 /* Gym is optional and 2× a week. A rest day is a legitimate close, NOT a miss —
    the weekly quota does the judging, not the individual day. */
@@ -2974,14 +3020,9 @@ function finishRun(){
   if(!run)return;clearInterval(run.t);
   const d=day(),b=run.b;
   d.done[b.id]=true;stampDom(d,today(),b.id);d.focus[b.id]=run.broken?'broke':'clean';
+  /* through the ONE DOOR now — this block used to be an inline copy of award() */
   const xp=run.broken?25:65;
-  const key='run:'+b.id+':'+today();
-  if(!d.credited[key]){
-    d.credited[key]=xp;S.xp+=xp;
-    const gid=goalOf2(b);
-    if(gid){S.xpByGoal=S.xpByGoal||{};S.xpByGoal[gid]=(S.xpByGoal[gid]||0)+xp;
-      d.xpByGoal=d.xpByGoal||{};d.xpByGoal[gid]=(d.xpByGoal[gid]||0)+xp}
-  }
+  award('run:'+b.id+':'+today(),xp,run.broken?'run done':'clean run',goalOf2(b));
   save();recount();
   $('runTime').textContent=run.broken?'TIME':'DONE';
   $('runMult').textContent=run.broken?`BLOCK COUNTED · +${xp} XP`:`CLEAN RUN · +${xp} XP`;
@@ -3257,6 +3298,8 @@ function renderClose(){
 }
 function ccMark(id,how){
   const d=day();
+  /* re-marking a done block as missed/waiting takes today's payment back with it */
+  if(d.done[id]&&how!=='done'){refund('blk:'+id);refund('run:'+id+':'+today())}
   delete d.done[id];delete d.miss[id];delete d.wait[id];
   if(how==='done'){d.done[id]=true;stampDom(d,today(),id);
     const _b=shape().find(x=>x.id===id);award('blk:'+id,25,'marked done',_b?goalOf2(_b):null)}
@@ -5042,8 +5085,11 @@ function logBoost(id){
 }
 function undoBoost(id){
   const L=boostLog();
+  /* the award key carried the count at pay time — reconstruct it before the splice */
+  const n=L.filter(e=>e.id===id&&e.date===today()).length;
   for(let i=L.length-1;i>=0;i--)if(L[i].id===id&&L[i].date===today()){L.splice(i,1);break}
-  save();render();toast('Removed — XP kept','bad');   /* XP never goes backwards. Same law as tapWin. */
+  const back=n?refund('boost:'+id+':'+today()+':'+(n-1)):0;
+  save();render();toast(back?`Removed — ${back} XP returned`:'Removed — XP kept','bad');
 }
 
 /* ---- the composer: one sheet for new and for edit ---- */
