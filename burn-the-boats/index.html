@@ -1263,6 +1263,9 @@ const DEFAULT={
      movement REVERSIBLE — his accidental-tap bug, fixed by architecture. The rule:
      an entry can be refunded only on the day it was written; midnight seals it. */
   ledger:[],
+  /* seeded from WINS/QUOTAS after load — declared here so the shape is documented.
+     A saved array wins wholesale (merge), exactly like boostDefs. */
+  winDefs:[], quotaDefs:[],
   /* FUNERAL 2026-07-28: the `december` seed is buried — that model was replaced by the
      Goals tab (btb4) in July. An OLD save still carrying S.december keeps it in storage,
      and importFromOld() still reads it from there; a fresh install starts without it. */
@@ -1591,6 +1594,20 @@ const QUOTAS=[
   {src:'win',   id:'bed',     dom:'BODY',   n:4},
 ];
 
+/* ═══ PHASE 2 · THE WINS AND THE STANDARDS ARE HIS ═══════════════════════════
+   His pushback, verbatim: "you're assuming you know and these are the final
+   standards — I'm telling you these are placeholders and someone should be able
+   to go in and actually tweak the system themselves."
+   WINS and QUOTAS above are the SEED, exactly as boostDefs already works: the
+   moment a save carries its own winDefs/quotaDefs, the constants stop mattering.
+   Deleting archives (arc:1) — history written against a def never disappears. */
+S.winDefs=(S.winDefs&&S.winDefs.length)?S.winDefs:WINS.map(w=>({...w}));
+S.quotaDefs=(S.quotaDefs&&S.quotaDefs.length)?S.quotaDefs:QUOTAS.map(q=>({...q}));
+const winsAll=()=>S.winDefs.filter(w=>!w.arc);      /* what shows */
+const winByK=k=>S.winDefs.find(w=>w.k===k)||null;   /* what resolves — archived included,
+                                                       so old records keep their labels */
+const quotasAll=()=>S.quotaDefs.filter(q=>!q.arc);
+
 /* Freeze what a block credited, the moment it is completed. Called from every
    place that sets d.done[...] = true. */
 function stampDom(d,k,bid){
@@ -1656,7 +1673,7 @@ function domainProgress(){
     });
 
     /* quotas: count the week's hits against its target, once */
-    QUOTAS.forEach(q=>{
+    quotasAll().forEach(q=>{
       let hits=0;
       weeks[wk].forEach(k=>{
         const rec=S.days[k]; if(!rec||rec.off)return;
@@ -2580,11 +2597,11 @@ function renderWins(){
   const mon=mondayOf(new Date());
   const weekHits=k=>{let n=0;for(let i=0;i<6;i++){const t=new Date(mon+'T00:00:00');t.setDate(t.getDate()+i);
     const r=S.days[iso(t)];if(r&&r.wins&&r.wins[k])n++}return n};
-  const onToday=WINS.filter(w=>d.wins[w.k]).length;
-  const xpToday=WINS.filter(w=>d.wins[w.k]).reduce((a,w)=>a+w.xp,0);
+  const onToday=winsAll().filter(w=>d.wins[w.k]).length;
+  const xpToday=winsAll().filter(w=>d.wins[w.k]).reduce((a,w)=>a+w.xp,0);
   $('winTally').textContent=`${onToday} on the board · +${xpToday} today`;
-  host.innerHTML=WINS.map(w=>{
-    const q=QUOTAS.find(x=>x.src==='win'&&x.id===w.k);
+  host.innerHTML=winsAll().map(w=>{
+    const q=quotasAll().find(x=>x.src==='win'&&x.id===w.k);
     const hits=weekHits(w.k),need=q?q.n:0,met=need&&hits>=need;
     const pips=need?`<span class="pips">${Array.from({length:need},(_,i)=>
       `<i class="${i<hits?(met?'full':'on'):''}"></i>`).join('')}</span>`:'';
@@ -2598,28 +2615,102 @@ function renderWins(){
    see the weekly standard each one carries, and tap one the question never asked about.
    Same store, same XP, same tapWin() — a second surface, not a second feature. */
 function winsPaidToday(){const d=day();
-  return '+'+WINS.filter(w=>d.wins[w.k]).reduce((a,w)=>a+w.xp,0)}
+  return '+'+winsAll().filter(w=>d.wins[w.k]).reduce((a,w)=>a+w.xp,0)}
 function winsBankList(){
   const d=day(),mon=mondayOf(new Date());
   const weekHits=k=>{let n=0;for(let i=0;i<6;i++){const t=new Date(mon+'T00:00:00');t.setDate(t.getDate()+i);
     const r=S.days[iso(t)];if(r&&r.wins&&r.wins[k])n++}return n};
-  return `<div class="wins">`+WINS.map(w=>{
-    const q=QUOTAS.find(x=>x.src==='win'&&x.id===w.k);
+  return `<div class="wins">`+winsAll().map(w=>{
+    const q=quotasAll().find(x=>x.src==='win'&&x.id===w.k);
     const hits=weekHits(w.k),need=q?q.n:0,met=need&&hits>=need;
     const pips=need?`<span class="pips">${Array.from({length:need},(_,i)=>
       `<i class="${i<hits?(met?'full':'on'):''}"></i>`).join('')}</span>`:'';
-    return `<button class="win${d.wins[w.k]?' on':''}" onclick="tapWin('${w.k}')">
-      <span class="wtop">${esc(w.n)}<b>+${w.xp}</b></span>
-      ${need?`<span class="wtop" style="gap:6px">${pips}<b style="margin-left:auto;font-size:11px">${hits}/${need} this week</b></span>`:''}
-    </button>`}).join('')+`</div>`;
+    /* a row is the tap button PLUS its EDIT — his content, so every row is editable
+       (buttons can't nest, hence the flex pair) */
+    return `<div style="display:flex;gap:6px;align-items:stretch;width:100%">
+      <button class="win${d.wins[w.k]?' on':''}" style="flex:1;min-width:0" onclick="tapWin('${w.k}')">
+        <span class="wtop">${esc(w.n)}<b>+${w.xp}</b></span>
+        ${need?`<span class="wtop" style="gap:6px">${pips}<b style="margin-left:auto;font-size:11px">${hits}/${need} this week</b></span>`:''}
+      </button>
+      <button class="bst-e" onclick="editWin('${w.k}')" aria-label="Edit ${esc(w.n)}">EDIT</button>
+    </div>`}).join('')+`</div>`;
+}
+/* ═══ the editors — his wins, his standards ═══════════════════════════════ */
+function editWin(k){
+  const w=k?winByK(k):null;
+  sheet(`<div class="sh-k">${w?'EDIT':'NEW'} · ALWAYS COUNTS</div>
+    <div class="sh-t">${w?esc(w.n):'What counts for you?'}</div>
+    <div class="sh-sub">SMALL, REAL, REPEATABLE — LAUNDRY, A WALK, A CALL HOME</div>
+    <div class="fld" style="margin-top:14px"><label>What is it</label>
+      <input id="wnN" maxlength="40" value="${w?esc(w.n):''}" placeholder="Did the laundry"></div>
+    <div class="fld"><label>Worth (5–100 XP)</label>
+      <input id="wnX" type="number" inputmode="numeric" value="${w?w.xp:20}"></div>
+    <div class="fld"><label>Feeds</label>
+      <div class="chips" id="wnD">${DOMAINS.map(d0=>`<button class="chip tap seg${(w?w.dom:'BODY')===d0.k?' on':''}"
+        data-d="${d0.k}" onclick="[...this.parentNode.children].forEach(e=>e.classList.remove('on'));this.classList.add('on')">${d0.label}</button>`).join('')}</div></div>
+    <button class="btn" onclick="saveWin(${w?`'${w.k}'`:'null'})">${w?'Save':'Add it'}</button>
+    ${w?`<button class="btn gh" style="margin-top:8px" onclick="dropWin('${w.k}')">Remove it</button>`:''}`);
+}
+function saveWin(k){
+  const n=$('wnN').value.trim();if(!n){toast('Give it a name','bad');return}
+  const raw=Math.round(Number($('wnX').value)||0),xp=Math.max(5,Math.min(100,raw));
+  if(raw!==xp){$('wnX').value=xp;toast(`An always-counts sits between 5 and 100 XP — set to ${xp}`,'bad');return}
+  const dom=($('wnD').querySelector('.on')||{}).dataset?$('wnD').querySelector('.on').dataset.d:'BODY';
+  const w=k?winByK(k):null;
+  if(w)Object.assign(w,{n,xp,dom});
+  else S.winDefs.push({k:'w'+Date.now().toString(36),n,xp,dom});
+  save();closeSheet();render();toast(k?'Saved':'It counts now','good');
+}
+function dropWin(k){
+  const w=winByK(k);if(!w)return;
+  w.arc=1;                             /* archived, never deleted — day records still resolve */
+  S.quotaDefs.forEach(q=>{if(q.src==='win'&&q.id===k)q.arc=1});   /* its standard retires with it */
+  save();closeSheet();render();toast('Removed','bad');
+}
+/* the weekly standards: one row each, tap cycles the count 1..7 then retires it */
+function standardsList(){
+  const qs=quotasAll();
+  if(!qs.length)return `<div class="card" style="color:var(--dim);font-size:13.5px;padding:12px">
+    No standards set. A standard is a thing that should happen n× a week — you choose what and how many.</div>`;
+  return `<div class="card" style="padding:2px 13px">${qs.map(q=>`
+    <button class="g2m" style="border:0;border-bottom:1px solid var(--line);border-radius:0;margin:0;width:100%;cursor:pointer;background:none;text-align:left"
+      onclick="qBump('${q.src}','${q.id}')">
+      <span class="d" style="background:${domColour(q.dom)}"></span>
+      <span class="n">${esc(quotaLabel(q))}<u>${q.src==='block'?'A BLOCK ON THE DAY':'ALWAYS COUNTS'}</u></span>
+      <b style="font-family:'Geist Mono',monospace;font-size:12px;color:var(--ink)">${q.n}× a week</b>
+    </button>`).join('')}</div>`;
+}
+function qBump(src,id){
+  const q=S.quotaDefs.find(x=>x.src===src&&x.id===id&&!x.arc);if(!q)return;
+  if(q.n>=7){q.arc=1;toast('Standard retired — the thing still counts, it just isn\'t owed','bad')}
+  else{q.n++;toast(`${quotaLabel(q)} · ${q.n}× a week`,'good')}
+  save();render();
+}
+function addStandard(){
+  const have=new Set(quotasAll().map(q=>q.src+':'+q.id));
+  const opts=REQABLE().filter(o=>!have.has(o.src+':'+o.id));
+  if(!opts.length){toast('Everything already has a standard','bad');return}
+  sheet(`<div class="sh-k">A STANDARD</div>
+    <div class="sh-t">What should happen every week?</div>
+    <div class="sh-sub">STARTS AT 3× — TAP ITS ROW AFTER TO CHANGE THE COUNT</div>
+    <div class="chips" style="margin-top:14px">${opts.map(o=>
+      `<button class="chip tap seg" onclick="saveStandard('${o.src}','${o.id}')">${esc(o.label)}</button>`).join('')}
+    </div>`);
+}
+function saveStandard(src,id){
+  const w=src==='win'?winByK(id):null;
+  const dom=w?w.dom:(id==='gym'?'BODY':id==='bible'?'FAITH':'MIND');
+  const old=S.quotaDefs.find(x=>x.src===src&&x.id===id);
+  if(old){old.arc=0;old.n=3}else S.quotaDefs.push({src,id,dom,n:3});
+  save();closeSheet();render();toast(quotaLabel({src,id})+' · 3× a week','good');
 }
 /* The single trace the two sections leave on Today: a total that only ever goes up, and a
    door to where they now live. Never a count of what he hasn't done. */
 function renderExtrasLine(){
   const el=$('extrasLine');if(!el)return;
   const d=day();
-  const n=WINS.filter(w=>d.wins[w.k]).length;
-  const xp=WINS.filter(w=>d.wins[w.k]).reduce((a,w)=>a+w.xp,0)
+  const n=winsAll().filter(w=>d.wins[w.k]).length;
+  const xp=winsAll().filter(w=>d.wins[w.k]).reduce((a,w)=>a+w.xp,0)
          +boostDefs().filter(b=>boostDone(b)).reduce((a,b)=>a+b.xp,0);
   const nb=boostDefs().filter(b=>boostDone(b)).length;
   const tot=n+nb;
@@ -2628,7 +2719,7 @@ function renderExtrasLine(){
     : `<span class="xl-n dim">The small stuff lives in the Bank</span><span class="xl-go">→</span>`;
 }
 function tapWin(k){
-  const d=day(),w=WINS.find(x=>x.k===k);
+  const d=day(),w=winByK(k);
   if(d.wins[k]){
     /* HIS BUG, fixed by architecture: an accidental tap is now fully reversible while
        the day is open — the ledger entry comes out and the XP comes back with it.
@@ -2703,7 +2794,7 @@ function openRewards(){
    standards he already has can be dropped straight onto a reward.                         */
 function reqLabel(q){
   if(q.src==='block'){const b=WEEKDAY.find(x=>x.id===q.id);return b?b.n:q.id}
-  const w=WINS.find(x=>x.k===q.id);return w?w.n:q.id;
+  const w=winByK(q.id);return w?w.n:q.id;
 }
 /* how many times this week — Monday to Saturday, same walk renderWins uses */
 function reqHits(q){
@@ -3052,7 +3143,7 @@ function shipIt(id){
 function elseCands(bid){
   const d=day(),b=shape().find(x=>x.id===bid),m=nowMin();
   const doms=b?b.dom:[];
-  return WINS.filter(w=>!d.wins[w.k])
+  return winsAll().filter(w=>!d.wins[w.k])
     .map(w=>{
       let s=0;
       if(doms.indexOf(w.dom)>=0)s+=3;                    /* same domain as the work just done */
@@ -3084,7 +3175,7 @@ function elseStep(bid,banked){
 /* tapping one banks it and re-asks with what's left, so two things can be logged without
    the sheet turning into a form. */
 function elseTap(k,bid){
-  const w=WINS.find(x=>x.k===k);if(!w)return;
+  const w=winByK(k);if(!w)return;
   const d=day();if(d.wins[k])return;
   d.wins[k]=1;save();
   award('win:'+k,w.xp,w.n);
@@ -3280,7 +3371,7 @@ function renderClose(){
     <div class="cc-t">Sealed at ${esc(d.closed)}. Nothing else is owed.</div></div>`;return}
   if(m<mins('20:00')){el.innerHTML='';return}
   const open=dueSoFar().filter(b=>!d.done[b.id]&&!d.miss[b.id]);
-  const openWins=WINS.filter(w=>!d.wins[w.k]);
+  const openWins=winsAll().filter(w=>!d.wins[w.k]);
   el.innerHTML=`<div class="closecard due">
     <div class="cc-k">Close the day</div>
     <div class="cc-t">${open.length?`${open.length} thing${open.length>1?'s':''} still unmarked`:'Everything is marked'}</div>
@@ -4968,6 +5059,10 @@ function renderBank(){
       ${xpAttribution()}
       <h2 class="sec"><span>Always counts</span><u>${winsPaidToday()} today</u></h2>
       ${winsBankList()}
+      <button class="btn gh" style="margin-top:8px" onclick="editWin(null)">+ Add one of your own</button>
+      <h2 class="sec"><span>The standards</span><u>tap to change the count</u></h2>
+      ${standardsList()}
+      <button class="btn gh" style="margin-top:8px" onclick="addStandard()">+ Set a standard</button>
       <h2 class="sec"><span>Boosts</span><u>never scored against you</u></h2>
       ${boostList()}
       <button class="btn gh" style="margin-top:12px" onclick="editBoost(null)">+ Write a boost</button>
@@ -5163,7 +5258,7 @@ function dropBoost(id){
 /* The requirement picker. Every "always counts" item plus the two block standards, each with
    a count he sets. Nothing is required by default — a reward with no requirements is the
    reward he already had. */
-const REQABLE=()=>WINS.map(w=>({src:'win',id:w.k,label:w.n}))
+const REQABLE=()=>winsAll().map(w=>({src:'win',id:w.k,label:w.n}))
   .concat([{src:'block',id:'gym',label:'Gym'},{src:'block',id:'bible',label:'Bible · text Kells'}]);
 let RWREQ=[];
 function rwReqRow(o){
@@ -5218,7 +5313,7 @@ function saveRewardReq(i){
 /* The quota board was rendering RAW INTERNAL IDS — "bible", "convo", "bed".
    The labels already exist on the blocks and the wins; nobody had joined them up. */
 function quotaLabel(q){
-  if(q.src==='win'){const w=WINS.find(x=>x.k===q.id);return w?w.n:q.id}
+  if(q.src==='win'){const w=winByK(q.id);return w?w.n:q.id}
   const b=WEEKDAY.concat(SATURDAY).find(x=>x.id===q.id);
   return b?b.n:q.id;
 }
@@ -5252,7 +5347,7 @@ function renderRecord(){
 
     <h2 class="sec">Quota board</h2>
     <div class="card">
-      ${QUOTAS.map(q=>{const h=weekHits(q.src,q.id),met=h>=q.n;
+      ${quotasAll().map(q=>{const h=weekHits(q.src,q.id),met=h>=q.n;
         return `<div class="stat"><span>${esc(quotaLabel(q))} <span style="color:var(--faint);font-size:11px">· ${q.dom}</span></span>
           <b style="color:${met?'var(--phos)':'var(--faint)'}">${h} / ${q.n}</b></div>`}).join('')}
     </div>
