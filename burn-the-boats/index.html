@@ -1266,6 +1266,9 @@ const DEFAULT={
   /* seeded from WINS/QUOTAS after load — declared here so the shape is documented.
      A saved array wins wholesale (merge), exactly like boostDefs. */
   winDefs:[], quotaDefs:[],
+  /* Phase 3: the day as data — templates seeded from WEEKDAY/SATURDAY after load,
+     dayPlan holds per-date overrides written by the planner */
+  templates:null, dayPlan:{},
   /* FUNERAL 2026-07-28: the `december` seed is buried — that model was replaced by the
      Goals tab (btb4) in July. An OLD save still carrying S.december keeps it in storage,
      and importFromOld() still reads it from there; a fresh install starts without it. */
@@ -1327,7 +1330,20 @@ const today=()=>iso(new Date());
 const dow=()=>new Date().getDay();
 const monthKey=()=>today().slice(0,7);
 function mondayOf(d){const x=new Date(d);const w=(x.getDay()+6)%7;x.setDate(x.getDate()-w);return iso(x)}
-function shape(){const d=dow();return d===0?[]:d===6?SATURDAY:WEEKDAY}
+/* ═══ PHASE 3 · THE DAY IS DATA ═══════════════════════════════════════════════
+   WEEKDAY and SATURDAY above are the SEED — the same journey the goals, the
+   boosts, the wins and the standards already made. The truth is:
+     S.templates.{weekday,saturday}   his normal days (editable, Phase 4)
+     S.dayPlan[date]                  one specific date, planned differently
+   Sunday stays [] — the Sabbath is a decision, not a missing template.
+   Day one renders pixel-identical, because the seed IS his current day. */
+function shape(date){
+  const k=date||today();
+  if(S.dayPlan&&S.dayPlan[k]&&S.dayPlan[k].length)return S.dayPlan[k];
+  const g=date?new Date(k+'T00:00:00').getDay():dow();
+  return g===0?[]:g===6?S.templates.saturday:S.templates.weekday;
+}
+const allBlocks=()=>S.templates.weekday.concat(S.templates.saturday);
 /* The fields that decide scoring. Stored per day, ~40 bytes, never shown. */
 const SHAPE_KEYS=['id','s','e','kind','dom','opt','auto','focus','writes'];
 const stampOf=sh=>sh.map(b=>{const o={};SHAPE_KEYS.forEach(k=>{if(b[k]!==undefined)o[k]=b[k]});return o});
@@ -1336,8 +1352,9 @@ const stampOf=sh=>sh.map(b=>{const o={};SHAPE_KEYS.forEach(k=>{if(b[k]!==undefin
 function shapeFor(k){
   const r=S.days[k];
   if(r&&Array.isArray(r.shape)&&r.shape.length)return r.shape;
-  const g=new Date(k+'T00:00:00').getDay();
-  return g===0?[]:g===6?SATURDAY:WEEKDAY;
+  /* no stamp — fall back to the plan/template, which on day one equals the old
+     constants, so days lived before the stamp existed keep their shape exactly */
+  return shape(k);
 }
 /* Written once, on the first render of a day the app is actually present for. */
 function stampToday(){
@@ -1601,8 +1618,17 @@ const QUOTAS=[
    WINS and QUOTAS above are the SEED, exactly as boostDefs already works: the
    moment a save carries its own winDefs/quotaDefs, the constants stop mattering.
    Deleting archives (arc:1) — history written against a def never disappears. */
-S.winDefs=(S.winDefs&&S.winDefs.length)?S.winDefs:WINS.map(w=>({...w}));
-S.quotaDefs=(S.quotaDefs&&S.quotaDefs.length)?S.quotaDefs:QUOTAS.map(q=>({...q}));
+/* one function, because a RESTORE replaces S wholesale and must reseed too —
+   backup.js caught exactly that crash the first time this was inline */
+function seedOwned(){
+  S.winDefs=(S.winDefs&&S.winDefs.length)?S.winDefs:WINS.map(w=>({...w}));
+  S.quotaDefs=(S.quotaDefs&&S.quotaDefs.length)?S.quotaDefs:QUOTAS.map(q=>({...q}));
+  /* Phase 3: the day itself. Same rule — the constants seed once, then his. */
+  if(!S.templates||!Array.isArray(S.templates.weekday)||!S.templates.weekday.length)
+    S.templates={weekday:WEEKDAY.map(b=>({...b})),saturday:SATURDAY.map(b=>({...b}))};
+  S.dayPlan=S.dayPlan||{};
+}
+seedOwned();
 const winsAll=()=>S.winDefs.filter(w=>!w.arc);      /* what shows */
 const winByK=k=>S.winDefs.find(w=>w.k===k)||null;   /* what resolves — archived included,
                                                        so old records keep their labels */
@@ -2793,7 +2819,7 @@ function openRewards(){
    A requirement is {src:'win'|'block', id, n} — the same shape as QUOTAS, so the weekly
    standards he already has can be dropped straight onto a reward.                         */
 function reqLabel(q){
-  if(q.src==='block'){const b=WEEKDAY.find(x=>x.id===q.id);return b?b.n:q.id}
+  if(q.src==='block'){const b=allBlocks().find(x=>x.id===q.id);return b?b.n:q.id}
   const w=winByK(q.id);return w?w.n:q.id;
 }
 /* how many times this week — Monday to Saturday, same walk renderWins uses */
@@ -3796,7 +3822,7 @@ function autoCloseWeeks(){
   /* autoMark() ticks wake and lunch off the clock whether or not he was there, so
      those must NOT count as evidence of a day lived — otherwise a phone left on a
      bedside table looks like a day worked and cancels the return card. */
-  const AUTO=WEEKDAY.concat(SATURDAY).filter(b=>b.auto).map(b=>b.id);
+  const AUTO=allBlocks().filter(b=>b.auto).map(b=>b.id);
   const lived=!!(d&&(
     (d.done&&Object.keys(d.done).some(k=>AUTO.indexOf(k)<0))||
     (d.wins&&Object.keys(d.wins).length)));
@@ -3998,7 +4024,7 @@ function nextOpenSlot(){
     if(gone(wk,d))continue;
     for(let i=0;i<DEEP_BLOCKS.length;i++){
       const bid=DEEP_BLOCKS[i];
-      if(!commitFor(wk,d,bid))return{wk,d,bid,blk:WEEKDAY.find(b=>b.id===bid)||{}};
+      if(!commitFor(wk,d,bid))return{wk,d,bid,blk:S.templates.weekday.find(b=>b.id===bid)||{}};
     }
   }
   return null;
@@ -4331,7 +4357,7 @@ function g2Week(){
       isToday?'var(--gold)':'var(--line2)'}"><span>${DAY_NAMES[d]}</span><u>${date.slice(5)}</u>${
       isToday?'<b>TODAY</b>':''}</h2>`;
     DEEP_BLOCKS.forEach(bid=>{
-      const blk=WEEKDAY.find(b=>b.id===bid),c=commitFor(wk,d,bid);
+      const blk=S.templates.weekday.find(b=>b.id===bid),c=commitFor(wk,d,bid);
       const g=c?GM.goalOf(G,c.goalId):null,a=g?GM.areaById(G,g.areaId):null;
       const done=c&&c.done;
       /* A DAY ALREADY LIVED IS SETTLED. This slot used to keep offering "Open — tap to
@@ -5314,7 +5340,7 @@ function saveRewardReq(i){
    The labels already exist on the blocks and the wins; nobody had joined them up. */
 function quotaLabel(q){
   if(q.src==='win'){const w=winByK(q.id);return w?w.n:q.id}
-  const b=WEEKDAY.concat(SATURDAY).find(x=>x.id===q.id);
+  const b=allBlocks().find(x=>x.id===q.id);
   return b?b.n:q.id;
 }
 function renderRecord(){
@@ -5390,7 +5416,7 @@ function restoreSave(inp){
       (nG===null?'\n\nThis is an older backup with no goals in it — your goals will be left as they are.'
                 :`\n${nG} goal${nG===1?'':'s'} · ${(gPart.areas||[]).length} areas`);
     if(!confirm(`Restore ${what}\n\nThis replaces what is here.`))return;
-    S=merge(JSON.parse(JSON.stringify(DEFAULT)),sPart);save();
+    S=merge(JSON.parse(JSON.stringify(DEFAULT)),sPart);seedOwned();save();
     if(gPart){G=backfillAnchors(Object.assign(GM.empty(),gPart));gsave()}
     render();toast('Restored','good');
   }catch(e){toast('That file could not be read','bad')}};
