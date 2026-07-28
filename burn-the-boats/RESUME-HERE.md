@@ -5,7 +5,37 @@ It is the single entry point. `HANDOFF-GOALS.md` is the deeper history; this fil
 
 ---
 
-## 0 · THE VERY LAST THING HE SAID — you are answering this
+## 0 · WHERE WE ARE — waiting on him to pick a Today-page direction
+
+**The five new renditions are DRAWN, DEPLOYED and VERIFIED (2026-07-27).**
+
+- **Live:** https://jasper4-web.github.io/shared-pages/burn-the-boats/renditions/rend-today-five.html
+- **Source:** `renditions/rend-today-five.html` · commit `ec2ef8b`+ on `jasper4-web/shared-pages`
+- Clean at 375 / 390 / 440 / 1280: no horizontal overflow, no text under 11px, every drawn tap ≥44px.
+
+**The five, and where each puts wins** (all five keep his one liked idea — notes that belong to the block):
+
+| | | |
+|---|---|---|
+| **E · The Notebook** | today is one page you write on; blocks are headings, notes are the page | ticks in the **margin** |
+| **F · One Thing** | only the block you're in, full-bleed; the whole screen turns over for notes | **absent all day**, once at 21:30 |
+| **G · The Log** | a thread; blocks post themselves, notes are replies | events that **post themselves** |
+| **H · The Ledger** | today is an account; every line is a credit, notes are the memo | small credits in the **same column** |
+| **I · The Two-Sided Day** | the page has a front (doing) and a back (writing) | a **footnote** at the foot of the back |
+
+Four more were **killed in writing on the page itself** (his rule: show the cull) — The Clock (the rail
+bent into a circle), The Filmstrip (the deck on its side), The Spine (One Column + a rail, the hybrid
+he already passed on), The Room (hides the day behind gestures).
+
+**My stated recommendation to him: E · The Notebook.** Flagged **H · The Ledger** as the one not to
+ship — it's the most impressive and it turns the day into a scoreboard. Named **I** as the cheap win.
+
+**NEXT: he picks.** Nothing goes into `index.html` until he does. He may also say
+"E's page with F's block screen" — draw that hybrid properly before building.
+
+---
+
+### 0b · The message this was answering (keep for context)
 
 He had just been shown four Today-page directions (`renditions/rend-today-options.html`).
 His reply, verbatim:
@@ -30,13 +60,9 @@ His reply, verbatim:
 | **LUKEWARM** | The Deck itself. *"I still don't even fully love the deck idea. It's just the one that I love the most."* **Do not produce five deck variants.** |
 | **ALSO DEAD** | A (The Rail), C (One Column), D (The Cockpit) — he said only B. Don't re-serve them. |
 
-**A draft of the five was in progress when he stopped it.** The planned directions were:
-**E · The Clock** (day as a ring/arc, wins accumulate as marks on it) · **F · The Feed** (a downward
-thread; blocks post themselves, notes are replies) · **G · One Thing** (only the current block,
-full-bleed; wins only at the close) · **H · The Filmstrip** (block on top, horizontally swipeable
-cards below) · **I · The Spine** (vertical timeline down the left, echoing the Goals spine).
-**These are a starting point, not a commitment** — he asked for options that are *not* the first
-thought, so interrogate them before drawing.
+**This has been answered — see §0 above.** (The pre-draft list was Clock / Feed / One Thing /
+Filmstrip / Spine; Clock, Filmstrip and Spine were interrogated and killed, Feed became **The Log**,
+One Thing survived, and Notebook / Ledger / Two-Sided were added.)
 
 ---
 
@@ -190,7 +216,8 @@ PROFILE.md                     who he is — source of truth
 WATCHTOWER.md                  the older design-crew role (mostly historical now)
 model/                         the goal model + ALL harnesses
 renditions/
-  rend-today-options.html      the four he just rejected (only B, partially)
+  rend-today-five.html         THE FIVE NEW DIRECTIONS — awaiting his pick
+  rend-today-options.html      the four he rejected (only B, partially)
   rend-day-system-v2.html      the day-system proposal after the investigation
   rend-day-system.html         v1 of that proposal (superseded)
   rend-goals-system.html       the 13-screen goals design (built, shipped)
@@ -212,7 +239,9 @@ index.html.bak-*               snapshots, newest last
 
 ## 10 · HOW TO PICK UP
 
-Say back what he asked for in §0, then **draw five new Today-page directions** — genuinely different
-architectures, keeping back-of-card notes, rethinking where wins go, and not five deck variants.
-Deploy the rendition to a public URL, verify it renders at 440px with no sub-11px text and no
-overflow, and `open` it for him. **Do not build anything into `index.html` until he picks.**
+**Ask him which of the five he wants** (§0), or read his answer if he already gave one. Then draw
+*that* one properly — every screen, every state — before touching `index.html`. If he names a hybrid,
+draw the hybrid first. **Do not build anything into `index.html` until he picks.**
+
+If he's picked and the drawing is approved, the build order is: the notes store (per block, per day,
+with the previous run reachable) → the new Today surface → wherever wins landed in his choice.
