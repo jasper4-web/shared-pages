@@ -5,7 +5,46 @@ It is the single entry point. `HANDOFF-GOALS.md` is the deeper history; this fil
 
 ---
 
-## 0 · WHERE WE ARE — HE PICKED E + I. The merge round is live.
+## 0 · WHERE WE ARE — the seam is BUILT AND LIVE. A merge pick is still owed.
+
+**2026-07-27, round 4 — the first thing from this design cycle actually shipped.**
+His push-back on the outside rendition: *"the thread shouldn't be so super long. I still like how on
+the earlier renditions you could just see the one before and the one after and then if you wanted,
+maybe there's an option to click to see the whole day at once… let's go ahead and build that and put
+it in."*
+
+**BUILT AND LIVE** — commit `485412f`, **sw `btb-v19`**:
+
+- **The day now ships CLOSED.** `#dayWrap` (the "Today" heading + `#sched`) is `hidden` unless opened.
+  Today page at 390px went **2518px → 1481px**. That was the whole complaint.
+- **The live card carries its own two neighbours** — `seamLine()` / `seams()` render the item before
+  and the item after *inside* `.nextup`. This also closes his ask #2 (merge the NOW card and the day):
+  one component now, not two sections with things wedged between them.
+- **The door toggles instead of scrolling.** `dayDoor()` → `toggleDay()`, label flips to "Hide the day ▴".
+  `DAY_OPEN` is a **module variable, deliberately not persisted** — every fresh open of the app is short
+  again. `openDay()` kept as an alias because the harnesses call it by name.
+- A seam line for a block that didn't happen shows **nothing** — no cross, no "missed", no red.
+
+**Verified on the LIVE url:** qc3 51/51 · vanish 32/32 · tiers 28/28 · full 124/124 · phase1 24/24 ·
+boosts 34/34 · backup 13/13 · profiles 320/320 · **stress 360/360**. Screenshots read at 390 and 375.
+
+**⚠ Two PRE-EXISTING harness problems, NOT caused by this change** (confirmed by running both against
+`index.html.bak-seam-195451`, the pre-change snapshot) — §6's claim of "all green" is stale:
+- `goals2.js` **56/59** — fails "WIG card rendered", "capacity line sits above it", "capacity goes amber".
+- `area.js` **crashes**: `#pushStrip .ps-c` is null at `area.js:50` — a stale selector, so that whole
+  harness currently covers nothing.
+
+**⚠ Also spotted and deliberately NOT changed** (out of scope, needs his call): at 09:20 with a deep
+block live and no objective, the card renders *"No objective set — write it at 08:30"* **in ember/red
+italic on the daily surface**, and it names a time already past. That's the closest thing to a wall of
+failure on the Today page.
+
+**STILL OWED BY HIM: a merge + a strip from `rend-today-merge.html`.** The seam did NOT build the back
+page, the per-block notes store, or the wins strip — those are the parts that need his pick.
+
+---
+
+### 0-prev · Round 3 — HE PICKED E + I. The merge renditions are live.
 
 **2026-07-27, round 3.** From the five directions he chose **a mixture of E · The Notebook and
 I · The Two-Sided Day**, in his words:
