@@ -2829,7 +2829,7 @@ function elseCands(bid){
     })
     .filter(x=>x.s>-50).sort((a,b2)=>b2.s-a.s).slice(0,3).map(x=>x.w);
 }
-function elseStep(bid){
+function elseStep(bid,banked){
   const c=elseCands(bid);
   if(!c.length)return closeRun();                        /* nothing left to ask — don't ask */
   $('runTime').textContent='ALSO';
@@ -2837,8 +2837,13 @@ function elseStep(bid){
   $('runWarn').innerHTML=`<div class="else-q">Anything else happen in there?</div>`+
     c.map(w=>`<button class="else-o" onclick="elseTap('${w.k}','${bid}')">
       ${esc(w.n)}<u>+${w.xp}</u></button>`).join('');
-  $('runStep').textContent='Nothing · carry on';$('runStep').onclick=()=>closeRun();
-  $('runEnd').textContent='Done';$('runEnd').onclick=()=>closeRun();
+  /* ONE exit, never two. Two buttons that do the same thing is a question about which
+     button to press, and this screen is supposed to be the opposite of that. The wording
+     changes with the truth: before anything is tapped the honest exit is "nothing", after
+     something is tapped it is "done". */
+  $('runStep').textContent=banked?'Done':'Nothing · carry on';
+  $('runStep').onclick=()=>closeRun();
+  $('runEnd').hidden=true;
 }
 /* tapping one banks it and re-asks with what's left, so two things can be logged without
    the sheet turning into a form. */
@@ -2849,7 +2854,7 @@ function elseTap(k,bid){
   award('win:'+k,w.xp,w.n);
   const left=elseCands(bid);
   if(!left.length)return closeRun();
-  elseStep(bid);
+  elseStep(bid,true);
 }
 function closeRun(){
   if(run&&run.t)clearInterval(run.t);
@@ -2857,7 +2862,7 @@ function closeRun(){
   run=null;S.activeRun=null;save();$('run').className='run';document.body.classList.remove('noTabs');
   /* the end-of-run steps rebind these two buttons — hand them back, or the NEXT run's
      "give up" button is still wired to the last run's "carry on". */
-  $('runEnd').textContent='End';$('runEnd').onclick=runEndDefault;
+  $('runEnd').hidden=false;$('runEnd').textContent='End';$('runEnd').onclick=runEndDefault;
   render();
 }
 function runEndDefault(){if(run&&!run.broken&&run.left>0){day().focus[run.b.id]='quit';save()}closeRun()}
