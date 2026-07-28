@@ -5,7 +5,58 @@ It is the single entry point. `HANDOFF-GOALS.md` is the deeper history; this fil
 
 ---
 
-## 0 · WHERE WE ARE — TWO picks owed: a merge, and an extras direction.
+## 0 · WHERE WE ARE — the extras move is BUILT AND LIVE. One schema question is open.
+
+**2026-07-27, round 6.** He picked **X5 + X3, with X2's requirement-counts as the Bank's structure**:
+*"a mix of them living in the bank under certain things I need to do… each one requires specific things
+one to or however many times… and I wanted to pair that with the anything else happen in there idea on
+direction three… the place that they would be living is on the bank."*
+
+### BUILT AND LIVE — commit `d1e…`/`sw btb-v21`
+
+- **Neither section is on Today any more.** `#extrasWrap` (Always counts) and `#boostCard` are
+  `hidden`. The nodes stay in the DOM on purpose so every renderer and harness still addresses them.
+  Today at 390px is now **1171px** (it was 2518px before this design cycle started).
+- **In their place, ONE line**: `#extrasLine` → `renderExtrasLine()`. A total that only ever goes up
+  ("+45 also today · 2 things →"), or, with nothing logged, "The small stuff lives in the Bank →".
+  It navigates to the Bank. **It never renders a zero or a shortfall** — asserted by the harness.
+- **The run-end question**: `elseStep()` / `elseCands()` / `elseTap()`. After the SHIP field (and after
+  Skip), a focus run ends by asking **"Anything else happen in there?"** with **three** plausible
+  options, scored on the finished block's domain and the time of day — *in bed on time* can never be
+  offered in the morning, *cooked* not before 17:00. Tapping one banks it and re-asks with what's left.
+- **ONE exit, never two.** Wording follows the truth: "Nothing · carry on" before anything is tapped,
+  "Done" after. (First cut shipped two buttons that did the same thing — caught by looking at the
+  screenshot, not by the tests.)
+- **The Bank is the home**: a real "Always counts" section (`winsBankList()`, `winsPaidToday()`) —
+  all six, tappable via the same `tapWin()`, each showing its **weekly standard** (3/4 this week).
+  Boosts already lived there.
+- `closeRun()` now hands `#runEnd` back to `runEndDefault` — the end-of-run steps rebind it, and
+  without this the *next* run's End button was still wired to the last run's "carry on".
+
+**Verified on the LIVE url:** **extras 33/33 (new)** · qc3 51/51 · vanish 32/32 · tiers 28/28 ·
+full 124/124 · phase1 24/24 · boosts 37/37 · backup 13/13 · profiles 320/320 · **stress 360/360**.
+
+**`model/extras.js` is new** — 33 checks over all three halves of this feature. **`boosts.js` changed:**
+its "Today shows a boost card / card clears 44px" assertions were guarding a thing he deliberately
+removed. They now assert the opposite (Today must NOT show it) plus the new line's floor and that it
+never shows a shortfall. The 44px floor for boosts is still covered, in the Bank, at `boosts.js:56–60`.
+
+### ⚠ STILL OPEN — one schema decision, asked and not yet answered
+
+He wants **each Bank reward to require specific wins, N times.** Today `rewards[]` has
+`condition:'Cooked + laundry every night this week'` — **a free-text string that is displayed and never
+checked.** Making it real needs `req:[{k:'cooked',n:4},…]` and answers to:
+
+1. **Does a requirement GATE the reward (XP cost still applies) or REPLACE the cost?**
+2. **What is the counting window** — this week, or cumulative since he started saving for it?
+
+Do not guess these. He said the economy is the thing that does not bend; picking wrong means
+re-pricing his ladder. **Ask, then build, then migrate `condition` → `req` keeping the old string
+visible until it has been converted.**
+
+---
+
+### 0-prev · Round 5 — the extras diagnosis and the five directions
 
 **2026-07-27, round 5.** *"There's just something about those two sections that I just feel like don't
 fit on the page properly. They just feel like weird little afterthoughts… what are ways we could really
