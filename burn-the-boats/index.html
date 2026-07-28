@@ -647,6 +647,38 @@ body.glanceOpen .ovrpeek{border-bottom-left-radius:0;border-bottom-right-radius:
 .glance{display:none}
 body.glanceOpen .glance{display:block}
 
+/* ---------- the three tiers ---------- */
+.g2apex{border:1px solid rgba(224,178,94,.4);border-radius:16px;padding:15px;margin-bottom:16px;
+  background:linear-gradient(150deg,#1b1526,#110e1a 62%,#0d0b14)}
+.g2apex .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.19em;color:var(--gold);margin-bottom:9px}
+.g2apex .t{font-family:'Clash Display',sans-serif;font-size:27px;letter-spacing:-.03em;line-height:1.1;margin-bottom:12px}
+.g2apex .ap-n{display:flex;align-items:baseline;gap:7px}
+.g2apex .ap-n b{font-family:'Clash Display',sans-serif;font-size:30px;letter-spacing:-.035em;line-height:1}
+.g2apex .ap-n span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint)}
+.g2apex .ap-n i{flex:1}
+.g2apex .ap-s{margin-top:9px;font-size:12.5px;line-height:1.45;color:var(--faint)}
+
+.g2tier{margin-bottom:20px}
+.g2tier .tr-h{display:flex;align-items:center;gap:9px;min-height:32px;padding:0 2px;margin-bottom:8px}
+.g2tier .tr-h i{width:7px;height:7px;border-radius:99px;flex:none}
+.g2tier .tr-h span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.17em;color:var(--dim);text-transform:uppercase}
+.g2tier .tr-h u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);text-decoration:none}
+.g2anc{border:1px solid var(--c);border-radius:14px;padding:13px 14px;cursor:pointer;background:var(--panel)}
+.g2anc .k{display:flex;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--c);margin-bottom:7px}
+.g2anc .k u{margin-left:auto;text-decoration:none}
+.g2anc .t{font-size:16px;line-height:1.3;color:var(--ink);margin-bottom:9px}
+.g2sub{border:1px solid var(--line);border-left:2px solid var(--line2);border-radius:0 11px 11px 0;
+  margin:6px 0 0 16px;padding:9px 12px;cursor:pointer;background:var(--panel)}
+.g2sub .sb-t{font-size:13.5px;line-height:1.3;color:var(--dim)}
+.g2sub .sb-m{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.07em;color:var(--faint);margin-top:2px}
+.g2facts{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:7px;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--dim)}
+.g2facts .cold{color:var(--faint)}
+.g2addanc,.g2addsub{display:block;width:100%;min-height:var(--tap);cursor:pointer;text-align:left;
+  border:1px dashed var(--line2);border-radius:11px;background:transparent;color:var(--faint);
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;padding:12px}
+.g2addsub{margin:6px 0 0 16px;border-radius:0 11px 11px 0;border-left-width:2px}
+
 .g2ready{margin-top:14px;padding:13px 14px;border-radius:14px;border:1px solid var(--line2);background:var(--panel)}
 .g2ready .k{display:flex;align-items:center;font-family:'Geist Mono',monospace;font-size:11px;
   letter-spacing:.17em;color:var(--faint);margin-bottom:10px}
@@ -935,7 +967,6 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
     <div class="rail-l"><span id="railS">—</span><span id="railE">—</span></div>
   </div>
 
-  <div class="pushstrip" id="pushStrip"></div>
 
   <div class="gauges">
     <div class="gg" id="ggA"></div>
@@ -1171,6 +1202,27 @@ function stampToday(){
   const g=dow();if(g===0)return;
   const d=day(),cur=stampOf(shape());
   if(!Array.isArray(d.shape)||!d.shape.length){d.shape=cur;save()}
+  freezePast();
+}
+/* SELF-HEALING FREEZE. Relying on every write path to call stampDom is fragile —
+   a restore, a hand-edit or g2Flip can set a block done without it. So any day
+   that is NOT today gets its credited domains frozen the first time we see it.
+   After that, moving a goal between areas can never re-score it. */
+function freezePast(){
+  const tk=today();let ch=0;
+  Object.keys(S.days).forEach(k=>{
+    if(k>=tk)return;
+    const rec=S.days[k];if(!rec||!rec.done)return;
+    const sh=shapeFor(k);
+    Object.keys(rec.done).forEach(bid=>{
+      if(!rec.done[bid])return;
+      rec.dom=rec.dom||{};
+      if(rec.dom[bid])return;
+      const b=sh.find(x=>x.id===bid);
+      if(b){rec.dom[bid]=blockDomains(k,b);ch=1}
+    });
+  });
+  if(ch)save();
 }
 function workdaysLeft(){
   const b=new Date(RUN_END+'T00:00:00');let n=0;const c=new Date();c.setHours(0,0,0,0);
@@ -1275,7 +1327,7 @@ const bizFor=b=>(b.kind==='deep'&&week().theme[b.id])||null;
 const SCORED=b=>b.kind==='deep'||b.kind==='market'||b.kind==='body'||(b.kind==='ritual'&&!b.auto);
 function autoMark(){
   const d=day(),m=nowMin();let changed=0;
-  shape().forEach(b=>{ if(b.auto&&!d.done[b.id]&&m>=mins(b.e)){d.done[b.id]=true;changed=1;} });
+  shape().forEach(b=>{ if(b.auto&&!d.done[b.id]&&m>=mins(b.e)){d.done[b.id]=true;stampDom(d,today(),b.id);changed=1;} });
   if(changed)save();
 }
 function recount(){
@@ -1323,9 +1375,22 @@ const QUOTAS=[
   {src:'win',   id:'bed',     dom:'BODY',   n:4},
 ];
 
+/* Freeze what a block credited, the moment it is completed. Called from every
+   place that sets d.done[...] = true. */
+function stampDom(d,k,bid){
+  const b=shapeFor(k).find(x=>x.id===bid)||shape().find(x=>x.id===bid);
+  if(!b)return;
+  d.dom=d.dom||{};
+  if(!d.dom[bid])d.dom[bid]=blockDomains(k,b);
+}
 /* Which domains a block credits ON A GIVEN DAY. Deep blocks follow the goal that
    was committed to them; everything else keeps the domain it was stamped with. */
 function blockDomains(k,b){
+  /* what this block credited on the day it was done, frozen. Without this, any
+     later edit to the goal or its area rewrites history that has already been
+     scored — the exact thing the shape stamp exists to prevent. */
+  const rec=S.days[k];
+  if(rec&&rec.dom&&rec.dom[b.id])return rec.dom[b.id];
   if(b.kind==='deep'){
     const dt=new Date(k+'T00:00:00'),off=(dt.getDay()+6)%7;
     if(off<=4){
@@ -1823,7 +1888,7 @@ function badges(){
   const cheapest=Math.min(...S.rewards.filter(r=>!r.done).map(r=>r.cost).concat([Infinity]));
   const bank=S.xp>=cheapest||(S.privileges||0)>0;
   const rec=[5,6].includes(dow());
-  const stale=daysSincePitchReady()>=3;
+
   const set=(t,on,red)=>{const b=document.querySelector(`.tabs button[data-t="${t}"]`);if(!b)return;
     b.querySelector('.badge')?.remove();
     if(on){const i=document.createElement('span');i.className='badge'+(red?' red':'');b.appendChild(i)}};
@@ -1833,7 +1898,7 @@ function badges(){
      "your week closed itself" read as bad news. */
   const g2=gOn()&&(!!freshClose()||g2NeedsDecision().length>0||daysGone()>=3);
   set('today',owed,true); set('bank',bank); set('record',rec);
-  set('push',gOn()?g2:stale,gOn()?false:true);
+  set('push',g2,false);
 }
 
 let sabOff=false;   /* dismissed for this session only — returns next visit */
@@ -1857,7 +1922,7 @@ function render(){
     stampToday();
     document.body.classList.toggle('offday',!!day().off);
     renderStatus(); renderGauges(); renderGlance(); renderRail();
-    renderPushStrip(); renderPenance(); renderNext(); renderBoostCard();
+    renderPenance(); renderNext(); renderBoostCard();
     renderWins(); renderSched(); renderClose(); renderRunStrip();
     $('foot').innerHTML=`BURN THE BOATS · DAY ${dayNo()} / ${TOTAL_DAYS}<br>WHAT IS THE MILLIONAIRE VERSION OF YOURSELF DOING RIGHT NOW?`;
   }
@@ -2279,38 +2344,9 @@ function tapWin(k){
   d.wins[k]=1;save();
   if(!award('win:'+k,w.xp,w.n))render();
 }
-const PITCH_READY='2026-07-24';
-function daysSincePitchReady(){
-  return Math.max(0,Math.floor((new Date(today())-new Date(PITCH_READY))/864e5));
-}
 /* The pipeline strip read S.december directly — three hardcoded businesses. It now
    shows the three goals YOU rank highest, whatever they are, with the WIG first.
    A goal with no number shows its area instead of an invented 0. */
-function renderPushStrip(){
-  const stale=daysSincePitchReady(),sent=S.push&&S.push.anthonySent;
-  const gs=GM.liveGoals(G),wig=gs.find(x=>x.wig);
-  const pick=(wig?[wig].concat(gs.filter(x=>x!==wig)):gs).slice(0,3);
-  if(!pick.length){
-    $('pushStrip').innerHTML=`<div class="ps-row">
-      <div class="ps-c" style="flex:1"><div class="k">NOTHING SET</div>
-        <div class="v" style="font-size:15px">Write your first goal →</div></div></div>`;
-    $('pushStrip').onclick=()=>go('push');return;
-  }
-  $('pushStrip').innerHTML=`<div class="ps-row">
-      ${pick.map(g=>{const a=GM.areaById(G,g.areaId)||{};
-        const has=g.target!==null;
-        /* an auto-created holder is not a name — show his own words instead */
-        const lab=(a.auto||a.name==='Unsorted')?g.title.split(' ').slice(0,2).join(' '):(a.name||'');
-        /* trim on a word, never mid-word — "Three client" is worse than no label */
-        const cut=lab.length<=14?lab:lab.slice(0,14).replace(/\s+\S*$/,'');
-        return `<div class="ps-c"><div class="k">${esc(cut)}</div>
-          <div class="v"${has?'':' style="font-size:15px"'}>${has?`${fmtN(g.at)}/${fmtN(g.target)}`
-            :esc(g.title.split(' ').slice(0,2).join(' '))}</div></div>`}).join('')}
-    </div>
-    ${!sent&&stale>=1?`<div class="ps-stale" onclick="event.stopPropagation();markSent()">
-        ANTHONY · PITCH-READY ${stale} DAYS · NOT SENT · TAP WHEN DONE →</div>`:''}`;
-  $('pushStrip').onclick=()=>go('push');
-}
 function renderPenance(){
   const el=$('penanceBanner');
   if(!S.penance||S.penance.done){el.innerHTML='';return}
@@ -2412,7 +2448,9 @@ function sheet(html){
   $('sheetA').innerHTML='<div class="grab"></div><button class="sh-x" onclick="closeSheet()">✕</button>'+html;
   $('ovA').classList.add('on');
 }
-function closeSheet(){$('ovA').classList.remove('on')}
+function closeSheet(){$('ovA').classList.remove('on');
+  /* dismissing a sheet ends any round trip — nothing should survive to the next one */
+  if(typeof GB==='object'&&GB&&!GB.tripLive)g2ClearDraft&&g2ClearDraft();}
 
 /* The 08:30 ritual writes the whole day at once. `writes:1` was declared on the block and
    read nowhere, so the one ritual whose job is filling the four "no objective set" holes
@@ -2542,7 +2580,7 @@ function lastProduced(id){
   for(const k of ks){if(k===today())continue;const p=S.days[k].produced&&S.days[k].produced[id];if(p)return p}
   return null;
 }
-function markDone(id){const d=day();d.done[id]=true;delete d.miss[id];delete d.wait[id];save();closeSheet();
+function markDone(id){const d=day();d.done[id]=true;stampDom(d,today(),id);delete d.miss[id];delete d.wait[id];save();closeSheet();
   const _b=shape().find(x=>x.id===id),_g=_b?goalOf2(_b):null;
   if(!award('blk:'+id,25,'block done',_g))render();}
 /* A miss must never be a terminal red row with no way out. */
@@ -2620,7 +2658,7 @@ function breakRun(msg){
 function finishRun(){
   if(!run)return;clearInterval(run.t);
   const d=day(),b=run.b;
-  d.done[b.id]=true;d.focus[b.id]=run.broken?'broke':'clean';
+  d.done[b.id]=true;stampDom(d,today(),b.id);d.focus[b.id]=run.broken?'broke':'clean';
   const xp=run.broken?25:65;
   const key='run:'+b.id+':'+today();
   if(!d.credited[key]){
@@ -2847,7 +2885,7 @@ function renderClose(){
 function ccMark(id,how){
   const d=day();
   delete d.done[id];delete d.miss[id];delete d.wait[id];
-  if(how==='done'){d.done[id]=true;
+  if(how==='done'){d.done[id]=true;stampDom(d,today(),id);
     const _b=shape().find(x=>x.id===id);award('blk:'+id,25,'marked done',_b?goalOf2(_b):null)}
   else if(how==='miss')d.miss[id]=true; else d.wait[id]={who:'someone',since:today()};
   save();render();
@@ -2976,20 +3014,41 @@ const GM=(()=>{
     G.horizons=G.horizons.filter(x=>x.id!==id);return freed;
   }
 
-  function addGoal(G,{title,areaId,horizonId,kind,start,at,target,unit,evidence,obstacle,lead,wig}={}){
+  function addGoal(G,{title,areaId,horizonId,kind,start,at,target,unit,evidence,obstacle,lead,wig,anchor,parentId}={}){
     if(!title||!String(title).trim())throw new Error('a goal needs a title');
     if(!areaById(G,areaId))throw new Error('a goal needs a real area');
     const nums=target!==undefined&&target!==null&&target!=='';
-    const g={id:uid('g'),areaId,horizonId:horizonById(G,horizonId)?horizonId:null,parentId:null,
+    const g={id:uid('g'),areaId,horizonId:horizonById(G,horizonId)?horizonId:null,
+      parentId:parentId||null,
       title:String(title).trim(),kind:KINDS.includes(kind)?kind:'outcome',
       start:nums?Number(start!==undefined&&start!==null&&start!==''?start:(at||0)):null,
       at:nums?Number(at||0):null,target:nums?Number(target):null,unit:unit||'',
       evidence:evidence||'',obstacle:obstacle||'',
       lead:lead&&lead.name?{name:lead.name,target:Number(lead.target)||0}:null,
-      wig:wig?1:0,rank:G.goals.length+1,state:'active',confidence:[],history:[]};
+      wig:wig?1:0,anchor:anchor?1:0,
+      rank:G.goals.length+1,state:'active',confidence:[],history:[]};
     G.goals.push(g);return g;
   }
   const goalOf=(G,id)=>G.goals.find(g=>g.id===id)||null;
+  /* TIER 2 — the December goal for an area. One each; the year is defined by them. */
+  const anchorOf=(G,areaId)=>G.goals.find(g=>g.areaId===areaId&&g.anchor&&g.state==='active')||null;
+  const anchors=G=>G.goals.filter(g=>g.anchor&&g.state==='active')
+    .sort((a,b)=>{const A=G.areas.find(x=>x.id===a.areaId)||{},B=G.areas.find(x=>x.id===b.areaId)||{};
+      return (A.rank||0)-(B.rank||0)});
+  /* TIER 3 — the working goals. Planning material, not contracts. */
+  const childrenOf=(G,id)=>G.goals.filter(g=>g.parentId===id&&g.state==='active').sort(byRank);
+  const looseIn=(G,areaId)=>G.goals.filter(g=>g.areaId===areaId&&!g.anchor&&!g.parentId&&g.state==='active').sort(byRank);
+  /* Promoting is one-per-area: taking the anchor demotes whoever held it. */
+  function setAnchor(G,id,day){
+    const g=goalOf(G,id);if(!g)return null;
+    const prev=anchorOf(G,g.areaId);
+    if(prev&&prev.id!==id){prev.anchor=0;prev.history.push({t:'anchor',from:'the December goal',to:'a goal under it',day:day||0})}
+    g.anchor=1;g.parentId=null;                       /* an anchor is never under anything */
+    g.history.push({t:'anchor',from:'a goal',to:'the December goal',day:day||0});
+    /* everything loose in the area now hangs off it */
+    G.goals.forEach(x=>{if(x.areaId===g.areaId&&x.id!==g.id&&!x.anchor&&!x.parentId)x.parentId=g.id});
+    return g;
+  }
   const liveGoals=G=>G.goals.filter(g=>g.state==='active').sort(byRank);
   const goalsOfArea=(G,id)=>liveGoals(G).filter(g=>g.areaId===id);
   const goalsAt=(G,id)=>liveGoals(G).filter(g=>g.horizonId===id);
@@ -3000,7 +3059,8 @@ const GM=(()=>{
      A `start` baseline fixes both directions with one formula and no flag.
      null means "no number" — render a state, never a 0% bar. */
   function progress(g){
-    if(g.start===null||g.target===null)return null;
+    if(g.start===null||g.target===null||g.at===null||
+       isNaN(g.start)||isNaN(g.target)||isNaN(g.at))return null;
     if(g.target===g.start)return g.at>=g.target?1:0;
     return cl01((g.at-g.start)/(g.target-g.start));
   }
@@ -3075,8 +3135,12 @@ const GM=(()=>{
       orphanAreas:liveAreas(G).filter(a=>!cs.some(c=>(goalOf(G,c.goalId)||{}).areaId===a.id)).map(a=>a.id)};
   }
   /* the SOFT cap: it argues, it never blocks (owner decision 2026-07-26) */
-  function capCheck(G,total){
-    const live=liveGoals(G).length,cap=G.meta.softCap||5;
+  function capCheck(G,total,weekKey){
+    /* what you have COMMITTED this week, not how many goals exist */
+    const cs=weekKey?commitsOfWeek(G,weekKey):[];
+    const busy=new Set(cs.map(c=>c.goalId)).size;
+    const live=weekKey?busy:liveGoals(G).filter(g=>!g.anchor).length;
+    const cap=G.meta.softCap||5;
     if(live<cap)return{over:false,live,cap};
     return{over:true,live,cap,blocksEach:Math.round((total||20)/(live+1)*10)/10,
       suggest:liveGoals(G).slice().sort((a,b)=>{
@@ -3112,11 +3176,31 @@ const GM=(()=>{
   return{empty,KINDS,STATES,DOMAIN_KEYS,addArea,liveAreas,areaById,archiveArea,reorderArea,
     addHorizon,liveHorizons,horizonById,removeHorizon,addGoal,goalOf,liveGoals,goalsOfArea,
     goalsAt,undated,progress,direction,editGoal,setState,setConf,needsEarly,commit,
+    anchorOf,anchors,childrenOf,looseIn,setAnchor,
     commitsOfWeek,capacity,capCheck,closeWeek,draftWeek,importAreas};
 })();
 
 /* ---- the v2 store.  Separate key, separate object, one-tap revert. -------- */
-let G=(()=>{try{const r=localStorage.getItem(GKEY);if(r)return Object.assign(GM.empty(),JSON.parse(r))}
+/* A save written before the tiers existed has no `anchor` on any goal, so every
+   area would read as empty. Promote one per area, once: the WIG if it's there,
+   else the goal with a December-ish date, else the first. Marked so it never
+   runs twice and never overrides a choice he has made. */
+function backfillAnchors(g){
+  if(!g||!Array.isArray(g.goals)||g.meta&&g.meta.anchored)return g;
+  g.meta=g.meta||{};
+  if(g.goals.some(x=>x.anchor)){g.meta.anchored=1;return g}
+  (g.areas||[]).forEach(a=>{
+    const mine=g.goals.filter(x=>x.areaId===a.id&&x.state==='active');
+    if(!mine.length)return;
+    const last=(g.horizons||[]).slice().sort((p,q)=>p.date<q.date?-1:1).pop();
+    const pick=mine.find(x=>x.wig)||(last&&mine.find(x=>x.horizonId===last.id))||mine[0];
+    pick.anchor=1;pick.parentId=null;
+    mine.forEach(x=>{if(x.id!==pick.id&&!x.parentId)x.parentId=pick.id});
+  });
+  g.meta.anchored=1;
+  return g;
+}
+let G=(()=>{try{const r=localStorage.getItem(GKEY);if(r)return backfillAnchors(Object.assign(GM.empty(),JSON.parse(r)))}
   catch(e){}return GM.empty()})();
 function gsave(){try{localStorage.setItem(GKEY,JSON.stringify(G))}catch(e){}}
 /* The old Goals model was deleted 2026-07-26. gOn() stays as a constant so every
@@ -3292,12 +3376,18 @@ function undoImport(){
       model needs a legend it is leaking. It now asks for one goal, in words.
    ==================================================== */
 function renderGoals2(){
+  /* a hand-edited or partially-restored save must never white-screen the tab */
+  G=G||GM.empty();['goals','areas','horizons','commits'].forEach(k=>{if(!Array.isArray(G[k]))G[k]=[]});
+  G.meta=G.meta||{};
   const areas=GM.liveAreas(G),goals=GM.liveGoals(G);
   $('pushHorizon').textContent=goals.length
     ? `${goals.length} GOAL${goals.length>1?'S':''} · ${areas.length} AREA${areas.length>1?'S':''}`
     : 'NOTHING SET YET';
 
-  if(!goals.length){$('pushBody').innerHTML=g2Empty(areas);return}
+  if(!goals.length){
+    /* set-down goals must still be reachable, or "park everything" reads as a
+       wiped app with the work sitting untouched in storage */
+    $('pushBody').innerHTML=g2Empty(areas)+g2Orphans()+g2Quiet();return}
 
   const view=G.meta.view||'area';
   const tabs=`<div class="g2tabs">${[['area','BY AREA'],['date','BY DATE'],['week','THE WEEK']]
@@ -3306,31 +3396,21 @@ function renderGoals2(){
   if(view==='week'){$('pushBody').innerHTML=g2Banners()+tabs+g2Week()+g2Foot();return}
   if(view==='date'){$('pushBody').innerHTML=g2Banners()+tabs+g2ByDate()+g2Foot();return}
 
-  const wig=goals.find(g=>g.wig)||(goals.length===1?goals[0]:null);
-  const rest=goals.filter(g=>g!==wig);
-  $('pushBody').innerHTML=g2Banners()+g2Capacity(goals.length)+tabs+
-    (wig?g2Wig(wig):g2PickWig(goals))+
-    /* Grouped BY AREA, and every goal has exactly ONE home on this screen.
-       An undated goal used to render twice — once under its area and again in a
-       "no date yet" bucket — which reads as the app double-counting. It shows
-       under its area, with "no date" in its own line. The date-first cut is a
-       different view, not a second copy on this one. */
-    (rest.length?`<h2 class="sec"><span>Everything else</span><u>${rest.length}</u></h2>
-       ${areas.map(a=>g2Area(a)).filter(Boolean).join('')}`:'')+
-    g2Quiet()+
-    g2Foot();
+  $('pushBody').innerHTML=g2Banners()+g2Apex()+g2Capacity()+tabs+g2Tiers()+g2Orphans()+g2Quiet()+g2Foot();
 }
 /* Parked and dropped goals had NO screen anywhere and no way back — the only
    recovery was hand-editing a backup file. "Parked, not lost" was false. */
 function g2Quiet(){
-  const q=G.goals.filter(g=>g.state==='parked'||g.state==='dropped');
+  const q=G.goals.filter(g=>g.state!=='active');
   if(!q.length)return'';
-  return `<h2 class="sec"><span>Set down</span><u>${q.length} · still here</u></h2>
+  const done=q.filter(g=>g.state==='done').length;
+  return `<h2 class="sec"><span>${done===q.length?'Finished':'Set down'}</span><u>${
+    done?done+' done':''}${done&&done<q.length?' · ':''}${q.length-done?(q.length-done)+' parked':''}</u></h2>
     <div class="g2area">${q.map(g=>{
       const a=GM.areaById(G,g.areaId)||{};
       return `<div class="g2m">
-        <span class="d" style="background:${g.state==='parked'?'var(--violet)':'var(--faint)'}"></span>
-        <span class="n">${esc(g.title)}<u>${g.state==='parked'?'PARKED':'DROPPED'}${
+        <span class="d" style="background:${g.state==='parked'?'var(--violet)':g.state==='done'?'var(--phos)':'var(--faint)'}"></span>
+        <span class="n">${esc(g.title)}<u>${g.state==='parked'?'PARKED':g.state==='done'?'DONE':'DROPPED'}${
           a.name?' · '+esc(a.name):''}</u></span>
         <button class="mb" style="width:auto;padding:0 12px;color:var(--phos);
           font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em"
@@ -3340,6 +3420,112 @@ function g2Wake(id){
   const g=GM.goalOf(G,id);if(!g)return;
   GM.setState(G,id,'active',dayNo(),'picked back up');
   gsave();render();toast('Back on the board','good');
+}
+/* ═══ THE THREE TIERS ═══════════════════════════════════════════════════════
+   ONE APEX — 99 OVR, be him. Never changes, never competes; it IS the page.
+   THE DECEMBER GOALS — one per area. Clear these and the year worked. They
+     don't compete with the apex, they're how you reach it.
+   THE WORKING GOALS — monthly, weekly, whenever. Planning material, not
+     contracts. A menu is not a load, so they don't count against capacity.
+   This page is for SEEING, not editing. Every row states what it has actually
+   done — blocks committed, blocks done, when it last moved. Editing is a level
+   deeper, behind a button. ═══════════════════════════════════════════════ */
+function g2Apex(){
+  const o=ovr(),gap=Math.max(0,HIM-o),pct=Math.round((o-50)/(HIM-50)*100);
+  const anc=GM.anchors(G);
+  /* count the ones he actually FINISHED, which leave the active list entirely */
+  const hit=G.goals.filter(g=>g.anchor&&g.state==='done').length
+    +anc.filter(g=>{const p=GM.progress(g);return p!==null&&p>=1}).length;
+  return `<div class="g2apex">
+    <div class="k">THE WHOLE POINT OF THIS PAGE</div>
+    <div class="t">Be him.</div>
+    <div class="ap-n"><b>${o}</b><span>OVERALL</span><i></i><b>${gap}</b><span>TO GO</span></div>
+    <div class="g2bar" style="margin-top:10px"><i style="width:${Math.max(0,Math.min(100,pct))}%;background:var(--gold)"></i></div>
+    <div class="ap-s">${anc.length
+      ? `You get there by clearing the ${anc.length} below${hit?` · ${hit} already done`:''}.`
+      : 'Give each part of your life one December goal. Those are the way there.'}</div>
+  </div>`;
+}
+/* every area, its December goal, and the working goals under it */
+function g2Tiers(){
+  const areas=GM.liveAreas(G);
+  if(!areas.length)return'';
+  return areas.map(a=>{
+    const anc=GM.anchorOf(G,a.id);
+    /* membership, not lineage — a goal cannot fall out of a view it belongs to
+       by area, whatever happened to its anchor */
+    /* exclude ONLY the anchor being rendered above — not every goal flagged as one.
+       Two anchors can coexist after a move or a restored save, and the second one
+       used to fall out of every view. */
+    const under=G.goals.filter(g=>g.areaId===a.id&&g.state==='active'&&(!anc||g.id!==anc.id))
+      .sort((x,y)=>(x.rank||0)-(y.rank||0));
+    const c=domColour(a.domain);
+    return `<div class="g2tier">
+      <div class="tr-h"><i style="background:${c}"></i><span>${esc(a.name)}</span>
+        <u>${anc?`${under.length} under it`:`${under.length} goal${under.length===1?'':'s'}`}</u></div>
+      ${anc?g2AnchorCard(anc,c):`<button class="g2addanc" onclick="g2NewGoal('${a.id}',1)">
+        + Give ${esc(a.name)} a December goal</button>`}
+      ${under.map(g=>g2Read(g,c)).join('')}
+      ${anc?`<button class="g2addsub" onclick="g2NewGoal('${a.id}',0,'${anc.id}')">+ Add one under this</button>`:''}
+    </div>`;
+  }).join('');
+}
+/* LAST RESORT. A live goal whose area was archived or deleted belongs to no
+   tier and would otherwise be typed, saved and never seen again. */
+function g2Orphans(){
+  const live=GM.liveAreas(G).map(a=>a.id);
+  const lost=G.goals.filter(g=>g.state==='active'&&live.indexOf(g.areaId)<0);
+  if(!lost.length)return'';
+  return `<div class="g2tier"><div class="tr-h"><i style="background:var(--blood)"></i>
+      <span>No area</span><u>${lost.length} · needs a home</u></div>
+    ${lost.map(g=>g2Read(g,'var(--faint)')).join('')}</div>`;
+}
+function g2AnchorCard(g,c){
+  const h=g.horizonId?GM.horizonById(G,g.horizonId):null,p=GM.progress(g);
+  const st=goalStats(g);
+  return `<div class="g2anc" style="--c:${c}" onclick="g2Open('${g.id}')">
+    <div class="k">DECEMBER${h?` · ${esc(h.label)} · ${hzWhen(h)}`:''}${
+      p!==null&&p>=1?'<u style="color:var(--phos)">DONE</u>':''}</div>
+    <div class="t">${esc(g.title)}</div>
+    ${g2Bar(g,p,c)}
+    ${g2Facts(st)}
+  </div>`;
+}
+function g2Read(g,c){
+  const h=g.horizonId?GM.horizonById(G,g.horizonId):null,p=GM.progress(g);
+  const st=goalStats(g);
+  return `<div class="g2sub" onclick="g2Open('${g.id}')">
+    <div class="sb-t">${esc(g.title)}${g.anchor?' <b style="color:var(--gold)">ALSO A DECEMBER GOAL</b>':''}${
+      GM.needsEarly(g)?' <b style="color:var(--gold)">NEEDS A DECISION</b>':''}</div>
+    <div class="sb-m">${h?esc(h.label)+' · '+hzWhen(h):'no date'}${
+      p!==null?` · ${Math.round(p*100)}%`:' · no number'}</div>
+    ${g2Facts(st)}
+  </div>`;
+}
+/* THE EVALUATION LINE. All of this was already stored and none of it was shown. */
+function goalStats(g){
+  const cs=(G.commits||[]).filter(c=>c.goalId===g.id);
+  const done=cs.filter(c=>c.done).length;
+  const xp=(S.xpByGoal||{})[g.id]||0;
+  let last=null;
+  Object.keys(S.days).sort().forEach(k=>{const r=S.days[k];
+    if(r.xpByGoal&&r.xpByGoal[g.id])last=k;});
+  const ago=last?Math.round((new Date(today()+'T00:00:00')-new Date(last+'T00:00:00'))/864e5):null;
+  return {blocks:cs.length,done,xp,ago};
+}
+function g2Facts(st){
+  if(!st.blocks&&!st.xp)return `<div class="g2facts"><span class="cold">nothing on it yet</span></div>`;
+  return `<div class="g2facts">
+    <span>${st.done} of ${st.blocks} blocks</span>
+    ${st.xp?`<span>${st.xp.toLocaleString()} XP</span>`:''}
+    <span class="${st.ago===null?'cold':st.ago>=10?'cold':''}">${
+      st.ago===null?'never moved':st.ago===0?'moved today':`moved ${st.ago}d ago`}</span>
+  </div>`;
+}
+function g2NewGoal(areaId,anchor,parentId){
+  GB={areaId,horizonId:null,id:null,anchor:anchor?1:0,parentId:parentId||null,
+      anchorFor:anchor?areaId:null};    /* the area he ASKED to anchor, not whatever he ends on */
+  sheet(g2Form(anchor?'The December goal':'A goal under it',GM.capCheck(G,WEEK_BLOCKS,weekKeyNow())));
 }
 const g2Foot=()=>`<button class="btn" style="margin-top:14px" onclick="g2New()">+ Add a goal</button>
   <button class="btn gh" style="margin-top:8px" onclick="g2Manage()">Areas and dates</button>
@@ -3530,7 +3716,8 @@ function g2Flip(cid){
   /* correcting the close must also correct the day record it was read from,
      or the next sync silently reverts him */
   const d=day(dateOfSlot(c.weekKey,c.day));
-  if(c.done)d.done[c.block]=true;else delete d.done[c.block];
+  if(c.done){d.done[c.block]=true;stampDom(d,dateOfSlot(c.weekKey,c.day),c.block)}
+  else{delete d.done[c.block];if(d.dom)delete d.dom[c.block]}
   const s=G.weeks[c.weekKey];
   if(s){const cs=GM.commitsOfWeek(G,c.weekKey);s.done=cs.filter(x=>x.done).length;
     s.missed=cs.length-s.done;s.pct=cs.length?Math.round(s.done/cs.length*100):null}
@@ -3585,70 +3772,38 @@ function g2Mig(id,act){
    ONE threshold, not two: it goes amber at exactly the point the soft cap starts
    arguing. Two different numbers for the same idea reads as the app changing its
    mind about what "too many" means. */
-function g2Capacity(n){
-  const each=Math.round(WEEK_BLOCKS/n*10)/10;
+function g2Capacity(){
+  /* what you have COMMITTED this week — a list of goals is a menu, not a load */
+  const c=GM.capacity(G,weekKeyNow(),WEEK_BLOCKS);
+  const n=new Set(GM.commitsOfWeek(G,weekKeyNow()).map(x=>x.goalId)).size;
+  if(!n)return `<div class="g2cap"><b>${c.total}</b><span>deep blocks this week</span><i></i>
+    <b>${c.committed}</b><span>committed</span></div>`;
+  const per=Math.round(c.committed/n*10)/10;
   const tight=n>=(G.meta.softCap||5);
   return `<div class="g2cap${tight?' tight':''}">
-    <b>${n}</b><span>goal${n>1?'s':''}</span>
+    <b>${c.committed}</b><span>of ${c.total} blocks committed</span>
     <i></i>
-    <b>${WEEK_BLOCKS}</b><span>deep blocks a week</span>
-    <i></i>
-    <b>${each}</b><span>each</span>
-  </div>${tight?`<div class="g2warn">${each} blocks each. That's ${each<3?'not a plan, it\'s a wish list':'thin'} — one of these being first would change the week.</div>`:''}`;
+    <b>${n}</b><span>goal${n>1?'s':''} · ${per} each</span>
+  </div>${tight?`<div class="g2warn">${n} goals sharing ${c.committed} block${c.committed===1?'':'s'} this week — ${per} each. One of them being first would change the week.</div>`:''}`;
 }
 
-function g2Wig(g){
-  const a=GM.areaById(G,g.areaId)||{},h=g.horizonId?GM.horizonById(G,g.horizonId):null;
-  const p=GM.progress(g),c=domColour(a.domain);
-  return `<div class="g2wig" style="--c:${c}" onclick="g2Open('${g.id}')">
-    <div class="k"><i></i><span>THE ONE THAT MATTERS</span>${goals2Conf(g)}</div>
-    <div class="t">${esc(g.title)}</div>
-    <div class="m">${esc(a.name||'')}${h?` · ${esc(h.label)} · ${hzWhen(h)}`:' · no date yet'}</div>
-    ${g2Bar(g,p,c)}
-    ${g.lead?`<div class="lead"><span>${esc(g.lead.name)}</span><b>${g.lead.target} a week</b></div>`:''}
-  </div>`;
-}
 /* No WIG chosen and more than one goal — the single most useful question the
    app can ask, so it asks it rather than picking for him. */
-function g2PickWig(goals){
-  return `<div class="g2wig ask" style="--c:var(--gold)">
-    <div class="k"><i></i><span>NAME THE ONE</span></div>
-    <div class="t">Which of these actually matters most?</div>
-    <div class="m">Everything moves faster when one thing is first. You can change it any week.</div>
-    <div class="g2pick">${goals.slice(0,6).map(g=>
-      `<button class="chip tap" onclick="g2SetWig('${g.id}')">${esc(g.title.slice(0,32))}</button>`).join('')}</div>
-  </div>`;
-}
 /* The unit is HIS word, so it can never be singularised safely — "1 clients"
    is what naive interpolation gives you. Putting the unit once, on the pair,
    sidesteps it entirely and reads better in both directions. */
 function g2Bar(g,p,c){
   if(p===null)return `<div class="g2none">No number on this one — it's done when the evidence says so.</div>`;
-  const d=GM.direction(g),u=esc(g.unit);
+  const d=GM.direction(g),u=esc(fmtU(g.unit));
   return `<div class="g2bar"><i style="width:${Math.round(p*100)}%;background:${c}"></i></div>
     <div class="g2num">${d==='down'
       ? `<span>${fmtN(g.at)}${u}</span><span>down to ${fmtN(g.target)}${u}</span>`
       : `<span>${fmtN(g.at)} of ${fmtN(g.target)}${u}</span><span>${Math.round(p*100)}%</span>`}</div>`;
 }
-const fmtN=n=>(n===null||n===undefined)?'':Number(n).toLocaleString();
+const fmtN=n=>(n===null||n===undefined||isNaN(n))?'—':Number(n).toLocaleString();
+/* imported units arrive with a leading space, typed ones don't — normalise once */
+const fmtU=u=>{u=(u||'').trim();return u?(u==='%'?u:' '+u):''};
 const domColour=k=>{const d=DOMAINS.find(x=>x.k===k);return d?d.c:'var(--gold)'};
-function goals2Conf(g){
-  if(!g.confidence.length)return'';
-  const v=g.confidence[g.confidence.length-1].v;
-  const L={3:'ON TRACK',2:'WOBBLING',1:'NOT HAPPENING'};
-  return `<u style="color:${v===3?'var(--phos)':v===2?'var(--gold)':'var(--blood)'}">${L[v]}</u>`;
-}
-
-function g2Area(a){
-  const gs=GM.goalsOfArea(G,a.id).filter(g=>!g.wig);
-  const std=(a.standards||[]).length;
-  if(!gs.length&&!std)return '';
-  const c=domColour(a.domain);
-  return `<div class="g2area">
-    <div class="ah" onclick="g2Area1('${a.id}')"><i style="background:${c}"></i>
-      <span>${esc(a.name)}</span><u>${gs.length?gs.length+' goal'+(gs.length>1?'s':''):std+' standard'+(std>1?'s':'')}</u></div>
-    ${gs.map(g=>g2Row(g,c)).join('')}</div>`;
-}
 function g2Row(g,c){
   const h=g.horizonId?GM.horizonById(G,g.horizonId):null,p=GM.progress(g);
   return `<button class="g2row" onclick="g2Open('${g.id}')">
@@ -3697,8 +3852,15 @@ function g2SaveFirst(){
      an invented name must never end up being the label on his home screen */
   if(!a){a=GM.addArea(G,{name:'Unsorted',domain:'WORK'});a.auto=1}
   const g=GM.addGoal(G,{title:t,areaId:a.id,wig:1});
+  GM.setAnchor(G,g.id,dayNo());     /* the first thing you write is a December goal */
   gsave();render();toast('That is the one','good');
   setTimeout(()=>g2Open(g.id),260);
+}
+function g2Promote(id){
+  const g=GM.goalOf(G,id);if(!g)return;
+  const prev=GM.anchorOf(G,g.areaId);
+  GM.setAnchor(G,id,dayNo());gsave();closeSheet();render();
+  toast(prev?'Swapped — the old one is now under it':'That is the December goal','good');
 }
 function g2SetWig(id){
   GM.liveGoals(G).forEach(g=>g.wig=0);
@@ -3712,10 +3874,13 @@ function g2SetWig(id){
    down at all. `kind` is not asked for: nobody can classify a goal before
    they've lived with it a week. */
 let GB={};
-function g2New(){
-  const chk=GM.capCheck(G,WEEK_BLOCKS);
-  GB={areaId:(GM.liveAreas(G)[0]||{}).id||null,horizonId:null,id:null};
-  sheet(g2Form('New goal',chk));
+function g2New(keep){
+  const chk=GM.capCheck(G,WEEK_BLOCKS,weekKeyNow());
+  /* keep=true when we're coming BACK from "+ new area/date" — rebuilding GB
+     there discarded the anchor intent, the parent link and the chosen area. */
+  /* only reuse GB if a round trip is genuinely in flight */
+  if(!keep||!GB.trip)GB={areaId:(GM.liveAreas(G)[0]||{}).id||null,horizonId:null,id:null,anchor:0,parentId:null};
+  sheet(g2Form(GB.anchor?'The December goal':'New goal',chk));
 }
 function g2Open(id){
   const g=GM.goalOf(G,id);if(!g)return;
@@ -3725,13 +3890,13 @@ function g2Open(id){
 function g2Form(title,chk,g){
   const areas=GM.liveAreas(G),hz=GM.liveHorizons(G);
   const cap=chk&&chk.over?`<div class="g2warn" style="margin-bottom:14px">
-    You'd have ${chk.live+1} live goals against ${WEEK_BLOCKS} blocks a week — ${chk.blocksEach} each.
-    Adding it is fine. Just know what it costs the others.</div>`:'';
+    You already have ${chk.live} goals taking blocks this week out of ${WEEK_BLOCKS}.
+    Adding another is fine — it only costs anything when you give it a block.</div>`:'';
   return `<div class="sh-k">${g?'EDIT · NOTHING IS PERMANENT':'TITLE AND AREA ARE ENOUGH'}</div>
     <div class="sh-t">${title}</div>
     ${cap}
     <div class="fld"><label>The goal</label>
-      <input id="g2T" maxlength="90" placeholder="Three clients signed and paying" value="${g?esc(g.title):''}"></div>
+      <input id="g2T" maxlength="90" placeholder="Three clients signed and paying" value="${g?esc(g.title):esc(GB.d_g2T||'')}"></div>
     <div class="fld"><label>Area</label><div class="chips" id="g2A">
       ${areas.map(a=>`<button class="chip tap seg${GB.areaId===a.id?' on':''}" data-a="${a.id}"
         onclick="g2Pick('a','${a.id}')">${esc(a.name)}</button>`).join('')}
@@ -3743,22 +3908,26 @@ function g2Form(title,chk,g){
         onclick="g2Pick('h','${h.id}')">${esc(h.label)}</button>`).join('')}
       <button class="chip tap" onclick="g2NewDate()">+ NEW DATE</button></div></div>
     <button class="btn gh sm" id="g2MoreB" onclick="g2More()" style="margin-bottom:14px">${
-      g?'Hide the number and the evidence':'Add a number or your evidence'}</button>
-    <div id="g2Extra" style="${g?'':'display:none'}">
+      (g||GB.d_g2G||GB.d_g2E)?'Hide the number and the evidence':'Add a number or your evidence'}</button>
+    <div id="g2Extra" style="${(g||GB.d_g2G||GB.d_g2E)?'':'display:none'}">
     <div class="fld"><label>Where it stands</label>
-      <div class="g22"><input id="g2C" inputmode="decimal" placeholder="where you are now" value="${g&&g.at!==null?g.at:''}">
-        <input id="g2G" inputmode="decimal" placeholder="where you're going" value="${g&&g.target!==null?g.target:''}"></div>
-      <input id="g2U" maxlength="12" style="margin-top:7px" placeholder="clients · lbs · % — the unit" value="${g?esc(g.unit):''}">
+      <div class="g22"><input id="g2C" inputmode="decimal" placeholder="where you are now" value="${g&&g.at!==null?g.at:esc(GB.d_g2C||'')}">
+        <input id="g2G" inputmode="decimal" placeholder="where you're going" value="${g&&g.target!==null&&!isNaN(g.target)?g.target:esc(GB.d_g2G||'')}"></div>
+      <input id="g2U" maxlength="12" style="margin-top:7px" placeholder="clients · lbs · % — the unit" value="${g?esc(g.unit):esc(GB.d_g2U||'')}">
       <div class="hintline">Leave both empty if this one has no number — it'll be done when the evidence says so.
         Going down is fine: 198 now, 185 to go to.</div>
       ${g&&g.start!==null?`<div class="fld" style="margin-top:11px"><label>Started at
         <span style="text-transform:none;letter-spacing:0">— what the bar measures from</span></label>
         <input id="g2S" inputmode="decimal" value="${g.start}"></div>`:''}</div>
     <div class="fld"><label>What would prove it</label>
-      <input id="g2E" maxlength="120" placeholder="What you'd point at to say it's done" value="${g?esc(g.evidence):''}"></div>
+      <input id="g2E" maxlength="120" placeholder="What you'd point at to say it's done" value="${g?esc(g.evidence):esc(GB.d_g2E||'')}"></div>
     </div>
     <button class="btn" onclick="g2Save()">${g?'Save it':'Add it'}</button>
-    ${g?`<div class="g23" style="margin-top:8px">
+    ${g?`${g.anchor
+      ?`<div class="hintline" style="margin-top:10px">This is ${esc((GM.areaById(G,g.areaId)||{}).name||'')}'s December goal.</div>`
+      :`<button class="btn gh" style="margin-top:8px" onclick="g2Promote('${g.id}')">Make this the December goal</button>`}
+    ${g.wig?'':`<button class="btn gh" style="margin-top:8px" onclick="g2SetWig('${g.id}');closeSheet()">Make this the one that matters</button>`}
+    <div class="g23" style="margin-top:8px">
       <button class="btn gh sm" onclick="g2State('${g.id}','parked')">Park</button>
       <button class="btn gh sm" onclick="g2State('${g.id}','done')">Done</button>
       <button class="btn gh sm" onclick="g2State('${g.id}','dropped')">Drop</button></div>
@@ -3784,7 +3953,8 @@ function g2Pick(k,v){
 function g2Save(){
   const t=$('g2T').value.trim();if(!t){toast('Give it a title','bad');return}
   if(!GB.areaId){toast('Pick an area','bad');return}
-  const num=v=>{const e=$(v);if(!e)return null;const s=e.value.trim();return s===''?null:Number(s)};
+  const num=v=>{const e=$(v);if(!e)return null;const s=e.value.trim();
+    if(s==='')return null;const n=Number(s);return isNaN(n)?null:n};
   const tg=num('g2G'),at=num('g2C');
   /* CAPTURED, not typed. On day one "started at" and "where you are" are the same
      number, so asking for both was asking him to type it twice — and "from" was
@@ -3798,9 +3968,18 @@ function g2Save(){
     GM.editGoal(G,GB.id,{...patch,start:st,at:at},dayNo());
     if(tg!==null)GM.editGoal(G,GB.id,{target:tg},dayNo());else if(g)g.target=null;
   }else{
-    GM.addGoal(G,{...patch,start:st,at:at,target:tg,wig:GM.liveGoals(G).length===0?1:0});
+    /* only anchor if he asked for THIS area, or the area has none at all —
+       counting PARKED anchors too, or waking one later gives the area two */
+    const askedHere=GB.anchor&&(!GB.anchorFor||GB.anchorFor===GB.areaId);
+    const firstInArea=!G.goals.some(x=>x.areaId===GB.areaId&&x.anchor&&x.state!=='dropped');
+    const ng=GM.addGoal(G,{...patch,start:st,at:at,target:tg,
+      parentId:GB.parentId,wig:GM.liveGoals(G).length===0?1:0});
+    /* explicit ask, or the first goal this area has ever had */
+    const promoted=askedHere||(firstInArea&&!GB.parentId);
+    if(promoted)GM.setAnchor(G,ng.id,dayNo());
   }
-  gsave();closeSheet();render();toast(GB.id?'Saved':'Added','good');
+  g2ClearDraft();gsave();closeSheet();render();
+  toast(GB.id?'Saved':(typeof promoted!=='undefined'&&promoted)?'Added · this is now the December goal':'Added','good');
 }
 function g2State(id,st){
   GM.setState(G,id,st,dayNo());
@@ -3821,7 +4000,22 @@ function g2EditArea(id){
       <div class="hintline">Blocks pointed at this area now credit this part of your rating.</div></div>
     <button class="btn" onclick="g2SaveArea()">Save it</button>`);
 }
+/* whatever he'd typed before tapping "+ new" must survive the trip */
+/* keep EVERYTHING he'd typed across "+ new area/date", not just the title —
+   and mark that a round trip is in flight so a dismissed sheet can't leak. */
+function g2Stash(){
+  /* only a real round trip FROM the goal form counts. "+ New area" reached from
+     Areas-and-dates has no form behind it, and marking a trip there let an old
+     dismissed draft reappear in a sheet he never asked for. */
+  /* closeSheet only hides the overlay — the form's DOM survives, so testing for
+     the element found a stale one from a sheet he already dismissed. */
+  if(!$('ovA').classList.contains('on')||!$('g2T'))return;
+  GB.trip=1;
+  ['g2T','g2C','g2G','g2U','g2E'].forEach(k=>{const e=$(k);if(e)GB['d_'+k]=e.value});
+}
+function g2ClearDraft(){GB.trip=0;GB.tripLive=0;['g2T','g2C','g2G','g2U','g2E'].forEach(k=>delete GB['d_'+k])}
 function g2NewArea(){
+  g2Stash();GB.tripLive=GB.trip?1:0;
   sheet(`<div class="sh-k">AN AREA NEVER ENDS</div><div class="sh-t">New area</div>
     <div class="sh-sub">A BUSINESS, OR A PART OF YOUR LIFE</div>
     <div class="fld"><label>Name</label><input id="g2AN" maxlength="40" placeholder="SANO"></div>
@@ -3844,9 +4038,10 @@ function g2SaveArea(){
   }
   const a=GM.addArea(G,{name:n,domain:GB.dom||'WORK'});
   GB.areaId=a.id;gsave();closeSheet();render();toast('Area added','good');
-  setTimeout(()=>{GB.id?g2Open(GB.id):g2New()},240);
+  setTimeout(()=>{GB.id?g2Open(GB.id):g2New(1)},240);
 }
 function g2NewDate(){
+  g2Stash();GB.tripLive=GB.trip?1:0;
   sheet(`<div class="sh-k">A DATE, NOTHING MORE</div><div class="sh-t">New date</div>
     <div class="sh-sub">MONTHLY · TWO-MONTH · PAST THE END OF THE RUN · ANYTHING</div>
     <div class="fld"><label>Call it</label><input id="g2HN" maxlength="24" placeholder="End of September"></div>
@@ -3859,7 +4054,7 @@ function g2SaveDate(){
     .toLocaleDateString('en-US',{month:'short',day:'numeric'});
   const h=GM.addHorizon(G,{label:lbl,date:d});
   GB.horizonId=h.id;gsave();closeSheet();render();toast('Date added','good');
-  setTimeout(()=>{GB.id?g2Open(GB.id):g2New()},240);
+  setTimeout(()=>{GB.id?g2Open(GB.id):g2New(1)},240);
 }
 
 /* ---- manage: areas and dates ------------------------------------------- */
@@ -3901,26 +4096,7 @@ function renderPush(){ return renderGoals2() }
 /* The Anthony gate IS SANO's first milestone — six checks and the one action that
    matters most in the app right now. It lives inside that milestone rather than in a
    card of its own, and the text button is a real sms: deep link. */
-function gateChecks(){
-  const p=S.push,stale=daysSincePitchReady(),ticked=GATE.filter(x=>p.gate[x.k]).length;
-  return `<div style="margin-top:9px;display:grid;gap:5px">
-    ${GATE.map(x=>`<div onclick="event.stopPropagation();tickGate('${x.k}')"
-      style="display:flex;align-items:center;gap:8px;font-size:11.5px;min-height:32px;cursor:pointer;
-             color:${p.gate[x.k]?'var(--phos)':'var(--dim)'}">
-      <i style="width:13px;height:13px;border-radius:4px;flex:none;
-        background:${p.gate[x.k]?'var(--phos)':'transparent'};border:1.5px solid ${p.gate[x.k]?'var(--phos)':'#3a3350'}"></i>
-      ${esc(x.n)}</div>`).join('')}
-    <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;margin-top:3px;
-      color:${stale>=3&&!p.anthonySent?'var(--blood)':'var(--faint)'}">
-      ${ticked} OF 6 · PITCH-READY ${stale} DAYS${p.anthonySent?' · SENT':' · NOT SENT'}</div>
-    ${p.anthonySent?'':`<a class="chip tap" style="border-color:rgba(224,178,94,.5);color:var(--gold);justify-content:center;
-      min-height:44px;text-decoration:none;margin-top:4px"
-      href="sms:&body=${encodeURIComponent('Anthony — got something built for AVRS I want to show you. Free to look this week?')}"
-      onclick="event.stopPropagation();markSent()">TEXT ANTHONY NOW →</a>`}
-  </div>`;
-}
 function tickGate(k){S.push.gate[k]=!S.push.gate[k];save();render()}
-function markSent(){S.push.anthonySent=today();save();setTimeout(render,400);gainXP(300,'you sent it')}
 /* gateChecks() below is orphaned — kept only because its six-item checklist is
    content, not code, and deleting it would lose the list. Nothing calls it. */
 function openTrade(){
@@ -4377,7 +4553,7 @@ function restoreSave(inp){
                 :`\n${nG} goal${nG===1?'':'s'} · ${(gPart.areas||[]).length} areas`);
     if(!confirm(`Restore ${what}\n\nThis replaces what is here.`))return;
     S=merge(JSON.parse(JSON.stringify(DEFAULT)),sPart);save();
-    if(gPart){G=Object.assign(GM.empty(),gPart);gsave()}
+    if(gPart){G=backfillAnchors(Object.assign(GM.empty(),gPart));gsave()}
     render();toast('Restored','good');
   }catch(e){toast('That file could not be read','bad')}};
   r.readAsText(f);
