@@ -326,9 +326,9 @@ window.SANO_CAPABILITIES = [
     d:'A standing call to look at what’s working, what isn’t, and what we should change next month.',
     more:'A standing call every month with a person who has been watching your numbers — what worked, what did not, and what we are changing next. Not a support ticket.' },
 
-  { key:'app', short:'Your own app', tier:'total', name:'Your own branded app',
-    d:'Your customers, jobs and numbers in an app with your name on it — on your phone and theirs.',
-    more:'Everything you have been tapping through, carrying your name and your logo, on your phone and your customers’ phones. There is a real platform cost behind it, which is why it sits at this level.' },
+  { key:'app', short:'Your name on it', tier:'total', name:'The app in your name and logo',
+    d:'The app you already get from Growth up, rebadged as yours — on your phone and your customers’ phones.',
+    more:'You can see everything from Growth onward; what this level adds is the badge. The same screens carry your name and your logo instead of ours, and your customers can hold it too. There is a real platform cost behind that, which is why it sits here.' },
   { key:'manager', short:'Dedicated manager', tier:'total', name:'A dedicated manager',
     d:'One person who knows your business by name, weekly calls, and a four-hour response target in writing.',
     more:'It is written into your agreement, not offered as a courtesy \u2014 so there is a named person accountable for your setup rather than a queue. You stop explaining your business from scratch every time you need something changed.' }
