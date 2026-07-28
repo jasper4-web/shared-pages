@@ -1421,7 +1421,6 @@ function autoMark(){
   const d=day(),m=nowMin();let changed=0;
   shape().forEach(b=>{ if(b.auto&&!d.done[b.id]&&m>=mins(b.e)){d.done[b.id]=true;stampDom(d,today(),b.id);changed=1;} });
   if(changed)save();
-  sealPast();
 }
 /* ═══════════ SEALING A DAY THAT IS OVER ═══════════
    A block he COMPLETED froze what it credited, the moment it was completed. A block he
@@ -2038,6 +2037,10 @@ function render(){
      silently depended on him opening one particular screen. It also runs BEFORE
      the Sabbath return below, or a Sunday-only visit would close nothing. */
   autoCloseWeeks();
+  /* SEALING MUST NOT DEPEND ON WHICH SCREEN HE OPENS. It lived inside autoMark(), which
+     is only reached on the Today branch below — so a Sunday visit, or a Goals-only visit,
+     left Friday unsealed and re-derivable. Same lesson as autoCloseWeeks above it. */
+  sealPast();
   if(dow()===0&&!sabOff){$('sabbath').classList.add('on');
     const w=week(mondayOf(new Date(Date.now()-864e5)));
     const p=w.due?Math.round(w.done/w.due*100):null;
@@ -2745,13 +2748,20 @@ function composerSel(key,k){
 }
 /* one chip per goal, plus a "none" — this is where a block gets its purpose */
 function goalPicker(k,sel){
-  return GM.liveGoals(G).map(g=>`<button type="button" class="gpx${sel===g.id?' on':''}" data-k="${k}" data-g="${g.id}"
+  /* the goal ON THIS BLOCK is always drawn, even if it has since been parked or dropped —
+     otherwise the picker silently misrepresents what the block is for, and the only way to
+     see the truth is to look at another screen */
+  const live=GM.liveGoals(G);
+  const cur=sel&&!live.some(g=>g.id===sel)?GM.goalOf(G,sel):null;
+  return (cur?[cur].concat(live):live).map(g=>`<button type="button" class="gpx${sel===g.id?' on':''}${
+      g.state&&g.state!=='active'?' rest':''}" data-k="${k}" data-g="${g.id}"
       style="--gc:${domColour((GM.areaById(G,g.areaId)||{}).domain)}" onclick="pickGoal(this)">${esc(g.title.slice(0,22))}</button>`).join('')
     +`<button type="button" class="gpx${sel?'':' on'}" data-k="${k}" data-g="" onclick="pickGoal(this)">NONE</button>`;
 }
 function pickGoal(el){
   el.parentNode.querySelectorAll('.gpx').forEach(x=>x.classList.remove('on'));
   el.classList.add('on');
+  el.parentNode.dataset.touched='1';      /* he answered THIS one — see saveComposer */
 }
 function saveComposer(){
   const key=S._composeFor||today(),mode=S._composeMode||'';
@@ -2759,12 +2769,19 @@ function saveComposer(){
   ['b1','b2','b3','b4'].forEach((k,i)=>{
     const v=$('cp_'+k).value.trim();
     d.prio[i]=v; if(v&&mode!=='monday')w.tactics[k]=v;
-    const sel=document.querySelector('#gp_'+k+' .gpx.on');
+    /* ONLY WHAT HE TOUCHED. Pre-selecting from the commitment was not enough on its own:
+       goalPicker() only draws chips for ACTIVE goals, so a committed goal that had been
+       parked or dropped left every picker with nothing selected — and saving then read
+       null and deleted all four commitments again, exactly the original defect. Reading
+       the selection can always fail for reasons like that; the safe rule is that silence
+       means "leave it alone". A block is only rewritten when he actually answered it. */
+    const host=document.getElementById('gp_'+k);
+    if(!host||host.dataset.touched!=='1')return;
+    const sel=host.querySelector('.gpx.on');
     const gid=sel?sel.dataset.g:'';
     d.goals[k]=gid; if(mode!=='monday')w.goals[k]=gid;
-    /* the picker used to write into week().goals, which nothing reads any more.
-       Picking a goal for a block IS a commitment — write the real thing, so it
-       shows on THE WEEK, counts against capacity and closes with the week. */
+    /* Picking a goal for a block IS a commitment — write the real thing, so it shows on
+       THE WEEK, counts against capacity and closes with the week. */
     const off=(new Date(key+'T00:00:00').getDay()+6)%7;
     if(off<=4)setCommitQuiet(mondayOf(new Date(key+'T00:00:00')),off,k,gid||null);
   });
@@ -3474,10 +3491,18 @@ const GM=(()=>{
       pct:cs.length?Math.round(done.length/cs.length*100):null,
       repeatMisses:Object.keys(byGoal).filter(k=>byGoal[k]>=2),carry:missed.map(c=>c.id)};
   }
-  function draftWeek(G,from,to){
+  function draftWeek(G,from,to,gone){
     const made=[];
     commitsOfWeek(G,from).filter(c=>!c.done).forEach(c=>{
       const g=goalOf(G,c.goalId);if(!g||g.state!=='active')return;   /* never resurrect dropped work */
+      /* A DRAFT MUST NOT LAND IN THE PAST. The week closes itself whether or not he opens
+         the app, so the draft for "this week" is routinely written on a Wednesday — and
+         every carried block aimed at Monday or Tuesday arrived on a day already lived,
+         where it inherited that day's completion and scored itself. This is the same door
+         setCommitQuiet guards; draftWeek reached past it straight into commit().
+         A block with nowhere left to land this week is simply not drafted — it is still on
+         the goal, and he can place it himself. */
+      if(typeof gone==='function'&&gone(to,c.day))return;
       const n=commit(G,{goalId:c.goalId,text:c.text,weekKey:to,day:c.day,block:c.block});
       n.carried=(c.carried||0)+1;made.push(n);
     });
@@ -3585,7 +3610,7 @@ function autoCloseWeeks(){
     const sum=GM.closeWeek(G,wk,null);
     G.weeks[wk]=sum;
     /* never a blank form — the carry happens with or without him */
-    if(wk===open[open.length-1])GM.draftWeek(G,wk,cur);
+    if(wk===open[open.length-1])GM.draftWeek(G,wk,cur,gone);
     changed=1;
   });
   if(syncCommits(cur))changed=1;
@@ -4126,7 +4151,12 @@ function g2Flip(cid){
      or the next sync silently reverts him */
   const d=day(dateOfSlot(c.weekKey,c.day));
   if(c.done){d.done[c.block]=true;stampDom(d,dateOfSlot(c.weekKey,c.day),c.block)}
-  else{delete d.done[c.block];if(d.dom)delete d.dom[c.block]}
+  else{delete d.done[c.block];
+    /* THE SEAL IS NOT THE TICK. Un-ticking a block corrects whether it was done; it must
+       not un-freeze what that day credited. Stripping the stamp re-opened a sealed day to
+       live re-derivation, so a later goal move would rewrite it again — the stage-1 bug,
+       reachable through the weekly review. Only an unsealed day loses its stamp here. */
+    if(d.dom&&!d.sealed)delete d.dom[c.block]}
   const s=G.weeks[c.weekKey];
   if(s){const cs=GM.commitsOfWeek(G,c.weekKey);s.done=cs.filter(x=>x.done).length;
     s.missed=cs.length-s.done;s.pct=cs.length?Math.round(s.done/cs.length*100):null}

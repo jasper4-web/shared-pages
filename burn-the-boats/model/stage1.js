@@ -52,6 +52,93 @@ async function boot(clock){
   ok('no JS errors',errs.length===0,errs.slice(0,2).join(' | '));
   await b.close();
 
+  // ── the verifier's break: a committed goal that is later PARKED ──
+  ({b,p,errs}=await boot('2026-09-16T09:35:00'));
+  const parked=await p.evaluate(async()=>{
+    const a=GM.addArea(G,{name:'SANO',domain:'WORK'});
+    const g=GM.addGoal(G,{title:'Ten owners called',areaId:a.id});
+    const wk=weekKeyNow(),off=(new Date().getDay()+6)%7;
+    ['b1','b2','b3','b4'].forEach(bid=>setCommit(wk,off,bid,g.id));
+    GM.setState(G,g.id,'parked',dayNo());
+    gsave();
+    const before=GM.commitsOfWeek(G,wk).filter(c=>c.day===off&&c.goalId).length;
+    const xp0=S.xp;
+    openComposer();await new Promise(r=>setTimeout(r,500));
+    const drawn=!!document.querySelector('#gp_b1 .gpx.on');
+    saveComposer();await new Promise(r=>setTimeout(r,400));
+    return {before,drawn,after:GM.commitsOfWeek(G,wk).filter(c=>c.day===off&&c.goalId).length,
+            xp:S.xp-xp0};
+  });
+  ok('a PARKED goal on a block is still drawn in the picker',parked.drawn);
+  ok('...and saving does not wipe the week',parked.after===parked.before,
+     parked.before+' -> '+parked.after);
+  ok('...+25 XP was not paid for destroying it',parked.after===4,'left='+parked.after);
+
+  // ── untouched pickers must never invent a commitment from the legacy maps ──
+  const invent=await p.evaluate(async()=>{
+    const wk=weekKeyNow(),off=(new Date().getDay()+6)%7;
+    G.commits=[];const w=week();w.goals={b1:GM.liveGoals(G,1)[0]?'x':'x'};
+    gsave();save();
+    openComposer();await new Promise(r=>setTimeout(r,450));
+    saveComposer();await new Promise(r=>setTimeout(r,350));
+    return GM.commitsOfWeek(G,wk).length;
+  });
+  ok('an untouched composer invents no commitments',invent===0,'made='+invent);
+  ok('no JS errors',errs.length===0,errs.slice(0,2).join(' | '));
+  await b.close();
+
+  // ══ the auto-carry must not land in the past ══
+  ({b,p,errs}=await boot('2026-09-16T09:20:00'));
+  const draft=await p.evaluate(()=>{
+    const a=GM.addArea(G,{name:'SANO',domain:'WORK'});
+    const g=GM.addGoal(G,{title:'Ten owners called',areaId:a.id});
+    const cur=weekKeyNow();
+    const prev=iso(new Date(new Date(cur+'T00:00:00').getTime()-6048e5));
+    for(let d=0;d<5;d++)GM.commit(G,{goalId:g.id,weekKey:prev,day:d,block:'b1'});
+    G.weeks={};gsave();
+    autoCloseWeeks();syncCommits(cur);gsave();
+    const made=GM.commitsOfWeek(G,cur);
+    return {n:made.length,days:made.map(c=>c.day).sort(),
+            bornDone:made.filter(c=>c.done).length};
+  });
+  ok('the auto-carry drafts into the new week',draft.n>0,'drafted='+draft.n);
+  ok('...never onto a day already lived',draft.days.every(d=>d>=2),'days='+draft.days.join(','));
+  ok('...and nothing it drafts is born already done',draft.bornDone===0,'done='+draft.bornDone);
+  ok('no JS errors',errs.length===0,errs.slice(0,2).join(' | '));
+  await b.close();
+
+  // ══ correcting a block in the weekly review must not break the seal ══
+  ({b,p,errs}=await boot('2026-09-18T16:00:00'));
+  const flip=await p.evaluate(()=>{
+    const w=GM.addArea(G,{name:'SANO',domain:'WORK'});
+    const m=GM.addArea(G,{name:'Spanish',domain:'MIND'});
+    const g=GM.addGoal(G,{title:'Ten owners called',areaId:w.id});
+    const wk=weekKeyNow();
+    for(let d=0;d<4;d++){const k=dateOfSlot(wk,d);const rec=day(k);
+      rec.done['b1']=true;GM.commit(G,{goalId:g.id,weekKey:wk,day:d,block:'b1'})}
+    save();gsave();sealPast();render();
+    const c=GM.commitsOfWeek(G,wk)[0];
+    g2Flip(c.id);                       // he corrects Monday in the review
+    const before=JSON.stringify(domainStats());
+    GM.editGoal(G,g.id,{areaId:m.id});
+    gsave();render();
+    return {before,after:JSON.stringify(domainStats())};
+  });
+  ok('correcting a block does not re-open a sealed day',flip.before===flip.after,
+     flip.before===flip.after?'unchanged':flip.before+' -> '+flip.after);
+
+  // ══ sealing must happen on a Sunday too ══
+  await b.close();
+  ({b,p,errs}=await boot('2026-09-20T11:00:00'));   // a Sunday
+  const sun=await p.evaluate(()=>{
+    const k='2026-09-18';const rec=day(k);rec.done['b2']=true;save();
+    delete rec.sealed;delete rec.dom;save();render();
+    return {sealed:!!S.days[k].sealed,dom:S.days[k].dom?Object.keys(S.days[k].dom).length:0};
+  });
+  ok('a Sunday visit still seals Friday',sun.sealed,'sealed='+sun.sealed+' stamps='+sun.dom);
+  ok('no JS errors',errs.length===0,errs.slice(0,2).join(' | '));
+  await b.close();
+
   // ══ F2-2 · a day already lived is settled ══
   ({b,p,errs}=await boot('2026-09-18T16:00:00'));   // Friday
   const f22=await p.evaluate(()=>{
