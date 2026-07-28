@@ -634,6 +634,20 @@ h2.sec u{text-decoration:none;color:var(--dim)}
 .nu-door{display:block;width:100%;margin-top:10px;min-height:var(--tap);cursor:pointer;
   border:1px dashed rgba(224,178,94,.4);border-radius:11px;background:transparent;color:var(--gold);
   font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;padding:12px}
+
+/* THE SEAM — the one before and the one after, inside the live card.
+   Deliberately quiet: these are for orientation, not for doing. */
+.seam{display:flex;align-items:center;gap:9px;width:100%;text-align:left;cursor:pointer;
+  min-height:var(--tap);padding:9px 2px;background:transparent;border:0;color:inherit}
+.seam.before{border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:9px}
+.seam.after{border-top:1px solid rgba(255,255,255,.07);margin-top:10px}
+.seam .sm-t{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--faint);
+  flex:none;width:38px}
+.seam .sm-n{font-size:13px;color:var(--dim);line-height:1.25;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;min-width:0;flex:1}
+.seam.past .sm-n{color:var(--faint)}
+.seam .sm-tick{font-size:12px;color:var(--phos);flex:none}
+.seam .sm-held,.seam .sm-ahead{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);flex:none}
 #sched.flash{animation:schedflash 1.4s ease-out}
 @keyframes schedflash{0%{box-shadow:0 0 0 2px rgba(224,178,94,.5)}100%{box-shadow:0 0 0 2px rgba(224,178,94,0)}}
 
@@ -982,8 +996,10 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
   <h2 class="sec">Always counts <u id="winTally"></u></h2>
   <div class="wins" id="wins"></div>
 
-  <h2 class="sec">Today <u id="schCount"></u></h2>
-  <div id="sched"></div>
+  <div id="dayWrap" hidden>
+    <h2 class="sec">Today <u id="schCount"></u></h2>
+    <div id="sched"></div>
+  </div>
 
   <div id="closeCard"></div>
   <div class="runstrip" id="runStrip"></div>
@@ -2177,9 +2193,12 @@ function quotaChip(q){
 function renderNext(){
   const sh=shape(),ci=curIdx(),ni=nxtIdx(),i=ci>=0?ci:ni,el=$('nextUp');
   if(i<0){el.classList.remove('live');
+    const sm=seams();
     el.innerHTML=`<div class="nu-k"><span>Day complete</span></div><div class="nu-t">Nothing left on the board</div>
       <div class="nu-obj">Close it out and set tomorrow.</div>
-      <div class="acts"><button class="act primary" onclick="closeDay()">Close the day →</button></div>`;return}
+      ${sm.before}
+      <div class="acts"><button class="act primary" onclick="closeDay()">Close the day →</button></div>
+      ${dayDoor()}`;return}
   const b=sh[i],t=tacticFor(b),biz=bizFor(b),live=ci>=0,d=day();
   const state=d.done[b.id]?'done':d.wait[b.id]?'waiting':d.miss[b.id]?'missed':live?'live':'notstarted';
   const spec=actsFor(b);
@@ -2193,12 +2212,15 @@ function renderNext(){
     : esc(b.sub||b.dom.join(' + '));
   const kick=state==='done'?'Done':state==='missed'?'Passed':state==='waiting'?'Held'
             :live?'Now':'Next up';
-  el.innerHTML=`<div class="nu-k">${live&&state==='live'?'<i></i>':''}<span>${kick}</span>${quotaChip(spec.quota)}
+  const sm=seams();
+  el.innerHTML=`${sm.before}
+    <div class="nu-k">${live&&state==='live'?'<i></i>':''}<span>${kick}</span>${quotaChip(spec.quota)}
       <u>${b.s}–${b.e} · ${mins(b.e)-mins(b.s)}m</u></div>
     <div class="nu-t">${b.kind==='deep'&&t?esc(t):title}</div>
     <div class="nu-obj">${sub}</div>
     ${goalStrip(b)}
     ${actionRow(b,state)}
+    ${sm.after}
     ${dayDoor()}`;
 }
 /* THE HANDSHAKE — a block knows which goal it serves, and what it moves.
@@ -2230,24 +2252,63 @@ function goalStrip2(b){
       <div class="gt">${esc(g.title)}</div></div>
     <div class="gn">${n}<s>of ${tot}<br>this week</s></div></div>`;
 }
-/* The whole day is already on the page — it just wasn't reachable from the card
-   you're actually looking at. One dashed line. */
+/* THE SEAM. His push-back: the day was ALWAYS on screen underneath, so the page
+   was permanently long. What he actually reads is the block he's in plus the one
+   either side of it — "just see the one before and the one after, and then click
+   to see the whole day at once". So the day now ships CLOSED, the card carries its
+   own two neighbours, and the door below opens the full list on demand.
+   This is also the answer to "merge the NOW card and the day": the seam lines live
+   INSIDE the card, so there is one component, not two sections. */
+function seamLine(b,dir){
+  if(!b)return'';
+  const d=day(),t=tacticFor(b),biz=bizFor(b);
+  const done=d.done[b.id],wait=d.wait[b.id];
+  const past=nowMin()>=mins(b.e);
+  const name=(b.kind==='deep'&&t)?t:esc(b.n)+(biz?' · '+esc(biz):'');
+  /* a block that didn't happen says nothing about itself — no cross, no "missed",
+     no red. It is simply a line that never got a tick. */
+  const mark=done?'<span class="sm-tick">✓</span>':wait?'<span class="sm-held">held</span>'
+            :past?'':'<span class="sm-ahead">'+(mins(b.e)-mins(b.s))+'m</span>';
+  return `<button class="seam ${dir}${done?' done':''}${past&&!done?' past':''}"
+    onclick="openBlk('${b.id}')" aria-label="${dir==='before'?'Before this':'After this'}: ${esc(b.n)}">
+    <span class="sm-t">${b.s}</span><span class="sm-n">${name}</span>${mark}</button>`;
+}
+/* the item either side of whatever the card is showing */
+function seams(){
+  const sh=shape();if(!sh.length)return{before:'',after:''};
+  const ci=curIdx(),ni=nxtIdx(),i=ci>=0?ci:ni;
+  if(i<0)return{before:seamLine(sh[sh.length-1],'before'),after:''};
+  return {before:i>0?seamLine(sh[i-1],'before'):'',
+          after:i<sh.length-1?seamLine(sh[i+1],'after'):''};
+}
+/* One dashed line. It now OPENS the day rather than scrolling to a list that was
+   always there — the whole point of the change is that the list isn't there until
+   he asks for it. Transient on purpose: every fresh open of the app is short again. */
+let DAY_OPEN=false;
 function dayDoor(){
   const sh=shape();if(!sh.length)return'';
   const d=day();
   const scored=sh.filter(b=>SCORED(b)&&!b.opt);
   const done=scored.filter(b=>d.done[b.id]).length;
-  return `<button class="nu-door" onclick="openDay()">See the whole day · ${done} of ${scored.length} ▾</button>`;
+  return `<button class="nu-door" onclick="toggleDay()" aria-expanded="${DAY_OPEN}">${
+    DAY_OPEN?'Hide the day ▴':`See the whole day · ${done} of ${scored.length} ▾`}</button>`;
 }
-function openDay(){
-  const el=$('sched');if(!el)return;
-  el.scrollIntoView({behavior:'smooth',block:'start'});
-  el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1400);
+function toggleDay(){
+  DAY_OPEN=!DAY_OPEN;
+  render();
+  if(DAY_OPEN){const el=$('sched');if(el){
+    el.scrollIntoView({behavior:'smooth',block:'start'});
+    el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1400);}}
 }
+/* kept: older code and the harnesses call openDay() by name */
+function openDay(){if(!DAY_OPEN)toggleDay();}
 /* how many blocks this week carried that goal */
 const ARCS=[['Morning',0,3],['Peak — deep work',3,5],['Midday',5,8],['Afternoon',8,11],['Evening',11,99]];
 function renderSched(){
   const sh=shape(),d=day(),ci=curIdx(),host=$('sched');host.innerHTML='';
+  /* the list is built either way — the tally it produces is read by the door's
+     label — but the wrapper only shows when he has asked for it. */
+  const wrap=$('dayWrap');if(wrap)wrap.hidden=!DAY_OPEN;
   let done=0,total=0,ahead=0;
   const groups=dow()===6?[['Saturday',0,99]]:ARCS;
   groups.forEach(([name,a,z])=>{
