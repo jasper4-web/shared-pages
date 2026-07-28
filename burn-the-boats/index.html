@@ -779,6 +779,12 @@ body.glanceOpen .glance{display:block}
 /* a day already lived: readable, quiet, and not an invitation. Never red, never a cross —
    an empty past slot is a thing that didn't happen, not a thing he failed. */
 .g2slot.settled{opacity:.45;border-style:dashed;cursor:default}
+/* what an unplanned week says instead of naming everything he is neglecting */
+.g2first{border:1px solid rgba(74,222,128,.3);border-radius:12px;background:rgba(74,222,128,.05);
+  padding:13px 14px;margin-bottom:10px}
+.g2first .t{font-size:14px;color:var(--ink);line-height:1.35}
+.g2first .s{font-size:12.5px;color:var(--faint);line-height:1.45;margin-top:5px}
+.g2first .g2fb{width:100%;margin-top:11px;min-height:var(--tap)}
 .g2slot.done{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.06)}
 .g2slot .sk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
 .g2slot .sk u{display:block;text-decoration:none;margin-top:2px;font-size:11px}
@@ -3830,13 +3836,30 @@ function goalStats(g){
   const ago=last?Math.round((new Date(today()+'T00:00:00')-new Date(last+'T00:00:00'))/864e5):null;
   return {blocks:cs.length,done,xp,ago};
 }
+/* "moved 21d ago" on every goal, straight under a banner that says nothing was lost, is a
+   column of decay — the promise and the screen disagreed, and the screen was louder.
+   AFTER A GAP THE COUNTER IS SUPPRESSED ENTIRELY: for the first three days back, a goal
+   reads "still standing", because the days he was away are not evidence about the goal.
+   The counter returns once he is running again, and it never turns a colour that reads as
+   an alarm. */
+function agoLine(ago){
+  if(ago===null)return `<span class="cold">nothing on it yet</span>`;
+  if(daysGone()>=3&&justBack())return `<span>still standing</span>`;
+  return `<span class="${ago>=10?'cold':''}">${
+    ago===0?'moved today':ago===1?'moved yesterday':`moved ${ago}d ago`}</span>`;
+}
+/* within three days of coming back from a gap of three days or more */
+function justBack(){
+  const b=S._backOn;
+  if(!b)return true;                       /* the return hasn't been acknowledged yet */
+  return (new Date(today()+'T00:00:00')-new Date(b+'T00:00:00'))/864e5 < 3;
+}
 function g2Facts(st){
   if(!st.blocks&&!st.xp)return `<div class="g2facts"><span class="cold">nothing on it yet</span></div>`;
   return `<div class="g2facts">
     <span>${st.done} of ${st.blocks} blocks</span>
     ${st.xp?`<span>${st.xp.toLocaleString()} XP</span>`:''}
-    <span class="${st.ago===null?'cold':st.ago>=10?'cold':''}">${
-      st.ago===null?'never moved':st.ago===0?'moved today':`moved ${st.ago}d ago`}</span>
+    ${agoLine(st.ago)}
   </div>`;
 }
 function g2NewGoal(areaId,anchor,parentId){
@@ -3891,7 +3914,9 @@ function g2Return(){
   </div>`;
 }
 function g2Seen(k){
-  if(k==='ret')G.meta.awayFrom=null;
+  /* remember the day he picked it back up, so the "moved 21d ago" counters stay suppressed
+     for three days rather than reappearing the instant he dismisses the welcome */
+  if(k==='ret'){G.meta.awayFrom=null;S._backOn=today();save();}
   if(k==='close'){const s=freshClose();if(s)s.seen=1}
   gsave();render();
 }
@@ -3911,10 +3936,19 @@ function g2CloseBanner(){
 function g2MigrateBanner(){
   const due=g2NeedsDecision();
   if(!due.length)return'';
+  /* THE MONTH-END PILE-UP. When a horizon passes, every goal on it comes due at once —
+     no mistake required, it happens on the calendar. Eight at a time reads as a failure
+     notice, and the wording ("8 goals have stopped moving") made it one.
+     ONE AT A TIME. The banner names a single goal and offers the decision on that goal;
+     the rest wait their turn and are counted quietly, not listed. Nothing is lost by
+     queueing them — a decision deferred costs nothing here. */
+  const first=due[0];
+  const rest=due.length-1;
   return `<div class="g2mig" onclick="g2Migrate()">
-    <div class="k">NEEDS A DECISION<u>${due.length}</u></div>
-    <div class="t">${due.length===1?esc(due[0].title):due.length+' goals have stopped moving'}</div>
-    <div class="s">Not a failure — a signal. Carry it, change it, park it or drop it.</div>
+    <div class="k">ONE DECISION${rest>0?`<u>${rest} after this</u>`:''}</div>
+    <div class="t">${esc(first.title)}</div>
+    <div class="s">Its date passed. Not a failure — a signal.
+      Carry it, change it, park it or drop it.</div>
   </div>`;
 }
 function g2NeedsDecision(){
@@ -3927,6 +3961,33 @@ function g2NeedsDecision(){
   });
 }
 
+/* What the top of an unplanned week says instead of a list of neglected areas. It states
+   what is true, and its button PLACES A BLOCK rather than asking him to own more goals —
+   the old screen's primary action on planning day was "+ Add a goal", which is the one
+   thing a man with twenty empty slots does not need. */
+function g2FirstMove(){
+  const wk=weekKeyNow(),lastWk=iso(new Date(new Date(wk+'T00:00:00').getTime()-6048e5));
+  const lw=S.week&&S.week[lastWk];
+  const pct=lw&&lw.due?Math.round(lw.done/lw.due*100):null;
+  const carried=GM.commitsOfWeek(G,wk).filter(c=>c.carried).length;
+  const head = pct===null ? 'A fresh week. Twenty blocks, all yours.'
+    : pct>=85 ? `Last week closed at ${pct}%. ${carried?carried+' carried in.':'Nothing carried in.'}`
+    : `Last week is closed. ${carried?carried+' carried in.':'Nothing carried in.'}`;
+  /* the anchor of his highest-ranked area, and the first slot still ahead */
+  const a=GM.liveAreas(G)[0];
+  const g=a?(GM.anchorOf(G,a.id)||GM.goalsOfArea(G,a.id)[0]):GM.liveGoals(G)[0];
+  let slot=null;
+  for(let d=0;d<5&&!slot;d++){
+    if(gone(wk,d))continue;
+    for(const bid of DEEP_BLOCKS){ if(!commitFor(wk,d,bid)){slot={d,bid};break} }
+  }
+  return `<div class="g2first">
+    <div class="t">${esc(head)}</div>
+    <div class="s">Twenty blocks, all yours. Put the first one down.</div>
+    ${g&&slot?`<button class="btn sm g2fb" onclick="setCommit('${wk}',${slot.d},'${slot.bid}','${g.id}')">
+      Put ${esc(g.title.slice(0,22))} on ${DAY_NAMES[slot.d]} ${slot.bid.toUpperCase()}</button>`:''}
+  </div>`;
+}
 /* ---- THE WEEK: 20 slots, each a goal and a day ------------------------- */
 function g2Week(){
   const wk=weekKeyNow();syncCommits(wk);
@@ -3935,7 +3996,21 @@ function g2Week(){
   let out=`<div class="g2cap${cap.committed>=WEEK_BLOCKS?' tight':''}">
       <b>${cap.committed}</b><span>of ${WEEK_BLOCKS} committed</span><i></i>
       <b>${cap.free}</b><span>still open</span></div>`;
-  if(orphan.length)out+=`<div class="g2warn">Nothing on ${esc(orphan.join(' · '))} this week. Allowed — but make it a decision, not an accident.</div>`;
+  /* ═══════════ NOT ON MONDAY ═══════════
+     This line used to render the moment any area had no block on it — which, on Monday
+     morning before he has planned anything, is EVERY area he owns. Closing a week at 100%
+     was rewarded with a list of five things he was neglecting, in amber, as the first
+     coloured thing on the screen. That is the wall of failure with better manners.
+     It only makes sense once the week is genuinely underway and the shape of it is a
+     CHOICE he has made — so: not before Wednesday, and not until he has actually
+     committed something. Before that the same space says what is true and offers the
+     first move. */
+  const underway=cap.committed>0&&dow()>=3;
+  if(orphan.length&&underway){
+    out+=`<div class="g2warn">Nothing on ${esc(orphan.join(' · '))} this week. Allowed — but make it a decision, not an accident.</div>`;
+  }else if(!cap.committed){
+    out+=g2FirstMove();
+  }
   for(let d=0;d<5;d++){
     const date=dateOfSlot(wk,d),isToday=date===today();
     out+=`<div class="g2day${isToday?' now':''}"><span>${DAY_NAMES[d]}</span><u>${date.slice(5)}</u>${isToday?'<b>TODAY</b>':''}</div>`;
