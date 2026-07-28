@@ -65,8 +65,10 @@ async function boot(clock){
             n:opts.length,
             under44:opts.filter(e=>e.getBoundingClientRect().height<44).length,
             refusal:(document.getElementById('runStep')||{}).textContent||'',
-            refusalH:document.getElementById('runStep').getBoundingClientRect().height};
+            refusalH:document.getElementById('runStep').getBoundingClientRect().height,
+            exits:[...document.querySelectorAll('#run .btn')].filter(e=>!e.hidden).length};
   });
+  ok('there is exactly ONE exit, not two',step.exits===1,'exits='+step.exits);
   ok('the run ends by asking',/anything else/i.test(step.q),step.q);
   ok('it offers three, not six',step.n===3,'offered='+step.n);
   ok('every option clears 44px',step.under44===0,step.under44+' under');
@@ -90,10 +92,14 @@ async function boot(clock){
     first.click();
     return {gained:S.xp-before,label,
             offeredAgain:[...document.querySelectorAll('.else-o')]
-              .some(e=>e.textContent.trim()===label)};
+              .some(e=>e.textContent.trim()===label),
+            exit:(document.getElementById('runStep')||{}).textContent||'',
+            exits:[...document.querySelectorAll('#run .btn')].filter(e=>!e.hidden).length};
   });
   ok('tapping one banks XP',tapped.gained>0,'+'+tapped.gained+' · '+tapped.label);
   ok('and it is never offered twice',!tapped.offeredAgain);
+  ok('after a tap the exit stops saying "nothing"',/done/i.test(tapped.exit),tapped.exit);
+  ok('and there is still only one exit',tapped.exits===1,'exits='+tapped.exits);
 
   // the "give up" button must be handed back after the run, not left wired to "carry on"
   const rebind=await p.evaluate(()=>{closeRun();
