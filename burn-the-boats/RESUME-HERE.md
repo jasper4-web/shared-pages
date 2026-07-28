@@ -29,9 +29,22 @@ Merge and strip are **independent choices** ("M1 with M3's strip"). The page als
 "the side strip, five ways" table because he said the strip isn't all the way there yet.
 **My recommendation: M3** (per-block depth, day never leaves the screen, full-width block names).
 
-**Also commissioned at his request:** an **outside agent** with no prior exposure to this project,
-briefed only on the product, the three problems, what he rejected, and the hard rules — producing its
-own independent rendition at `renditions/rend-today-outside.html`. Deploy it when it lands.
+**LIVE — the outside take, "The Thread":**
+https://jasper4-web.github.io/shared-pages/burn-the-boats/renditions/rend-today-outside.html
+(source `renditions/rend-today-outside.html`; 6 boards; clean at 375/390/440/1280 on our own harness,
+re-audited independently, on-screen totals check out)
+
+An agent with **no prior exposure to this project**, briefed only on the product, the three problems,
+everything he rejected, and the hard rules — not shown our directions or our recommendation.
+It landed on: **the day is one written record and the block you're in is the only lit line in it.**
+No checkbox anywhere, no x-of-y counter anywhere, past entries are his own prose rather than ticks,
+wins offered once at the foot of the page the moment a block ends.
+
+**The signal worth noting: it converged independently on writing-as-architecture** — the same thesis
+as E · The Notebook, which is what he responded to. Two designers, no contact, same conclusion.
+**Caveat: it is NOT a merge candidate** — it has no checklist and no two-sided back page, because it
+was deliberately briefed cold. It's a second opinion, not a sixth option.
+Its own stated risk: it can be dismissed on sight as "One Column with a keyboard."
 
 **NEXT: he picks a merge + a strip.** Nothing goes into `index.html` until he does.
 
