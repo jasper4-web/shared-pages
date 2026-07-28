@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Today page — THE THREAD (outside rendition)</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --blue:#7FB4FF; --tap:44px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#08070c;color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.028em;margin:0}
+
+.wrap{max-width:1240px;margin:0 auto;padding:44px 20px 90px}
+.lede{max-width:720px;margin-bottom:26px}
+.lede .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold);margin-bottom:12px}
+.lede h1{font-size:38px;line-height:1.04;margin-bottom:8px}
+.lede .prem{font-size:16.5px;color:var(--ink);margin:0 0 16px;line-height:1.4;max-width:640px}
+.lede p{color:var(--dim);font-size:14.5px;margin:0 0 10px}
+.lede b{color:var(--ink)}
+
+.asks{border:1px solid var(--line2);border-radius:14px;background:var(--panel);margin:20px 0 6px;max-width:780px}
+.ask{display:grid;grid-template-columns:26px 1fr;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.ask:last-child{border-bottom:0}
+.ask .n{font-family:'Geist Mono',monospace;font-size:11px;color:var(--gold)}
+.ask .v{font-size:13.5px;color:var(--dim);line-height:1.5}
+.ask .v b{color:var(--ink)}
+.gives{max-width:780px;font-size:13.5px;color:var(--faint);line-height:1.55;margin:14px 0 0}
+.gives b{color:var(--dim)}
+
+.railhint{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--faint);margin:38px 0 12px}
+
+.row{display:flex;gap:20px;overflow-x:auto;padding-bottom:18px;align-items:flex-start}
+.col{flex:none;width:320px}
+.cap{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--gold);margin-bottom:9px}
+.note{margin-top:11px;font-size:12.5px;line-height:1.55;color:var(--faint)}
+.note b{color:var(--dim)}
+
+/* ── phone shell ────────────────────────────── */
+.ph{width:320px;border:1px solid var(--line2);border-radius:26px;background:var(--bg);
+  padding:12px 11px 0;box-shadow:0 24px 60px -30px #000;overflow:hidden}
+
+/* existing app header, compressed — not part of this redesign */
+.stub{display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--line);
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
+.stub b{font-family:'Clash Display',sans-serif;font-size:17px;letter-spacing:-.03em;color:var(--ink)}
+.stub i{margin-left:auto;font-style:normal;color:var(--faint)}
+
+/* the one sentence — the only thing on screen that is not the thread */
+.sticky{display:flex;align-items:center;gap:7px;padding:10px 2px 9px;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--dim);
+  border-bottom:1px solid var(--line)}
+.sticky .dot{width:6px;height:6px;border-radius:99px;background:var(--gold);box-shadow:0 0 8px var(--gold);flex:none}
+.sticky u{margin-left:auto;text-decoration:none;color:var(--phos)}
+
+/* the thread */
+.thread{padding:4px 0 6px}
+
+/* a bare entry — no card, no checkbox, no chrome */
+.e{display:grid;grid-template-columns:46px 1fr auto;gap:9px;align-items:baseline;
+  min-height:var(--tap);padding:9px 2px;border-bottom:1px solid rgba(30,26,43,.55)}
+.e:last-child{border-bottom:0}
+.e .tm{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:.02em;padding-top:2px}
+.e .nm{font-size:13.5px;color:var(--ink);line-height:1.3}
+.e .dm{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint);margin-top:3px}
+.e .wr{font-size:12.5px;color:var(--dim);line-height:1.45;margin-top:5px;
+  border-left:2px solid var(--line2);padding-left:8px}
+.e .xp{font-family:'Geist Mono',monospace;font-size:11px;color:var(--phos);padding-top:2px}
+.e .xp.soft{color:var(--faint)}
+/* ahead of now, or simply never happened — identical treatment. absence has no colour. */
+.e.q .nm{color:var(--faint);font-weight:400}
+.e.q .tm{color:#4b4560}
+.e.q .wr{color:var(--faint);border-left-color:var(--line)}
+
+.more{display:flex;align-items:center;justify-content:center;gap:8px;min-height:var(--tap);
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;color:#57516b}
+
+/* THE one lit surface */
+.now{border:1px solid rgba(224,178,94,.45);border-radius:16px;
+  background:linear-gradient(155deg,#1d1727,#120f1c 60%,#0d0b14);
+  padding:12px 13px 13px;margin:9px 0 4px}
+.now .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--gold);
+  display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.now .k i{width:6px;height:6px;border-radius:99px;background:var(--gold);box-shadow:0 0 9px var(--gold);flex:none}
+.now .k u{margin-left:auto;text-decoration:none;color:var(--faint);letter-spacing:.06em}
+.now .lab{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint);margin-bottom:5px}
+.now .obj{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.028em;line-height:1.18;color:var(--ink)}
+.now .obj.empty{color:#6b6480;font-family:'Satoshi',sans-serif;font-size:14.5px;letter-spacing:0;font-style:italic}
+.now .nt{font-size:12.5px;color:var(--dim);line-height:1.5;margin-top:9px;
+  border-left:2px solid var(--line2);padding-left:8px}
+.now .meta{font-family:'Geist Mono',monospace;font-size:11px;color:#57516b;margin-top:9px}
+
+.btn{display:flex;align-items:center;justify-content:center;min-height:var(--tap);width:100%;
+  text-align:center;border-radius:12px;padding:11px 12px;margin-top:10px;
+  font-size:13.5px;font-weight:600;background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;
+  font-family:'Satoshi',sans-serif;letter-spacing:.01em}
+.btn.gh{background:transparent;border:1px solid var(--line2);color:var(--dim);font-weight:500}
+.btn.mono{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.15em}
+
+/* a row you can tap that lives inside the thread */
+.tapline{display:flex;align-items:center;gap:9px;min-height:var(--tap);padding:8px 10px;margin-top:8px;
+  border:1px solid var(--line2);border-radius:11px;background:rgba(255,255,255,.012);
+  font-size:12.5px;color:var(--dim)}
+.tapline .r{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint)}
+.tapline.dash{border-style:dashed;color:var(--faint)}
+.tapline.gold{border-color:rgba(224,178,94,.34);color:var(--gold)}
+
+/* writing surface */
+.write{border:1px solid rgba(224,178,94,.45);border-radius:16px;background:#100d19;padding:12px 13px 13px;margin:9px 0 4px}
+.write .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--gold);margin-bottom:10px;display:flex;gap:7px;align-items:center}
+.write .k i{width:6px;height:6px;border-radius:99px;background:var(--gold);box-shadow:0 0 9px var(--gold);flex:none}
+.write .k u{margin-left:auto;text-decoration:none;color:var(--faint);letter-spacing:.06em}
+.fl{margin-bottom:11px}
+.fl .lab{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint);margin-bottom:6px}
+.fl .box{border:1px solid var(--line2);border-radius:11px;background:#0b0912;padding:10px;min-height:var(--tap)}
+.fl .box.on{border-color:rgba(224,178,94,.4)}
+.fl .big{font-family:'Clash Display',sans-serif;font-size:17.5px;letter-spacing:-.026em;line-height:1.2;color:var(--ink)}
+.fl .body{font-size:12.5px;color:var(--dim);line-height:1.55}
+.car{display:inline-block;width:2px;height:15px;background:var(--gold);vertical-align:-2px;margin-left:2px;border-radius:1px}
+.saved{font-family:'Geist Mono',monospace;font-size:11px;color:#4f4a63;letter-spacing:.1em;text-align:right}
+
+/* keyboard hint block */
+.kbd{margin:10px -11px 0;border-top:1px solid var(--line);background:#0b0910;padding:9px 11px 12px}
+.kbd .rowk{display:flex;gap:5px}
+.kbd .key{flex:1;height:30px;border-radius:5px;background:#191524}
+.kbd .lbl{font-family:'Geist Mono',monospace;font-size:11px;color:#4f4a63;letter-spacing:.14em;margin-bottom:7px}
+
+/* the tail — where the day's residue collects */
+.tail{margin-top:12px;padding-top:11px;border-top:1px solid var(--line)}
+.tail .h{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--faint);
+  display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.tail .h u{margin-left:auto;text-decoration:none;color:var(--phos)}
+.win{display:flex;align-items:center;gap:9px;min-height:var(--tap);padding:7px 2px;
+  border-bottom:1px solid rgba(30,26,43,.55);font-size:13px;color:var(--ink)}
+.win:last-of-type{border-bottom:0}
+.win .b{width:5px;height:5px;border-radius:99px;background:var(--phos);flex:none;opacity:.8}
+.win .b.v{background:var(--violet)}
+.win .x{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--phos)}
+.win .x.v{color:var(--violet)}
+.win.off{color:var(--faint)}
+.win.off .b{background:#312a42}
+.win.off .x{color:#57516b}
+
+.total{display:flex;align-items:baseline;gap:9px;margin-top:11px;padding:12px 0 6px;min-height:var(--tap);border-top:1px solid var(--line)}
+.total b{font-family:'Clash Display',sans-serif;font-size:26px;letter-spacing:-.04em;line-height:1}
+.total span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint)}
+.brk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:#57516b;margin-top:6px}
+.verdict{font-size:13px;line-height:1.45;color:var(--gold);margin-top:11px;font-style:italic}
+.verdict.plain{color:var(--dim);font-style:normal}
+
+/* run history */
+.runs{margin-top:4px}
+.run{padding:10px 2px;border-bottom:1px solid rgba(30,26,43,.55);min-height:var(--tap)}
+.run:last-child{border-bottom:0}
+.run .top{display:flex;align-items:baseline;gap:8px}
+.run .d{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--dim)}
+.run .x{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--phos)}
+.run .x.half{color:var(--gold)}
+.run .x.non{color:#4f4a63}
+.run .ob{font-size:13px;color:var(--ink);line-height:1.3;margin-top:5px}
+.run .wr{font-size:12.5px;color:var(--dim);line-height:1.45;margin-top:5px;border-left:2px solid var(--line2);padding-left:8px}
+.run.non .ob{color:var(--faint)}
+
+/* tab bar stub */
+.tabs{display:flex;margin:12px -11px 0;border-top:1px solid var(--line);background:#0a0810}
+.tab{flex:1;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#4f4a63}
+.tab.on{color:var(--gold)}
+.tab .g{width:7px;height:7px;background:#312a42;transform:rotate(45deg)}
+.tab.on .g{background:var(--gold)}
+
+@media (max-width:520px){ .wrap{padding:30px 16px 70px} .lede h1{font-size:29px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lede">
+    <div class="k">OUTSIDE RENDITION · ONE ARCHITECTURE · TODAY TAB</div>
+    <h1>The Thread</h1>
+    <p class="prem">The day is one written record you keep adding to, and the block you're in is the only lit line in it.</p>
+    <p><b>What it is.</b> One document, top to bottom, that opens at right now. Everything already lived is <b>his own handwriting</b> — no cards, no ticks. Everything ahead is one dim line. Exactly one thing on screen has a border: the block he is in. Tap any line to write into it.</p>
+    <p><b>What it gives up.</b> The day at a single glance — you scroll for the shape, and one sentence at the top carries the count. It is a record, not a schedule.</p>
+    <div class="asks">
+      <div class="ask"><div class="n">01</div><div class="v"><b>Notes on a block.</b> Writing <i>is</i> the architecture — the objective and notes are the body of a block, and its earlier runs are the same thread, scrolled back.</div></div>
+      <div class="ask"><div class="n">02</div><div class="v"><b>Merge NOW and the day.</b> Nothing to merge: NOW is a <b>position in the day</b>, not a second component.</div></div>
+      <div class="ask"><div class="n">03</div><div class="v"><b>Wins as by-product.</b> Lines at the <b>foot of the page</b> where the day's residue collects — offered once, in passing, when a block ends.</div></div>
+    </div>
+    <p class="gives"><b>Two rules held.</b> No checkbox anywhere, so nothing can sit unticked accusing him. No x-of-y counter anywhere: the count only goes up.</p>
+  </div>
+
+  <div class="railhint">SCROLL SIDEWAYS · 6 SCREENS →</div>
+
+  <div class="row">
+
+    <!-- ══════════ 1 · MAIN SURFACE, MID-DAY ══════════ -->
+    <div class="col">
+      <div class="cap">01 · MID-DAY, THE WHOLE SURFACE</div>
+      <div class="ph">
+        <div class="stub"><b>110</b> WORKDAYS <i>DAY 12 · WK 03</i></div>
+        <div class="sticky"><span class="dot"></span>MON 13:22 · 2 BLOCKS DONE <u>+175</u></div>
+
+        <div class="thread">
+          <div class="more">↑ EARLIER TODAY · 3 MORE</div>
+
+          <div class="e">
+            <div class="tm">08:40</div>
+            <div>
+              <div class="nm">Wrote today's three</div>
+              <div class="wr">Anthony deck · LA kitchen call back · gym at 4</div>
+            </div>
+            <div class="xp soft"></div>
+          </div>
+
+          <div class="e">
+            <div class="tm">09:05</div>
+            <div>
+              <div class="nm">Deep block 1</div>
+              <div class="dm">SANO · 82 MIN CLEAN</div>
+              <div class="wr">Pricing page rebuilt. Still stuck on how to word the $1 founding line.</div>
+            </div>
+            <div class="xp">+65</div>
+          </div>
+
+          <div class="e">
+            <div class="tm">11:20</div>
+            <div>
+              <div class="nm">Deep block 2</div>
+              <div class="dm">ADMIN · 78 MIN CLEAN</div>
+              <div class="wr">Invoices out. Half of it was nothing, but it's off my chest.</div>
+            </div>
+            <div class="xp">+65</div>
+          </div>
+
+          <div class="e q">
+            <div class="tm">12:30</div>
+            <div><div class="nm">Lunch · off</div></div>
+            <div class="xp soft"></div>
+          </div>
+
+          <!-- the one lit surface -->
+          <div class="now">
+            <div class="k"><i></i>NOW · 13:10 – 14:35 <u>SANO · 85m</u></div>
+            <div class="lab">BY THE END OF THIS BLOCK</div>
+            <div class="obj">Get the Anthony deck to a state I would actually send.</div>
+            <div class="nt">Slide 4 is the whole problem. Price first, then the proof.</div>
+            <div class="tapline gold">Last run · Fri · "slide 4"<span class="r">WRITE · 9 RUNS →</span></div>
+            <div class="btn">Start the timer · 85 min</div>
+          </div>
+
+          <div class="e q">
+            <div class="tm">14:50</div>
+            <div><div class="nm">Deep block 4</div><div class="dm">FRUITS · 85m</div></div>
+            <div class="xp soft"></div>
+          </div>
+          <div class="e q">
+            <div class="tm">16:30</div>
+            <div><div class="nm">Gym</div></div>
+            <div class="xp soft"></div>
+          </div>
+          <div class="e q">
+            <div class="tm">17:30</div>
+            <div><div class="nm">Personal life</div></div>
+            <div class="xp soft"></div>
+          </div>
+          <div class="e q">
+            <div class="tm">21:00</div>
+            <div><div class="nm">Wind-down · phone away</div></div>
+            <div class="xp soft"></div>
+          </div>
+
+          <div class="tail">
+            <div class="h">ALSO TODAY <u>+45</u></div>
+            <div class="win"><span class="b"></span>In bed on time<span class="x">+20</span></div>
+            <div class="win"><span class="b"></span>Said no to something<span class="x">+25</span></div>
+            <div class="tapline dash">+ something else<span class="r">10–90</span></div>
+            <div class="total"><b>175</b><span>ON THE BOARD SO FAR</span></div>
+            <div class="brk">DEEP WORK 130 · ALSO 45</div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab on"><span class="g"></span>TODAY</div>
+          <div class="tab"><span class="g"></span>GOALS</div>
+          <div class="tab"><span class="g"></span>BANK</div>
+          <div class="tab"><span class="g"></span>RECORD</div>
+        </div>
+      </div>
+      <div class="note">One component, top to bottom. Behind him: <b>his own sentences</b>, not ticks — that is what a finished block looks like. Ahead of him: one dim line each. The lunch line shows the neutral state doing its job on a <i>good</i> day, so it can never read as an accusation on a bad one.</div>
+    </div>
+
+    <!-- ══════════ 2 · THE WRITING MOMENT ══════════ -->
+    <div class="col">
+      <div class="cap">02 · TAP THE BLOCK, WRITE INTO IT</div>
+      <div class="ph">
+        <div class="stub"><b>110</b> WORKDAYS <i>DAY 12 · WK 03</i></div>
+        <div class="sticky"><span class="dot"></span>MON 13:24 · 2 BLOCKS DONE <u>+175</u></div>
+
+        <div class="thread">
+          <div class="e q">
+            <div class="tm">11:20</div>
+            <div><div class="nm">Deep block 2 · ADMIN</div></div>
+            <div class="xp soft">+65</div>
+          </div>
+
+          <div class="write">
+            <div class="k"><i></i>DEEP BLOCK 3 · SANO <u>13:10–14:35</u></div>
+
+            <div class="fl">
+              <div class="lab">BY THE END OF THIS BLOCK</div>
+              <div class="box on"><div class="big">Get the Anthony deck to a state I would actually send.<span class="car"></span></div></div>
+            </div>
+
+            <div class="fl">
+              <div class="lab">NOTES</div>
+              <div class="box"><div class="body">Slide 4 is the whole problem. Price first, then the proof.<br>Don't rewrite the intro again.</div></div>
+            </div>
+
+            <div class="saved">SAVED 13:24</div>
+
+            <div class="tapline gold">Last run · Fri 07/24<span class="r">9 RUNS →</span></div>
+            <div class="btn">Start the timer · 85 min</div>
+            <div class="btn gh mono">DONE WRITING</div>
+          </div>
+
+          <div class="e q">
+            <div class="tm">14:50</div>
+            <div><div class="nm">Deep block 4 · FRUITS</div></div>
+            <div class="xp soft"></div>
+          </div>
+        </div>
+
+        <div class="kbd">
+          <div class="lbl">KEYBOARD</div>
+          <div class="rowk"><span class="key"></span><span class="key"></span><span class="key"></span><span class="key"></span><span class="key"></span><span class="key"></span></div>
+        </div>
+      </div>
+      <div class="note">The block opens <b>in place</b> — the thread stays around it, so he never leaves the day. Objective on top in big type because it is the promise; notes under it. Autosaves; there is no Save button to forget. Works identically on a block three hours away.</div>
+    </div>
+
+    <!-- ══════════ 3 · THE BLOCK'S OWN THREAD ══════════ -->
+    <div class="col">
+      <div class="cap">03 · THE SAME BLOCK, EVERY TIME IT RAN</div>
+      <div class="ph">
+        <div class="stub"><b>110</b> WORKDAYS <i>DAY 12 · WK 03</i></div>
+        <div class="sticky"><span class="dot"></span>DEEP BLOCK 3 · SANO <u>9 RUNS</u></div>
+
+        <div class="runs">
+          <div class="run">
+            <div class="top"><span class="d">FRI 07/24</span><span class="x">+65</span></div>
+            <div class="ob">Deck outline and the first four slides.</div>
+            <div class="wr">Left off on slide 4. The pricing slide is the problem, not the intro.</div>
+          </div>
+          <div class="run">
+            <div class="top"><span class="d">THU 07/23</span><span class="x half">+25</span></div>
+            <div class="ob">Rewrite the offer page headline.</div>
+            <div class="wr">Did it, hated it. Phone got me twice — still counted the 40 minutes.</div>
+          </div>
+          <div class="run non">
+            <div class="top"><span class="d">WED 07/22</span><span class="x non">—</span></div>
+            <div class="ob" style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em">NO ENTRY</div>
+          </div>
+          <div class="run">
+            <div class="top"><span class="d">TUE 07/21</span><span class="x">+65</span></div>
+            <div class="ob">Send Anthony the follow-up text.</div>
+            <div class="wr">Sent at 10:15. No reply yet. Don't chase until Thursday.</div>
+          </div>
+          <div class="more">↓ 5 EARLIER RUNS</div>
+        </div>
+
+        <div class="tapline gold">Carry Friday's objective forward<span class="r">→</span></div>
+        <div class="btn gh mono">BACK TO TODAY</div>
+
+        <div class="tabs">
+          <div class="tab on"><span class="g"></span>TODAY</div>
+          <div class="tab"><span class="g"></span>GOALS</div>
+          <div class="tab"><span class="g"></span>BANK</div>
+          <div class="tab"><span class="g"></span>RECORD</div>
+        </div>
+      </div>
+      <div class="note">Reached from the one line inside the open block, and it is the same object — a thread. Across the run, this becomes the only real record of what SANO work actually <i>was</i>. The skipped Wed is a dash and one dim word; it is history, and history is never re-scored here.</div>
+    </div>
+
+    <!-- ══════════ 4 · WINS, IN PASSING ══════════ -->
+    <div class="col">
+      <div class="cap">04 · WHERE THE WINS COME FROM</div>
+      <div class="ph">
+        <div class="stub"><b>110</b> WORKDAYS <i>DAY 12 · WK 03</i></div>
+        <div class="sticky"><span class="dot"></span>MON 14:36 · 3 BLOCKS DONE <u>+240</u></div>
+
+        <div class="thread">
+          <div class="e q">
+            <div class="tm">11:20</div>
+            <div><div class="nm">Deep block 2 · ADMIN</div></div>
+            <div class="xp soft">+65</div>
+          </div>
+
+          <div class="now">
+            <div class="k"><i></i>BLOCK 3 DONE · 85 MIN CLEAN <u>+65</u></div>
+            <div class="nt">Deck is sendable. Slide 4 finally works.</div>
+            <div class="lab" style="margin-top:13px">ANYTHING ELSE HAPPEN?</div>
+            <div class="tapline">Cooked instead of ordering<span class="r">+20</span></div>
+            <div class="tapline">Real time with someone<span class="r">+25</span></div>
+            <div class="tapline dash">Something else<span class="r">10–90</span></div>
+            <div class="btn gh mono">NOTHING · CARRY ON</div>
+          </div>
+
+          <div class="e q">
+            <div class="tm">14:50</div>
+            <div><div class="nm">Deep block 4 · FRUITS</div><div class="dm">STARTS IN 14 MIN</div></div>
+            <div class="xp soft"></div>
+          </div>
+
+          <div class="tail">
+            <div class="h">ALSO TODAY <u>+45</u></div>
+            <div class="win"><span class="b"></span>In bed on time<span class="x">+20</span></div>
+            <div class="win"><span class="b"></span>Said no to something<span class="x">+25</span></div>
+            <div class="total"><b>240</b><span>ON THE BOARD SO FAR</span></div>
+            <div class="brk">DEEP WORK 195 · ALSO 45</div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab on"><span class="g"></span>TODAY</div>
+          <div class="tab"><span class="g"></span>GOALS</div>
+          <div class="tab"><span class="g"></span>BANK</div>
+          <div class="tab"><span class="g"></span>RECORD</div>
+        </div>
+      </div>
+      <div class="note">The small wins are never a grid bolted to the side. They are <b>asked once</b>, at the only moment he is already looking at the screen — the second a timer ends — then they vanish and live as lines at the foot of the page. Two suggestions, never the whole list.</div>
+    </div>
+
+    <!-- ══════════ 5 · THE END OF A STRONG DAY ══════════ -->
+    <div class="col">
+      <div class="cap">05 · THE FOOT OF A STRONG DAY</div>
+      <div class="ph">
+        <div class="stub"><b>110</b> WORKDAYS <i>DAY 12 · WK 03</i></div>
+        <div class="sticky"><span class="dot"></span>MON 21:40 · 4 BLOCKS DONE <u>+370</u></div>
+
+        <div class="thread">
+          <div class="more">↑ THE WHOLE DAY · 11 LINES</div>
+
+          <div class="e"><div class="tm">09:05</div><div><div class="nm">Deep block 1 · SANO</div><div class="wr">Pricing page rebuilt.</div></div><div class="xp">+65</div></div>
+          <div class="e"><div class="tm">11:20</div><div><div class="nm">Deep block 2 · ADMIN</div><div class="wr">Invoices out.</div></div><div class="xp">+65</div></div>
+          <div class="e"><div class="tm">13:10</div><div><div class="nm">Deep block 3 · SANO</div><div class="wr">Deck is sendable. Slide 4 finally works.</div></div><div class="xp">+65</div></div>
+          <div class="e"><div class="tm">14:50</div><div><div class="nm">Deep block 4 · FRUITS</div><div class="dm">PHONE GOT ME TWICE</div><div class="wr">Menu copy done anyway.</div></div><div class="xp">+25</div></div>
+          <div class="e"><div class="tm">21:00</div><div><div class="nm">Wind-down · phone away</div></div><div class="xp soft"></div></div>
+
+          <div class="tail">
+            <div class="h">ALSO TODAY <u>+90</u></div>
+            <div class="win"><span class="b"></span>In bed on time<span class="x">+20</span></div>
+            <div class="win"><span class="b"></span>Said no to something<span class="x">+25</span></div>
+            <div class="win"><span class="b"></span>Cooked instead of ordering<span class="x">+20</span></div>
+            <div class="win"><span class="b"></span>Real time with someone<span class="x">+25</span></div>
+            <div class="h" style="margin-top:10px">SOMETHING EXTRA <u style="color:var(--violet)">+60</u></div>
+            <div class="win"><span class="b v"></span>Read tonight<span class="x v">+60</span></div>
+            <div class="tapline dash">+ something else<span class="r">10–90</span></div>
+
+            <div class="total"><b>370</b><span>ON THE BOARD TODAY</span></div>
+            <div class="brk">DEEP WORK 220 · ALSO 90 · EXTRA 60</div>
+            <div class="verdict">You acted exactly like him today.</div>
+            <div class="tapline gold">Write tomorrow's first objective<span class="r">→</span></div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab on"><span class="g"></span>TODAY</div>
+          <div class="tab"><span class="g"></span>GOALS</div>
+          <div class="tab"><span class="g"></span>BANK</div>
+          <div class="tab"><span class="g"></span>RECORD</div>
+        </div>
+      </div>
+      <div class="note">The extras are the same kind of line as the wins in the same place, one violet dot and one small label apart — not a second section wedged in somewhere. <b>220 + 90 + 60 = 370.</b> The day ends with a sentence about him and a door into tomorrow, never a score against a target.</div>
+    </div>
+
+    <!-- ══════════ 6 · A THIN DAY ══════════ -->
+    <div class="col">
+      <div class="cap">06 · A THIN DAY · ONE BLOCK, LATE</div>
+      <div class="ph">
+        <div class="stub"><b>110</b> WORKDAYS <i>DAY 13 · WK 03</i></div>
+        <div class="sticky"><span class="dot"></span>TUE 21:10 · 1 BLOCK DONE <u>+80</u></div>
+
+        <div class="thread">
+          <div class="e q"><div class="tm">08:40</div><div><div class="nm">Write today's three</div></div><div class="xp soft"></div></div>
+
+          <div class="e">
+            <div class="tm">09:00</div>
+            <div>
+              <div class="nm">Deep block 1 · SANO</div>
+              <div class="dm">40 MIN · PHONE GOT ME</div>
+              <div class="wr">There was half an hour of real work in there.</div>
+            </div>
+            <div class="xp">+25</div>
+          </div>
+
+          <div class="e q"><div class="tm">11:20</div><div><div class="nm">Deep block 2 · ADMIN</div></div><div class="xp soft"></div></div>
+
+          <div class="e q">
+            <div class="tm">13:10</div>
+            <div>
+              <div class="nm">Deep block 3 · SANO</div>
+              <div class="wr">Get the deck to a state I would send.</div>
+              <div class="tapline">Put it on tomorrow, 09:00<span class="r">→</span></div>
+            </div>
+            <div class="xp soft"></div>
+          </div>
+
+          <div class="e q"><div class="tm">14:50</div><div><div class="nm">Deep block 4 · FRUITS</div></div><div class="xp soft"></div></div>
+          <div class="e q"><div class="tm">21:00</div><div><div class="nm">Wind-down · phone away</div></div><div class="xp soft"></div></div>
+
+          <div class="tail">
+            <div class="h">ALSO TODAY <u>+55</u></div>
+            <div class="win"><span class="b"></span>Chores · laundry · dishes<span class="x">+15</span></div>
+            <div class="win"><span class="b"></span>Cooked instead of ordering<span class="x">+20</span></div>
+            <div class="win"><span class="b"></span>In bed on time<span class="x">+20</span></div>
+            <div class="tapline dash">+ something else<span class="r">10–90</span></div>
+
+            <div class="total"><b>80</b><span>ON THE BOARD TODAY</span></div>
+            <div class="brk">DEEP WORK 25 · ALSO 55</div>
+            <div class="verdict plain">Today went elsewhere. Tomorrow, act like him.</div>
+            <div class="tapline gold">Write tomorrow's first objective<span class="r">→</span></div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab on"><span class="g"></span>TODAY</div>
+          <div class="tab"><span class="g"></span>GOALS</div>
+          <div class="tab"><span class="g"></span>BANK</div>
+          <div class="tab"><span class="g"></span>RECORD</div>
+        </div>
+      </div>
+      <div class="note">Three blocks did not happen and the screen says <b>nothing</b> about it — same dim line as a block that is still ahead. No red, no "missed", no 1-of-4. The only thing offered about the block he wrote into and never ran is a way to <b>move it forward</b>. The foot of the page still has 80 on it, because the foot of the page always can.</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
