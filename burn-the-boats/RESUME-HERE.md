@@ -5,7 +5,55 @@ It is the single entry point. `HANDOFF-GOALS.md` is the deeper history; this fil
 
 ---
 
-## 0 · WHERE WE ARE — the extras move is BUILT AND LIVE. One schema question is open.
+## 0 · WHERE WE ARE — the GOALS TAB AUDIT is done. Three blockers found. He picks a stage.
+
+**2026-07-28.** He asked for three UX agents over the whole goal experience plus one fresh aesthetics
+agent afterwards. Done. **44 findings, 112 screenshots**, all in
+`agent-briefs/goals-ux-2026-07-28/` (`lens-1-first-run.md`, `lens-2-weekly-loop.md`,
+`lens-3-change-and-delete.md`, `lens-4-aesthetics.md`).
+
+**Consolidated for him, LIVE:**
+https://jasper4-web.github.io/shared-pages/burn-the-boats/renditions/rend-goals-review.html
+**The redesign (lens 4 drew it), LIVE:** `.../renditions/rend-goals-aesthetic.html`
+
+### THE THREE I REPRODUCED MYSELF ON THE LIVE APP — do not take on trust, they are confirmed
+
+1. **F2-1 BLOCKER — the 08:30 composer wipes every commit on today's four blocks and pays +25 XP.**
+   Half-finished migration: line **2701** writes real commits, but the read at line **2672** still
+   pre-selects from the abandoned `d.goals`/`w.goals`. Pickers show NONE → save writes `null` over all
+   four. Measured: 4 commits → 0.
+2. **F2-2 BLOCKER — a commit on a day already lived is born `done:1`.** Stamped by `setCommit` itself,
+   not by `syncCommits` as first reported. Every past slot still offers "Open — tap to commit it".
+3. **F3-1 HIGH — moving a goal to another area re-scores lived days, upward.** `blockDomains()`
+   (line 1465) freezes the domain for **completed** blocks only; a **missed** block re-derives live from
+   the goal's *current* area. Measured with 25 lived days: WORK 55 → 56 from one edit.
+   **Needs accumulated history to show** — at 2 days it rounds away, so it would have surfaced in November.
+
+### Also confirmed by me in source
+- `importFromOld()` (line 3581) never calls `setAnchor`; `backfillAnchors` is load-only AND one-shot
+  (`meta.anchored`). → import leaves every area anchor-less (F1-1).
+- The auto-promotion toast can never fire — `const promoted` is block-scoped inside the `else`, and the
+  toast tests `typeof promoted` outside it, which returns `'undefined'` instead of throwing (F1-4).
+- `g2Week()` line **3868** renders the orphan-areas warning unconditionally → on Monday with nothing yet
+  planned it names **every area he owns**, as the reward for a 100% week (F2-4).
+- Lens 4's three structural claims all hold: `.g2apex` border is gold at **40%** while `.g2anc` is at
+  **100%** (tier 2 out-shouts tier 1); `.g2anc .t` is the app's only card headline in body font;
+  `--d-work` is literally the same hex as `--gold`.
+
+### The staged plan put to him (he chooses)
+1. **Stop the damage** — F2-1, F2-2, F3-1. Wiring, not design; all three small.
+2. **Stop the accusations** — the four wall-of-failure screens (F1-2, F2-4, F2-5, F3-10).
+3. **Dates** — a date cannot be *edited* at all; ✕ is 38px, unconfirmed, no undo; "Carry it" is a no-op
+   with no later date and re-asks forever (F3-2/3/5).
+4. **The look** — lens 4's redesign; fixes nine usability findings that were really drawing problems.
+5. **The long tail** — the seventh vanish (sticky view hides parked goals), no way to plan next week,
+   "the one that matters" doing nothing, anchor cannot be demoted, etc.
+
+**NOTHING HAS BEEN BUILT. Nothing in `index.html` changed for this audit.**
+
+---
+
+### 0-prev · The extras move + reward requirements (BUILT AND LIVE, sw btb-v23)
 
 **2026-07-27, round 6.** He picked **X5 + X3, with X2's requirement-counts as the Bank's structure**:
 *"a mix of them living in the bank under certain things I need to do… each one requires specific things
