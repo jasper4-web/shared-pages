@@ -5,9 +5,41 @@ It is the single entry point. `HANDOFF-GOALS.md` is the deeper history; this fil
 
 ---
 
-## 0 · WHERE WE ARE — waiting on him to pick a Today-page direction
+## 0 · WHERE WE ARE — HE PICKED E + I. The merge round is live.
 
-**The five new renditions are DRAWN, DEPLOYED and VERIFIED (2026-07-27).**
+**2026-07-27, round 3.** From the five directions he chose **a mixture of E · The Notebook and
+I · The Two-Sided Day**, in his words:
+
+> "I specifically like the checklist style and the other few things on the side is cool. It's not all
+> the way out but it's cool… and then also the two sided day again with this one I like seeing the back
+> page of like a little bit more information and in depth stuff on what you're doing."
+
+So: **checklist front + the side strip (liked but NOT resolved) + a back page holding the depth.**
+
+**LIVE — five merges:** https://jasper4-web.github.io/shared-pages/burn-the-boats/renditions/rend-today-merge.html
+(source `renditions/rend-today-merge.html`, commit `a60256d`; clean at 375/390/440/1280)
+
+- **M1** every line has a back (per block, replaces the day) · strip = full margin
+- **M2** one back for the whole day (DOING/WRITING switch) · strip = margin, front only
+- **M3** the back comes up as a **drawer** over the day · strip = **one row under the day**
+- **M4** the strip **is the door** — a working right-hand spine you pull · strip = the spine
+- **M5** both halves always on — day on top, live block's depth below · strip = **on the seam**
+
+Merge and strip are **independent choices** ("M1 with M3's strip"). The page also has a
+"the side strip, five ways" table because he said the strip isn't all the way there yet.
+**My recommendation: M3** (per-block depth, day never leaves the screen, full-width block names).
+
+**Also commissioned at his request:** an **outside agent** with no prior exposure to this project,
+briefed only on the product, the three problems, what he rejected, and the hard rules — producing its
+own independent rendition at `renditions/rend-today-outside.html`. Deploy it when it lands.
+
+**NEXT: he picks a merge + a strip.** Nothing goes into `index.html` until he does.
+
+---
+
+### 0a · Round 2 — the five directions (superseded but keep for context)
+
+**Drawn, deployed and verified 2026-07-27.**
 
 - **Live:** https://jasper4-web.github.io/shared-pages/burn-the-boats/renditions/rend-today-five.html
 - **Source:** `renditions/rend-today-five.html` · commit `ec2ef8b`+ on `jasper4-web/shared-pages`
