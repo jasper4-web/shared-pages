@@ -104,6 +104,82 @@ carries copy above its seam too — so it was **kept**, with the seam added bene
    those 25 images. If a hostile re-verify of stages 1–3 matters, re-run it rather than trusting the
    green harnesses alone — §6's lesson.
 
+---
+
+## 0-NEW · THE PLANNER — decisions locked in conversation 2026-07-28. NOTHING BUILT YET.
+
+He read the Goals-tab week view as a day planner and hit its ceiling: *"I can only schedule
+my work blocks."* That opened the real product question, and this is where it landed.
+**A mentor review is out with a Fable agent before any of it is built** —
+`agent-briefs/MENTOR-REVIEW-BRIEF.md`. Do not start building until that verdict is back.
+
+**His framing of the whole problem, verbatim:** *"I just wanna be able to plan my day. See my
+day, track my days, create goal structures — but right now I feel like we're independently
+doing something and every time we do it it's a backtrack of another spot."*
+**That middle sentence is the brief.** He is not asking for a feature; he is saying the work
+does not compound.
+
+### LOCKED WITH HIM
+
+1. **The day becomes data.** Every row his — per day, morning to night. `WEEKDAY`/`SATURDAY`
+   become the *seed*, not the system. Day one looks identical because his current day IS the
+   seed; nothing moves until he moves it.
+2. **THE WEEK is the overview; A DAY is the thing you plan.** Tap Tuesday → plan Tuesday,
+   06:00 to bed. Wednesday can look nothing like Tuesday without either being wrong.
+3. **`WINS` and `QUOTAS` are placeholders, not law.** Both become user-owned, the same
+   journey `boostDefs` already made. *"You're assuming you know, and these are the final
+   standards — I'm telling you these are placeholders."*
+4. **The palette is a MEMORY, not a MENU.** He types anything straight onto the day — no
+   lookup, no category, no permission. It pays nothing and is just structure. The catalogue
+   grows out of what he actually does instead of predicting it.
+5. **"Make it count" is an optional follow-up**, after the thing is already placed: a row of
+   **emoji quick-pick chips** (🧺 laundry, 🧹 cleaning) plus write-your-own for anything niche.
+   His words: *"nice and simple in there, but also I could add something niche if I wanted."*
+   **"Make it a standard"** sets n× a week on anything — including what he invented that morning.
+6. **Planning pays nothing. Doing pays.** Consistent with the locked Friday-planner rule.
+7. **Corrections are free while the day is open; once the day seals, XP is permanent.**
+   See the bug below. The boundary already exists (`freezePast()` / `sealed`).
+8. **250 XP/day ceiling on the ADDED/EXTRA stuff** — he approved a cap and named 250.
+   ⚠ **Flagged to him, NOT yet confirmed:** 250 is currently the *boost* cap; a strong weekday
+   already runs **~445 XP**, and the reward ladder (900→22,000) is priced against that. Capping
+   *everything* at 250 would re-price the whole Bank. Proposal on the table: keep 250 on the
+   added stuff — the surface being opened up is the surface that stays capped.
+
+### THE BUG HE FOUND — systemic, not one screen
+
+*"Whenever I click something to add XP I can't accidentally un-click it… it'll be an accident
+but it'll still just give me the XP anyways."* **Confirmed.** `S.xp` only ever increases;
+`d.credited[key]` is written at `:1453` and `:2994` and deleted **nowhere**. Every undo path
+says the same thing — `tapWin` `:2608`, `undoBoost` `:5071` — *"Removed — XP kept."*
+The intent was kindness; the effect is that it protects XP he never earned, and the toast
+announces it. **The fix must go everywhere**, at his instruction: blocks, wins, boosts,
+run-end question, Bank.
+
+### WHAT THIS REMOVED FROM THE PLAN
+
+The minutes-based economy re-pricing that `PLANNER-GAP-ANALYSIS.md` calls "the gate you must
+decide before anything else" is **no longer needed**. His structure (nothing new is priced;
+you only place things that already have a price; added stuff is capped) does that job.
+That was the single largest piece of the original plan.
+
+### ALREADY BUILT AND REUSABLE — do not rebuild these
+
+- **`elseCands()` `:3025`** is already a time-of-day + domain suggestion engine with hard
+  vetoes ("in bed on time" is never offered before 20:00). It only fires at run-end today.
+  Point it at the planner and the morning→*Bible · text Kells* behaviour works on day one.
+- **`QUOTAS` `:1552`** is already the one table spanning both halves of the app —
+  `{src:'block', id:'bible'}` and `{src:'win', id:'cooked'}` in the same six rows. That is the
+  palette's vocabulary; it does not need inventing.
+- **`freezePast()` / `sealed`** is the correction-window boundary, already written and proven.
+- **`boostDefs`** is the exact precedent for user-owned content with guarded ceilings.
+
+### DEFERRED ON PURPOSE
+
+Recurrence (*"every Tuesday from now on"*) — the one genuinely new engine, better designed
+after he has used the manual version for a week.
+
+---
+
 ### NEXT — stage 5, unless he re-picks
 
 **Stage 5 · the long tail** is the last one in the plan he was given:
