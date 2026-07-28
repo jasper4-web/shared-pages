@@ -1,0 +1,600 @@
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Goals tab — how it looks</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --blue:#7FB4FF; --tap:44px;
+  --d-work:#E0B25E; --d-cap:#7FB4FF; --d-body:#FF6B2C; --d-faith:#B08CFF;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#08070c;color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.028em;margin:0}
+
+.wrap{max-width:1240px;margin:0 auto;padding:44px 20px 90px}
+.lede{max-width:720px;margin-bottom:28px}
+.lede .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold);margin-bottom:12px}
+.lede h1{font-size:36px;line-height:1.08;margin-bottom:14px}
+.lede p{color:var(--dim);font-size:15px;margin:0 0 10px}
+.lede b{color:var(--ink)}
+
+.asks{border:1px solid var(--line2);border-radius:14px;background:var(--panel);margin:22px 0 8px;max-width:800px}
+.ask{display:grid;grid-template-columns:34px 1fr;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.ask:last-child{border-bottom:0}
+.ask .n{font-family:'Geist Mono',monospace;font-size:11px;color:var(--gold)}
+.ask .v{font-size:13.5px;color:var(--dim);line-height:1.5}
+.ask .v b{color:var(--ink)}
+
+.opt{margin:58px 0 18px;max-width:780px}
+.opt .n{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--faint);margin-bottom:9px}
+.opt h2{font-size:26px;line-height:1.12;margin-bottom:10px}
+.opt p{color:var(--dim);font-size:14px;margin:0 0 8px}
+.opt p b{color:var(--ink)}
+
+.row{display:flex;gap:22px;overflow-x:auto;padding-bottom:14px;align-items:flex-start}
+.col{flex:none;width:320px}
+.cap{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.15em;margin-bottom:9px;color:var(--faint)}
+.cap.aft{color:var(--gold)}
+.note{margin-top:12px;font-size:12.5px;line-height:1.55;color:var(--faint)}
+.note b{color:var(--dim)}
+
+.ph{width:320px;border:1px solid var(--line2);border-radius:26px;background:var(--bg);
+  padding:14px 13px 16px;box-shadow:0 24px 60px -30px #000}
+.ph.clip{position:relative;max-height:780px;overflow:hidden}
+.ph.clip:after{content:'';position:absolute;left:0;right:0;bottom:0;height:90px;
+  background:linear-gradient(to bottom,rgba(7,6,11,0),#07060b)}
+
+/* ---- app chrome ---- */
+.hdr{display:flex;align-items:baseline;gap:9px;margin-bottom:13px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.hdr b{font-family:'Clash Display',sans-serif;font-size:22px;letter-spacing:-.035em}
+.hdr u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint);text-decoration:none}
+
+/* h2.sec — the app's section header */
+.sec{font-size:11px;font-family:'Geist Mono',monospace;letter-spacing:.19em;text-transform:uppercase;
+  color:var(--faint);margin:24px 0 8px;font-weight:700;display:flex;justify-content:space-between;
+  align-items:baseline;min-height:20px}
+.sec u{text-decoration:none;color:var(--dim)}
+.sec.g2sec{padding-left:9px;border-left:3px solid var(--c);color:var(--c)}
+.sec:first-child{margin-top:0}
+
+/* the OLD area header — three near-copies of h2.sec live in the app; this is .g2tier .tr-h */
+.trh{display:flex;align-items:center;gap:9px;min-height:32px;padding:0 2px;margin-bottom:8px}
+.trh i{width:7px;height:7px;border-radius:99px;flex:none;background:var(--c)}
+.trh span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.17em;color:var(--dim);text-transform:uppercase}
+.trh u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);text-decoration:none}
+
+/* apex */
+.apex{border:1px solid rgba(224,178,94,.4);border-radius:16px;padding:15px;margin-bottom:16px;
+  background:linear-gradient(150deg,#1b1526,#110e1a 62%,#0d0b14)}
+.apex.lit{box-shadow:0 8px 36px -18px rgba(224,178,94,.5)}
+.apex .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.19em;color:var(--gold);margin-bottom:9px}
+.apex .t{font-family:'Clash Display',sans-serif;font-size:27px;letter-spacing:-.03em;line-height:1.1;margin-bottom:12px}
+.apex .apn{display:flex;align-items:baseline;gap:7px}
+.apex .apn b{font-family:'Clash Display',sans-serif;font-size:30px;letter-spacing:-.035em;line-height:1}
+.apex .apn span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint)}
+.apex .apn i{flex:1}
+.apex .aps{margin-top:9px;font-size:12.5px;line-height:1.45;color:var(--faint)}
+/* the seam — Today's .nextup construction, borrowed */
+.seam{margin-top:11px;padding-top:11px;border-top:1px solid rgba(255,255,255,.08)}
+.seam-r{display:flex;align-items:center;gap:9px;min-height:26px;font-size:13px;color:var(--ink);line-height:1.3}
+.seam-r em{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint);
+  font-style:normal;flex:none;width:56px}
+.seam-r i{width:6px;height:6px;border-radius:99px;background:var(--c);flex:none;box-shadow:0 0 8px var(--c)}
+.seam-r.q{color:var(--dim);font-size:12.5px;border-top:1px solid rgba(255,255,255,.08);margin-top:9px;padding-top:9px}
+
+/* capacity */
+.cap2{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;padding:11px 13px;margin-bottom:14px;
+  border:1px solid var(--line2);border-radius:12px;background:var(--panel)}
+.cap2 b{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;color:var(--ink);line-height:1}
+.cap2 span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
+.cap2 i{flex:none;width:1px;height:13px;background:var(--line2);margin:0 3px}
+
+/* view tabs */
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tab{flex:1;min-height:var(--tap);border:1px solid var(--line2);background:var(--panel);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint)}
+.tab.on{border-color:var(--gold);color:var(--gold);background:rgba(224,178,94,.08)}
+.tab.seg{border-color:var(--violet);color:var(--violet);background:rgba(176,140,255,.1)}
+
+/* TIER 2 — the December goal */
+.anc{padding:13px 14px;background:var(--panel);min-height:var(--tap);margin-bottom:2px}
+.anc.old{border:1px solid var(--c);border-radius:14px}
+.anc.new{border:1px solid var(--line);border-left:3px solid var(--c);border-radius:0 14px 14px 0}
+.anc .k{display:flex;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.15em;
+  color:var(--c);margin-bottom:7px}
+/* AFTER: colour lives on the spine (header rule + card rule + bar). The text goes neutral,
+   exactly as Bank and Record do — only the area name keeps a small dose. */
+.anc.new .k{color:var(--faint)}
+.anc.new .k u{color:var(--dim)}
+.anc .k u{margin-left:auto;text-decoration:none}
+.anc .k .past{color:var(--blood)}
+.anc .k .was{color:var(--faint)}
+.anc .t{font-size:16px;line-height:1.3;color:var(--ink);margin-bottom:9px;overflow-wrap:anywhere}
+.anc.new .t{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;line-height:1.2}
+.bar{height:7px;border-radius:99px;background:#221d33;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--c)}
+.num{display:flex;justify-content:space-between;margin-top:6px;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--faint)}
+.none{font-size:12.5px;line-height:1.45;color:var(--faint);margin-top:7px}
+
+/* TIER 3 — working goals */
+.sub{border:1px solid var(--line);border-radius:0 11px 11px 0;margin:6px 0 0 16px;padding:9px 12px;
+  background:var(--panel);min-height:var(--tap)}
+.sub.old{border-left:2px solid var(--line2)}
+.sub.new{border-left:2px solid color-mix(in srgb,var(--c) 40%,transparent)}
+.sub .st{font-size:13.5px;line-height:1.3;color:var(--dim);overflow-wrap:anywhere}
+.sub .sm{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.07em;color:var(--faint);margin-top:2px}
+.sub .sm .past{color:var(--blood)}
+.sub .sm .was{color:var(--faint)}
+.facts{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:7px;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--dim)}
+.facts .cold{color:var(--faint)}
+.facts .colder{color:#4e4860}
+
+.addsub{display:flex;align-items:center;min-height:var(--tap);text-align:left;
+  border:1px dashed var(--line2);border-left-width:2px;border-radius:0 11px 11px 0;background:transparent;
+  color:var(--faint);font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;padding:12px}
+.addsub.old{width:100%;margin:6px 0 0 16px}
+.addsub.new{width:calc(100% - 16px);margin:6px 0 0 16px}
+
+/* week */
+.day{display:flex;align-items:center;gap:9px;margin:16px 0 7px;padding:0 2px}
+.day span{font-family:'Clash Display',sans-serif;font-size:15px;letter-spacing:.02em}
+.day u{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);text-decoration:none}
+.day b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--gold)}
+.slot{display:grid;align-items:center;gap:10px;min-height:var(--tap);padding:9px 11px;margin-bottom:5px;
+  border:1px solid var(--line);border-radius:11px;background:var(--panel);position:relative;overflow:hidden}
+.slot.old{grid-template-columns:56px 1fr auto}
+.slot.new{grid-template-columns:42px 1fr 20px}
+.slot.done{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.06)}
+.slot .sk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
+.slot .sk u{display:block;text-decoration:none;margin-top:2px;font-size:11px}
+.slot .sg{font-size:13.5px;line-height:1.3;color:var(--ink);min-width:0;overflow-wrap:anywhere}
+.slot .sg em{color:var(--faint);font-style:normal;font-size:12.5px}
+.slot .sa{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;margin-top:3px;display:block}
+.slot .sa.amber{color:var(--gold)}
+.slot .sa.quiet{color:var(--faint)}
+.slot .dom{position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--c)}
+.slot .bc{width:18px;height:18px;border-radius:5px;border:1.5px solid #362f47;justify-self:end}
+.slot.done .bc{background:var(--phos);border-color:var(--phos)}
+.slot .sd{font-size:15px;color:var(--phos)}
+
+.door{display:flex;align-items:center;justify-content:center;width:100%;min-height:var(--tap);
+  border:1px dashed rgba(224,178,94,.4);border-radius:11px;background:transparent;color:var(--gold);
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;padding:12px;margin:4px 0 6px}
+
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:46px;
+  border-radius:11px;padding:12px;margin-top:9px;font-size:14px;font-weight:600;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204}
+.btn.gh{background:transparent;border:1px solid var(--line2);color:var(--dim);font-weight:500}
+.btn.sm{margin-top:11px;min-height:var(--tap);font-size:13.5px}
+
+/* tier ruler */
+.rule{display:flex;align-items:center;gap:8px;margin:0 0 6px;padding-left:2px;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:#4e4860}
+/* flex:1 alone let this collapse to 0 width once the labels got long — the hairline
+   vanished while every automated check stayed green. min-width is the guard. */
+.rule s{text-decoration:none;display:block;flex:1 1 16px;min-width:16px;height:1px;background:var(--line2)}
+
+.tbl{width:100%;max-width:940px;border-collapse:collapse;margin-top:26px;font-size:13.5px}
+.tbl th{text-align:left;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;
+  color:var(--faint);padding:9px 10px;border-bottom:1px solid var(--line2);font-weight:400}
+.tbl td{padding:10px;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+.tbl td b{color:var(--ink)}
+.tbl tr td:first-child{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;
+  color:var(--gold);white-space:nowrap}
+@media(max-width:700px){.wrap{padding:28px 14px 70px}.lede h1{font-size:27px}.opt h2{font-size:21px}
+  .ask{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap">
+
+<div class="lede">
+  <div class="k">LENS 4 · AESTHETICS · NOTHING BUILT</div>
+  <h1>Goals looks like a<br>different app. Here's why.</h1>
+  <p>Today, Bank and Record share one discipline: <b>one thing is lit, everything else is grey, and a
+     domain colour is a thin rule at the edge of a neutral card</b> — never the card's outline. Record
+     draws six domains with no colour at all, as hairline rows inside one container.</p>
+  <p>Goals paints the same palette around seven full-bleed cards. Measured on the live app: <b>eight
+     accent-bordered elements</b> on one screen, seven of them at exactly <b>364×133px</b>, each with the
+     identical kicker <b>DECEMBER · Dec 25 · 150 days</b> repeated verbatim. Nothing is lit, so nothing is
+     first — and the December goal is the only card headline in the app set in body font (Satoshi 16px),
+     smaller than the capacity line above it.</p>
+  <p>The fix needs no new components. Move the colour to a 3px left rule, give the apex the
+     <b>one</b> glow, put the December goal in Clash 19px, replace three hand-rolled section headers with
+     <b>h2.sec</b>, and hand the repeated string back to the header's <b>&lt;u&gt;</b> slot.</p>
+</div>
+
+<div class="asks">
+  <div class="ask"><div class="n">A1</div><div class="v"><b>Colour becomes a rule, not an outline.</b>
+    <code>border-left:3px solid var(--c)</code> on a neutral card — Bank's reward row and Today's
+    <code>.blk .dom</code>, already shipped.</div></div>
+  <div class="ask"><div class="n">A2</div><div class="v"><b>Three tiers, three weights.</b>
+    Clash 27 / Clash 19 / Satoshi 13.5, with left rules at glow · 100% · 28%. Legible with the text
+    blurred out.</div></div>
+  <div class="ask"><div class="n">A3</div><div class="v"><b>Gold means one thing again.</b>
+    It carries eight meanings here and three on Today. The view tabs go violet (Bank's
+    <code>.chip.seg.on</code>); the footer goes ghost.</div></div>
+  <div class="ask"><div class="n">A4</div><div class="v"><b>The apex gets Today's seam</b> — the thing
+    before and after, inside the lit card — which finally gives the WIG somewhere to render
+    (fixes&nbsp;F1-3) and puts the one gold action at the top instead of 2,151px down.</div></div>
+</div>
+
+<!-- ══ 1 ══ -->
+<div class="opt">
+  <div class="n">SCREEN 1</div>
+  <h2>The main view, with real content</h2>
+  <p>Same four areas, same nine goals, same numbers. The only change is where the colour sits and which
+     object is allowed to be bright.</p>
+</div>
+<div class="row">
+
+  <div class="col"><div class="cap">BEFORE · THE RAINBOW LADDER</div>
+    <div class="ph clip">
+      <div class="hdr"><b>The Goals</b><u>9 GOALS · 4 AREAS</u></div>
+      <div class="apex">
+        <div class="k">THE WHOLE POINT OF THIS PAGE</div>
+        <div class="t">Be him.</div>
+        <div class="apn"><b>51</b><span>OVERALL</span><i></i><b>49</b><span>TO GO</span></div>
+        <div class="aps">You get there by clearing the 4 below.</div>
+      </div>
+      <div class="cap2"><b>6</b><span>of 20 committed</span><i></i><b>14</b><span>open</span></div>
+      <div class="tabs"><div class="tab on">BY AREA</div><div class="tab">BY DATE</div><div class="tab">THE WEEK</div></div>
+
+      <div style="--c:var(--d-work)">
+        <div class="trh"><i></i><span>SANO</span><u>3 under it</u></div>
+        <div class="anc old"><div class="k">DECEMBER · Dec 25 · 150 days</div>
+          <div class="t">3 SANO clients, one at full freight</div>
+          <div class="bar"><i style="width:33%"></i></div>
+          <div class="num"><span>1 of 3 clients</span><span>33%</span></div></div>
+        <div class="addsub old">+ ADD ONE UNDER THIS</div>
+      </div>
+      <div style="--c:var(--d-cap)">
+        <div class="trh"><i></i><span>TRADING</span><u>1 under it</u></div>
+        <div class="anc old"><div class="k">DECEMBER · Dec 25 · 150 days</div>
+          <div class="t">3 live funded accounts</div>
+          <div class="bar"><i style="width:0%"></i></div>
+          <div class="num"><span>0 of 3 accounts</span><span>0%</span></div></div>
+        <div class="addsub old">+ ADD ONE UNDER THIS</div>
+      </div>
+      <div style="--c:var(--d-body)">
+        <div class="trh"><i></i><span>BODY</span><u>1 under it</u></div>
+        <div class="anc old"><div class="k">DECEMBER · Dec 25 · 150 days</div>
+          <div class="t">185 lbs</div>
+          <div class="bar"><i style="width:25%"></i></div>
+          <div class="num"><span>+2 of +8 lbs</span><span>25%</span></div></div>
+      </div>
+      <div style="--c:var(--d-faith)">
+        <div class="trh"><i></i><span>FAITH</span><u>0 under it</u></div>
+        <div class="anc old"><div class="k">DECEMBER · Dec 25 · 150 days</div>
+          <div class="t">Reading with Kells, consistently</div>
+          <div class="bar"><i style="width:67%"></i></div>
+          <div class="num"><span>2 of 3 this week</span><span>67%</span></div></div>
+      </div>
+    </div>
+    <div class="note">Four cards, four colours, four identical kickers, four identical shapes — and the
+      apex above them is the <b>lowest-contrast</b> border on the screen (gold at 40% against four at 100%).
+      Gold is on the apex, the active tab, SANO's identity and the footer button.</div>
+  </div>
+
+  <div class="col"><div class="cap aft">AFTER · ONE LIT CARD, FOUR RULES</div>
+    <div class="ph clip">
+      <div class="hdr"><b>The Goals</b><u>9 GOALS · 4 AREAS</u></div>
+      <div class="apex lit">
+        <div class="k">THE WHOLE POINT OF THIS PAGE</div>
+        <div class="t">Be him.</div>
+        <div class="apn"><b>51</b><span>OVERALL</span><i></i><b>49</b><span>TO GO</span></div>
+        <div class="seam" style="--c:var(--d-work)">
+          <div class="seam-r"><em>FIRST</em><i></i>3 SANO clients, one at full freight</div>
+          <div class="seam-r q"><em>NEXT</em>WED · B3 · 13:20</div>
+        </div>
+        <div class="btn sm">Put it on Wednesday B3</div>
+      </div>
+      <div class="cap2"><b>6</b><span>of 20 committed</span><i></i><b>14</b><span>open</span></div>
+      <div class="tabs"><div class="tab seg">BY AREA</div><div class="tab">BY DATE</div><div class="tab">THE WEEK</div></div>
+
+      <div style="--c:var(--d-work)">
+        <div class="sec g2sec">SANO<u>3 under it</u></div>
+        <div class="anc new"><div class="k">150 DAYS<u>33%</u></div>
+          <div class="t">3 SANO clients, one at full freight</div>
+          <div class="bar"><i style="width:33%"></i></div>
+          <div class="num"><span>1 of 3 clients</span></div></div>
+        <div class="addsub new">+ ADD ONE UNDER THIS</div>
+      </div>
+      <div style="--c:var(--d-cap)">
+        <div class="sec g2sec">TRADING<u>1 under it</u></div>
+        <div class="anc new"><div class="k">150 DAYS<u>NOT STARTED</u></div>
+          <div class="t">3 live funded accounts</div>
+          <div class="bar"><i style="width:0%"></i></div>
+          <div class="num"><span>0 of 3 accounts</span></div></div>
+        <div class="addsub new">+ ADD ONE UNDER THIS</div>
+      </div>
+      <div style="--c:var(--d-body)">
+        <div class="sec g2sec">BODY<u>1 under it</u></div>
+        <div class="anc new"><div class="k">150 DAYS<u>25%</u></div>
+          <div class="t">185 lbs</div>
+          <div class="bar"><i style="width:25%"></i></div>
+          <div class="num"><span>+2 of +8 lbs</span></div></div>
+      </div>
+      <div style="--c:var(--d-faith)">
+        <div class="sec g2sec">FAITH<u>0 under it</u></div>
+        <div class="anc new"><div class="k">150 DAYS<u>67%</u></div>
+          <div class="t">Reading with Kells, consistently</div>
+          <div class="bar"><i style="width:67%"></i></div>
+          <div class="num"><span>2 of 3 this week</span></div></div>
+      </div>
+    </div>
+    <div class="note">The apex is now the only lit object (Today's exact
+      <code>0 8px 36px -18px rgba(224,178,94,.5)</code>) and carries the seam plus the tab's one gold
+      button. <b>DECEMBER · Dec 25</b> is deleted — it was identical on all four and is implied by tier
+      position; only the delta survives, and the header owns the count in its <b>&lt;u&gt;</b>.</div>
+  </div>
+</div>
+
+<!-- ══ 2 ══ -->
+<div class="opt">
+  <div class="n">SCREEN 2</div>
+  <h2>The three tiers, as three tiers</h2>
+  <p>The blur test: cover the words and count the levels. Today does this with four —
+     <code>.nextup.live</code> → <code>.blk.now</code> → <code>.blk</code> → <code>.blk.past</code>.</p>
+</div>
+<div class="row">
+
+  <div class="col"><div class="cap">BEFORE · TWO LEVELS, NOT THREE</div>
+    <div class="ph">
+      <div class="rule">APEX <s></s> CLASH 27</div>
+      <div class="apex">
+        <div class="k">THE WHOLE POINT OF THIS PAGE</div>
+        <div class="t">Be him.</div>
+        <div class="apn"><b>51</b><span>OVERALL</span><i></i><b>49</b><span>TO GO</span></div>
+        <div class="aps">You get there by clearing the 4 below.</div>
+      </div>
+      <div style="--c:var(--d-work)">
+        <div class="rule">DECEMBER <s></s> SATOSHI 16</div>
+        <div class="trh"><i></i><span>SANO</span><u>3 under it</u></div>
+        <div class="anc old"><div class="k">DECEMBER · Dec 25 · 150 days</div>
+          <div class="t">3 SANO clients, one at full freight</div>
+          <div class="bar"><i style="width:33%"></i></div>
+          <div class="num"><span>1 of 3 clients</span><span>33%</span></div></div>
+        <div class="rule" style="margin-top:14px">WORKING <s></s> SATOSHI 13.5</div>
+        <div class="sub old"><div class="st">Pricing page rewritten</div>
+          <div class="sm">End of September · 30 days</div>
+          <div class="facts"><span>2 of 5 blocks</span><span>240 XP</span><span class="cold">moved 12d ago</span></div></div>
+        <div class="sub old"><div class="st">Sebastian onboarded as sales partner</div>
+          <div class="sm">End of September · 30 days</div>
+          <div class="facts"><span>2 of 3 blocks</span><span>240 XP</span><span class="cold">moved 5d ago</span></div></div>
+      </div>
+    </div>
+    <div class="note">Type descends correctly, but the <b>border inverts</b>: the apex is gold at 40%,
+      the December card is a domain colour at 100%. Tier 2 out-contrasts tier 1 — and there are seven of
+      it. Tier 3's rule is <code>var(--line2)</code>, a neutral, so it reads as a generic sub-row rather
+      than as something descended from the card above.</div>
+  </div>
+
+  <div class="col"><div class="cap aft">AFTER · A MONOTONIC RAMP</div>
+    <div class="ph">
+      <div class="rule">APEX <s></s> CLASH 27 · GLOW</div>
+      <div class="apex lit">
+        <div class="k">THE WHOLE POINT OF THIS PAGE</div>
+        <div class="t">Be him.</div>
+        <div class="apn"><b>51</b><span>OVERALL</span><i></i><b>49</b><span>TO GO</span></div>
+        <div class="seam" style="--c:var(--d-work)">
+          <div class="seam-r"><em>FIRST</em><i></i>3 SANO clients, one at full freight</div>
+        </div>
+      </div>
+      <div style="--c:var(--d-work)">
+        <div class="rule">DECEMBER <s></s> CLASH 19</div>
+        <div class="sec g2sec">SANO<u>3 under it</u></div>
+        <div class="anc new"><div class="k">150 DAYS<u>33%</u></div>
+          <div class="t">3 SANO clients, one at full freight</div>
+          <div class="bar"><i style="width:33%"></i></div>
+          <div class="num"><span>1 of 3 clients</span></div></div>
+        <div class="rule" style="margin-top:14px">WORKING <s></s> SATOSHI 13.5</div>
+        <div class="sub new"><div class="st">Pricing page rewritten</div>
+          <div class="sm">End of September · 30 days</div>
+          <div class="facts"><span>2 of 5 blocks</span><span>240 XP</span><span class="colder">moved 12d ago</span></div></div>
+        <div class="sub new"><div class="st">Sebastian onboarded as sales partner</div>
+          <div class="sm">End of September · 30 days</div>
+          <div class="facts"><span>2 of 3 blocks</span><span>240 XP</span><span class="colder">moved 5d ago</span></div></div>
+      </div>
+    </div>
+    <div class="note">One bright card · a medium rule · a faint rule stepped in from it. Weight and type
+      now descend <b>together</b>, so the ranking survives the blur. Tier 3 inherits <code>--c</code> at
+      40%, which is what makes it read as <i>under SANO</i> rather than as a loose row.</div>
+  </div>
+</div>
+
+<!-- ══ 3 ══ -->
+<div class="opt">
+  <div class="n">SCREEN 3</div>
+  <h2>One area, with everything under it</h2>
+  <p>SANO with its December goal and all three working goals — including one whose date has gone by.
+     This is the shape that repeats down the page, so it is the shape that has to be quiet.</p>
+</div>
+<div class="row">
+
+  <div class="col"><div class="cap">BEFORE · A RED STAMP AND A DOUBLED COLOUR</div>
+    <div class="ph">
+      <div style="--c:var(--d-work)">
+        <div class="trh"><i></i><span>SANO</span><u>3 under it</u></div>
+        <div class="anc old"><div class="k">DECEMBER · Dec 25 · 150 days</div>
+          <div class="t">3 SANO clients, one at full freight</div>
+          <div class="bar"><i style="width:33%"></i></div>
+          <div class="num"><span>1 of 3 clients</span><span>33%</span></div>
+          <div class="facts"><span>6 of 14 blocks</span><span>720 XP</span><span class="cold">moved 14d ago</span></div></div>
+        <div class="sub old"><div class="st">Anthony signed</div>
+          <div class="sm">End of August · <span class="past">PASSED</span> · 0%</div>
+          <div class="facts"><span>6 of 14 blocks</span><span>720 XP</span><span class="cold">moved 14d ago</span></div></div>
+        <div class="sub old"><div class="st">Pricing page rewritten</div>
+          <div class="sm">End of September · 30 days · no number</div>
+          <div class="facts"><span>2 of 5 blocks</span><span>240 XP</span><span class="cold">moved 12d ago</span></div></div>
+        <div class="sub old"><div class="st">Sebastian onboarded as sales partner</div>
+          <div class="sm">End of September · 30 days · no number</div>
+          <div class="facts"><span>2 of 3 blocks</span><span>240 XP</span><span class="cold">moved 5d ago</span></div></div>
+        <div class="addsub old">+ ADD ONE UNDER THIS</div>
+      </div>
+      <div class="btn">+ Add a goal</div>
+      <div class="btn gh">Areas and dates</div>
+    </div>
+    <div class="note">The area's colour is stated three times — the dot, the card outline, the kicker —
+      and a date going by is stamped <b>PASSED</b> in <code>--blood</code>, the colour the app reserves for
+      <code>.blk.miss</code>. On 1 October that stamp appears eight times in a column (F3-10). The dashed
+      row also runs to <b>x:393</b> on a 393px viewport — flush to the bezel (F1-11).</div>
+  </div>
+
+  <div class="col"><div class="cap aft">AFTER · ONE RULE, NO RED</div>
+    <div class="ph">
+      <div style="--c:var(--d-work)">
+        <div class="sec g2sec">SANO<u>3 under it</u></div>
+        <div class="anc new"><div class="k">150 DAYS<u>33%</u></div>
+          <div class="t">3 SANO clients, one at full freight</div>
+          <div class="bar"><i style="width:33%"></i></div>
+          <div class="num"><span>1 of 3 clients</span></div>
+          <div class="facts"><span>6 of 14 blocks</span><span>720 XP</span><span class="colder">moved 14d ago</span></div></div>
+        <div class="sub new"><div class="st">Anthony signed</div>
+          <div class="sm"><span class="was">was End of August</span></div>
+          <div class="facts"><span>6 of 14 blocks</span><span>720 XP</span><span class="colder">moved 14d ago</span></div></div>
+        <div class="sub new"><div class="st">Pricing page rewritten</div>
+          <div class="sm">End of September · 30 days</div>
+          <div class="facts"><span>2 of 5 blocks</span><span>240 XP</span><span class="colder">moved 12d ago</span></div></div>
+        <div class="sub new"><div class="st">Sebastian onboarded as sales partner</div>
+          <div class="sm">End of September · 30 days</div>
+          <div class="facts"><span>2 of 3 blocks</span><span>240 XP</span><span class="colder">moved 5d ago</span></div></div>
+        <div class="addsub new">+ ADD ONE UNDER THIS</div>
+      </div>
+      <div class="btn gh">+ Add a goal</div>
+      <div class="btn gh">Areas and dates</div>
+    </div>
+    <div class="note">Colour is stated once, on the rule that runs through the header and the card.
+      <b>was End of August</b> in <code>--faint</code> is a fact about the calendar, not a miss — the
+      stylesheet already says the banners are never red, and this should follow. Both footer buttons go
+      ghost, like Bank's: on a tab that warns him at five goals, <i>add more</i> should not be the one
+      lit thing (A3).</div>
+  </div>
+</div>
+
+<!-- ══ 4 ══ -->
+<div class="opt">
+  <div class="n">SCREEN 4</div>
+  <h2>THE WEEK</h2>
+  <p>Wednesday morning. Twenty slots, six committed, fourteen open, two done. The grid is the best idea
+     in the tab and it is drawn in the wrong dialect.</p>
+</div>
+<div class="row">
+
+  <div class="col"><div class="cap">BEFORE · 20 UNIFORM SLOTS, ~1,040PX</div>
+    <div class="ph clip">
+      <div class="cap2"><b>6</b><span>of 20 committed</span><i></i><b>14</b><span>open</span></div>
+      <div class="day"><span>MON</span><u>08-31</u></div>
+      <div class="slot old done"><div class="sk">B1<u>09:00</u></div>
+        <div><div class="sg">Anthony signed</div><span class="sa amber">SANO · CARRIED 1×</span></div>
+        <div class="sd">✓</div></div>
+      <div class="slot old done"><div class="sk">B2<u>10:45</u></div>
+        <div><div class="sg">Pricing page rewritten</div><span class="sa amber">SANO</span></div>
+        <div class="sd">✓</div></div>
+      <div class="slot old"><div class="sk">B3<u>13:20</u></div>
+        <div><div class="sg">3 live funded accounts</div><span class="sa amber">TRADING</span></div><div></div></div>
+      <div class="slot old"><div class="sk">B4<u>15:05</u></div>
+        <div><div class="sg"><em>Open — tap to commit it</em></div></div><div></div></div>
+      <div class="day"><span>TUE</span><u>09-01</u></div>
+      <div class="slot old"><div class="sk">B1<u>09:00</u></div>
+        <div><div class="sg">185 lbs</div><span class="sa amber">BODY</span></div><div></div></div>
+      <div class="slot old"><div class="sk">B2<u>10:45</u></div>
+        <div><div class="sg"><em>Open — tap to commit it</em></div></div><div></div></div>
+      <div class="slot old"><div class="sk">B3<u>13:20</u></div>
+        <div><div class="sg"><em>Open — tap to commit it</em></div></div><div></div></div>
+      <div class="slot old"><div class="sk">B4<u>15:05</u></div>
+        <div><div class="sg"><em>Open — tap to commit it</em></div></div><div></div></div>
+      <div class="day now"><span style="color:var(--gold)">WED</span><u>09-02</u><b>TODAY</b></div>
+      <div class="slot old"><div class="sk">B1<u>09:00</u></div>
+        <div><div class="sg">3 SANO clients, one at full freight</div><span class="sa amber">SANO</span></div><div></div></div>
+      <div class="slot old"><div class="sk">B2<u>10:45</u></div>
+        <div><div class="sg">Reading with Kells, consistently</div><span class="sa amber">FAITH</span></div><div></div></div>
+    </div>
+    <div class="note">Every area is written in the same amber, whichever domain it is — so the colour
+      Today <i>draws</i> as a 2.5px bar is here written as words, in gold, which now means a ninth thing
+      (A7). No checkbox, no domain bar, and all twenty slots render at once, pushing the footer past
+      1,400px — on a page that already invented <code>.nu-door</code> for exactly this (A8).</div>
+  </div>
+
+  <div class="col"><div class="cap aft">AFTER · TODAY'S BLOCK, AND A DOOR</div>
+    <div class="ph">
+      <div class="cap2"><b>6</b><span>of 20 committed</span><i></i><b>14</b><span>open</span></div>
+      <div class="door">MON · TUE · LIVED · 4 COMMITTED ▾</div>
+      <div class="sec">WED<u>09-02 · TODAY</u></div>
+      <div class="slot new" style="--c:var(--d-work)"><div class="dom"></div>
+        <div class="sk">09:00<u>B1</u></div>
+        <div><div class="sg">3 SANO clients, one at full freight</div></div>
+        <div class="bc"></div></div>
+      <div class="slot new" style="--c:var(--d-faith)"><div class="dom"></div>
+        <div class="sk">10:45<u>B2</u></div>
+        <div><div class="sg">Reading with Kells, consistently</div></div>
+        <div class="bc"></div></div>
+      <div class="slot new"><div class="sk">13:20<u>B3</u></div>
+        <div><div class="sg"><em>Open — tap to commit it</em></div></div><div class="bc"></div></div>
+      <div class="slot new"><div class="sk">15:05<u>B4</u></div>
+        <div><div class="sg"><em>Open — tap to commit it</em></div></div><div class="bc"></div></div>
+      <div class="sec">THU<u>09-03 · 4 OPEN</u></div>
+      <div class="slot new"><div class="sk">09:00<u>B1</u></div>
+        <div><div class="sg"><em>Open — tap to commit it</em></div></div><div class="bc"></div></div>
+      <div class="slot new"><div class="sk">10:45<u>B2</u></div>
+        <div><div class="sg"><em>Open — tap to commit it</em></div></div><div class="bc"></div></div>
+      <div class="slot new"><div class="sk">13:20<u>B3</u></div>
+        <div><div class="sg"><em>Open — tap to commit it</em></div></div><div class="bc"></div></div>
+      <div class="slot new"><div class="sk">15:05<u>B4</u></div>
+        <div><div class="sg"><em>Open — tap to commit it</em></div></div><div class="bc"></div></div>
+      <div class="sec">FRI<u>09-04 · 4 OPEN</u></div>
+      <div class="slot new"><div class="sk">09:00<u>B1</u></div>
+        <div><div class="sg"><em>Open — tap to commit it</em></div></div><div class="bc"></div></div>
+      <div class="slot new"><div class="sk">10:45<u>B2</u></div>
+        <div><div class="sg"><em>Open — tap to commit it</em></div></div><div class="bc"></div></div>
+      <div class="slot new"><div class="sk">13:20<u>B3</u></div>
+        <div><div class="sg"><em>Open — tap to commit it</em></div></div><div class="bc"></div></div>
+      <div class="slot new"><div class="sk">15:05<u>B4</u></div>
+        <div><div class="sg"><em>Open — tap to commit it</em></div></div><div class="bc"></div></div>
+    </div>
+    <div class="note">Time first in a 42px column, domain as a 2.5px bar, an 18px <code>.bc</code>
+      checkbox — <code>.blk</code>, exactly. The two lived days close behind <code>.nu-door</code>, which
+      also draws F2-2's read-only past state for free. <b>4 committed + 2 committed here + 8 open Thu–Fri
+      = 6 of 20 · 14 open.</b> Gold appears once, on TODAY.</div>
+  </div>
+</div>
+
+<table class="tbl">
+  <tr><th>ID</th><th>The change, in real classes and tokens</th><th>Also fixes</th></tr>
+  <tr><td>A1</td><td><b>Colour → rule.</b> <code>.g2anc{border:1px solid var(--line);border-left:3px solid
+    var(--c);border-radius:0 14px 14px 0}</code> — Bank's reward row, Today's <code>.blk .dom</code>.</td><td>F1-10</td></tr>
+  <tr><td>A2</td><td><b>Three weights.</b> <code>.g2apex{box-shadow:0 8px 36px -18px rgba(224,178,94,.5)}</code>;
+    <code>.g2anc .t{font-family:'Clash Display';font-size:19px}</code>;
+    <code>.g2sub{border-left:2px solid color-mix(in srgb,var(--c) 40%,transparent)}</code>. Delete dead
+    <code>.g2wig</code>.</td><td>—</td></tr>
+  <tr><td>A3</td><td><b>Gold means one thing.</b> <code>.g2tab.on</code> → <code>.chip.seg.on</code>
+    (violet); both footer buttons → <code>.btn.gh</code>, like Bank's.</td><td>F2-4</td></tr>
+  <tr><td>A4</td><td><b>The seam in the apex</b> — <code>.g2wig .lead</code>'s
+    <code>border-top:1px solid rgba(255,255,255,.08)</code> above and below one line, plus the tab's one
+    gold <code>.btn</code>.</td><td>F1-3</td></tr>
+  <tr><td>A5</td><td><b>One section header.</b> <code>h2.sec.g2sec{padding-left:9px;border-left:3px solid
+    var(--c);margin:24px 0 8px}</code>. Delete <code>.g2tier .tr-h</code>, <code>.g2area .ah</code>,
+    <code>.g2ready .k</code>.</td><td>—</td></tr>
+  <tr><td>A6</td><td><b>BY DATE = Record's QUOTA BOARD.</b> One <code>--panel</code> container of
+    hairline rows; print the area as a grey mono suffix.</td><td>F1-10</td></tr>
+  <tr><td>A7</td><td><b>THE WEEK = <code>.blk</code>.</b> <code>grid-template-columns:42px 1fr 20px</code>,
+    a <code>.dom</code> bar, a <code>.bc</code> checkbox; the amber area caps go
+    <code>var(--faint)</code>.</td><td>F2-7</td></tr>
+  <tr><td>A8</td><td><b>Twenty slots get a door.</b> <code>.nu-door</code> over the days already
+    lived.</td><td>F2-2</td></tr>
+  <tr><td>A9</td><td><b>No red for a calendar.</b> <code>PASSED</code> → <code>was End of September</code>
+    in <code>var(--faint)</code>; <code>.g2facts .cold</code> → <code>#4e4860</code>.</td><td>F3-10, F2-5</td></tr>
+  <tr><td>A10</td><td><b>Craft floor.</b> <code>.g2addsub{width:calc(100% - 16px)}</code> ·
+    <code>.g2m .mb{width:44px}</code> · <code>overflow-wrap:anywhere</code> on the three title classes ·
+    one truncation constant with <code>…</code> · set <code>--gc</code> on <code>.gpx</code>.</td>
+    <td>F1-11, F3-5, F3-16, F1-8, F2-9</td></tr>
+</table>
+
+</div>

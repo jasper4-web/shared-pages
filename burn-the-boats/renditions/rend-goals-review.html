@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Goals tab — four audits, and what I'd change</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --blue:#7FB4FF; --tap:48px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#08070c;color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.028em;margin:0}
+
+.wrap{max-width:1240px;margin:0 auto;padding:44px 20px 90px}
+.lede{max-width:760px;margin-bottom:26px}
+.lede .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold);margin-bottom:12px}
+.lede h1{font-size:36px;line-height:1.08;margin-bottom:14px}
+.lede p{color:var(--dim);font-size:15px;margin:0 0 11px}
+.lede b{color:var(--ink)}
+
+.verdict{border-left:2px solid var(--gold);padding:2px 0 2px 16px;margin:22px 0 8px;max-width:790px}
+.verdict p{font-size:15px;color:var(--dim);line-height:1.6;margin:0 0 9px}
+.verdict p:last-child{margin:0}
+.verdict b{color:var(--ink)}
+
+.who{display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));gap:10px;max-width:1000px;margin:26px 0 8px}
+.wcard{border:1px solid var(--line2);border-radius:12px;background:var(--panel);padding:13px 14px}
+.wcard .n{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--gold);margin-bottom:6px}
+.wcard .t{font-size:14px;color:var(--ink);margin-bottom:5px;line-height:1.3}
+.wcard .s{font-size:12.5px;color:var(--faint);line-height:1.5}
+
+.sect{margin:62px 0 16px;max-width:820px}
+.sect .n{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--faint);margin-bottom:9px}
+.sect h2{font-size:27px;line-height:1.12;margin-bottom:11px}
+.sect p{color:var(--dim);font-size:14.5px;margin:0 0 10px;line-height:1.55}
+.sect p b{color:var(--ink)}
+
+.find{border:1px solid var(--line2);border-radius:13px;background:var(--panel);margin:0 0 12px;max-width:1000px;overflow:hidden}
+.find .fh{display:flex;align-items:center;gap:10px;padding:12px 15px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.find .sev{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;padding:5px 8px;border-radius:5px;flex:none}
+.sev.blocker{background:rgba(255,77,94,.14);color:var(--blood)}
+.sev.high{background:rgba(255,107,44,.14);color:var(--ember)}
+.sev.med{background:rgba(224,178,94,.14);color:var(--gold)}
+.sev.look{background:rgba(176,140,255,.16);color:var(--violet)}
+.find .id{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);flex:none}
+.find .ft{font-size:15px;color:var(--ink);line-height:1.3;flex:1;min-width:200px}
+.find .mine{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--phos);
+  border:1px solid rgba(74,222,128,.4);border-radius:5px;padding:5px 8px;flex:none}
+.find .fb{padding:13px 15px}
+.find .fb p{font-size:13.5px;color:var(--dim);line-height:1.6;margin:0 0 9px}
+.find .fb p:last-child{margin:0}
+.find .fb b{color:var(--ink)}
+.find .fb code{font-family:'Geist Mono',monospace;font-size:12.5px;color:var(--rune)}
+
+pre{font-family:'Geist Mono',monospace;font-size:12px;line-height:1.65;color:var(--dim);
+  background:#0a0910;border:1px solid var(--line);border-radius:10px;padding:12px 13px;margin:0 0 10px;
+  overflow-x:auto;white-space:pre}
+pre b{color:var(--phos)}
+pre i{color:var(--blood);font-style:normal}
+
+.row{display:flex;gap:20px;overflow-x:auto;padding-bottom:14px;align-items:flex-start;margin-top:6px}
+.col{flex:none;width:320px}
+.cap{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--faint);margin-bottom:9px}
+.cap.bad{color:var(--blood)}.cap.good{color:var(--phos)}
+.note{margin-top:10px;font-size:12.5px;line-height:1.55;color:var(--faint)}
+.note b{color:var(--dim)}
+
+.ph{width:320px;border:1px solid var(--line2);border-radius:26px;background:var(--bg);
+  padding:14px 13px 16px;box-shadow:0 24px 60px -30px #000;overflow:hidden}
+.hdr{display:flex;align-items:baseline;gap:9px;margin-bottom:11px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+.hdr b{font-family:'Clash Display',sans-serif;font-size:20px;letter-spacing:-.035em}
+.hdr span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint);margin-left:auto}
+.k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold);display:flex;
+  align-items:center;gap:7px;margin-bottom:8px}
+.s{font-size:12.5px;line-height:1.5;color:var(--faint)}
+.s.dim{color:var(--dim)}
+.warnbox{border:1px solid rgba(255,107,44,.45);border-radius:11px;background:rgba(255,107,44,.08);
+  padding:11px 12px;font-size:13px;color:#F0BE9A;line-height:1.5;margin-bottom:10px}
+.okbox{border:1px solid rgba(74,222,128,.35);border-radius:11px;background:rgba(74,222,128,.06);
+  padding:11px 12px;font-size:13px;color:var(--ink);line-height:1.5;margin-bottom:10px}
+.okbox u{display:block;text-decoration:none;color:var(--faint);font-size:12.5px;margin-top:5px}
+.cap2{display:flex;align-items:baseline;gap:8px;padding:11px 12px;border:1px solid var(--line);
+  border-radius:11px;background:var(--panel);margin-bottom:9px}
+.cap2 b{font-family:'Clash Display',sans-serif;font-size:19px}
+.cap2 span{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint)}
+.dayrow{display:flex;align-items:center;gap:8px;padding:8px 2px;border-bottom:1px solid rgba(255,255,255,.05)}
+.dayrow:last-child{border-bottom:0}
+.dayrow .d{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint);width:36px;flex:none}
+.dayrow .slots{display:flex;gap:5px;flex:1}
+.dayrow i{width:26px;height:26px;border-radius:6px;border:1px solid var(--line2);display:block}
+.dayrow i.on{border-color:rgba(224,178,94,.55);background:rgba(224,178,94,.16)}
+.dayrow i.done{border-color:rgba(74,222,128,.5);background:rgba(74,222,128,.14)}
+.btnx{display:flex;align-items:center;justify-content:center;width:100%;min-height:var(--tap);
+  border-radius:11px;padding:9px 11px;margin-top:9px;font-size:13.5px;font-weight:600;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204}
+.btnx.gh{background:transparent;border:1px solid var(--line2);color:var(--dim);font-weight:500}
+.daterow{display:flex;align-items:center;gap:9px;padding:10px 2px;min-height:var(--tap);
+  border-bottom:1px solid rgba(255,255,255,.05)}
+.daterow .nm{font-size:13.5px;color:var(--ink);flex:1;min-width:0}
+.daterow .dt{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);flex:none}
+.daterow .x{width:38px;height:38px;border-radius:8px;border:1px solid var(--line2);display:flex;
+  align-items:center;justify-content:center;color:var(--faint);font-size:13px;flex:none}
+.daterow .x.big{width:auto;min-height:var(--tap);padding:0 12px;font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.1em}
+.pick{display:flex;align-items:center;gap:8px;padding:10px 11px;min-height:var(--tap);border-radius:10px;
+  border:1px solid var(--line2);margin-bottom:6px;font-size:13.5px;color:var(--dim)}
+.pick.on{border-color:rgba(224,178,94,.5);background:rgba(224,178,94,.09);color:var(--ink)}
+.pick u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);text-decoration:none}
+
+.plan{border:1px solid var(--line2);border-radius:13px;background:var(--panel);max-width:1000px;overflow-x:auto}
+.plan table{width:100%;min-width:660px;border-collapse:collapse;font-size:13.5px}
+.plan th{text-align:left;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint);
+  padding:11px 13px;border-bottom:1px solid var(--line2);font-weight:400}
+.plan td{padding:12px 13px;border-bottom:1px solid var(--line);color:var(--dim);vertical-align:top}
+.plan tr:last-child td{border-bottom:0}
+.plan td b{color:var(--ink)}
+.plan td:first-child{font-family:'Geist Mono',monospace;font-size:11px;color:var(--gold);white-space:nowrap}
+
+.more{display:flex;flex-wrap:wrap;gap:8px;max-width:1000px;margin-top:8px}
+.mchip{border:1px solid var(--line2);border-radius:8px;padding:9px 11px;font-size:12.5px;color:var(--faint);
+  background:var(--panel)}
+.mchip b{color:var(--dim);font-family:'Geist Mono',monospace;font-size:11px;margin-right:6px}
+.lnk{display:inline-flex;align-items:center;min-height:var(--tap);padding:0 16px;margin-top:12px;
+  border:1px solid rgba(224,178,94,.45);border-radius:11px;color:var(--gold);text-decoration:none;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em}
+.hr{height:1px;background:var(--line);max-width:1000px;margin:52px 0 0}
+@media(max-width:700px){.wrap{padding:28px 14px 70px}.lede h1{font-size:27px}.sect h2{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="lede">
+  <div class="k">THE GOALS TAB · FOUR AUDITS · 44 FINDINGS · NOTHING CHANGED YET</div>
+  <h1>Three of these<br>destroy your work.<br>Start there.</h1>
+  <p>Four agents went through the goal experience — three on usability with different lenses, one
+     fresh on how it looks. They produced <b>44 findings and 112 screenshots</b>. I've read all of it,
+     cut what I couldn't stand behind, and <b>personally reproduced every one of the serious ones on the
+     live app</b> before putting it in front of you.</p>
+  <p>The headline: the screens are good. <b>The plumbing under three of them is not safe to live with</b>,
+     and one of those runs every morning at 08:30.</p>
+</div>
+
+<div class="who">
+  <div class="wcard"><div class="n">LENS 1</div><div class="t">First run &amp; adding</div>
+    <div class="s">Empty states, adding areas and goals, the December-goal rule. 11 findings, 33 shots.</div></div>
+  <div class="wcard"><div class="n">LENS 2</div><div class="t">The weekly loop</div>
+    <div class="s">Slotting goals, capacity, the week turning, the return path. 10 findings, 34 shots.</div></div>
+  <div class="wcard"><div class="n">LENS 3</div><div class="t">Changing, dates &amp; deletion</div>
+    <div class="s">Editing, dates, deleting, bad input, hunting a seventh vanish. 17 findings, 45 shots.</div></div>
+  <div class="wcard"><div class="n">LENS 4</div><div class="t">How it looks</div>
+    <div class="s">Fresh eyes, congruence with Today / Bank / Record. 10 points + a full redesign drawn.</div></div>
+</div>
+
+<div class="verdict">
+  <p><b>My verdict, having checked their work rather than relaying it.</b> The Goals tab is the newest
+     surface in the app and it shows in two different ways. Visually it never adopted the language the
+     other three tabs settled on — that's real but it's cosmetic, and lens 4 has already drawn the fix.</p>
+  <p>The serious problems are structural, and they share one cause: <b>the goal system was migrated to a
+     new commitment model and three older code paths were never brought across.</b> They still read and
+     write the abandoned data. That's why the damage is silent — every one of these looks like it worked.</p>
+</div>
+
+<!-- ═══════════ 1 · DESTRUCTIVE ═══════════ -->
+<div class="sect">
+  <div class="n">SECTION ONE · FIX THESE FIRST</div>
+  <h2>Three things that destroy or falsify your work</h2>
+  <p>I reproduced all three myself on the live app. The console output under each is from my run,
+     not from an agent's report.</p>
+</div>
+
+<div class="find">
+  <div class="fh"><span class="sev blocker">BLOCKER</span><span class="id">F2-1</span>
+    <span class="ft">The 08:30 ritual deletes every goal you put on today's blocks — and pays you 25 XP for it</span>
+    <span class="mine">I REPRODUCED THIS</span></div>
+  <div class="fb">
+    <pre>commits before opening the composer : <b>4</b>
+what the four pickers showed        : <i>NONE, NONE, NONE, NONE</i>
+commits after saving it             : <i>0</i>
+XP paid for doing that              : <b>+25</b></pre>
+    <p><b>The cause is a half-finished migration.</b> Line 2701 was deliberately added so the composer
+      writes real commitments — there's a comment explaining why. The <b>read</b> side, line 2672, was
+      never updated: it still pre-selects from the abandoned <code>d.goals</code> / <code>w.goals</code>
+      maps. So the goals you placed on THE WEEK are invisible to the pickers, all four default to NONE,
+      and saving writes <code>null</code> over every one of them.</p>
+    <p><b>Why it matters:</b> this is the 08:30 block. You do it every weekday. It silently erases the
+      planning you did on Sunday and then congratulates you.</p>
+  </div>
+</div>
+
+<div class="find">
+  <div class="fh"><span class="sev blocker">BLOCKER</span><span class="id">F2-2</span>
+    <span class="ft">Putting a goal on a day you've already lived instantly marks it done</span>
+    <span class="mine">I REPRODUCED THIS</span></div>
+  <div class="fb">
+    <pre>commit created on a day already lived
+  done flag at creation             : <i>1</i></pre>
+    <p>Every past slot in THE WEEK still reads <b>"Open — tap to commit it."</b> Taking that offer on a
+      Friday, for a Monday you already worked, creates a commitment that is <b>born complete</b> — it
+      counts as a finished block toward that goal and lifts the week's percentage. The agent reported
+      this happens on sync; it's actually stamped at creation, by <code>setCommit</code> itself.</p>
+    <p><b>Why it matters:</b> the number stops being true, and it's you who'd be quietly inflating it.
+      That breaks the forward-only rule — the past is supposed to be settled.</p>
+  </div>
+</div>
+
+<div class="find">
+  <div class="fh"><span class="sev high">HIGH</span><span class="id">F3-1</span>
+    <span class="ft">Moving a goal to another area re-scores days you already lived — and the score goes up</span>
+    <span class="mine">I REPRODUCED THIS</span></div>
+  <div class="fb">
+    <pre>lived days in the record : 25
+before moving the goal   : OVR 51 · WORK <b>55</b> · MIND 50
+after  moving the goal   : OVR 51 · WORK <i>56</i> · MIND 50</pre>
+    <p>A completed block freezes what it credited. A <b>missed</b> block never got that stamp, so
+      <code>blockDomains()</code> re-derives it live from the goal's <i>current</i> area. Move a goal
+      today and every past miss moves with it.</p>
+    <p><b>This one is sneaky.</b> It took me three attempts to reproduce: with two days of history the
+      curve rounds it away entirely. It only becomes visible once history accumulates — so it would have
+      surfaced in November, not now. The comment above that function says the author fixed exactly this;
+      they fixed it for work you did and left it open for work you didn't.</p>
+  </div>
+</div>
+
+<div class="hr"></div>
+
+<!-- ═══════════ 2 · WALL OF FAILURE ═══════════ -->
+<div class="sect">
+  <div class="n">SECTION TWO · YOUR RULE, BROKEN FOUR WAYS</div>
+  <h2>The app tells you what you're neglecting before you've had a chance to do anything</h2>
+  <p>The one rule everything else is subordinate to: <b>never render a wall of failure.</b> Four separate
+     screens break it — and none of them needs you to have made a mistake first. Nobody drew a fix for
+     these, so I did.</p>
+</div>
+<div class="row">
+  <div class="col"><div class="cap bad">NOW · MONDAY 09:20, AFTER A PERFECT WEEK</div>
+    <div class="ph">
+      <div class="hdr"><b>The Week</b><span>WK 06</span></div>
+      <div class="cap2"><b>0</b><span>of 20 committed</span><b style="margin-left:auto">20</b><span>still open</span></div>
+      <div class="warnbox">Nothing on SANO · Trading · LA Edible · Body · Faith this week.
+        Allowed — but make it a decision, not an accident.</div>
+      <div class="dayrow"><span class="d">MON</span><span class="slots"><i></i><i></i><i></i><i></i></span></div>
+      <div class="dayrow"><span class="d">TUE</span><span class="slots"><i></i><i></i><i></i><i></i></span></div>
+      <div class="dayrow"><span class="d">WED</span><span class="slots"><i></i><i></i><i></i><i></i></span></div>
+      <div class="btnx gh">+ Add a goal</div>
+    </div>
+    <div class="note">Every area you own, named, in amber — <b>as the reward for closing a week at 100%.</b>
+      The named areas aren't even tappable, and the screen's main button asks you to own <i>more</i> goals.</div>
+  </div>
+
+  <div class="col"><div class="cap good">PROPOSED · THE SAME MONDAY</div>
+    <div class="ph">
+      <div class="hdr"><b>The Week</b><span>WK 06</span></div>
+      <div class="cap2"><b>0</b><span>of 20 committed</span><b style="margin-left:auto">20</b><span>still open</span></div>
+      <div class="okbox">Last week closed at 100%. Nothing carried in.
+        <u>Twenty blocks, all yours. Put the first one down.</u></div>
+      <div class="dayrow"><span class="d">MON</span><span class="slots"><i></i><i></i><i></i><i></i></span></div>
+      <div class="dayrow"><span class="d">TUE</span><span class="slots"><i></i><i></i><i></i><i></i></span></div>
+      <div class="dayrow"><span class="d">WED</span><span class="slots"><i></i><i></i><i></i><i></i></span></div>
+      <div class="btnx">Put SANO on Monday B1</div>
+    </div>
+    <div class="note">The neglect line is <b>suppressed until the week is genuinely underway</b> — it
+      belongs on Wednesday, not Monday. And the button does the thing instead of asking for more goals.</div>
+  </div>
+
+  <div class="col"><div class="cap bad">NOW · COMING BACK AFTER TWO WEEKS AWAY</div>
+    <div class="ph">
+      <div class="hdr"><b>The Goals</b><span>DAY 51</span></div>
+      <div class="okbox" style="border-color:rgba(74,222,128,.3)">Nothing was lost. Here's what's still true.</div>
+      <div class="warnbox" style="margin-top:9px">SANO · <b>14 days since this moved</b></div>
+      <div class="warnbox">Trading · <b>14 days since this moved</b></div>
+      <div class="warnbox">Body · <b>21 days since this moved</b></div>
+      <div class="s" style="padding-top:4px">…and four more</div>
+    </div>
+    <div class="note">The return path says the right sentence and then <b>renders a column of decay
+      underneath it.</b> The promise and the screen disagree — and the screen is louder.</div>
+  </div>
+</div>
+
+<div class="hr"></div>
+
+<!-- ═══════════ 3 · DATES ═══════════ -->
+<div class="sect">
+  <div class="n">SECTION THREE · YOU ASKED ABOUT THIS BY NAME</div>
+  <h2>Dates</h2>
+  <p>You said "adding new dates, trying to delete dates." Here's the honest answer: <b>you can add one
+     and you can destroy one. You cannot change one.</b> And the destroy has no confirmation and no undo
+     — which makes deletion the only editing tool available.</p>
+</div>
+<div class="row">
+  <div class="col"><div class="cap bad">NOW · THE ONLY CONTROL IS ✕</div>
+    <div class="ph">
+      <div class="hdr"><b>Areas and dates</b><span>MANAGE</span></div>
+      <div class="daterow"><span class="nm">End of September</span><span class="dt">SEP 30</span>
+        <span class="x">✕</span></div>
+      <div class="daterow"><span class="nm">December</span><span class="dt">DEC 25</span>
+        <span class="x">✕</span></div>
+      <div class="daterow"><span class="nm">End of October</span><span class="dt">OCT 31</span>
+        <span class="x">✕</span></div>
+      <div class="btnx gh">+ New date</div>
+      <div class="s" style="padding-top:9px">Tapping ✕ removes it immediately. No question, no undo.</div>
+    </div>
+    <div class="note">A 38px target — <b>under the 48px floor the rest of the app holds</b> — that
+      permanently deletes a date. Typo in the name? Wrong day? Delete it and rebuild it.</div>
+  </div>
+
+  <div class="col"><div class="cap good">PROPOSED · A DATE IS EDITABLE</div>
+    <div class="ph">
+      <div class="hdr"><b>Areas and dates</b><span>MANAGE</span></div>
+      <div class="daterow"><span class="nm">End of September</span><span class="dt">SEP 30</span>
+        <span class="x big">EDIT</span></div>
+      <div class="daterow"><span class="nm">December</span><span class="dt">DEC 25</span>
+        <span class="x big">EDIT</span></div>
+      <div class="daterow"><span class="nm">End of October</span><span class="dt">OCT 31</span>
+        <span class="x big">EDIT</span></div>
+      <div class="btnx gh">+ New date</div>
+      <div class="s" style="padding-top:9px">The name and the day are both editable. Delete lives
+        inside, behind one confirmation that says what it will do.</div>
+    </div>
+    <div class="note">Same row, one honest control. <b>Deleting stops being the only way to fix a
+      typo</b>, and the tap target comes back up to the app's own floor.</div>
+  </div>
+
+  <div class="col"><div class="cap bad">AND "CARRY IT" IS A DEAD BUTTON</div>
+    <div class="ph">
+      <div class="hdr"><b>September ended</b><span>3 OVERDUE</span></div>
+      <div class="s dim" style="margin-bottom:10px">Three goals reached their date. What happens to each?</div>
+      <div class="pick on">Carry it to the next date<u>TAPPED ×10</u></div>
+      <div class="pick">Change it</div>
+      <div class="pick">Park it</div>
+      <div class="pick">Drop it</div>
+      <div class="warnbox" style="margin-top:10px">Toast says <b>"Carried"</b>. Count stays at 3.
+        The same sheet re-opens.</div>
+    </div>
+    <div class="note">With no later date to carry <i>to</i>, the button does nothing — but reports
+      success. <b>It re-asks forever</b>, and it's guaranteed to happen the moment your last date passes.</div>
+  </div>
+</div>
+
+<div class="hr"></div>
+
+<!-- ═══════════ 4 · LOOK ═══════════ -->
+<div class="sect">
+  <div class="n">SECTION FOUR · HOW IT LOOKS</div>
+  <h2>It doesn't look like it belongs in this app yet</h2>
+  <p>The fresh pair of eyes measured what the other three only felt. Today, Bank and Record all share
+     one discipline: <b>one thing is lit, everything else is grey, and a domain colour is a thin rule on
+     the edge of a neutral card.</b> Goals paints that palette around seven full-bleed cards — it measured
+     <b>eight accent-outlined elements, seven of them identical</b>, repeating the same kicker verbatim.
+     Nothing is lit, so nothing is first.</p>
+  <p>I checked its three structural claims in the source myself and all three hold:</p>
+</div>
+
+<div class="more">
+  <div class="mchip"><b>A1</b>The domain colour is a full outline here — a 3px left rule everywhere else</div>
+  <div class="mchip"><b>A2</b>The apex border is gold at <b>40%</b>; each December card sits at <b>100%</b> — tier 2 out-shouts tier 1</div>
+  <div class="mchip"><b>A2</b><code style="color:var(--rune)">.g2anc .t</code> is the app's only card headline in body font</div>
+  <div class="mchip"><b>A3</b>Gold means eight different things on this tab and three on Today</div>
+  <div class="mchip"><b>A5</b>The standard section header was re-implemented three times</div>
+</div>
+
+<div class="sect" style="margin-top:26px">
+  <p>Its redesign is drawn properly — before and after, four screens, and I've run it through my own
+     harness at 375 / 390 / 440 / 1280 and read the screenshots. <b>The single change it recommends is
+     the right one:</b> light the apex the way Today lights the live card, and quiet the seven December
+     cards to a left rule. One card lit, seven calmed — the page gets a top, and the three tiers become
+     readable with the text blurred out.</p>
+  <a class="lnk" href="rend-goals-aesthetic.html">OPEN THE FULL REDESIGN →</a>
+</div>
+
+<div class="hr"></div>
+
+<!-- ═══════════ ORDER ═══════════ -->
+<div class="sect">
+  <div class="n">WHAT I'D DO, IN THIS ORDER</div>
+  <h2>The plan</h2>
+  <p>Grouped so each stage is one coherent piece of work you can approve on its own.</p>
+</div>
+<div class="plan">
+<table>
+  <tr><th></th><th>WHAT</th><th>WHY THIS ORDER</th></tr>
+  <tr><td>STAGE 1</td>
+      <td><b>Stop the damage.</b> Make commitments the single source of truth for the 08:30 pickers ·
+          refuse a commit on a day already lived · freeze the domain on a missed block the way a
+          completed one is frozen.</td>
+      <td>These three are actively destroying and falsifying data every week. Nothing else matters
+          until they're closed. <b>All three are small — they're wiring, not design.</b></td></tr>
+  <tr><td>STAGE 2</td>
+      <td><b>Stop the accusations.</b> Hold the neglect line until the week is underway · let the return
+          path keep its promise · cap the month-end pile-up · make the Monday button place a block
+          instead of asking for more goals.</td>
+      <td>Your first rule. Four screens break it with no mistake required, and this is the class of
+          thing that made you stop opening the last version.</td></tr>
+  <tr><td>STAGE 3</td>
+      <td><b>Dates, properly.</b> Edit a date · confirm before destroying one · fix "carry it" when
+          there's nowhere to carry to · bring the ✕ up to 48px.</td>
+      <td>You raised it by name, and right now deletion is the only editing tool that exists.</td></tr>
+  <tr><td>STAGE 4</td>
+      <td><b>The look.</b> Lens 4's redesign — colour as a rule, one lit card, the three tiers legible,
+          the section header used instead of re-invented.</td>
+      <td>Already drawn and verified. It's a contained pass once the structure underneath is honest —
+          and it fixes nine of the usability findings on its own, because they were drawing problems
+          wearing a usability costume.</td></tr>
+  <tr><td>STAGE 5</td>
+      <td><b>The long tail.</b> The seventh vanish (a sticky view hides parked goals) · no way to plan
+          next week · "the one that matters" doing nothing · demoting an anchor · duplicate area
+          names · a bad number silently wiping a target.</td>
+      <td>Real, but none of them destroys anything or breaks a rule. Worth doing, worth doing last.</td></tr>
+</table>
+</div>
+
+<div class="sect" style="margin-top:34px">
+  <p><b>What I have not done:</b> changed a single line of the app. Nothing here is built.
+     I also threw out nothing of theirs silently — the four full reports and all 112 screenshots are on
+     disk under <code style="color:var(--rune)">agent-briefs/goals-ux-2026-07-28/</code> if you want to
+     go deeper on any one of them.</p>
+  <p><b>Tell me which stage to start with</b> — or say "all of stage 1" and I'll build, verify against
+     the live URL, and come back with it working.</p>
+</div>
+
+</div>
+</body>
+</html>
