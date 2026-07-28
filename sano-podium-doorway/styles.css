@@ -790,6 +790,38 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
 .cap:hover .cap-more{color:#4D9BFF}
 .cap-hint{text-align:center;margin-top:14px;font-size:13.5px;color:#7E90A1}
 
+/* --- the drawer. The 16 tiles were 950px of spec sheet sitting between the tier
+   switch and the app demo, so the app — the thing that actually sells — did not
+   appear until ~2,175px on a phone. They now collapse behind one bar. The live
+   count above it and the "16" badge carry the scale, so the breadth is still
+   stated even while the list is shut. No JS: a checkbox plus :has(), same as the
+   tier switch. --- */
+.caps-chk{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.drawer{margin-top:20px}
+.drw-bar{display:flex;align-items:center;gap:14px;cursor:pointer;max-width:520px;margin:0 auto;
+  padding:15px 18px;border-radius:16px;border:1.5px solid rgba(0,112,243,.45);
+  background:rgba(0,112,243,.10);transition:background .18s,border-color .18s}
+.drw-bar:hover{background:rgba(0,112,243,.18);border-color:#0070F3}
+.drw-n{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:12px;
+  background:rgba(0,112,243,.24);color:#8FC2FF;font-family:var(--disp);font-weight:700;font-size:19px}
+.drw-t{display:flex;flex-direction:column;gap:2px;text-align:left;flex:1 1 auto;min-width:0}
+.drw-t b{font-family:var(--disp);font-size:15.5px;color:#E8F1F8;font-weight:600;line-height:1.3}
+.drw-sub{font-style:normal;font-size:13px;color:#9FB0BF;line-height:1.4}
+.drw-shut{display:none}
+.drw-cv{flex:none;color:#8FC2FF;transition:transform .2s}
+.caps-chk:focus-visible + .drawer .drw-bar{outline:3px solid #4D9BFF;outline-offset:3px}
+.cap-band .cap-grid{display:none}
+.cap-band:has(.caps-chk:checked) .cap-grid{display:grid;margin-top:16px}
+.cap-band:has(.caps-chk:checked) .drw-cv{transform:rotate(180deg)}
+.cap-band:has(.caps-chk:checked) .drw-open{display:none}
+.cap-band:has(.caps-chk:checked) .drw-shut{display:block}
+/* Without :has() the drawer cannot work, so the board renders open and the bar is
+   removed — the same honest-degrade the tier switch already relies on. */
+@supports not (selector(:has(*))){
+  .cap-band .cap-grid{display:grid}
+  .drawer{display:none}
+}
+
 /* --- the sheet: bottom sheet on a phone, centred panel on a desktop --- */
 .cap-sheet{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:20px}
 .cap-radio:checked + .cap + .cap-sheet{display:flex}
