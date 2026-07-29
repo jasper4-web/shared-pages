@@ -699,6 +699,46 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
   font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.05em}
 .ndg:active{border-color:var(--violet);color:var(--violet)}
 
+/* ═══ D2 · EDITORIAL — his pick (2026-07-28): "we can go with D2 editorial."
+   Inside every SHEET, boxes die: choices are WORDS, the chosen word is inked and
+   underlined in the selection color; inputs are ruled lines, not wells; ghost
+   actions are quiet mono; the CTA speaks Clash. Page-level chrome (tabs, cards)
+   keeps its language — this is the control voice, applied where he types and picks. */
+#sheetA .chips .chip,#sheetA .chips4 .chip{border:0;background:none;border-radius:0;
+  min-height:44px;padding:0 6px;font-family:'Satoshi',sans-serif;font-size:15px;
+  letter-spacing:0;text-transform:none;color:var(--faint);position:relative}
+#sheetA .chips .chip.on,#sheetA .chips4 .chip.on{background:none;border:0;color:var(--ink)}
+#sheetA .chips .chip.on::after,#sheetA .chips4 .chip.on::after{content:'';position:absolute;
+  left:4px;right:4px;bottom:7px;height:2px;border-radius:2px;background:var(--violet)}
+#sheetA .chips{gap:2px 14px}
+#sheetA .chips4{gap:2px 6px}
+/* the emoji presets: same words, editorial frame — hairline rows, no boxes */
+#sheetA .pgrid{gap:0;border-top:1px solid var(--line);margin-top:10px}
+#sheetA .pgrid .chip{border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;
+  min-height:48px;justify-content:flex-start;font-family:'Satoshi',sans-serif;font-size:14px;
+  letter-spacing:0;text-transform:none;color:var(--dim)}
+/* inputs become ruled lines */
+#sheetA .fld input:not([type=time]){background:transparent;border:0;border-bottom:1px solid var(--line2);
+  border-radius:0;padding-left:2px;padding-right:2px}
+#sheetA .tmw{background:transparent;border:0;border-bottom:1px solid var(--line2);border-radius:0}
+#sheetA .ndg{border:0;background:none;color:var(--dim);font-size:13px}
+/* the CTA speaks Clash; ghosts go quiet mono */
+#sheetA .btn:not(.gh):not(.sm){font-family:'Clash Display',sans-serif;font-weight:600;
+  font-size:17px;letter-spacing:-.01em}
+#sheetA .btn.gh:not(.sm){background:none;border:0;color:var(--faint);
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:400}
+
+/* a working goal can be KNOCKED OUT in one tap — his loop: quick goals under the
+   December ones, cleared constantly. The ✓ never navigates; it finishes. */
+.g2sub{position:relative;padding-right:58px}
+.g2sub .ko{position:absolute;right:7px;top:50%;transform:translateY(-50%);
+  width:44px;height:44px;border-radius:11px;border:1.5px solid #362f47;background:none;
+  cursor:pointer;color:var(--faint);font-size:15px}
+.g2sub .ko:active{border-color:var(--phos);color:var(--phos)}
+/* a row that runs ALONGSIDE another (cleaning while the market runs) */
+.pdrow.pdin{margin-left:22px;width:calc(100% - 22px)}
+.pdrow.pdin .n u.al{color:var(--faint)}
+
 /* A reward's terms, on the reward. Pips, because a count you can see is a count you trust. */
 .rq{display:flex;flex-direction:column;gap:4px;margin:7px 0 6px}
 .rq-r{display:flex;align-items:center;gap:8px}
@@ -1167,6 +1207,8 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
   <!-- the widget (Phase 4): tap = log a good thing right now, ranked by the clock;
        the Bank stays one tap further -->
   <button id="extrasLine" class="extras-line" onclick="quickLog()"></button>
+  <!-- his call (2026-07-28): an evening door straight into tomorrow's planner -->
+  <button id="planTmr" class="extras-line" onclick="planTomorrow()" hidden></button>
 
   <div id="dayWrap" hidden>
     <h2 class="sec">Today <u id="schCount"></u></h2>
@@ -2806,6 +2848,24 @@ function renderExtrasLine(){
   el.innerHTML = tot
     ? `<span class="xl-x">+${xp}</span><span class="xl-n">also today · ${tot} thing${tot>1?'s':''}</span><span class="xl-go">→</span>`
     : `<span class="xl-n dim">The small stuff lives in the Bank</span><span class="xl-go">→</span>`;
+  /* the evening door — from 17:00, tomorrow is one tap away. Saturday evening's
+     tomorrow is the Sabbath, so it offers next week instead. */
+  const pt=$('planTmr');
+  if(pt){const evening=nowMin()>=17*60;
+    pt.hidden=!evening;
+    if(evening)pt.innerHTML=dow()===6
+      ?`<span class="xl-n">Set next week</span><span class="xl-go">→</span>`
+      :`<span class="xl-n">Plan tomorrow</span><span class="xl-go">→</span>`;}
+}
+function planTomorrow(){
+  G.meta.view='week';gsave();
+  if(dow()===6){WK_VIEW=1;go('push');return}
+  const t=new Date();t.setDate(t.getDate()+1);
+  const k=iso(t);
+  if(new Date(k+'T00:00:00').getDay()===0){WK_VIEW=1;go('push');return}  /* safety */
+  if(mondayOf(t)!==mondayOf(new Date()))WK_VIEW=1;
+  go('push');
+  setTimeout(()=>planDay(k),450);
 }
 function tapWin(k){
   const d=day(),w=winByK(k);
@@ -4033,6 +4093,16 @@ function g2Quiet(){
           font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em"
           onclick="g2Wake('${g.id}')">WAKE</button></div>`}).join('')}</div>`;
 }
+/* HIS LOOP, said plainly (2026-07-28): "for my overarching goals I'm setting goals for
+   December 25 and then I'm adding a bunch of goals that are much smaller under them so I
+   can knock out goals in mind of the main overarching goal." The tiers already hold that;
+   this makes the knock-out ONE TAP. It pays nothing — what a finished goal is WORTH is
+   the XP session's question, not this button's. */
+function g2Done(id){
+  const g=GM.goalOf(G,id);if(!g)return;
+  GM.setState(G,id,'done',dayNo(),'knocked out');
+  gsave();render();toast('Knocked out ✓','good');
+}
 function g2Wake(id){
   const g=GM.goalOf(G,id);if(!g)return;
   GM.setState(G,id,'active',dayNo(),'picked back up');
@@ -4191,6 +4261,7 @@ function g2Read(g,c){
   const h=g.horizonId?GM.horizonById(G,g.horizonId):null,p=GM.progress(g);
   const st=goalStats(g);
   return `<div class="g2sub" style="--c:${c}" onclick="g2Open('${g.id}')">
+    <button class="ko" aria-label="Knock it out" onclick="event.stopPropagation();g2Done('${g.id}')">✓</button>
     <div class="sb-t">${esc(g.title)}${g.anchor?' <b style="color:var(--gold)">ALSO A DECEMBER GOAL</b>':''}${
       GM.needsEarly(g)?' <b style="color:var(--gold)">NEEDS A DECISION</b>':''}</div>
     <div class="sb-m">${h?esc(h.label)+' · '+hzWhenH(h):'no date'}${
@@ -4490,23 +4561,31 @@ function planDay(date){
   const DAYFULL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dw];
   /* the numbers that describe the day, said once, up top */
   const deepM=rows.filter(b=>b.kind==='deep').reduce((a,b)=>a+mins(b.e)-mins(b.s),0);
-  let openM=0,gapN=0;
-  rows.forEach((b,i)=>{if(i){const g=mins(b.s)-mins(rows[i-1].e);if(g>=15){openM+=g;gapN++}}});
+  let openM=0,gapN=0;{let cur=null;
+  rows.forEach(b=>{if(cur!==null){const g=mins(b.s)-cur;if(g>=15){openM+=g;gapN++}}
+    cur=cur===null?mins(b.e):Math.max(cur,mins(b.e));});}
   const hrs=m=>m>=60?(m%60?`${Math.floor(m/60)}h ${m%60}m`:`${Math.floor(m/60)}h`):`${m}m`;
   /* rows and the AIR between them, interleaved — a gap is a thing you can tap */
-  let list='';
+  let list='';let cur=null;
   rows.forEach((b,i)=>{
-    if(i){const g=mins(b.s)-mins(rows[i-1].e);
-      if(g>=15)list+=`<button class="pdgap" onclick="planAdd('${date}','${rows[i-1].e}',${Math.min(g,120)})">
+    if(cur!==null){const g=mins(b.s)-cur;
+      const at=`${pad(Math.floor(cur/60))}:${pad(cur%60)}`;
+      if(g>=15)list+=`<button class="pdgap" onclick="planAdd('${date}','${at}',${Math.min(g,120)})">
         + fill this ${hrs(g)} opening</button>`;}
+    cur=cur===null?mins(b.e):Math.max(cur,mins(b.e));
+    /* a row wholly inside another runs ALONGSIDE it — two things in one slot is a
+       feature, not a conflict (his call: clean while the market runs) */
+    const host=rows.find(x=>x!==b&&mins(x.s)<=mins(b.s)&&mins(x.e)>=mins(b.e)&&
+      (mins(x.e)-mins(x.s))>(mins(b.e)-mins(b.s)));
     const len=mins(b.e)-mins(b.s),deep=b.kind==='deep';
     /* uniform rows — the GAPS carry the feel of time, the rows carry the facts.
        (Proportional heights were tried and judged: mostly-similar heights plus one
        tall void read as inconsistency, not scale.) */
-    list+=`<button class="pdrow${deep?' deep':''}" style="--c:${domColour((b.dom||[])[0])}"
+    list+=`<button class="pdrow${deep?' deep':''}${host?' pdin':''}" style="--c:${domColour((b.dom||[])[0])}"
         onclick="planRow('${date}',${i})">
       <span class="t">${b.s}<b>${b.e}</b></span>
-      <span class="n">${esc(b.n)}${deep?`<u class="pdtag">◆ SACRED</u>`:''}</span>
+      <span class="n">${esc(b.n)}${deep?`<u class="pdtag">◆ SACRED</u>`:''}${
+        host?`<u class="al">alongside ${esc(host.n)}</u>`:''}</span>
       <span class="len">${len}m</span>
     </button>`;
   });
@@ -4577,11 +4656,11 @@ function prEcho(){
   const m=mins(sEl.value||'06:00')+Math.max(5,Math.min(600,Math.round(Number(lEl.value)||30)));
   out.textContent=`${pad(Math.floor(m/60)%24)}:${pad(m%60)}`;
 }
-/* structure bends: an overlap is allowed, but it is never silent */
-function planOverlapWarn(date,s,e,skipId){
+/* two things in one slot is a FEATURE (clean while the market runs) — the app just
+   says so out loud instead of calling it a conflict */
+function planAlongside(date,s,e,skipId){
   const rows=shape(date);
-  const hit=rows.find(b=>b.id!==skipId&&mins(s)<mins(b.e)&&mins(e)>mins(b.s));
-  if(hit)toast(`Heads up — overlaps ${hit.n}`,'bad');
+  return rows.find(b=>b.id!==skipId&&mins(s)<mins(b.e)&&mins(e)>mins(b.s))||null;
 }
 function planRowSave(date,i){
   const rows=planRows(date),b=rows[i];if(!b)return;
@@ -4591,7 +4670,8 @@ function planRowSave(date,i){
   const e=(m=>`${pad(Math.floor(m/60)%24)}:${pad(m%60)}`)(mins(s)+len);
   Object.assign(b,{n,s,e});
   planWrite(date,rows);closeSheet();
-  planOverlapWarn(date,s,e,b.id);
+  const al=planAlongside(date,s,e,b.id);
+  if(al)toast(`Moved — runs alongside ${al.n}`,'good');
   planDay(date);
 }
 function planRowDrop(date,i){
@@ -4655,13 +4735,14 @@ function planAddSave(date){
   const rows=planRows(date),nid='p'+Date.now().toString(36);
   rows.push({id:nid,s,e,n,dom:['MIND'],kind:'plan'});
   planWrite(date,rows);
-  planOverlapWarn(date,s,e,nid);
+  const al=planAlongside(date,s,e,nid);
+  PA.al=al?al.n:null;
   /* "make it count" — HIS idea: the thing he just planned can join Always counts.
      Creating a def pays nothing; the tap pays, later, like every win. */
   if(PA.count&&!S.winDefs.some(w=>!w.arc&&w.n.toLowerCase()===n.toLowerCase())){
     S.winDefs.push({k:'w'+Date.now().toString(36),n,xp:15,dom:'MIND'});save();
-    toast(`On the day — and "${n}" counts now (+15 when you log it)`,'good');
-  }else toast('On the day','good');
+    toast(`On the day${PA.al?` alongside ${PA.al}`:''} — and "${n}" counts now (+15 when you log it)`,'good');
+  }else toast(PA.al?`On the day — alongside ${PA.al}`:'On the day','good');
   closeSheet();planDay(date);
 }
 function planReset(date){
