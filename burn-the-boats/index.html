@@ -1459,6 +1459,11 @@ if(S.xp>0&&!S.ledger.length){const _d=new Date(),_p=n=>String(n).padStart(2,'0')
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,'0');
 const mins=t=>{const[h,m]=t.split(':').map(Number);return h*60+m};
+/* his call (2026-07-28): no military time ON SCREEN. Storage, stamps and math stay
+   24h; this is the one door every displayed clock walks through. */
+const t12=t=>{if(!t||!/^\d{1,2}:\d{2}$/.test(t))return t;
+  const[h,m]=t.split(':').map(Number);const hh=h%12||12;
+  return `${hh}:${pad(m)}${h>=12?'p':'a'}`};
 const nowMin=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()};
 const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const today=()=>iso(new Date());
@@ -2581,14 +2586,14 @@ function renderNext(){
   const title=(b.kind==='deep'&&t)?t:esc(b.n)+(biz?' · '+esc(biz):'');
   const sub=(b.kind==='deep')
     ? (t?esc(b.n)+(biz?' · '+esc(biz):'')+' · deep work'
-        :'<span class="nu-em">No objective set — write it at 08:30</span>')
+        :'<span class="nu-em">No objective set — write it at 8:30a</span>')
     : esc(b.sub||b.dom.join(' + '));
   const kick=state==='done'?'Done':state==='missed'?'Passed':state==='waiting'?'Held'
             :live?'Now':'Next up';
   const sm=seams();
   el.innerHTML=`${sm.before}
     <div class="nu-k">${live&&state==='live'?'<i></i>':''}<span>${kick}</span>${quotaChip(spec.quota)}
-      <u>${b.s}–${b.e} · ${mins(b.e)-mins(b.s)}m</u></div>
+      <u>${t12(b.s)}–${t12(b.e)} · ${mins(b.e)-mins(b.s)}m</u></div>
     <div class="nu-t">${b.kind==='deep'&&t?esc(t):title}</div>
     <div class="nu-obj">${sub}</div>
     ${goalStrip(b)}
@@ -2644,7 +2649,7 @@ function seamLine(b,dir){
             :past?'':'<span class="sm-ahead">'+(mins(b.e)-mins(b.s))+'m</span>';
   return `<button class="seam ${dir}${done?' done':''}${past&&!done?' past':''}"
     onclick="openBlk('${b.id}')" aria-label="${dir==='before'?'Before this':'After this'}: ${esc(b.n)}">
-    <span class="sm-t">${b.s}</span><span class="sm-n">${name}</span>${mark}</button>`;
+    <span class="sm-t">${t12(b.s)}</span><span class="sm-n">${name}</span>${mark}</button>`;
 }
 /* the item either side of whatever the card is showing */
 function seams(){
@@ -2710,7 +2715,7 @@ function renderSched(){
         +(isWait?' wait':'')+(isNow?' now':'')+(past&&!isDone&&!isNow?' past':'');
       el.onclick=()=>openBlk(b.id);
       el.innerHTML=`<span class="dom" style="background:${dm.c};opacity:${isDone?.8:.32}"></span>
-        <span class="bt">${b.s}</span>
+        <span class="bt">${t12(b.s)}</span>
         <div><div class="bn">${b.kind==='deep'&&t?esc(t):esc(b.n)+(biz?' · '+esc(biz):'')}</div>
         ${b.kind==='deep'
           ?`<div class="bo ${t?'':'empty'}">${t?esc(b.n)+(biz?' · '+esc(biz):''):'no objective set'}</div>`
@@ -3103,7 +3108,7 @@ function openComposer(mode){
   S._composeFor=key;S._composeMode=mode||'';
   const d=day(key),w=week(),carry=mode==='carry'?lastPrio():null;
   const slots=[['b1','Block 1 · 09:00'],['b2','Block 2 · 10:45'],['b3','Block 3 · 13:20'],['b4','Block 4 · 15:05']];
-  sheet(`<div class="sh-k">${mode==='monday'?'SATURDAY · SETTING MONDAY UP':'08:30 · THE COFFEE SHOP'}</div>
+  sheet(`<div class="sh-k">${mode==='monday'?'SATURDAY · SETTING MONDAY UP':'8:30a · THE COFFEE SHOP'}</div>
     <div class="sh-t">${mode==='monday'?"Monday's three":"Today's three"}</div>
     <div class="sh-sub">${carry?'PRE-FILLED FROM YOUR LAST SET — EDIT WHAT CHANGED':'WRITE THEM ONCE — THEY FILL THE DAY'}</div>
     ${slots.map(([k,lab],i)=>`<div class="fld"><label>${lab}</label>
@@ -3203,7 +3208,7 @@ function openBlk(id){
      back to the WIG so the line is never empty */
   const d=day(),t=tacticFor(b),biz=bizFor(b),g=blkGoal2(b);
   sheet(`
-    <div class="sh-k">${b.s} – ${b.e} · ${mins(b.e)-mins(b.s)} MIN</div>
+    <div class="sh-k">${t12(b.s)} – ${t12(b.e)} · ${mins(b.e)-mins(b.s)} MIN</div>
     <div class="sh-t">${esc(b.n)}${biz?' · '+esc(biz):''}</div>
     <div class="sh-sub">${b.dom.map(k=>DOMAINS.find(x=>x.k===k).label).join('  +  ')}</div>
     ${b.kind==='deep'?`<div class="fld"><label>What this block produces</label>
@@ -3563,7 +3568,7 @@ function nudgeCheck(){
   const key=today()+(b?b.id:'');
   if(b&&key!==lastNudge&&document.hidden){
     lastNudge=key;
-    notify('You burned the boats.', `${b.n} started at ${b.s}. ${tacticFor(b)||''}`);
+    notify('You burned the boats.', `${b.n} started at ${t12(b.s)}. ${tacticFor(b)||''}`);
   }
 }
 
@@ -4230,7 +4235,7 @@ function apexSeam(){
     return `<div class="sm"><span>FIRST</span><em style="color:var(--faint)">Nothing is first yet</em></div>
       <button class="btn gh apb" onclick="g2PickWig()">Choose the one that matters</button>`;
   }
-  const where=slot?`${DAY_NAMES[slot.d]} · ${slot.bid.toUpperCase()} · ${slot.blk.s||''}`:null;
+  const where=slot?`${DAY_NAMES[slot.d]} · ${slot.bid.toUpperCase()} · ${slot.blk.s?t12(slot.blk.s):''}`:null;
   return `<div class="sm"><span>FIRST</span><em>${esc(w.title)}</em></div>
     <div class="sm"><span>NEXT OPEN</span><em style="color:var(--faint)">${
       where||'Every block this week is spoken for'}</em></div>
@@ -4577,7 +4582,7 @@ function g2Week(){
         ${g?`style="--c:${domColour((a||{}).domain)}"`:''}
         onclick="${past?`g2Past(${d})`:`g2Slot('${wk}',${d},'${bid}')`}">
         ${g?'<span class="dom"></span>':''}
-        <span class="sk">${bid.toUpperCase()}<u>${blk?blk.s:''}</u></span>
+        <span class="sk">${bid.toUpperCase()}<u>${blk?t12(blk.s):''}</u></span>
         <span class="sg">${g?esc(g.title):past?'<i>Nothing was on this one</i>':'<i>Open — tap to commit it</i>'}</span>
         ${g&&c.carried?`<span class="sa">CARRIED ${c.carried}×</span>`:''}
         ${g?`<span class="bc"></span>`:''}</button>`;
@@ -4632,7 +4637,7 @@ function planDay(date){
   const subRow=(b,j)=>{const len=mins(b.e)-mins(b.s),g=rowGoalOf(date,b);
     return `<button class="pdsub" style="--c:${domColour((b.dom||[])[0])}"
         onclick="event.stopPropagation();planRow('${date}',${j})">
-      <span class="t">${b.s}<b>${b.e}</b></span>
+      <span class="t">${t12(b.s)}<b>${t12(b.e)}</b></span>
       <span class="n">${esc(b.n)}<span class="al">runs alongside${g?` · → ${esc(cut(g.title,18))}`:''}</span></span>
       <span class="len">${len}m</span>
     </button>`};
@@ -4649,7 +4654,7 @@ function planDay(date){
     const len=mins(b.e)-mins(b.s),deep=b.kind==='deep';
     list+=`<div class="pdrow${deep?' deep':''}${kids.length?' pdhost':''}" style="--c:${domColour((b.dom||[])[0])}"
         onclick="planRow('${date}',${i})">
-      <span class="t">${b.s}<b>${b.e}</b></span>
+      <span class="t">${t12(b.s)}<b>${t12(b.e)}</b></span>
       <span class="n">${esc(b.n)}${(()=>{const g=rowGoalOf(date,b);
         return deep?`<u class="pdtag">◆ SACRED${g?` · ${esc(cut(g.title,18)).toUpperCase()}`:''}</u>`
           :(g?`<u class="al" style="display:block;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint);margin-top:3px">→ ${esc(cut(g.title,22))}</u>`:'')})()}</span>
@@ -4660,7 +4665,7 @@ function planDay(date){
   sheet(`<div class="sh-k">${label} · ${date.slice(5)}${own?' · ITS OWN PLAN':' · YOUR NORMAL '+(dw===6?'SATURDAY':'DAY')}</div>
     <div class="sh-t">${DAYFULL}.</div>
     <div class="pd-stats"><span><i class="dm" style="font-style:normal">◆</i> <b>${hrs(deepM)}</b> DEEP</span><span><b>${
-      gapN?hrs(openM):'NOTHING'}</b> OPEN</span><span>ENDS <b>${rows.length?rows[rows.length-1].e:'—'}</b></span></div>
+      gapN?hrs(openM):'NOTHING'}</b> OPEN</span><span>ENDS <b>${rows.length?t12(rows[rows.length-1].e):'—'}</b></span></div>
     <div class="pd">${list}</div>
     <button class="btn gh" style="margin-top:4px" onclick="planAdd('${date}')">+ Add to the evening</button>
     ${own?`<button class="btn gh" style="margin-top:8px" onclick="planReset('${date}')">Back to my normal ${dw===6?'Saturday':'day'}</button>`:''}
@@ -4735,15 +4740,15 @@ function planRow(date,i){
   const rg=rowGoalOf(date,b);PRG=rg?rg.id:null;
   sheet(`<div class="sh-k" style="padding-left:9px;border-left:3px solid ${c}">${
       esc(b.n).toUpperCase()}${deep?' <span class="pdtag">· ◆ SACRED</span>':''}</div>
-    <div class="sh-t">${b.s} – <span id="prEnd">${b.e}</span></div>
+    <div class="sh-t">${t12(b.s)} – <span id="prEnd">${t12(b.e)}</span></div>
     <div class="sh-sub">${deep?'MOVE IT, RENAME IT — IT STAYS ON THE DAY':len+'M · YOURS ENTIRELY'}</div>
     <div class="fld" style="margin-top:14px"><label>What</label>
       <input id="prN" maxlength="48" value="${esc(b.n)}"></div>
     <div class="fld"><label>Starts</label>
       <div class="ndgrow">
         <button class="ndg" onclick="ndg(-15)">−15</button>
-        <div class="tmw"><span id="prSd">${b.s}</span>
-          <input id="prS" type="time" value="${b.s}" onchange="$('prSd').textContent=this.value"></div>
+        <div class="tmw"><span id="prSd">${t12(b.s)}</span>
+          <input id="prS" type="time" value="${b.s}" onchange="$('prSd').textContent=t12(this.value)"></div>
         <button class="ndg" onclick="ndg(15)">+15</button>
       </div></div>
     <div class="fld"><label>How long</label>
@@ -4769,7 +4774,7 @@ function ndg(d,w){
   const el=$(w+'S');if(!el||!el.value)return;
   const m=Math.max(0,Math.min(23*60+45,mins(el.value)+d));
   el.value=`${pad(Math.floor(m/60))}:${pad(m%60)}`;
-  const disp=$(w+'Sd');if(disp)disp.textContent=el.value;
+  const disp=$(w+'Sd');if(disp)disp.textContent=t12(el.value);
   if(w==='pr')prEcho();
 }
 function prPick(el){
@@ -4779,7 +4784,7 @@ function prPick(el){
 function prEcho(){
   const sEl=$('prS'),lEl=$('prL'),out=$('prEnd');if(!sEl||!lEl||!out)return;
   const m=mins(sEl.value||'06:00')+Math.max(5,Math.min(600,Math.round(Number(lEl.value)||30)));
-  out.textContent=`${pad(Math.floor(m/60)%24)}:${pad(m%60)}`;
+  out.textContent=t12(`${pad(Math.floor(m/60)%24)}:${pad(m%60)}`);
 }
 /* two things in one slot is a FEATURE (clean while the market runs) — the app just
    says so out loud instead of calling it a conflict */
@@ -4830,7 +4835,7 @@ function planAdd(date,s,len){
   /* tapped from a GAP, the sheet arrives already aimed at it */
   const aimed=!!s;
   const fit=[120,90,75,60,45,30,15].find(m=>m<=(len||45))||15;
-  sheet(`<div class="sh-k">${aimed?`THE ${s} OPENING · ${len}M FREE`:`ADD TO ${date.slice(5)}`}</div>
+  sheet(`<div class="sh-k">${aimed?`THE ${t12(s)} OPENING · ${len}M FREE`:`ADD TO ${date.slice(5)}`}</div>
     <div class="sh-t">What else is that day for?</div>
     <div class="sh-sub">ANYTHING. IT GOES ON THE DAY AND PAYS NOTHING.</div>
     <div class="fld" style="margin-top:12px"><label>What</label>
@@ -4842,8 +4847,8 @@ function planAdd(date,s,len){
     <div class="fld" style="margin-top:10px"><label>Starts</label>
       <div class="ndgrow">
         <button class="ndg" onclick="ndg(-15,'pa')">−15</button>
-        <div class="tmw"><span id="paSd">${s||'17:30'}</span>
-          <input id="paS" type="time" value="${s||'17:30'}" onchange="$('paSd').textContent=this.value"></div>
+        <div class="tmw"><span id="paSd">${t12(s||'17:30')}</span>
+          <input id="paS" type="time" value="${s||'17:30'}" onchange="$('paSd').textContent=t12(this.value)"></div>
         <button class="ndg" onclick="ndg(15,'pa')">+15</button>
       </div></div>
     <div class="fld"><label>How long</label>
