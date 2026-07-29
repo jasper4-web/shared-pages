@@ -823,6 +823,9 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
   font-size:11px;letter-spacing:.14em;color:var(--faint)}
 .ovrpeek b{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;color:var(--ink)}
 .ovrpeek u{margin-left:auto;text-decoration:none;color:var(--gold)}
+.ovrpeek .pace{display:block;margin-top:3px;font-size:11px;color:var(--faint)}
+.ovrpeek .pace b{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em}
+.ovrpeek .pace .good{color:var(--phos)}.ovrpeek .pace .warn{color:var(--gold)}.ovrpeek .pace .bad{color:var(--blood)}
 body.glanceOpen .ovrpeek{border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0}
 .glance{display:none}
 body.glanceOpen .glance{display:block}
@@ -1397,6 +1400,7 @@ const DEFAULT={
   /* FUNERAL 2026-07-28: the `december` seed is buried — that model was replaced by the
      Goals tab (btb4) in July. An OLD save still carrying S.december keeps it in storage,
      and importFromOld() still reads it from there; a fresh install starts without it. */
+  gradAsked:{},
   vices:{
     dish:{label:'THE DISHWASHER', mode:'weekly', allow:1, week:0, weekKey:null,
           streak:0, streakBest:0, lastSlip:null, slips:0, hist:{}, ch:null, chDone:{}, chLapsed:null},
@@ -1543,9 +1547,10 @@ function merge(base,over){
 /* merge() replaces arrays wholesale, so a save made before the Vault shipped keeps the
    old four-reward ladder forever. Upgrade it — but only if he never edited it himself. */
 function migrate(s){
-  if(s.v>=6)return s;
-  if(s.v>=5){migrateCoffee(s);s.v=6;return s}
-  if(s.v>=4){migrateBoosts(s);migrateCoffee(s);s.v=6;return s}
+  if(s.v>=7)return s;
+  if(s.v>=6){migrateStandards(s);s.v=7;return s}
+  if(s.v>=5){migrateCoffee(s);migrateStandards(s);s.v=7;return s}
+  if(s.v>=4){migrateBoosts(s);migrateCoffee(s);migrateStandards(s);s.v=7;return s}
   const OLD=[1200,1500,2000,2500];
   const untouched=Array.isArray(s.rewards)&&s.rewards.length===OLD.length&&
     s.rewards.every((r,i)=>r.cost===OLD[i]&&!r.done);
@@ -1564,8 +1569,21 @@ function migrate(s){
     s.conf.personal=s.conf.body;delete s.conf.body}
   migrateBoosts(s);
   migrateCoffee(s);
-  s.v=6;
+  migrateStandards(s);
+  s.v=7;
   return s;
+}
+/* XP SESSION PHASE 1 (2026-07-29): standards get a lifetime. A live def has one open
+   span since forever (exactly what the old engine assumed); an ALREADY-archived def
+   gets spans:[] — grandfathered fully-excluded, exactly as it scored before this fix,
+   so no old save's number moves on update. gradAsked = habits he declined to make
+   standards; the graduation offer fires once per habit, ever. */
+function migrateStandards(s){
+  (s.quotaDefs||[]).forEach(q=>{
+    if(!q.spans)q.spans=q.arc?[]:[{from:'0000-00-00'}];
+    if(!q.hist)q.hist=[{from:'0000-00-00',n:q.n}];
+  });
+  s.gradAsked=s.gradAsked||{};
 }
 /* FUNERAL 2026-07-29: the 08:30 composer is buried. The coffee block keeps its slot
    and its price; the old seed name promised an interview that no longer exists, so a
@@ -1776,6 +1794,48 @@ const winsAll=()=>S.winDefs.filter(w=>!w.arc);      /* what shows */
 const winByK=k=>S.winDefs.find(w=>w.k===k)||null;   /* what resolves — archived included,
                                                        so old records keep their labels */
 const quotasAll=()=>S.quotaDefs.filter(q=>!q.arc);
+/* ═══ FORWARD-ONLY STANDARDS (the retro-trap fix, XP session 2026-07-29) ═══════
+   The engine used to apply TODAY'S standards to every past week — committing to a
+   new habit in week 10 marked weeks 1–9 failures at it and visibly DROPPED the
+   score. Now a standard carries its own lifetime: spans (when it was live) and
+   hist (what its count was, when). A week is scored by what was true THAT week.
+   Pre-fix archived standards keep their old exclusion (spans:[]) — grandfathered,
+   so no old save re-scores on update. */
+function qActiveIn(q,wk){
+  const sp=q.spans||(q.arc?[]:[{from:'0000-00-00'}]);
+  return sp.some(s=>s.from<=wk&&(!s.until||wk<s.until));
+}
+function qNAt(q,wk){
+  const h=q.hist||[{from:'0000-00-00',n:q.n}];
+  let n=0;h.forEach(e=>{if(e.from<=wk)n=e.n});
+  return n;
+}
+/* Every change lands on the NEXT Monday, never mid-week. A standard added on a
+   Tuesday must not make Tuesday's week owe something it never promised (the number
+   would dip — the first law), and one retired on a Thursday finishes its week
+   honestly before it stops being owed. q.n updates at once for the UI; the ENGINE
+   reads hist/spans, which only ever speak in whole weeks. */
+function nextWeekKey(){const d=new Date(weekKeyNow()+'T00:00:00');d.setDate(d.getDate()+7);return iso(d)}
+function qHistSet(q,n){
+  const at=nextWeekKey();
+  q.hist=q.hist||[{from:'0000-00-00',n:q.n}];
+  const last=q.hist[q.hist.length-1];
+  if(last.from===at)last.n=n;else q.hist.push({from:at,n});
+  q.n=n;
+}
+function qRetire(q){
+  const at=nextWeekKey();
+  q.spans=q.spans||[{from:'0000-00-00'}];
+  const open=q.spans.find(s=>!s.until);
+  /* retired before it ever started counting → the span nets out to nothing */
+  if(open){if(open.from>=at)q.spans.splice(q.spans.indexOf(open),1);else open.until=at}
+  q.arc=1;
+}
+function qRevive(q,n){
+  q.spans=q.spans||[];
+  if(!q.spans.some(s=>!s.until))q.spans.push({from:nextWeekKey()});
+  q.arc=0;qHistSet(q,n);
+}
 
 /* Freeze what a block credited, the moment it is completed. Called from every
    place that sets d.done[...] = true. */
@@ -1841,15 +1901,19 @@ function domainProgress(){
       });
     });
 
-    /* quotas: count the week's hits against its target, once */
-    quotasAll().forEach(q=>{
+    /* quotas: count the week's hits against the target THAT WEEK HAD — forward-only.
+       All defs walk here, archived included: a retired standard keeps the credit it
+       earned while it was live, and a new one can never accuse the past. */
+    S.quotaDefs.forEach(q=>{
+      if(!qActiveIn(q,wk))return;
+      const qn=qNAt(q,wk);if(!qn)return;
       let hits=0;
       weeks[wk].forEach(k=>{
         const rec=S.days[k]; if(!rec||rec.off)return;
         if(q.src==='block'? rec.done[q.id] : (rec.wins&&rec.wins[q.id])) hits++;
       });
-      avail[q.dom]+=q.n;
-      earned[q.dom]+=Math.min(q.n,hits);
+      avail[q.dom]+=qn;
+      earned[q.dom]+=Math.min(qn,hits);
     });
 
     DOMAINS.forEach(d=>{
@@ -2397,7 +2461,15 @@ function toggleGlance(){glanceOpen=!glanceOpen;
   document.body.classList.toggle('glanceOpen',glanceOpen);renderGlance()}
 function renderGlance(){
   const o=ovr(),pr=projection();
-  $('ovrPeek').innerHTML=`<b>${o}</b><span>OVERALL · GAP TO HIM ${Math.max(0,HIM-o)}</span>`+
+  /* XP SESSION 2026-07-29: the pace date comes OUT from behind the door — the
+     "sooner" lever lives on the front page now, always visible, never a lecture. */
+  const pace=pr.date
+    ?(()=>{const y=pr.date.getFullYear(),md=pr.date.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      const cls=pr.date<=new Date(iso(RUN_LAST)+'T23:59:59')?'good'
+               :pr.date.getTime()<=new Date(iso(RUN_LAST)+'T23:59:59').getTime()+21*864e5?'warn':'bad';
+      return `<span class="pace">AT THIS PACE · 99 ON <b class="${cls}">${md}${y>2026?" '"+String(y).slice(2):''}</b></span>`})()
+    :`<span class="pace">99 BY DEC 25 — TODAY STARTS THE CLIMB</span>`;
+  $('ovrPeek').innerHTML=`<b>${o}</b><span>OVERALL · GAP TO HIM ${Math.max(0,HIM-o)}${pace}</span>`+
     `<u>${glanceOpen?'HIDE':'SEE THE RUN ▸'}</u>`;
   if(!glanceOpen)return;
   _renderGlanceFull();
@@ -2838,7 +2910,7 @@ function saveWin(k){
 function dropWin(k){
   const w=winByK(k);if(!w)return;
   w.arc=1;                             /* archived, never deleted — day records still resolve */
-  S.quotaDefs.forEach(q=>{if(q.src==='win'&&q.id===k)q.arc=1});   /* its standard retires with it */
+  S.quotaDefs.forEach(q=>{if(q.src==='win'&&q.id===k&&!q.arc)qRetire(q)});   /* its standard retires with it, credit kept */
   save();closeSheet();render();toast('Removed','bad');
 }
 /* the weekly standards: one row each, tap cycles the count 1..7 then retires it */
@@ -2856,8 +2928,8 @@ function standardsList(){
 }
 function qBump(src,id){
   const q=S.quotaDefs.find(x=>x.src===src&&x.id===id&&!x.arc);if(!q)return;
-  if(q.n>=7){q.arc=1;toast('Standard retired — the thing still counts, it just isn\'t owed','bad')}
-  else{q.n++;toast(`${quotaLabel(q)} · ${q.n}× a week`,'good')}
+  if(q.n>=7){qRetire(q);toast('Standard retired — the thing still counts, it just isn\'t owed','bad')}
+  else{qHistSet(q,q.n+1);toast(`${quotaLabel(q)} · ${q.n}× a week`,'good')}
   save();render();
 }
 function addStandard(){
@@ -2871,12 +2943,15 @@ function addStandard(){
       `<button class="chip tap seg" onclick="saveStandard('${o.src}','${o.id}')">${esc(o.label)}</button>`).join('')}
     </div>`);
 }
-function saveStandard(src,id){
+function saveStandard(src,id,n){
+  n=n||3;
   const w=src==='win'?winByK(id):null;
   const dom=w?w.dom:(id==='gym'?'BODY':id==='bible'?'FAITH':'MIND');
   const old=S.quotaDefs.find(x=>x.src===src&&x.id===id);
-  if(old){old.arc=0;old.n=3}else S.quotaDefs.push({src,id,dom,n:3});
-  save();closeSheet();render();toast(quotaLabel({src,id})+' · 3× a week','good');
+  /* it starts counting MONDAY — this week owes nothing it never promised */
+  if(old)qRevive(old,n);
+  else S.quotaDefs.push({src,id,dom,n,spans:[{from:nextWeekKey()}],hist:[{from:nextWeekKey(),n}]});
+  save();closeSheet();render();toast(quotaLabel({src,id})+` · ${n}× a week — feeds the 99 from Monday`,'good');
 }
 /* The single trace the two sections leave on Today: a total that only ever goes up, and a
    door to where they now live. Never a count of what he hasn't done. */
@@ -2938,6 +3013,16 @@ function planTomorrow(){
   go('push');
   setTimeout(()=>planDay(k),450);
 }
+/* ═══ THE ADDED POOL (XP session, his call routed through me, 2026-07-29) ══════
+   Boosts + wins + quick-logs share ONE 250/day ceiling. Planned work is never
+   capped, so a strong day still runs ~445 and the Bank ladder never re-prices.
+   When the pool is full the thing STILL COUNTS — d.wins is written, standards
+   and the 99 still see it — only the money stops. Never a lecture. */
+const ADDED_DAY_CAP=250;
+function addedSpentToday(){
+  const c=day().credited||{};
+  return Object.keys(c).reduce((a,k)=>a+((k.slice(0,4)==='win:'||k.slice(0,6)==='boost:')?(c[k]||0):0),0);
+}
 function tapWin(k){
   const d=day(),w=winByK(k);
   if(d.wins[k]){
@@ -2948,7 +3033,40 @@ function tapWin(k){
     const back=refund('win:'+k);
     save();render();toast(back?`Removed — ${back} XP returned`:'Removed — XP kept','bad');return}
   d.wins[k]=1;save();
-  if(!award('win:'+k,w.xp,w.n))render();
+  const pay=Math.min(w.xp,Math.max(0,ADDED_DAY_CAP-addedSpentToday()));
+  if(pay>0){if(!award('win:'+k,pay,w.n))render()}
+  else{toast('Counted — today\'s side pocket is full','good');render()}
+  gradCheck(k);
+}
+/* ═══ THE GRADUATION (his sentence: "getting in the habit of doing laundry often").
+   Three weeks running with at least one log → the app offers, exactly once, to make
+   it a standard. Accepted, it walks through the forward-only door and feeds the 99.
+   Declined, it never asks about that habit again. */
+function weekHitsIn(k,mon){
+  let hits=0;const d=new Date(mon+'T00:00:00');
+  for(let i=0;i<7;i++){const rec=S.days[iso(d)];
+    if(rec&&rec.wins&&rec.wins[k])hits++;d.setDate(d.getDate()+1)}
+  return hits;
+}
+function gradCheck(k){
+  S.gradAsked=S.gradAsked||{};
+  if(S.gradAsked[k])return;
+  if(S.quotaDefs.some(q=>q.src==='win'&&q.id===k&&!q.arc))return;
+  const w=winByK(k);if(!w)return;
+  const cur=weekKeyNow();
+  for(let i=0;i<3;i++){
+    const d=new Date(cur+'T00:00:00');d.setDate(d.getDate()-7*i);
+    if(!weekHitsIn(k,iso(d)))return;
+  }
+  S.gradAsked[k]=1;save();
+  sheet(`<div class="sh-k">THIS KEEPS HAPPENING</div>
+    <div class="sh-t">${esc(w.n)}.</div>
+    <div class="sh-sub">THREE WEEKS RUNNING. MAKE IT A STANDARD?</div>
+    <div class="fld" style="margin-top:12px"><label>How many times a week</label>
+      <div class="chips">${[1,2,3,4,5].map(n=>
+        `<button class="chip tap seg${n===2?' on':''}" onclick="saveStandard('win','${k}',${n})">${n}×</button>`).join('')}</div>
+      <div class="hintline">A standard feeds the 99 from Monday — capped at its own count, so it can never be farmed.</div></div>
+    <button class="btn gh" style="margin-top:8px" onclick="closeSheet();toast('Never asked again','bad')">Not this one — don't ask again</button>`);
 }
 /* The pipeline strip read S.december directly — three hardcoded businesses. It now
    shows the three goals YOU rank highest, whatever they are, with the WIG first.
@@ -3345,7 +3463,10 @@ function elseTap(k,bid){
   const w=winByK(k);if(!w)return;
   const d=day();if(d.wins[k])return;
   d.wins[k]=1;save();
-  award('win:'+k,w.xp,w.n);
+  /* same door, same pool as tapWin — the thing counts even when the money stops */
+  const pay=Math.min(w.xp,Math.max(0,ADDED_DAY_CAP-addedSpentToday()));
+  if(pay>0)award('win:'+k,pay,w.n);
+  else toast('Counted — today\'s side pocket is full','good');
   const left=elseCands(bid);
   if(!left.length)return closeRun();
   elseStep(bid,true);
@@ -4116,15 +4237,30 @@ function g2Quiet(){
    can knock out goals in mind of the main overarching goal." The tiers already hold that;
    this makes the knock-out ONE TAP. It pays nothing — what a finished goal is WORTH is
    the XP session's question, not this button's. */
+/* THE KNOCK-OUT FINALLY PAYS (XP session, 2026-07-29 — his call: 40 auto, nudge
+   25–50 in the sheet). Anchors are not knockable prizes — a December goal's worth
+   is the Phase-2 conversation. Paid once ever, through the ledger: waking it the
+   same day refunds; a day already sealed keeps its XP, because the past doesn't
+   change. */
+function payKnock(g){
+  if(!g||g.anchor)return;
+  const key='goal:'+g.id;
+  if((S.ledger||[]).some(e=>e.k===key))return;
+  award(key,Math.max(25,Math.min(50,g.worth||40)),'knocked out · '+cut(g.title,24));
+}
 function g2Done(id){
   const g=GM.goalOf(G,id);if(!g)return;
   GM.setState(G,id,'done',dayNo(),'knocked out');
-  gsave();render();toast('Knocked out ✓','good');
+  gsave();payKnock(g);render();toast('Knocked out ✓','good');
 }
 function g2Wake(id){
   const g=GM.goalOf(G,id);if(!g)return;
   GM.setState(G,id,'active',dayNo(),'picked back up');
-  gsave();render();toast('Back on the board','good');
+  gsave();
+  const back=refund('goal:'+id);
+  if(back)toast(`Back on the board — ${back} XP returned`,'good');
+  else toast('Back on the board','good');
+  render();return;
 }
 /* ═══ THE THREE TIERS ═══════════════════════════════════════════════════════
    ONE APEX — 99 OVR, be him. Never changes, never competes; it IS the page.
@@ -5173,6 +5309,10 @@ function g2Form(title,chk,g){
         <input id="g2S" inputmode="decimal" value="${g.start}"></div>`:''}</div>
     <div class="fld"><label>What would prove it</label>
       <input id="g2E" maxlength="120" placeholder="What you'd point at to say it's done" value="${g?esc(g.evidence):esc(GB.d_g2E||'')}"></div>
+    ${(g&&g.anchor)||GB.anchor?'':`<div class="fld"><label>Worth when you knock it out</label>
+      <div class="chips" id="g2W">${[25,30,40,50].map(v=>`<button class="chip tap seg${((g&&g.worth)||GB.worth||40)===v?' on':''}"
+        onclick="g2PickW(${v})" data-w="${v}">${v} XP</button>`).join('')}</div>
+      <div class="hintline">Pays the moment you knock it out. 40 unless you say otherwise.</div></div>`}
     </div>
     <button class="btn" onclick="g2Save()">${g?'Save it':'Add it'}</button>
     ${g?`${g.anchor
@@ -5202,6 +5342,10 @@ function g2Pick(k,v){
   if(k==='a'){GB.areaId=v;$('g2A').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',e.dataset.a===v))}
   else{GB.horizonId=v||null;$('g2H').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',(e.dataset.h||'')===v))}
 }
+function g2PickW(v){
+  GB.worth=v;
+  const h=$('g2W');if(h)h.querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',Number(e.dataset.w)===v));
+}
 function g2Save(){
   const t=$('g2T').value.trim();if(!t){toast('Give it a title','bad');return}
   if(!GB.areaId){toast('Pick an area','bad');return}
@@ -5219,6 +5363,7 @@ function g2Save(){
     /* target goes through editGoal so easing leaves its trail; start/at do not */
     GM.editGoal(G,GB.id,{...patch,start:st,at:at},dayNo());
     if(tg!==null)GM.editGoal(G,GB.id,{target:tg},dayNo());else if(g)g.target=null;
+    if(g&&!g.anchor&&GB.worth)g.worth=GB.worth;   /* the knock-out price, his nudge */
   }else{
     /* only anchor if he asked for THIS area, or the area has none at all —
        counting PARKED anchors too, or waking one later gives the area two */
@@ -5226,6 +5371,7 @@ function g2Save(){
     const firstInArea=!G.goals.some(x=>x.areaId===GB.areaId&&x.anchor&&x.state!=='dropped');
     const ng=GM.addGoal(G,{...patch,start:st,at:at,target:tg,
       parentId:GB.parentId,wig:GM.liveGoals(G).length===0?1:0});
+    if(GB.worth&&!GB.anchor)ng.worth=GB.worth;    /* the knock-out price, his nudge */
     /* explicit ask, or the first goal this area has ever had */
     const promoted=askedHere||(firstInArea&&!GB.parentId);
     if(promoted)GM.setAnchor(G,ng.id,dayNo());
@@ -5237,7 +5383,9 @@ function g2State(id,st){
   GM.setState(G,id,st,dayNo());
   const g=GM.goalOf(G,id);
   if(g&&g.wig&&st!=='active'){g.wig=0;const n=GM.liveGoals(G);if(n.length===1)n[0].wig=1}
-  gsave();closeSheet();render();
+  gsave();
+  if(st==='done')payKnock(g);            /* the form's Done is the same knock-out */
+  closeSheet();render();
   toast(st==='done'?'Done — that one is yours':st==='parked'?'Parked, not lost':'Dropped',st==='done'?'good':'bad');
 }
 function g2EditArea(id){
@@ -5677,10 +5825,12 @@ function logBoost(id){
   const xp=boostClamp(b.xp,b.size);
   /* THE DAILY CEILING. Per-item caps were never enough: a repeat:'any' boost had
      no bound at all and the award key included the tap count, so it re-paid every
-     press. This is the backstop that makes the economy actually closed. */
-  const spent=boostXpToday();
-  if(spent>=BOOST_DAY_CAP){toast('Boosts are capped for today — go earn it','bad');return}
-  const pay=Math.min(xp,BOOST_DAY_CAP-spent);
+     press. This is the backstop that makes the economy actually closed.
+     XP SESSION 2026-07-29: the ceiling is now the SHARED added pool — boosts and
+     wins together, one 250. Planned work stays uncapped. */
+  const spent=addedSpentToday();
+  if(spent>=ADDED_DAY_CAP){toast('The side pocket is full for today — go earn it','bad');return}
+  const pay=Math.min(xp,ADDED_DAY_CAP-spent);
   const n=boostLog().filter(e=>e.id===id&&e.date===today()).length;
   boostLog().push({id,date:today(),xp:pay,day:dayNo()});
   /* one token a day, not one per tap */
