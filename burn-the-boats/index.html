@@ -735,9 +735,17 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
   width:44px;height:44px;border-radius:11px;border:1.5px solid #362f47;background:none;
   cursor:pointer;color:var(--faint);font-size:15px}
 .g2sub .ko:active{border-color:var(--phos);color:var(--phos)}
-/* a row that runs ALONGSIDE another (cleaning while the market runs) */
-.pdrow.pdin{margin-left:22px;width:calc(100% - 22px)}
-.pdrow.pdin .n u.al{color:var(--faint)}
+/* a row that runs ALONGSIDE another lives INSIDE its host card (his call, from the
+   screenshot): the host grows vertically and the inner row is physically within the
+   slot it shares. Hosts become divs (buttons can't nest); taps still edit either. */
+.pdrow.pdhost{cursor:pointer}
+.pdrow .inwrap{grid-column:1/-1;margin-top:4px;display:flex;flex-direction:column;gap:6px}
+.pdrow .pdsub{display:grid;grid-template-columns:46px 1fr auto;gap:10px;align-items:start;
+  width:100%;text-align:left;cursor:pointer;padding:9px 11px;border:1px solid var(--line2);
+  border-radius:10px;background:var(--panel2);position:relative;overflow:hidden;min-height:48px}
+.pdrow .pdsub::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c,var(--line2))}
+.pdrow .pdsub .al{display:block;font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.1em;color:var(--faint);margin-top:3px}
 
 /* A reward's terms, on the reward. Pips, because a count you can see is a count you trust. */
 .rq{display:flex;flex-direction:column;gap:4px;margin:7px 0 6px}
@@ -897,6 +905,13 @@ body.glanceOpen .glance{display:block}
 .g2ret{border-color:rgba(74,222,128,.35);cursor:default}
 .g2close{border-color:rgba(56,225,216,.32)}
 .g2mig{border-color:rgba(224,178,94,.4)}
+/* the not-installed warning — kind, one line, and it can act */
+.homenudge{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;text-align:left;
+  cursor:pointer;margin:10px 0 2px;padding:11px 13px;border:1px solid rgba(224,178,94,.4);
+  border-radius:12px;background:rgba(224,178,94,.06);color:var(--dim);
+  font-size:12.5px;line-height:1.4}
+.homenudge b{color:var(--gold);font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;flex:none}
+.homenudge span{min-width:0}
 .g2ret .k,.g2close .k,.g2mig .k{display:flex;align-items:center;font-family:'Geist Mono',monospace;
   font-size:11px;letter-spacing:.19em;margin-bottom:8px}
 .g2ret .k{color:var(--phos)} .g2close .k{color:var(--rune)} .g2mig .k{color:var(--gold)}
@@ -1192,6 +1207,9 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
   </div>
 
   <div class="timeleft"><b id="tlBig">—</b><span>OF DEEP WORK LEFT</span><span class="dow" id="tlDow">—</span></div>
+  <!-- the app defends its own data: shown ONLY when running in a browser tab, where
+       Safari can wipe storage (private tabs especially). Installed = never shown. -->
+  <div id="homeNudge"></div>
   <div id="penanceBanner"></div>
   <div class="nextup" id="nextUp"></div>
   <div id="boostCard" hidden></div>
@@ -2289,7 +2307,7 @@ function render(){
   if(VIEW==='today'){
     stampToday();
     document.body.classList.toggle('offday',!!day().off);
-    renderStatus(); renderGauges(); renderGlance(); renderTimeLeft();
+    renderStatus(); renderGauges(); renderGlance(); renderTimeLeft(); renderHomeNudge();
     renderPenance(); renderNext(); renderBoostCard();
     renderWins(); renderExtrasLine(); renderSched(); renderClose(); renderRunStrip();
     $('foot').innerHTML=`BURN THE BOATS · DAY ${dayNo()} / ${TOTAL_DAYS}<br>WHAT IS THE MILLIONAIRE VERSION OF YOURSELF DOING RIGHT NOW?`;
@@ -2856,6 +2874,34 @@ function renderExtrasLine(){
     if(evening)pt.innerHTML=dow()===6
       ?`<span class="xl-n">Set next week</span><span class="xl-go">→</span>`
       :`<span class="xl-n">Plan tomorrow</span><span class="xl-go">→</span>`;}
+}
+/* ═══ THE APP GUARDS ITS OWN DATA ═════════════════════════════════════════════
+   His goals kept "deleting" — the deploys were blamed, but a deploy cannot touch
+   storage. The real killer was the browser tab (Private especially): Safari wipes
+   it, and every update prompts a reopen, so the wipe WORE the update's timing.
+   Now the app says so itself, wherever it is running unsafely, until he installs. */
+const IS_INSTALLED=()=>!!(navigator.standalone||
+  (window.matchMedia&&matchMedia('(display-mode: standalone)').matches));
+let NUDGE_OFF=false;                       /* per-open, deliberately not persisted */
+function renderHomeNudge(){
+  const el=$('homeNudge');if(!el)return;
+  el.innerHTML=(IS_INSTALLED()||NUDGE_OFF)?'':
+    `<button class="homenudge" onclick="homeNudgeSheet()">
+      <b>TAB</b><span>This is a browser tab — Safari can wipe what lives here.
+      Tap for the 2-minute fix.</span></button>`;
+}
+function homeNudgeSheet(){
+  sheet(`<div class="sh-k">YOUR DATA, MADE PERMANENT</div>
+    <div class="sh-t">Move in properly.</div>
+    <div class="sh-sub">A TAB — ESPECIALLY PRIVATE — CAN BE WIPED. THE INSTALLED APP CANNOT.</div>
+    <div class="card" style="margin-top:14px;padding:14px;font-size:13.5px;line-height:1.6;color:var(--dim)">
+      1 · Tap <b style="color:var(--ink)">Back up my data now</b> below — a file lands in your phone's Files.<br>
+      2 · Open this address in <b style="color:var(--ink)">normal Safari</b> → Share → <b style="color:var(--ink)">Add to Home Screen</b>.<br>
+      3 · Open the new icon → Record → <b style="color:var(--ink)">Restore</b> that file.<br>
+      4 · Live there. Delete the tab. Done forever.
+    </div>
+    <button class="btn" style="margin-top:12px" onclick="exportSave();toast('Backup saved to your Files','good')">Back up my data now</button>
+    <button class="btn gh" style="margin-top:8px" onclick="NUDGE_OFF=true;closeSheet();render()">I'm safe — hide this for now</button>`);
 }
 function planTomorrow(){
   G.meta.view='week';gsave();
@@ -4565,29 +4611,37 @@ function planDay(date){
   rows.forEach(b=>{if(cur!==null){const g=mins(b.s)-cur;if(g>=15){openM+=g;gapN++}}
     cur=cur===null?mins(b.e):Math.max(cur,mins(b.e));});}
   const hrs=m=>m>=60?(m%60?`${Math.floor(m/60)}h ${m%60}m`:`${Math.floor(m/60)}h`):`${m}m`;
-  /* rows and the AIR between them, interleaved — a gap is a thing you can tap */
+  /* rows and the AIR between them, interleaved — a gap is a thing you can tap.
+     A row wholly inside another runs ALONGSIDE it and renders INSIDE that card —
+     the host grows vertically to hold it (his call, from the screenshot). Uniform
+     row heights otherwise; the gaps carry the feel of time. */
+  const hostOf=b=>rows.find(x=>x!==b&&mins(x.s)<=mins(b.s)&&mins(x.e)>=mins(b.e)&&
+      (mins(x.e)-mins(x.s))>(mins(b.e)-mins(b.s)));
+  const subRow=(b,j)=>{const len=mins(b.e)-mins(b.s);
+    return `<button class="pdsub" style="--c:${domColour((b.dom||[])[0])}"
+        onclick="event.stopPropagation();planRow('${date}',${j})">
+      <span class="t">${b.s}<b>${b.e}</b></span>
+      <span class="n">${esc(b.n)}<span class="al">runs alongside</span></span>
+      <span class="len">${len}m</span>
+    </button>`};
   let list='';let cur=null;
   rows.forEach((b,i)=>{
+    const host=hostOf(b);
+    if(host&&!hostOf(host))return;              /* drawn inside its host instead */
     if(cur!==null){const g=mins(b.s)-cur;
       const at=`${pad(Math.floor(cur/60))}:${pad(cur%60)}`;
       if(g>=15)list+=`<button class="pdgap" onclick="planAdd('${date}','${at}',${Math.min(g,120)})">
         + fill this ${hrs(g)} opening</button>`;}
     cur=cur===null?mins(b.e):Math.max(cur,mins(b.e));
-    /* a row wholly inside another runs ALONGSIDE it — two things in one slot is a
-       feature, not a conflict (his call: clean while the market runs) */
-    const host=rows.find(x=>x!==b&&mins(x.s)<=mins(b.s)&&mins(x.e)>=mins(b.e)&&
-      (mins(x.e)-mins(x.s))>(mins(b.e)-mins(b.s)));
+    const kids=rows.map((x,j)=>[x,j]).filter(([x])=>hostOf(x)===b);
     const len=mins(b.e)-mins(b.s),deep=b.kind==='deep';
-    /* uniform rows — the GAPS carry the feel of time, the rows carry the facts.
-       (Proportional heights were tried and judged: mostly-similar heights plus one
-       tall void read as inconsistency, not scale.) */
-    list+=`<button class="pdrow${deep?' deep':''}${host?' pdin':''}" style="--c:${domColour((b.dom||[])[0])}"
+    list+=`<div class="pdrow${deep?' deep':''}${kids.length?' pdhost':''}" style="--c:${domColour((b.dom||[])[0])}"
         onclick="planRow('${date}',${i})">
       <span class="t">${b.s}<b>${b.e}</b></span>
-      <span class="n">${esc(b.n)}${deep?`<u class="pdtag">◆ SACRED</u>`:''}${
-        host?`<u class="al">alongside ${esc(host.n)}</u>`:''}</span>
+      <span class="n">${esc(b.n)}${deep?`<u class="pdtag">◆ SACRED</u>`:''}</span>
       <span class="len">${len}m</span>
-    </button>`;
+      ${kids.length?`<div class="inwrap">${kids.map(([x,j])=>subRow(x,j)).join('')}</div>`:''}
+    </div>`;
   });
   sheet(`<div class="sh-k">${label} · ${date.slice(5)}${own?' · ITS OWN PLAN':' · YOUR NORMAL '+(dw===6?'SATURDAY':'DAY')}</div>
     <div class="sh-t">${DAYFULL}.</div>
