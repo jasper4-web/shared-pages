@@ -173,8 +173,6 @@ button{font-family:inherit}
 .nu-k u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--dim);text-decoration:none}
 .nu-t{font-family:'Clash Display',sans-serif;font-size:20px;letter-spacing:-.025em;line-height:1.12;margin-bottom:5px}
 .nu-obj{font-size:13.5px;color:var(--dim);line-height:1.4;margin-bottom:11px}
-.nu-obj.empty{color:#ff8f70;font-style:italic}
-.nu-em{color:#ff8f70;font-style:italic}
 
 /* =====================================================================
    THE MASTHEAD — the vice screen (Agent 5, round 3).
@@ -522,7 +520,6 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 .blk .bn{font-size:13.5px;font-weight:500;letter-spacing:-.01em;line-height:1.25}
 .blk.done .bn{color:#6d7a70}
 .blk .bo{font-size:11.5px;color:var(--dim);margin-top:3px;line-height:1.35}
-.blk .bo.empty{color:#c9705e;font-style:italic}
 .blk .bd{font-family:'Geist Mono',monospace;font-size:11px;color:#565064;letter-spacing:.08em;margin-top:4px}
 .blk .bc{width:18px;height:18px;border-radius:5px;border:1.5px solid #362f47;justify-self:end;margin-top:1px}
 .blk.done .bc{background:var(--phos);border-color:var(--phos)}
@@ -1039,13 +1036,6 @@ body.glanceOpen .glance{display:block}
 input,textarea,select{width:100%;background:var(--panel2);border:1px solid var(--line2);color:var(--ink);
   border-radius:10px;padding:12px;font-family:'Satoshi',sans-serif;font-size:16px;appearance:none;-webkit-appearance:none;resize:none}
 input:focus,textarea:focus{outline:none;border-color:var(--gold)}
-/* goal picker inside the composer */
-.gpick{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
-.gpx{min-height:44px;padding:0 11px;border-radius:8px;background:var(--panel2);
-  box-shadow:inset 0 0 0 1px var(--line2);color:var(--dim);
-  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.09em}
-.gpx.on{background:color-mix(in srgb,var(--gc,var(--gold)) 18%,transparent);color:var(--gc,var(--gold));
-  box-shadow:inset 0 0 0 1px var(--gc,var(--gold))}
 .chain{border-left:2px solid var(--line2);padding-left:12px;margin:14px 0}
 .chain div{margin-bottom:9px}.chain div:last-child{margin-bottom:0}
 .chain .cl{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
@@ -1360,7 +1350,7 @@ const DOMAINS=[
 const WEEKDAY=[
   {id:'wake', s:'06:00',e:'06:30',n:'Wake · pre-market',dom:['BODY'],kind:'ritual',auto:1},
   {id:'open', s:'06:30',e:'08:30',n:'Market open',sub:'Trade on phone · getting ready',dom:['CAPITAL'],kind:'market'},
-  {id:'prio', s:'08:30',e:'09:00',n:"Write today's 3 priorities",sub:'Breakfast · reset',dom:['MIND'],kind:'ritual',writes:1},
+  {id:'prio', s:'08:30',e:'09:00',n:'Coffee & breakfast',sub:'Relax — plan ahead if you want',dom:['MIND'],kind:'ritual',writes:1},
   {id:'b1',   s:'09:00',e:'10:30',n:'Block 1',sub:'PEAK WINDOW',dom:['WORK'],kind:'deep',focus:90},
   {id:'b2',   s:'10:45',e:'12:00',n:'Block 2',sub:'PEAK WINDOW',dom:['WORK'],kind:'deep',focus:75},
   {id:'lunch',s:'12:00',e:'13:00',n:'Lunch',dom:['BODY'],kind:'ritual',auto:1},
@@ -1553,8 +1543,9 @@ function merge(base,over){
 /* merge() replaces arrays wholesale, so a save made before the Vault shipped keeps the
    old four-reward ladder forever. Upgrade it — but only if he never edited it himself. */
 function migrate(s){
-  if(s.v>=5)return s;
-  if(s.v>=4){migrateBoosts(s);s.v=5;return s}
+  if(s.v>=6)return s;
+  if(s.v>=5){migrateCoffee(s);s.v=6;return s}
+  if(s.v>=4){migrateBoosts(s);migrateCoffee(s);s.v=6;return s}
   const OLD=[1200,1500,2000,2500];
   const untouched=Array.isArray(s.rewards)&&s.rewards.length===OLD.length&&
     s.rewards.every((r,i)=>r.cost===OLD[i]&&!r.done);
@@ -1572,8 +1563,20 @@ function migrate(s){
   if(s.conf&&s.conf.body!==undefined&&s.conf.personal===undefined){
     s.conf.personal=s.conf.body;delete s.conf.body}
   migrateBoosts(s);
-  s.v=5;
+  migrateCoffee(s);
+  s.v=6;
   return s;
+}
+/* FUNERAL 2026-07-29: the 08:30 composer is buried. The coffee block keeps its slot
+   and its price; the old seed name promised an interview that no longer exists, so a
+   name he never changed is re-seeded. A name HE typed is his and stays. Days already
+   lived keep their old name — the past doesn't change. */
+function migrateCoffee(s){
+  delete s._composeFor;delete s._composeMode;
+  const fix=b=>{if(b&&b.id==='prio'&&b.n==="Write today's 3 priorities"){
+    b.n='Coffee & breakfast';b.sub='Relax — plan ahead if you want';}};
+  if(s.templates)['weekday','saturday'].forEach(k=>(s.templates[k]||[]).forEach(fix));
+  if(s.dayPlan)Object.keys(s.dayPlan).forEach(k=>{if(k>today())(s.dayPlan[k]||[]).forEach(fix)});
 }
 /* the old boosts were a hardcoded const and a bare {k,date} log — carry the history
    forward onto the new defs rather than dropping it on the floor */
@@ -2476,9 +2479,10 @@ function actsFor(b){
     /* a won month is rules kept and no double-back. Never a P&L, never a dollar figure. */
     case 'open':  return {row:'pair', acts:[A('Done for the day',"setTrade('closed')",'primary'),
                                             A('Broke a rule',"setTrade('broke')",'warn')]};
-    /* the composer IS the action — this block fills the objective line of all four work blocks */
-    case 'prio':  return {row:'pair', acts:[A('Write the three',"openComposer()",'primary'),
-                                            A('Same as yesterday',"openComposer('carry')")]};
+    /* FUNERAL 2026-07-29: the composer is buried. Coffee is for relaxing — planning
+       ahead is ONE tap, never an interview. Same price as before: done pays 25. */
+    case 'prio':  return {row:'pair', acts:[A('Plan tomorrow →',"planTomorrow()",'primary'),
+                                            A('Done — carry on',"markDone('prio')")]};
     case 'lunch': return {row:'one', acts:[A('Back at it',"markDone('lunch')",'primary big')]};
     /* the two measures of a won month, inline, so a 20-second job doesn't need a sheet */
     case 'close': return {row:'toggles', acts:[A('Followed my rules',"setTrade('rules')",'toggle'),
@@ -2504,9 +2508,11 @@ function actsFor(b){
     case 'hike':  return {row:'pair', quota:{label:'MOVEMENT',have:weekCount(['walk','hike']),need:3},
                           acts:[A('Hiked',"markDone('hike')",'primary'),
                                 A('Still out →',"markWait('hike')")]};
-    /* next week is set by tweaking the monthly goal, not starting from a blank page */
-    case 'mon':   return {row:'pair', acts:[A("Set Monday's three","openComposer('monday')",'primary'),
-                                            A('Tweak the monthly goal',"go('push')")]};
+    /* FUNERAL 2026-07-29: "Set Monday's three" died with the composer. Saturday's job
+       is the week itself — THE WEEK already owns next week (planTomorrow lands there
+       on a Saturday). Done still pays 25, same as it always did. */
+    case 'mon':   return {row:'pair', acts:[A('Set next week →',"planTomorrow()",'primary'),
+                                            A('Done — carry on',"markDone('mon')")]};
   }
   /* b1–b4 · deep work. Only the timer completes a work block — there is no "mark complete",
      because a manual tick would hollow out the one measure the whole score is built on. */
@@ -2584,9 +2590,11 @@ function renderNext(){
   /* THE TITLE IS THE OBJECTIVE, not the block name — "Send Anthony the AVRS pitch",
      not "Block 2". The block name drops to the sub-line. */
   const title=(b.kind==='deep'&&t)?t:esc(b.n)+(biz?' · '+esc(biz):'');
+  /* FUNERAL 2026-07-29: the "No objective set — write it at 8:30a" accusation died
+     with the composer. A block's purpose is the goal committed when planning; a block
+     with nothing on it shows its name, clean — nothing nags at 9:00. */
   const sub=(b.kind==='deep')
-    ? (t?esc(b.n)+(biz?' · '+esc(biz):'')+' · deep work'
-        :'<span class="nu-em">No objective set — write it at 8:30a</span>')
+    ? esc(b.n)+(biz?' · '+esc(biz):'')+' · deep work'
     : esc(b.sub||b.dom.join(' + '));
   const kick=state==='done'?'Done':state==='missed'?'Passed':state==='waiting'?'Held'
             :live?'Now':'Next up';
@@ -2718,7 +2726,7 @@ function renderSched(){
         <span class="bt">${t12(b.s)}</span>
         <div><div class="bn">${b.kind==='deep'&&t?esc(t):esc(b.n)+(biz?' · '+esc(biz):'')}</div>
         ${b.kind==='deep'
-          ?`<div class="bo ${t?'':'empty'}">${t?esc(b.n)+(biz?' · '+esc(biz):''):'no objective set'}</div>`
+          ?(t?`<div class="bo">${esc(b.n)+(biz?' · '+esc(biz):'')}</div>`:'')
           :(b.sub?`<div class="bo">${esc(b.sub)}</div>`:'')}
         <div class="bd">${mins(b.e)-mins(b.s)}m · ${b.dom.join(' + ')}${b.opt?' · OPTIONAL':''}</div></div>
         <span class="bc"></span>`;
@@ -3086,96 +3094,43 @@ function closeSheet(){$('ovA').classList.remove('on');
   /* dismissing a sheet ends any round trip — nothing should survive to the next one */
   if(typeof GB==='object'&&GB&&!GB.tripLive)g2ClearDraft&&g2ClearDraft();}
 
-/* The 08:30 ritual writes the whole day at once. `writes:1` was declared on the block and
-   read nowhere, so the one ritual whose job is filling the four "no objective set" holes
-   opened a generic sheet with no field to write into. */
-/* the last day that actually had three written — what "same as yesterday" pulls from */
-function lastPrio(){
-  for(let i=1;i<=14;i++){
-    const dt=new Date();dt.setDate(dt.getDate()-i);
-    const rec=S.days[iso(dt)];
-    if(rec&&rec.prio&&rec.prio.some(x=>x&&x.trim()))return rec.prio;
-  }
-  return null;
-}
-function nextMondayISO(){
-  const dt=new Date();dt.setDate(dt.getDate()+((8-dt.getDay())%7||7));return iso(dt);
-}
-/* mode: undefined = today · 'carry' = pre-filled from the last day that had three
-   · 'monday' = writes into next Monday, because Saturday's job is setting the week up */
-function openComposer(mode){
-  const key=mode==='monday'?nextMondayISO():today();
-  S._composeFor=key;S._composeMode=mode||'';
-  const d=day(key),w=week(),carry=mode==='carry'?lastPrio():null;
-  const slots=[['b1','Block 1 · 09:00'],['b2','Block 2 · 10:45'],['b3','Block 3 · 13:20'],['b4','Block 4 · 15:05']];
-  sheet(`<div class="sh-k">${mode==='monday'?'SATURDAY · SETTING MONDAY UP':'8:30a · THE COFFEE SHOP'}</div>
-    <div class="sh-t">${mode==='monday'?"Monday's three":"Today's three"}</div>
-    <div class="sh-sub">${carry?'PRE-FILLED FROM YOUR LAST SET — EDIT WHAT CHANGED':'WRITE THEM ONCE — THEY FILL THE DAY'}</div>
-    ${slots.map(([k,lab],i)=>`<div class="fld"><label>${lab}</label>
-      <input id="cp_${k}" value="${esc((carry&&carry[i])||(d.prio&&d.prio[i])||w.tactics[k]||'')}" placeholder="The one thing this block produces">
-      <div class="gpick" id="gp_${k}">${goalPicker(k,composerSel(key,k))}</div></div>`).join('')}
-    <div class="chain"><div><div class="cl">Why here</div>
-      <div class="cv">These become the objective line inside each block. Until they're written those
-      blocks show <b>no objective set</b> — a visible hole at 09:00.</div></div></div>
-    <button class="btn" onclick="saveComposer()">${mode==='monday'?'Set Monday':'Set the day'}</button>`);
-}
-/* THE COMMITMENT IS THE ONLY TRUTH. The `d.goals`/`w.goals` maps this used to fall back
-   on are BURIED (funeral, 2026-07-28): the fallback manufactured commitments he never
-   made — Monday's plan silently pre-selected onto Tuesday. A day with no commitment now
-   opens on NONE, which is the honest answer. */
-function composerSel(key,k){
-  const dt=new Date(key+'T00:00:00'),off=(dt.getDay()+6)%7;
-  if(off<=4){
-    const c=commitFor(mondayOf(dt),off,k);
-    if(c&&c.goalId&&GM.goalOf(G,c.goalId))return c.goalId;
-  }
-  return '';
-}
-/* one chip per goal, plus a "none" — this is where a block gets its purpose */
-function goalPicker(k,sel){
-  /* the goal ON THIS BLOCK is always drawn, even if it has since been parked or dropped —
-     otherwise the picker silently misrepresents what the block is for, and the only way to
-     see the truth is to look at another screen */
-  const live=GM.liveGoals(G);
-  const cur=sel&&!live.some(g=>g.id===sel)?GM.goalOf(G,sel):null;
-  return (cur?[cur].concat(live):live).map(g=>`<button type="button" class="gpx${sel===g.id?' on':''}${
-      g.state&&g.state!=='active'?' rest':''}" data-k="${k}" data-g="${g.id}"
-      style="--gc:${domColour((GM.areaById(G,g.areaId)||{}).domain)}" onclick="pickGoal(this)">${esc(cut(g.title,22))}</button>`).join('')
-    +`<button type="button" class="gpx${sel?'':' on'}" data-k="${k}" data-g="" onclick="pickGoal(this)">NONE</button>`;
-}
-function pickGoal(el){
-  el.parentNode.querySelectorAll('.gpx').forEach(x=>x.classList.remove('on'));
-  el.classList.add('on');
-  el.parentNode.dataset.touched='1';      /* he answered THIS one — see saveComposer */
-}
-function saveComposer(){
-  const key=S._composeFor||today(),mode=S._composeMode||'';
-  const d=day(key),w=week();d.prio=d.prio||[];
-  ['b1','b2','b3','b4'].forEach((k,i)=>{
-    const v=$('cp_'+k).value.trim();
-    d.prio[i]=v; if(v&&mode!=='monday')w.tactics[k]=v;
-    /* ONLY WHAT HE TOUCHED. Pre-selecting from the commitment was not enough on its own:
-       goalPicker() only draws chips for ACTIVE goals, so a committed goal that had been
-       parked or dropped left every picker with nothing selected — and saving then read
-       null and deleted all four commitments again, exactly the original defect. Reading
-       the selection can always fail for reasons like that; the safe rule is that silence
-       means "leave it alone". A block is only rewritten when he actually answered it. */
-    const host=document.getElementById('gp_'+k);
-    if(!host||host.dataset.touched!=='1')return;
-    const sel=host.querySelector('.gpx.on');
-    const gid=sel?sel.dataset.g:'';
-    /* Picking a goal for a block IS a commitment — write the real thing, so it shows on
-       THE WEEK, counts against capacity and closes with the week. The legacy
-       d.goals/w.goals maps are buried; nothing writes them, nothing reads them. */
-    const off=(new Date(key+'T00:00:00').getDay()+6)%7;
-    if(off<=4)setCommitQuiet(mondayOf(new Date(key+'T00:00:00')),off,k,gid||null);
-  });
-  /* setting Monday up closes Saturday's 'mon' block, not today's 'prio' block */
-  if(mode==='monday'){day().done['mon']=true;save();gsave();closeSheet();award('blk:mon',25,'Monday is set');return}
-  d.done['prio']=true;
-  save();gsave();closeSheet();award('blk:prio',25,'the day is set');
+/* ═══ FUNERAL 2026-07-29 — THE 08:30 COMPOSER IS BURIED ═══════════════════════
+   "Today's three" asked four questions with four goal-pickers every morning — the
+   same question the planner already answers, at a moment he wants to relax. His
+   verdict: "an overbuild. I would rather just have the option to actually plan
+   tomorrow or another day with one click." The coffee block stays (his ritual,
+   same 25 on completion); tapping it opens ONE door to the real planner.
+   Buried with it: the Saturday "Setting Monday up" twin, d.prio/w.tactics WRITES
+   (history still reads), and the "No objective set" accusations. kill-tests in
+   model/funeral.js §7. */
+function coffeeDoor(b){
+  const done=!!day().done[b.id];
+  sheet(`<div class="sh-k">${t12(b.s)} – ${t12(b.e)} · YOUR COFFEE</div>
+    <div class="sh-t">${esc(b.n)}.</div>
+    <div class="sh-sub">TODAY IS ALREADY SET — YOU PLANNED IT. AHEAD IS YOURS.</div>
+    <button class="btn" style="margin-top:14px" onclick="closeSheet();planTomorrow()">${
+      dow()===6?'Set next week':'Plan tomorrow'} →</button>
+    <button class="btn gh" style="margin-top:8px"
+      onclick="closeSheet();G.meta.view='week';gsave();go('push')">Another day — open the week</button>
+    ${done?'':`<button class="btn gh" style="margin-top:8px" onclick="markDone('${b.id}')">Done — carry on</button>`}`);
 }
 $('ovA').onclick=e=>{if(e.target.id==='ovA')closeSheet()};
+/* ONE DOOR for naming a day relative to now — a planning sheet must say TOMORROW
+   in words, never make him do date math (his ask, 2026-07-29). Mirrors t12's rule:
+   one formatter, used by every sheet that names a day ahead. */
+function dayWord(date){
+  const dt=new Date(date+'T00:00:00');
+  const DAY=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'][dt.getDay()];
+  if(date===today())return 'TODAY';
+  const tm=new Date();tm.setDate(tm.getDate()+1);
+  if(date===iso(tm))return 'TOMORROW';
+  const wk=mondayOf(dt);
+  if(wk===mondayOf(new Date()))return DAY+' · THIS WEEK';
+  const nx=new Date();nx.setDate(nx.getDate()+7);
+  if(wk===mondayOf(nx))return DAY+' · NEXT WEEK';
+  const MON=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][dt.getMonth()];
+  return DAY+' · '+MON+' '+dt.getDate();
+}
 
 /* THE ATTRIBUTION. XP was still being keyed to the OLD goal ids even with the new
    Goals tab on, so the Bank's "what bought this shelf" was fed by a model he no
@@ -3202,7 +3157,7 @@ function blkGoal2(b){
 }
 function openBlk(id){
   const b=shape().find(x=>x.id===id);if(!b)return;
-  if(b.writes)return openComposer();
+  if(b.writes)return coffeeDoor(b);
   /* the block sheet used to quote the hardcoded December goal for the block's
      domain; it now quotes the goal actually committed to this block, and falls
      back to the WIG so the line is never empty */
@@ -4620,7 +4575,6 @@ function planDay(date){
   const dw=new Date(date+'T00:00:00').getDay();
   if(dw===0){toast('Sunday is the Sabbath — rest is the plan','bad');return}
   const rows=shape(date),own=!!S.dayPlan[date];
-  const label=['SUN','MON','TUE','WED','THU','FRI','SAT'][dw];
   const DAYFULL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dw];
   /* the numbers that describe the day, said once, up top */
   const deepM=rows.filter(b=>b.kind==='deep').reduce((a,b)=>a+mins(b.e)-mins(b.s),0);
@@ -4662,8 +4616,8 @@ function planDay(date){
       ${kids.length?`<div class="inwrap">${kids.map(([x,j])=>subRow(x,j)).join('')}</div>`:''}
     </div>`;
   });
-  sheet(`<div class="sh-k">${label} · ${date.slice(5)}${own?' · ITS OWN PLAN':' · YOUR NORMAL '+(dw===6?'SATURDAY':'DAY')}</div>
-    <div class="sh-t">${DAYFULL}.</div>
+  sheet(`<div class="sh-k">${dayWord(date)}${own?' · ITS OWN PLAN':' · YOUR NORMAL '+(dw===6?'SATURDAY':'DAY')}</div>
+    <div class="sh-t">${dayWord(date)==='TOMORROW'?'Tomorrow — '+DAYFULL:DAYFULL}.</div>
     <div class="pd-stats"><span><i class="dm" style="font-style:normal">◆</i> <b>${hrs(deepM)}</b> DEEP</span><span><b>${
       gapN?hrs(openM):'NOTHING'}</b> OPEN</span><span>ENDS <b>${rows.length?t12(rows[rows.length-1].e):'—'}</b></span></div>
     <div class="pd">${list}</div>
@@ -4738,7 +4692,7 @@ function planRow(date,i){
   const rows=planRows(date),b=rows[i];if(!b)return;
   const len=mins(b.e)-mins(b.s),deep=b.kind==='deep',c=domColour((b.dom||[])[0]);
   const rg=rowGoalOf(date,b);PRG=rg?rg.id:null;
-  sheet(`<div class="sh-k" style="padding-left:9px;border-left:3px solid ${c}">${
+  sheet(`<div class="sh-k" style="padding-left:9px;border-left:3px solid ${c}">${dayWord(date)} · ${
       esc(b.n).toUpperCase()}${deep?' <span class="pdtag">· ◆ SACRED</span>':''}</div>
     <div class="sh-t">${t12(b.s)} – <span id="prEnd">${t12(b.e)}</span></div>
     <div class="sh-sub">${deep?'MOVE IT, RENAME IT — IT STAYS ON THE DAY':len+'M · YOURS ENTIRELY'}</div>
@@ -4835,7 +4789,7 @@ function planAdd(date,s,len){
   /* tapped from a GAP, the sheet arrives already aimed at it */
   const aimed=!!s;
   const fit=[120,90,75,60,45,30,15].find(m=>m<=(len||45))||15;
-  sheet(`<div class="sh-k">${aimed?`THE ${t12(s)} OPENING · ${len}M FREE`:`ADD TO ${date.slice(5)}`}</div>
+  sheet(`<div class="sh-k">${aimed?`${dayWord(date)} · THE ${t12(s)} OPENING · ${len}M FREE`:`ADD TO ${dayWord(date)}`}</div>
     <div class="sh-t">What else is that day for?</div>
     <div class="sh-sub">ANYTHING. IT GOES ON THE DAY AND PAYS NOTHING.</div>
     <div class="fld" style="margin-top:12px"><label>What</label>
