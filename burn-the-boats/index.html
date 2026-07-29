@@ -704,11 +704,11 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
    underlined in the selection color; inputs are ruled lines, not wells; ghost
    actions are quiet mono; the CTA speaks Clash. Page-level chrome (tabs, cards)
    keeps its language — this is the control voice, applied where he types and picks. */
-#sheetA .chips .chip,#sheetA .chips4 .chip{border:0;background:none;border-radius:0;
+#sheetA .chips .chip,#sheetA .chips4 .chip,#sheetA .gpick2 .chip{border:0;background:none;border-radius:0;
   min-height:44px;padding:0 6px;font-family:'Satoshi',sans-serif;font-size:15px;
   letter-spacing:0;text-transform:none;color:var(--faint);position:relative}
-#sheetA .chips .chip.on,#sheetA .chips4 .chip.on{background:none;border:0;color:var(--ink)}
-#sheetA .chips .chip.on::after,#sheetA .chips4 .chip.on::after{content:'';position:absolute;
+#sheetA .chips .chip.on,#sheetA .chips4 .chip.on,#sheetA .gpick2 .chip.on{background:none;border:0;color:var(--ink)}
+#sheetA .chips .chip.on::after,#sheetA .chips4 .chip.on::after,#sheetA .gpick2 .chip.on::after{content:'';position:absolute;
   left:4px;right:4px;bottom:7px;height:2px;border-radius:2px;background:var(--violet)}
 #sheetA .chips{gap:2px 14px}
 #sheetA .chips4{gap:2px 6px}
@@ -727,6 +727,18 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
   font-size:17px;letter-spacing:-.01em}
 #sheetA .btn.gh:not(.sm){background:none;border:0;color:var(--faint);
   font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:400}
+
+/* the grouped goal picker — each project is a drop-down */
+.gpick2 .gpk-h{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  width:100%;min-height:46px;border:0;background:none;cursor:pointer;text-align:left;
+  font-family:'Satoshi',sans-serif;font-size:15px;color:var(--dim);
+  border-bottom:1px solid var(--line);padding:0 2px}
+.gpick2 .gpk-h u{text-decoration:none;font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.1em;color:var(--faint);flex:none}
+.gpick2 .gpk-kids{padding:2px 0 6px 14px;border-left:1px solid var(--line2);margin:4px 0 4px 4px;
+  display:flex;flex-direction:column;align-items:flex-start}
+.gpick2 .gpk-kids[hidden]{display:none}   /* display:flex must never defeat `hidden` */
+.gpick2 .chip{justify-content:flex-start}
 
 /* a working goal can be KNOCKED OUT in one tap — his loop: quick goals under the
    December ones, cleared constantly. The ✓ never navigates; it finishes. */
@@ -4679,15 +4691,43 @@ function rowGoalOf(date,b){
   return b.goalId?GM.goalOf(G,b.goalId):null;
 }
 let PRG;              /* the goal picked in the open sheet; undefined = untouched */
+/* THE PICKER MIRRORS HIS HIERARCHY (his call): each project — the December goal —
+   is a drop-down. Open it and pick either the project itself or one of the small
+   goals under it. Membership follows the tiers' rule: the area, not lineage. */
 function goalPickChips(sel){
-  const anchors=GM.liveGoals(G).filter(g=>g.anchor);
-  const small=GM.liveGoals(G).filter(g=>!g.anchor);
+  const live=GM.liveGoals(G);
+  const anchors=live.filter(g=>g.anchor);
+  const kidsOf=a=>live.filter(g=>!g.anchor&&g.areaId===a.areaId);
+  const loose=live.filter(g=>!g.anchor&&!anchors.some(a=>a.areaId===g.areaId));
   const chip=(g,pre)=>`<button class="chip tap seg${sel===g.id?' on':''}"
-      onclick="PRG='${g.id}';[...this.parentNode.querySelectorAll('.seg')].forEach(e=>e.classList.remove('on'));this.classList.add('on')">${pre}${esc(cut(g.title,22))}</button>`;
-  return `<div class="chips">
-    <button class="chip tap seg${sel?'':' on'}"
-      onclick="PRG=null;[...this.parentNode.querySelectorAll('.seg')].forEach(e=>e.classList.remove('on'));this.classList.add('on')">nothing — it's just the day</button>
-    ${anchors.map(g=>chip(g,'◆ ')).join('')}${small.map(g=>chip(g,'')).join('')}</div>`;
+      onclick="gpkPick(this,'${g.id}')">${pre}${esc(cut(g.title,26))}</button>`;
+  const group=(title,items,openNow)=>`<div class="gpk">
+      <button class="gpk-h" onclick="gpkToggle(this)">${title}
+        <u>${items.length} ${openNow?'▴':'▾'}</u></button>
+      <div class="gpk-kids"${openNow?'':' hidden'}>${items.join('')}</div>
+    </div>`;
+  let out=`<button class="chip tap seg${sel?'':' on'}" style="margin-bottom:4px"
+      onclick="gpkPick(this,null)">nothing — it's just the day</button>`;
+  anchors.forEach(a=>{
+    const kids=kidsOf(a);
+    const openNow=sel===a.id||kids.some(k=>k.id===sel);
+    out+=group('◆ '+esc(cut(a.title,26)),
+      [chip(a,'◆ '),...kids.map(k=>chip(k,''))],openNow);
+  });
+  if(loose.length)out+=group('On their own',loose.map(k=>chip(k,'')),loose.some(k=>k.id===sel));
+  return `<div class="gpick2">${out}</div>`;
+}
+function gpkPick(el,id){
+  PRG=id;
+  const root=el.closest('.gpick2');
+  if(root)[...root.querySelectorAll('.seg')].forEach(e=>e.classList.remove('on'));
+  el.classList.add('on');
+}
+function gpkToggle(el){
+  const kids=el.parentNode.querySelector('.gpk-kids');
+  kids.hidden=!kids.hidden;
+  const u=el.querySelector('u');
+  if(u)u.textContent=u.textContent.replace(kids.hidden?'▴':'▾',kids.hidden?'▾':'▴');
 }
 function planRow(date,i){
   const rows=planRows(date),b=rows[i];if(!b)return;

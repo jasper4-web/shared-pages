@@ -157,6 +157,27 @@ const week=async p=>p.evaluate(async()=>{go('push');await new Promise(r=>setTime
     return {hasPicker,commit:!!c&&c.goalId===big.id,rowGoal:!!row&&row.goalId===small.id,
       listShows,ko:!!btn,done:GM.goalOf(G,small.id).state==='done'};});
   ok('every row asks which goal it serves',att.hasPicker);
+  const grp=await p.evaluate(async()=>{
+    /* the picker is a hierarchy: projects closed by default, open on tap, and the
+       project itself is pickable inside its own drop-down */
+    const big=GM.liveGoals(G).find(x=>x.anchor);
+    GM.addGoal(G,{title:'Sent Anthony an offer',areaId:big.areaId,parentId:big.id});gsave();
+    const bi=shape('2026-09-25').findIndex(x=>x.id==='b2');
+    planRow('2026-09-25',bi);await new Promise(r=>setTimeout(r,300));
+    const sheet=()=>document.getElementById('sheetA');
+    const head=[...sheet().querySelectorAll('.gpk-h')].find(e=>/Three clients/.test(e.textContent));
+    const kidsHidden=head&&head.parentNode.querySelector('.gpk-kids').getBoundingClientRect().height===0;
+    if(head)head.click();await new Promise(r=>setTimeout(r,150));
+    const opened=head&&head.parentNode.querySelector('.gpk-kids').getBoundingClientRect().height>0;
+    const inside=head&&head.parentNode.querySelector('.gpk-kids').textContent;
+    closeSheet();
+    return {grouped:!!head,kidsHidden,opened,
+      projectPickable:/◆ Three clients/.test(inside||''),
+      childInside:/Sent Anthony an offer/.test(inside||'')};});
+  ok('projects are drop-downs, closed by default',grp.grouped&&grp.kidsHidden);
+  ok('...that open on a tap',grp.opened);
+  ok('...holding the project itself AND its small goals',grp.projectPickable&&grp.childInside,
+     JSON.stringify(grp));
   ok('a sacred block\'s pick writes the real commitment',att.commit);
   ok('a custom row carries its goal on the plan',att.rowGoal);
   ok('...and the day list says so with an arrow',att.listShows);
