@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>The XP System v2 — the locked design, drawn</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --blue:#7FB4FF;
+}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+h1,h2,h3,h4{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.028em;margin:0}
+.wrap{max-width:900px;margin:0 auto;padding:44px 20px 90px}
+.k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold);margin-bottom:12px;text-transform:uppercase}
+.lede h1{font-size:33px;line-height:1.08;margin-bottom:14px}
+.lede p{color:var(--dim);font-size:15px;margin:0 0 11px;max-width:720px}
+.lede b{color:var(--ink)}
+blockquote{border-left:3px solid var(--gold);padding:10px 0 10px 16px;margin:18px 0;color:var(--ink);font-size:15px;line-height:1.55;max-width:720px}
+blockquote i{color:var(--faint);font-style:normal;font-size:12px;display:block;margin-top:6px;font-family:'Geist Mono',monospace;letter-spacing:.08em}
+.sec{margin-top:56px}
+.sec>h2{font-size:23px;margin-bottom:6px}
+.sec>.sub{color:var(--faint);font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:18px}
+.locked{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.lock{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 15px}
+.lock .lk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--phos);margin-bottom:6px}
+.lock p{font-size:13px;color:var(--dim)}
+.lock b{color:var(--ink)}
+.fact{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:12px}
+.fact .fk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--ember);margin-bottom:8px}
+.fact p{color:var(--dim);font-size:14px}
+.fact b{color:var(--ink)}
+/* the day anatomy bar */
+.anatomy{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 20px;margin-bottom:14px}
+.bar{display:flex;height:54px;border-radius:12px;overflow:hidden;margin:16px 0 8px;border:1px solid var(--line2)}
+.bar div{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em}
+.bar .w{flex:60;background:color-mix(in srgb,var(--blue) 16%,var(--panel2));color:var(--blue)}
+.bar .l{flex:25;background:color-mix(in srgb,var(--violet) 16%,var(--panel2));color:var(--violet)}
+.bar .c{flex:15;background:color-mix(in srgb,var(--phos) 14%,var(--panel2));color:var(--phos)}
+.bar b{font-size:16px;font-family:'Clash Display',sans-serif;letter-spacing:0}
+.over{display:flex;align-items:center;gap:10px;margin-top:10px;font-family:'Geist Mono',monospace;font-size:11.5px;color:var(--gold)}
+.over .ob{height:10px;flex:1;border-radius:6px;background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--gold) 30%,transparent),color-mix(in srgb,var(--gold) 30%,transparent) 6px,transparent 6px,transparent 12px);border:1px dashed color-mix(in srgb,var(--gold) 50%,transparent)}
+.anatomy p{font-size:13.5px;color:var(--dim);margin-top:10px}
+.anatomy b{color:var(--ink)}
+.rules{margin:12px 0 0;padding:0;list-style:none}
+.rules li{font-size:13.5px;color:var(--dim);padding:8px 0 8px 22px;position:relative;border-top:1px solid var(--line)}
+.rules li::before{content:'▸';position:absolute;left:2px;color:var(--faint)}
+.rules li.good::before{content:'✓';color:var(--phos)}
+.rules li.hard::before{content:'◆';color:var(--gold)}
+.rules b{color:var(--ink)}
+/* phone mocks */
+.mockrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:14px}
+.mock{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+.mock .mk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--rune);margin-bottom:4px}
+.mock h4{font-size:16px;margin-bottom:8px}
+.mock .note{font-size:12.5px;color:var(--faint);margin-top:10px;line-height:1.5}
+.mock .note b{color:var(--dim)}
+.phone{background:#0a0912;border:1px solid var(--line2);border-radius:18px;padding:14px 12px;margin-top:8px}
+.ph-k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint);margin-bottom:8px;display:flex;justify-content:space-between}
+.ph-k u{text-decoration:none;color:var(--gold)}
+.chipgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.chip{background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:9px 10px;font-size:12.5px;color:var(--ink);display:flex;align-items:center;gap:7px;min-height:40px}
+.chip .xp{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint)}
+.chip.add{color:var(--faint);border-style:dashed;justify-content:center}
+.chip .dots{margin-left:auto;font-size:10px;letter-spacing:2px;color:var(--phos)}
+.deck{display:flex;gap:7px;overflow:hidden;margin-top:6px}
+.deck .chip{flex:0 0 auto;min-width:120px}
+.boardrow{display:flex;align-items:center;gap:8px;padding:8px 2px;border-top:1px solid var(--line);font-size:12.5px}
+.boardrow:first-child{border-top:0}
+.boardrow .dom{width:3px;height:22px;border-radius:2px}
+.boardrow .dots{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--phos)}
+.tagline{display:inline-block;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;padding:4px 10px;border-radius:99px;border:1px solid var(--line2);color:var(--dim);margin-bottom:10px}
+.tagline.rec{color:var(--phos);border-color:color-mix(in srgb,var(--phos) 40%,transparent)}
+/* ranks */
+.ranks{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:14px}
+.rankrow{display:flex;gap:6px;margin:14px 0 6px;flex-wrap:wrap}
+.rank{flex:1;min-width:96px;background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:10px;text-align:center}
+.rank .rl{font-family:'Clash Display',sans-serif;font-size:18px}
+.rank .rr{font-family:'Geist Mono',monospace;font-size:10.8px;color:var(--faint);letter-spacing:.08em;margin-top:3px}
+.rank.now{border-color:color-mix(in srgb,var(--gold) 55%,transparent);box-shadow:0 0 24px -12px var(--gold)}
+.rank.now .rl{color:var(--gold)}
+.levelup{background:linear-gradient(180deg,color-mix(in srgb,var(--blue) 10%,#0a0912),#0a0912);border:1px solid color-mix(in srgb,var(--blue) 45%,transparent);border-radius:18px;padding:26px 18px;text-align:center;margin-top:8px;box-shadow:0 0 44px -18px var(--blue)}
+.levelup .lk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.26em;color:var(--blue);margin-bottom:10px}
+.levelup h3{font-size:24px;margin-bottom:6px}
+.levelup p{font-size:12.5px;color:var(--dim)}
+.levelup .unlock{margin-top:12px;font-family:'Geist Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:.1em}
+.cull{background:var(--panel);border:1px dashed var(--line2);border-radius:14px;padding:16px 18px;margin-top:16px}
+.cull .fk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--blood);margin-bottom:10px}
+.cull p{font-size:13.5px;color:var(--dim);margin:0 0 8px}
+.cull b{color:var(--ink)}
+.next{background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 7%,var(--panel)),var(--panel));border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);border-radius:18px;padding:24px 22px;margin-top:16px}
+.next .fk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold);margin-bottom:10px}
+.next p{color:var(--dim);font-size:14.5px;margin:0 0 10px;max-width:700px}
+.next b{color:var(--ink)}
+.foot{margin-top:60px;color:var(--faint);font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;line-height:2}
+@media(max-width:700px){.bar div{font-size:10px}.bar .w b,.bar .l b,.bar .c b{font-size:14px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="lede">
+  <div class="k">Burn the Boats · The XP Session · Round 2 · 2026-07-29</div>
+  <h1>The locked design, drawn — and the vices take their seat.</h1>
+  <blockquote>"These little things are also the magic that helped me stay away from my vices, which is one
+  of the main overarching goals with the XP. We need to make sure that the vices are a main way that you
+  get to 99 overall — you cannot get to 99 overall if you're falling through on all of your vices."
+  <i>YOUR CALL, THIS SESSION — AND IT CHANGED THE ARCHITECTURE</i></blockquote>
+  <p>I checked the engine after you said that: <b>you were right to flag it.</b> Today a clean day pays
+  +40 XP and nothing else — the 99 literally cannot see your vices. As built, you could slip every single
+  day of the run and still finish at 99. That dies here. Below: the locked decisions, the day's new anatomy
+  with the vices inside it, the magic list drawn three ways, and the ranks. <b>Nothing is built.</b></p>
+</div>
+
+<!-- LOCKED -->
+<div class="sec">
+  <h2>Locked this session</h2>
+  <div class="sub">Your answers, now law — reopened only by you</div>
+  <div class="locked">
+    <div class="lock"><div class="lk">✓ THE CORE</div><p><b>The 70/30 day</b> — now refined to 60/25/15 below so the vices fit inside it, same idea: work is most of the day, life is real, grinding chores can never replace blocks.</p></div>
+    <div class="lock"><div class="lk">✓ THE GAME LAYER</div><p><b>Ranks + level-up moments.</b> The 99 stays THE number; the road gets rank bands and crossing one is an event.</p></div>
+    <div class="lock"><div class="lk">✓ THE CEILING</div><p><b>The overflow lane.</b> A flawless above-and-beyond day banks up to 120. Perfect run lands 99 ~Dec 1 — never earlier. Human-great lands Dec 25.</p></div>
+    <div class="lock"><div class="lk">✓ SMALL GOALS</div><p><b>40 XP auto</b> the moment you knock one out. Nudge 25–50 in the goal sheet if one deserves it. Through the ledger, refundable while the day is open.</p></div>
+    <div class="lock"><div class="lk">✓ THE 250 CAP</div><p><b>Added pool only</b> — boosts + invented wins + quick-logs share one 250/day ceiling. Planned work never capped; the Bank ladder never re-prices.</p></div>
+    <div class="lock"><div class="lk">✓ ON TODAY</div><p><b>The pace date</b> — "AT THIS PACE · 99 ON DEC 27" lives on the front page. Repair credit stays parked.</p></div>
+  </div>
+</div>
+
+<!-- THE DAY ANATOMY -->
+<div class="sec">
+  <h2>The day's anatomy — vices inside the score</h2>
+  <div class="sub">Every day scores out of 100 · three slices, one truth</div>
+  <div class="anatomy">
+    <div class="bar">
+      <div class="w"><b>60</b><span>THE WORK</span></div>
+      <div class="l"><b>25</b><span>THE LIFE</span></div>
+      <div class="c"><b>15</b><span>CLEAN</span></div>
+    </div>
+    <div class="over"><span>ABOVE &amp; BEYOND</span><div class="ob"></div><span>UP TO 120 — ONLY WHEN WORK IS FULL <b>AND</b> THE DAY IS CLEAN</span></div>
+    <p><b>THE WORK · 60</b> — the four sacred blocks and the market, rules kept. The spine. Nothing else can fill this slice.</p>
+    <p><b>THE LIFE · 25</b> — the magic list and your standards fill it, capped around four real things a day. The fifth thing still pays XP money — it just can't inflate the score.</p>
+    <p><b>CLEAN · 15</b> — your vices, every day, all of them. The dishwasher held, the smoke gate kept. All clean = the slice is full. A slip = that vice's share goes quiet for the day. <b>Never red, never a lecture — quiet.</b></p>
+    <ul class="rules">
+      <li class="hard"><b>The sentence you asked for, as math:</b> perfect everything else + failing your vices every day caps the whole run at <b>~92</b>. The top rank starts above that line — <b>there is no route to the summit around your vices.</b> Not a punishment; a locked door.</li>
+      <li class="hard"><b>No leveling in the penalty zone:</b> the above-and-beyond lane (the 120) only opens on a day that is both full on work AND fully clean. You cannot go "beyond" while slipping — Jinwoo doesn't level in the penalty zone either.</li>
+      <li class="good"><b>The redemption arc is already in the app:</b> a slip triggers the make-up you already own (escalating, with proof). Completing it wins back part of that day's clean slice — the streak mechanic and the score finally speak to each other. A slip costs; the make-up heals; the number never falls either way.</li>
+      <li class="good"><b>"All types of stuff for doing better":</b> clean-streak landmarks (7 · 30 · 60 days) pay real XP through the ledger, and Bank rewards can now carry clean-day terms — "That purchase · 7,000 · AND 14 clean days." Your requirement-gated Bank, pointed at the thing that matters most.</li>
+      <li>Stress-check, re-run: with 60/25/15 the grinder lands ~78 (still refused), the realistic you ~86–89 (still rewarded), the collapse still never sees the number fall. The vice slice changes who can reach the top — not the fairness underneath.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- THE CATALOGUE -->
+<div class="sec">
+  <h2>The magic list — drawn three ways</h2>
+  <div class="sub">Your list, your edits · tap = logged · every item pays XP and feeds THE LIFE slice</div>
+
+  <div class="mockrow">
+    <div class="mock">
+      <div class="mk">C1 · THE SHELF</div>
+      <h4>It lives in the Bank.</h4>
+      <div class="phone">
+        <div class="ph-k"><span>THE LIST</span><u>EDIT ▸</u></div>
+        <div class="chipgrid">
+          <div class="chip">🧺 Laundry <span class="xp">15</span></div>
+          <div class="chip">🍳 Cooked <span class="xp">20</span></div>
+          <div class="chip">🧹 House clean <span class="xp">20</span></div>
+          <div class="chip">🌿 Backyard <span class="xp">25</span></div>
+          <div class="chip">🐕 Long walk · Theo <span class="xp">20</span></div>
+          <div class="chip">🛁 Theo's shower <span class="xp">25</span></div>
+          <div class="chip">🛏 Bed on time <span class="xp">20</span></div>
+          <div class="chip add">+ Add your own</div>
+        </div>
+      </div>
+      <div class="note"><b>One home, everything visible.</b> Tap = logged (+XP, refundable). Long-press = rename, re-price, retire. The habit graduation lives here too: three weeks of laundry and the card grows a "make it a standard?" ribbon. <b>Cost:</b> it's a tab away from where the evening actually happens.</div>
+    </div>
+
+    <div class="mock">
+      <div class="mk">C2 · THE DECK <span class="tagline rec" style="margin-left:6px">MY PICK — WITH C1 AS ITS HOME</span></div>
+      <h4>One row on Today. The evening rack.</h4>
+      <div class="phone">
+        <div class="ph-k"><span>ALSO TODAY · +35</span><u>THE LIST ▸</u></div>
+        <div class="deck">
+          <div class="chip">🍳 Cooked <span class="xp">✓</span></div>
+          <div class="chip">🧺 Laundry <span class="xp">15</span></div>
+          <div class="chip">🐕 Long walk <span class="xp">20</span></div>
+          <div class="chip">🌿 Backyard <span class="xp">25</span></div>
+        </div>
+      </div>
+      <div class="note"><b>Logging happens where you live.</b> A thumb-row under the day: done things show ✓, the rest wait. It orders itself by time of day and what you actually do (the suggestion engine that already exists). The row IS the door to C1 — <b>same list, two doors: log on Today, manage in the Bank.</b> Your "4 or 5 things" evening reads as one climbing total, not five blips.</div>
+    </div>
+
+    <div class="mock">
+      <div class="mk">C3 · THE BOARD</div>
+      <h4>Grouped by life area, dots for the week.</h4>
+      <div class="phone">
+        <div class="ph-k"><span>THE LIFE · THIS WEEK</span></div>
+        <div class="boardrow"><span class="dom" style="background:var(--ember)"></span> Cooked <span class="dots">●●●○ 3/4</span></div>
+        <div class="boardrow"><span class="dom" style="background:var(--rune)"></span> Laundry <span class="dots">●○ 1/2</span></div>
+        <div class="boardrow"><span class="dom" style="background:var(--ember)"></span> Long walk · Theo <span class="dots">●●○ 2/3</span></div>
+        <div class="boardrow"><span class="dom" style="background:var(--violet)"></span> Real time · phone down <span class="dots">●●● 3/3</span></div>
+      </div>
+      <div class="note"><b>The most informative</b> — standards and the list in one view, weekly dots showing where the week stands. <b>Cost:</b> it's furniture. It reports; it doesn't invite a tap. Better as C1's second tab than as the front door.</div>
+    </div>
+  </div>
+
+  <div class="cull">
+    <div class="fk">CULLED IN WRITING</div>
+    <p><b>A fifth tab for the list</b> — a whole tab for chores outranks the Bank itself. Dead.</p>
+    <p><b>An auto-suggested list</b> ("the AI thinks you should…") — the list is the one place that must be 100% yours. The machine may notice habits; it may not write your list.</p>
+    <p><b>Per-item streaks with visible breaks</b> — five broken streaks on a chore grid is a wall of failure in miniature. Weekly dots only, and only where you set a standard.</p>
+  </div>
+</div>
+
+<!-- THE RANKS -->
+<div class="sec">
+  <h2>The ranks — the road from 50 to 99</h2>
+  <div class="sub">Six bands · crossing one is an event · the 99 stays the only number</div>
+  <div class="ranks">
+    <div class="k" style="color:var(--rune)">R1 · THE HUNTER ROAD — borrowed straight</div>
+    <div class="rankrow">
+      <div class="rank"><div class="rl">E</div><div class="rr">50–57</div></div>
+      <div class="rank"><div class="rl">D</div><div class="rr">58–65</div></div>
+      <div class="rank now"><div class="rl">C</div><div class="rr">66–73</div></div>
+      <div class="rank"><div class="rl">B</div><div class="rr">74–81</div></div>
+      <div class="rank"><div class="rl">A</div><div class="rr">82–90</div></div>
+      <div class="rank"><div class="rl">S</div><div class="rr">91–99</div></div>
+    </div>
+    <p style="font-size:13px;color:var(--dim)">Instantly legible if you know the show — E-rank hunter to S. The catch: it's borrowed clothing, and "S" says nothing about <b>who you're becoming</b>.</p>
+  </div>
+  <div class="ranks">
+    <div class="k" style="color:var(--rune)">R2 · HIS ROAD — the run's own mythology <span class="tagline rec" style="margin-left:8px">MY PICK</span></div>
+    <div class="rankrow">
+      <div class="rank"><div class="rl">ASHES</div><div class="rr">50–57</div></div>
+      <div class="rank"><div class="rl">EMBER</div><div class="rr">58–65</div></div>
+      <div class="rank now"><div class="rl">FLAME</div><div class="rr">66–73</div></div>
+      <div class="rank"><div class="rl">FORGE</div><div class="rr">74–81</div></div>
+      <div class="rank"><div class="rl">STEEL</div><div class="rr">82–90</div></div>
+      <div class="rank"><div class="rl">HIM</div><div class="rr">91–99</div></div>
+    </div>
+    <p style="font-size:13px;color:var(--dim)">The boats burned — what's left starts in the ashes and gets forged. The last band isn't a letter: it's <b>HIM</b> — the millionaire version, the only name the summit ever had. And the vice math above means <b>you cannot reach HIM while slipping</b>, which is exactly the sentence you said.</p>
+  </div>
+  <div class="ranks">
+    <div class="k" style="color:var(--rune)">R3 · QUIET TIERS</div>
+    <p style="font-size:13px;color:var(--dim);margin-top:8px">Bronze → Silver → Gold → Platinum → Diamond → Legend. Familiar from every game you've played; zero explanation needed. The cost: it belongs to every game you've played — nothing of this run in it.</p>
+  </div>
+
+  <div class="mockrow" style="margin-top:16px">
+    <div class="mock">
+      <div class="mk">THE MOMENT — drawn</div>
+      <h4>Crossing a band is an event.</h4>
+      <div class="levelup">
+        <div class="lk">◆ RANK UP ◆</div>
+        <h3>FORGE · 74</h3>
+        <p>Ember is behind you. 41 days in — pace holds Dec 25.</p>
+        <div class="unlock">UNLOCKED · A NEW SHELF IN THE BANK</div>
+      </div>
+      <div class="note">Full-screen, once, the moment the number crosses — the blue-window feeling without the blue window. <b>Rank-gated Bank shelves</b> are the "all types of stuff" you asked for: some rewards only open at FORGE, some at STEEL. Claiming still costs XP and terms — rank opens the door, it never pays the bill.</div>
+    </div>
+    <div class="mock">
+      <div class="mk">THE STATUS WINDOW — drawn</div>
+      <h4>Your numbers, presented like a hunter's sheet.</h4>
+      <div class="phone">
+        <div class="ph-k"><span>FLAME · 68</span><u>DAY 41/110</u></div>
+        <div class="boardrow">THE WORK <span class="dots" style="color:var(--blue)">████████░░ 82%</span></div>
+        <div class="boardrow">THE LIFE <span class="dots" style="color:var(--violet)">███████░░░ 71%</span></div>
+        <div class="boardrow">CLEAN <span class="dots" style="color:var(--phos)">█████████░ 93%</span></div>
+        <div class="boardrow">PACE <span class="dots" style="color:var(--gold)">99 · DEC 27</span></div>
+      </div>
+      <div class="note">The three slices as running stats, the pace date under them. This replaces nothing — it's the OVR card's tap-through, the "See the run" door made game-shaped. The radar and the six areas stay; this is the summary above them.</div>
+    </div>
+  </div>
+</div>
+
+<!-- NEXT -->
+<div class="sec">
+  <div class="next">
+    <div class="fk">WHERE THIS STANDS · WHAT I NEED FROM YOU</div>
+    <p><b>You react to three things on this page</b> — no essays needed, just picks: the catalogue direction
+    (my pick: C2 the Deck on Today, with C1 the Shelf as its home in the Bank — same list, two doors) · the
+    rank names (my pick: R2, HIS ROAD — but the names are five words and all five are yours to rewrite) ·
+    and a yes on the day anatomy (60 / 25 / 15 with the overflow lane and the vice rules as drawn).</p>
+    <p><b>Then the build runs in two phases, each behind its own harness and a hostile QC pass:</b>
+    Phase 1, the plumbing — the retro-standard fix, one-tap make-it-a-standard, the graduation moment,
+    knock-out pay through the ledger, the 250 added pool, the pace date on Today. Phase 2, the engine —
+    the three-slice day, the overflow lane, the vice slice with the make-up wired in, the ranks and the
+    level-up moment, the Deck + Shelf. Nothing touches the live app until the drawings are approved.</p>
+  </div>
+</div>
+
+<div class="foot">
+  ROUND 2 OF THE XP SESSION · EVERYTHING ABOVE IS A DRAWING, NOT A BUILD<br>
+  BURN THE BOATS · PREPARED 2026-07-29 · COMPANION TO REND-XP-SYSTEM.HTML (ROUND 1, THE FIVE SYSTEMS)
+</div>
+
+</div>
+</body>
+</html>
