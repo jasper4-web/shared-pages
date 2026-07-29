@@ -83,6 +83,13 @@ reframed around words he'd use ("my standards", "what came out of my weeks").
     editing/adding any row. Sacred Mon–Fri blocks write the REAL commitment (THE WEEK's
     store — one truth); other rows carry `goalId` on the plan; a linked small goal can be
     knocked out from the row ("✓ This finished the goal"). Attaching pays nothing.
+14b. **The goal picker mirrors the hierarchy.** Not a wall of buttons: each project
+    (December goal) is a drop-down holding the project itself + its small goals;
+    "nothing — it's just the day" stays a first-class first choice.
+15. **No military time on screen.** 6:00a / 12:00p / 9:50p everywhere displayed; the
+    model stays 24h underneath (one formatter, t12 — never format at more than one door).
+16. **The app guards its own data.** In a browser tab it warns kindly and offers
+    backup + install steps; installed to the home screen it never mentions it.
 14. **His data lives on HIS phone.** Installed home-screen app = permanent; Backup weekly
     = insurance. Nothing syncs anywhere; agents cannot see his data unless he hands over
     a backup file.

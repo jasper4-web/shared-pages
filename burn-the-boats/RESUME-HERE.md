@@ -1,8 +1,41 @@
 # RESUME HERE — BURN THE BOATS
 
-**Updated 2026-07-28, after stage 4 shipped AND after the vision Q&A.** Read this top to
-bottom before touching anything. It is the single entry point. `HANDOFF-GOALS.md` is the
-deeper history.
+**Updated 2026-07-29. Current live build: sw `btb-v40`.** Read this top to bottom before
+touching anything. It is the single entry point. `HANDOFF-GOALS.md` is the deeper history.
+
+## ⭐ WHERE WE ARE NOW (end of 2026-07-28, a huge day)
+
+Phases 0–4 of the mentor plan are BUILT AND LIVE (see the phase log below), the planner
+was redesigned to a THREE-JUDGE jury pass, and then a night of live use with him drove
+seven more shipped rounds (v36→v40):
+
+- **D2 EDITORIAL** is the control voice in every sheet (his pick from `renditions/rend-buttons.html`)
+- **Alongside**: a row inside another block's window renders INSIDE that card ("Clean
+  house · runs alongside" nested in Market open) — a feature, never a conflict
+- **The knock-out ✓** on every working-goal row — his loop: December goals on top, quick
+  goals under them, cleared constantly
+- **Goal attachment everywhere**: any planned row asks "FOR — which goal does this serve?"
+  · sacred Mon–Fri blocks write the REAL commitment (THE WEEK's store — one truth) · other
+  rows carry goalId on the plan · the picker is a HIERARCHY (each project a drop-down:
+  the project itself or its small goals) · linked small goals knock out from the row
+- **The evening door**: from 5pm Today shows "Plan tomorrow →" (Sat: "Set next week →")
+- **No military time on screen** (t12 — one door for every displayed clock; model stays 24h)
+- **The tab guard**: running in a browser tab shows a kind warning + backup/install steps
+  (his "updates keep deleting my goals" was the PRIVATE TAB wiping storage — never deploys)
+
+**HIS SETUP:** he is moving to normal Safari → Add to Home Screen → Restore from Backup.
+If he reports lost data, it's a tab-context issue — Backup/Restore is the fix, always.
+
+**NEXT (in order):**
+1. **Phase 5 · the XP design session — OWNER-GATED.** He lives one full planned day, hands
+   it over (AirDrop the backup file if he wants data-informed pricing), THEN price
+   everything together: day worth, custom wins, knocked-out goals, the 250 extras cap.
+2. Then: AWAY mode + appointments · recurrence ("every Tuesday") · reminders (needs a push
+   server — parked honestly) · the Record tab rebuilt in his words.
+
+Housekeeping 2026-07-29: 19 old `index.html.bak-*` snapshots and 7 design-era html files
+moved to `_archive/` (two newest snapshots kept in root). `NORTH-STAR.md` items 9–16 carry
+every decision from the live-use night.
 
 > ⭐ **READ `NORTH-STAR.md` FIRST — it outranks this file and every other document.**
 > It is the owner's full vision in his own words (Q&A 2026-07-28). Then read
@@ -32,18 +65,8 @@ dashed **gap pills** ("+ fill this 45m opening") that open the add sheet pre-aim
 sheets · live end-time echo · presets carry default lengths · make-it-count has a real
 checkbox above the CTA. Same model, no behavior change; `planner.js` 33/33 throughout.
 
-### ⏳ OPEN — HE PICKS A CONTROL STYLE (2026-07-28 evening)
-
-He called the buttons/chips "basic, ugly, boring" and asked for style options. **LIVE:**
-https://jasper4-web.github.io/shared-pages/burn-the-boats/renditions/rend-buttons.html —
-five directions on the real New-goal sheet (D1 Soft Tokens · D2 Editorial · D3 The Rail ·
-D4 Beam · D5 Tactile), recommendation = **D1 base + D4's beam on the selected item only.**
-Whatever he picks applies APP-WIDE (chips, dates, durations, planner, Bank editors).
-**Do not restyle anything until he answers.**
-
-⚠ **STORAGE:** he was using the app in a PRIVATE Safari tab. He was told: Backup from the
-private tab → open in normal Safari → Add to Home Screen → Restore → live there. If he
-mentions lost data, this is why — the backup/restore path is the fix.
+### ✅ DECIDED — D2 EDITORIAL (he picked it 2026-07-28 night; applied app-wide in sheets, v36)
+`renditions/rend-buttons.html` stays as the record of the five directions considered.
 
 **NEXT — PHASE 5, and it starts with HIM, not code:** he lives one real planned day in the
 new planner and hands it over; THEN the XP-system design session (his locked sequencing),
@@ -732,7 +755,10 @@ RESUME-HERE.md                 this file
 HANDOFF-GOALS.md               deeper history: §12 decisions, §13 critique, §14–15 what shipped
 PROFILE.md                     who he is — source of truth
 WATCHTOWER.md                  the older design-crew role (mostly historical now)
-model/                         the goal model + ALL harnesses
+model/                         the goal model + ALL harnesses (funeral · ledger · owned ·
+                               dayplan · planner · stage1-4 · full · qc3 · vanish · tiers ·
+                               phase1 · area · boosts · backup · extras · rewardreq ·
+                               goals2 · profiles · stress)
 renditions/
   rend-today-five.html         THE FIVE NEW DIRECTIONS — awaiting his pick
   rend-today-options.html      the four he rejected (only B, partially)
@@ -740,7 +766,8 @@ renditions/
   rend-day-system.html         v1 of that proposal (superseded)
   rend-goals-system.html       the 13-screen goals design (built, shipped)
   rend-goal-builder.html       working prototype — he still hasn't used it
-index.html.bak-*               snapshots, newest last
+index.html.bak-*               the two NEWEST snapshots only — older ones live in
+_archive/                      snapshots/ (19 superseded .baks) + design-era/ (old scratch pages)
 ```
 
 ---
