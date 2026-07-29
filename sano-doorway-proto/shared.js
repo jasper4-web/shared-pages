@@ -7,7 +7,7 @@
   var IND = window.SANO_INDUSTRIES || [];
 
   var indDrop = IND.map(function (i) {
-    return '<a href="industry-' + i.slug + '.html"><b>' + i.label + '</b><span>' + i.tag + '</span></a>';
+    return '<a href="' + (i.slug === 'roofing' ? '' : 'https://jasper4-web.github.io/shared-pages/sano-podium-doorway/') + 'industry-' + i.slug + '.html"><b>' + i.label + '</b><span>' + i.tag + '</span></a>';
   }).join('');
 
   var HERE = (location.pathname.split('/').pop() || 'index.html');
@@ -19,46 +19,46 @@
     '<header><div class="wrap nav">' +
       '<a href="doorway.html" class="brand" aria-label="SANO Systems — home"><img src="sano-logo.png" alt="" width="30" height="30"/><span class="bt">SANO Systems</span></a>' +
       '<nav aria-label="Main"><ul class="nav-links">' +
-        '<li class="' + (page === 'product' ? 'active' : '') + '"><a href="what-we-run.html"' + (page === 'product' ? (here('what-we-run.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>What we run ' + caret + '</a>' +
+        '<li class="' + (page === 'product' ? 'active' : '') + '"><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html"' + (page === 'product' ? (here('what-we-run.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>What we run ' + caret + '</a>' +
           '<div class="dropdown">' +
-            '<a href="what-we-run.html#frontdesk"><b>The front desk</b><span>Calls, texts &amp; booking, around the clock</span></a>' +
-            '<a href="what-we-run.html#followup"><b>The follow-up</b><span>Chased until you get an answer</span></a>' +
-            '<a href="what-we-run.html#reviews"><b>Reviews</b><span>Asked for after every job</span></a>' +
-            '<a href="what-we-run.html#marketing"><b>Marketing &amp; payments</b><span>Campaigns, follow-up, pay-by-text</span></a>' +
-            '<a href="what-we-run.html#command"><b>Your monthly report</b><span>What happened, in plain English</span></a>' +
-            '<a href="sample-blueprint.html"><b>See a sample blueprint</b><span>The document a client actually approves</span></a>' +
+            '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#frontdesk"><b>The front desk</b><span>Calls, texts &amp; booking, around the clock</span></a>' +
+            '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#followup"><b>The follow-up</b><span>Chased until you get an answer</span></a>' +
+            '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#reviews"><b>Reviews</b><span>Asked for after every job</span></a>' +
+            '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#marketing"><b>Marketing &amp; payments</b><span>Campaigns, follow-up, pay-by-text</span></a>' +
+            '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#command"><b>Your monthly report</b><span>What happened, in plain English</span></a>' +
+            '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/sample-blueprint.html"><b>See a sample blueprint</b><span>The document a client actually approves</span></a>' +
           '</div>' +
         '</li>' +
-        '<li class="' + (page === 'industries' ? 'active' : '') + '"><a href="industries.html"' + (page === 'industries' ? (here('industries.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>Industries ' + caret + '</a>' +
+        '<li class="' + (page === 'industries' ? 'active' : '') + '"><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/industries.html"' + (page === 'industries' ? (here('industries.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>Industries ' + caret + '</a>' +
           '<div class="dropdown">' + indDrop + '</div>' +
         '</li>' +
-        '<li class="' + (page === 'pricing' ? 'active' : '') + '"><a href="pricing.html"' + (page === 'pricing' ? (here('pricing.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>Pricing</a></li>' +
-        '<li class="' + (page === 'resources' ? 'active' : '') + '"><a href="resources.html"' + (page === 'resources' ? (here('resources.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>Resources</a></li>' +
-        '<li class="' + (page === 'about' ? 'active' : '') + '"><a href="about.html"' + (page === 'about' ? (here('about.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>Why SANO</a></li>' +
+        '<li class="' + (page === 'pricing' ? 'active' : '') + '"><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/pricing.html"' + (page === 'pricing' ? (here('pricing.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>Pricing</a></li>' +
+        '<li class="' + (page === 'resources' ? 'active' : '') + '"><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/resources.html"' + (page === 'resources' ? (here('resources.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>Resources</a></li>' +
+        '<li class="' + (page === 'about' ? 'active' : '') + '"><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/about.html"' + (page === 'about' ? (here('about.html') ? ' aria-current="page"' : ' aria-current="true"') : '') + '>Why SANO</a></li>' +
       '</ul></nav>' +
       '<div class="nav-right">' +
         '<div class="nav-contact"><a href="tel:' + PHONE + '" class="nav-phone">' + PHONE_D + '</a>' +
-          '<a href="about.html#bilingual" class="nav-es" lang="es">Se habla Espa&ntilde;ol</a></div>' +
+          '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/about.html#bilingual" class="nav-es" lang="es">Se habla Espa&ntilde;ol</a></div>' +
         '<a href="tel:' + PHONE + '" class="nav-call" aria-label="Call us"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.11 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>' +
-        '<a href="demo.html" class="btn btn-blue nav-cta" aria-label="Request a demo"' + (page === 'demo' ? ' aria-current="page"' : '') + '>Request a demo</a>' + '<button class="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>' +
+        '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/demo.html" class="btn btn-blue nav-cta" aria-label="Request a demo"' + (page === 'demo' ? ' aria-current="page"' : '') + '>Request a demo</a>' + '<button class="nav-burger" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>' +
       '</div>' +
     '</div></header>' +
     '<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu">' +
       '<button class="mm-close" aria-label="Close menu">&times;</button>' +
       '<a href="doorway.html" class="mm-home"><img src="sano-logo.png" alt="" width="26" height="26"/> SANO Systems</a>' +
-      '<a href="what-we-run.html"' + (page === 'product' ? ' class="mm-on" aria-current="' + (here('what-we-run.html') ? 'page' : 'true') + '"' : '') + '>What we run</a>' +
-      '<a href="industries.html"' + (page === 'industries' ? ' class="mm-on" aria-current="' + (here('industries.html') ? 'page' : 'true') + '"' : '') + '>Industries</a>' +
-      '<a href="pricing.html"' + (page === 'pricing' ? ' class="mm-on" aria-current="' + (here('pricing.html') ? 'page' : 'true') + '"' : '') + '>Pricing</a>' +
-      '<a href="resources.html"' + (page === 'resources' ? ' class="mm-on" aria-current="' + (here('resources.html') ? 'page' : 'true') + '"' : '') + '>Resources</a>' +
-      '<a href="about.html"' + (page === 'about' ? ' class="mm-on" aria-current="' + (here('about.html') ? 'page' : 'true') + '"' : '') + '>Why SANO</a>' +
+      '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html"' + (page === 'product' ? ' class="mm-on" aria-current="' + (here('what-we-run.html') ? 'page' : 'true') + '"' : '') + '>What we run</a>' +
+      '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/industries.html"' + (page === 'industries' ? ' class="mm-on" aria-current="' + (here('industries.html') ? 'page' : 'true') + '"' : '') + '>Industries</a>' +
+      '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/pricing.html"' + (page === 'pricing' ? ' class="mm-on" aria-current="' + (here('pricing.html') ? 'page' : 'true') + '"' : '') + '>Pricing</a>' +
+      '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/resources.html"' + (page === 'resources' ? ' class="mm-on" aria-current="' + (here('resources.html') ? 'page' : 'true') + '"' : '') + '>Resources</a>' +
+      '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/about.html"' + (page === 'about' ? ' class="mm-on" aria-current="' + (here('about.html') ? 'page' : 'true') + '"' : '') + '>Why SANO</a>' +
       '<a href="tel:' + PHONE + '">' + PHONE_D + '</a>' +
-      '<a href="about.html#bilingual" lang="es">Se habla Espa&ntilde;ol</a>' +
-      '<a href="demo.html" class="btn btn-blue btn-lg">Request a demo</a>' +
+      '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/about.html#bilingual" lang="es">Se habla Espa&ntilde;ol</a>' +
+      '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/demo.html" class="btn btn-blue btn-lg">Request a demo</a>' +
     '</div>';
 
   var indFoot = IND.slice(0, 4).map(function (i) {
-    return '<a href="industry-' + i.slug + '.html">' + i.label + '</a>';
-  }).join('') + '<a href="industries.html">All industries →</a>';
+    return '<a href="' + (i.slug === 'roofing' ? '' : 'https://jasper4-web.github.io/shared-pages/sano-podium-doorway/') + 'industry-' + i.slug + '.html">' + i.label + '</a>';
+  }).join('') + '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/industries.html">All industries →</a>';
 
   var foot =
     '<footer><div class="wrap">' +
@@ -70,16 +70,16 @@
           '<a href="mailto:' + EMAIL + '" class="c">' + EMAIL + '</a>' +
         '</div>' +
         '<div class="foot-col"><h2 class="foot-col-h">What we run</h2>' +
-          '<a href="what-we-run.html#frontdesk">The front desk</a><a href="what-we-run.html#reviews">Reviews</a>' +
-          '<a href="what-we-run.html#marketing">Marketing &amp; payments</a><a href="sample-blueprint.html">Sample blueprint</a></div>' +
+          '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#frontdesk">The front desk</a><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#reviews">Reviews</a>' +
+          '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#marketing">Marketing &amp; payments</a><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/sample-blueprint.html">Sample blueprint</a></div>' +
         '<div class="foot-col"><h2 class="foot-col-h">Industries</h2>' + indFoot + '</div>' +
         '<div class="foot-col"><h2 class="foot-col-h">Company</h2>' +
-          '<a href="about.html">Why SANO</a><a href="resources.html">Resources</a><a href="pricing.html">Pricing</a>' +
-          '<a href="about.html#bilingual" lang="es">Se habla Español</a><a href="demo.html">Request a demo</a></div>' +
+          '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/about.html">Why SANO</a><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/resources.html">Resources</a><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/pricing.html">Pricing</a>' +
+          '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/about.html#bilingual" lang="es">Se habla Español</a><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/demo.html">Request a demo</a></div>' +
         
       '</div></nav>' +
       '<div class="foot-base"><span>© 2026 SANO Systems LLC. (Design test — not the live site.)</span>' +
-        '<span><a href="privacy.html" style="color:#8A8A93">Privacy Policy</a> · <a href="terms.html" style="color:#8A8A93">Terms of Service</a></span></div>' +
+        '<span><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/privacy.html" style="color:#8A8A93">Privacy Policy</a> · <a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/terms.html" style="color:#8A8A93">Terms of Service</a></span></div>' +
     '</div></footer>';
 
   /* One source of truth for the risk-reversal + contact lines under every CTA.
@@ -108,7 +108,7 @@
   } catch (e) { IND_CTX = ''; }
   function carryInd(force) {
     if (!IND_CTX) return;
-    document.querySelectorAll('a[href^="demo.html"]').forEach(function (a) {
+    document.querySelectorAll('a[href*="demo.html"]').forEach(function (a) {
       var h = a.getAttribute('href') || '';
       var hash = h.indexOf('#') > -1 ? h.slice(h.indexOf('#')) : '';
       var base = hash ? h.slice(0, h.indexOf('#')) : h;
@@ -125,7 +125,7 @@
        an ask -- and reversible, because the visitor can change their mind. */
     document.querySelectorAll('.cta-box a[href], .hero-cta a[href]').forEach(function (a) {
       if (!a.hasAttribute('data-orig-href')) {
-        if (!/^sample-blueprint\.html/.test(a.getAttribute('href') || '')) return;
+        if (!/sample-blueprint\.html/.test(a.getAttribute('href') || '')) return;
         a.setAttribute('data-orig-href', a.getAttribute('href'));
         a.setAttribute('data-orig-text', a.textContent);
       }
@@ -175,7 +175,7 @@
     var plan = picked.id.replace(/^t-/, '');
     /* remember the latest pick, including a change of mind made on this page */
     try { sessionStorage.setItem('sano_plan', plan); } catch (e) {}
-    document.querySelectorAll('a[href^="demo.html"]').forEach(function (a) {
+    document.querySelectorAll('a[href*="demo.html"]').forEach(function (a) {
       var h = a.getAttribute('href') || '';
       var hash = h.indexOf('#') > -1 ? h.slice(h.indexOf('#')) : '';
       var base = hash ? h.slice(0, h.indexOf('#')) : h;
