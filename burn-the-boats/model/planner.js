@@ -132,6 +132,35 @@ const week=async p=>p.evaluate(async()=>{go('push');await new Promise(r=>setTime
   ok('one tap back to the normal day',norm.cleared);
   ok('"make this my normal day" writes the template',norm.tmpl&&norm.ownGone);
   ok('...and every future weekday inherits it',norm.otherDay);
+
+  // ══ 4b · ATTACH A GOAL TO ANYTHING ON THE DAY ════════════════════════════
+  const att=await p.evaluate(async()=>{
+    const big=GM.liveGoals(G).find(x=>x.anchor);
+    const small=GM.addGoal(G,{title:'Call Anthony back',areaId:G.areas[0].id,parentId:big.id});
+    gsave();
+    /* the sacred block's picker writes the REAL commitment — THE WEEK's own store */
+    const bi=shape('2026-09-24').findIndex(x=>x.id==='b1');
+    planRow('2026-09-24',bi);await new Promise(r=>setTimeout(r,300));
+    const hasPicker=/which goal does this serve/i.test(document.getElementById('sheetA').innerText);
+    PRG=big.id;planRowSave('2026-09-24',bi);await new Promise(r=>setTimeout(r,300));
+    const c=commitFor(mondayOf(new Date('2026-09-24T00:00:00')),3,'b1');
+    /* a custom row carries the link on the plan */
+    planAdd('2026-09-24');await new Promise(r=>setTimeout(r,250));
+    document.getElementById('paN').value='Call Anthony';PRG=small.id;
+    planAddSave('2026-09-24');await new Promise(r=>setTimeout(r,300));
+    const row=S.dayPlan['2026-09-24'].find(x=>x.n==='Call Anthony');
+    const listShows=document.getElementById('sheetA').innerText.includes('→ Call Anthony back');
+    /* and the linked small goal can be knocked out from the row itself */
+    planRow('2026-09-24',S.dayPlan['2026-09-24'].indexOf(row));await new Promise(r=>setTimeout(r,300));
+    const btn=[...document.querySelectorAll('#sheetA button')].find(e=>/knock it out/i.test(e.textContent));
+    if(btn)btn.click();await new Promise(r=>setTimeout(r,300));
+    return {hasPicker,commit:!!c&&c.goalId===big.id,rowGoal:!!row&&row.goalId===small.id,
+      listShows,ko:!!btn,done:GM.goalOf(G,small.id).state==='done'};});
+  ok('every row asks which goal it serves',att.hasPicker);
+  ok('a sacred block\'s pick writes the real commitment',att.commit);
+  ok('a custom row carries its goal on the plan',att.rowGoal);
+  ok('...and the day list says so with an arrow',att.listShows);
+  ok('a linked small goal knocks out from the row',att.ko&&att.done,JSON.stringify({ko:att.ko,done:att.done}));
   ok('no JS errors',errs.length===0,errs.join(' | '));
   await b.close();
 

@@ -79,6 +79,10 @@ reframed around words he'd use ("my standards", "what came out of my weeks").
     week →").
 13. **Reminders are wanted** — real push notifications are a genuine project (needs a push
     server; GitHub Pages can't). Parked, not forgotten.
+14a. **Anything on the day can carry a goal.** His ask: attach a big or small goal when
+    editing/adding any row. Sacred Mon–Fri blocks write the REAL commitment (THE WEEK's
+    store — one truth); other rows carry `goalId` on the plan; a linked small goal can be
+    knocked out from the row ("✓ This finished the goal"). Attaching pays nothing.
 14. **His data lives on HIS phone.** Installed home-screen app = permanent; Backup weekly
     = insurance. Nothing syncs anywhere; agents cannot see his data unless he hands over
     a backup file.

@@ -4617,11 +4617,11 @@ function planDay(date){
      row heights otherwise; the gaps carry the feel of time. */
   const hostOf=b=>rows.find(x=>x!==b&&mins(x.s)<=mins(b.s)&&mins(x.e)>=mins(b.e)&&
       (mins(x.e)-mins(x.s))>(mins(b.e)-mins(b.s)));
-  const subRow=(b,j)=>{const len=mins(b.e)-mins(b.s);
+  const subRow=(b,j)=>{const len=mins(b.e)-mins(b.s),g=rowGoalOf(date,b);
     return `<button class="pdsub" style="--c:${domColour((b.dom||[])[0])}"
         onclick="event.stopPropagation();planRow('${date}',${j})">
       <span class="t">${b.s}<b>${b.e}</b></span>
-      <span class="n">${esc(b.n)}<span class="al">runs alongside</span></span>
+      <span class="n">${esc(b.n)}<span class="al">runs alongside${g?` · → ${esc(cut(g.title,18))}`:''}</span></span>
       <span class="len">${len}m</span>
     </button>`};
   let list='';let cur=null;
@@ -4638,7 +4638,9 @@ function planDay(date){
     list+=`<div class="pdrow${deep?' deep':''}${kids.length?' pdhost':''}" style="--c:${domColour((b.dom||[])[0])}"
         onclick="planRow('${date}',${i})">
       <span class="t">${b.s}<b>${b.e}</b></span>
-      <span class="n">${esc(b.n)}${deep?`<u class="pdtag">◆ SACRED</u>`:''}</span>
+      <span class="n">${esc(b.n)}${(()=>{const g=rowGoalOf(date,b);
+        return deep?`<u class="pdtag">◆ SACRED${g?` · ${esc(cut(g.title,18)).toUpperCase()}`:''}</u>`
+          :(g?`<u class="al" style="display:block;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint);margin-top:3px">→ ${esc(cut(g.title,22))}</u>`:'')})()}</span>
       <span class="len">${len}m</span>
       ${kids.length?`<div class="inwrap">${kids.map(([x,j])=>subRow(x,j)).join('')}</div>`:''}
     </div>`;
@@ -4663,9 +4665,34 @@ function planWrite(date,rows){
   rows.sort((a,b)=>mins(a.s)-mins(b.s));
   S.dayPlan[date]=rows;save();
 }
+/* ═══ ATTACH A GOAL TO ANYTHING ON THE DAY (his ask, 2026-07-28 night) ════════
+   The four sacred blocks already had a goal system — the commitments THE WEEK
+   edits. The row editor now speaks to THAT SAME store (one truth, no fifth model).
+   Every other row carries a light goalId on the plan. A linked small goal can be
+   knocked out right from the row. Attaching pays nothing; worth is the XP session. */
+function rowGoalOf(date,b){
+  const dt=new Date(date+'T00:00:00'),off=(dt.getDay()+6)%7;
+  if(b.kind==='deep'&&off<=4){
+    const c=commitFor(mondayOf(dt),off,b.id);
+    return c&&c.goalId?GM.goalOf(G,c.goalId):null;
+  }
+  return b.goalId?GM.goalOf(G,b.goalId):null;
+}
+let PRG;              /* the goal picked in the open sheet; undefined = untouched */
+function goalPickChips(sel){
+  const anchors=GM.liveGoals(G).filter(g=>g.anchor);
+  const small=GM.liveGoals(G).filter(g=>!g.anchor);
+  const chip=(g,pre)=>`<button class="chip tap seg${sel===g.id?' on':''}"
+      onclick="PRG='${g.id}';[...this.parentNode.querySelectorAll('.seg')].forEach(e=>e.classList.remove('on'));this.classList.add('on')">${pre}${esc(cut(g.title,22))}</button>`;
+  return `<div class="chips">
+    <button class="chip tap seg${sel?'':' on'}"
+      onclick="PRG=null;[...this.parentNode.querySelectorAll('.seg')].forEach(e=>e.classList.remove('on'));this.classList.add('on')">nothing — it's just the day</button>
+    ${anchors.map(g=>chip(g,'◆ ')).join('')}${small.map(g=>chip(g,'')).join('')}</div>`;
+}
 function planRow(date,i){
   const rows=planRows(date),b=rows[i];if(!b)return;
   const len=mins(b.e)-mins(b.s),deep=b.kind==='deep',c=domColour((b.dom||[])[0]);
+  const rg=rowGoalOf(date,b);PRG=rg?rg.id:null;
   sheet(`<div class="sh-k" style="padding-left:9px;border-left:3px solid ${c}">${
       esc(b.n).toUpperCase()}${deep?' <span class="pdtag">· ◆ SACRED</span>':''}</div>
     <div class="sh-t">${b.s} – <span id="prEnd">${b.e}</span></div>
@@ -4688,6 +4715,10 @@ function planRow(date,i){
       <button class="g2addanc" style="margin-top:7px" onclick="prPick(null);$('prLW').hidden=false;$('prL').focus()">exactly… — any length, typed</button>
       <div id="prLW" ${[15,30,45,60,75,90,120].includes(len)?'hidden':''}>
         <input id="prL" type="number" inputmode="numeric" value="${len}" oninput="prEcho()"></div></div>
+    <div class="fld"><label>For — which goal does this serve?</label>
+      ${goalPickChips(rg?rg.id:null)}</div>
+    ${rg&&!rg.anchor&&rg.state==='active'?`<button class="btn gh" style="margin-top:2px"
+      onclick="g2Done('${rg.id}');closeSheet()">✓ This finished the goal — knock it out</button>`:''}
     <button class="btn" style="margin-top:6px" onclick="planRowSave('${date}',${i})">Save the change</button>
     ${deep?''
       :`<button class="btn gh" style="margin-top:8px" onclick="planRowDrop('${date}',${i})">Take it off this day</button>`}`);
@@ -4723,6 +4754,13 @@ function planRowSave(date,i){
   const len=Math.max(5,Math.min(600,Math.round(Number($('prL').value)||mins(b.e)-mins(b.s))));
   const e=(m=>`${pad(Math.floor(m/60)%24)}:${pad(m%60)}`)(mins(s)+len);
   Object.assign(b,{n,s,e});
+  /* the goal link: sacred Mon–Fri blocks write the REAL commitment (the same store
+     THE WEEK edits); every other row carries it on the plan */
+  const dt=new Date(date+'T00:00:00'),off=(dt.getDay()+6)%7;
+  if(b.kind==='deep'&&off<=4){
+    if(PRG!==undefined)setCommitQuiet(mondayOf(dt),off,b.id,PRG||null);
+  }else{if(PRG)b.goalId=PRG;else delete b.goalId}
+  gsave();
   planWrite(date,rows);closeSheet();
   const al=planAlongside(date,s,e,b.id);
   if(al)toast(`Moved — runs alongside ${al.n}`,'good');
@@ -4747,7 +4785,7 @@ function paLen(m){const el=$('paL');if(el)el.value=m;
   const host=$('paLC');if(host)[...host.querySelectorAll('.seg')].forEach(e=>e.classList.toggle('on',e.dataset.m==String(m)));
   const w=$('paLW');if(w&&[...(host?host.querySelectorAll('.seg.on'):[])].length)w.hidden=true}
 function planAdd(date,s,len){
-  PA={count:0};
+  PA={count:0};PRG=null;
   const mem=planMemory();
   /* tapped from a GAP, the sheet arrives already aimed at it */
   const aimed=!!s;
@@ -4776,6 +4814,7 @@ function planAdd(date,s,len){
       </div>
       <button class="g2addanc" style="margin-top:7px" onclick="[...$('paLC').querySelectorAll('.seg')].forEach(e=>e.classList.remove('on'));$('paLW').hidden=false;$('paL').focus()">exactly… — any length, typed</button>
       <div id="paLW" hidden><input id="paL" type="number" inputmode="numeric" value="${fit}"></div></div>
+    <div class="fld"><label>For — optional</label>${goalPickChips(null)}</div>
     <button class="mkc" id="paCount" style="margin-top:10px"
       onclick="PA.count=PA.count?0:1;this.classList.toggle('on');this.querySelector('b').textContent=PA.count?'★':''">
       <b></b>ALSO MAKE IT ONE OF MY ALWAYS COUNTS — WORTH XP WHEN I LOG IT DONE</button>
@@ -4787,7 +4826,9 @@ function planAddSave(date){
   const len=Math.max(5,Math.min(600,Math.round(Number($('paL').value)||45)));
   const e=(m=>`${pad(Math.floor(m/60)%24)}:${pad(m%60)}`)(mins(s)+len);
   const rows=planRows(date),nid='p'+Date.now().toString(36);
-  rows.push({id:nid,s,e,n,dom:['MIND'],kind:'plan'});
+  const nr={id:nid,s,e,n,dom:['MIND'],kind:'plan'};
+  if(PRG)nr.goalId=PRG;
+  rows.push(nr);
   planWrite(date,rows);
   const al=planAlongside(date,s,e,nid);
   PA.al=al?al.n:null;
