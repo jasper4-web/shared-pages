@@ -55,7 +55,7 @@ const week=async p=>p.evaluate(async()=>{go('push');await new Promise(r=>setTime
     const xp0=S.xp;
     planDay('2026-09-18');await new Promise(r=>setTimeout(r,350));
     const sheet=document.getElementById('sheetA').innerText.replace(/\s+/g,' ');
-    const rows=document.querySelectorAll('#sheetA .g2m').length;
+    const rows=document.querySelectorAll('#sheetA .pdrow').length;
     /* add the dentist */
     planAdd('2026-09-18');await new Promise(r=>setTimeout(r,300));
     document.getElementById('paN').value='Dentist';
