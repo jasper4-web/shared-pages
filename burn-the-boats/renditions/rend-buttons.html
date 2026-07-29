@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BTB · the controls, five ways</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{--bg:#0b0a12;--panel:#14121f;--panel2:#1a1728;--line:#1e1a2b;--line2:#2a2438;
+  --ink:#efeaf7;--dim:#a89fc0;--faint:#6b6480;--gold:#E0B25E;--violet:#B08CFF;
+  --phos:#4ADE80;--work:#E0B25E;--cap:#7FB4FF;--body:#FF6B2C;--mind:#38E1D8}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font-family:'Satoshi',sans-serif;padding:20px 0 60px}
+.wrap{max-width:430px;margin:0 auto;padding:0 16px}
+h1{font-family:'Clash Display',sans-serif;font-size:28px;letter-spacing:-.03em;margin:6px 0 6px}
+.lede{font-size:13.5px;line-height:1.55;color:var(--dim);margin-bottom:8px}
+.k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.19em;color:var(--faint);text-transform:uppercase}
+.dir{margin-top:34px}
+.dir .dk{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.dir .dk b{font-family:'Clash Display',sans-serif;font-size:20px;letter-spacing:-.02em;font-weight:600}
+.dir .th{font-size:12.5px;line-height:1.5;color:var(--dim);margin-bottom:12px}
+.frame{border:1px solid var(--line2);border-radius:22px;background:var(--panel);padding:18px 15px 20px;overflow:hidden}
+.sk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.19em;color:var(--faint);margin-bottom:8px;text-transform:uppercase}
+.st{font-family:'Clash Display',sans-serif;font-size:24px;letter-spacing:-.028em;margin-bottom:14px}
+label{display:block;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--faint);margin:14px 0 7px;text-transform:uppercase}
+.inp{width:100%;min-height:48px;border:1px solid var(--line2);border-radius:12px;background:var(--panel2);
+  color:var(--ink);font-family:'Satoshi',sans-serif;font-size:16px;padding:0 14px;display:flex;align-items:center}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.note{margin-top:12px;font-size:11.5px;line-height:1.5;color:var(--faint)}
+.verdict{margin-top:30px;border:1px solid rgba(224,178,94,.4);border-radius:16px;padding:15px;
+  background:linear-gradient(150deg,#1b1526,#110e1a 62%,#0d0b14)}
+.verdict .k{color:var(--gold);margin-bottom:8px}
+.verdict p{font-size:13.5px;line-height:1.55;color:var(--dim)}
+button{cursor:pointer}
+
+/* ══ D1 · SOFT TOKENS ═══════════════════════════════════════ */
+.d1 .tk{min-height:46px;padding:0 16px;border:0;border-radius:999px;background:var(--panel2);
+  color:var(--dim);font-family:'Satoshi',sans-serif;font-size:14px;font-weight:500}
+.d1 .tk.on{background:color-mix(in srgb,var(--violet) 16%,var(--panel2));color:var(--violet);
+  box-shadow:inset 0 0 0 1.5px var(--violet)}
+.d1 .tk.gold-on{background:color-mix(in srgb,var(--gold) 14%,var(--panel2));color:var(--gold);
+  box-shadow:inset 0 0 0 1.5px var(--gold)}
+.d1 .cta{width:100%;min-height:54px;margin-top:18px;border:0;border-radius:999px;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;
+  font-family:'Satoshi',sans-serif;font-size:16px;font-weight:700}
+.d1 .ghost{width:100%;min-height:48px;margin-top:10px;border:0;border-radius:999px;
+  background:var(--panel2);color:var(--dim);font-size:14px;font-weight:500}
+
+/* ══ D2 · EDITORIAL ═════════════════════════════════════════ */
+.d2 .tk{min-height:46px;padding:0 4px;border:0;background:none;color:var(--faint);
+  font-family:'Satoshi',sans-serif;font-size:15px;position:relative;margin-right:14px}
+.d2 .tk.on{color:var(--ink)}
+.d2 .tk.on::after{content:'';position:absolute;left:2px;right:2px;bottom:6px;height:2px;
+  border-radius:2px;background:var(--violet)}
+.d2 .tk.gold-on{color:var(--ink)}
+.d2 .tk.gold-on::after{content:'';position:absolute;left:2px;right:2px;bottom:6px;height:2px;
+  border-radius:2px;background:var(--gold)}
+.d2 .inp{background:transparent;border:0;border-bottom:1px solid var(--line2);border-radius:0;padding:0 2px}
+.d2 .cta{width:100%;min-height:54px;margin-top:20px;border:0;border-radius:13px;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;
+  font-family:'Clash Display',sans-serif;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.d2 .ghost{width:100%;min-height:44px;margin-top:12px;border:0;background:none;color:var(--faint);
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.d2 .hr{border-top:1px solid var(--line);margin:4px 0 0}
+
+/* ══ D3 · SEGMENTED RAIL ════════════════════════════════════ */
+.d3 .rail{display:flex;border:1px solid var(--line2);border-radius:13px;background:var(--panel2);
+  padding:4px;gap:4px;overflow-x:auto}
+.d3 .tk{flex:1;min-height:42px;padding:0 10px;border:0;border-radius:9px;background:transparent;
+  color:var(--faint);font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.08em;white-space:nowrap}
+.d3 .tk.on{background:color-mix(in srgb,var(--violet) 20%,var(--panel));color:var(--violet)}
+.d3 .tk.gold-on{background:color-mix(in srgb,var(--gold) 18%,var(--panel));color:var(--gold)}
+.d3 .cta{width:100%;min-height:52px;margin-top:18px;border:0;border-radius:13px;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;
+  font-family:'Satoshi',sans-serif;font-size:16px;font-weight:700}
+.d3 .ghost{width:100%;min-height:46px;margin-top:10px;border:1px solid var(--line2);border-radius:13px;
+  background:transparent;color:var(--dim);font-size:14px}
+
+/* ══ D4 · BEAM ══════════════════════════════════════════════ */
+.d4 .tk{min-height:46px;padding:0 15px;border-radius:12px;position:relative;background:var(--panel2);
+  border:1px solid var(--line2);color:var(--dim);font-family:'Satoshi',sans-serif;font-size:14px;font-weight:500}
+.d4 .tk.on{border-color:transparent;background:
+  linear-gradient(var(--panel2),var(--panel2)) padding-box,
+  linear-gradient(120deg,var(--violet),#5f4a9e 45%,var(--violet)) border-box;
+  color:var(--violet);box-shadow:0 0 18px -6px rgba(176,140,255,.55)}
+.d4 .tk.gold-on{border-color:transparent;background:
+  linear-gradient(var(--panel2),var(--panel2)) padding-box,
+  linear-gradient(120deg,var(--gold),#8a6527 45%,var(--gold)) border-box;
+  color:var(--gold);box-shadow:0 0 18px -6px rgba(224,178,94,.55)}
+.d4 .cta{width:100%;min-height:54px;margin-top:18px;border:0;border-radius:14px;
+  background:linear-gradient(135deg,var(--gold),#b8873a);color:#1a1204;
+  font-family:'Satoshi',sans-serif;font-size:16px;font-weight:700;
+  box-shadow:0 10px 34px -14px rgba(224,178,94,.65)}
+.d4 .ghost{width:100%;min-height:46px;margin-top:10px;border:1px dashed var(--line2);border-radius:12px;
+  background:none;color:var(--faint);font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em}
+
+/* ══ D5 · TACTILE ═══════════════════════════════════════════ */
+.d5 .tk{min-height:48px;padding:0 15px;border-radius:14px;border:1px solid #241f33;
+  background:linear-gradient(180deg,#1d1930,#151221);color:var(--dim);
+  font-family:'Satoshi',sans-serif;font-size:14px;font-weight:500;
+  box-shadow:0 2px 0 rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.05);
+  display:inline-flex;align-items:center;gap:8px}
+.d5 .tk i{width:8px;height:8px;border-radius:99px;background:var(--faint);flex:none}
+.d5 .tk.on{color:var(--ink);border-color:#3a3157;box-shadow:0 2px 0 rgba(0,0,0,.45),
+  inset 0 1px 0 rgba(255,255,255,.07),0 0 0 1px #3a3157}
+.d5 .tk.on i{background:var(--violet);box-shadow:0 0 8px var(--violet)}
+.d5 .tk.gold-on{color:var(--ink);border-color:#4a3c22}
+.d5 .tk.gold-on i{background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.d5 .cta{width:100%;min-height:56px;margin-top:18px;border:0;border-radius:15px;
+  background:linear-gradient(180deg,#f0c273,#c9964a);color:#1a1204;
+  font-family:'Satoshi',sans-serif;font-size:16px;font-weight:700;
+  box-shadow:0 3px 0 #8a6527,0 12px 30px -12px rgba(224,178,94,.5)}
+.d5 .ghost{width:100%;min-height:48px;margin-top:12px;border-radius:14px;border:1px solid #241f33;
+  background:linear-gradient(180deg,#1d1930,#151221);color:var(--dim);font-size:14px;
+  box-shadow:0 2px 0 rgba(0,0,0,.45)}
+</style></head><body><div class="wrap">
+
+<div class="k">BURN THE BOATS · RENDITION</div>
+<h1>The controls, five ways.</h1>
+<p class="lede">Same New-goal sheet, five different control languages. Whatever you pick gets
+applied <em>everywhere</em> — area chips, dates, durations, the planner, the Bank editors.
+Tap around; everything here is fake but pressable.</p>
+
+<!-- ══ D1 ═══════════════════════════════════════════════════ -->
+<section class="dir d1">
+  <div class="dk"><span class="k">D1</span><b>Soft Tokens</b></div>
+  <p class="th">Kill every outline. Chips become filled pills in the body font — selection is a
+  tinted fill, not a box. The friendliest of the five; closest to what modern iOS apps do.</p>
+  <div class="frame">
+    <div class="sk">Title and area are enough</div>
+    <div class="st">New goal</div>
+    <label>The goal</label>
+    <div class="inp" style="border-radius:999px">Anthony reached out too</div>
+    <label>Area</label>
+    <div class="row">
+      <button class="tk">Unsorted</button><button class="tk on">SANO</button>
+      <button class="tk">195 Lean</button><button class="tk">Fruits</button><button class="tk">+ New</button>
+    </div>
+    <label>Due by — optional</label>
+    <div class="row">
+      <button class="tk">No date</button><button class="tk gold-on">Jul 31</button>
+      <button class="tk">End</button><button class="tk">+ New date</button>
+    </div>
+    <button class="ghost">Add a number or your evidence</button>
+    <button class="cta">Add it</button>
+  </div>
+  <p class="note">What changes app-wide: every mono-caps chip becomes a sentence-case pill; the craft
+  floor stays (46px+). Risk: loses a little of the app's “instrument panel” character.</p>
+</section>
+
+<!-- ══ D2 ═══════════════════════════════════════════════════ -->
+<section class="dir d2">
+  <div class="dk"><span class="k">D2</span><b>Editorial</b></div>
+  <p class="th">No boxes at all. Choices are words; the chosen word is inked and underlined in its
+  color. Inputs are ruled lines, not wells. The quietest, most premium-print take.</p>
+  <div class="frame">
+    <div class="sk">Title and area are enough</div>
+    <div class="st">New goal</div>
+    <label>The goal</label>
+    <div class="inp">Anthony reached out too</div>
+    <div class="hr"></div>
+    <label>Area</label>
+    <div class="row" style="gap:2px">
+      <button class="tk">Unsorted</button><button class="tk on">SANO</button>
+      <button class="tk">195 Lean</button><button class="tk">Fruits</button><button class="tk">+ New</button>
+    </div>
+    <label>Due by — optional</label>
+    <div class="row" style="gap:2px">
+      <button class="tk">No date</button><button class="tk gold-on">Jul 31</button>
+      <button class="tk">End of run</button><button class="tk">+ New date</button>
+    </div>
+    <button class="ghost">＋ add a number or your evidence</button>
+    <button class="cta">Add it</button>
+  </div>
+  <p class="note">What changes app-wide: enormous calm — but tappability relies on spacing alone, and
+  with many options (seven areas) an underline row wraps less gracefully than pills.</p>
+</section>
+
+<!-- ══ D3 ═══════════════════════════════════════════════════ -->
+<section class="dir d3">
+  <div class="dk"><span class="k">D3</span><b>The Rail</b></div>
+  <p class="th">Options live INSIDE one grooved container and the chosen one is a lit cell — an
+  instrument, not scattered buttons. Keeps the mono voice. Closest to the app's existing soul.</p>
+  <div class="frame">
+    <div class="sk">Title and area are enough</div>
+    <div class="st">New goal</div>
+    <label>The goal</label>
+    <div class="inp">Anthony reached out too</div>
+    <label>Area</label>
+    <div class="rail">
+      <button class="tk">UNSORTED</button><button class="tk on">SANO</button>
+      <button class="tk">195 LEAN</button><button class="tk">FRUITS</button><button class="tk">＋</button>
+    </div>
+    <label>Due by — optional</label>
+    <div class="rail">
+      <button class="tk">NONE</button><button class="tk gold-on">JUL 31</button>
+      <button class="tk">END</button><button class="tk">＋</button>
+    </div>
+    <button class="ghost">Add a number or your evidence</button>
+    <button class="cta">Add it</button>
+  </div>
+  <p class="note">What changes app-wide: chip clouds become rails (durations 15–120m become one
+  sliding rail; view tabs already almost do this). Scrolls sideways when a row is long.</p>
+</section>
+
+<!-- ══ D4 ═══════════════════════════════════════════════════ -->
+<section class="dir d4">
+  <div class="dk"><span class="k">D4</span><b>Beam</b></div>
+  <p class="th">Keep the outline language but make selection GLOW — a gradient beam border and a
+  soft halo, like the SANO site's beam cards. The most “premium tech” of the five.</p>
+  <div class="frame">
+    <div class="sk">Title and area are enough</div>
+    <div class="st">New goal</div>
+    <label>The goal</label>
+    <div class="inp">Anthony reached out too</div>
+    <label>Area</label>
+    <div class="row">
+      <button class="tk">Unsorted</button><button class="tk on">SANO</button>
+      <button class="tk">195 Lean</button><button class="tk">Fruits</button><button class="tk">+ New</button>
+    </div>
+    <label>Due by — optional</label>
+    <div class="row">
+      <button class="tk">No date</button><button class="tk gold-on">Jul 31</button>
+      <button class="tk">End</button><button class="tk">+ New date</button>
+    </div>
+    <button class="ghost">+ ADD A NUMBER OR YOUR EVIDENCE</button>
+    <button class="cta">Add it</button>
+  </div>
+  <p class="note">What changes app-wide: unselected stays as-is, chosen things become jewelry. The
+  glow must stay rationed — only the SELECTED thing beams, or the page turns into a fairground.</p>
+</section>
+
+<!-- ══ D5 ═══════════════════════════════════════════════════ -->
+<section class="dir d5">
+  <div class="dk"><span class="k">D5</span><b>Tactile</b></div>
+  <p class="th">Buttons with physical depth — a subtle top light, a hard 2px drop, a press you can
+  feel. Every option carries its little domain light. The most “buttons feel like buttons”.</p>
+  <div class="frame">
+    <div class="sk">Title and area are enough</div>
+    <div class="st">New goal</div>
+    <label>The goal</label>
+    <div class="inp" style="border-radius:14px">Anthony reached out too</div>
+    <label>Area</label>
+    <div class="row">
+      <button class="tk"><i></i>Unsorted</button><button class="tk on"><i></i>SANO</button>
+      <button class="tk"><i></i>195 Lean</button><button class="tk"><i></i>Fruits</button><button class="tk">+ New</button>
+    </div>
+    <label>Due by — optional</label>
+    <div class="row">
+      <button class="tk">No date</button><button class="tk gold-on"><i></i>Jul 31</button>
+      <button class="tk">End</button><button class="tk">+ New date</button>
+    </div>
+    <button class="ghost">Add a number or your evidence</button>
+    <button class="cta">Add it</button>
+  </div>
+  <p class="note">What changes app-wide: everything pressable gains weight and a real :active dip.
+  Heaviest look of the five — on dense screens (20 week slots) it can get loud.</p>
+</section>
+
+<div class="verdict">
+  <div class="k">My recommendation</div>
+  <p><b style="color:var(--ink)">D1 Soft Tokens as the base, with D4's beam reserved for the single
+  selected item on gold decisions.</b> D1 fixes exactly what you named — the boxy, mono-caps
+  sameness — while keeping the dark instrument feel; the beam then gives chosen things one touch of
+  jewelry without lighting the whole page. D2 is the most beautiful but fights big option rows;
+  D3 is the safest but changes the least; D5 is charming and a bit loud at density.
+  Say a direction (or a mix, like “D1 with D3's rails for durations”) and it goes app-wide.</p>
+</div>
+
+</div><script>
+/* fake interactivity so the chips feel pressable */
+document.querySelectorAll('.row,.rail').forEach(g=>{
+  g.addEventListener('click',e=>{
+    const b=e.target.closest('.tk');if(!b||/＋|\+ New/i.test(b.textContent))return;
+    const gold=[...g.children].some(x=>x.classList.contains('gold-on'));
+    g.querySelectorAll('.tk').forEach(x=>x.classList.remove('on','gold-on'));
+    b.classList.add(gold?'gold-on':'on');
+  });
+});
+</script></body></html>
