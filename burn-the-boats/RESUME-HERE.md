@@ -32,6 +32,19 @@ dashed **gap pills** ("+ fill this 45m opening") that open the add sheet pre-aim
 sheets · live end-time echo · presets carry default lengths · make-it-count has a real
 checkbox above the CTA. Same model, no behavior change; `planner.js` 33/33 throughout.
 
+### ⏳ OPEN — HE PICKS A CONTROL STYLE (2026-07-28 evening)
+
+He called the buttons/chips "basic, ugly, boring" and asked for style options. **LIVE:**
+https://jasper4-web.github.io/shared-pages/burn-the-boats/renditions/rend-buttons.html —
+five directions on the real New-goal sheet (D1 Soft Tokens · D2 Editorial · D3 The Rail ·
+D4 Beam · D5 Tactile), recommendation = **D1 base + D4's beam on the selected item only.**
+Whatever he picks applies APP-WIDE (chips, dates, durations, planner, Bank editors).
+**Do not restyle anything until he answers.**
+
+⚠ **STORAGE:** he was using the app in a PRIVATE Safari tab. He was told: Backup from the
+private tab → open in normal Safari → Add to Home Screen → Restore → live there. If he
+mentions lost data, this is why — the backup/restore path is the fix.
+
 **NEXT — PHASE 5, and it starts with HIM, not code:** he lives one real planned day in the
 new planner and hands it over; THEN the XP-system design session (his locked sequencing),
 then AWAY mode + appointments, then recurrence. **Do not design the economy without him.**
