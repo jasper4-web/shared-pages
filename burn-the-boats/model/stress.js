@@ -1,5 +1,5 @@
 const puppeteer=require('/Users/jaspersmind/build-arsenal/_verify/node_modules/puppeteer-core');
-const OUT='/private/tmp/claude-501/-Users-jaspersmind/b8fc4d6b-2299-4e39-b7cd-dae1be058193/scratchpad/';
+const OUT=process.env.SP+'/';
 const URL=process.argv[2]||'file:///Users/jaspersmind/Documents/burn-the-boats/index.html';
 
 // real iPhone CSS widths, including the big ones I never tested
