@@ -63,6 +63,26 @@ standards), meaning the concept is fine and the presentation failed. The whole R
 is unclear to him. **Record is FROZEN, not deleted** — rethought after the planner ships,
 reframed around words he'd use ("my standards", "what came out of my weeks").
 
+### Added from live use, 2026-07-28 evening (locked)
+
+9. **D2 EDITORIAL is the control voice.** He picked it from `rend-buttons.html`: inside
+   sheets, choices are words underlined in the selection color; inputs are ruled lines;
+   the CTA speaks Clash. Applied app-wide to sheets, btb-v36.
+10. **Two things in one slot is a FEATURE.** His words: *"market open 6:30–8, I also want
+    to clean at the same time."* A row inside another renders nested "alongside X" —
+    never a conflict warning.
+11. **Quick goals under the December goals are his core loop.** *"I'm adding a bunch of
+    goals that are much smaller under them so I can knock out goals in mind of the main
+    overarching goal."* Working-goal rows carry a one-tap ✓ knock-out. What a finished
+    goal is WORTH = the XP session.
+12. **The evening door:** from 17:00 Today shows "Plan tomorrow →" (Saturday: "Set next
+    week →").
+13. **Reminders are wanted** — real push notifications are a genuine project (needs a push
+    server; GitHub Pages can't). Parked, not forgotten.
+14. **His data lives on HIS phone.** Installed home-screen app = permanent; Backup weekly
+    = insurance. Nothing syncs anywhere; agents cannot see his data unless he hands over
+    a backup file.
+
 ---
 
 ## 3 · THE ONE PUSHBACK MADE, AND WHY
