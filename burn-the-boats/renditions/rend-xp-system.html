@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>The XP Session — five systems, stress-tested</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --blue:#7FB4FF;
+}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.028em;margin:0}
+.mono{font-family:'Geist Mono',monospace}
+.wrap{max-width:860px;margin:0 auto;padding:44px 20px 90px}
+.k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold);margin-bottom:12px;text-transform:uppercase}
+.lede h1{font-size:34px;line-height:1.08;margin-bottom:14px}
+.lede p{color:var(--dim);font-size:15px;margin:0 0 11px;max-width:700px}
+.lede b{color:var(--ink)}
+blockquote{border-left:3px solid var(--gold);padding:10px 0 10px 16px;margin:18px 0;color:var(--ink);font-size:15.5px;line-height:1.55}
+blockquote i{color:var(--faint);font-style:normal;font-size:12px;display:block;margin-top:6px;font-family:'Geist Mono',monospace;letter-spacing:.08em}
+.sec{margin-top:52px}
+.sec>h2{font-size:23px;margin-bottom:6px}
+.sec>.sub{color:var(--faint);font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:18px}
+.fact{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;margin-bottom:12px}
+.fact .fk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--rune);margin-bottom:8px}
+.fact p{color:var(--dim);font-size:14px}
+.fact b{color:var(--ink)}
+.fact.warn .fk{color:var(--ember)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 20px;margin-bottom:18px;position:relative}
+.card h3{font-size:19px;margin-bottom:4px}
+.card .tag{position:absolute;top:20px;right:18px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;padding:5px 10px;border-radius:99px;border:1px solid var(--line2);color:var(--dim)}
+.tag.keep{color:var(--phos);border-color:color-mix(in srgb,var(--phos) 40%,transparent)}
+.tag.kill{color:var(--blood);border-color:color-mix(in srgb,var(--blood) 40%,transparent)}
+.tag.big{color:var(--gold);border-color:color-mix(in srgb,var(--gold) 40%,transparent)}
+.tag.park{color:var(--faint)}
+.card .how{color:var(--dim);font-size:14px;margin:8px 0 0;max-width:660px}
+.card .how b{color:var(--ink)}
+.walk{background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:14px 16px;margin:14px 0 0}
+.walk .wk{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;color:var(--violet);margin-bottom:8px}
+.walk p{font-size:13.5px;color:var(--dim);margin:0 0 7px}
+.walk p:last-child{margin:0}
+.walk b{color:var(--ink)}
+.walk .say{color:var(--rune);font-family:'Geist Mono',monospace;font-size:12px}
+.stress{margin:14px 0 0;padding:0;list-style:none}
+.stress li{font-size:13.5px;color:var(--dim);padding:7px 0 7px 22px;position:relative;border-top:1px solid var(--line)}
+.stress li:first-child{border-top:0}
+.stress li::before{content:'▸';position:absolute;left:2px;color:var(--faint)}
+.stress li.bad::before{content:'✕';color:var(--blood)}
+.stress li.good::before{content:'✓';color:var(--phos)}
+.stress b{color:var(--ink)}
+.verdict{margin-top:14px;padding-top:12px;border-top:1px solid var(--line2);font-size:14px;color:var(--ink)}
+.verdict .vk{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;color:var(--gold);display:block;margin-bottom:5px}
+table{width:100%;border-collapse:collapse;font-family:'Geist Mono',monospace;font-size:12.5px;margin-top:10px}
+th{color:var(--faint);font-weight:400;text-align:left;font-size:10.5px;letter-spacing:.12em;padding:8px 10px;border-bottom:1px solid var(--line2);text-transform:uppercase}
+td{padding:9px 10px;border-bottom:1px solid var(--line);color:var(--dim)}
+td:first-child{color:var(--ink)}
+td.hi{color:var(--phos)} td.lo{color:var(--blood)} td.mid{color:var(--gold)}
+.tablenote{color:var(--faint);font-size:12px;margin-top:10px;line-height:1.55}
+.cull{background:var(--panel);border:1px dashed var(--line2);border-radius:14px;padding:16px 18px;margin-top:14px}
+.cull .fk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--blood);margin-bottom:10px}
+.cull p{font-size:13.5px;color:var(--dim);margin:0 0 8px}
+.cull b{color:var(--ink)}
+.fork{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+@media(max-width:640px){.fork{grid-template-columns:1fr}}
+.door{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 18px}
+.door.rec{border-color:color-mix(in srgb,var(--gold) 45%,transparent);box-shadow:0 0 34px -18px var(--gold)}
+.door .dk{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;color:var(--gold);margin-bottom:8px}
+.door h3{font-size:17px;margin-bottom:8px}
+.door p{font-size:13.5px;color:var(--dim);margin:0 0 8px}
+.door b{color:var(--ink)}
+.price{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:4px 18px;margin-top:14px}
+.price .row{display:flex;gap:14px;padding:13px 0;border-top:1px solid var(--line);font-size:14px;align-items:baseline}
+.price .row:first-child{border-top:0}
+.price .q{color:var(--ink);min-width:0;flex:1}
+.price .q i{display:block;font-style:normal;color:var(--faint);font-size:12.5px;margin-top:3px}
+.price .a{font-family:'Geist Mono',monospace;font-size:12px;color:var(--gold);white-space:nowrap}
+.reco{background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 7%,var(--panel)),var(--panel));border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);border-radius:18px;padding:24px 22px;margin-top:16px}
+.reco .fk{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold);margin-bottom:10px}
+.reco h3{font-size:20px;margin-bottom:10px}
+.reco p{color:var(--dim);font-size:14.5px;margin:0 0 10px;max-width:680px}
+.reco b{color:var(--ink)}
+.reco ol{margin:10px 0 0 18px;padding:0;color:var(--dim);font-size:14px}
+.reco li{margin-bottom:8px}
+.reco li b{color:var(--ink)}
+.foot{margin-top:60px;color:var(--faint);font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;line-height:2}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="lede">
+  <div class="k">Burn the Boats · The XP Session · 2026-07-29</div>
+  <h1>Five ways the XP could work.<br>Each one lived, each one stress-tested.</h1>
+  <blockquote>"The XP is very crucial because my main goal is to get to the 99 overall. However just doing
+  the main working blocks shouldn't be the only way to really rack up XP, because this whole thing is
+  about me doing great in all different aspects of life. Getting in the habit of doing laundry often so
+  that I get more XP is good — and doing a few household chores or random things that normal people
+  usually put off, so I can earn a nice dinner and get closer to the 99 overall sooner, is really good."
+  <i>YOUR BRIEF, VERBATIM</i></blockquote>
+  <p>Nothing here is built. Every option below was walked through as a lived Tuesday, then run through a
+  simulation of your <b>actual scoring engine</b> over the full 110-day run under four versions of you —
+  the perfect run, the realistic run, a two-week collapse, and <b>a grinder who does chores instead of work</b>
+  (the exploit test). The numbers in the table are what each system hands each of them on Dec 25.</p>
+</div>
+
+<!-- ══════════ THE FACTS FIRST ══════════ -->
+<div class="sec">
+  <h2>Three facts from inside the engine</h2>
+  <div class="sub">Read these first — every option lives or dies against them</div>
+
+  <div class="fact warn">
+    <div class="fk">FACT 1 · THE 99 IS DATE-LOCKED. "SOONER" IS CURRENTLY IMPOSSIBLE.</div>
+    <p>The engine divides all progress by the 110 days of the run, <b>on purpose</b>: a perfect run reaches 99
+    exactly on Dec 25 — never in October. Today, nothing you do can move the 99 earlier. What CAN move is the
+    <b>pace date</b> the app already computes ("AT THIS PACE · 99 ON&nbsp;…"): fall behind and it drifts to January;
+    catch up and it pulls back toward Dec 25. So "closer to the 99 sooner" is really a choice between two laws —
+    that's <b>the fork</b> at the bottom of this page, and it's yours alone to call.</p>
+  </div>
+
+  <div class="fact">
+    <div class="fk">FACT 2 · THE LIFE→99 DOOR ALREADY EXISTS. IT'S JUST INVISIBLE — AND TRAPPED.</div>
+    <p>Your weekly standards (Bible 3×, cooked 4×, real time with someone 3×…) already feed the 99 — each one adds
+    real weight to its life area's score, capped at its own number so it can't be farmed. <b>Laundry 2× a week, made
+    a standard, would move your 99 today.</b> Two problems: the app never shows you this connection, and I found a
+    live trap — <b>adding or editing a standard silently re-scores every past week</b>. Add "laundry 2×" in week 10
+    and the engine retroactively marks weeks 1–9 as failures at it. Your OVR would visibly DROP as a reward for
+    committing to a new habit. That must be fixed no matter which option you pick.</p>
+  </div>
+
+  <div class="fact">
+    <div class="fk">FACT 3 · THE KNOCK-OUT ✓ PAYS NOTHING, AND A STRONG DAY IS ~445 XP.</div>
+    <p>Knocking out a small goal — your core loop — currently pays <b>0 XP</b>. Meanwhile the Bank's ladder
+    (900 → 22,000) is priced against a strong day of roughly 445: a clean deep run is 65, closing the day 50, a
+    clean vice day 40, wins 15–30, boosts capped at 250/day. Whatever we choose, these prices are the ground truth
+    the new system has to respect — <b>or knowingly re-price</b>.</p>
+  </div>
+</div>
+
+<!-- ══════════ THE TABLE ══════════ -->
+<div class="sec">
+  <h2>What the simulation says</h2>
+  <div class="sub">Final OVR on Dec 25 · your real engine, 22 weeks, four versions of you</div>
+  <div class="fact" style="overflow-x:auto">
+    <table>
+      <tr><th>Who</th><th>Today's system</th><th>1 · Standards door</th><th>2 · XP is the score</th><th>3 · The 70/30 day</th><th>4 · Repair credit</th></tr>
+      <tr><td>Perfect run</td><td>98</td><td>99</td><td class="mid">99</td><td class="hi">99</td><td>99</td></tr>
+      <tr><td>Realistic you</td><td>83</td><td>83</td><td class="lo">99</td><td class="hi">89</td><td>86</td></tr>
+      <tr><td>Collapse fortnight</td><td>80</td><td>83</td><td class="lo">99</td><td class="hi">85</td><td>83</td></tr>
+      <tr><td>The chore grinder</td><td>81</td><td>82</td><td class="lo">99</td><td class="hi">75</td><td class="mid">85</td></tr>
+    </table>
+    <div class="tablenote">How to read it: a good system should <b>reward the realistic you for breadth</b> (rise vs
+    today's 83), <b>be kind to the collapse</b> (never punish the return), and <b>refuse the grinder</b> (someone doing
+    30% of the deep work while maxing chores must not beat you). Option 2 hands 99 to all four — including the grinder —
+    which is exactly why it's killed below. Option 3 is the only one that gets all three tests right: you +6, collapse +5,
+    grinder −6. One more property held everywhere: in the collapse trajectory the number <b>never falls</b> — it climbs
+    slower (58 → 62 through the bad fortnight). Any redesign must keep that, or it rebuilds the wall of failure.</div>
+  </div>
+</div>
+
+<!-- ══════════ THE FIVE ══════════ -->
+<div class="sec">
+  <h2>The five systems</h2>
+  <div class="sub">Each: how it works · a Tuesday lived in it · where it breaks · verdict</div>
+
+  <!-- S1 -->
+  <div class="card">
+    <span class="tag keep">KEEP · AS PLUMBING</span>
+    <h3>1 · The Standards Door</h3>
+    <p class="how">Anything you do repeatedly can become <b>a standard — n× a week, your number</b> — in one tap from
+    the add sheet or the quick log. Standards are already the thing that feeds the 99 (Fact 2); this option just opens
+    that door wide and makes the connection visible. XP stays money.</p>
+    <div class="walk">
+      <div class="wk">A TUESDAY, LIVED</div>
+      <p>7:40p — you throw in laundry, tap it in the quick log. <span class="say">+15 · LAUNDRY 1 OF 2 THIS WEEK · FEEDS MIND</span></p>
+      <p>That last part is the change: the tap has always paid XP — now it <b>tells you it's moving the 99</b>.</p>
+      <p>Sunday — the week closes: standards met 6 of 8, and the areas they feed climbed at full rate.</p>
+    </div>
+    <ul class="stress">
+      <li class="good">Grind-proof by construction — the 3rd laundry past your 2× pays XP but can't farm the 99.</li>
+      <li class="bad"><b>The over-promise trap:</b> set "laundry 5×" in an enthusiastic week 1 and every normal week quietly
+      bleeds that area. Fix: standards BEND — lowering your number is one tap, never shamed, forward-only.</li>
+      <li class="bad">Requires the Fact-2 retro-fix first, or adding any standard drops your score for the past.</li>
+      <li>The honest limit: the sim barely moves (83 → 83). Ratio engines score <b>promises kept</b>, not volume — so this
+      is the right door, but alone it won't produce the "getting closer sooner" feeling you asked for.</li>
+    </ul>
+    <div class="verdict"><span class="vk">VERDICT</span>The correct foundation and a small build — but it's plumbing,
+    not the headline. Every surviving option below assumes it exists.</div>
+  </div>
+
+  <!-- S2 -->
+  <div class="card">
+    <span class="tag kill">KILLED · BY THE NUMBERS</span>
+    <h3>2 · XP Is The Score</h3>
+    <p class="how">One currency. The 99 is computed from <b>lifetime XP against a target curve</b> (~400/day pace).
+    Laundry pays 15, and those 15 visibly push the 99. The purest reading of your brief — every good act, one number.</p>
+    <div class="walk">
+      <div class="wk">A TUESDAY, LIVED</div>
+      <p>Every single tap moves the big number. It feels <b>incredible</b> — for about two weeks.</p>
+      <p>Week 6, behind pace: you notice boosts pay 250 and blocks pay 65. You are now optimizing prices, not living days.</p>
+    </div>
+    <ul class="stress">
+      <li class="bad"><b>The sim is fatal:</b> all four profiles finish at 99 — the grinder, the collapse, everyone.
+      The XP economy is too rich for a curve to hold, and any curve steep enough to stop the grinder also stops you.</li>
+      <li class="bad"><b>The 99 becomes self-priced.</b> You own the win and boost prices (that's locked, and right).
+      The moment prices push the score, "did I become him?" becomes "did I set laundry to 100?" The number dies the way
+      the old app died — you stop believing it.</li>
+      <li class="bad">Permanent inflation pressure on the Bank: every future price decision would be a score decision too.</li>
+    </ul>
+    <div class="verdict"><span class="vk">VERDICT</span>Killed, with the receipts shown. The one thing worth saving:
+    the <b>feeling</b> of every tap visibly counting — option 3 delivers it without the disease.</div>
+  </div>
+
+  <!-- S3 -->
+  <div class="card">
+    <span class="tag big">THE STRONG CANDIDATE · BIG BUILD</span>
+    <h3>3 · The 70/30 Day</h3>
+    <p class="how">Every day scores out of 100. The sacred blocks and the market are <b>the 70</b>. Everything else —
+    standards, chores, wins, the stuff normal people put off — fills <b>the 30</b>, up to its cap. The 99 climbs on your
+    accumulated day-scores ÷ 110, so it still never falls, and perfection still lands on Dec 25. <i style="color:var(--faint)">
+    (The split is illustrative — 70/30 vs 75/25 vs 60/40 is YOUR number to lock.)</i></p>
+    <div class="walk">
+      <div class="wk">A TUESDAY, LIVED</div>
+      <p>You clear 3 of 4 blocks — the 70 gives you 52.5. Laundry, cooked dinner, in bed on time — the 30 fills. <b>Day: 82.</b></p>
+      <p>7:41p, the laundry tap: <span class="say">+15 XP · DAY 74 → 82 · PACE HOLDS DEC 25</span> — the tap moves the day,
+      the day moves the 99. That's your brief, in one toast.</p>
+      <p>A rough Saturday where you only do chores and a walk still posts <b>30 real points</b> — a bad day is never a zero,
+      which is the first law holding.</p>
+    </div>
+    <ul class="stress">
+      <li class="good"><b>The only option that passes all three tests:</b> realistic you 83 → 89, collapse 80 → 85, and the
+      grinder 81 → <b>75</b> — chores genuinely count and genuinely cannot replace the work. The 70 is a wall.</li>
+      <li class="good">The "sooner" feeling is real and honest: mid-run the number climbs faster because the 30 is finally
+      yours to fill — but the ceiling stays earned.</li>
+      <li class="bad"><b>Biggest build of the five.</b> A new scoring core alongside the domain radar (the radar survives —
+      domains still say WHERE the life credit lands). Needs its own harness and a hostile QC pass before it ships.</li>
+      <li class="bad">Two numbers to lock with you before a line is written: the split (70/30?) and the 30's daily cap
+      (how many life-units fill it — the sim used 3/day plus standards).</li>
+    </ul>
+    <div class="verdict"><span class="vk">VERDICT</span>The strongest honest expression of what you asked for. Worth its
+    build cost — but second, after the plumbing, and only with your two numbers locked.</div>
+  </div>
+
+  <!-- S4 -->
+  <div class="card">
+    <span class="tag park">PARKED · KINDNESS, NOT SPINE</span>
+    <h3>4 · Repair Credit</h3>
+    <p class="how">Extra life acts can <b>patch the week's holes</b>: miss the walk Monday, deep-clean the house Thursday,
+    and BODY's week is made whole — capped at one patch per area per week, and <b>the sacred blocks and the market can
+    never be patched</b>. "Closer sooner" becomes literal: the pace date heals backward toward Dec 25.</p>
+    <div class="walk">
+      <div class="wk">A TUESDAY, LIVED</div>
+      <p>You missed Monday's walk. Thursday you deep-clean the garage. <span class="say">BODY PATCHED · PACE DEC 29 → DEC 27</span></p>
+      <p>It reads like healing, not scoring — the kindest possible mechanic after a bad stretch.</p>
+    </div>
+    <ul class="stress">
+      <li class="good">Kindest to the collapse profile (+3): the return path gets a real hand up, never a lecture.</li>
+      <li class="bad"><b>The grinder pockets the most from it</b> (+4, finishing one point under the realistic you — the
+      thinnest margin of any option). The fences hold, but barely, and every future tweak risks them.</li>
+      <li class="bad">Invisible complexity: explaining why Thursday's cleaning "counted twice" needs a paragraph. Anything
+      that needs a paragraph on a 390px screen loses.</li>
+    </ul>
+    <div class="verdict"><span class="vk">VERDICT</span>Parked, not killed. If the 70/30 day ships and the collapse weeks
+    still feel cruel in real use, this is the targeted medicine — added then, with its fences tested in its own harness.</div>
+  </div>
+
+  <!-- S5 -->
+  <div class="card">
+    <span class="tag keep">KEEP · THE GRADUATION ONLY</span>
+    <h3>5 · The Habit Ladder</h3>
+    <p class="how">The app notices repetition. Log laundry three weeks running and it offers, once:
+    <b>"This looks like a habit — make it a standard? 2× a week, your number."</b> One tap, and it walks through the
+    Standards Door into the 99. (The original idea also grew the XP as the habit matured — 10 → 15 → 20. That half is cut:
+    it's complexity that mostly rewards remembering to tap.)</p>
+    <div class="walk">
+      <div class="wk">A TUESDAY, LIVED</div>
+      <p>Third Tuesday of laundry in a row. <span class="say">THIS KEEPS HAPPENING · MAKE IT A STANDARD?</span></p>
+      <p>That moment IS your sentence — "getting in the habit of doing laundry often" — noticed by the machine and turned
+      into a commitment <b>you</b> size.</p>
+    </div>
+    <ul class="stress">
+      <li class="good">Zero exploit surface: graduation just opens option 1's capped door. Decline and it never nags —
+      it offers exactly once per habit.</li>
+      <li class="good">Tiny build: the quick-log history already exists; this is one detector and one sheet.</li>
+      <li>The escalating-XP half died in writing: values that grow must someday shrink, and shrinking XP is a fine —
+      the first law forbids it.</li>
+    </ul>
+    <div class="verdict"><span class="vk">VERDICT</span>Keep the graduation moment, ship it with option 1. It's the
+    smallest thing on this page and the closest to your actual words.</div>
+  </div>
+
+  <div class="cull">
+    <div class="fk">KILLED IN WRITING — SO THEY STAY DEAD</div>
+    <p><b>Multipliers</b> ("a full life day ×1.1 on your blocks") — hidden math you can't verify from a toast; the score
+    stops being explainable at a glance.</p>
+    <p><b>Paying OVR directly in XP per area</b> — option 2's self-pricing disease, six times over.</p>
+    <p><b>Fines and negative XP</b> (docking for unplanned blocks, un-earning on a miss) — the first law. Punishment
+    killed the last version of this app; it doesn't get a second audition.</p>
+    <p><b>Streak bonuses that reset</b> — the previous app's corpse. Your redemption mechanic (make it up with proof)
+    already answers this better.</p>
+  </div>
+</div>
+
+<!-- ══════════ THE FORK ══════════ -->
+<div class="sec">
+  <h2>The fork only you can call</h2>
+  <div class="sub">What does "getting to 99 sooner" actually mean?</div>
+  <div class="fork">
+    <div class="door rec">
+      <div class="dk">DOOR A · THE 99 STAYS DATE-LOCKED — RECOMMENDED</div>
+      <h3>Dec 25 is the meaning.</h3>
+      <p>99 on the day the run ends IS the sentence "I became him by the time the boats finished burning." Nobody —
+      not even the perfect run — hits 99 in October, because the 99 measures <b>the run</b>, not a sprint.</p>
+      <p>"Sooner" then means two real things: the number <b>climbs faster mid-run</b> because your life finally fills
+      the 30, and the <b>pace date</b> pulls back toward Dec 25 whenever you're behind. Both are honest, both are visible,
+      both are what the options above deliver.</p>
+    </div>
+    <div class="door">
+      <div class="dk">DOOR B · THE 99 BECOMES REACHABLE EARLY</div>
+      <h3>Overshoot allowed.</h3>
+      <p>Great weeks bank surplus; hit 99 on Dec 1 if you've earned it. The genuine cost: <b>Dec 25 stops meaning
+      anything</b>, and the last weeks of the run go dead the moment the number maxes — the exact endgame problem that
+      kills every game that allows it.</p>
+      <p>If you want this feeling anyway, the honest version is a <b>second</b> number, not the OVR: "DAYS AHEAD OF PACE +4"
+      on the Today header. The 99 keeps its date; your surplus gets its own scoreboard.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ THE MONEY SIDE ══════════ -->
+<div class="sec">
+  <h2>The money side — decisions to lock together</h2>
+  <div class="sub">XP stays the spend currency in every surviving option · these five close the loop</div>
+  <div class="price">
+    <div class="row"><div class="q">What is a knocked-out goal worth? <i>Your core loop currently pays 0. Proposal: you price
+    each small goal when you create it, band 25–150, default 50 — a real small goal ≈ one to two clean deep runs. Paid through
+    the ledger, refundable while the day is open. December goals aren't knockable — they're anchors.</i></div><div class="a">PROPOSED 25–150 · DEFAULT 50</div></div>
+    <div class="row"><div class="q">The 250 cap — on what, exactly? <i>Your instinct was right and the fear was right too.
+    Answer: the cap covers the ADDED pool only — boosts + invented wins + quick-logs share one 250/day ceiling. Planned and
+    template work stays uncapped, so a strong day still runs ~445 and the Bank ladder (900→22,000) doesn't re-price.</i></div><div class="a">ADDED POOL ONLY</div></div>
+    <div class="row"><div class="q">Custom win prices <i>The 5–100 band you already own stays. Each win pays once a day, and the
+    shared 250 pool is the backstop — so even a maxed-out invention day can't mint money.</i></div><div class="a">KEEP 5–100</div></div>
+    <div class="row"><div class="q">Fix first, regardless of everything above <i>1 · The retro-standard trap (Fact 2): standards
+    get an effective-from week, so committing to a new habit can never lower a past score. 2 · The knock-out ✓ goes through the
+    ledger like everything else, so an accidental tap refunds while the day is open.</i></div><div class="a">NON-NEGOTIABLE</div></div>
+    <div class="row"><div class="q">What the dinner costs <i>Nothing changes: 900 XP stays 900 XP, and your chores genuinely get
+    you there — the realistic sim earns ~61,000 XP over the run, so the rhythm is roughly a nice dinner every 2–3 strong days
+    if you spend as you go. The requirements you set on rewards keep gating them.</i></div><div class="a">LADDER UNCHANGED</div></div>
+  </div>
+</div>
+
+<!-- ══════════ RECOMMENDATION ══════════ -->
+<div class="sec">
+  <div class="reco">
+    <div class="fk">MY RECOMMENDATION — YOURS TO OVERRULE</div>
+    <h3>Door A, built in two phases.</h3>
+    <p><b>Phase one (small, days):</b> the plumbing. Fix the retro-standard trap · one-tap "make it a standard" from the
+    quick log and add sheet · the habit graduation moment (option 5) · knock-out pricing through the ledger · the 250
+    added-pool cap · and the pace date surfaced on Today so the "sooner" lever is finally visible.</p>
+    <p><b>Phase two (the real build, with your two numbers locked first):</b> the 70/30 day (option 3). It's the only
+    system the stress test fully passed — your breadth finally counts (+6 for the realistic you), the collapse is treated
+    gently (+5, and the number never falls), and the grinder is refused (−6). Repair credit stays parked unless real use
+    says the bad weeks need it.</p>
+    <p>Before any of phase two: you lock the split (70/30?) and the 30's daily cap — and per the house rule, the new
+    scoring core gets its own harness and a hostile QC pass before it touches the live app.</p>
+  </div>
+</div>
+
+<div class="foot">
+  SIMULATION: 22 WEEKS × 4 PROFILES × 5 SYSTEMS AGAINST THE REAL WEEKLY-RATIO ENGINE · NOTHING ON THIS PAGE IS BUILT<br>
+  BURN THE BOATS · THE XP SESSION · PREPARED 2026-07-29
+</div>
+
+</div>
+</body>
+</html>
