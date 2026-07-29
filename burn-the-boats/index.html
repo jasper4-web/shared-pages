@@ -528,7 +528,11 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 .blk .dom{position:absolute;left:0;top:0;bottom:0;width:2.5px}
 
 /* ---------- small wins ---------- */
-.wins{display:flex;gap:6px;flex-wrap:wrap}
+/* THE SHELF — the magic list's home in the Bank (C1, his pick): a 2-up card grid */
+.wins{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.shcell{display:flex;flex-direction:column;gap:5px;min-width:0}
+.shcell .win{width:100%;min-width:0;word-break:break-word}
+.shcell .bst-e{width:100%}
 .win{flex:1 1 calc(50% - 3px);border:1px solid var(--line2);background:var(--panel);border-radius:10px;
   padding:11px 9px;font-size:12.5px;color:var(--dim);cursor:pointer;text-align:left;min-height:44px;
   display:flex;align-items:center;gap:7px}
@@ -824,6 +828,35 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 .ovrpeek b{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;color:var(--ink)}
 .ovrpeek u{margin-left:auto;text-decoration:none;color:var(--gold)}
 .ovrpeek .pace{display:block;margin-top:3px;font-size:11px;color:var(--faint)}
+.ovrpeek .rk{font-style:normal;color:var(--gold)}
+/* HIS ROAD — the rank-up moment (the blue window, ours) */
+.rankup{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;
+  background:rgba(5,4,10,.88);backdrop-filter:blur(6px);padding:24px}
+.rankup.on{display:flex}
+.rankup .ru-in{max-width:340px;width:100%;text-align:center;padding:30px 22px;border-radius:20px;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--blue) 10%,#0a0912),#0a0912);
+  border:1px solid color-mix(in srgb,var(--blue) 45%,transparent);box-shadow:0 0 60px -18px var(--blue)}
+.rankup .ru-k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.28em;color:var(--blue);margin-bottom:12px}
+.rankup .ru-n{font-family:'Clash Display',sans-serif;font-size:30px;letter-spacing:-.02em}
+.rankup .ru-s{font-size:13px;color:var(--dim);margin-top:8px;line-height:1.5}
+.rankup .ru-u{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--gold);margin-top:12px}
+/* the status window's rank road */
+.rkroad{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:10px 0 12px}
+.rkc{background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:7px 2px;text-align:center;min-width:0}
+.rkc b{display:block;font-family:'Clash Display',sans-serif;font-size:11px;letter-spacing:.02em;font-weight:600}
+.rkc span{display:block;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);margin-top:2px;transform:scale(.92)}
+.rkc.now{border-color:color-mix(in srgb,var(--gold) 55%,transparent)}
+.rkc.now b{color:var(--gold)}
+/* THE DECK — his list, one thumb-row on Today (C2, his pick) */
+.deckrow{display:flex;gap:7px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  padding:2px 2px 8px;scrollbar-width:none}
+.deckrow::-webkit-scrollbar{display:none}
+.dchip{flex:0 0 auto;min-height:44px;display:flex;align-items:center;gap:8px;padding:0 13px;
+  border-radius:11px;background:var(--panel);border:1px solid var(--line2);color:var(--ink);
+  font-size:13px;white-space:nowrap}
+.dchip u{text-decoration:none;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint)}
+.dchip.on{border-color:color-mix(in srgb,var(--phos) 45%,transparent);color:var(--dim)}
+.dchip.on u{color:var(--phos)}
 .ovrpeek .pace b{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em}
 .ovrpeek .pace .good{color:var(--phos)}.ovrpeek .pace .warn{color:var(--gold)}.ovrpeek .pace .bad{color:var(--blood)}
 body.glanceOpen .ovrpeek{border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0}
@@ -1230,6 +1263,9 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
   <!-- the widget (Phase 4): tap = log a good thing right now, ranked by the clock;
        the Bank stays one tap further -->
   <button id="extrasLine" class="extras-line" onclick="quickLog()"></button>
+  <!-- THE DECK (C2, his pick 2026-07-29): the magic list, one thumb-row, logging
+       where he lives. Same list as the Bank's Shelf — one truth, two doors. -->
+  <div id="deckRow" class="deckrow" hidden></div>
   <!-- his call (2026-07-28): an evening door straight into tomorrow's planner -->
   <button id="planTmr" class="extras-line" onclick="planTomorrow()" hidden></button>
 
@@ -1309,6 +1345,8 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
 
 <div class="vicev" id="vicev"><div id="viceBody"></div></div>
 
+<div class="rankup" id="rankUp"></div>
+
 <div class="charv" id="charv">
   <div style="display:flex"><button class="cv-close" id="cvClose">✕</button></div>
   <div class="hero">
@@ -1316,6 +1354,8 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
       <div class="only-you"><div class="ovr" id="cvOvr">—</div><div class="nm">JASPER</div></div>
       <div class="only-him"><div class="ovr">99</div><div class="nm">THE MILLIONAIRE VERSION</div></div>
     </div>
+    <!-- PHASE 2: the status window — rank road + the three slices + pace -->
+    <div id="cvStatus"></div>
     <div class="radarwrap"><svg id="radar" width="252" height="250" viewBox="0 0 252 250"></svg></div>
     <div id="cvStats"></div>
     <div class="gchips" id="cvGoals"></div>
@@ -1385,7 +1425,11 @@ const WINS=[
 ];
 
 const DEFAULT={
-  v:4, xp:0,
+  /* v MUST match the migration ceiling. It sat at 4 for months, which meant every
+     fresh install re-walked the migrations on its second load — harmless until
+     migrateEngine, which would have stamped a fresh sliced-from-day-one save with
+     a seam and flipped its first days onto the OLD engine. Hostile QC, 2026-07-29. */
+  v:8, xp:0,
   /* THE LEDGER (Phase 1, 2026-07-28). Every XP movement is an entry: {k,xp,d,g,t}.
      S.xp stays the running balance every screen reads; the ledger is what makes a
      movement REVERSIBLE — his accidental-tap bug, fixed by architecture. The rule:
@@ -1401,6 +1445,9 @@ const DEFAULT={
      Goals tab (btb4) in July. An OLD save still carrying S.december keeps it in storage,
      and importFromOld() still reads it from there; a fresh install starts without it. */
   gradAsked:{},
+  /* fresh installs live on the sliced day from day one; lived saves get a seam
+     stamped by migrateEngine so their history keeps the score it was lived under */
+  engineSeam:'0000-00-00',
   vices:{
     dish:{label:'THE DISHWASHER', mode:'weekly', allow:1, week:0, weekKey:null,
           streak:0, streakBest:0, lastSlip:null, slips:0, hist:{}, ch:null, chDone:{}, chLapsed:null},
@@ -1547,10 +1594,11 @@ function merge(base,over){
 /* merge() replaces arrays wholesale, so a save made before the Vault shipped keeps the
    old four-reward ladder forever. Upgrade it — but only if he never edited it himself. */
 function migrate(s){
-  if(s.v>=7)return s;
-  if(s.v>=6){migrateStandards(s);s.v=7;return s}
-  if(s.v>=5){migrateCoffee(s);migrateStandards(s);s.v=7;return s}
-  if(s.v>=4){migrateBoosts(s);migrateCoffee(s);migrateStandards(s);s.v=7;return s}
+  if(s.v>=8)return s;
+  if(s.v>=7){migrateEngine(s);s.v=8;return s}
+  if(s.v>=6){migrateStandards(s);migrateEngine(s);s.v=8;return s}
+  if(s.v>=5){migrateCoffee(s);migrateStandards(s);migrateEngine(s);s.v=8;return s}
+  if(s.v>=4){migrateBoosts(s);migrateCoffee(s);migrateStandards(s);migrateEngine(s);s.v=8;return s}
   const OLD=[1200,1500,2000,2500];
   const untouched=Array.isArray(s.rewards)&&s.rewards.length===OLD.length&&
     s.rewards.every((r,i)=>r.cost===OLD[i]&&!r.done);
@@ -1570,7 +1618,8 @@ function migrate(s){
   migrateBoosts(s);
   migrateCoffee(s);
   migrateStandards(s);
-  s.v=7;
+  migrateEngine(s);
+  s.v=8;
   return s;
 }
 /* XP SESSION PHASE 1 (2026-07-29): standards get a lifetime. A live def has one open
@@ -1584,6 +1633,17 @@ function migrateStandards(s){
     if(!q.hist)q.hist=[{from:'0000-00-00',n:q.n}];
   });
   s.gradAsked=s.gradAsked||{};
+}
+/* PHASE 2: the engine seam. A save with lived days keeps its history scored the
+   old way — the sliced day takes over on the NEXT Monday, the same forward-only
+   rule every standard already follows. A fresh save has nothing to protect. */
+function migrateEngine(s){
+  /* HOSTILE QC D1: migrate() runs on merge(DEFAULT, saved), and DEFAULT's
+     '0000-00-00' is truthy — so `if(!s.engineSeam)` never fired and every lived
+     pre-v8 save would have had its whole history re-sliced. A pre-v8 save can
+     never legitimately carry the fresh-install seam, so treat it as absent. */
+  if(!s.engineSeam||s.engineSeam==='0000-00-00')
+    s.engineSeam=Object.keys(s.days||{}).length?nextWeekKey():'0000-00-00';
 }
 /* FUNERAL 2026-07-29: the 08:30 composer is buried. The coffee block keeps its slot
    and its price; the old seed name promised an interview that no longer exists, so a
@@ -1865,15 +1925,20 @@ function blockDomains(k,b){
   return b.dom||[];
 }
 /* Recomputed from the stored day records every time — self-healing, cannot drift.
-   Scored a week at a time so daily blocks and weekly quotas can live on the same scale. */
-function domainProgress(){
+   Scored a week at a time so daily blocks and weekly quotas can live on the same scale.
+   PHASE 2 (2026-07-29): this engine now feeds TWO readers — the domain radar (full
+   history, unchanged) and the OVR's pre-seam share (pass `cutoff` = the seam; weeks
+   from the seam onward are scored by the sliced day instead). */
+function domainProgress(cutoff){
   const prog={};DOMAINS.forEach(d=>prog[d.k]=0);
   const tk=today(),nm=nowMin();
 
   const weeks={};
   Object.keys(S.days).forEach(k=>{
     const dt=new Date(k+'T00:00:00'); if(dt.getDay()===0)return;
-    (weeks[mondayOf(dt)]=weeks[mondayOf(dt)]||[]).push(k);
+    const wk0=mondayOf(dt);
+    if(cutoff&&wk0>=cutoff)return;
+    (weeks[wk0]=weeks[wk0]||[]).push(k);
   });
 
   Object.keys(weeks).forEach(wk=>{
@@ -1931,12 +1996,103 @@ function domainStats(){
   DOMAINS.forEach(d=>{ out[d.k]=Math.round(START_OVR+(TARGET_OVR-START_OVR)*p[d.k]) });
   return out;
 }
-const ovr=()=>{const s=domainStats();return Math.round(DOMAINS.reduce((a,d)=>a+s[d.k],0)/DOMAINS.length)};
+/* ═══ PHASE 2 · THE SLICED DAY — the new scorekeeper (XP session, locked with him,
+   NORTH-STAR 19–24) ══════════════════════════════════════════════════════════════
+   Every day from the seam onward scores out of 100: THE WORK 60 (sacred blocks +
+   market, rules kept — nothing else can fill it) · THE LIFE 25 (his list and his
+   rituals, ~4 real things fill it) · CLEAN 15 (his vices; a recorded slip quiets
+   its share, the make-up wins half back; silence is never a failure). A day both
+   full on work AND clean opens the ABOVE-AND-BEYOND lane to 120 — which is why a
+   flawless run lands 99 around Dec 1 and never earlier. Days lived BEFORE the seam
+   keep the score they were lived under (forward-only applies to engines too). */
+function slicesFor(k){
+  const rec=S.days[k];if(!rec)return null;
+  const sh=shapeFor(k),tk=today(),nm=nowMin();
+  /* THE WORK · 60 — only what has already ENDED can be owed; waiting is not a miss */
+  let wAvail=0,wDone=0;
+  sh.forEach(b=>{
+    if(b.kind!=='deep'&&b.kind!=='market')return;
+    if(b.opt)return;
+    if(k===tk&&mins(b.e)>nm)return;
+    if(rec.wait&&rec.wait[b.id])return;
+    const ruled=b.kind==='market'?!!(rec.trade&&rec.trade.rules&&rec.trade.nodb):true;
+    wAvail++;if(rec.done[b.id]&&ruled)wDone++;
+  });
+  const wr=wAvail?wDone/wAvail:0;
+  /* THE LIFE · 25 — wins + real rituals done. Auto blocks are free, so they never count. */
+  const units=Object.keys(rec.wins||{}).length
+    +sh.filter(b=>b.kind!=='deep'&&b.kind!=='market'&&b.kind!=='life'&&!b.auto&&rec.done[b.id]).length;
+  const lr=Math.min(1,units/4);
+  /* CLEAN · 15 — a share per vice. Only a RECORDED slip costs; the make-up heals half. */
+  const vks=Object.keys(S.vices||{});
+  let cr=1;
+  if(vks.length){let sum=0;vks.forEach(v=>{
+    sum+=(rec.slip&&rec.slip[v])?((rec.slipHealed&&rec.slipHealed[v])?0.5:0):1});
+    cr=sum/vks.length;}
+  /* ABOVE AND BEYOND — only a perfect, clean day may go past 100. No leveling in
+     the penalty zone. */
+  let over=0;
+  if(wAvail&&wr===1&&cr===1){
+    const boosts=(S.boostLog||[]).filter(e=>e.date===k).length;
+    over=Math.min(20,5*Math.max(0,units-4)+5*boosts);
+  }
+  const pts=Math.min(120,60*wr+25*lr+15*cr+over)/100;
+  return {wr,lr,cr,units,over,pts,wAvail};
+}
+function runPoints(){
+  let pts=0;const tk=today();
+  Object.keys(S.days).forEach(k=>{
+    if(k<S.engineSeam||k>tk)return;
+    if(new Date(k+'T00:00:00').getDay()===0)return;
+    if(S.days[k].off)return;
+    const s=slicesFor(k);if(s)pts+=s.pts;
+  });
+  return pts;
+}
+function preFrac(){
+  if(!S.engineSeam||S.engineSeam==='0000-00-00')return 0;
+  const p=domainProgress(S.engineSeam);
+  const f=DOMAINS.reduce((a,d)=>a+p[d.k],0)/DOMAINS.length;
+  /* HOSTILE QC D2: while the migration week is still being lived, the old weekly
+     engine's rate can dilute as blank days arrive — the displayed number dipped a
+     point day-over-day. The pre-seam share is HISTORY: it holds its high-water
+     mark and converges the moment the seam week closes. The number never falls. */
+  S.preHigh=Math.max(S.preHigh||0,f);
+  return S.preHigh;
+}
+/* the ONE number: what the old engine banked before the seam + every sliced day since */
+const runFrac=()=>Math.min(1,preFrac()+runPoints()/TOTAL_DAYS);
+const ovr=()=>Math.round(START_OVR+(TARGET_OVR-START_OVR)*runFrac());
+
+/* ═══ HIS ROAD — six bands on the same number, never a second one ═══════════ */
+const RANKS=[{n:'ASHES',min:50},{n:'EMBER',min:58},{n:'FLAME',min:66},
+             {n:'FORGE',min:74},{n:'STEEL',min:82},{n:'HIM',min:91}];
+const rankIdx=o=>{let i=0;RANKS.forEach((r,j)=>{if(o>=r.min)i=j});return i};
+const rankName=o=>RANKS[rankIdx(o)].n;
+/* crossing a band is an EVENT — celebrated once. An update never celebrates the
+   status quo: the first look just remembers where he already stands. */
+function rankUpCheck(){
+  const i=rankIdx(ovr());
+  if(S.rankSeen===undefined||S.rankSeen===null){S.rankSeen=i;save();return}
+  if(i>S.rankSeen){S.rankSeen=i;save();showRankUp(i)}
+}
+function showRankUp(i){
+  const el=$('rankUp');if(!el)return;
+  const pr=projection();
+  const md=pr.date?pr.date.toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
+  el.innerHTML=`<div class="ru-in">
+    <div class="ru-k">◆ RANK UP ◆</div>
+    <div class="ru-n">${RANKS[i].n} · ${ovr()}</div>
+    <div class="ru-s">${i>0?RANKS[i-1].n+' is behind you. ':''}Day ${dayNo()} of ${TOTAL_DAYS} — pace holds ${md}.</div>
+    ${i>=1?`<div class="ru-u">UNLOCKED · A NEW SHELF IN THE BANK</div>`:''}
+    <button class="btn" style="margin-top:16px" onclick="$('rankUp').classList.remove('on')">Carry on</button>
+  </div>`;
+  el.classList.add('on');
+}
 
 /* At the pace you've actually kept, when do you hit 99? */
 function projection(){
-  const p=domainProgress();
-  const avg=DOMAINS.reduce((a,d)=>a+p[d.k],0)/DOMAINS.length;   // 0..1 of the way to 99
+  const avg=runFrac();                                           // 0..1 of the way to 99
   const elapsed=Math.max(1,dayNo());
   const rate=avg/elapsed;                                        // progress per weekday so far
   if(rate<=0)return {date:null,rate:0,pct:0};
@@ -2009,6 +2165,9 @@ const PENANCE=[
 function logSlip(k,noCount){
   const v=S.vices[k];
   v.slips++; v.lastSlip=today();
+  /* PHASE 2: the slip lands on the DAY, so the clean slice can see it. Only a
+     recorded slip ever costs — a day with no record stays clean by default. */
+  const rec=day();rec.slip=rec.slip||{};rec.slip[k]=1;
   if(k==='dish'){if(!noCount)v.week++} else {v.cleanStreak=0;}
   const lvl=Math.min(PENANCE.length-1,(S.penance?S.penance.level+1:0));
   S.penance={vice:k,level:lvl,text:PENANCE[lvl].t,date:today(),done:0};
@@ -2388,12 +2547,13 @@ function render(){
     return;}
   $('sabbath').classList.remove('on');document.body.classList.remove('noTabs');
   autoMark(); recount(); badges();
+  rankUpCheck();                       /* HIS ROAD — crossing a band is an event */
   if(VIEW==='today'){
     stampToday();
     document.body.classList.toggle('offday',!!day().off);
     renderStatus(); renderGauges(); renderGlance(); renderTimeLeft(); renderHomeNudge();
     renderPenance(); renderNext(); renderBoostCard();
-    renderWins(); renderExtrasLine(); renderSched(); renderClose(); renderRunStrip();
+    renderWins(); renderExtrasLine(); renderDeck(); renderSched(); renderClose(); renderRunStrip();
     $('foot').innerHTML=`BURN THE BOATS · DAY ${dayNo()} / ${TOTAL_DAYS}<br>WHAT IS THE MILLIONAIRE VERSION OF YOURSELF DOING RIGHT NOW?`;
   }
   else if(VIEW==='push') renderPush();
@@ -2469,7 +2629,7 @@ function renderGlance(){
                :pr.date.getTime()<=new Date(iso(RUN_LAST)+'T23:59:59').getTime()+21*864e5?'warn':'bad';
       return `<span class="pace">AT THIS PACE · 99 ON <b class="${cls}">${md}${y>2026?" '"+String(y).slice(2):''}</b></span>`})()
     :`<span class="pace">99 BY DEC 25 — TODAY STARTS THE CLIMB</span>`;
-  $('ovrPeek').innerHTML=`<b>${o}</b><span>OVERALL · GAP TO HIM ${Math.max(0,HIM-o)}${pace}</span>`+
+  $('ovrPeek').innerHTML=`<b>${o}</b><span><i class="rk">${rankName(o)}</i> · OVERALL · GAP TO HIM ${Math.max(0,HIM-o)}${pace}</span>`+
     `<u>${glanceOpen?'HIDE':'SEE THE RUN ▸'}</u>`;
   if(!glanceOpen)return;
   _renderGlanceFull();
@@ -2871,10 +3031,10 @@ function winsBankList(){
     const hits=weekHits(w.k),need=q?q.n:0,met=need&&hits>=need;
     const pips=need?`<span class="pips">${Array.from({length:need},(_,i)=>
       `<i class="${i<hits?(met?'full':'on'):''}"></i>`).join('')}</span>`:'';
-    /* a row is the tap button PLUS its EDIT — his content, so every row is editable
-       (buttons can't nest, hence the flex pair) */
-    return `<div style="display:flex;gap:6px;align-items:stretch;width:100%">
-      <button class="win${d.wins[w.k]?' on':''}" style="flex:1;min-width:0" onclick="tapWin('${w.k}')">
+    /* THE SHELF (C1, his pick): a card per thing, the tap and its EDIT stacked —
+       his content, so every card is editable (buttons can't nest, hence the pair) */
+    return `<div class="shcell">
+      <button class="win${d.wins[w.k]?' on':''}" onclick="tapWin('${w.k}')">
         <span class="wtop">${esc(w.n)}<b>+${w.xp}</b></span>
         ${need?`<span class="wtop" style="gap:6px">${pips}<b style="margin-left:auto;font-size:11px">${hits}/${need} this week</b></span>`:''}
       </button>
@@ -2966,6 +3126,7 @@ function renderExtrasLine(){
   el.innerHTML = tot
     ? `<span class="xl-x">+${xp}</span><span class="xl-n">also today · ${tot} thing${tot>1?'s':''}</span><span class="xl-go">→</span>`
     : `<span class="xl-n dim">The small stuff lives in the Bank</span><span class="xl-go">→</span>`;
+  renderDeck();
   /* the evening door — from 17:00, tomorrow is one tap away. Saturday evening's
      tomorrow is the Sabbath, so it offers next week instead. */
   const pt=$('planTmr');
@@ -2974,6 +3135,20 @@ function renderExtrasLine(){
     if(evening)pt.innerHTML=dow()===6
       ?`<span class="xl-n">Set next week</span><span class="xl-go">→</span>`
       :`<span class="xl-n">Plan tomorrow</span><span class="xl-go">→</span>`;}
+}
+/* THE DECK — the magic list as one thumb-row (C2, his pick). Undone first as
+   offers, done behind them wearing their ✓. A tap is tapWin — the same door the
+   Bank uses, so the pool, the refund window and the graduation all just work.
+   It never counts what he hasn't done; an untouched deck is just his list. */
+function renderDeck(){
+  const el=$('deckRow');if(!el)return;
+  const ws=winsAll(),d=day();
+  if(!ws.length){el.hidden=true;return}
+  el.hidden=false;
+  const undone=ws.filter(w=>!d.wins[w.k]),done=ws.filter(w=>d.wins[w.k]);
+  el.innerHTML=[...undone,...done].map(w=>
+    `<button class="dchip${d.wins[w.k]?' on':''}" onclick="tapWin('${w.k}')">${
+      esc(cut(w.n,20))}<u>${d.wins[w.k]?'✓':'+'+w.xp}</u></button>`).join('');
 }
 /* ═══ THE APP GUARDS ITS OWN DATA ═════════════════════════════════════════════
    His goals kept "deleting" — the deploys were blamed, but a deploy cannot touch
@@ -3153,6 +3328,10 @@ function reqState(r){
 function claim(i){
   const r=S.rewards[i];
   const rq=reqState(r);
+  /* PHASE 2: rank is the DOOR — checked first, one kind line, never a lecture.
+     It opens the shelf; XP and the terms still pay the bill. */
+  if(r.rank&&rankIdx(ovr())<r.rank){
+    toast(`Opens at ${RANKS[r.rank].n} — keep climbing`,'bad');return}
   /* Both gates, and the message names whichever is actually in the way — never both at once,
      and never a list of everything wrong. */
   if(!rq.met){
@@ -3187,7 +3366,16 @@ function offScript(){
   S.offScript[m]=(S.offScript[m]||0)+1;day().off=1;save();render();
   toast("Off-script. Today can't hurt you.",'good');
 }
-function clearPenance(){S.penance.done=1;save();render();award('penance:'+today(),60,'made it up')}
+function clearPenance(){
+  /* PHASE 2: the make-up HEALS — the slip day wins back half its share of the
+     clean slice. Healing only ever raises a day's score, so the sealed-past rule
+     is not violated: the past may be redeemed, never worsened. */
+  if(S.penance&&S.penance.vice&&S.penance.date){
+    const rec=S.days[S.penance.date];
+    if(rec&&rec.slip&&rec.slip[S.penance.vice]){
+      rec.slipHealed=rec.slipHealed||{};rec.slipHealed[S.penance.vice]=1;}
+  }
+  S.penance.done=1;save();render();award('penance:'+today(),60,'made it up')}
 /* THE BACKUP COVERS BOTH STORES. It only ever saved btb3, which meant every goal,
    area, date and weekly commitment he typed lived in exactly one place with no
    copy — fine while the old Goals tab was a live fallback, indefensible once it
@@ -3551,6 +3739,30 @@ function resumeRun(){
 $('cvClose').onclick=()=>{$('charv').classList.remove('on');document.body.dataset.veil='you'};
 function renderChar(){
   const s=domainStats();
+  /* PHASE 2 — THE STATUS WINDOW: his numbers presented like a hunter's sheet.
+     Rank road up top, the three slices as running stats since the seam, the pace.
+     The radar and the six areas survive below — this is the summary above them. */
+  (function(){
+    const host=$('cvStatus');if(!host)return;
+    const o=ovr(),ri=rankIdx(o);
+    const road=RANKS.map((r,j)=>`<div class="rkc${j===ri?' now':''}"><b>${r.n}</b><span>${r.min}${j<RANKS.length-1?'–'+(RANKS[j+1].min-1):'–99'}</span></div>`).join('');
+    let n=0,w=0,l=0,c=0;const tk=today();
+    Object.keys(S.days).forEach(k=>{
+      if(k<S.engineSeam||k>tk)return;
+      if(new Date(k+'T00:00:00').getDay()===0)return;
+      if(S.days[k].off)return;
+      const sl=slicesFor(k);if(!sl)return;
+      n++;w+=sl.wr;l+=sl.lr;c+=sl.cr;});
+    const pr=projection();
+    const md=pr.date?pr.date.toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
+    const bar=(v,col)=>`<span class="t"><i style="width:${Math.round(v*100)}%;background:${col}"></i></span><span class="v">${Math.round(v*100)}%</span>`;
+    host.innerHTML=`<div class="rkroad">${road}</div>`+(n
+      ?`<div class="srow"><span class="n">THE WORK</span>${bar(w/n,'var(--blue)')}</div>
+        <div class="srow"><span class="n">THE LIFE</span>${bar(l/n,'var(--violet)')}</div>
+        <div class="srow"><span class="n">CLEAN</span>${bar(c/n,'var(--phos)')}</div>
+        <div class="srow"><span class="n">PACE</span><span class="t"></span><span class="v" style="color:var(--gold)">99 · ${md}</span></div>`
+      :`<div class="hintline" style="margin:8px 0 4px">The sliced day starts Monday — your history keeps the score it was lived under.</div>`);
+  })();
   $('cvStats').innerHTML=DOMAINS.map(d=>{
     const v=s[d.k];
     return `<div class="srow"><span class="n">${d.label}</span>
@@ -5701,6 +5913,7 @@ function renderBank(){
       <div class="dom" style="background:${col}"></div>
       <div style="grid-column:1/3">
         <div class="bn">${esc(r.n)}</div>
+        ${r.rank&&rankIdx(ovr())<r.rank?`<div class="bo" style="color:var(--gold)">OPENS AT ${RANKS[r.rank].n}</div>`:''}
         ${r.condition&&!rq.rows.length?`<div class="bo">${esc(r.condition)}</div>`:''}
         ${reqRows}
         <div class="bd">${meta}</div>
@@ -5957,15 +6170,27 @@ function saveReward(){
 function editRewardReq(i){
   const r=S.rewards[i];if(!r)return;
   RWREQ=JSON.parse(JSON.stringify(reqsOf(r)));
+  RWRANK=r.rank||0;
   sheet(`<div class="sh-k">${r.condition?esc(r.condition.toUpperCase()):'THE DEAL'}</div>
     <div class="sh-t">${esc(r.n)}</div>
     <div class="sh-sub">${money(r.cost)} · TAP A LINE TO SET HOW MANY TIMES, THIS WEEK</div>
     <div class="fld"><div id="rwReqs" class="rw-reqs">${REQABLE().map(rwReqRow).join('')}</div></div>
+    <div class="fld"><label>A rank on the door — optional</label>
+      <div class="chips" id="rwRank">${RANKS.map((rk,j)=>
+        `<button class="chip tap seg${RWRANK===j?' on':''}" data-j="${j}"
+          onclick="rwPickRank(this,${j})">${j===0?'ANY':rk.n}</button>`).join('')}</div>
+      <div class="hintline">Rank opens the door — XP and the terms still pay the bill.</div></div>
     <button class="btn" onclick="saveRewardReq(${i})">Save the terms</button>`);
+}
+let RWRANK=0;
+function rwPickRank(el,j){
+  RWRANK=j;
+  el.parentNode.querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',Number(e.dataset.j)===j));
 }
 function saveRewardReq(i){
   const r=S.rewards[i];if(!r)return;
   r.req=JSON.parse(JSON.stringify(RWREQ));
+  r.rank=RWRANK||0;
   save();closeSheet();render();
   toast(r.req.length?`${r.req.length} requirement${r.req.length>1?'s':''} set`:'Requirements cleared','good');
 }
@@ -6051,7 +6276,10 @@ function restoreSave(inp){
       (nG===null?'\n\nThis is an older backup with no goals in it — your goals will be left as they are.'
                 :`\n${nG} goal${nG===1?'':'s'} · ${(gPart.areas||[]).length} areas`);
     if(!confirm(`Restore ${what}\n\nThis replaces what is here.`))return;
-    S=merge(JSON.parse(JSON.stringify(DEFAULT)),sPart);seedOwned();save();
+    /* MIGRATE ON RESTORE (Phase 2 fix): an old backup must walk the same doors a
+       stored save does — without this, a lived backup restored with no engineSeam
+       would have its whole history re-scored by the sliced day. */
+    S=migrate(merge(JSON.parse(JSON.stringify(DEFAULT)),sPart));seedOwned();save();
     if(gPart){G=backfillAnchors(Object.assign(GM.empty(),gPart));gsave()}
     render();toast('Restored','good');
   }catch(e){toast('That file could not be read','bad')}};
