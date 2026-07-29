@@ -20,6 +20,18 @@ full suite (22 harnesses, ~1,290 checks) ran green against the LIVE url at the e
 | 3 · Day as data | `S.templates.{weekday,saturday}` + `S.dayPlan[date]`; shape(date); pixel-identical day one; forward-only proven under hostile template edits; `seedOwned()` runs at boot AND restore | `dayplan.js` 20/20 |
 | 4 · The planner | THE WEEK: THIS/NEXT toggle, **PLAN ▸ doors on days ahead** (today locked by his own rule, Sunday Sabbath, **Saturday joined the week**); the day editor 06:00→bed (deep blocks SACRED, undeletable, survive hostile writes); free-type + emoji presets + memory chips; **★ Make it count**; Back-to-normal / Make-this-my-normal; Sabbath door lands on NEXT week; **the Today widget** (extras line → time-ranked quick-log, refundable) | `planner.js` 33/33 |
 
+### ✅ PHASE 4.1 — the planner REDESIGN, jury-passed (sw **btb-v35**)
+
+He rated the first planner sheets **2/10** and set the bar: **three independent design
+agents must call it a vast improvement.** Four rounds of build→shoot→cold-jury:
+r1 timeline grammar (7.5/8/7) → r2 unified rails (8/8/7) → **r3 THREE YES at 8/8/8**,
+each with the required +4 delta → r4 applied the passing jury's own remaining notes.
+What shipped: mono start/end time column + 3px category rules · DEEP/OPEN/ENDS stats ·
+dashed **gap pills** ("+ fill this 45m opening") that open the add sheet pre-aimed ·
+±15 nudge steppers + duration chip slate (15–120m + a visible *exactly…* slot) in BOTH
+sheets · live end-time echo · presets carry default lengths · make-it-count has a real
+checkbox above the CTA. Same model, no behavior change; `planner.js` 33/33 throughout.
+
 **NEXT — PHASE 5, and it starts with HIM, not code:** he lives one real planned day in the
 new planner and hands it over; THEN the XP-system design session (his locked sequencing),
 then AWAY mode + appointments, then recurrence. **Do not design the economy without him.**
