@@ -153,10 +153,28 @@
      the pricing page already passes it. Carry it exactly the way we carry the
      industry. No-op on pages without a tier switch, so pricing.html keeps the
      plan its own buttons set. */
+  /* A buyer who picks a level on pricing.html arrives here as ?plan=scale. The tier
+     switch below defaults to Growth, and carryPlan() then wrote that default over
+     their choice — so the pricing-first path silently downgraded every Scale and
+     Total prospect. Adopt an incoming plan before anything reads the switch, and
+     persist it the way sano_ind is already persisted so it survives the next hop. */
+  function adoptPlan() {
+    var incoming = '';
+    try { incoming = new URLSearchParams(location.search).get('plan') || ''; } catch (e) {}
+    if (!incoming) { try { incoming = sessionStorage.getItem('sano_plan') || ''; } catch (e) {} }
+    if (!incoming) return;
+    var radio = document.getElementById('t-' + incoming);
+    if (!radio || !radio.classList.contains('tier-radio')) return;
+    radio.checked = true;
+    try { sessionStorage.setItem('sano_plan', incoming); } catch (e) {}
+  }
+
   function carryPlan() {
     var picked = document.querySelector('.tier-radio:checked');
     if (!picked) return;
     var plan = picked.id.replace(/^t-/, '');
+    /* remember the latest pick, including a change of mind made on this page */
+    try { sessionStorage.setItem('sano_plan', plan); } catch (e) {}
     document.querySelectorAll('a[href^="demo.html"]').forEach(function (a) {
       var h = a.getAttribute('href') || '';
       var hash = h.indexOf('#') > -1 ? h.slice(h.indexOf('#')) : '';
@@ -173,6 +191,7 @@
   if (navMount) navMount.innerHTML = nav;
   if (footMount) footMount.innerHTML = foot;
   carryInd();
+  adoptPlan();
   carryPlan();
   /* the visitor can change level any number of times before they click */
   document.querySelectorAll('.tier-radio').forEach(function (r) {

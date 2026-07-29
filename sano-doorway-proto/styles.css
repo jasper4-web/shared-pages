@@ -901,6 +901,19 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
    collapse the price to nothing — the same honest-degrade the board already uses */
 @supports not (selector(:has(*))){ .cap-foot .mn{display:block} .cap-foot .mn + .mn{margin-top:10px} }
 
+/* The app guide chip, same per-level treatment and for the same reason: it read
+   "Runs on every level" in ALL FOUR states while pricing.html sells the app from
+   Growth up and the app's own footnote says Starter gets a report. There are five
+   of these chips (one per app screen), so the wrong string was on screen 40 times
+   per trade page. Degrades to the Growth line — that is the recommended tier and
+   the one the switch defaults to, so it is the true statement for most readers. */
+.pk .pkl{display:none}
+.cap-band:has(#t-starter:checked) .pkl-starter,
+.cap-band:has(#t-growth:checked)  .pkl-growth,
+.cap-band:has(#t-scale:checked)   .pkl-scale,
+.cap-band:has(#t-total:checked)   .pkl-total{display:inline}
+@supports not (selector(:has(*))){ .pk .pkl{display:none} .pk .pkl-growth{display:inline} }
+
 @media(max-width:1100px){ .cap-grid{grid-template-columns:repeat(3,minmax(0,1fr))} }
 @media(max-width:820px){
   .cap-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
