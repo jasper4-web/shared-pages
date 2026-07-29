@@ -641,6 +641,64 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
   border:1px dashed rgba(224,178,94,.4);border-radius:11px;background:transparent;color:var(--gold);
   font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;padding:12px}
 
+/* ---------- the day planner (Phase 4.1 — the redesign) --------------------
+   A day is TIME, so the editor draws time: a mono time column (Today's own .blk
+   vocabulary), card height proportional to length, and the gaps rendered as real
+   open air you can tap to fill. Deep blocks carry gold and one ◆ tag. */
+.pd{margin-top:14px}
+.pdrow{display:grid;grid-template-columns:46px 1fr auto;gap:10px;align-items:start;
+  width:100%;text-align:left;cursor:pointer;padding:10px 12px;margin-bottom:6px;
+  border:1px solid var(--line);border-radius:12px;background:var(--panel);
+  position:relative;overflow:hidden;min-height:52px}
+.pdrow::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c,var(--line2))}
+.pdrow .t{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--faint);line-height:1.5}
+.pdrow .t b{display:block;color:var(--dim);font-weight:400}
+.pdrow .n{font-size:13.5px;color:var(--ink);line-height:1.3;min-width:0;overflow-wrap:anywhere}
+.pdrow .n u{display:block;text-decoration:none;font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.1em;color:var(--faint);margin-top:3px}
+/* one slot for duration, pinned to the title line on every row — the rail never wobbles */
+.pdrow .len{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--faint);
+  align-self:start;padding-top:4px}
+.pdrow.deep{background:linear-gradient(135deg,rgba(224,178,94,.07),var(--panel) 55%)}
+.pdrow.deep::before{background:var(--gold)}
+.pdtag{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--gold)}
+/* the air in the day — real, visible, and a real target (a dashed pill, never gold) */
+.pdgap{display:flex;align-items:center;justify-content:center;gap:9px;width:calc(100% - 46px);
+  margin:2px 0 8px 46px;min-height:44px;cursor:pointer;
+  border:1px dashed var(--line2);border-radius:11px;background:transparent;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.11em;color:var(--faint)}
+.pdgap:active{border-color:var(--dim);color:var(--dim)}
+/* the mandated presets, composed: a locked two-column grid, never a ragged wrap */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
+.pgrid .chip{width:100%;justify-content:flex-start;text-align:left}
+.chips4{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.chips4 .chip{width:100%;padding:0 4px;justify-content:center}
+.pd-stats{display:flex;gap:18px;margin-top:10px;font-family:'Geist Mono',monospace;
+  font-size:11px;letter-spacing:.1em;color:var(--faint)}
+.pd-stats b{color:var(--ink);font-weight:400}
+.pd-stats .dm{color:var(--gold)}
+/* the 24-hour readout the app speaks, wrapped around the OS picker it doesn't control:
+   the mono chip is what you SEE, the native input underneath is what you TAP */
+.tmw{position:relative;min-height:46px;border:1px solid var(--line2);border-radius:11px;
+  background:var(--panel);display:flex;align-items:center;justify-content:center;
+  font-family:'Geist Mono',monospace;font-size:15px;letter-spacing:.06em;color:var(--ink)}
+.tmw input{position:absolute;inset:0;opacity:0;width:100%;height:100%}
+.tmw::after{content:'▾';margin-left:8px;color:var(--faint);font-size:11px}
+/* the make-it-count toggle: a claim, not a second button */
+.mkc{display:flex;align-items:center;gap:9px;width:100%;min-height:44px;border:0;background:none;
+  cursor:pointer;text-align:left;font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.11em;color:var(--faint);padding:0 2px}
+.mkc b{flex:none;width:18px;height:18px;border-radius:5px;border:1.5px solid #362f47;
+  display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:transparent;font-weight:400}
+.mkc.on{color:var(--gold)}
+.mkc.on b{background:rgba(224,178,94,.15);border-color:var(--gold);color:var(--gold)}
+/* the row editor's nudge row: −15 · the time · +15 */
+.ndgrow{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:stretch}
+.ndg{min-width:56px;min-height:46px;border:1px solid var(--line2);border-radius:11px;
+  background:var(--panel);color:var(--dim);cursor:pointer;
+  font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.05em}
+.ndg:active{border-color:var(--violet);color:var(--violet)}
+
 /* A reward's terms, on the reward. Pips, because a count you can see is a count you trust. */
 .rq{display:flex;flex-direction:column;gap:4px;margin:7px 0 6px}
 .rq-r{display:flex;align-items:center;gap:8px}
@@ -4429,19 +4487,38 @@ function planDay(date){
   if(dw===0){toast('Sunday is the Sabbath — rest is the plan','bad');return}
   const rows=shape(date),own=!!S.dayPlan[date];
   const label=['SUN','MON','TUE','WED','THU','FRI','SAT'][dw];
+  const DAYFULL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dw];
+  /* the numbers that describe the day, said once, up top */
+  const deepM=rows.filter(b=>b.kind==='deep').reduce((a,b)=>a+mins(b.e)-mins(b.s),0);
+  let openM=0,gapN=0;
+  rows.forEach((b,i)=>{if(i){const g=mins(b.s)-mins(rows[i-1].e);if(g>=15){openM+=g;gapN++}}});
+  const hrs=m=>m>=60?(m%60?`${Math.floor(m/60)}h ${m%60}m`:`${Math.floor(m/60)}h`):`${m}m`;
+  /* rows and the AIR between them, interleaved — a gap is a thing you can tap */
+  let list='';
+  rows.forEach((b,i)=>{
+    if(i){const g=mins(b.s)-mins(rows[i-1].e);
+      if(g>=15)list+=`<button class="pdgap" onclick="planAdd('${date}','${rows[i-1].e}',${Math.min(g,120)})">
+        + fill this ${hrs(g)} opening</button>`;}
+    const len=mins(b.e)-mins(b.s),deep=b.kind==='deep';
+    /* uniform rows — the GAPS carry the feel of time, the rows carry the facts.
+       (Proportional heights were tried and judged: mostly-similar heights plus one
+       tall void read as inconsistency, not scale.) */
+    list+=`<button class="pdrow${deep?' deep':''}" style="--c:${domColour((b.dom||[])[0])}"
+        onclick="planRow('${date}',${i})">
+      <span class="t">${b.s}<b>${b.e}</b></span>
+      <span class="n">${esc(b.n)}${deep?`<u class="pdtag">◆ SACRED</u>`:''}</span>
+      <span class="len">${len}m</span>
+    </button>`;
+  });
   sheet(`<div class="sh-k">${label} · ${date.slice(5)}${own?' · ITS OWN PLAN':' · YOUR NORMAL '+(dw===6?'SATURDAY':'DAY')}</div>
-    <div class="sh-t">The day, yours to shape</div>
-    <div class="sh-sub">TAP A ROW TO CHANGE IT · PLANNING PAYS NOTHING — DOING DOES</div>
-    <div style="margin-top:12px">${rows.map((b,i)=>`
-      <button class="g2m" style="width:100%;text-align:left" onclick="planRow('${date}',${i})">
-        <span class="d" style="background:${domColour((b.dom||[])[0])}"></span>
-        <span class="n">${esc(b.n)}${b.kind==='deep'?' <b style="color:var(--gold);font-size:11px">SACRED</b>':''}
-          <u>${b.s}–${b.e}${b.kind==='deep'?' · never deleted':''}</u></span>
-        <b style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint)">${mins(b.e)-mins(b.s)}m</b>
-      </button>`).join('')}</div>
-    <button class="btn gh" style="margin-top:10px" onclick="planAdd('${date}')">+ Add something</button>
+    <div class="sh-t">${DAYFULL}.</div>
+    <div class="pd-stats"><span><i class="dm" style="font-style:normal">◆</i> <b>${hrs(deepM)}</b> DEEP</span><span><b>${
+      gapN?hrs(openM):'NOTHING'}</b> OPEN</span><span>ENDS <b>${rows.length?rows[rows.length-1].e:'—'}</b></span></div>
+    <div class="pd">${list}</div>
+    <button class="btn gh" style="margin-top:4px" onclick="planAdd('${date}')">+ Add to the evening</button>
     ${own?`<button class="btn gh" style="margin-top:8px" onclick="planReset('${date}')">Back to my normal ${dw===6?'Saturday':'day'}</button>`:''}
-    <button class="btn gh" style="margin-top:8px" onclick="planAsNormal('${date}')">Make this my normal ${dw===6?'Saturday':'weekday'}</button>`);
+    <button class="btn gh" style="margin-top:8px" onclick="planAsNormal('${date}')">Make this my normal ${dw===6?'Saturday':'weekday'}</button>
+    <div class="hintline" style="margin-top:10px;text-align:center">Planning pays nothing — doing does.</div>`);
 }
 function planRows(date){return shape(date).map(b=>({...b}))}
 function planWrite(date,rows){
@@ -4455,18 +4532,56 @@ function planWrite(date,rows){
 }
 function planRow(date,i){
   const rows=planRows(date),b=rows[i];if(!b)return;
-  sheet(`<div class="sh-k">${esc(b.n).toUpperCase()}${b.kind==='deep'?' · SACRED':''}</div>
-    <div class="sh-t">Change it</div>
-    <div class="fld" style="margin-top:12px"><label>What</label>
+  const len=mins(b.e)-mins(b.s),deep=b.kind==='deep',c=domColour((b.dom||[])[0]);
+  sheet(`<div class="sh-k" style="padding-left:9px;border-left:3px solid ${c}">${
+      esc(b.n).toUpperCase()}${deep?' <span class="pdtag">· ◆ SACRED</span>':''}</div>
+    <div class="sh-t">${b.s} – <span id="prEnd">${b.e}</span></div>
+    <div class="sh-sub">${deep?'MOVE IT, RENAME IT — IT STAYS ON THE DAY':len+'M · YOURS ENTIRELY'}</div>
+    <div class="fld" style="margin-top:14px"><label>What</label>
       <input id="prN" maxlength="48" value="${esc(b.n)}"></div>
-    <div class="g22">
-      <div class="fld"><label>Starts</label><input id="prS" type="time" value="${b.s}"></div>
-      <div class="fld"><label>Minutes</label><input id="prL" type="number" inputmode="numeric" value="${mins(b.e)-mins(b.s)}"></div>
-    </div>
-    <button class="btn" onclick="planRowSave('${date}',${i})">Save</button>
-    ${b.kind==='deep'
-      ?`<div class="hintline" style="margin-top:9px">A deep block is sacred — move it, rename it, but it stays on the day.</div>`
+    <div class="fld"><label>Starts</label>
+      <div class="ndgrow">
+        <button class="ndg" onclick="ndg(-15)">−15</button>
+        <div class="tmw"><span id="prSd">${b.s}</span>
+          <input id="prS" type="time" value="${b.s}" onchange="$('prSd').textContent=this.value"></div>
+        <button class="ndg" onclick="ndg(15)">+15</button>
+      </div></div>
+    <div class="fld"><label>How long</label>
+      <div class="chips4" id="prLC">${[15,30,45,60,75,90,120].map(m=>
+        `<button class="chip tap seg${m===len?' on':''}" data-m="${m}"
+          onclick="$('prL').value=this.dataset.m;prPick(this);prEcho()">${m}m</button>`).join('')}
+        <button class="chip tap" style="visibility:hidden" tabindex="-1"></button>
+      </div>
+      <button class="g2addanc" style="margin-top:7px" onclick="prPick(null);$('prLW').hidden=false;$('prL').focus()">exactly… — any length, typed</button>
+      <div id="prLW" ${[15,30,45,60,75,90,120].includes(len)?'hidden':''}>
+        <input id="prL" type="number" inputmode="numeric" value="${len}" oninput="prEcho()"></div></div>
+    <button class="btn" style="margin-top:6px" onclick="planRowSave('${date}',${i})">Save the change</button>
+    ${deep?''
       :`<button class="btn gh" style="margin-top:8px" onclick="planRowDrop('${date}',${i})">Take it off this day</button>`}`);
+}
+/* the ±15 nudge — moving a block should feel like nudging, not like filling in a form */
+function ndg(d,w){
+  w=w||'pr';
+  const el=$(w+'S');if(!el||!el.value)return;
+  const m=Math.max(0,Math.min(23*60+45,mins(el.value)+d));
+  el.value=`${pad(Math.floor(m/60))}:${pad(m%60)}`;
+  const disp=$(w+'Sd');if(disp)disp.textContent=el.value;
+  if(w==='pr')prEcho();
+}
+function prPick(el){
+  const host=$('prLC');if(host)[...host.querySelectorAll('.seg')].forEach(e=>e.classList.remove('on'));
+  if(el){el.classList.add('on');const w=$('prLW');if(w)w.hidden=true}}
+/* the header echoes the change the moment it is made — 06:00 – 07:30, live */
+function prEcho(){
+  const sEl=$('prS'),lEl=$('prL'),out=$('prEnd');if(!sEl||!lEl||!out)return;
+  const m=mins(sEl.value||'06:00')+Math.max(5,Math.min(600,Math.round(Number(lEl.value)||30)));
+  out.textContent=`${pad(Math.floor(m/60)%24)}:${pad(m%60)}`;
+}
+/* structure bends: an overlap is allowed, but it is never silent */
+function planOverlapWarn(date,s,e,skipId){
+  const rows=shape(date);
+  const hit=rows.find(b=>b.id!==skipId&&mins(s)<mins(b.e)&&mins(e)>mins(b.s));
+  if(hit)toast(`Heads up — overlaps ${hit.n}`,'bad');
 }
 function planRowSave(date,i){
   const rows=planRows(date),b=rows[i];if(!b)return;
@@ -4475,7 +4590,8 @@ function planRowSave(date,i){
   const len=Math.max(5,Math.min(600,Math.round(Number($('prL').value)||mins(b.e)-mins(b.s))));
   const e=(m=>`${pad(Math.floor(m/60)%24)}:${pad(m%60)}`)(mins(s)+len);
   Object.assign(b,{n,s,e});
-  planWrite(date,rows);closeSheet();toast('Changed — planning pays nothing, doing does','good');
+  planWrite(date,rows);closeSheet();
+  planOverlapWarn(date,s,e,b.id);
   planDay(date);
 }
 function planRowDrop(date,i){
@@ -4484,8 +4600,8 @@ function planRowDrop(date,i){
 }
 /* the ADD sheet — a MEMORY, not a menu. He types anything; the chips only save typing.
    Presets are life with an emoji on it; the second row is what he has added before. */
-const PLAN_PRESETS=[['🧺','Laundry'],['🧹','Clean the house'],['🍳','Cook dinner'],['🚶','Walk'],
-  ['📞','Call someone'],['🛒','Errands'],['📖','Read'],['🙏','Pray']];
+const PLAN_PRESETS=[['🧺','Laundry',30],['🧹','Clean house',45],['🍳','Cook dinner',45],['🚶','Walk',30],
+  ['📞','Call someone',15],['🛒','Errands',60],['📖','Read',30],['🙏','Pray',15]];
 function planMemory(){
   const seen=new Set(),out=[];
   Object.keys(S.dayPlan).sort().reverse().forEach(k=>S.dayPlan[k].forEach(b=>{
@@ -4493,33 +4609,53 @@ function planMemory(){
   return out.slice(0,4);
 }
 let PA={count:0};
-function planAdd(date){
+function paLen(m){const el=$('paL');if(el)el.value=m;
+  const host=$('paLC');if(host)[...host.querySelectorAll('.seg')].forEach(e=>e.classList.toggle('on',e.dataset.m==String(m)));
+  const w=$('paLW');if(w&&[...(host?host.querySelectorAll('.seg.on'):[])].length)w.hidden=true}
+function planAdd(date,s,len){
   PA={count:0};
   const mem=planMemory();
-  sheet(`<div class="sh-k">ADD TO ${date.slice(5)}</div>
+  /* tapped from a GAP, the sheet arrives already aimed at it */
+  const aimed=!!s;
+  const fit=[120,90,75,60,45,30,15].find(m=>m<=(len||45))||15;
+  sheet(`<div class="sh-k">${aimed?`THE ${s} OPENING · ${len}M FREE`:`ADD TO ${date.slice(5)}`}</div>
     <div class="sh-t">What else is that day for?</div>
-    <div class="sh-sub">ANYTHING. IT GOES ON THE DAY AND PAYS NOTHING — IT'S STRUCTURE, NOT A SCORE.</div>
+    <div class="sh-sub">ANYTHING. IT GOES ON THE DAY AND PAYS NOTHING.</div>
     <div class="fld" style="margin-top:12px"><label>What</label>
       <input id="paN" maxlength="48" placeholder="Dentist · groceries · her recital"></div>
-    <div class="chips" style="margin-top:8px">${PLAN_PRESETS.map(([e,n])=>
-      `<button class="chip tap" onclick="$('paN').value='${n}'">${e} ${n}</button>`).join('')}</div>
+    <div class="pgrid">${PLAN_PRESETS.map(([e,n,l])=>
+      `<button class="chip tap" onclick="$('paN').value='${n}';paLen(${l})">${e} ${n} <span style="margin-left:auto;color:var(--faint)">${l}m</span></button>`).join('')}</div>
     ${mem.length?`<div class="hintline" style="margin:8px 0 2px">You've added before:</div>
       <div class="chips">${mem.map(n=>`<button class="chip tap seg" onclick="$('paN').value='${esc(n)}'">${esc(n)}</button>`).join('')}</div>`:''}
-    <div class="g22" style="margin-top:10px">
-      <div class="fld"><label>Starts</label><input id="paS" type="time" value="17:30"></div>
-      <div class="fld"><label>Minutes</label><input id="paL" type="number" inputmode="numeric" value="45"></div>
-    </div>
-    <button class="chip tap" id="paCount" style="margin-top:4px" onclick="PA.count=PA.count?0:1;this.classList.toggle('seg');this.classList.toggle('on')">★ Make it count — joins Always counts, pays when you log it</button>
-    <button class="btn" style="margin-top:12px" onclick="planAddSave('${date}')">Put it on the day</button>`);
+    <div class="fld" style="margin-top:10px"><label>Starts</label>
+      <div class="ndgrow">
+        <button class="ndg" onclick="ndg(-15,'pa')">−15</button>
+        <div class="tmw"><span id="paSd">${s||'17:30'}</span>
+          <input id="paS" type="time" value="${s||'17:30'}" onchange="$('paSd').textContent=this.value"></div>
+        <button class="ndg" onclick="ndg(15,'pa')">+15</button>
+      </div></div>
+    <div class="fld"><label>How long</label>
+      <div class="chips4" id="paLC">${[15,30,45,60,75,90,120].map(m=>
+        `<button class="chip tap seg${m===fit?' on':''}" data-m="${m}"
+          onclick="paLen(this.dataset.m)">${m}m</button>`).join('')}
+        <button class="chip tap" style="visibility:hidden" tabindex="-1"></button>
+      </div>
+      <button class="g2addanc" style="margin-top:7px" onclick="[...$('paLC').querySelectorAll('.seg')].forEach(e=>e.classList.remove('on'));$('paLW').hidden=false;$('paL').focus()">exactly… — any length, typed</button>
+      <div id="paLW" hidden><input id="paL" type="number" inputmode="numeric" value="${fit}"></div></div>
+    <button class="mkc" id="paCount" style="margin-top:10px"
+      onclick="PA.count=PA.count?0:1;this.classList.toggle('on');this.querySelector('b').textContent=PA.count?'★':''">
+      <b></b>ALSO MAKE IT ONE OF MY ALWAYS COUNTS — WORTH XP WHEN I LOG IT DONE</button>
+    <button class="btn" style="margin-top:8px" onclick="planAddSave('${date}')">Put it on the day</button>`);
 }
 function planAddSave(date){
   const n=$('paN').value.trim();if(!n){toast('Name it first','bad');return}
   const s=$('paS').value||'17:30';
   const len=Math.max(5,Math.min(600,Math.round(Number($('paL').value)||45)));
   const e=(m=>`${pad(Math.floor(m/60)%24)}:${pad(m%60)}`)(mins(s)+len);
-  const rows=planRows(date);
-  rows.push({id:'p'+Date.now().toString(36),s,e,n,dom:['MIND'],kind:'plan'});
+  const rows=planRows(date),nid='p'+Date.now().toString(36);
+  rows.push({id:nid,s,e,n,dom:['MIND'],kind:'plan'});
   planWrite(date,rows);
+  planOverlapWarn(date,s,e,nid);
   /* "make it count" — HIS idea: the thing he just planned can join Always counts.
      Creating a def pays nothing; the tap pays, later, like every win. */
   if(PA.count&&!S.winDefs.some(w=>!w.arc&&w.n.toLowerCase()===n.toLowerCase())){
