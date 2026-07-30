@@ -1,7 +1,179 @@
 # RESUME HERE — BURN THE BOATS
 
-**Updated 2026-07-29. Current live build: sw `btb-v40`.** Read this top to bottom before
+**Updated 2026-07-29. Current live build: sw `btb-v41`.** Read this top to bottom before
 touching anything. It is the single entry point. `HANDOFF-GOALS.md` is the deeper history.
+
+## ⭐ NEWEST — 2026-07-29: THE COFFEE FUNERAL (sw **btb-v41**, all 22 harnesses green vs LIVE)
+
+He opened his list of pre-XP-session changes with a screenshot of the 08:30 sheet:
+*"a bit of an overbuild. Instead of doing this while I have my coffee I would rather just
+have the option to actually plan tomorrow or another day with one click."* Shipped same day:
+
+- **The "THE COFFEE SHOP / Today's three" composer is BURIED** (openComposer/saveComposer/
+  goalPicker/pickGoal/lastPrio/nextMondayISO all deleted, CSS too). Its Saturday twin
+  "Setting Monday up" died with it. **Kill-tests: `funeral.js` §7 — funeral is now 47/47.**
+- **The coffee block stays** (renamed seed: "Coffee & breakfast · Relax — plan ahead if you
+  want"). Its card offers **Plan tomorrow → / Done — carry on**; tapping the block opens ONE
+  door sheet (Plan tomorrow → · Another day — open the week · Done). **Done still pays the
+  same 25 — the economy did not move** (asserted). Saturday's 'mon' block now offers
+  **Set next week →** via the same `planTomorrow()` door.
+- **The accusations died:** "No objective set — write it at 8:30a" (now-card) and
+  "no objective set" (day list) are gone with their ember CSS. A block's purpose is the
+  goal committed when planning; an empty block shows its name, clean.
+- **`dayWord(date)` — one formatter** (t12's rule): planning sheets now say **TOMORROW ·
+  YOUR NORMAL DAY / "Tomorrow — Thursday."**, the row editor says **TOMORROW · COFFEE &
+  BREAKFAST** while he nudges times, the add sheet says **ADD TO TOMORROW**. `funeral.js` §8.
+- **Migration v6** (`migrateCoffee`): renames only the untouched seed name (his own rename
+  is his), on templates + future dayPlan days only (lived days keep history), scrubs
+  `_composeFor/_composeMode`. `boosts.js` migration assertion updated to v6.
+- **Harnesses:** stage1's F2-1 composer tests honestly retired → replaced with burial
+  guards (stage1 is now **24/24**). Full suite run vs LIVE after deploy: funeral 47 ·
+  stage1 24 · planner 41 · dayplan 20 · ledger 24 · owned 20 · qc3 51 · stage2 24 ·
+  stage3 30 · stage4 52 · vanish 32 · tiers 28 · extras 33 · boosts 37 · rewardreq 31 ·
+  backup 13 · area 11 · goals2 59 · full 126 · phase1 24 · profiles 320 · stress 360 —
+  **all green**. Renders screenshotted from LIVE and read.
+- **NORTH-STAR gained locked items 17–18** (the composer's death · sheets say the day in words).
+
+**THE SESSION CONTEXT:** he has "a few things I want to change before we knock out the XP
+system." This was the first. Phase 5 (the XP session) then OPENED — see below.
+
+## ⭐⭐ 2026-07-29 · THE XP SESSION IS OPEN — the deep dive is DONE, HE DECIDES NEXT
+
+His brief (verbatim on the page): XP is crucial, the 99 is the goal, but deep blocks must not
+be the only real earner — chores/habits ("laundry often") should pay XP toward rewards AND
+bring the 99 closer. He asked for many options, lived walkthroughs, stress tests. **Delivered,
+NOT built:**
+
+**LIVE: https://jasper4-web.github.io/shared-pages/burn-the-boats/renditions/rend-xp-system.html**
+(source `renditions/rend-xp-system.html` · sim scripts were scratchpad-only; results on the page)
+
+**Three engine facts unearthed (verified in source, load-bearing for any design):**
+1. **The 99 is date-locked** — progress ÷ TOTAL_DAYS; perfection = 99 exactly on Dec 25,
+   never sooner. "Sooner" today is impossible; the movable thing is the pace date (line ~2433).
+2. **THE STANDARDS are already the life→99 door** (quotas add avail+earned to domains,
+   grind-capped at n) — but ⚠ **`domainProgress()` applies TODAY'S quotaDefs to every past
+   week**: adding/editing a standard retro-rescores history (adding one mid-run DROPS OVR).
+   Forward-only violation, must be fixed regardless of chosen option (effective-from week).
+3. **The knock-out ✓ pays 0 XP** (g2Done awards nothing). Strong day ≈445 · ladder 900→22k.
+
+**The five systems, simulated (22 wks × 4 profiles vs the real weekly-ratio engine).**
+Final OVRs (status-quo baseline: perfect 98 · real 83 · collapse 80 · grinder 81):
+- **S1 Standards Door** (one-tap make-it-a-standard; XP stays money) — KEEP AS PLUMBING.
+  Honest, grind-proof, but barely moves the number (83→83). Needs the retro-fix + "standards bend".
+- **S2 XP IS the score** — **KILLED BY THE NUMBERS**: every profile incl. the grinder ends 99;
+  he owns prices, so the 99 becomes self-priced. Shown dead on the page.
+- **S3 The 70/30 day** — **THE STRONG CANDIDATE**: day scores /100, sacred+market=70, life
+  fills a capped 30; cumulative ÷110 (never falls). Only option passing all three tests:
+  real 83→**89**, collapse 80→**85**, grinder 81→**75**. Biggest build; needs HIS split + cap.
+- **S4 Repair credit** (extras patch non-sacred misses, 1/dom/wk) — PARKED: kindest to
+  collapse but the grinder pockets the most (+4); thinnest margins.
+- **S5 Habit ladder** — KEEP THE GRADUATION ONLY (3 weeks of a chore → offered as a standard
+  once); escalating XP culled (values that shrink = a fine).
+- Culled in writing: multipliers · paying OVR in XP per domain · fines/negative XP · resetting streaks.
+
+**THE FORK HE MUST CALL (on the page): Door A** — 99 stays date-locked, "sooner" = faster
+mid-run climb + pace date healing (RECOMMENDED) — vs **Door B** — early 99 allowed (kills
+Dec 25's meaning; honest version = a separate "days ahead of pace" number, not the OVR).
+
+**The money side put to him:** knock-outs priced at creation 25–150 (default 50, via ledger,
+refundable) · **250 cap = ADDED pool only** (boosts+invented wins+quick-logs share 250/day;
+planned work uncapped → ladder unchanged) · custom band 5–100 stays · fix-first: retro-standard
+trap + knock-out through award().
+
+**Recommendation on the page (his to overrule): Door A, two phases** — Phase 1 plumbing
+(retro-fix, one-tap standard, graduation, knock-out pricing, added-pool cap, pace date on
+Today); Phase 2 the 70/30 day after he locks the split + the 30's cap, with its own harness
++ hostile QC before it ships.
+
+**ROUND 2 (same day): HE ANSWERED — see NORTH-STAR items 19–23 (locked) and the new page:**
+**https://jasper4-web.github.io/shared-pages/burn-the-boats/renditions/rend-xp-v2.html**
+
+His verdicts: 70/30 core + habit graduation YES · ranks + level-up moments (one number) ·
+the ceiling = his own version (flawless above-and-beyond run may land 99 ~Dec 1, never
+earlier; Dec 25 = human target) · knock-outs 40 auto (25–50 nudge) · 250 cap = my call
+(added pool) · pace date on Today · repair stays parked · **and the big one: THE VICES
+must be a main road to 99** ("you cannot get to 99 if you're falling through on your
+vices") — verified in source: vices currently pay +40 XP and the OVR cannot see them at
+all. He also wants the app to feel like a video game (Solo Leveling is his reference —
+take the System/status-window/quest FEEL, refuse the penalty mechanic), and flagged that
+the small-things list is "the magic that kept me from my vices" → needs a real designed
+home. **He talks as idea-guy/partner, NOT a builder — read his words as direction, not spec.**
+
+rend-xp-v2.html draws: the sliced day (60 WORK / 25 LIFE / 15 CLEAN + overflow lane to
+120, no overflow on slip days, make-up wins back part of the clean slice, streak
+landmarks pay, rewards can carry clean-day terms) · the magic list three ways (C1 Shelf
+in Bank / C2 Deck on Today ← my pick / C3 Board) · rank roads (R1 Hunter letters /
+R2 HIS ROAD: ASHES→EMBER→FLAME→FORGE→STEEL→HIM ← my pick / R3 quiet tiers) · the
+level-up moment + status window mocks.
+
+**HE GAVE THE PICKS ("this looks good and I agree with your picks") → NORTH-STAR item 24:**
+C2 Deck + C1 Shelf · R2 HIS ROAD (ASHES→EMBER→FLAME→FORGE→STEEL→HIM) · 60/25/15 as drawn.
+
+## ✅ XP SESSION **PHASE 1 SHIPPED** — sw **btb-v42**, 2026-07-29, all 23 harnesses green vs LIVE
+
+- **Forward-only standards** (the retro-trap is dead): quotaDefs carry `spans` (when live)
+  + `hist` (what count, when); the engine scores each week by what was true THAT week.
+  Every change lands NEXT MONDAY (mid-week changes would dip the number — first law).
+  Helpers: `qActiveIn/qNAt/qHistSet/qRetire/qRevive/nextWeekKey`. Pre-fix archived defs
+  grandfathered (spans:[]) so no old save re-scores. **Migration v7** (`migrateStandards`).
+- **The graduation**: 3 weeks running of a win with no standard → offered ONCE
+  (`gradCheck` in tapWin; `S.gradAsked` remembers declines). Accept = standard at his
+  count, starts Monday.
+- **Knock-outs pay**: `payKnock` — 40 default, `g.worth` nudge 25–50 via chips in the
+  goal sheet ("WORTH WHEN YOU KNOCK IT OUT"); through award(), same-day wake refunds,
+  sealed keeps, never double-pays (ledger is the guard), anchors pay 0.
+- **The added pool**: `ADDED_DAY_CAP=250` shared by boosts + wins (`addedSpentToday`);
+  partial pay at the rim; a pooled-out win STILL records (standards/quotas see it) —
+  "Counted — today's side pocket is full."
+- **The pace date is OUT from behind the door**: `.pace` line inside #ovrPeek, always
+  visible ("AT THIS PACE · 99 ON …" / "99 BY DEC 25 — TODAY STARTS THE CLIMB").
+- **`model/xp1.js` is new — 30 checks** over all five. boosts.js updated honestly
+  (shared-pool reset + v7 assertion). Suite vs LIVE: xp1 30 · funeral 47 · stage1 24 ·
+  planner 41 · dayplan 20 · ledger 24 · owned 20 · qc3 51 · stage2 24 · stage3 30 ·
+  stage4 52 · vanish 32 · tiers 28 · extras 33 · boosts 37 · rewardreq 31 · backup 13 ·
+  area 11 · goals2 59 · full 126 · phase1 24 · profiles 320 · stress 360 — **all green**.
+  Renders read: pace line, graduation sheet, worth chips.
+
+## ⚠⚠ PHASE 2 IS BUILT BUT **NOT VERIFIED, NOT DEPLOYED** — HELD BY A TOOL OUTAGE 2026-07-29
+
+He said "go" on Phase 2 and the ENTIRE engine was written into `index.html` (local ONLY —
+**live is still btb-v42 and untouched**), plus `model/xp2.js` (~35 checks) and funeral §9.
+Then the Claude Code command-runner went down mid-session (safety-classifier outage — every
+Bash/Agent call refused for 15+ straight attempts) — **ZERO tests have run on this code.**
+Snapshot from before the build: `index.html.bak-xp2-*` (newest).
+
+**WHAT IS STAGED (all in local index.html, self-reviewed by read, never executed):**
+- `slicesFor(k)` / `runPoints()` / `preFrac()` / `runFrac()` / new `ovr()` — the sliced day
+  (60/25/15, overflow to 120 gated on work-full AND clean, waiting excluded, off/Sunday skipped)
+- `S.engineSeam` + migration **v8** (`migrateEngine`: lived saves seam to next Monday; fresh
+  = '0000-00-00'); `domainProgress(cutoff)` param (radar untouched, pre-seam share for ovr)
+- `logSlip` now stamps `day().slip[vice]`; `clearPenance` heals half (`slipHealed`) — the
+  make-up wired to the clean slice
+- `RANKS`/`rankIdx`/`rankUpCheck` (+`S.rankSeen`, lazy init — updates never celebrate the
+  status quo) + `#rankUp` overlay; rank name in `#ovrPeek`
+- rank-gated rewards: `r.rank` + gate FIRST in `claim()` + "OPENS AT X" row + rank chips in
+  `editRewardReq` (RWRANK)
+- THE DECK `#deckRow`+`renderDeck()` on Today (tapWin door); THE SHELF: `.wins` grid +
+  `.shcell` in `winsBankList`; STATUS WINDOW `#cvStatus` in `renderChar` (rank road + slices + pace)
+- **Bug found in self-review and fixed: `restoreSave` now runs `migrate()`** (an old backup
+  restored without it would re-slice its whole history) — guarded in funeral §9
+- `projection()` now reads `runFrac()`
+
+**RESUME (in order, NOTHING else first):**
+1. `node model/xp2.js` — fix until green (it has NEVER run; expect first-run failures)
+2. Full local suite (24 harnesses incl xp1/funeral; SP=/tmp/shots where needed) — fix honestly
+3. Hostile QC pass (house rule) before deploy
+4. Bump sw to **btb-v43**, deploy via /tmp/shared-pages, verify suite vs LIVE, screenshot-read
+   Today (deck+rank+pace), Bank (shelf, OPENS AT), status window, rank-up moment
+5. Docs + memory. **Do not tell him it shipped until step 4 is done.**
+
+**NEXT — PHASE 2, THE ENGINE (the big build; drawings approved, nothing started):**
+the sliced day (60 WORK / 25 LIFE / 15 CLEAN, ~4 life-units fill the 25) · the overflow
+lane to 120 (only when work full AND clean) · the vice slice wired to the make-up ·
+HIS ROAD ranks + the level-up moment + rank-gated Bank shelves · THE DECK on Today +
+THE SHELF in the Bank (one list, two doors) · the status window. Per the house rule:
+its own harness + a hostile QC pass before it touches the live app. The old scoring
+path gets a funeral entry when replaced.
 
 ## ⭐ WHERE WE ARE NOW (end of 2026-07-28, a huge day)
 

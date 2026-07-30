@@ -26,6 +26,12 @@
   --tap:48px; --tap-lg:56px;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* `hidden` MUST always win. A class that sets display (flex/grid) outranks the UA
+   [hidden] rule, and this app hides a dozen things by attribute: #planTmr painted
+   an empty 48px bordered card on Today every day until 17:00, and an empty #deckRow
+   would do the same for anyone with no wins. The lesson was already learned once
+   locally (.gpick2 .gpk-kids[hidden], further down) — this is the general form. */
+[hidden]{display:none!important}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);overscroll-behavior-y:none}
 body{font-family:'Satoshi',system-ui,sans-serif;line-height:1.45;-webkit-font-smoothing:antialiased}
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:400;
@@ -2039,12 +2045,22 @@ function slicesFor(k){
   const pts=Math.min(120,60*wr+25*lr+15*cr+over)/100;
   return {wr,lr,cr,units,over,pts,wAvail};
 }
+/* ONE door for "does this day move the number" — the numerator must speak the
+   same language as the denominator. TOTAL_DAYS counts WEEKDAYS (Mon–Fri, 110 of
+   them), so only a weekday may add points. Saturday is planned, lived and PAID
+   IN XP — it just isn't part of the run's 110. Scoring it landed a flawless run
+   on 99 by Nov 9 instead of the locked ~Dec 1, because Saturday's shape holds
+   ONE deep block: a full 1.2 day for a sixth of a weekday's work. */
+function scoresOn(k){
+  if(!S.days[k]||S.days[k].off)return false;
+  const g=new Date(k+'T00:00:00').getDay();
+  return g>0&&g<6;
+}
 function runPoints(){
   let pts=0;const tk=today();
   Object.keys(S.days).forEach(k=>{
     if(k<S.engineSeam||k>tk)return;
-    if(new Date(k+'T00:00:00').getDay()===0)return;
-    if(S.days[k].off)return;
+    if(!scoresOn(k))return;
     const s=slicesFor(k);if(s)pts+=s.pts;
   });
   return pts;
@@ -2078,18 +2094,33 @@ function rankUpCheck(){
 }
 function showRankUp(i){
   const el=$('rankUp');if(!el)return;
-  const pr=projection();
-  const md=pr.date?pr.date.toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
+  const pf=paceFmt();
   el.innerHTML=`<div class="ru-in">
     <div class="ru-k">◆ RANK UP ◆</div>
     <div class="ru-n">${RANKS[i].n} · ${ovr()}</div>
-    <div class="ru-s">${i>0?RANKS[i-1].n+' is behind you. ':''}Day ${dayNo()} of ${TOTAL_DAYS} — pace holds ${md}.</div>
+    <div class="ru-s">${i>0?RANKS[i-1].n+' is behind you. ':''}Day ${dayNo()} of ${TOTAL_DAYS}${
+      pf.inRun?` — pace holds ${pf.md}.`:'.'}</div>
     ${i>=1?`<div class="ru-u">UNLOCKED · A NEW SHELF IN THE BANK</div>`:''}
     <button class="btn" style="margin-top:16px" onclick="$('rankUp').classList.remove('on')">Carry on</button>
   </div>`;
   el.classList.add('on');
 }
 
+/* ONE door for the pace date (t12's rule, again). Three surfaces printed this
+   date three different ways: the peek carried the year, the status window and
+   the rank-up moment dropped it — so a projection four months PAST the run read
+   as "Apr 19", indistinguishable from next week. Worse, the rank-up moment said
+   "pace holds <that date>", which is affirmative language over a miss.
+   `inRun` is what any celebration must ask before it quotes a date. */
+function paceFmt(){
+  const pr=projection();
+  if(!pr.date)return {none:true,md:'',cls:'warn',inRun:false};
+  const y=pr.date.getFullYear();
+  const md=pr.date.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const last=new Date(iso(RUN_LAST)+'T23:59:59').getTime(), t=pr.date.getTime();
+  return {none:false, date:pr.date, md:md+(y>2026?" '"+String(y).slice(2):''),
+    inRun:t<=last, cls:t<=last?'good':(t<=last+21*864e5?'warn':'bad')};
+}
 /* At the pace you've actually kept, when do you hit 99? */
 function projection(){
   const avg=runFrac();                                           // 0..1 of the way to 99
@@ -2623,12 +2654,10 @@ function renderGlance(){
   const o=ovr(),pr=projection();
   /* XP SESSION 2026-07-29: the pace date comes OUT from behind the door — the
      "sooner" lever lives on the front page now, always visible, never a lecture. */
-  const pace=pr.date
-    ?(()=>{const y=pr.date.getFullYear(),md=pr.date.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-      const cls=pr.date<=new Date(iso(RUN_LAST)+'T23:59:59')?'good'
-               :pr.date.getTime()<=new Date(iso(RUN_LAST)+'T23:59:59').getTime()+21*864e5?'warn':'bad';
-      return `<span class="pace">AT THIS PACE · 99 ON <b class="${cls}">${md}${y>2026?" '"+String(y).slice(2):''}</b></span>`})()
-    :`<span class="pace">99 BY DEC 25 — TODAY STARTS THE CLIMB</span>`;
+  const pf=paceFmt();
+  const pace=pf.none
+    ?`<span class="pace">99 BY DEC 25 — TODAY STARTS THE CLIMB</span>`
+    :`<span class="pace">AT THIS PACE · 99 ON <b class="${pf.cls}">${pf.md}</b></span>`;
   $('ovrPeek').innerHTML=`<b>${o}</b><span><i class="rk">${rankName(o)}</i> · OVERALL · GAP TO HIM ${Math.max(0,HIM-o)}${pace}</span>`+
     `<u>${glanceOpen?'HIDE':'SEE THE RUN ▸'}</u>`;
   if(!glanceOpen)return;
@@ -2657,12 +2686,9 @@ function _renderGlanceFull(){
     <span class="gap">GAP TO HIM<u>${HIM-o}</u></span>`;
   $('ovrBox').onclick=()=>{$('charv').classList.add('on');renderChar()};
 
-  const pr=projection(),el=$('proj');
-  if(!pr.date){el.innerHTML=`<span>NO PACE YET</span><b class="warn">START TODAY</b>`;return}
-  const y=pr.date.getFullYear(),md=pr.date.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-  const cls=pr.date<=new Date(iso(RUN_LAST)+'T23:59:59')?'good'
-           :pr.date<=new Date(iso(RUN_LAST)+'T23:59:59').getTime()+21*864e5?'warn':'bad';
-  el.innerHTML=`<span>AT THIS PACE · 99 OVR ON</span><b class="${cls}">${md}${y>2026?" '"+String(y).slice(2):''}</b>`;
+  const pf=paceFmt(),el=$('proj');
+  if(pf.none){el.innerHTML=`<span>NO PACE YET</span><b class="warn">START TODAY</b>`;return}
+  el.innerHTML=`<span>AT THIS PACE · 99 OVR ON</span><b class="${pf.cls}">${pf.md}</b>`;
 }
 /* was renderRail — the rail itself is buried (funeral 2026-07-28); the deep-work-left
    line it also computed survives, because that one answers a question he asks. */
@@ -3125,7 +3151,11 @@ function renderExtrasLine(){
   const tot=n+nb;
   el.innerHTML = tot
     ? `<span class="xl-x">+${xp}</span><span class="xl-n">also today · ${tot} thing${tot>1?'s':''}</span><span class="xl-go">→</span>`
-    : `<span class="xl-n dim">The small stuff lives in the Bank</span><span class="xl-go">→</span>`;
+    /* was "The small stuff lives in the Bank" — written when the extras had just
+       LEFT Today (the X5 move). THE DECK put that same list back one row below
+       this line, so the empty state was pointing him away to fetch what was
+       already under his thumb. The button's real job is the quick-log. */
+    : `<span class="xl-n dim">Anything else — log it</span><span class="xl-go">→</span>`;
   renderDeck();
   /* the evening door — from 17:00, tomorrow is one tap away. Saturday evening's
      tomorrow is the Sabbath, so it offers next week instead. */
@@ -3749,12 +3779,11 @@ function renderChar(){
     let n=0,w=0,l=0,c=0;const tk=today();
     Object.keys(S.days).forEach(k=>{
       if(k<S.engineSeam||k>tk)return;
-      if(new Date(k+'T00:00:00').getDay()===0)return;
-      if(S.days[k].off)return;
+      if(!scoresOn(k))return;                 /* same door as runPoints — one truth */
       const sl=slicesFor(k);if(!sl)return;
       n++;w+=sl.wr;l+=sl.lr;c+=sl.cr;});
-    const pr=projection();
-    const md=pr.date?pr.date.toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
+    const pf=paceFmt();
+    const md=pf.none?'—':pf.md;                /* same door as Today's pace line */
     const bar=(v,col)=>`<span class="t"><i style="width:${Math.round(v*100)}%;background:${col}"></i></span><span class="v">${Math.round(v*100)}%</span>`;
     host.innerHTML=`<div class="rkroad">${road}</div>`+(n
       ?`<div class="srow"><span class="n">THE WORK</span>${bar(w/n,'var(--blue)')}</div>
