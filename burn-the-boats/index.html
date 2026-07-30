@@ -6443,11 +6443,11 @@ function renderRecord(){
         p===null?'IT STARTS WHEN YOU COMMIT ONE':settled?'85% = ROUND WON':'TOO EARLY TO CALL'}</span></div>
     </div>
 
-    <h2 class="sec">Quota board</h2>
+    <h2 class="sec">The standards</h2>
     <div class="card">
-      ${quotasAll().map(q=>{const h=weekHits(q.src,q.id),met=h>=q.n;
+      ${quotasAll().map(q=>{const need=qNAt(q,mon),h=weekHits(q.src,q.id),met=need&&h>=need;
         return `<div class="stat"><span>${esc(quotaLabel(q))} <span style="color:var(--faint);font-size:11px">· ${q.dom}</span></span>
-          <b style="color:${met?'var(--phos)':'var(--faint)'}">${h} / ${q.n}</b></div>`}).join('')}
+          <b style="color:${met?'var(--phos)':'var(--faint)'}">${h} / ${need}</b></div>`}).join('')}
     </div>
 
     <h2 class="sec">What came out of it <u>last 14 days</u></h2>
