@@ -224,7 +224,15 @@ button{font-family:inherit}
 .vicev.on{display:block}
 .vicev{--v1:8px; --v2:16px; --v3:26px;
   --vt-display:64px; --vt-word:44px; --vt-unit:30px;
-  --vt-mod:14.5px; --vt-body:13.6px; --vt-data:8px; --vt-micro:7px;
+  /* 2026-07-30 · THE CRAFT FLOOR REACHES THE VICES SCREEN. craft.js measured ten
+     elements at 7-8px here, on both the smoke and dish surfaces, against his own
+     11px floor — the densest and most emotionally loaded screen in the app was
+     also the only one still below it. It looked like a per-element design pass
+     and it was not: every one of those ten reads its size from these two
+     variables. Raised to the floor exactly, not past it, so the hierarchy the
+     screen was built on survives — data and micro are still the smallest things
+     on it, they are simply now legible. */
+  --vt-mod:14.5px; --vt-body:13.6px; --vt-data:11px; --vt-micro:11px;
   --hot:#FFB25E; --warm:#e8a86a}
 .m-bar{display:flex;align-items:center;gap:10px;padding:0 12px;height:52px}
 .m-bar .bk{width:44px;height:44px;margin-left:-9px;border-radius:99px;border:0;background:transparent;
@@ -2512,7 +2520,12 @@ const VRING=(()=>{
           i<held?' style="filter:drop-shadow(0 0 6px rgba(255,107,44,.55))"':'');
       }
       /* the rule at the crown: the allowance token, gold when unspent, hollow when used */
-      const tr=Math.max(6.5,SZ*0.055),pc=pt(C,R,270),spent=!!o.used;
+      /* The glyph inside this token is sized from the token's radius, so at the
+         default chart size it rendered the allowance digit at 7.5px — the last
+         thing in the app below his 11px floor. The digit is the POINT of the
+         token (1 unspent, 0 used), so the floor wins and the circle grows to
+         fit it rather than the digit shrinking to fit the circle. */
+      const FLOOR=11, tr=Math.max(6.5,SZ*0.055,FLOOR/1.06),pc=pt(C,R,270),spent=!!o.used;
       s+=`<circle cx="${pc[0].toFixed(1)}" cy="${pc[1].toFixed(1)}" r="${tr.toFixed(1)}" fill="#0b0912" stroke="${spent?'#4a4560':'#E0B25E'}" stroke-width="${Math.max(2,SZ*0.017).toFixed(1)}"${spent?'':' style="filter:drop-shadow(0 0 6px rgba(224,178,94,.6))"'}/>`+
         `<text x="${pc[0].toFixed(1)}" y="${(pc[1]+tr*0.37).toFixed(1)}" fill="${spent?'#4a4560':'#E0B25E'}" font-family="Geist Mono, monospace" font-weight="700" font-size="${(tr*1.06).toFixed(1)}" text-anchor="middle">${spent?'0':'1'}</text>`;
     }else{
@@ -2541,8 +2554,8 @@ const VGRAPH=(()=>{
   const W=300,H=74,PADT=8,PADB=16,IN=H-PADT-PADB;
   const base=y=>`<line x1="0" y1="${PADT}" x2="${W}" y2="${PADT}" stroke="#1e1a2b" stroke-width="1"/>`+
     `<line x1="0" y1="${y.toFixed(1)}" x2="${W}" y2="${y.toFixed(1)}" stroke="#3a3350" stroke-width="1" stroke-dasharray="3 4"/>`;
-  const ends=(l,r)=>`<text x="14" y="${H-3}" fill="#3b3549" font-family="Geist Mono, monospace" font-size="7" letter-spacing="1.2">${l}</text>`+
-    `<text x="${W-14}" y="${H-3}" fill="#3b3549" font-family="Geist Mono, monospace" font-size="7" letter-spacing="1.2" text-anchor="end">${r}</text>`;
+  const ends=(l,r)=>`<text x="14" y="${H-3}" fill="#3b3549" font-family="Geist Mono, monospace" font-size="11" letter-spacing="1.2">${l}</text>`+
+    `<text x="${W-14}" y="${H-3}" fill="#3b3549" font-family="Geist Mono, monospace" font-size="11" letter-spacing="1.2" text-anchor="end">${r}</text>`;
   /* today is drawn HOLLOW until it resolves — a filled dot would claim a result the day has not produced */
   const open=(x,y)=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="none" stroke="#8b8398" stroke-width="1.6" stroke-dasharray="2.4 2.2"/>`;
   const dot=(x,y,col,ring)=>(ring?`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="7.5" fill="none" stroke="${col}" stroke-opacity=".3"/>`:'')+
@@ -3481,9 +3494,16 @@ function addStandard(){
   const have=new Set(quotasAll().map(q=>q.src+':'+q.id));
   const opts=REQABLE().filter(o=>!have.has(o.src+':'+o.id));
   if(!opts.length){toast('Everything already has a standard','bad');return}
+  /* ask #8: "clear differentiation between quotas and goals". The rule, in his
+     own vocabulary and stated where he is about to choose: a RHYTHM is a
+     standard, a FINISH LINE is a goal. "Gym 2x every week" is a standard wearing
+     a goal's clothes; "get to 185 lbs" is the goal it serves. */
   sheet(`<div class="sh-k">A STANDARD</div>
     <div class="sh-t">What should happen every week?</div>
     <div class="sh-sub">STARTS AT 3× — TAP ITS ROW AFTER TO CHANGE THE COUNT</div>
+    <div class="hintline" style="margin-top:10px">A <b>standard</b> is a rhythm — 2× a week,
+      every day. It never finishes; it just holds. A <b>goal</b> has a finish line you
+      cross once. "Gym twice a week" is a standard. "Get to 185" is the goal it serves.</div>
     <div class="chips" style="margin-top:14px">${opts.map(o=>
       `<button class="chip tap seg" onclick="saveStandard('${o.src}','${o.id}')">${esc(o.label)}</button>`).join('')}
     </div>`);
@@ -4272,9 +4292,9 @@ function drawRadar(s){
   DOMAINS.forEach((d,i)=>{const[x,y]=pt(i,s[d.k]/100,n);h+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="${d.c}"/>`});
   h+=`</g>`;
   DOMAINS.forEach((d,i)=>{const[x,y]=pt(i,1.22,n);
-    h+=`<text class="rlab" x="${x.toFixed(1)}" y="${y.toFixed(1)}" font-family="Geist Mono" font-size="7.5"
+    h+=`<text class="rlab" x="${x.toFixed(1)}" y="${y.toFixed(1)}" font-family="Geist Mono" font-size="11"
       text-anchor="middle" dominant-baseline="middle" fill="#7a7191">${d.label.replace('THE ','')}</text>
-      <text class="glab" x="${x.toFixed(1)}" y="${(y+9).toFixed(1)}" font-family="Geist Mono" font-size="7"
+      <text class="glab" x="${x.toFixed(1)}" y="${(y+9).toFixed(1)}" font-family="Geist Mono" font-size="11"
       text-anchor="middle" fill="#FF4D5E" opacity="0" font-weight="600">+${HIM-s[d.k]}</text>`});
   $('radar').innerHTML=h;
 }
@@ -5773,17 +5793,233 @@ function planAsNormal(date){
    His §8: on the page, good-looking, easy — plus mid-block, so a win isn't
    forgotten by waiting for the block to end. Ranked by the same time-aware
    scorer the run-end question uses; three chips, then the Bank. */
+/* HIS ASK, 2026-07-29, sent with a screenshot of this exact sheet: "Right here
+   there should be a quick option to just create a new one." So the door is HERE,
+   as a fourth row — and because he taps it mid-day for a thing that ALREADY
+   HAPPENED, it opens the Slate with thenLog: it saves the definition and taps it
+   in one pass. editWin(null) would have created it and left it unlogged, so he
+   would have had to go find it and tap it again.
+   The old `if(!c.length)go('bank')` punt is gone with it: with nothing left to
+   offer the sheet still has the reason he asked for. */
 function quickLog(){
+  slateCss();
   const ci=curIdx(),bid=ci>=0?shape()[ci].id:DEEP_BLOCKS[0];
   const c=elseCands(bid);
-  if(!c.length){go('bank');return}
   sheet(`<div class="sh-k">RIGHT NOW</div>
     <div class="sh-t">Log a good thing</div>
-    <div class="sh-sub">NEVER SCORED AGAINST YOU — AND UN-TAPPABLE WHILE THE DAY IS OPEN</div>
+    <!-- said "UN-TAPPABLE", which reads as "you cannot tap this". It meant the
+         opposite: tapWin() removes the win and refunds the XP on a second tap,
+         for as long as the day is open. -->
+    <div class="sh-sub">NEVER SCORED AGAINST YOU — TAP IT AGAIN TO UNDO IT WHILE THE DAY IS OPEN</div>
     <div style="margin-top:12px">${c.map(w=>`
-      <button class="else-o" onclick="tapWin('${w.k}');closeSheet()">${esc(w.n)}<u>+${w.xp}</u></button>`).join('')}</div>
+      <button class="else-o" onclick="tapWin('${w.k}');closeSheet()">${esc(w.n)}<u>+${w.xp}</u></button>`).join('')}
+      <button class="else-o slnew" onclick="slate({kind:'win',thenLog:true})">+ Something new — write it<u>NEW</u></button></div>
     <button class="btn gh" style="margin-top:10px" onclick="closeSheet();go('bank')">Everything else · the Bank →</button>`);
 }
+/* ═══ THE SLATE — ONE CREATION SCREEN, ONE VALUE CONTROL ══════════════════════
+   His ask, verbatim: "when you create a new one, there should be a quick screen
+   for creating one — a scale on how many XP, etc. Should be well thought out and
+   actually look good."
+
+   ONE sheet, FOUR slots, ONE value control. Slot 3 is ALWAYS slot 3, so he learns
+   the screen once — today worth is slot 3 in editWin, slot 4 in editBoost, slot 2
+   in newReward and slot 8-behind-a-fold in g2Form.
+     1 · KICKER  — the mode and the kind, in his words. Never an internal word.
+     2 · THE NAME— a ruled line, and under it the things he has typed before.
+     3 · THE WORTH — the band line and the rung row. The scale he asked for.
+     4 · FEEDS   — one chip row. D2 EDITORIAL: words underlined in violet.
+
+   THE BAND IS INESCAPABLE BECAUSE THE KEYBOARD IS GONE. Not a check on save — the
+   ABSENCE OF A FIELD. The rungs are the only way in and every rung is inside the
+   band by construction, so "An always-counts sits between 5 and 100 XP" can never
+   need to fire on a creation screen. That is the difference between a guardrail
+   and a fine, and it is this app's first law.
+
+   Only the ALWAYS COUNTS row of the KIND table is built. Every other creation door
+   (a standard, a reward, a boost, a goal, an area) sits in code below line 5000 and
+   is another wave's; the table is written so adding one is a row, not a screen.
+   editWin/saveWin still exist behind this — deleting them is that same wave. */
+let SL={kind:'win',edit:null,thenLog:false,worth:20,dom:'MIND',band:{min:5,max:100}};
+
+/* THE KIND TABLE. A new kind of thing names an existing band or ADDS A ROW HERE —
+   that is the mechanism that stops a sixth "how much is this worth" control ever
+   appearing, because adding one is a deliberate act in one place that forces
+   somebody to write down a band, its rungs, its axis and its CTA. */
+const SLATE_KINDS={
+  win:{
+    kicker:'ALWAYS COUNTS',
+    question:'What counts for you?',
+    promise:{new:'SMALL, REAL, REPEATABLE — LAUNDRY, A WALK, A CALL HOME',
+             edit:'CHANGES LAND NOW — WHAT YOU ALREADY LOGGED KEEPS WHAT IT PAID'},
+    nameLabel:'What is it', eg:'Did the laundry',
+    memLabel:'You’ve added before:', memory:()=>slateWinMemory(),
+    worthLabel:'Worth when you log it',
+    /* THE BAND AND THE RUNGS ARE THE APP'S OWN NUMBERS, not invented ones.
+       5 and 100 are saveWin's clamp (Math.max(5,Math.min(100,raw))) — the band it
+       already refuses outside of. The rungs step across it, and the default 20 is
+       what the seeded WINS actually pay (15/20/25/20/25/30). The consequence line
+       reads ADDED_DAY_CAP, so the sentence moves if the pool ever does. */
+    band:{min:5,max:100}, rungs:[10,20,40,75], axis:'straight', worth:20,
+    words:{10:'A minute.',20:'A chore.',40:'Real effort.',75:'A big one.'},
+    tagLabel:'Feeds',
+    chips:()=>DOMAINS.map(d=>({v:d.k,label:d.label.replace('THE ','')})),
+    cta:'Add it', ctaEdit:'Save it',
+  },
+};
+/* The Slate's own rules. They belong in the stylesheet in <head> and are installed
+   from here instead because that block is another lane's turf tonight — one style
+   node, once, idempotent. D2 EDITORIAL throughout: no boxes, the band is a ruled
+   line, the chosen rung is inked and underlined in violet. */
+function slateCss(){
+  if($('slateCss'))return;
+  const el=document.createElement('style');el.id='slateCss';
+  el.textContent=`
+  #sheetA .slband{display:flex;align-items:center;gap:10px;margin:2px 0 9px}
+  #sheetA .slband .e{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.1em;
+    color:var(--faint);flex:none}
+  #sheetA .slband .tr{position:relative;flex:1;height:2px;border-radius:2px;background:var(--line2)}
+  #sheetA .slband .tr i{position:absolute;top:-5px;width:7px;height:12px;border-radius:2px;
+    background:var(--violet);transform:translateX(-50%);transition:left .18s ease}
+  #sheetA .slrungs{display:grid;gap:2px 6px}
+  #sheetA .slrungs .chip{width:100%;min-width:44px;justify-content:center;
+    font-family:'Geist Mono',monospace;font-size:15px;letter-spacing:.02em}
+  /* a number he already set that is not a rung keeps its place, in gold, lit */
+  #sheetA .slrungs .chip.own{color:var(--gold)}
+  #sheetA .slrungs .chip.own.on::after{background:var(--gold)}
+  #sheetA .sldoms .chip,#sheetA .slmem .chip{min-width:44px;padding:0 9px}
+  #sheetA .slmem .chip{font-size:14px;color:var(--dim)}
+  /* the quick-log's new door: dashed and gold, the only new thing on that sheet */
+  .else-o.slnew{border-style:dashed;border-color:#4a3c22;color:var(--gold)}
+  .else-o.slnew u{color:var(--gold);letter-spacing:.16em}`;
+  document.head.appendChild(el);
+}
+/* THE AXIS. Straight, unless two neighbouring rungs would sit closer than 8% of
+   the track — 8% is three marker widths (7px) on the 269px track this sheet draws
+   at 390px. A band spanning more than one order of magnitude (a reward's price)
+   fails that and draws in ratios instead. The win band is 20:1 and straight. */
+const slateAxis=(v,band,axis)=>{
+  const f=axis==='ratios'
+    ?(Math.log(v)-Math.log(band.min))/(Math.log(band.max)-Math.log(band.min))
+    :(v-band.min)/(band.max-band.min);
+  return Math.round(Math.max(0,Math.min(1,f))*1000)/10;
+};
+/* WHAT HE HAS TYPED BEFORE. The same store the planner's memory row reads — the
+   day-row names he wrote — then the wins he retired, which dropWin archives
+   rather than deletes. Deduped against the live ones by the app's own test
+   (planAddSave's case-insensitive name compare), capped at 3: this row sits above
+   a band line, not in the planner's already-overflowing sheet. */
+function slateWinMemory(){
+  const live=winsAll().map(w=>w.n.toLowerCase()),seen=new Set(),out=[];
+  const add=n=>{const l=String(n||'').toLowerCase();
+    if(!l||seen.has(l)||live.indexOf(l)>=0)return;seen.add(l);out.push(n)};
+  planMemory().forEach(add);
+  S.winDefs.filter(w=>w.arc).slice().reverse().forEach(w=>add(w.n));
+  return out.slice(0,3);
+}
+/* The consequence line — the only place the band MEANS anything. It names the rung
+   in his language and states one true fact about it. */
+function slateSay(v,own){
+  const K=SLATE_KINDS[SL.kind];
+  if(own)return `Yours. ${v} — ${v>K.band.max?'above the band':'the number you already set'}. `+
+    `Nothing here re-prices what you wrote.`;
+  return `${K.words[v]} Your side pocket holds ${ADDED_DAY_CAP} a day — this is ${v} of it.`;
+}
+function slate(o){
+  slateCss();
+  const K=SLATE_KINDS[o.kind];if(!K)return;
+  const w=o.edit?winByK(o.edit):null;
+  /* THE DEFAULT TAG is the domain of the block he is in — curIdx() returns -1
+     outside any block, so it falls back rather than throwing. editWin hardcodes
+     BODY and the planner's ★ toggle hardcodes MIND; one expression for both doors. */
+  const ci=curIdx(),b=ci>=0?shape()[ci]:null;
+  SL={kind:o.kind,edit:w?w.k:null,thenLog:!!o.thenLog,
+      worth:w?w.xp:K.worth,dom:w?w.dom:((b&&b.dom&&b.dom[0])||'MIND'),
+      /* a value stored OUTSIDE the band widens the printed end rather than being
+         clamped — the end that moved is his number, and forward-only says no
+         screen re-prices what he already wrote. No control here can produce one. */
+      band:{min:Math.min(K.band.min,w?w.xp:K.worth),max:Math.max(K.band.max,w?w.xp:K.worth)}};
+  const mem=w?[]:K.memory(),own=K.rungs.indexOf(SL.worth)<0;
+  const rungs=own?K.rungs.concat([SL.worth]).sort((a,b2)=>a-b2):K.rungs;
+  sheet(`<div class="sh-k">${w?'EDIT':'NEW'} · ${K.kicker}</div>
+    <div class="sh-t">${K.question}</div>
+    <div class="sh-sub">${w?K.promise.edit:K.promise.new}</div>
+    <div class="fld"><label>${K.nameLabel}</label>
+      <input id="slN" maxlength="40" value="${w?esc(w.n):''}" placeholder="${esc(K.eg)}"
+        oninput="slateName()"></div>
+    ${mem.length?`<div class="hintline" style="margin:-8px 0 5px">${K.memLabel}</div>
+      <div class="chips slmem">${mem.map(n=>`<button class="chip tap" data-n="${esc(n)}"
+        onclick="slateFill(this)">${esc(cut(n,26))}</button>`).join('')}</div>`:''}
+    <div class="fld"><label>${K.worthLabel}</label>
+      <div class="slband"><span class="e">${SL.band.min}</span>
+        <div class="tr"><i id="slMark" style="left:${slateAxis(SL.worth,SL.band,K.axis)}%"></i></div>
+        <span class="e">${SL.band.max} XP</span></div>
+      <div class="chips4 slrungs" id="slRungs" style="grid-template-columns:repeat(${rungs.length},1fr)">${
+        rungs.map(r=>`<button class="chip tap seg${r===SL.worth?' on':''}${K.rungs.indexOf(r)<0?' own':''}"
+          data-r="${r}" onclick="slateWorth(${r})">${r}</button>`).join('')}</div>
+      <div class="hintline" id="slSay">${slateSay(SL.worth,own)}</div></div>
+    <div class="fld"><label>${K.tagLabel}</label>
+      <div class="chips sldoms" id="slD">${K.chips().map(c=>`<button class="chip tap seg${
+        SL.dom===c.v?' on':''}" data-d="${c.v}" onclick="slateDom('${c.v}')">${c.label}</button>`).join('')}</div></div>
+    <button class="btn" id="slCta" onclick="slateSave()"></button>
+    ${w?`<button class="btn gh" style="margin-top:8px" onclick="slateAskDrop()">Remove it</button>`:''}`);
+  slateName();
+}
+/* One tap sets the worth, from a default that is already a real answer. Three
+   things move and nothing is typed: the marker slides to its true position on the
+   band, the rung inks, the consequence rewrites. */
+function slateWorth(v){
+  const K=SLATE_KINDS[SL.kind];SL.worth=v;
+  const m=$('slMark');if(m)m.style.left=slateAxis(v,SL.band,K.axis)+'%';
+  const host=$('slRungs');
+  if(host)[...host.querySelectorAll('.chip')].forEach(e=>e.classList.toggle('on',Number(e.dataset.r)===v));
+  const say=$('slSay');if(say)say.textContent=slateSay(v,K.rungs.indexOf(v)<0);
+}
+function slateDom(k){SL.dom=k;
+  const host=$('slD');if(host)[...host.querySelectorAll('.chip')].forEach(e=>e.classList.toggle('on',e.dataset.d===k))}
+/* tapping a remembered name FILLS the line and does not focus it — for anything he
+   has made before, no keyboard opens at all */
+function slateFill(el){const n=$('slN');if(!n)return;n.value=el.dataset.n;slateName()}
+/* The CTA is quiet until the name has a character: a ghost saying what it wants,
+   never disabled, never red, always 46px. That one rule retires four "give it a
+   name" toasts. Pressing it empty is not a scold — it puts the cursor in the line. */
+function slateName(){
+  const el=$('slN'),cta=$('slCta');if(!el||!cta)return;
+  const named=!!el.value.trim(),K=SLATE_KINDS[SL.kind];
+  cta.textContent=named?(SL.edit?K.ctaEdit:K.cta):'NAME IT AND IT’S YOURS';
+  cta.classList.toggle('gh',!named);
+}
+function slateSave(){
+  const el=$('slN');if(!el)return;
+  const n=el.value.trim();if(!n){el.focus();return}
+  const xp=SL.worth,dom=SL.dom,w=SL.edit?winByK(SL.edit):null;
+  let k;
+  if(w){Object.assign(w,{n,xp,dom});k=w.k}
+  else{k='w'+Date.now().toString(36);S.winDefs.push({k,n,xp,dom})}
+  save();closeSheet();
+  if(!SL.thenLog){render();toast(w?'Saved':'It counts now','good');return}
+  /* HE IS LOGGING A THING THAT ALREADY HAPPENED, so it is created and tapped in one
+     pass — through tapWin, never around it, so the 250/day added pool, the ledger
+     and the graduation all see it exactly as any other log. The Slate never invents
+     the number in its toast: it says what tapWin actually paid, and when the pool is
+     full tapWin's own true sentence wins. */
+  const paid=Math.min(xp,Math.max(0,ADDED_DAY_CAP-addedSpentToday()));
+  tapWin(k);
+  toast(paid>0?`Logged — +${paid}, and it’s on your list now.`
+              :`Counted — today’s side pocket is full. It’s on your list now.`,'good');
+}
+/* Nothing is deleted — dropWin archives, so every day record still resolves. The
+   ask-first shape is g2AskDropDate's, the best destructive flow in the app: the
+   question names the consequence. */
+function slateAskDrop(){
+  const w=SL.edit?winByK(SL.edit):null;if(!w)return;
+  const q=S.quotaDefs.some(x=>x.src==='win'&&x.id===w.k&&!x.arc);
+  sheet(`<div class="sh-k">NOTHING IS DELETED</div>
+    <div class="sh-t">Remove “${esc(w.n)}”?</div>
+    <div class="sh-sub">${q?'ITS WEEKLY STANDARD RETIRES WITH IT. ':''}WHAT YOU’VE ALREADY LOGGED KEEPS WHAT IT PAID</div>
+    <button class="btn" style="margin-top:14px" onclick="slate({kind:'win',edit:'${w.k}'})">Keep it</button>
+    <button class="btn gh" style="margin-top:8px" onclick="dropWin('${w.k}')">Remove it</button>`);
+}
+
 function toggleWkPast(){WK_PAST_OPEN=!WK_PAST_OPEN;render()}
 function g2Slot(wk,d,bid){
   const c=commitFor(wk,d,bid),goals=GM.liveGoals(G);
@@ -6500,8 +6736,8 @@ function renderBank(){
       ${xpAttribution()}
       <h2 class="sec"><span>Always counts</span><u>${winsPaidToday()} today</u></h2>
       ${winsBankList()}
-      <button class="btn gh" style="margin-top:8px" onclick="editWin(null)">+ Add one of your own</button>
-      <h2 class="sec"><span>The standards</span><u>tap to change the count</u></h2>
+      <button class="btn gh" style="margin-top:8px" onclick="slate({kind:'win'})">+ Add one of your own</button>
+      <h2 class="sec"><span>The standards</span><u>a rhythm, not a finish line</u></h2>
       ${standardsList()}
       <button class="btn gh" style="margin-top:8px" onclick="addStandard()">+ Set a standard</button>
       <h2 class="sec"><span>Boosts</span><u>never scored against you</u></h2>
