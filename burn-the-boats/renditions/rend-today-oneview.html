@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The day and the block, in one — five ways</title>
+<link rel="stylesheet" href="../lib/fonts/fonts.css">
+<style>
+:root{
+  --bg:#07060b; --panel:#0e0c16; --panel2:#141120; --line:#1e1a2b; --line2:#2b2540;
+  --ink:#EDEAE4; --dim:#9a93a8; --faint:#6b6480;
+  --gold:#E0B25E; --ember:#FF6B2C; --phos:#4ADE80; --blood:#FF4D5E; --rune:#38E1D8; --violet:#B08CFF;
+  --blue:#7FB4FF;
+  --d-work:#E0B25E; --d-cap:#7FB4FF; --d-body:#FF6B2C; --d-faith:#B08CFF; --d-mind:#38E1D8; --d-people:#4ADE80;
+  --tap:44px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#08070c;color:var(--ink);overflow-x:hidden}
+body{font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.028em;margin:0}
+
+.wrap{max-width:1240px;margin:0 auto;padding:44px 20px 90px}
+.lede{max-width:750px;margin-bottom:26px}
+.lede .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold);margin-bottom:12px}
+.lede h1{font-size:36px;line-height:1.08;margin-bottom:14px}
+.lede p{color:var(--dim);font-size:15px;margin:0 0 10px}
+.lede b{color:var(--ink)}
+.quote{border-left:2px solid var(--gold);padding:2px 0 2px 15px;margin:18px 0 20px;max-width:750px;
+  font-size:15.5px;color:var(--ink);line-height:1.5}
+.quote i{color:var(--faint);font-style:normal;display:block;margin-top:7px;font-size:13px}
+
+.asks{border:1px solid var(--line2);border-radius:14px;background:var(--panel);margin:22px 0 8px;max-width:850px}
+.ask{display:grid;grid-template-columns:132px 1fr;gap:14px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.ask:last-child{border-bottom:0}
+.ask .n{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--phos)}
+.ask .n.v{color:var(--violet)} .ask .n.q{color:var(--gold)} .ask .n.r{color:var(--blue)}
+.ask .v{font-size:13.5px;color:var(--dim);line-height:1.5}
+.ask .v b{color:var(--ink)}
+.ask .v i{color:var(--faint);font-style:normal}
+
+.opt{margin:62px 0 18px;max-width:800px}
+.opt .n{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--faint);margin-bottom:9px}
+.opt h2{font-size:27px;line-height:1.12;margin-bottom:10px}
+.opt .idea{font-size:15.5px;color:var(--ink);margin:0 0 9px;line-height:1.45}
+.opt p{color:var(--dim);font-size:14px;margin:0 0 8px}
+.opt p b{color:var(--ink)}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 0}
+.tag{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;padding:6px 9px;border-radius:6px;
+  border:1px solid var(--line2);color:var(--dim)}
+.tag.a{border-color:rgba(74,222,128,.4);color:var(--phos)}
+.tag.b{border-color:rgba(255,77,94,.35);color:var(--blood)}
+.tag.c{border-color:rgba(224,178,94,.4);color:var(--gold)}
+
+.row{display:flex;gap:20px;overflow-x:auto;padding-bottom:14px;align-items:flex-start;margin-top:22px}
+.col{flex:none;width:320px}
+.cap{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--faint);margin-bottom:9px}
+.note{margin-top:12px;font-size:12.5px;line-height:1.55;color:var(--faint);width:320px}
+.note b{color:var(--dim)}
+
+/* ── the phone ───────────────────────────────────────────────────────── */
+.ph{width:320px;border:1px solid var(--line2);border-radius:26px;background:var(--bg);
+  padding:13px 12px 15px;box-shadow:0 24px 60px -30px #000;overflow:hidden;position:relative}
+.hdr{display:flex;align-items:baseline;gap:8px;margin-bottom:11px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+.hdr b{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.035em}
+.hdr span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--faint)}
+.hdr u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);text-decoration:none}
+
+/* ── the shared day-row grammar (the app's own: 3px rule, mono time, dur · DOMAIN) ── */
+.r{display:grid;grid-template-columns:40px 1fr;gap:9px;align-items:start;
+  padding:8px 10px;border:1px solid var(--line);border-left:3px solid var(--dd,var(--line2));
+  border-radius:9px;background:var(--panel);margin-bottom:5px;min-height:var(--tap)}
+/* the compressed rows are display-only by design — see the note under N3 */
+.r.hair,.fe .r.far{min-height:0}
+.r .bt{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);padding-top:1px;white-space:nowrap}
+.r .bn{font-size:13px;font-weight:500;letter-spacing:-.01em;line-height:1.25}
+.r .bd{font-family:'Geist Mono',monospace;font-size:11px;color:#565064;letter-spacing:.06em;margin-top:3px}
+.r.done{border-color:rgba(74,222,128,.2)} .r.done .bn{color:#6d7a70}
+.r.past{opacity:.5}
+.r.opt2 .bn{color:var(--dim)}
+.r.tight{padding:6px 10px;margin-bottom:4px}
+.r.hair{padding:5px 10px;margin-bottom:3px;background:transparent;border-color:transparent;
+  border-left-color:var(--dd,var(--line2));border-radius:0}
+.r.hair .bn{font-size:12px;color:var(--dim)}
+.r.hair .bd{display:none}
+.wk{--dd:var(--d-work)} .cp{--dd:var(--d-cap)} .bo{--dd:var(--d-body)}
+.mn{--dd:var(--d-mind)} .pe{--dd:var(--d-people)} .fa{--dd:var(--d-faith)}
+
+/* ── the live block, at full size ─────────────────────────────────────── */
+.live{border:1px solid rgba(224,178,94,.45);border-left:3px solid var(--gold);border-radius:14px;
+  background:linear-gradient(180deg,rgba(224,178,94,.07),var(--panel));padding:13px 13px 14px;
+  box-shadow:0 8px 34px -18px rgba(224,178,94,.5);margin:7px 0}
+.live .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.19em;color:var(--gold);
+  display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.live .k i{width:6px;height:6px;border-radius:99px;background:var(--gold);box-shadow:0 0 8px var(--gold);flex:none}
+.live .k u{margin-left:auto;text-decoration:none;color:var(--dim);letter-spacing:.1em}
+.live .t{font-family:'Clash Display',sans-serif;font-size:20px;letter-spacing:-.025em;line-height:1.12;margin-bottom:4px}
+.live .o{font-size:13px;color:var(--dim);line-height:1.4;margin-bottom:11px}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:var(--tap);
+  border-radius:11px;font-family:'Satoshi',sans-serif;font-size:14.5px;font-weight:600;
+  background:linear-gradient(180deg,#EBC072,#D9A44E);color:#241a08;border:0}
+.gh{display:flex;gap:7px;margin-top:7px}
+.gh div{flex:1;display:flex;align-items:center;justify-content:center;min-height:var(--tap);
+  border:1px solid var(--line2);border-radius:11px;background:var(--panel2);font-size:12.5px;color:var(--dim)}
+
+/* ── the fold / count strips ──────────────────────────────────────────── */
+.fold{display:flex;align-items:center;gap:8px;min-height:var(--tap);padding:0 11px;margin-bottom:5px;
+  border:1px dashed var(--line2);border-radius:9px;background:transparent}
+.fold b{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--faint);font-weight:400}
+.fold u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--gold);text-decoration:none}
+.grp{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--faint);
+  margin:11px 0 6px;display:flex;align-items:baseline;gap:8px}
+.grp s{margin-left:auto;text-decoration:none;color:#4a445c}
+
+/* option-specific ----------------------------------------------------- */
+/* N2 — the pinned block */
+.pin{border-bottom:1px solid var(--line2);padding-bottom:10px;margin-bottom:2px;
+  position:relative}
+.pin::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(224,178,94,.55),transparent)}
+.lane{max-height:214px;overflow:hidden;position:relative;
+  mask-image:linear-gradient(180deg,transparent,#000 16px,#000 calc(100% - 22px),transparent);
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 16px,#000 calc(100% - 22px),transparent)}
+.lanek{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:#4a445c;
+  margin:10px 0 6px}
+
+/* N3 — the fisheye ramp */
+.fe .r.mid{padding:7px 10px}
+.fe .r.mid .bn{font-size:12.5px}
+.fe .r.far{padding:4px 10px;margin-bottom:3px;background:transparent;border-color:transparent;
+  border-left-color:var(--dd,var(--line2));border-radius:0}
+.fe .r.far .bn{font-size:11px;color:var(--faint);font-weight:400}
+.fe .r.far .bd{display:none}
+.fe .r.far .bt{font-size:11px;color:#4a445c}
+
+/* N4 — the rail */
+.rail{position:relative;padding-left:52px}
+.rail::before{content:'';position:absolute;left:38px;top:4px;bottom:4px;width:1px;background:var(--line2)}
+.rl{position:relative;margin-bottom:6px}
+.rl .tm{position:absolute;left:-52px;top:1px;width:44px;text-align:right;
+  font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint)}
+.rl .dot{position:absolute;left:-15px;top:6px;width:5px;height:5px;border-radius:99px;
+  background:var(--dd,var(--line2))}
+.rl .bd2{font-family:'Geist Mono',monospace;font-size:11px;color:#565064;letter-spacing:.06em}
+.rl .nm{font-size:12.5px;color:var(--dim);line-height:1.3}
+.rl.on{margin:9px 0 9px -52px}
+.rl.on .dot{display:none}
+
+/* N5 — the squeeze */
+.sq .band{display:flex;align-items:center;gap:9px;min-height:var(--tap);padding:0 11px;
+  border:1px solid var(--line);border-radius:9px;background:var(--panel);margin-bottom:6px}
+.sq .band .pips{display:flex;gap:3px;flex:none}
+.sq .band .pips i{width:5px;height:5px;border-radius:99px;background:var(--dd,#332c44)}
+.sq .band b{font-size:12.5px;font-weight:500;color:var(--dim)}
+.sq .band u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--gold);text-decoration:none}
+
+/* the cull */
+.cull{margin:70px 0 0;max-width:850px;border:1px solid var(--line2);border-radius:14px;background:var(--panel)}
+.cull h3{font-size:15px;padding:15px 17px 0}
+.cull .ci{display:grid;grid-template-columns:190px 1fr;gap:14px;padding:12px 17px;border-top:1px solid var(--line)}
+.cull .ci:first-of-type{border-top:1px solid var(--line);margin-top:13px}
+.cull .ci b{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--blood);font-weight:400}
+.cull .ci span{font-size:13px;color:var(--dim);line-height:1.5}
+.cull .ci span i{color:var(--faint);font-style:normal}
+
+.rec{margin:64px 0 0;max-width:850px;border:1px solid rgba(224,178,94,.4);border-radius:14px;
+  background:linear-gradient(180deg,rgba(224,178,94,.06),var(--panel));padding:20px 20px 22px}
+.rec .k{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold);margin-bottom:11px}
+.rec h3{font-size:21px;margin-bottom:11px}
+.rec p{color:var(--dim);font-size:14px;margin:0 0 9px}
+.rec p b{color:var(--ink)}
+.foot{margin-top:60px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:#3f3950}
+@media(max-width:760px){.wrap{padding:30px 14px 70px}.lede h1{font-size:29px}.opt h2{font-size:23px}
+  .ask,.cull .ci{grid-template-columns:1fr;gap:5px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="lede">
+  <div class="k">BURN THE BOATS · THE TODAY SURFACE · 2026-07-29</div>
+  <h1>The day and the block you're in, as one thing.</h1>
+  <p>Five ways to lay it out. <b>Nothing structural changes</b> — same blocks, same times, same
+     economy, same taps. This is only <b>how the day is drawn on the main page.</b></p>
+</div>
+
+<div class="quote">
+  “I want us to have the one block that we're on and the whole day kind of all in one… the block
+  that you're on right now is just a bit larger, but you can also partly see the other parts of
+  the day.”
+  <i>— his brief, verbatim</i>
+</div>
+
+<div class="asks">
+  <div class="ask"><div class="n">WHAT'S THERE NOW</div><div class="v">Two things with a gap between
+    them: the <b>NOW card</b> (with the seam — one row above, one below) and <b>the whole day</b>,
+    which ships <b>closed</b> behind “See the whole day”. <i>The seam was round 4's partial answer
+    to this same ask. This is the full one.</i></div></div>
+  <div class="ask"><div class="n r">THE REAL DENSITY</div><div class="v">A weekday is <b>14 rows</b>,
+    06:00 to 21:50. Every drawing below uses the real day at <b>1:45p, mid Block 3</b> — so the
+    problem is honest. Any layout that only looks good with six rows is a lie.</div></div>
+  <div class="ask"><div class="n q">FIXED, NOT NEGOTIABLE</div><div class="v">Deep blocks stay
+    sacred and undeletable · no military time · the domain is a <b>3px left rule</b>, never an
+    outline · one lit object per screen · <b>never a wall of failure</b> — a passed block is faint,
+    never red · 11px text floor, 44px tap floor, no sideways scroll at 390px.</div></div>
+  <div class="ask"><div class="n v">THE TEST EACH MUST PASS</div><div class="v">At 1:45p, can he see
+    <b>what he's in</b>, <b>what's next</b>, and <b>the shape of the rest</b> — without tapping
+    anything and without the page growing? <i>And can he still reach a past row to correct it?</i></div></div>
+</div>
+
+<!-- ════════════════════════════ N1 ════════════════════════════ -->
+<div class="opt">
+  <div class="n">N1</div>
+  <h2>One list. The row you're in swells.</h2>
+  <p class="idea">There is no NOW card. There is <b>one day</b>, from wake to Bible, and the row
+     you're standing in is simply bigger — it grows the objective, the button, the goal line.
+     Everything else stays a row.</p>
+  <p>The most literal merge: the two components become one because <b>the second one is deleted</b>.
+     Nothing is duplicated, because there is only one place a block can be drawn.</p>
+</div>
+<div class="row">
+  <div class="col">
+    <div class="cap">N1 · AT 1:45P</div>
+    <div class="ph">
+      <div class="hdr"><b>Today</b><span>WED · DAY 38</span><u>3 OF 5 DONE</u></div>
+      <div class="r done bo tight"><div class="bt">6:00a</div><div><div class="bn">Wake · pre-market</div><div class="bd">30m · BODY</div></div></div>
+      <div class="r done cp tight"><div class="bt">6:30a</div><div><div class="bn">Market open</div><div class="bd">2h · CAPITAL</div></div></div>
+      <div class="r done mn tight"><div class="bt">8:30a</div><div><div class="bn">Coffee &amp; breakfast</div><div class="bd">30m · MIND</div></div></div>
+      <div class="r done wk tight"><div class="bt">9:00a</div><div><div class="bn">Block 1</div><div class="bd">90m · WORK</div></div></div>
+      <div class="r done wk tight"><div class="bt">10:45a</div><div><div class="bn">Block 2</div><div class="bd">75m · WORK</div></div></div>
+      <div class="r done bo tight"><div class="bt">12:00p</div><div><div class="bn">Lunch</div><div class="bd">60m · BODY</div></div></div>
+      <div class="r done cp tight"><div class="bt">1:00p</div><div><div class="bn">Market close · log the day</div><div class="bd">20m · CAPITAL</div></div></div>
+      <div class="live">
+        <div class="k"><i></i>NOW<u>1:20P–2:35P · 75M</u></div>
+        <div class="t">Block 3</div>
+        <div class="o">Ship the onboarding flow · SANO</div>
+        <button class="btn">Start focus run · 75m</button>
+        <div class="gh"><div>Waiting on someone</div><div>Detail</div></div>
+      </div>
+      <div class="r bo tight"><div class="bt">2:35p</div><div><div class="bn">Walk the dog</div><div class="bd">30m · BODY + MIND</div></div></div>
+      <div class="r wk tight"><div class="bt">3:05p</div><div><div class="bn">Block 4</div><div class="bd">75m · WORK</div></div></div>
+      <div class="r bo opt2 tight"><div class="bt">4:20p</div><div><div class="bn">Gym</div><div class="bd">70m · BODY · OPTIONAL</div></div></div>
+      <div class="r pe tight"><div class="bt">5:30p</div><div><div class="bn">Personal life</div><div class="bd">3.5h · PEOPLE</div></div></div>
+      <div class="r mn tight"><div class="bt">9:00p</div><div><div class="bn">Clean · prep tomorrow</div><div class="bd">30m · MIND</div></div></div>
+      <div class="r fa opt2 tight"><div class="bt">9:30p</div><div><div class="bn">Bible · text Kells</div><div class="bd">20m · FAITH · OPTIONAL</div></div></div>
+    </div>
+    <div class="note"><b>The whole day fits</b>, and the live block is unmistakably the lit object.
+      Past rows are faint, not red. Every row is still a real 44px tap, so correcting a
+      mis-recorded morning works exactly as it does now.</div>
+  </div>
+  <div class="col">
+    <div class="cap">N1 · THE COST — 8:40P</div>
+    <div class="ph">
+      <div class="hdr"><b>Today</b><span>WED · DAY 38</span><u>5 OF 5 DONE</u></div>
+      <div class="fold"><b>7 EARLIER · ALL DONE</b><u>SHOW</u></div>
+      <div class="r done pe tight"><div class="bt">5:30p</div><div><div class="bn">Personal life</div><div class="bd">3.5h · PEOPLE</div></div></div>
+      <div class="live">
+        <div class="k"><i></i>NOW<u>9:00P–9:30P · 30M</u></div>
+        <div class="t">Clean · prep tomorrow</div>
+        <div class="o">Phone away</div>
+        <button class="btn">Done</button>
+        <div class="gh"><div>Waiting on someone</div><div>Detail</div></div>
+      </div>
+      <div class="r fa opt2 tight"><div class="bt">9:30p</div><div><div class="bn">Bible · text Kells</div><div class="bd">20m · FAITH · OPTIONAL</div></div></div>
+      <div class="fold"><b>PLAN TOMORROW</b><u>→</u></div>
+    </div>
+    <div class="note"><b>This is the honest problem with N1:</b> by evening the live block has
+      travelled to the bottom of a long list, so the thing you most need is the thing furthest
+      down the page. The fix drawn here — <b>the morning folds into one line once it's all
+      done</b> — is what N3 turns into a whole system.</div>
+  </div>
+</div>
+<div class="tags"><span class="tag a">one truth, zero duplication</span><span class="tag a">every row still tappable</span><span class="tag b">live block drifts down the page</span><span class="tag c">needs the fold to survive evening</span></div>
+
+<!-- ════════════════════════════ N2 ════════════════════════════ -->
+<div class="opt">
+  <div class="n">N2</div>
+  <h2>The block is pinned. The day runs underneath it.</h2>
+  <p class="idea">The live block sits at the top and <b>stays there</b>. Beneath it, the day scrolls
+     inside its own short lane, already centred on where you are — you see a few behind, a few
+     ahead, and you can push through the whole day without ever losing the block.</p>
+  <p>Answers “<b>partly see the other parts of the day</b>” most directly: the day is genuinely
+     present and genuinely scrollable, but it never competes for the top of the screen.</p>
+</div>
+<div class="row">
+  <div class="col">
+    <div class="cap">N2 · AT 1:45P</div>
+    <div class="ph">
+      <div class="hdr"><b>Today</b><span>WED · DAY 38</span><u>3 OF 5 DONE</u></div>
+      <div class="pin">
+        <div class="live" style="margin:0">
+          <div class="k"><i></i>NOW<u>1:20P–2:35P · 75M</u></div>
+          <div class="t">Block 3</div>
+          <div class="o">Ship the onboarding flow · SANO</div>
+          <button class="btn">Start focus run · 75m</button>
+          <div class="gh"><div>Waiting on someone</div><div>Detail</div></div>
+        </div>
+      </div>
+      <div class="lanek">THE DAY · 14 ROWS · SCROLLS</div>
+      <div class="lane">
+        <div class="r done wk hair"><div class="bt">9:00a</div><div><div class="bn">Block 1</div></div></div>
+        <div class="r done wk hair"><div class="bt">10:45a</div><div><div class="bn">Block 2</div></div></div>
+        <div class="r done bo hair"><div class="bt">12:00p</div><div><div class="bn">Lunch</div><div class="bd">60m · BODY</div></div></div>
+        <div class="r done cp tight"><div class="bt">1:00p</div><div><div class="bn">Market close · log the day</div><div class="bd">20m · CAPITAL</div></div></div>
+        <div class="r wk tight" style="border-color:rgba(224,178,94,.5);background:rgba(224,178,94,.07)"><div class="bt" style="color:var(--gold)">1:20p</div><div><div class="bn">Block 3 — you're here</div><div class="bd">75m · WORK</div></div></div>
+        <div class="r bo tight"><div class="bt">2:35p</div><div><div class="bn">Walk the dog</div><div class="bd">30m · BODY + MIND</div></div></div>
+        <div class="r wk tight"><div class="bt">3:05p</div><div><div class="bn">Block 4</div><div class="bd">75m · WORK</div></div></div>
+        <div class="r bo opt2 tight"><div class="bt">4:20p</div><div><div class="bn">Gym</div><div class="bd">70m · BODY · OPTIONAL</div></div></div>
+        <div class="r pe tight"><div class="bt">5:30p</div><div><div class="bn">Personal life</div><div class="bd">3.5h · PEOPLE</div></div></div>
+      </div>
+    </div>
+    <div class="note">The lane fades at both edges so it reads as “there is more in both
+      directions”. The row you're in is <b>marked inside the day too</b> — the one place this
+      design repeats itself, and deliberately: it's how the pinned card and the list stay
+      connected.</div>
+  </div>
+  <div class="col">
+    <div class="cap">N2 · WHY THE LANE IS SHORT</div>
+    <div class="ph">
+      <div class="hdr"><b>Today</b><span>WED · DAY 38</span><u>3 OF 5 DONE</u></div>
+      <div class="pin"><div class="live" style="margin:0">
+        <div class="k"><i></i>NOW<u>1:20P–2:35P · 75M</u></div>
+        <div class="t">Block 3</div>
+        <div class="o">Ship the onboarding flow · SANO</div>
+        <button class="btn">Start focus run · 75m</button>
+      </div></div>
+      <div class="lanek">THE DAY · OPENED FULL</div>
+      <div class="lane" style="max-height:150px">
+        <div class="grp">MORNING<s>3 OF 3</s></div>
+        <div class="r done cp hair"><div class="bt">6:30a</div><div><div class="bn">Market open</div></div></div>
+        <div class="r done mn hair"><div class="bt">8:30a</div><div><div class="bn">Coffee &amp; breakfast</div><div class="bd">30m · MIND</div></div></div>
+        <div class="r done wk hair"><div class="bt">9:00a</div><div><div class="bn">Block 1</div></div></div>
+        <div class="r done wk hair"><div class="bt">10:45a</div><div><div class="bn">Block 2</div></div></div>
+      </div>
+      <div class="fold"><b>THE WHOLE DAY</b><u>OPEN ▾</u></div>
+    </div>
+    <div class="note"><b>The cost:</b> a scroll area inside a scrolling page. On a phone that is
+      the one interaction that can feel broken — you swipe the day and the page moves instead.
+      Drawn here with the safety valve: the lane can always be <b>opened out</b> into the full
+      page instead of scrolling in place.</div>
+  </div>
+</div>
+<div class="tags"><span class="tag a">block never leaves the screen</span><span class="tag a">day genuinely browsable</span><span class="tag b">nested scroll on a phone</span><span class="tag b">marks “now” twice</span></div>
+
+<!-- ════════════════════════════ N3 ════════════════════════════ -->
+<div class="opt">
+  <div class="n">N3 · <span style="color:var(--gold)">THE RECOMMENDATION</span></div>
+  <h2>The day bends around now.</h2>
+  <p class="idea">One list, but the rows <b>ramp</b>. The block you're in is full size. Its
+     neighbours are medium. Everything further out compresses to a time and a name. The far
+     ends collapse into a single quiet line you can open.</p>
+  <p>This is his sentence turned into a layout: <b>“the block you're on is a bit larger, but you
+     can also partly see the other parts of the day.”</b> Near is big, far is small, nothing is
+     hidden and nothing is duplicated.</p>
+</div>
+<div class="row">
+  <div class="col">
+    <div class="cap">N3 · AT 1:45P</div>
+    <div class="ph fe">
+      <div class="hdr"><b>Today</b><span>WED · DAY 38</span><u>3 OF 5 DONE</u></div>
+      <div class="fold"><b>4 EARLIER · MORNING DONE</b><u>SHOW</u></div>
+      <div class="r done wk far"><div class="bt">10:45a</div><div><div class="bn">Block 2</div></div></div>
+      <div class="r done bo mid"><div class="bt">12:00p</div><div><div class="bn">Lunch</div><div class="bd">60m · BODY</div></div></div>
+      <div class="r done cp mid"><div class="bt">1:00p</div><div><div class="bn">Market close · log the day</div><div class="bd">20m · CAPITAL</div></div></div>
+      <div class="live">
+        <div class="k"><i></i>NOW<u>1:20P–2:35P · 75M</u></div>
+        <div class="t">Block 3</div>
+        <div class="o">Ship the onboarding flow · SANO</div>
+        <button class="btn">Start focus run · 75m</button>
+        <div class="gh"><div>Waiting on someone</div><div>Detail</div></div>
+      </div>
+      <div class="r bo mid"><div class="bt">2:35p</div><div><div class="bn">Walk the dog</div><div class="bd">30m · BODY + MIND</div></div></div>
+      <div class="r wk mid"><div class="bt">3:05p</div><div><div class="bn">Block 4</div><div class="bd">75m · WORK</div></div></div>
+      <div class="r bo opt2 far"><div class="bt">4:20p</div><div><div class="bn">Gym · optional</div></div></div>
+      <div class="r pe far"><div class="bt">5:30p</div><div><div class="bn">Personal life</div></div></div>
+      <div class="r mn far"><div class="bt">9:00p</div><div><div class="bn">Clean · prep tomorrow</div></div></div>
+      <div class="r fa far"><div class="bt">9:30p</div><div><div class="bn">Bible · text Kells</div></div></div>
+    </div>
+    <div class="note">Three sizes, one rule: <b>distance from now</b>. The evening is still on the
+      screen — you can see there's a gym block and a long Personal life — it just isn't shouting.
+      Shortest page of the five, and the live block sits at the same height all day.</div>
+  </div>
+  <div class="col">
+    <div class="cap">N3 · AT 8:40P — THE RAMP RE-CENTRES</div>
+    <div class="ph fe">
+      <div class="hdr"><b>Today</b><span>WED · DAY 38</span><u>5 OF 5 DONE</u></div>
+      <div class="fold"><b>9 EARLIER · THE DAY YOU HAD</b><u>SHOW</u></div>
+      <div class="r done bo far"><div class="bt">4:20p</div><div><div class="bn">Gym</div></div></div>
+      <div class="r done pe mid"><div class="bt">5:30p</div><div><div class="bn">Personal life</div><div class="bd">3.5h · PEOPLE</div></div></div>
+      <div class="live">
+        <div class="k"><i></i>NOW<u>9:00P–9:30P · 30M</u></div>
+        <div class="t">Clean · prep tomorrow</div>
+        <div class="o">Phone away</div>
+        <button class="btn">Done</button>
+        <div class="gh"><div>Waiting on someone</div><div>Detail</div></div>
+      </div>
+      <div class="r fa opt2 mid"><div class="bt">9:30p</div><div><div class="bn">Bible · text Kells</div><div class="bd">20m · FAITH · OPTIONAL</div></div></div>
+      <div class="fold"><b>PLAN TOMORROW</b><u>→</u></div>
+    </div>
+    <div class="note"><b>This is why it's the recommendation.</b> The same rule that spreads the
+      day at 1:45p collapses it at 8:40p — the live block never drifts, because the page is
+      always built <i>around</i> it. N1 needed a special evening fix; N3 gets it for free.</div>
+  </div>
+</div>
+<div class="tags"><span class="tag a">his sentence, literally</span><span class="tag a">whole day on one screen</span><span class="tag a">live block never drifts</span><span class="tag c">compressed rows open before they tap</span></div>
+<div class="note" style="width:auto;max-width:800px"><b>The one honest cost, stated:</b> a
+  compressed row is 11px text in a ~26px band, which is under the 44px tap floor. So a far row
+  is <b>display-only</b> — tapping the zone <i>expands</i> it to full rows first, and then the
+  row itself is tappable. That's one extra tap to correct a block from four hours ago. Everything
+  near you is a real target immediately.</div>
+
+<!-- ════════════════════════════ N4 ════════════════════════════ -->
+<div class="opt">
+  <div class="n">N4</div>
+  <h2>The rail, with the block bulging out of it.</h2>
+  <p class="idea">Borrow the grammar the planner already earned — a mono time column, a hairline
+     spine, a dot per block — and let the live block <b>break out of the rail</b> at full width.
+     The day is a continuous thread; now is the one place it swells.</p>
+  <p>The consistency argument: THE WEEK already looks like this after the Phase 4.1 redesign.
+     Today would stop speaking a second dialect, and the planner's timeline would mean the same
+     thing on both tabs.</p>
+</div>
+<div class="row">
+  <div class="col">
+    <div class="cap">N4 · AT 1:45P</div>
+    <div class="ph">
+      <div class="hdr"><b>Today</b><span>WED · DAY 38</span><u>3 OF 5 DONE</u></div>
+      <div class="rail">
+        <div class="rl"><div class="tm">8:30a</div><div class="dot mn"></div><div class="nm" style="color:#6d7a70">Coffee &amp; breakfast</div></div>
+        <div class="rl"><div class="tm">9:00a</div><div class="dot wk"></div><div class="nm" style="color:#6d7a70">Block 1</div><div class="bd2">90m · WORK</div></div>
+        <div class="rl"><div class="tm">10:45a</div><div class="dot wk"></div><div class="nm" style="color:#6d7a70">Block 2</div><div class="bd2">75m · WORK</div></div>
+        <div class="rl"><div class="tm">12:00p</div><div class="dot bo"></div><div class="nm" style="color:#6d7a70">Lunch</div></div>
+        <div class="rl"><div class="tm">1:00p</div><div class="dot cp"></div><div class="nm" style="color:#6d7a70">Market close · log the day</div></div>
+        <div class="rl on">
+          <div class="live" style="margin:0">
+            <div class="k"><i></i>NOW · 1:20P<u>75M · ENDS 2:35P</u></div>
+            <div class="t">Block 3</div>
+            <div class="o">Ship the onboarding flow · SANO</div>
+            <button class="btn">Start focus run · 75m</button>
+            <div class="gh"><div>Waiting on someone</div><div>Detail</div></div>
+          </div>
+        </div>
+        <div class="rl"><div class="tm">2:35p</div><div class="dot bo"></div><div class="nm">Walk the dog</div><div class="bd2">30m · BODY + MIND</div></div>
+        <div class="rl"><div class="tm">3:05p</div><div class="dot wk"></div><div class="nm">Block 4</div><div class="bd2">75m · WORK</div></div>
+        <div class="rl"><div class="tm">4:20p</div><div class="dot bo"></div><div class="nm">Gym · optional</div></div>
+        <div class="rl"><div class="tm">5:30p</div><div class="dot pe"></div><div class="nm">Personal life</div><div class="bd2">3.5h · PEOPLE</div></div>
+        <div class="rl"><div class="tm">9:00p</div><div class="dot mn"></div><div class="nm">Clean · prep tomorrow</div></div>
+        <div class="rl"><div class="tm">9:30p</div><div class="dot fa"></div><div class="nm">Bible · text Kells</div></div>
+      </div>
+    </div>
+    <div class="note">The time column does the work the 3px rules were doing, so the page gets
+      quieter — one lit object, one thread, no eight-cards-with-borders. The bulge is the only
+      break in the line, which is exactly the emphasis he asked for.</div>
+  </div>
+  <div class="col">
+    <div class="cap">N4 · THE TRADE</div>
+    <div class="ph">
+      <div class="hdr"><b>Today</b><span>WED · DAY 38</span><u>3 OF 5 DONE</u></div>
+      <div class="rail">
+        <div class="rl"><div class="tm">1:00p</div><div class="dot cp"></div><div class="nm" style="color:#6d7a70">Market close</div></div>
+        <div class="rl on"><div class="live" style="margin:0">
+          <div class="k"><i></i>NOW · 1:20P<u>75M</u></div>
+          <div class="t">Block 3</div>
+          <button class="btn">Start focus run · 75m</button>
+        </div></div>
+        <div class="rl"><div class="tm">2:35p</div><div class="dot bo"></div><div class="nm">Walk the dog</div></div>
+      </div>
+      <div class="fold"><b>THE DOMAIN COLOURS GO QUIET</b><u>·</u></div>
+      <div class="note" style="width:auto;margin-top:11px">A 5px dot carries a domain far worse
+        than a 3px rule down the whole row. Six domains that were instantly readable become six
+        dots you have to look at. <b>That is a real loss</b>, and it is the reason this is not
+        the recommendation.</div>
+    </div>
+    <div class="note"><b>Also:</b> the rail is the planner's idiom. Round 4's verdict on the Goals
+      tab was “<i>Today, Bank and Record are one app; Goals is a second app pasted into it.</i>”
+      This risks running that sentence backwards.</div>
+  </div>
+</div>
+<div class="tags"><span class="tag a">one grammar with the planner</span><span class="tag a">quietest page</span><span class="tag b">domain colour gets much weaker</span><span class="tag b">imports a Goals-tab idiom</span></div>
+
+<!-- ════════════════════════════ N5 ════════════════════════════ -->
+<div class="opt">
+  <div class="n">N5</div>
+  <h2>Behind you · now · ahead. Three bands, one card.</h2>
+  <p class="idea">The day stops being a list. What's done collapses to <b>one band with a pip per
+     block</b>, the live block is the body, and what's left collapses to another band. Two taps
+     reach any row; nothing scrolls.</p>
+  <p>The conservative end of the range — it keeps the most screen for the block you're in, and
+     the day is present as <b>shape</b> rather than as text.</p>
+</div>
+<div class="row">
+  <div class="col">
+    <div class="cap">N5 · AT 1:45P</div>
+    <div class="ph sq">
+      <div class="hdr"><b>Today</b><span>WED · DAY 38</span><u>3 OF 5 DONE</u></div>
+      <div class="band"><div class="pips"><i class="bo" style="background:var(--d-body)"></i><i style="background:var(--d-cap)"></i><i style="background:var(--d-mind)"></i><i style="background:var(--d-work)"></i><i style="background:var(--d-work)"></i><i style="background:var(--d-body)"></i><i style="background:var(--d-cap)"></i></div><b>7 behind you · all done</b><u>OPEN</u></div>
+      <div class="live">
+        <div class="k"><i></i>NOW<u>1:20P–2:35P · 75M</u></div>
+        <div class="t">Block 3</div>
+        <div class="o">Ship the onboarding flow · SANO</div>
+        <button class="btn">Start focus run · 75m</button>
+        <div class="gh"><div>Waiting on someone</div><div>Detail</div></div>
+      </div>
+      <div class="r bo tight"><div class="bt">2:35p</div><div><div class="bn">Walk the dog</div><div class="bd">30m · BODY + MIND — next</div></div></div>
+      <div class="band"><div class="pips"><i style="background:var(--d-work)"></i><i style="background:var(--d-body)"></i><i style="background:var(--d-people)"></i><i style="background:var(--d-mind)"></i><i style="background:var(--d-faith)"></i></div><b>5 ahead · 2 deep, 1 optional</b><u>OPEN</u></div>
+      <div class="fold"><b>1H 30M OF DEEP WORK LEFT</b><u>·</u></div>
+    </div>
+    <div class="note">The pips are the day's shape in one glance — you can see the afternoon is
+      work-then-body-then-people without reading a word. <b>Next</b> is spelled out because it's
+      the only other row that changes what he does in the next hour.</div>
+  </div>
+  <div class="col">
+    <div class="cap">N5 · WHAT HE ASKED FOR VS WHAT HE GETS</div>
+    <div class="ph sq">
+      <div class="hdr"><b>Today</b><span>WED · DAY 38</span><u>3 OF 5 DONE</u></div>
+      <div class="band"><div class="pips"><i style="background:var(--d-work)"></i><i style="background:var(--d-body)"></i><i style="background:var(--d-people)"></i><i style="background:var(--d-mind)"></i><i style="background:var(--d-faith)"></i></div><b>5 ahead</b><u>OPEN</u></div>
+      <div class="fold" style="border-style:solid;border-color:rgba(255,77,94,.3)"><b style="color:var(--blood)">“PARTLY SEE THE OTHER PARTS”</b><u style="color:var(--blood)">?</u></div>
+      <div class="note" style="width:auto;margin-top:11px">He didn't ask for the day to be
+        <i>summarised</i> — he asked to <b>see</b> it. A pip is a count, not a part of his day.
+        This option answers the “one component” half of the brief and quietly drops the other
+        half, which is why it's drawn last and not recommended.</div>
+      <div class="fold" style="margin-top:13px"><b>KEPT FOR ONE REASON</b><u>·</u></div>
+      <div class="note" style="width:auto;margin-top:11px">It is the only option that would still
+        work if the day ever got <b>much longer</b> — 25 rows, an away-day, appointments. Worth
+        remembering when AWAY mode lands.</div>
+    </div>
+    <div class="note">Shown honestly as the weakest fit for <i>this</i> brief, and kept because
+      it's the strongest fit for a day twice this size.</div>
+  </div>
+</div>
+<div class="tags"><span class="tag a">most room for the live block</span><span class="tag a">scales to a much longer day</span><span class="tag b">summarises the day instead of showing it</span><span class="tag b">two taps to any row</span></div>
+
+<!-- ════════════════════════════ THE CULL ════════════════════════════ -->
+<div class="cull">
+  <h3>Killed in writing, so you can see the cull</h3>
+  <div class="ci"><b>THE CAROUSEL</b><span>Blocks as cards you swipe between. <i>He already ruled
+    on this: “I still don't even fully love the deck idea.” A swipe also hides the day behind a
+    gesture, which is the opposite of the brief.</i></span></div>
+  <div class="ci"><b>THE CLOCK / DIAL</b><span>The day bent into a circle around a 24h face.
+    <i>Killed in round 2 and it hasn't got better — 14 blocks of wildly uneven length are
+    unreadable on a dial at 390px, and it can't hold a button.</i></span></div>
+  <div class="ci"><b>TWO COLUMNS</b><span>Day on the left, live block on the right. <i>Dies at
+    390px, which is the only width that matters. It's a desktop layout wearing a phone.</i></span></div>
+  <div class="ci"><b>THE ACCORDION</b><span>Every block collapsed; tap one to open it. <i>Makes
+    “which one am I in” a thing he has to do. The app already knows the time — it should never
+    ask him to find himself.</i></span></div>
+  <div class="ci"><b>A MINI-DAY INSIDE THE CARD</b><span>The live card carries a little strip of
+    the whole day inside it. <i>That is the exact duplication he's complaining about, moved one
+    level down. Two truths, smaller.</i></span></div>
+  <div class="ci"><b>HIDING THE PAST ENTIRELY</b><span>Drop finished blocks off the page.
+    <i>The day loses its shape, and a mis-recorded morning becomes unreachable — the correction
+    path needs that row to exist. Faint, yes. Gone, no.</i></span></div>
+  <div class="ci"><b>PROGRESS BARS PER BLOCK</b><span>A filling bar on the live row.
+    <i>Tried in spirit already: it turns the day into a scoreboard, and the focus run screen is
+    where a countdown belongs.</i></span></div>
+</div>
+
+<div class="rec">
+  <div class="k">MY RECOMMENDATION</div>
+  <h3>N3 · The day bends around now — with N1's list as its skeleton.</h3>
+  <p>N3 is the only one that is <b>literally your sentence</b>: bigger where you are, smaller
+     but still visible everywhere else. It's also the only one that <b>keeps working at 8:40p</b>
+     without a special case — the ramp re-centres itself, so the block you're in never drifts
+     down the page.</p>
+  <p>It's one list, so there is <b>no second place a block can be drawn</b> — which is the actual
+     complaint underneath the brief. And it's the shortest page of the five, which continues the
+     direction Today has been going all along (2518px → 1481px → ~1240px).</p>
+  <p><b>The one thing to decide with me:</b> whether a far row should expand-then-tap (drawn), or
+     stay a real 44px target at 11px text and make the page taller. I'd take the expand — but
+     it's your thumb.</p>
+  <p><b>Second choice: N2</b>, if when you see it you want the block genuinely nailed to the top.
+     <b>Not N4</b> — it costs the domain colours, and <b>not N5</b> — it summarises the day
+     instead of showing it.</p>
+</div>
+
+<div class="foot">NOTHING IS BUILT · STRUCTURE UNCHANGED · DRAWN AT 1:45P AND 8:40P ON THE REAL WEEKDAY</div>
+</div>
+</body>
+</html>
