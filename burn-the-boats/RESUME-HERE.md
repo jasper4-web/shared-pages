@@ -1,6 +1,9 @@
 # RESUME HERE — BURN THE BOATS
 
-**Updated 2026-07-29 (late). Current live build: sw `btb-v48`.** Two things shipped this
+⭐ **START WITH `WAKE-UP.md`** — what shipped overnight (sw **btb-v50**), and the eight
+decisions waiting on you. This file is the deeper history.
+
+**Updated 2026-07-30. Current live build: sw `btb-v50`.** Two things shipped this
 session: the XP Phase 2 verification (four defects + two economy holes closed) and then
 **THE DAY AND THE BLOCK BECAME ONE COMPONENT** — his pick, N3 THE FISHEYE. Saturday is
 **settled** (he ruled: it pays XP, not the 99). One number is still a guess:
@@ -54,10 +57,24 @@ NOT built:**
 **Three engine facts unearthed (verified in source, load-bearing for any design):**
 1. **The 99 is date-locked** — progress ÷ TOTAL_DAYS; perfection = 99 exactly on Dec 25,
    never sooner. "Sooner" today is impossible; the movable thing is the pace date (line ~2433).
-2. **THE STANDARDS are already the life→99 door** (quotas add avail+earned to domains,
-   grind-capped at n) — but ⚠ **`domainProgress()` applies TODAY'S quotaDefs to every past
-   week**: adding/editing a standard retro-rescores history (adding one mid-run DROPS OVR).
-   Forward-only violation, must be fixed regardless of chosen option (effective-from week).
+2. ~~**THE STANDARDS are already the life→99 door**~~ — **NO LONGER TRUE, and this line was
+   the trap.** It described the weekly domain-average engine, which **Phase 2 replaced**.
+   Measured 2026-07-29 by crew lane L04 and confirmed independently: `slicesFor()` and
+   `runPoints()` never read `S.quotaDefs`, and on a fresh install (`engineSeam ===
+   '0000-00-00'` — which is what a restart produces) `preFrac()` returns 0. **One identical
+   110-day run scores OVR 99 with six standards, with none, and with standards set
+   impossibly high.** Goal commits move it by zero too; knock-outs pay XP only.
+   **The only three inputs to the 99 are the WORK slice, the LIFE slice and the CLEAN slice.**
+   His *"chores must bring the 99 closer"* still holds — the **win underneath** a standard
+   scores through the LIFE slice (two wins a day → 94, zero → 91). The chore counts; the
+   quota *about* the chore doesn't. A standard is a tracking-and-graduation device now.
+   ⚠ **Two live strings still claim otherwise** (`index.html:3386` graduation sheet,
+   `index.html:3251` `saveStandard` toast) — queued for fixing.
+   **Whether standards SHOULD score again is an open decision for him** (see
+   `crew-2026-07-29/FINDINGS/CONDUCTOR-2158-standards-ruling.md`); the grinder wall measured
+   healthy without them, so this is a design call, not an emergency.
+   *(The old retro-rescoring bug in this line WAS real and WAS fixed in Phase 1's
+   forward-only standards — `spans`/`hist`, migration v7.)*
 3. **The knock-out ✓ pays 0 XP** (g2Done awards nothing). Strong day ≈445 · ladder 900→22k.
 
 **The five systems, simulated (22 wks × 4 profiles vs the real weekly-ratio engine).**
