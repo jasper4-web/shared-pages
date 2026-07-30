@@ -77,6 +77,16 @@
     white-space:pre-wrap;overflow-x:auto}
   .gate .ok{color:var(--green)}.gate .fl{color:var(--red)}
 
+  /* the banner is the first thing on the page on purpose — this record is closed,
+     and a reader who skims the renditions must not come away thinking it is open */
+  .decided{background:rgba(255,107,107,.10);border-bottom:1px solid rgba(255,107,107,.35);
+    padding:16px 0}
+  .decided .wrap{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+  .decided .stamp{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    background:var(--red);color:#12080A;padding:5px 11px;border-radius:999px;white-space:nowrap}
+  .decided p{color:var(--soft);font-size:15px;max-width:74ch}
+  .decided b{color:var(--ink)}
+
   footer{padding:40px 0 70px;color:var(--mut);font-size:13.5px}
   .askbox{border:1px dashed rgba(255,255,255,.18);border-radius:12px;padding:20px 22px;margin-top:22px}
   .askbox h3{font-size:17px;margin-bottom:10px}
@@ -85,6 +95,16 @@
 </style>
 </head>
 <body>
+
+<div class="decided"><div class="wrap">
+  <span class="stamp">Decided · rejected</span>
+  <p><b>Jasper reviewed all three and said no</b> — "I don't like the 3-D background on our new page.
+     It doesn't look right." <b>Rendition A stays: the doorway site keeps its static Warm Vanilla skin,
+     and that closes it for the whole site, not just this screen</b> — the trade-page-hero placement
+     recommended below is dead with it. Logged as <b>D-0061</b>. This page is kept as the record of
+     what was measured and why; <b>the recommendation further down is superseded by this banner.</b>
+     Do not re-propose a shader or animated background for this site.</p>
+</div></div>
 
 <header class="top"><div class="wrap">
   <div class="kick">SANO Systems · decision record · 2026-07-29</div>
@@ -104,7 +124,7 @@
     genuinely good, and it is the only thing in the whole SANO estate that has real depth.</p>
 
   <div class="verdict">
-    <h3>My recommendation: take the effect, on the trade pages — not on the doorway. Ship C now if you want it today.</h3>
+    <h3><span style="color:var(--red)">SUPERSEDED by D-0061 — none of this shipped.</span><br />What I recommended at the time: take the effect, on the trade pages — not on the doorway.</h3>
     <p>The field is worth having, but the doorway is the wrong screen for it. The doorway has exactly one job —
       eight tiles, one decision, one screen at 320×568 — and a moving background competes with the only thing
       the visitor is supposed to do there. On the beta landing the field sits behind <em>a claim</em>
@@ -274,15 +294,15 @@ before the two fixes above:
   </ul>
 
   <div class="askbox">
-    <h3>What I need from you</h3>
+    <h3>What I needed from you — <span style="color:var(--red)">answered 2026-07-29</span></h3>
     <ol>
-      <li><b>The brand answer:</b> Warm Vanilla (D-0034, what the site is) or Prismatic Dark (the beta landing
-        and the galaxy build)? Everything else follows from this, and it wants a
-        <code>DECISIONS.jsonl</code> entry either way.</li>
-      <li><b>Then the screen:</b> my recommendation is the trade-page hero, not the doorway. If you want it on
-        the doorway anyway, say so — B is built and green, it's one deploy.</li>
-      <li><b>Or C today</b> and revisit the rest later. It's the only one of the three that needs no decision
-        from you at all, because it changes nothing but the air behind the tiles.</li>
+      <li><b>The brand answer — STILL OPEN.</b> Warm Vanilla (D-0034, what the site is) or Prismatic Dark
+        (the beta landing and the galaxy build)? Rejecting the background did not settle this, because the
+        background was only one thing that hung off it. It decides what the site looks like when the domain
+        lands, and it still wants its own <code>DECISIONS.jsonl</code> entry.</li>
+      <li><s>Then the screen: the trade-page hero, not the doorway.</s>
+        <b>Answered: no moving background anywhere on this site.</b> B and C are both dead.</li>
+      <li><s>Or C today.</s> <b>Also no.</b></li>
     </ol>
   </div>
 </div></section>
