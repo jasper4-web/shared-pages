@@ -1,6 +1,8 @@
 # RESUME HERE — BURN THE BOATS
 
-**Updated 2026-07-29. Current live build: sw `btb-v41`.** Read this top to bottom before
+**Updated 2026-07-29 (late). Current live build: sw `btb-v45` — Phase 2 verified.**
+⚠ **One open decision waits on him: THE SATURDAY QUESTION** (see the Phase 2 section).
+Read this top to bottom before
 touching anything. It is the single entry point. `HANDOFF-GOALS.md` is the deeper history.
 
 ## ⭐ NEWEST — 2026-07-29: THE COFFEE FUNERAL (sw **btb-v41**, all 22 harnesses green vs LIVE)
@@ -134,15 +136,74 @@ C2 Deck + C1 Shelf · R2 HIS ROAD (ASHES→EMBER→FLAME→FORGE→STEEL→HIM) 
   area 11 · goals2 59 · full 126 · phase1 24 · profiles 320 · stress 360 — **all green**.
   Renders read: pace line, graduation sheet, worth chips.
 
-## ⚠⚠ PHASE 2 IS BUILT BUT **NOT VERIFIED, NOT DEPLOYED** — HELD BY A TOOL OUTAGE 2026-07-29
+## ✅ XP SESSION **PHASE 2 IS VERIFIED AND LIVE** — sw **btb-v45**, 2026-07-29 (late)
 
-He said "go" on Phase 2 and the ENTIRE engine was written into `index.html` (local ONLY —
-**live is still btb-v42 and untouched**), plus `model/xp2.js` (~35 checks) and funeral §9.
-Then the Claude Code command-runner went down mid-session (safety-classifier outage — every
-Bash/Agent call refused for 15+ straight attempts) — **ZERO tests have run on this code.**
-Snapshot from before the build: `index.html.bak-xp2-*` (newest).
+**The engine is real now.** Phase 2 had been written AND deployed as btb-v43 last session,
+but a tool outage killed the test run — so it sat on his phone with **zero tests ever run
+on it**. (The section this replaces said "live is still btb-v42 and untouched." That was
+already false when it was written: commit `c17f700` shipped v43, and live `index.html` was
+byte-identical to local.) Verified now, and **verification found four real defects in the
+shipped build** — three of them invisible to all 24 harnesses.
 
-**WHAT IS STAGED (all in local index.html, self-reviewed by read, never executed):**
+### The four defects the verification found (all fixed, all guarded, all live)
+
+1. **THE DENOMINATOR — Saturday was paying the 99.** `runPoints()` skipped only Sunday, but
+   `TOTAL_DAYS` counts the **110 WEEKDAYS**. Saturday's shape holds **one** deep block, so a
+   Saturday banked a full above-and-beyond **1.2 — the same as a four-block weekday** —
+   against a denominator that never counted it. **Measured: a flawless run reached 99 on
+   Nov 9 instead of the locked ~Dec 1.** Fixed with ONE door, `scoresOn(k)`, shared with the
+   status window (which had the same filter copy-pasted). A flawless run now lands **Nov 30**
+   — the locked ceiling, reproduced to the day. ⚠ **NEEDS HIS RATIFICATION — see below.**
+   *Why nothing caught it: every harness skips Saturday when it builds days.*
+2. **THE PACE DATE — three surfaces, three formatters.** The peek carried the year; the status
+   window and the rank-up moment dropped it, so a projection **four months past the run** read
+   as "Apr 19". Worse, the rank-up moment said **"pace holds <that date>"** — affirmative
+   language over a miss, on a celebration screen. One `paceFmt()` door now, with `inRun`:
+   a celebration only quotes a date when it is **inside** the run, otherwise it just says
+   "Day 38 of 110." and celebrates.
+3. **`hidden` LOST TO `display:flex`.** `#planTmr` is `.extras-line`, whose class rule outranks
+   the UA `[hidden]` rule — so Today carried an **empty 48px bordered card every day until
+   17:00** (page 1316 → 1261px). The same trap was armed on `#deckRow` for anyone with no
+   wins. `[hidden]{display:none!important}` is the general form of a fix this codebase had
+   **already made once**, for a single selector (`.gpick2 .gpk-kids[hidden]`).
+4. **The line above THE DECK was lying.** It read *"The small stuff lives in the Bank"* — true
+   when the extras had just LEFT Today (the X5 move), a contradiction once THE DECK put that
+   exact list one row below it, tappable. It is the quick-log door now: *"Anything else — log it"*.
+
+Plus one caught by **reading the live render**: the projected date wrapped mid-date as
+**"Apr / 15 '27"** on the front page. `nowrap`; measured as one line box at 375/390/440.
+
+### ⚠ THE ONE THING THAT NEEDS HIS WORD — Saturday
+
+The fix makes Saturday **pay XP but not move the 99**. That is what the locked ceiling
+requires (weekday-only accrual reproduces "~Dec 1" exactly), and Saturday's work still pays
+into rewards. But it sits against his directive that *chores/habits must bring the 99 closer*
+— on Saturday they now bring only money. **The alternative is to count Saturdays in
+`TOTAL_DAYS` too** (110 → 131), which re-tunes the whole curve, the pace date, `dayNo()`, the
+landmarks and every harness asserting 110 — a structural move, and his call, not mine.
+**Put to him; the conservative fix shipped in the meantime because the leak was live.**
+
+### Also flagged, deliberately NOT changed (his layout call)
+
+`#ovrPeek` is **crowded at 390px**: "GAP TO / HIM 39" and "99 ON / Apr 15 '27" each wrap,
+because `SEE THE RUN ▸` sits beside them and wraps too. The date is intact now and it is
+readable, but the peek wants a real layout pass. Pre-existing (Phase 1), not from this work.
+
+### Verification, for the record
+
+**24 harnesses green vs the LIVE url (~1,498 checks):** xp1 31 · xp2 **55** (was 43) ·
+funeral 52 · stage1 24 · stage2 24 · stage3 30 · stage4 52 · planner 41 · dayplan 20 ·
+ledger 24 · owned 20 · extras 33 · boosts 37 · qc3 51 · vanish 32 · tiers 28 · rewardreq 31 ·
+backup 13 · area 11 · goals2 59 · full 126 · phase1 24 · profiles 320 · stress 360.
+Harness changes were made **honestly**: `xp2.js` gained §9 (the denominator + the ceiling
+date) and §10 (the `[hidden]` contract + empty-box sweep on Today); `xp1.js` gained the
+no-break date; `boosts.js`'s "one line **to the Bank**" assertion was guarding the copy that
+had become a lie, and now asserts the quick-log wording.
+Renders read from LIVE at 390px: Today (deck, rank, pace, no blank card), Bank (shelf grid,
+`OPENS AT STEEL`), the status window (rank road, three slices, pace with its year), the
+rank-up moment. Rank-gated claim verified to **take nothing** (4200 → 4200).
+
+**WHAT PHASE 2 SHIPPED (was "staged", now live and tested):**
 - `slicesFor(k)` / `runPoints()` / `preFrac()` / `runFrac()` / new `ovr()` — the sliced day
   (60/25/15, overflow to 120 gated on work-full AND clean, waiting excluded, off/Sunday skipped)
 - `S.engineSeam` + migration **v8** (`migrateEngine`: lived saves seam to next Monday; fresh
@@ -159,21 +220,17 @@ Snapshot from before the build: `index.html.bak-xp2-*` (newest).
   restored without it would re-slice its whole history) — guarded in funeral §9
 - `projection()` now reads `runFrac()`
 
-**RESUME (in order, NOTHING else first):**
-1. `node model/xp2.js` — fix until green (it has NEVER run; expect first-run failures)
-2. Full local suite (24 harnesses incl xp1/funeral; SP=/tmp/shots where needed) — fix honestly
-3. Hostile QC pass (house rule) before deploy
-4. Bump sw to **btb-v43**, deploy via /tmp/shared-pages, verify suite vs LIVE, screenshot-read
-   Today (deck+rank+pace), Bank (shelf, OPENS AT), status window, rank-up moment
-5. Docs + memory. **Do not tell him it shipped until step 4 is done.**
-
-**NEXT — PHASE 2, THE ENGINE (the big build; drawings approved, nothing started):**
-the sliced day (60 WORK / 25 LIFE / 15 CLEAN, ~4 life-units fill the 25) · the overflow
-lane to 120 (only when work full AND clean) · the vice slice wired to the make-up ·
-HIS ROAD ranks + the level-up moment + rank-gated Bank shelves · THE DECK on Today +
-THE SHELF in the Bank (one list, two doors) · the status window. Per the house rule:
-its own harness + a hostile QC pass before it touches the live app. The old scoring
-path gets a funeral entry when replaced.
+**NEXT — IN ORDER:**
+1. **ASK HIM THE SATURDAY QUESTION** (above). It is the only open decision in the engine,
+   and the answer either ratifies what shipped or turns 110 into 131.
+2. **He lives on it.** The engine is the whole scoring model now — a few real days will say
+   more than another simulation. Watch the pace line and the rank road with his own data.
+3. `#ovrPeek`'s layout pass (his call), if he agrees it's crowded.
+4. Then the still-open queue: **AWAY mode + appointments** · recurrence ("every Tuesday") ·
+   reminders (needs a push server — parked honestly) · the Record tab rebuilt in his words ·
+   `markWait` is still *"an unlimited, untracked erase button"* (§7) and it now feeds the
+   OVR directly — marking blocks "waiting" shrinks `wAvail`, so doing 1 of 4 can score the
+   full 60. **Flagged, not fixed: it needs his call on what waiting should mean.**
 
 ## ⭐ WHERE WE ARE NOW (end of 2026-07-28, a huge day)
 
@@ -779,7 +836,7 @@ Mon 2026-07-27 → Fri 2026-12-25**. Installed on his iPhone home screen.
 - **Live:** https://jasper4-web.github.io/shared-pages/burn-the-boats/
 - **Source:** `~/Documents/burn-the-boats/index.html` (one file, ~4,400 lines)
 - **Deploy:** the `jasper4-web/shared-pages` repo, folder `burn-the-boats/`
-- **Currently live:** service worker **btb-v29** (stages 1–4 of the goals audit)
+- **Currently live:** service worker **btb-v45** (XP Phase 2, verified — see the top of this file)
 - **Who he is:** `PROFILE.md`. Non-technical. 2–3 productive hours a day. **Pacific time.**
 
 ---
@@ -788,7 +845,7 @@ Mon 2026-07-27 → Fri 2026-12-25**. Installed on his iPhone home screen.
 
 1. **A change is not done until it is LIVE and verified.** Never ask "want me to deploy?"
    He reviews on his phone; a local edit is an invisible edit.
-2. **Bump `const CACHE` in `sw.js` every single deploy.** Currently **btb-v29**.
+2. **Bump `const CACHE` in `sw.js` every single deploy.** Currently **btb-v45**.
 3. **Verify the LIVE url, not the local file.** Poll it (~40–60s), then run the harnesses against it.
 4. **Never render a wall of failure.** When he falls behind he stops opening it — that killed the
    previous version. Everything is subordinate to this.
@@ -876,6 +933,16 @@ node stage2.js   [url]              #  24 · stop the accusations — the four w
 node stage3.js   [url]              #  30 · dates — edit, confirmed delete, a carry that really moves
 node stage4.js   [url]              #  52 · the look — one lit object, the tier ramp, the seam, the board
 node stress.js   [url]              # 360 · 6 widths × 5 clocks × 4 views × 3 states
+node funeral.js  [url]              #  52 · every buried thing — fails if a grave reopens
+node ledger.js   [url]              #  24 · the one economy door: award() in, refund() out
+node owned.js    [url]              #  20 · WINS/QUOTAS as his own stores
+node dayplan.js  [url]              #  20 · the day as data (templates + dayPlan)
+node planner.js  [url]              #  41 · THE WEEK and the day editor
+node xp1.js      [url]              #  31 · Phase 1: forward-only standards, graduation,
+                                    #       knock-outs, the added pool, the pace date
+node xp2.js      [url]              #  55 · Phase 2: the sliced day, the ceiling, the ranks,
+                                    #       the Deck, the Shelf, the status window,
+                                    #       §9 the denominator · §10 `hidden` must win
 ```
 
 ⚠ **`full.js`, `goals2.js`, `tiers.js` and `stress.js` require `SP=<screenshot dir>`** or they crash
@@ -894,6 +961,18 @@ at the end on `undefined/full-final.png`. `SP=/tmp/shots node full.js <url>`.
 **Three QC agents found 27 defects across two passes; ten were mine.** The third pass I ran myself
 (the agent hit an API limit) found the worst one: **moving a goal to another area re-scored days
 already lived.** Run a hostile QC pass on anything structural. Screenshot every screen and read it.
+
+**2026-07-29 — the sharpest instance of this yet, and the one to remember.** `xp2.js` passed
+**43/43 on its very first run** against the shipped Phase 2 engine. It looked like proof. It was
+not: the harness **skips Saturday when it builds days**, and the bug was that **Saturday scored
+a full day against a weekday-only denominator** — a flawless run hitting 99 on Nov 9 instead of
+the locked ~Dec 1. A test cannot find what it never constructs. The other three defects that
+round came from **reading the render** (an empty 48px card that `hidden` failed to hide, a line
+telling him to go to the Bank for a list one row below it) and from **reading the copy in a state
+the tests only pattern-matched** ("pace holds" printed over a date four months past the run).
+
+**So: when a brand-new harness passes everything on the first attempt, distrust it and go
+looking for the case it does not build.** Ask what the fixture skips. That is where the bug is.
 
 ---
 

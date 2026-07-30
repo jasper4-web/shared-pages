@@ -94,6 +94,73 @@ reframed around words he'd use ("my standards", "what came out of my weeks").
     = insurance. Nothing syncs anywhere; agents cannot see his data unless he hands over
     a backup file.
 
+### Added 2026-07-29 (locked)
+
+17. **The 08:30 composer is DEAD — coffee is for relaxing.** His words: *"it feels like a
+    bit of an overbuild. Instead of doing this while I have my coffee I would rather just
+    have the option to actually plan tomorrow or another day with one click."* The coffee
+    block stays a ritual (done still pays its 25); tapping it is ONE door: Plan tomorrow →
+    (or open THE WEEK). A block's purpose comes from the goal attached when planning —
+    the "No objective set" accusations died with the composer, and so did Saturday's
+    "Setting Monday up" twin. Buried with kill-tests: `model/funeral.js` §7.
+18. **A planning sheet says the day in words.** "TOMORROW · WEDNESDAY", never "07-30" —
+    he must never do date math to know which day he is organizing. One formatter
+    (`dayWord`, same one-door rule as t12) feeds the day sheet, the row editor and the
+    add sheet. Guarded by `funeral.js` §8.
+
+### Added 2026-07-29 — THE XP SESSION (locked in Q&A; drawings at renditions/rend-xp-system.html + rend-xp-v2.html)
+
+19. **The XP system's shape: the sliced day.** Every day scores out of 100 — the work
+    (sacred blocks + market rules) is the majority slice, the life (his catalogue +
+    standards, capped ~4 things/day) is real but can never replace work, and **CLEAN —
+    his vices — is its own slice.** His law, verbatim: *"you cannot get to 99 overall if
+    you're falling through on all of your vices."* Perfect-everything-but-vices caps
+    around 92 — below the top rank. XP stays the spend currency; the score is never
+    purchasable ("XP is the score" was killed by simulation — every profile incl. a
+    chore-grinder hit 99). The grinder must always lose to the realistic run.
+20. **The ceiling (his fork answer).** Perfect work + fully clean days open an
+    above-and-beyond lane (day banks up to ~120), so a flawless run can land 99 around
+    **Dec 1 and never earlier**; Dec 25 stays the human target. The number still never
+    falls — a bad stretch only climbs slower. No overflow on a day with a slip.
+21. **The game layer: ranks + level-up moments, one number.** The 99 OVR stays THE
+    number; the 50→99 road gets six rank bands, crossing one is a full-screen moment,
+    and some Bank shelves unlock by rank (rank opens doors; XP + terms still pay).
+    Solo Leveling is the reference for FEEL (status window, quests, visible growth) —
+    its penalty mechanic is explicitly refused (first law).
+22. **Money decisions:** knocked-out small goals pay **40 XP auto** (nudge 25–150 band
+    → he said 25–50; sheet allows it), through the ledger, refundable while the day is
+    open · the **250/day cap applies to the ADDED pool only** (boosts + invented wins +
+    quick-logs; planned work never capped, Bank ladder never re-prices) · custom-win
+    band 5–100 stays · an evening of 4–5 small things must read as ONE climbing total ·
+    the pace date ("AT THIS PACE · 99 ON …") joins Today. Repair credit stays parked.
+23. **The magic list (the catalogue) is load-bearing.** His words: the little things are
+    *"the magic that helped me stay away from my vices."* It gets a real home — drawn
+    three ways in rend-xp-v2.html; the list is 100% his (machine may notice habits,
+    never write the list).
+24. **His three picks, given 2026-07-29 ("this looks good and I agree with your picks"):**
+    the catalogue = **C2 THE DECK on Today with C1 THE SHELF as its home in the Bank**
+    (one list, two doors) · the ranks = **R2 HIS ROAD: ASHES → EMBER → FLAME → FORGE →
+    STEEL → HIM** (50–57 / 58–65 / 66–73 / 74–81 / 82–90 / 91–99) · the day anatomy =
+    **60 / 25 / 15 with the overflow lane and the vice rules as drawn.** These close the
+    design session; Phase 2 builds exactly this.
+
+### ⚠ OPEN — NOT LOCKED. Awaiting his word (raised 2026-07-29 late, by the Phase 2 verification)
+
+25. **THE SATURDAY QUESTION — does Saturday move the 99, or only pay XP?**
+    The verification found the shipped engine scoring Saturdays into a denominator that
+    counts only the **110 weekdays**. Because Saturday's shape holds **one** deep block, a
+    Saturday banked a **full above-and-beyond day (1.2)** — the same as a four-block
+    weekday. Measured consequence: **a flawless run reached 99 on Nov 9**, breaking item 21's
+    ceiling ("never earlier than ~Dec 1").
+    **Shipped, conservatively, in btb-v45: Saturday pays XP but does not move the 99.**
+    Weekday-only accrual reproduces the locked ~Dec 1 *exactly* (Nov 30), which is strong
+    evidence it was the intent all along.
+    **But it rubs against item 19–20's spirit** — chores and habits should bring the 99
+    closer, and on Saturday they now bring only money. **The alternative is to count
+    Saturdays in `TOTAL_DAYS` (110 → 131)**, which re-tunes the OVR curve, the pace date,
+    `dayNo()`, the landmarks, and every harness asserting 110. That is a structural change
+    and **his** decision. Until he rules, what shipped holds because the leak was live.
+
 ---
 
 ## 3 · THE ONE PUSHBACK MADE, AND WHY
