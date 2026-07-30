@@ -1,9 +1,10 @@
 # RESUME HERE — BURN THE BOATS
 
-**Updated 2026-07-29 (late). Current live build: sw `btb-v46` — Phase 2 verified, and the
-two economy holes the verification found are closed.** Saturday is **settled** (he ruled:
-it pays XP, not the 99). One number is still a guess: **`WAIT_FREE = 2`** — see below.
-Read this top to bottom before
+**Updated 2026-07-29 (late). Current live build: sw `btb-v48`.** Two things shipped this
+session: the XP Phase 2 verification (four defects + two economy holes closed) and then
+**THE DAY AND THE BLOCK BECAME ONE COMPONENT** — his pick, N3 THE FISHEYE. Saturday is
+**settled** (he ruled: it pays XP, not the 99). One number is still a guess:
+**`WAIT_FREE = 2`**. Read this top to bottom before
 touching anything. It is the single entry point. `HANDOFF-GOALS.md` is the deeper history.
 
 ## ⭐ NEWEST — 2026-07-29: THE COFFEE FUNERAL (sw **btb-v41**, all 22 harnesses green vs LIVE)
@@ -137,6 +138,60 @@ C2 Deck + C1 Shelf · R2 HIS ROAD (ASHES→EMBER→FLAME→FORGE→STEEL→HIM) 
   area 11 · goals2 59 · full 126 · phase1 24 · profiles 320 · stress 360 — **all green**.
   Renders read: pace line, graduation sheet, worth chips.
 
+## ⭐⭐ NEWEST — THE DAY AND THE BLOCK ARE **ONE COMPONENT** (sw **btb-v48**, N3 THE FISHEYE)
+
+He paused the XP work for this: *"I want us to have the one block that we're on and the whole
+day kind of all in one… the block that you're on right now is just a bit larger, but you can
+also partly see the other parts of the day."* Five renditions were drawn
+(`renditions/rend-today-oneview.html`, LIVE) and he picked **N3 + my sub-decision**:
+*"Your recommendation is perfect."*
+
+**There is no NOW card above a closed day any more. There is ONE day, and `#nextUp` is a row
+inside it** — `renderSched()` puts the card back at the live index on every render, so the
+block he's in is *the same object* as the block in the list. No copies, no second place a
+block can be drawn. That was the complaint underneath the brief.
+
+**THE RAMP** (`MID_SPAN=2`), by distance from now:
+`fold strip · one far row · 2 mid rows · THE LIVE CARD · 2 mid rows · far rows to bed`
+The evening stays visible (what's coming is what he plans around); the morning folds to one
+line (it's behind him). **The ramp re-centres itself all day, so the live block never drifts
+down the page** — that was N1's cost and the reason N3 won.
+Far rows are **display-only**: 11px in a short band cannot be a 44px target, so tapping the
+far zone **opens the day to full rows first**, then every row is a real target (his approved
+trade). Not `aria-hidden` — it's still his day and a reader should read it.
+
+**BURIED, with kill-tests in `funeral.js` §10 (52 → 69 checks):**
+- **`seamLine()` / `seams()`** and all `.seam` CSS. They drew the row before and after
+  *inside* the card because the day underneath shipped closed — one component built out of
+  **copies** of two rows. His brief killed the premise.
+- **`dayDoor()`** and Today's use of `.nu-door`. ⚠ **The class SURVIVES** because THE WEEK
+  still hides its lived days behind one — asserted, so nobody deletes it later.
+- **`.blk.now`** and its CSS: the block he is IN is never a row.
+- **`openArc()`** and the self-collapsing arcs: opening the day now means every row at full
+  size, so an arc that re-collapsed would argue with the only thing `DAY_OPEN` means.
+
+**THREE HOSTILE-QC FINDS, all fixed and guarded — none caught by a test:**
+1. A **spent day** rendered all 14 rows (3100px). The ramp now anchors on the **last** block
+   when nothing is live, and the "Close the day" card lands under the day it closes → 1637px.
+2. **Sunday** rendered an **orphan "TODAY" heading over an empty list** — `renderSched()`
+   never runs on the Sabbath, and I'd made the wrapper visible by default. `hidden` is the
+   markup default again; the renderer opens it only when there is a shape.
+3. **The card fell to the BOTTOM of an opened-out day** (v47, found by reading the DOM order
+   on the live build). My own Sunday fix made the fallback append unconditional, so it
+   re-moved the card after the arcs had already placed it correctly — *one block in two
+   places, the exact bug this change exists to delete.* Fixed with a `placed` flag in v48.
+
+**Page at 390px mid-block: 1568px, up from ~1240.** That is the honest cost of the day always
+being on screen, which is what he asked for. Still far under the 2518px this page started at.
+`phase1.js`'s three "See the whole day" door assertions were **retired honestly** and replaced
+with the new truth (24 → 26).
+
+**Verified:** the full 24-harness suite ran green vs LIVE on v47. v48's delta is three lines
+inside the opened-day branch, verified with the eight Today-surface harnesses vs LIVE —
+funeral 69 · phase1 26 · dayplan 20 · stage4 52 · tiers 28 · area 11 · extras 33 · qc3 51
+(**290 checks**). Renders read from LIVE at five clocks: mid-block, evening, first minute,
+opened-out, spent.
+
 ## ✅ XP SESSION **PHASE 2 IS VERIFIED AND LIVE** — shipped v43, verified in v44–v46, 2026-07-29 (late)
 
 **The engine is real now.** Phase 2 had been written AND deployed as btb-v43 last session,
@@ -255,6 +310,9 @@ rank-up moment. Rank-gated claim verified to **take nothing** (4200 → 4200).
 - `projection()` now reads `runFrac()`
 
 **NEXT — IN ORDER:**
+0. **He lives on the merged day.** N3 shipped tonight and has never been used for a real day.
+   The one thing to watch: whether `MID_SPAN=2` is the right amount of context either side,
+   and whether the far rows' expand-then-tap is annoying in practice. Both are one-line changes.
 1. **Confirm or change `WAIT_FREE` (currently 2)** — the only guessed number in the engine.
 2. **He lives on it.** The engine is the whole scoring model now, and every hole found this
    round was found by *measuring a lived run*, not by reading code. A few real days with his
@@ -870,7 +928,7 @@ Mon 2026-07-27 → Fri 2026-12-25**. Installed on his iPhone home screen.
 - **Live:** https://jasper4-web.github.io/shared-pages/burn-the-boats/
 - **Source:** `~/Documents/burn-the-boats/index.html` (one file, ~4,400 lines)
 - **Deploy:** the `jasper4-web/shared-pages` repo, folder `burn-the-boats/`
-- **Currently live:** service worker **btb-v46** (XP Phase 2, verified — see the top of this file)
+- **Currently live:** service worker **btb-v48** (XP Phase 2, verified — see the top of this file)
 - **Who he is:** `PROFILE.md`. Non-technical. 2–3 productive hours a day. **Pacific time.**
 
 ---
@@ -879,7 +937,7 @@ Mon 2026-07-27 → Fri 2026-12-25**. Installed on his iPhone home screen.
 
 1. **A change is not done until it is LIVE and verified.** Never ask "want me to deploy?"
    He reviews on his phone; a local edit is an invisible edit.
-2. **Bump `const CACHE` in `sw.js` every single deploy.** Currently **btb-v46**.
+2. **Bump `const CACHE` in `sw.js` every single deploy.** Currently **btb-v48**.
 3. **Verify the LIVE url, not the local file.** Poll it (~40–60s), then run the harnesses against it.
 4. **Never render a wall of failure.** When he falls behind he stops opening it — that killed the
    previous version. Everything is subordinate to this.
