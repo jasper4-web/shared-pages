@@ -827,13 +827,22 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 #sched.flash{animation:schedflash 1.4s ease-out}
 @keyframes schedflash{0%{box-shadow:0 0 0 2px rgba(224,178,94,.5)}100%{box-shadow:0 0 0 2px rgba(224,178,94,0)}}
 
-.ovrpeek{display:flex;align-items:center;gap:10px;width:100%;text-align:left;cursor:pointer;
+/* THE PEEK — a 2-row grid, not a flex row. Measured at 390px: the label and the
+   pace line each need 252px, and both were being squeezed into 203px because
+   "SEE THE RUN ▸" (106px) sat in the same band — so BOTH wrapped mid-phrase
+   ("GAP TO / HIM 39", "99 ON / Apr 15 '27"). The door is a chevron now; every
+   word of his copy is kept, and each line gets the full 278px it needs. */
+.ovrpeek{display:grid;grid-template-columns:auto 1fr auto;align-items:center;
+  column-gap:10px;row-gap:2px;width:100%;text-align:left;cursor:pointer;
   margin-top:13px;padding:11px 14px;border:1px solid var(--line2);border-radius:12px;
   background:var(--panel);min-height:var(--tap);font-family:'Geist Mono',monospace;
   font-size:11px;letter-spacing:.14em;color:var(--faint)}
-.ovrpeek b{font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;color:var(--ink)}
-.ovrpeek u{margin-left:auto;text-decoration:none;color:var(--gold)}
-.ovrpeek .pace{display:block;margin-top:3px;font-size:11px;color:var(--faint)}
+.ovrpeek>b{grid-column:1;grid-row:1/-1;
+  font-family:'Clash Display',sans-serif;font-size:19px;letter-spacing:-.03em;color:var(--ink)}
+.ovrpeek>span{grid-column:2;grid-row:1;min-width:0}
+.ovrpeek>u{grid-column:3;grid-row:1/-1;justify-self:end;
+  text-decoration:none;color:var(--gold);font-size:13px}
+.ovrpeek>.pace{grid-column:2;grid-row:2;display:block;font-size:11px;color:var(--faint)}
 .ovrpeek .rk{font-style:normal;color:var(--gold)}
 /* HIS ROAD — the rank-up moment (the blue window, ours) */
 .rankup{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;
@@ -2013,16 +2022,31 @@ function domainStats(){
    full on work AND clean opens the ABOVE-AND-BEYOND lane to 120 — which is why a
    flawless run lands 99 around Dec 1 and never earlier. Days lived BEFORE the seam
    keep the score they were lived under (forward-only applies to engines too). */
+/* HOW MANY BLOCKS "Waiting on someone" MAY ERASE IN ONE DAY.
+   ⚠ PROVISIONAL NUMBER — his to set (one edit, here). Why it exists: `markWait`
+   took a block out of the DENOMINATOR, unlimited and untracked (the investigation
+   §7 called it "an unlimited, untracked erase button"). Once the sliced engine
+   shipped it fed the OVR directly. Measured: one block done + five marked waiting
+   scored 1.2 — byte-identical to a flawless six-block day, overflow bonus and all
+   — and doing that every weekday reached 99, the same as a perfect run (honest
+   would be 74). Two forgiven waits keeps the kindness the toast promises for a
+   genuinely blocked morning; past that, the block counts as it really was. */
+const WAIT_FREE=2;
 function slicesFor(k){
   const rec=S.days[k];if(!rec)return null;
   const sh=shapeFor(k),tk=today(),nm=nowMin();
-  /* THE WORK · 60 — only what has already ENDED can be owed; waiting is not a miss */
-  let wAvail=0,wDone=0;
+  /* THE WORK · 60 — only what has already ENDED can be owed; waiting is not a miss,
+     but it cannot manufacture a day either (see WAIT_FREE). */
+  let wAvail=0,wDone=0,waited=0;
   sh.forEach(b=>{
     if(b.kind!=='deep'&&b.kind!=='market')return;
     if(b.opt)return;
     if(k===tk&&mins(b.e)>nm)return;
-    if(rec.wait&&rec.wait[b.id])return;
+    if(rec.wait&&rec.wait[b.id]){
+      waited++;
+      if(waited<=WAIT_FREE)return;      /* forgiven — out of the denominator */
+      /* past the allowance it stays in, undone: the day is not rewritten */
+    }
     const ruled=b.kind==='market'?!!(rec.trade&&rec.trade.rules&&rec.trade.nodb):true;
     wAvail++;if(rec.done[b.id]&&ruled)wDone++;
   });
@@ -2040,7 +2064,9 @@ function slicesFor(k){
   /* ABOVE AND BEYOND — only a perfect, clean day may go past 100. No leveling in
      the penalty zone. */
   let over=0;
-  if(wAvail&&wr===1&&cr===1){
+  /* ...and a day held up by someone else is not "above and beyond". The overflow
+     lane wants a day that actually happened: work full, clean, nothing waited. */
+  if(wAvail&&wr===1&&cr===1&&!waited){
     const boosts=(S.boostLog||[]).filter(e=>e.date===k).length;
     over=Math.min(20,5*Math.max(0,units-4)+5*boosts);
   }
@@ -2660,8 +2686,13 @@ function renderGlance(){
   const pace=pf.none
     ?`<span class="pace">99 BY DEC 25 — TODAY STARTS THE CLIMB</span>`
     :`<span class="pace">AT THIS PACE · 99 ON <b class="${pf.cls}">${pf.md}</b></span>`;
-  $('ovrPeek').innerHTML=`<b>${o}</b><span><i class="rk">${rankName(o)}</i> · OVERALL · GAP TO HIM ${Math.max(0,HIM-o)}${pace}</span>`+
-    `<u>${glanceOpen?'HIDE':'SEE THE RUN ▸'}</u>`;
+  /* the pace is a SIBLING now, not nested inside the label — it has to be a grid
+     child to get its own full-width row. The door keeps its meaning in the
+     label a screen reader reads; on screen it is the chevron. */
+  $('ovrPeek').innerHTML=`<b>${o}</b>`+
+    `<span><i class="rk">${rankName(o)}</i> · OVERALL · GAP TO HIM ${Math.max(0,HIM-o)}</span>`+
+    `<u aria-label="${glanceOpen?'Hide the run':'See the run'}">${glanceOpen?'▾':'▸'}</u>`+
+    pace;
   if(!glanceOpen)return;
   _renderGlanceFull();
 }
@@ -3570,8 +3601,18 @@ function pushToTomorrow(id){
   if(t&&idx!==undefined){nd.prio=nd.prio||[];nd.prio[idx]=t}
   save();closeSheet();render();toast('Moved to tomorrow','good');
 }
+/* how many of today's REAL work blocks are being held by someone else */
+function waitedWork(k){
+  const rec=S.days[k||today()];if(!rec||!rec.wait)return 0;
+  return shapeFor(k||today()).filter(b=>
+    (b.kind==='deep'||b.kind==='market')&&!b.opt&&rec.wait[b.id]).length;
+}
 function markWait(id){const d=day();d.wait[id]=true;delete d.miss[id];save();closeSheet();render();
-  toast("Marked waiting — it won't score against you.",'good')}
+  /* the old toast promised "it won't score against you" unconditionally — true for
+     the allowance, a lie past it (and the lie was worth 0.65 of a day). Say which. */
+  toast(waitedWork()<=WAIT_FREE
+    ? "Marked waiting — it won't score against you."
+    : `Marked waiting. ${WAIT_FREE} come free each day — this one stays on the day.`,'good')}
 
 /* ---------- FOCUS RUN — 4 phone passes per block, splittable ---------- */
 function startRun(id,resume){
