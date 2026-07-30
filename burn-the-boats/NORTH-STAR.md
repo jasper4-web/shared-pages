@@ -144,9 +144,11 @@ reframed around words he'd use ("my standards", "what came out of my weeks").
     **60 / 25 / 15 with the overflow lane and the vice rules as drawn.** These close the
     design session; Phase 2 builds exactly this.
 
-### ⚠ OPEN — NOT LOCKED. Awaiting his word (raised 2026-07-29 late, by the Phase 2 verification)
+### Added 2026-07-29 (late) — raised by the Phase 2 verification, **ANSWERED BY HIM**
 
-25. **THE SATURDAY QUESTION — does Saturday move the 99, or only pay XP?**
+25. **THE SATURDAY QUESTION — LOCKED: Saturday pays XP, it does not move the 99.**
+    His word, 2026-07-29: *"We can stick with the Saturday only gives XP that's fine."*
+    The detail below is kept because it is the reasoning behind a locked number.
     The verification found the shipped engine scoring Saturdays into a denominator that
     counts only the **110 weekdays**. Because Saturday's shape holds **one** deep block, a
     Saturday banked a **full above-and-beyond day (1.2)** — the same as a four-block
@@ -155,11 +157,24 @@ reframed around words he'd use ("my standards", "what came out of my weeks").
     **Shipped, conservatively, in btb-v45: Saturday pays XP but does not move the 99.**
     Weekday-only accrual reproduces the locked ~Dec 1 *exactly* (Nov 30), which is strong
     evidence it was the intent all along.
-    **But it rubs against item 19–20's spirit** — chores and habits should bring the 99
-    closer, and on Saturday they now bring only money. **The alternative is to count
-    Saturdays in `TOTAL_DAYS` (110 → 131)**, which re-tunes the OVR curve, the pace date,
-    `dayNo()`, the landmarks, and every harness asserting 110. That is a structural change
-    and **his** decision. Until he rules, what shipped holds because the leak was live.
+    It does rub against item 19–20's spirit — chores and habits should bring the 99 closer,
+    and on Saturday they now bring only money. The alternative put to him was counting
+    Saturdays in `TOTAL_DAYS` (110 → 131); **he declined it.** Do not re-open without him.
+
+26. **WAITING HAS AN ALLOWANCE — `WAIT_FREE = 2` per day. Provisional number, his to set.**
+    Also found by the Phase 2 verification, and the largest hole yet in the economy:
+    `markWait` removed a block from the **denominator**, unlimited and untracked, so once
+    the sliced engine shipped **one block done + five marked "waiting" scored 1.2 —
+    byte-identical to a flawless six-block day, above-and-beyond bonus included** — and
+    doing that every weekday reached **99**, the same as a perfect run (honest: 74).
+    Locked in principle: **waiting must stay kinder than missing, and must never buy the
+    run.** Shipped in btb-v46 — the first two waits a day are forgiven, past that the block
+    counts as it was, and a day held up by someone else never opens the overflow lane.
+    Result: flawless 99 · five-waits 77 · honest 74. **The number 2 is a guess made to close
+    a live hole — one named constant, one edit. Confirm or change it.**
+    Still open underneath: waiting is *still untracked* over the run, and it remains the
+    only way to complete a block that happened off-screen — the investigation's real fix
+    for that is **AWAY mode**, still unbuilt.
 
 ---
 
