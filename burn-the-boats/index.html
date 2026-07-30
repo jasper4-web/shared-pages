@@ -518,11 +518,9 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 .blk.deep{padding:13px 11px}
 .blk.past{opacity:.55}
 .blk.done{border-color:rgba(74,222,128,.22)}
-.blk.now{border-color:rgba(224,178,94,.5);background:rgba(224,178,94,.07)}
 .blk.miss{border-color:rgba(255,77,94,.28);background:rgba(255,77,94,.05)}
 .blk.wait{border-color:rgba(127,180,255,.3);background:rgba(127,180,255,.05)}
 .blk .bt{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);padding-top:1px}
-.blk.now .bt{color:var(--gold)}
 .blk .bn{font-size:13.5px;font-weight:500;letter-spacing:-.01em;line-height:1.25}
 .blk.done .bn{color:#6d7a70}
 .blk .bo{font-size:11.5px;color:var(--dim);margin-top:3px;line-height:1.35}
@@ -530,8 +528,26 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 .blk .bc{width:18px;height:18px;border-radius:5px;border:1.5px solid #362f47;justify-self:end;margin-top:1px}
 .blk.done .bc{background:var(--phos);border-color:var(--phos)}
 .blk.miss .bc{border-color:rgba(255,77,94,.55);background:rgba(255,77,94,.14)}
-.blk.now .bc{border-color:var(--gold)}
 .blk .dom{position:absolute;left:0;top:0;bottom:0;width:2.5px}
+/* ═══ THE RAMP (N3 THE FISHEYE) ══════════════════════════════════════════════
+   A FAR row is the day still being visible without shouting: the domain rule, the
+   time, the name. No panel, no border, no duration, no checkbox — and no tap (see
+   schedRow: the zone opens the day instead). 11px is the floor and it sits on it. */
+.blk.far{grid-template-columns:42px 1fr;padding:4px 11px;margin-bottom:2px;min-height:0;
+  background:transparent;border-color:transparent;border-radius:0}
+.blk.far .bn{font-size:11.5px;font-weight:400;color:var(--faint);line-height:1.3;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.blk.far .bt{font-size:11px;color:#4a445c}
+.blk.far.done .bn{color:#5c6a60}
+.blk.far .dom{width:2px}
+/* the rows folded off the top of the day, standing in as one line */
+.dayfold{display:flex;align-items:center;gap:9px;width:100%;min-height:var(--tap);
+  padding:0 12px;margin-bottom:6px;cursor:pointer;text-align:left;
+  border:1px dashed var(--line2);border-radius:10px;background:transparent}
+.dayfold b{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;
+  color:var(--faint);font-weight:400}
+.dayfold u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;
+  letter-spacing:.1em;color:var(--gold);text-decoration:none}
 
 /* ---------- small wins ---------- */
 /* THE SHELF — the magic list's home in the Bank (C1, his pick): a 2-up card grid */
@@ -644,6 +660,9 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 .g2h b{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;color:var(--ink)}
 /* the rating, the radar, the gap and the projection collapse to one line —
    month-scale instruments do not belong on a day-scale screen */
+/* .nu-door NO LONGER BELONGS TO TODAY — the day has no door to open any more, only
+   earlier rows to unfold, and .dayfold does that up in the list where the rows are.
+   The class stays because THE WEEK still hides its lived days behind one (g2Week). */
 .nu-door{display:block;width:100%;margin-top:10px;min-height:var(--tap);cursor:pointer;
   border:1px dashed rgba(224,178,94,.4);border-radius:11px;background:transparent;color:var(--gold);
   font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;padding:12px}
@@ -813,17 +832,8 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 
 /* THE SEAM — the one before and the one after, inside the live card.
    Deliberately quiet: these are for orientation, not for doing. */
-.seam{display:flex;align-items:center;gap:9px;width:100%;text-align:left;cursor:pointer;
-  min-height:var(--tap);padding:9px 2px;background:transparent;border:0;color:inherit}
-.seam.before{border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:9px}
-.seam.after{border-top:1px solid rgba(255,255,255,.07);margin-top:10px}
-.seam .sm-t{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--faint);
-  flex:none;width:38px}
-.seam .sm-n{font-size:13px;color:var(--dim);line-height:1.25;overflow:hidden;text-overflow:ellipsis;
-  white-space:nowrap;min-width:0;flex:1}
-.seam.past .sm-n{color:var(--faint)}
-.seam .sm-tick{font-size:12px;color:var(--phos);flex:none}
-.seam .sm-held,.seam .sm-ahead{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);flex:none}
+/* the .seam rules are buried with seamLine()/seams() — funeral.js §10 fails if the
+   selector returns. The live card's neighbours are real rows now. */
 #sched.flash{animation:schedflash 1.4s ease-out}
 @keyframes schedflash{0%{box-shadow:0 0 0 2px rgba(224,178,94,.5)}100%{box-shadow:0 0 0 2px rgba(224,178,94,0)}}
 
@@ -1266,7 +1276,21 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
        Safari can wipe storage (private tabs especially). Installed = never shown. -->
   <div id="homeNudge"></div>
   <div id="penanceBanner"></div>
-  <div class="nextup" id="nextUp"></div>
+  <!-- ═══ THE DAY AND THE BLOCK, AS ONE (his pick 2026-07-29: N3 THE FISHEYE) ═══
+       There is no longer a NOW card ABOVE a day that ships closed. There is ONE day,
+       and #nextUp is a row inside it — renderSched() puts it back at the live index
+       on every render, so the block you're in is the same object as the block in the
+       list. The rows RAMP by distance from now: full card · mid · far · folded.
+       #nextUp keeps its id and all its content, because it is still the live card —
+       it just lives in the list now. -->
+  <!-- `hidden` is the DEFAULT on purpose: on Sunday renderSched() never runs (there is
+       no shape to draw), and an empty "TODAY" heading over nothing is the orphan this
+       app keeps deleting. renderSched opens it the moment there is a real day. -->
+  <div id="dayWrap" hidden>
+    <h2 class="sec">Today <u id="schCount"></u></h2>
+    <div id="sched"></div>
+    <div class="nextup" id="nextUp"></div>
+  </div>
   <div id="boostCard" hidden></div>
 
   <!-- HIS CALL: these two stop being sections on the daily page. They are captured in the
@@ -1285,11 +1309,6 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
   <div id="deckRow" class="deckrow" hidden></div>
   <!-- his call (2026-07-28): an evening door straight into tomorrow's planner -->
   <button id="planTmr" class="extras-line" onclick="planTomorrow()" hidden></button>
-
-  <div id="dayWrap" hidden>
-    <h2 class="sec">Today <u id="schCount"></u></h2>
-    <div id="sched"></div>
-  </div>
 
   <div id="closeCard"></div>
   <div class="runstrip" id="runStrip"></div>
@@ -2868,12 +2887,9 @@ function quotaChip(q){
 function renderNext(){
   const sh=shape(),ci=curIdx(),ni=nxtIdx(),i=ci>=0?ci:ni,el=$('nextUp');
   if(i<0){el.classList.remove('live');
-    const sm=seams();
     el.innerHTML=`<div class="nu-k"><span>Day complete</span></div><div class="nu-t">Nothing left on the board</div>
       <div class="nu-obj">Close it out and set tomorrow.</div>
-      ${sm.before}
-      <div class="acts"><button class="act primary" onclick="closeDay()">Close the day →</button></div>
-      ${dayDoor()}`;return}
+      <div class="acts"><button class="act primary" onclick="closeDay()">Close the day →</button></div>`;return}
   const b=sh[i],t=tacticFor(b),biz=bizFor(b),live=ci>=0,d=day();
   const state=d.done[b.id]?'done':d.wait[b.id]?'waiting':d.miss[b.id]?'missed':live?'live':'notstarted';
   const spec=actsFor(b);
@@ -2889,16 +2905,17 @@ function renderNext(){
     : esc(b.sub||b.dom.join(' + '));
   const kick=state==='done'?'Done':state==='missed'?'Passed':state==='waiting'?'Held'
             :live?'Now':'Next up';
-  const sm=seams();
-  el.innerHTML=`${sm.before}
+  /* FUNERAL 2026-07-29 (N3 THE FISHEYE): the SEAM and the day DOOR are gone from
+     this card. The seam carried the row before and after INSIDE the card because the
+     day was closed underneath; the day is now always open and this card sits IN it,
+     so its neighbours are simply the rows above and below — real rows, not copies. */
+  el.innerHTML=`
     <div class="nu-k">${live&&state==='live'?'<i></i>':''}<span>${kick}</span>${quotaChip(spec.quota)}
       <u>${t12(b.s)}–${t12(b.e)} · ${mins(b.e)-mins(b.s)}m</u></div>
     <div class="nu-t">${b.kind==='deep'&&t?esc(t):title}</div>
     <div class="nu-obj">${sub}</div>
     ${goalStrip(b)}
-    ${actionRow(b,state)}
-    ${sm.after}
-    ${dayDoor()}`;
+    ${actionRow(b,state)}`;
 }
 /* THE HANDSHAKE — a block knows which goal it serves, and what it moves.
    Renders nothing when no goal is attached, so it can never be in the way. */
@@ -2929,105 +2946,149 @@ function goalStrip2(b){
       <div class="gt">${esc(g.title)}</div></div>
     <div class="gn">${n}<s>of ${tot}<br>this week</s></div></div>`;
 }
-/* THE SEAM. His push-back: the day was ALWAYS on screen underneath, so the page
-   was permanently long. What he actually reads is the block he's in plus the one
-   either side of it — "just see the one before and the one after, and then click
-   to see the whole day at once". So the day now ships CLOSED, the card carries its
-   own two neighbours, and the door below opens the full list on demand.
-   This is also the answer to "merge the NOW card and the day": the seam lines live
-   INSIDE the card, so there is one component, not two sections. */
-function seamLine(b,dir){
-  if(!b)return'';
-  const d=day(),t=tacticFor(b),biz=bizFor(b);
-  const done=d.done[b.id],wait=d.wait[b.id];
-  const past=nowMin()>=mins(b.e);
-  const name=(b.kind==='deep'&&t)?t:esc(b.n)+(biz?' · '+esc(biz):'');
-  /* a block that didn't happen says nothing about itself — no cross, no "missed",
-     no red. It is simply a line that never got a tick. */
-  const mark=done?'<span class="sm-tick">✓</span>':wait?'<span class="sm-held">held</span>'
-            :past?'':'<span class="sm-ahead">'+(mins(b.e)-mins(b.s))+'m</span>';
-  return `<button class="seam ${dir}${done?' done':''}${past&&!done?' past':''}"
-    onclick="openBlk('${b.id}')" aria-label="${dir==='before'?'Before this':'After this'}: ${esc(b.n)}">
-    <span class="sm-t">${t12(b.s)}</span><span class="sm-n">${name}</span>${mark}</button>`;
-}
-/* the item either side of whatever the card is showing */
-function seams(){
-  const sh=shape();if(!sh.length)return{before:'',after:''};
-  const ci=curIdx(),ni=nxtIdx(),i=ci>=0?ci:ni;
-  if(i<0)return{before:seamLine(sh[sh.length-1],'before'),after:''};
-  return {before:i>0?seamLine(sh[i-1],'before'):'',
-          after:i<sh.length-1?seamLine(sh[i+1],'after'):''};
-}
-/* One dashed line. It now OPENS the day rather than scrolling to a list that was
-   always there — the whole point of the change is that the list isn't there until
-   he asks for it. Transient on purpose: every fresh open of the app is short again. */
+/* ═══ THE SEAM IS BURIED (2026-07-29, N3 THE FISHEYE) ════════════════════════
+   `seamLine()` and `seams()` are gone. They drew the row before and the row after
+   INSIDE the live card, because the day underneath shipped CLOSED — one component
+   made out of copies. His brief killed the premise: "I want the one block that
+   we're on and the whole day kind of all in one." The day is now always open, the
+   live card is a row in it, and its neighbours are the real rows either side.
+   The `dayDoor()` died with it: there is nothing to open, only the earlier rows to
+   unfold. Kill-tests in funeral.js §10.
+   DAY_OPEN survives as "show every row at full size" — the fold's SHOW, and what
+   openDay() reaches. Still transient on purpose: every fresh open is a short page. */
 let DAY_OPEN=false;
-function dayDoor(){
-  const sh=shape();if(!sh.length)return'';
-  const d=day();
-  const scored=sh.filter(b=>SCORED(b)&&!b.opt);
-  const done=scored.filter(b=>d.done[b.id]).length;
-  return `<button class="nu-door" onclick="toggleDay()" aria-expanded="${DAY_OPEN}">${
-    DAY_OPEN?'Hide the day ▴':`See the whole day · ${done} of ${scored.length} ▾`}</button>`;
-}
 function toggleDay(){
   DAY_OPEN=!DAY_OPEN;
   render();
   if(DAY_OPEN){const el=$('sched');if(el){
-    el.scrollIntoView({behavior:'smooth',block:'start'});
     el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1400);}}
 }
 /* kept: older code and the harnesses call openDay() by name */
 function openDay(){if(!DAY_OPEN)toggleDay();}
 /* how many blocks this week carried that goal */
 const ARCS=[['Morning',0,3],['Peak — deep work',3,5],['Midday',5,8],['Afternoon',8,11],['Evening',11,99]];
+/* THE RAMP — how many rows either side of the live block keep their full body.
+   Everything past this compresses to a time and a name; everything earlier than
+   the far row folds into one strip. His words: "the block that you're on right
+   now is just a bit larger, but you can also partly see the other parts". */
+const MID_SPAN=2;
+/* one row, at whichever weight the ramp asked for */
+function schedRow(b,i,ci,weight){
+  /* NOTE: there is no `.blk.now` any more. The block he is IN is never drawn as a
+     row — it is #nextUp, inserted at that index — so a row can only ever be past,
+     ahead, done, missed or held. `.blk.now`'s CSS went with it (funeral §10). */
+  const d=day(),isDone=d.done[b.id],isMiss=d.miss[b.id],isWait=d.wait[b.id];
+  const past=nowMin()>=mins(b.e);
+  const t=tacticFor(b),biz=bizFor(b),dm=DOMAINS.find(x=>x.k===b.dom[0]);
+  const el=document.createElement('div');
+  el.className='blk'+(b.kind==='deep'?' deep':'')+(isDone?' done':'')+(isMiss?' miss':'')
+    +(isWait?' wait':'')+(past&&!isDone?' past':'')
+    +(weight==='far'?' far':'');
+  const name=b.kind==='deep'&&t?esc(t):esc(b.n)+(biz?' · '+esc(biz):'');
+  if(weight==='far'){
+    /* DISPLAY ONLY — 11px in a short band cannot be a 44px target, so a far row is
+       not a tap. Tapping anywhere in the far zone OPENS the day to full rows first
+       (openDay), and then every row is a real target. His approved trade.
+       NOT aria-hidden: it is still his day, and a screen reader should read it. */
+    el.innerHTML=`<span class="dom" style="background:${dm.c};opacity:${isDone?.7:.3}"></span>
+      <span class="bt">${t12(b.s)}</span>
+      <div><div class="bn">${name}${b.opt?' · optional':''}</div></div>`;
+    return el;
+  }
+  el.onclick=()=>openBlk(b.id);
+  el.innerHTML=`<span class="dom" style="background:${dm.c};opacity:${isDone?.8:.32}"></span>
+    <span class="bt">${t12(b.s)}</span>
+    <div><div class="bn">${name}</div>
+    ${b.kind==='deep'
+      ?(t?`<div class="bo">${esc(b.n)+(biz?' · '+esc(biz):'')}</div>`:'')
+      :(b.sub?`<div class="bo">${esc(b.sub)}</div>`:'')}
+    <div class="bd">${mins(b.e)-mins(b.s)}m · ${b.dom.join(' + ')}${b.opt?' · OPTIONAL':''}</div></div>
+    <span class="bc"></span>`;
+  return el;
+}
+/* the strip that stands in for the rows folded off the top */
+function foldStrip(n,allDone,label){
+  const el=document.createElement('button');
+  el.className='dayfold';
+  el.onclick=()=>openDay();
+  el.innerHTML=`<b>${n} EARLIER · ${label}</b><u>SHOW</u>`;
+  return el;
+}
 function renderSched(){
-  const sh=shape(),d=day(),ci=curIdx(),host=$('sched');host.innerHTML='';
-  /* the list is built either way — the tally it produces is read by the door's
-     label — but the wrapper only shows when he has asked for it. */
-  const wrap=$('dayWrap');if(wrap)wrap.hidden=!DAY_OPEN;
+  const sh=shape(),d=day(),ci=curIdx(),host=$('sched');
+  /* The day is never CLOSED any more — but Sunday has no shape at all, and an empty
+     "TODAY" heading over nothing is exactly the kind of orphan this app keeps
+     deleting. No shape, no component. */
+  const wrap=$('dayWrap');if(wrap)wrap.hidden=sh.length===0;
+  /* the tally, counted over the WHOLE day regardless of what the ramp is showing —
+     folding a row must never change the number. */
   let done=0,total=0,ahead=0;
-  const groups=dow()===6?[['Saturday',0,99]]:ARCS;
-  groups.forEach(([name,a,z])=>{
-    const items=sh.slice(a,z);if(!items.length)return;
-    const arc=document.createElement('div');arc.className='arc';
-    const allPast=items.every(b=>nowMin()>=mins(b.e));
-    const hits=items.filter(b=>SCORED(b)&&!b.opt&&d.done[b.id]).length;
-    const tot=items.filter(b=>SCORED(b)&&!b.opt).length;
-    // count BEFORE any early return — collapsing an arc must not delete it from the day's tally
-    items.forEach(b=>{
-      if(!SCORED(b)||b.opt||d.wait[b.id])return;
-      if(mins(b.e)<=nowMin()){total++;if(d.done[b.id])done++} else ahead++;
-    });
-    if(allPast&&!S._open?.[name]){
-      arc.innerHTML=`<div class="arc-h" style="cursor:pointer;padding:9px 2px" onclick="openArc('${name}')">
-        <span>${name} · ${hits}/${tot}</span><span>${items[items.length-1].e} ▾</span></div>`;
-      host.appendChild(arc);return;
-    }
-    arc.innerHTML=`<div class="arc-h"><span>${name}</span><span>${Math.round(items.reduce((x,b)=>x+mins(b.e)-mins(b.s),0)/6)/10}h</span></div>`;
-    items.forEach(b=>{
-      const i=sh.indexOf(b),isDone=d.done[b.id],isMiss=d.miss[b.id],isWait=d.wait[b.id],isNow=i===ci;
-      const past=nowMin()>=mins(b.e);
-      const t=tacticFor(b),biz=bizFor(b),dm=DOMAINS.find(x=>x.k===b.dom[0]);
-      const el=document.createElement('div');
-      el.className='blk'+(b.kind==='deep'?' deep':'')+(isDone?' done':'')+(isMiss?' miss':'')
-        +(isWait?' wait':'')+(isNow?' now':'')+(past&&!isDone&&!isNow?' past':'');
-      el.onclick=()=>openBlk(b.id);
-      el.innerHTML=`<span class="dom" style="background:${dm.c};opacity:${isDone?.8:.32}"></span>
-        <span class="bt">${t12(b.s)}</span>
-        <div><div class="bn">${b.kind==='deep'&&t?esc(t):esc(b.n)+(biz?' · '+esc(biz):'')}</div>
-        ${b.kind==='deep'
-          ?(t?`<div class="bo">${esc(b.n)+(biz?' · '+esc(biz):'')}</div>`:'')
-          :(b.sub?`<div class="bo">${esc(b.sub)}</div>`:'')}
-        <div class="bd">${mins(b.e)-mins(b.s)}m · ${b.dom.join(' + ')}${b.opt?' · OPTIONAL':''}</div></div>
-        <span class="bc"></span>`;
-      arc.appendChild(el);
-    });
-    host.appendChild(arc);
+  sh.forEach(b=>{
+    if(!SCORED(b)||b.opt||d.wait[b.id])return;
+    if(mins(b.e)<=nowMin()){total++;if(d.done[b.id])done++} else ahead++;
   });
+  const nu=$('nextUp');
+  const frag=document.createDocumentFragment();
+  /* the live index: what he's in, or what's next. Once the day is spent there is no
+     live block, so the ramp anchors on the LAST one and the card ("Close the day")
+     lands beneath it — a finished day should be a short page, not all 14 rows. */
+  const ni=nxtIdx();
+  const spent=ci<0&&ni<0;
+  const li=spent?sh.length-1:(ci>=0?ci:ni);
+
+  if(DAY_OPEN||sh.length===0){
+    /* THE WHOLE DAY, opened out: every row full, the arcs back as headers. This is
+       what the fold's SHOW and openDay() reach, and where a past row is tappable. */
+    const groups=dow()===6?[['Saturday',0,99]]:ARCS;
+    groups.forEach(([name,a,z])=>{
+      const items=sh.slice(a,z);if(!items.length)return;
+      const arc=document.createElement('div');arc.className='arc';
+      arc.innerHTML=`<div class="arc-h"><span>${name}</span><span>${
+        Math.round(items.reduce((x,b)=>x+mins(b.e)-mins(b.s),0)/6)/10}h</span></div>`;
+      items.forEach(b=>{
+        const i=sh.indexOf(b);
+        if(i===li){arc.appendChild(nu);return}          /* the live card, in place */
+        arc.appendChild(schedRow(b,i,ci,'mid'));
+      });
+      frag.appendChild(arc);
+    });
+    frag.appendChild(nu);                                /* no shape at all (Sunday) */
+  }else{
+    /* THE RAMP. Before the anchor: MID_SPAN full rows, ONE far row, then a fold.
+       After it: MID_SPAN full rows, then far rows all the way to bed — the evening
+       stays visible, because what's coming is what he plans around. */
+    const firstMid=Math.max(0,li-MID_SPAN+(spent?1:0));
+    const farBefore=firstMid-1;                          /* the single compressed row */
+    const foldCount=Math.max(0,farBefore);               /* rows 0..farBefore-1 */
+    if(foldCount>0){
+      const folded=sh.slice(0,foldCount);
+      const allDone=folded.every(b=>d.done[b.id]||!SCORED(b)||b.opt);
+      frag.appendChild(foldStrip(foldCount,allDone,allDone?'ALL DONE':'THE DAY SO FAR'));
+    }
+    if(farBefore>=0)frag.appendChild(schedRow(sh[farBefore],farBefore,ci,'far'));
+    if(spent){
+      /* nothing is live, so no row gets replaced — every remaining row is drawn and
+         the card ("Close the day") lands underneath the day it is closing. */
+      for(let i=firstMid;i<sh.length;i++)frag.appendChild(schedRow(sh[i],i,ci,'mid'));
+      frag.appendChild(nu);
+    }else{
+      for(let i=firstMid;i<li;i++)frag.appendChild(schedRow(sh[i],i,ci,'mid'));
+      frag.appendChild(nu);                              /* ── the block he's in ── */
+      const lastMid=Math.min(sh.length-1,li+MID_SPAN);
+      for(let i=li+1;i<=lastMid;i++)frag.appendChild(schedRow(sh[i],i,ci,'mid'));
+      for(let i=lastMid+1;i<sh.length;i++)frag.appendChild(schedRow(sh[i],i,ci,'far'));
+    }
+  }
+  /* nu has already been moved into the fragment, so clearing the host cannot eat it */
+  host.innerHTML='';
+  host.appendChild(frag);
+  /* the far rows are not taps; the zone they sit in is */
+  host.querySelectorAll('.blk.far').forEach(el=>{el.onclick=()=>openDay()});
   $('schCount').textContent=total?`${done} of ${total} so far · ${ahead} ahead`:`${ahead} ahead`;
 }
-function openArc(n){S._open=S._open||{};S._open[n]=1;render()}
+/* openArc() is buried with the collapsing arcs (funeral §10): opening the day now
+   means every row at full size, so a past arc that re-collapsed itself would be
+   arguing with the only thing DAY_OPEN means. */
 /* ONE card, and only the small ones. The Goals tab is not a daily surface and neither is
    the Bank — but a gesture he wrote is worth a nudge where he already looks.
    Three states, none of which is failure: an open offer, a done tick, or — if he has
