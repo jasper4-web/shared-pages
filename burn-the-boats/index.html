@@ -119,6 +119,10 @@ body.noTabs .tabs{display:none}
 /* win chips gain quota pips */
 .win{flex-direction:column;align-items:flex-start;gap:6px}
 .win .wtop{display:flex;align-items:center;gap:7px;width:100%}
+/* measured on the Bank shelf: when the win's name wrapped, the XP badge wrapped
+   WITH it and split the number itself across two lines — "+1 / 5", "+2 / 0", at
+   18.2px wide. A number is one word. */
+.win .wtop b{white-space:nowrap;flex-shrink:0}
 .win .pips{display:flex;gap:3px}
 .win .pips i{width:5px;height:5px;border-radius:99px;background:#2a2438;display:block}
 .win .pips i.on{background:var(--phos)}
@@ -1260,7 +1264,12 @@ body[data-veil="him"] .hero{background:radial-gradient(120% 100% at 50% 0%,#0f1c
 .radarwrap{position:relative;height:250px}
 .radarwrap svg{position:absolute;inset:0;margin:auto}
 .srow{display:grid;grid-template-columns:56px 1fr 28px 36px;gap:8px;align-items:center;padding:7px 0;
-  border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;min-height:40px}
+  border-bottom:1px solid rgba(255,255,255,.05);min-height:40px}
+/* `.srow` carried cursor:pointer and NOT ONE click handler — grep for an onclick
+   on it returns zero. It is a read-out row in the status window, and the finger
+   cursor was the last thing failing the 44px floor. The fix is not to grow a row
+   nobody can tap to 44px; it is to stop it promising a tap that was never there.
+   That is the whole craft debt cleared: no sub-11px text, no undersized target. */
 .srow:last-child{border-bottom:0}
 .srow .n{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#847a99}
 .srow .t{height:6px;border-radius:99px;background:#191527;overflow:hidden;position:relative}
@@ -2808,7 +2817,12 @@ function go(v){location.hash='#/'+v}
 function badges(){
   const owed=S.penance&&!S.penance.done;
   const cheapest=Math.min(...S.rewards.filter(r=>!r.done).map(r=>r.cost).concat([Infinity]));
-  const bank=S.xp>=cheapest||(S.privileges||0)>0;
+  /* The dot said "something for you here" whenever he held a TOKEN — the app's
+     strongest remaining implication that a spend door exists. Nothing decrements
+     S.privileges anywhere in the build. The dot now means only what it can
+     honour: a reward he can actually afford. Restore the clause the day a spend
+     door ships, not before. */
+  const bank=S.xp>=cheapest;
   const rec=[5,6].includes(dow());
 
   const set=(t,on,red)=>{const b=document.querySelector(`.tabs button[data-t="${t}"]`);if(!b)return;
@@ -3743,6 +3757,19 @@ function openPenance(){
       each time. One mistake doesn't end the run — but it does cost you.</div></div></div>
     <button class="btn" onclick="clearPenance()">I did it</button>`);
 }
+/* ═══ FUNERAL 2026-07-30 — THE SECOND REWARDS DOOR ════════════════════════
+   `renderRun()` and `openRewards()` are buried. renderRun wrote into
+   `#runcard`, an element that does not exist in the document — grep for the id
+   returned exactly one hit, inside renderRun itself — and nothing ever called
+   it. openRewards was reachable only from inside it, so it went with it.
+
+   It was not merely unused, it was WRONG, which is why it dies rather than
+   waits: it drew a CLAIM button off `S.xp >= r.cost` alone, so a
+   requirement-gated and a rank-locked reward both showed CLAIM. `claim()`
+   refuses correctly, so the button lied rather than paid — but a second,
+   staler rewards door is exactly the thing the mentor rule is about: a rebuild
+   is not finished until the version it replaced is deleted. The live door is
+   the Bank. Found by the Bank review; verified unreachable before removal. */
 function renderRunStrip(){
   const m=monthKey(),used=S.offScript[m]||0,d=day();
   $('runStrip').innerHTML=`<span>DAY <b>${dayNo()}</b> / ${TOTAL_DAYS}</span><span>WK <b>${pad(weekNo())}</b></span>
@@ -3760,20 +3787,7 @@ function renderWeek(){
     :`<b>${Math.max(0,Math.ceil(w.due*0.85)-w.done)} more</b> to take this round.`;
 }
 /* Rewards live on their own page — off the daily surface, still one tap away. */
-function openRewards(){
-  sheet(`<div class="sh-k">EARNED, NOT GIVEN</div>
-    <div class="sh-t">Rewards</div>
-    <div class="sh-sub">${S.xp.toLocaleString()} XP BANKED</div>
-    ${S.rewards.map((r,i)=>{
-      const can=S.xp>=r.cost;
-      return `<div class="stat"><span style="color:${r.done?'var(--faint)':'var(--ink)'}">${esc(r.n)}${r.done?' · claimed':''}</span>
-        ${r.done?'<b style="color:var(--faint)">—</b>'
-        :`<button class="btn ${can?'':'gh'} sm" style="width:auto;padding:9px 14px;min-height:38px"
-           onclick="claim(${i})">${can?'CLAIM':r.cost.toLocaleString()}</button>`}</div>`}).join('')}
-    <div class="chain" style="margin-top:16px"><div><div class="cl">How you earn</div>
-      <div class="cv">Clean focus run <b>+65</b> · block done <b>+25</b> · small win <b>+15–25</b> ·
-      clean vice day <b>+40</b> · made up a slip <b>+60</b></div></div></div>`);
-}
+
 /* ═══════════ REWARD REQUIREMENTS ═══════════
    HIS DECISIONS, 2026-07-27:
      · a requirement GATES the reward — the XP price still applies. Both must be true.
@@ -3821,23 +3835,7 @@ function claim(i){
   S.ledger.push({k:'spend:'+dayNo(),xp:-r.cost,d:today(),g:null,t:r.n});
   save();closeSheet();render();toast(`Withdrawn: ${r.n}`,'good');
 }
-function renderRun(){
-  const d=day(),m=monthKey(),used=S.offScript[m]||0;
-  $('runcard').innerHTML=`
-    <div class="stat"><span>Day</span><b>${dayNo()} of ${TOTAL_DAYS}</b></div>
-    <div class="stat"><span>Week</span><b>${weekNo()}</b></div>
-    <div class="stat"><span>Total XP</span><b style="color:var(--gold)">${S.xp.toLocaleString()}</b></div>
-    <div class="stat"><span>Off-script days used</span><b>${used} / 1 this month</b></div>
-    ${S.penance&&!S.penance.done?`<div class="stat" style="border-top:1px solid var(--line)">
-      <span style="color:var(--blood);font-size:12.5px;line-height:1.4">MAKE-UP OWED<br>
-      <span style="color:var(--dim)">${esc(S.penance.text)}</span></span>
-      <button class="btn sm" style="width:auto;padding:8px 12px;min-height:36px" onclick="clearPenance()">DONE</button></div>`:''}
-    <div class="stat" style="gap:8px">
-      <button class="btn sm" onclick="openRewards()">Rewards · ${S.xp.toLocaleString()} XP</button>
-      <button class="btn gh sm" onclick="exportSave()">Backup</button></div>
-    <div class="stat" style="border-bottom:0">
-      <button class="btn gh sm" onclick="offScript()" ${used>=1||d.off?'disabled':''}>${d.off?'Today is off-script — it cannot hurt you':'Mark today off-script'}</button></div>`;
-}
+
 function offScript(){
   const m=monthKey();if((S.offScript[m]||0)>=1){toast('Used this month','bad');return}
   S.offScript[m]=(S.offScript[m]||0)+1;day().off=1;save();render();
@@ -6627,9 +6625,14 @@ function renderBank(){
   const rs=S.rewards,priv=S.privileges,rate=dailyXp(),gained=xpToday();
   const open=rs.map((r,i)=>({...r,i})).filter(r=>!r.done);
   const next=open.filter(r=>r.cost>S.xp).sort((a,b)=>a.cost-b.cost)[0];
-  const nextPct=next?Math.min(1,S.xp/next.cost):1;
   const taken=rs.filter(r=>r.done);
   const readyN=open.filter(r=>r.cost<=S.xp).length;
+  /* AN EMPTY LADDER IS NOT A FINISHED ONE. With rs=[] every "is there a next?" test
+     falls through to the all-done branch, so a Bank with no rewards in it announced
+     "ALL CLAIMED · ALL TAKEN 0 · Next up 100%" — a victory over nothing. Restoring a
+     backup written before the ladder existed reaches this state. It gets its own word. */
+  const none=!rs.length;
+  const nextPct=next?Math.min(1,S.xp/next.cost):none?0:1;
 
   /* the furnace plate — the same stamped header the day opens with */
   const head=`<div class="bk-furn">
@@ -6639,16 +6642,21 @@ function renderBank(){
       <div class="r">
         <div class="t"><i style="width:${Math.round(nextPct*100)}%"></i></div>
         <div class="lab"><span>${gained?`+${money(gained)} TODAY`:'NOTHING BANKED TODAY'}</span>
-          <span>${next?`NEXT AT ${money(next.cost)}`:readyN?'READY TO CLAIM':'ALL CLAIMED'}</span></div>
+          <span>${none?'NO REWARDS WRITTEN YET':next?`NEXT AT ${money(next.cost)}`
+            :readyN?'READY TO CLAIM':'ALL CLAIMED'}</span></div>
       </div>
     </div></div>`;
 
-  /* the gauge strip — the same three-dial furniture as the day screen */
+  /* the gauge strip — the same three-dial furniture as the day screen.
+     THE TOKEN ARC IS A LIGHT, NOT A FRACTION. It read `priv/2`, a denominator nothing
+     in the app justifies: two tokens and five tokens both drew a full arc, and three
+     drew the same arc as two. A count with no ceiling has no honest percentage, so the
+     arc says only "you hold some" and the raw number under it says how many. */
   const firstDays=next?daysAway(next.cost-S.xp):null;
   const dials=`<div class="gauges">
     ${bankDial(Math.min(1,S.xp/Math.max(1,(next?next.cost:S.xp||1))),'#E0B25E',S.xp>0)}
       <div class="val">${money(S.xp)}</div><div class="lb">Banked</div></div>
-    ${bankDial(Math.min(1,priv/2),'#38E1D8',priv>0)}
+    ${bankDial(priv?1:0,'#38E1D8',priv>0)}
       <div class="val">${priv}</div><div class="lb">Tokens</div></div>
     ${bankDial(nextPct,'#4ADE80',false)}
       <div class="val">${Math.round(nextPct*100)}%</div><div class="lb">Next up</div></div>
@@ -6674,20 +6682,36 @@ function renderBank(){
   const glance=`<div class="glance bk-glance">
     <div class="mini-stats">${rows}</div>
     <div class="ovrbox"><b>${money(S.xp)}</b><span class="l">XP<br>BANKED</span>
-      <span class="gap">${next
+      <span class="gap">${none
+        ? `NOTHING SET<u>—</u>`
+        : next
         ? `NEXT REWARD<u>${money(next.cost-S.xp)}</u>`
         : readyN?`READY<u>${readyN}</u>`:`ALL TAKEN<u>${taken.length}</u>`}</span></div>
   </div>`;
 
-  /* tokens — privileges as cards, unearned ones stated rather than hidden */
-  const TOKENS=[['Cut a block in half'],['Make a block yours']];
-  const toks=`<div class="toks">${TOKENS.map((t,i)=>{
-    const held=priv>i;
-    return `<div class="tok${held?'':' mt'}"><i></i>
-      <div class="k">${held?'PRIVILEGE':'UNEARNED'}</div><b>${t[0]}</b></div>`}).join('')}</div>
-    ${priv?`<div class="bk-note">${priv} HELD · NOTHING SPENDS THEM YET</div>`:''}
-    ${priv===0?`<div class="bk-note">ONE BIG THING LOGGED ISSUES THE FIRST ONE.<br>
-      <b>NOTHING SPENDS THEM YET.</b></div>`:''}`;
+  /* ═══ TOKENS · a COUNT, not two named holdings ═══
+     `held = priv > i` mapped an unbounded counter onto two labelled cards, and it lied
+     in both directions. Measured: at ONE token the Bank stated he owned "Cut a block in
+     half" and did NOT own "Make a block yours" — false, the token logBoost issues is
+     generic and buys either. At THREE it rendered identically to two, and the third
+     token was nowhere on the screen at all.
+     So the two cards are the MENU — what a token is good for — and the count stays where
+     a count belongs: the section header and the line beneath.
+     PROFILE §6, his words: "Rewards are schedule privileges, not points… earned freedom
+     in the schedule is the currency." That is the mechanic he named as the one he cares
+     about, so the Bank says what the token is FOR instead of leaving a dead end.
+     WHAT IT MUST NOT SAY: that something in here spends it. Nothing in this build
+     decrements S.privileges — building that door is not this lane's call — so the copy
+     names the real redemption (he cuts or swaps the block himself when he plans) and
+     states plainly that the app does not take the token back. */
+  const TOKENS=['Cut a block in half','Make a block yours'];
+  const toks=`<div class="toks">${TOKENS.map(t=>
+    `<div class="tok${priv?'':' mt'}"><i></i>
+      <div class="k">${priv?'IT BUYS':'UNEARNED'}</div><b>${t}</b></div>`).join('')}</div>
+    ${priv?`<div class="bk-note">${priv} HELD · THE RIGHT TO CUT OR SWAP A BLOCK
+      WHEN YOU PLAN.<br><b>NOTHING IN HERE SPENDS THEM — YOU DO.</b></div>`
+    :`<div class="bk-note">A REAL DAY LOGGED — A NETWORKING EVENT, A GOLF DAY —<br>
+      ISSUES THE FIRST ONE.</div>`}`;
 
   /* rewards — the block rows from the schedule, reused verbatim */
   const blks=rs.map((r,i)=>{
@@ -6714,7 +6738,11 @@ function renderBank(){
         <span class="pips">${Array.from({length:x.need},(_,j)=>
           `<i class="${j<x.hits?'full':''}"></i>`).join('')}</span>
         <span class="rq-c">${x.hits}/${x.need}</span></div>`).join('')+`</div>`:'';
-    return `<div class="blk${r.done?' done':''}${ready?' ready':''}" onclick="${r.done?'':`claim(${i})`}">
+    /* A TAKEN REWARD IS NOT A BUTTON. It shipped with `onclick=""` — an empty attribute —
+       while `#bankBody .blk{cursor:pointer}` still drew the finger, so the one row on the
+       page that can never do anything was the one advertising itself hardest. */
+    return `<div class="blk${r.done?' done':''}${ready?' ready':''}"${r.done
+        ?' style="cursor:default"':` onclick="claim(${i})"`}>
       <div class="dom" style="background:${col}"></div>
       <div style="grid-column:1/3">
         <div class="bn">${esc(r.n)}</div>
@@ -6727,12 +6755,20 @@ function renderBank(){
       <div class="bc"></div></div>`;
   }).join('');
 
+  /* "+ New reward" USED TO SIT AT THE VERY BOTTOM OF THE PAGE, under the boosts —
+     four sections and a full scroll away from the ladder it adds to. Every other list
+     on this screen carries its own door directly beneath it ("+ Add one of your own",
+     "+ Set a standard", "+ Write a boost"); rewards was the single orphan, which is
+     why adding one felt like a thing the app did rather than a thing he does. */
   $('bankBody').innerHTML=head+dials+
     `<div class="bk-app">${glance}
       <h2 class="sec"><span>Tokens held</span><u>${priv}</u></h2>
       ${toks}
       <h2 class="sec"><span>Rewards</span><u>you set the terms</u></h2>
-      ${blks}
+      ${none?`<div class="card" style="color:var(--dim);font-size:13.5px">
+        No rewards yet. Write one — the thing in the real world you are earning,
+        and the price you are willing to pay for it.</div>`:blks}
+      <button class="btn gh" style="margin-top:8px" onclick="newReward()">+ New reward</button>
       ${xpAttribution()}
       <h2 class="sec"><span>Always counts</span><u>${winsPaidToday()} today</u></h2>
       ${winsBankList()}
@@ -6743,7 +6779,6 @@ function renderBank(){
       <h2 class="sec"><span>Boosts</span><u>never scored against you</u></h2>
       ${boostList()}
       <button class="btn gh" style="margin-top:12px" onclick="editBoost(null)">+ Write a boost</button>
-      <button class="btn gh" style="margin-top:8px" onclick="newReward()">+ New reward</button>
     </div>`;
 }
 /* WHAT BOUGHT THE SHELF — the bullion stops being a generic score.
@@ -6953,26 +6988,60 @@ function rwBump(src,id){
   else RWREQ[i].n++;
   const host=$('rwReqs');if(host)host.innerHTML=REQABLE().map(rwReqRow).join('');
 }
+/* ═══ THE PRICE HAS TWO ENDS ═══
+   `Math.max(50, parseInt(x)||800)` was never a bound. It was a silent rewriter with a
+   hole at each end, measured on the shipped build at 390px:
+       5 -> 50 · 49 -> 50 · -400 -> 50          (his number quietly replaced)
+       0 -> 800                                 (0 is falsy, so it became the placeholder)
+       12.9 -> 50 · 1e9 -> 50                   (parseInt stops at the '.' and the 'e')
+       999999 -> 999999, stored and rendered    (no ceiling at all)
+   THE BAND, CHECKED AGAINST THE LADDER RATHER THAN GUESSED:
+     FLOOR 250 — one whole day's side pocket (ADDED_DAY_CAP). Below that a single
+       evening of small wins buys a real-world reward, and his cheapest real rung is 900.
+     CEILING 25,000 — a strong weekday pays about 445 XP and the run is 105 weekdays,
+       so everything he can EVER earn is roughly 46,700. His dearest rung is 22,000,
+       already about half the run. The 250–50,000 that was proposed fails at the top:
+       50,000 is MORE than the whole run pays, so it re-admits the very thing a ceiling
+       exists to stop — a reward that can never be claimed. Nothing on his ladder moves;
+       900 … 22,000 all sit inside this band, so no existing price is touched.
+   AND IT NEVER REWRITES HIS NUMBER IN SILENCE — the same contract saveBoost keeps. */
+const REWARD_MIN=250, REWARD_MAX=25000;
+const rewardClamp=x=>Math.max(REWARD_MIN,Math.min(REWARD_MAX,Math.round(Number(x)||0)));
 function newReward(){
   RWREQ=[];
   sheet(`<div class="sh-k">EARNED, NOT GIVEN</div><div class="sh-t">New reward</div>
     <div class="sh-sub">WRITE THE DEAL IN YOUR OWN WORDS</div>
-    <div class="fld"><label>The reward</label><input id="rwN" placeholder="A nice dinner out"></div>
-    <div class="fld"><label>Price in XP</label><input id="rwX" type="text" inputmode="numeric" value="800"></div>
+    <div class="fld"><label>The reward</label>
+      <input id="rwN" maxlength="60" placeholder="A nice dinner out"></div>
+    <div class="fld"><label>Price in XP</label>
+      <input id="rwX" type="text" inputmode="numeric" value="800">
+      <div class="hintline">${money(REWARD_MIN)}–${money(REWARD_MAX)} XP. A strong weekday
+        pays about 445 — under ${money(REWARD_MIN)} and one evening buys it.</div></div>
     <div class="fld"><label>What it also requires — tap to set a count, this week</label>
       <div id="rwReqs" class="rw-reqs">${REQABLE().map(rwReqRow).join('')}</div></div>
     <div class="fld"><label>Anything else about the deal (optional)</label>
-      <input id="rwC" placeholder="Only if the week was honest"></div>
+      <input id="rwC" maxlength="80" placeholder="Only if the week was honest"></div>
     <button class="btn" onclick="saveReward()">Add it</button>`);
 }
 function saveReward(){
   const n=$('rwN').value.trim();
   if(!n){toast('Give it a name first','bad');return}
-  S.rewards.push({n,condition:$('rwC').value.trim(),cost:Math.max(50,parseInt($('rwX').value)||800),
-    req:JSON.parse(JSON.stringify(RWREQ)),done:0});
+  const raw=Math.round(Number($('rwX').value)||0),cost=rewardClamp(raw);
+  /* say what happened and why, then let him decide — never store a number he did not write */
+  if(raw!==cost){$('rwX').value=cost;
+    toast(`A reward is priced ${money(REWARD_MIN)}–${money(REWARD_MAX)} XP — set to ${money(cost)}`,'bad');
+    return;}
+  /* claimedOn from the first breath, so a reward he writes has the same shape as a
+     seeded one — the exact concern DEFAULT.rewards was given `req:[]` for */
+  S.rewards.push({n,condition:$('rwC').value.trim(),cost,
+    req:JSON.parse(JSON.stringify(RWREQ)),done:0,claimedOn:null});
   save();closeSheet();render();toast('Reward added','good');
 }
-/* Put requirements onto a reward he already has, without retyping it. */
+/* Put requirements onto a reward he already has, without retyping it.
+   THE RANK CHIPS CARRY A min-width. `.chip.tap` sets min-height:44px and nothing else,
+   so a SHORT WORD stayed a narrow target — measured 41x44 for ANY and 39x44 for HIM at
+   390px, which is the pair craft.js has been reporting against this sheet. The craft
+   floor is 44px in BOTH dimensions; height alone is a check that cannot fail sideways. */
 function editRewardReq(i){
   const r=S.rewards[i];if(!r)return;
   RWREQ=JSON.parse(JSON.stringify(reqsOf(r)));
@@ -6984,6 +7053,7 @@ function editRewardReq(i){
     <div class="fld"><label>A rank on the door — optional</label>
       <div class="chips" id="rwRank">${RANKS.map((rk,j)=>
         `<button class="chip tap seg${RWRANK===j?' on':''}" data-j="${j}"
+          style="min-width:44px;justify-content:center"
           onclick="rwPickRank(this,${j})">${j===0?'ANY':rk.n}</button>`).join('')}</div>
       <div class="hintline">Rank opens the door — XP and the terms still pay the bill.</div></div>
     <button class="btn" onclick="saveRewardReq(${i})">Save the terms</button>`);
