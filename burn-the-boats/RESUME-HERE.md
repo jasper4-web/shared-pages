@@ -1,7 +1,8 @@
 # RESUME HERE — BURN THE BOATS
 
-**Updated 2026-07-29 (late). Current live build: sw `btb-v45` — Phase 2 verified.**
-⚠ **One open decision waits on him: THE SATURDAY QUESTION** (see the Phase 2 section).
+**Updated 2026-07-29 (late). Current live build: sw `btb-v46` — Phase 2 verified, and the
+two economy holes the verification found are closed.** Saturday is **settled** (he ruled:
+it pays XP, not the 99). One number is still a guess: **`WAIT_FREE = 2`** — see below.
 Read this top to bottom before
 touching anything. It is the single entry point. `HANDOFF-GOALS.md` is the deeper history.
 
@@ -136,7 +137,7 @@ C2 Deck + C1 Shelf · R2 HIS ROAD (ASHES→EMBER→FLAME→FORGE→STEEL→HIM) 
   area 11 · goals2 59 · full 126 · phase1 24 · profiles 320 · stress 360 — **all green**.
   Renders read: pace line, graduation sheet, worth chips.
 
-## ✅ XP SESSION **PHASE 2 IS VERIFIED AND LIVE** — sw **btb-v45**, 2026-07-29 (late)
+## ✅ XP SESSION **PHASE 2 IS VERIFIED AND LIVE** — shipped v43, verified in v44–v46, 2026-07-29 (late)
 
 **The engine is real now.** Phase 2 had been written AND deployed as btb-v43 last session,
 but a tool outage killed the test run — so it sat on his phone with **zero tests ever run
@@ -173,25 +174,58 @@ shipped build** — three of them invisible to all 24 harnesses.
 Plus one caught by **reading the live render**: the projected date wrapped mid-date as
 **"Apr / 15 '27"** on the front page. `nowrap`; measured as one line box at 375/390/440.
 
-### ⚠ THE ONE THING THAT NEEDS HIS WORD — Saturday
+### ✅ SATURDAY IS SETTLED — he ruled
 
-The fix makes Saturday **pay XP but not move the 99**. That is what the locked ceiling
-requires (weekday-only accrual reproduces "~Dec 1" exactly), and Saturday's work still pays
-into rewards. But it sits against his directive that *chores/habits must bring the 99 closer*
-— on Saturday they now bring only money. **The alternative is to count Saturdays in
-`TOTAL_DAYS` too** (110 → 131), which re-tunes the whole curve, the pace date, `dayNo()`, the
-landmarks and every harness asserting 110 — a structural move, and his call, not mine.
-**Put to him; the conservative fix shipped in the meantime because the leak was live.**
+*"We can stick with the Saturday only gives XP that's fine."* (2026-07-29) — **NORTH-STAR
+item 25 is LOCKED.** He declined the alternative (counting Saturdays in `TOTAL_DAYS`,
+110 → 131). Do not re-open it.
 
-### Also flagged, deliberately NOT changed (his layout call)
+## 🔥 THEN THE BIGGEST HOLE IN THE ECONOMY — "Waiting on someone" (closed, sw btb-v46)
 
-`#ovrPeek` is **crowded at 390px**: "GAP TO / HIM 39" and "99 ON / Apr 15 '27" each wrap,
-because `SEE THE RUN ▸` sits beside them and wraps too. The date is intact now and it is
-readable, but the peek wants a real layout pass. Pre-existing (Phase 1), not from this work.
+He said "go ahead with the rest", and the remaining flag turned out to be the worst defect
+found in this project so far. **`markWait` was a one-tap path to 99.**
+
+It removed a block from the **denominator** — unlimited and untracked, exactly as the
+investigation (§7) described it: *"an unlimited, untracked erase button."* Harmless-ish while
+it only hid a row; **once the sliced engine shipped it erased straight into the OVR.**
+
+| the day | scored |
+|---|---|
+| all six work blocks done | **1.2** (with the overflow bonus) |
+| **one block done + five marked "waiting"** | **1.2** — byte-identical, bonus included |
+| one block done, nothing marked | 0.5 |
+
+**Marking five waits every weekday reached OVR 99 — the same as a flawless run.** Honest
+would have been 74.
+
+**Fixed:** `WAIT_FREE = 2`. The first two waits a day are forgiven (a genuinely blocked
+morning is real and the toast's promise should hold); past that the block counts as it was,
+and **a day held up by someone else never opens the overflow lane** — "above and beyond"
+has to describe a day that actually happened. The toast used to promise *"it won't score
+against you"* unconditionally, which past the allowance was a lie worth 0.65 of a day; it
+now says which case it is.
+
+**After: flawless 99 · five-waits 77 · honest 74.** Waiting is still kinder than missing —
+it just cannot buy the run. Guarded in `xp2.js` §11 (65 checks).
+
+⚠ **THE 2 IS A GUESS I MADE TO CLOSE A LIVE HOLE — his number to set.** One named constant
+(`WAIT_FREE`, above `slicesFor`), one edit. **Still open underneath:** waiting is *still
+untracked* across the run, and it is still the only way to complete a block that happened
+off-screen. The investigation's real fix for that is **AWAY mode**, still unbuilt.
+
+### ✅ THE PEEK GOT ITS LAYOUT PASS (his call to overrule)
+
+Measured at 390px: the label and the pace line each need **252px** and both were being
+squeezed into **203px**, because `SEE THE RUN ▸` (106px) sat in the same band — so both
+wrapped mid-phrase ("GAP TO / HIM 39", "99 ON / Apr 15 '27"). `#ovrPeek` is a **2-row grid**
+now: the number spans both rows, the label owns row 1, the pace owns row 2, and each gets
+its full 278px. **Every word of his copy is kept**; the door traded its words for a chevron
+(▸ / ▾) with an aria-label. Guarded in `xp1.js` (34 checks — both rows single-line, and the
+peek never widens the page).
 
 ### Verification, for the record
 
-**24 harnesses green vs the LIVE url (~1,498 checks):** xp1 31 · xp2 **55** (was 43) ·
+**24 harnesses green vs the LIVE url (~1,520 checks):** xp1 **34** (was 30) · xp2 **65** (was 43) ·
 funeral 52 · stage1 24 · stage2 24 · stage3 30 · stage4 52 · planner 41 · dayplan 20 ·
 ledger 24 · owned 20 · extras 33 · boosts 37 · qc3 51 · vanish 32 · tiers 28 · rewardreq 31 ·
 backup 13 · area 11 · goals2 59 · full 126 · phase1 24 · profiles 320 · stress 360.
@@ -221,16 +255,16 @@ rank-up moment. Rank-gated claim verified to **take nothing** (4200 → 4200).
 - `projection()` now reads `runFrac()`
 
 **NEXT — IN ORDER:**
-1. **ASK HIM THE SATURDAY QUESTION** (above). It is the only open decision in the engine,
-   and the answer either ratifies what shipped or turns 110 into 131.
-2. **He lives on it.** The engine is the whole scoring model now — a few real days will say
-   more than another simulation. Watch the pace line and the rank road with his own data.
-3. `#ovrPeek`'s layout pass (his call), if he agrees it's crowded.
-4. Then the still-open queue: **AWAY mode + appointments** · recurrence ("every Tuesday") ·
-   reminders (needs a push server — parked honestly) · the Record tab rebuilt in his words ·
-   `markWait` is still *"an unlimited, untracked erase button"* (§7) and it now feeds the
-   OVR directly — marking blocks "waiting" shrinks `wAvail`, so doing 1 of 4 can score the
-   full 60. **Flagged, not fixed: it needs his call on what waiting should mean.**
+1. **Confirm or change `WAIT_FREE` (currently 2)** — the only guessed number in the engine.
+2. **He lives on it.** The engine is the whole scoring model now, and every hole found this
+   round was found by *measuring a lived run*, not by reading code. A few real days with his
+   own data will say more than another simulation. Watch the pace line and the rank road.
+3. **AWAY mode + appointments** — this is now the top build, not just a roadmap item: it is
+   the honest answer to the thing `WAIT_FREE` is only capping. §7's finding stands — a deep
+   block can only be completed by the timer, so a class, a call or an appointment cannot be
+   completed at all, and the design manufactures the lie that `markWait` then tells.
+4. Then: recurrence ("every Tuesday") · reminders (needs a push server — parked honestly) ·
+   the Record tab rebuilt in his words · make waiting **tracked** across the run.
 
 ## ⭐ WHERE WE ARE NOW (end of 2026-07-28, a huge day)
 
@@ -836,7 +870,7 @@ Mon 2026-07-27 → Fri 2026-12-25**. Installed on his iPhone home screen.
 - **Live:** https://jasper4-web.github.io/shared-pages/burn-the-boats/
 - **Source:** `~/Documents/burn-the-boats/index.html` (one file, ~4,400 lines)
 - **Deploy:** the `jasper4-web/shared-pages` repo, folder `burn-the-boats/`
-- **Currently live:** service worker **btb-v45** (XP Phase 2, verified — see the top of this file)
+- **Currently live:** service worker **btb-v46** (XP Phase 2, verified — see the top of this file)
 - **Who he is:** `PROFILE.md`. Non-technical. 2–3 productive hours a day. **Pacific time.**
 
 ---
@@ -845,7 +879,7 @@ Mon 2026-07-27 → Fri 2026-12-25**. Installed on his iPhone home screen.
 
 1. **A change is not done until it is LIVE and verified.** Never ask "want me to deploy?"
    He reviews on his phone; a local edit is an invisible edit.
-2. **Bump `const CACHE` in `sw.js` every single deploy.** Currently **btb-v45**.
+2. **Bump `const CACHE` in `sw.js` every single deploy.** Currently **btb-v46**.
 3. **Verify the LIVE url, not the local file.** Poll it (~40–60s), then run the harnesses against it.
 4. **Never render a wall of failure.** When he falls behind he stops opening it — that killed the
    previous version. Everything is subordinate to this.
@@ -973,6 +1007,15 @@ the tests only pattern-matched** ("pace holds" printed over a date four months p
 
 **So: when a brand-new harness passes everything on the first attempt, distrust it and go
 looking for the case it does not build.** Ask what the fixture skips. That is where the bug is.
+
+**And the corollary, from the same day: MEASURE A LIVED RUN, don't read the code.** Both
+economy holes closed that day — Saturday, and `markWait` — were invisible in the source and
+obvious the moment a full 110-day run was simulated and the finishing OVR printed. Saturday
+read as a harmless missing `&&`; waiting read as a kindness. Simulating said *99 on Nov 9*
+and *99 from one block a day*. **Any change to `slicesFor`, `runPoints` or the day's shape
+should be followed by simulating the whole run at three honesty levels (flawless / real /
+cheating) and printing the finishing number.** The scratch harnesses that did it are trivial
+to rewrite — the pattern is in `xp2.js` §9 and §11.
 
 ---
 
