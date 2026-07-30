@@ -530,6 +530,22 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
    the Bank borrows .blk and only Today was checked. Its own class now, because `now`
    already means "live" on three other surfaces. */
 .blk.ready{border-color:rgba(224,178,94,.5);background:rgba(224,178,94,.07)}
+/* REARRANGE — the day laid flat so it can be moved. `touch-action:none` is not
+   decoration: without it the browser claims the vertical drag for scrolling and
+   the row never moves. Rows are 52px against the 44px floor. */
+.rrlist{margin:12px 0 14px}
+.rr-row{display:grid;grid-template-columns:22px 46px 1fr;gap:10px;align-items:center;
+  min-height:52px;padding:0 12px;border-radius:11px;background:var(--panel);
+  border:1px solid var(--line);margin-bottom:6px;
+  touch-action:none;-webkit-user-select:none;user-select:none;
+  transition:transform .13s ease,border-color .13s,background .13s}
+.rr-row.rr-drag{transition:none;border-color:var(--gold);background:rgba(224,178,94,.10);
+  position:relative;z-index:5;box-shadow:0 10px 26px rgba(0,0,0,.5)}
+.rr-grab{color:var(--faint);font-size:15px;line-height:1;letter-spacing:-1px}
+.rr-t{font-family:'Geist Mono',monospace;font-size:12px;color:var(--dim)}
+.rr-n{font-size:14px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rr-row.rr-fixed .rr-n{color:var(--dim)}
+.dayfold.rr{margin-top:6px}
 .blk .bt{font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint);padding-top:1px}
 .blk .bn{font-size:13.5px;font-weight:500;letter-spacing:-.01em;line-height:1.25}
 .blk.done .bn{color:#6d7a70}
@@ -1761,6 +1777,48 @@ function award(key,n,label,goalId){
   save();
   toast(`+${n} XP · ${label}`,'good');render();
   return true;
+}
+/* ═══ A BLOCK PAYS ONCE ═══════════════════════════════════════════════════
+   2026-07-30. `award()`'s guard is `if(d.credited[key])return false` — keyed on
+   the ENTRY, not on the block. One block has TWO entry keys: tapping it done
+   writes `blk:<id>`, running it writes `run:<id>:<date>`. Different keys, so the
+   guard never saw the collision and the same block paid 25 + 65 = 90 XP in three
+   taps — repeatable on all four deep blocks, every weekday, and neither key is
+   seen by `addedSpentToday()`, so none of it touched the 250/day cap. That is
+   ~360 XP a day of unearned headroom against a Bank ladder priced 900 → 22,000.
+
+   The author already knew both keys could exist: `unDone()` refunds BOTH. The
+   intent was plainly EITHER route, not both.
+
+   The rule is not "refuse the second" — that would rob him of 40 XP for tapping
+   done and then actually running the block, which is more work, not less. A
+   block is worth the best single route it earned. So the second route TOPS UP
+   to that price and never beyond it: 25 then a clean run pays 40 more (65 total);
+   a clean run then a tap pays nothing. */
+function blockPaidToday(id){
+  const c=day().credited||{};
+  return (c['blk:'+id]||0)+(c['run:'+id+':'+today()]||0);
+}
+function awardBlock(id,key,n,label,goalId){
+  const room=n-blockPaidToday(id);
+  if(room<=0)return false;              /* already paid at this price or better */
+  return award(key,room,label,goalId);
+}
+/* One door for "a row on today's plan was done". A fixture block pays the block
+   price, once, through awardBlock. A row he TYPED onto the day is added work —
+   it draws from the same 250/day side pocket as wins and boosts.
+
+   It used to pay a flat 25 through `blk:`+id with `id='p'+Date.now()`, so the
+   key was brand new every row and every day, the double-pay guard could never
+   fire, and nothing bounded the number of rows. Unlimited XP for typing. */
+function payRowDone(id,label){
+  const b=shape().find(x=>x.id===id), g=b?goalOf2(b):null;
+  if(b&&b.kind==='plan'){
+    const pay=Math.min(25,Math.max(0,ADDED_DAY_CAP-addedSpentToday()));
+    if(pay<=0){toast('The side pocket is full for today — go earn it','bad');return false}
+    return award('plan:'+id,pay,label,g);
+  }
+  return awardBlock(id,'blk:'+id,25,label,g);
 }
 function refund(key){
   const d=day();
@@ -3059,8 +3117,28 @@ function foldStrip(n,allDone,label){
   el.innerHTML=`<b>${n} EARLIER · ${label}</b><u>SHOW</u>`;
   return el;
 }
+/* HOLD THE DAY. His words: "whenever I hold an app down on an iPhone and
+   everything kind of shows that it can be reconstructed." 550ms, and any real
+   movement or lift before then cancels it — so a hold never steals a tap. */
+function armHold(host){
+  if(!host||host._held)return;host._held=1;
+  let t=null,x=0,y=0;
+  const stop=()=>{clearTimeout(t);t=null};
+  host.addEventListener('pointerdown',e=>{
+    x=e.clientX;y=e.clientY;
+    stop();t=setTimeout(()=>{t=null;
+      if(navigator.vibrate&&navigator.userActivation&&navigator.userActivation.hasBeenActive)
+        navigator.vibrate(12);
+      openRearrange();},550);
+  });
+  host.addEventListener('pointermove',e=>{
+    if(t&&(Math.abs(e.clientX-x)>8||Math.abs(e.clientY-y)>8))stop();
+  });
+  ['pointerup','pointercancel','pointerleave'].forEach(k=>host.addEventListener(k,stop));
+}
 function renderSched(){
   const sh=shape(),d=day(),ci=curIdx(),host=$('sched');
+  armHold(host);
   /* The day is never CLOSED any more — but Sunday has no shape at all, and an empty
      "TODAY" heading over nothing is exactly the kind of orphan this app keeps
      deleting. No shape, no component. */
@@ -3095,6 +3173,13 @@ function renderSched(){
       back.onclick=()=>toggleDay();
       back.innerHTML=`<b>THE WHOLE DAY</b><u>FOLD IT BACK ▴</u>`;
       frag.appendChild(back);
+      /* The hold gesture is his, but a gesture with no affordance is a secret.
+         The door is visible here AND the hold works anywhere on the day. */
+      const rr=document.createElement('button');
+      rr.className='dayfold rr';
+      rr.onclick=()=>openRearrange();
+      rr.innerHTML=`<b>PLANS CHANGED</b><u>REARRANGE ☰</u>`;
+      frag.appendChild(rr);
     }
     const groups=dow()===6?[['Saturday',0,99]]:ARCS;
     let placed=false;
@@ -3396,7 +3481,7 @@ function planTomorrow(){
 const ADDED_DAY_CAP=250;
 function addedSpentToday(){
   const c=day().credited||{};
-  return Object.keys(c).reduce((a,k)=>a+((k.slice(0,4)==='win:'||k.slice(0,6)==='boost:')?(c[k]||0):0),0);
+  return Object.keys(c).reduce((a,k)=>a+((k.slice(0,4)==='win:'||k.slice(0,6)==='boost:'||k.slice(0,5)==='plan:')?(c[k]||0):0),0);
 }
 function tapWin(k){
   const d=day(),w=winByK(k);
@@ -3704,8 +3789,7 @@ function lastProduced(id){
   return null;
 }
 function markDone(id){const d=day();d.done[id]=true;stampDom(d,today(),id);delete d.miss[id];delete d.wait[id];save();closeSheet();
-  const _b=shape().find(x=>x.id===id),_g=_b?goalOf2(_b):null;
-  if(!award('blk:'+id,25,'block done',_g))render();}
+  if(!payRowDone(id,'block done'))render();}
 /* A miss must never be a terminal red row with no way out. */
 function markMiss(id){
   const d=day();d.miss[id]=true;delete d.done[id];save();
@@ -3720,7 +3804,7 @@ function markMiss(id){
 function unMiss(id){const d=day();delete d.miss[id];save();closeSheet();render()}
 function unDone(id){const d=day();delete d.done[id];
   /* undoing a block returns whatever it paid today — the tap route and the run route */
-  const back=refund('blk:'+id)+refund('run:'+id+':'+today());
+  const back=refund('blk:'+id)+refund('run:'+id+':'+today())+refund('plan:'+id);
   save();closeSheet();render();
   if(back)toast(`Undone — ${back} XP returned`,'bad')}
 function unWait(id){const d=day();delete d.wait[id];save();closeSheet();render();toast('Unblocked','good')}
@@ -3798,7 +3882,7 @@ function finishRun(){
   d.done[b.id]=true;stampDom(d,today(),b.id);d.focus[b.id]=run.broken?'broke':'clean';
   /* through the ONE DOOR now — this block used to be an inline copy of award() */
   const xp=run.broken?25:65;
-  award('run:'+b.id+':'+today(),xp,run.broken?'run done':'clean run',goalOf2(b));
+  awardBlock(b.id,'run:'+b.id+':'+today(),xp,run.broken?'run done':'clean run',goalOf2(b));
   save();recount();
   $('runTime').textContent=run.broken?'TIME':'DONE';
   $('runMult').textContent=run.broken?`BLOCK COUNTED · +${xp} XP`:`CLEAN RUN · +${xp} XP`;
@@ -4101,10 +4185,9 @@ function renderClose(){
 function ccMark(id,how){
   const d=day();
   /* re-marking a done block as missed/waiting takes today's payment back with it */
-  if(d.done[id]&&how!=='done'){refund('blk:'+id);refund('run:'+id+':'+today())}
+  if(d.done[id]&&how!=='done'){refund('blk:'+id);refund('run:'+id+':'+today());refund('plan:'+id)}
   delete d.done[id];delete d.miss[id];delete d.wait[id];
-  if(how==='done'){d.done[id]=true;stampDom(d,today(),id);
-    const _b=shape().find(x=>x.id===id);award('blk:'+id,25,'marked done',_b?goalOf2(_b):null)}
+  if(how==='done'){d.done[id]=true;stampDom(d,today(),id);payRowDone(id,'marked done')}
   else if(how==='miss')d.miss[id]=true; else d.wait[id]={who:'someone',since:today()};
   save();render();
 }
@@ -5194,6 +5277,108 @@ function planWrite(date,rows){
     if(!rows.some(b=>b.id===id))rows.push({...S.templates.weekday.find(b=>b.id===id)});});
   rows.sort((a,b)=>mins(a.s)-mins(b.s));
   S.dayPlan[date]=rows;save();
+}
+/* ═══ THE DAY BENDS, IT DOES NOT SHRINK ═══════════════════════════════════
+   His words, 2026-07-30: "like whenever I hold an app down on an iPhone and
+   everything kind of shows that it can be reconstructed and I can just drag and
+   move things and it will adjust the time accordingly — that way I can still
+   accomplish the same things in a day even if I have a slight change in plans,
+   so my whole day isn't just destroyed."
+
+   And the ruling that came out of it (JASPER-1145): the bar follows the AMOUNT
+   of work in a day, not its ARRANGEMENT. That is what makes this safe to give
+   him mid-day. A move may change the ORDER and the CLOCK. It may change nothing
+   else — so there is no version of this that lowers the bar, and §2.2 survives:
+   order and timing may change, content, length and amount may not.
+
+   Preserved, every time: each row's LENGTH · the day's first START and last END
+   · the GAP sequence in position (his weekday has one, 10:30 -> 10:45) · the SET
+   of rows. Because none of those move, the score cannot move either — which is
+   asserted directly in model/reorder.js rather than assumed here.
+
+   Out-of-range is REFUSED, not clamped: a silent clamp is how a drag that ends
+   off the edge of the screen quietly deletes a block. */
+function moveRow(date,from,to){
+  date=date||today();
+  const rows=planRows(date);
+  if(!Array.isArray(rows)||rows.length<2)return false;
+  if(!Number.isInteger(from)||!Number.isInteger(to))return false;
+  if(from<0||from>=rows.length||to<0||to>=rows.length||from===to)return false;
+
+  const startM=mins(rows[0].s);
+  /* the gaps as a positional pattern, taken BEFORE the move */
+  const gaps=rows.slice(0,-1).map((b,i)=>mins(rows[i+1].s)-mins(b.e));
+  const out=rows.slice();
+  out.splice(to,0,out.splice(from,1)[0]);
+
+  const hhmm=m=>`${pad(Math.floor(m/60)%24)}:${pad(m%60)}`;
+  let cur=startM;
+  out.forEach((b,i)=>{
+    const len=mins(b.e)-mins(b.s);          /* the length is his, not mine */
+    b.s=hhmm(cur);b.e=hhmm(cur+len);
+    cur=cur+len+(gaps[i]||0);
+  });
+  planWrite(date,out);                       /* re-sorts by start: now a no-op */
+  return true;
+}
+/* The screen for it. He described holding an icon on the home screen until the
+   whole layout admits it can be moved — so this is a MODE, not a control buried
+   on each row: the day goes flat, every row becomes a handle, and the times
+   under his finger are the real ones, rewritten by moveRow on every drop. */
+let RR=null;
+function openRearrange(){
+  const rows=shape(today());
+  if(rows.length<2){toast('Nothing to rearrange today','bad');return}
+  sheet(`<div class="sh-k">REARRANGE TODAY</div>
+    <div class="sh-t">Drag a row where it needs to go</div>
+    <div class="sh-sub">The clock moves with it. Same blocks, same lengths, same finish —
+      the day bends, it doesn't shrink.</div>
+    <div id="rrList" class="rrlist"></div>
+    <button class="btn" onclick="closeSheet();render()">Done</button>`);
+  renderRR();
+}
+function renderRR(){
+  const host=$('rrList');if(!host)return;
+  host.innerHTML=shape(today()).map((b,i)=>
+    `<div class="rr-row" data-i="${i}"><span class="rr-grab">☰</span>`+
+    `<span class="rr-t">${b.s}</span><span class="rr-n">${esc(b.n)}</span></div>`).join('');
+  [...host.children].forEach(el=>el.addEventListener('pointerdown',rrDown));
+}
+function rrDown(e){
+  const el=e.currentTarget,i=+el.dataset.i;
+  RR={from:i,to:i,y0:e.clientY,h:el.offsetHeight+6,el};   /* +6 = the row margin */
+  el.classList.add('rr-drag');
+  try{el.setPointerCapture(e.pointerId)}catch(_){}
+  el.addEventListener('pointermove',rrMove);
+  el.addEventListener('pointerup',rrUp);
+  el.addEventListener('pointercancel',rrUp);
+  e.preventDefault();
+}
+function rrMove(e){
+  if(!RR)return;
+  const kids=[...$('rrList').children],dy=e.clientY-RR.y0;
+  RR.el.style.transform=`translateY(${dy}px)`;
+  const to=Math.max(0,Math.min(kids.length-1,RR.from+Math.round(dy/RR.h)));
+  if(to===RR.to)return;
+  RR.to=to;
+  /* everything between origin and target slides one slot to open the gap */
+  kids.forEach((c,i)=>{
+    if(c===RR.el)return;
+    let sh=0;
+    if(RR.from<to&&i>RR.from&&i<=to)sh=-RR.h;
+    if(RR.from>to&&i>=to&&i<RR.from)sh=RR.h;
+    c.style.transform=sh?`translateY(${sh}px)`:'';
+  });
+}
+function rrUp(){
+  if(!RR)return;
+  const {from,to,el}=RR;RR=null;
+  el.classList.remove('rr-drag');
+  /* moveRow is the only writer, and it refuses anything it cannot do honestly */
+  const moved=from!==to&&moveRow(today(),from,to);
+  renderRR();
+  if(moved){toast('Moved — the day re-timed','good');render()}
+  else [...$('rrList').children].forEach(c=>c.style.transform='');
 }
 /* ═══ ATTACH A GOAL TO ANYTHING ON THE DAY (his ask, 2026-07-28 night) ════════
    The four sacred blocks already had a goal system — the commitments THE WEEK
