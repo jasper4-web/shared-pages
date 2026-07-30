@@ -863,7 +863,9 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 .dchip u{text-decoration:none;font-family:'Geist Mono',monospace;font-size:11px;color:var(--faint)}
 .dchip.on{border-color:color-mix(in srgb,var(--phos) 45%,transparent);color:var(--dim)}
 .dchip.on u{color:var(--phos)}
-.ovrpeek .pace b{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em}
+/* the date is ONE word — read on the live build, it was breaking as "Apr / 15 '27" */
+.ovrpeek .pace b{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;
+  white-space:nowrap}
 .ovrpeek .pace .good{color:var(--phos)}.ovrpeek .pace .warn{color:var(--gold)}.ovrpeek .pace .bad{color:var(--blood)}
 body.glanceOpen .ovrpeek{border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0}
 .glance{display:none}
