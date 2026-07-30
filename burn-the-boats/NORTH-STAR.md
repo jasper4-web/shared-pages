@@ -36,6 +36,29 @@ planner exists and he has lived one real planned day in it.
 2. **Planning happens ONLY in the week view. No editing today from Today.** His reason, his
    words: changing the day on the spot would be *"me trying to get out of my duties."* This
    is a self-binding rule — do not add an escape hatch later out of helpfulness.
+
+   ⚠ **AMENDED 2026-07-29 — NARROWED TO ONE VERB. AWAITING HIS RATIFICATION.**
+   He asked for the opposite that night, directly: *"I would like the option, whenever I'm
+   looking at my day, to move things… I should be able to shift the schedule around during
+   the day."* A later instruction from him outranks an earlier note — but this is the exact
+   rule he wrote to stop an agent from being talked into an escape hatch, so it is amended
+   **visibly** rather than absorbed. The line crew lane L07 specified, and I ratified:
+
+   > **From Today he may change the ORDER of what is left. He may not change the CONTENT,
+   > the LENGTH, or the AMOUNT.** Rename, re-time, shorten, add and delete stay in the
+   > planner, on days ahead.
+
+   Why this keeps the rule intact: an escape hatch makes the day **smaller**, and order-only
+   cannot. L07 proved it — **302 legal reorders across five clocks on his real 14-row weekday
+   changed the score in 0 of 302 cases, and the day ended at the same minute in 302 of 302**,
+   because permuting lengths leaves `sum(lengths)+sum(gaps)` fixed. The same sweep showed the
+   inverse: forcing an *unfinished* work block out of the way shrinks the denominator 6→1 and
+   lifts the work ratio 0.1667→1.0 — a whole day handed over for nothing.
+
+   **If he wants §2.2 whole, the mid-day reorder dies and he plans tomorrow from the week
+   view instead.** That is a real option. Evidence:
+   `crew-2026-07-29/FINDINGS/L07-2230-today-may-reorder-but-never-reduce.md` and
+   `CONDUCTOR-2236-the-reorder-ruling.md`.
 3. **The four work blocks Mon–Fri are mandatory.** He proposed docking XP if they aren't
    planned. Resolution (see §3): they are **fixtures** — always present, cannot be deleted;
    planning means aiming them. Structure enforces what a fine would only punish.
