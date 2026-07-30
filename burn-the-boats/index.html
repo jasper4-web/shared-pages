@@ -1468,7 +1468,11 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
    last counted weekday is Fri Dec 25. Nothing else is hardcoded to a date: the
    label, the landmarks and the OVR curve are all derived from these two lines,
    so the next time he moves the finish line it is a one-character edit. */
-const RUN_START='2026-07-27', RUN_END='2026-12-26', HIM=99;
+/* 2026-08-03. His restart: the five days lived before it are DISCARDED, Dec 25
+   is untouched, and TOTAL_DAYS is derived rather than typed, so 110 became 105
+   on its own. He asked for this so the days before August could not "mess up the
+   timeline" — see JASPER-1145 and the migration below. */
+const RUN_START='2026-08-03', RUN_END='2026-12-26', HIM=99;
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const DOMAINS=[
@@ -1520,7 +1524,7 @@ const DEFAULT={
      fresh install re-walked the migrations on its second load — harmless until
      migrateEngine, which would have stamped a fresh sliced-from-day-one save with
      a seam and flipped its first days onto the OLD engine. Hostile QC, 2026-07-29. */
-  v:8, xp:0,
+  v:9, xp:0,
   /* THE LEDGER (Phase 1, 2026-07-28). Every XP movement is an entry: {k,xp,d,g,t}.
      S.xp stays the running balance every screen reads; the ledger is what makes a
      movement REVERSIBLE — his accidental-tap bug, fixed by architecture. The rule:
@@ -1539,6 +1543,7 @@ const DEFAULT={
   /* fresh installs live on the sliced day from day one; lived saves get a seam
      stamped by migrateEngine so their history keeps the score it was lived under */
   engineSeam:'0000-00-00',
+  preRun:{},                 /* days lived before RUN_START — kept, never scored */
   vices:{
     dish:{label:'THE DISHWASHER', mode:'weekly', allow:1, week:0, weekKey:null,
           streak:0, streakBest:0, lastSlip:null, slips:0, hist:{}, ch:null, chDone:{}, chLapsed:null},
@@ -1689,12 +1694,54 @@ function merge(base,over){
 }
 /* merge() replaces arrays wholesale, so a save made before the Vault shipped keeps the
    old four-reward ladder forever. Upgrade it — but only if he never edited it himself. */
+/* ═══ THE RESTART · v8 -> v9 ═════════════════════════════════════════════
+   Discarding a day is NOT deleting it. His writing lives inside those day
+   records, so they move to `s.preRun` and stay readable forever — they simply
+   leave `S.days`, which is the only place the engine looks.
+
+   They MUST leave. `runPoints()` skips anything before `engineSeam`, so a
+   surviving pre-run day cannot score directly — but `preFrac()` calls
+   `domainProgress(engineSeam)`, and that includes every WEEK whose Monday falls
+   before the cutoff. The discarded days are the week of Mon 2026-07-27, so a
+   single one left behind would return as BANKED HISTORY and hand him a head
+   start on the run he asked to throw away.
+
+   This is a sweep on every load, not a one-shot migration, for one reason: the
+   day he is STANDING IN is exempt. Deploying in the pre-run window would
+   otherwise delete today's record out from under him — which blanks Record for
+   the evening and drops the day's `credited` map. The exemption expires by
+   itself: once the run has started, no key can be both `< RUN_START` and today. */
+function sweepPreRun(s){
+  /* today's key computed INLINE and from nothing else. `let S=load()` runs at
+     :1586 while `const today` is declared at :1606, so calling today() from here
+     throws a ReferenceError from inside its own temporal dead zone — and load()'s
+     catch used to swallow that and hand back DEFAULT, silently deleting every day,
+     every ledger row and every sentence he had ever typed. Caught by
+     model/restart.js asserting his sentences survived, which is the only check
+     that could have caught it. See L02-0715. */
+  const _d=new Date(),_p=n=>String(n).padStart(2,'0');
+  const tk=`${_d.getFullYear()}-${_p(_d.getMonth()+1)}-${_p(_d.getDate())}`;
+  const days=s.days||{};
+  if(!s.preRun)s.preRun={};
+  let moved=0;
+  Object.keys(days).forEach(k=>{
+    if(k>=RUN_START||k===tk)return;      /* inside the run, or the day he is living */
+    s.preRun[k]=days[k];delete days[k];moved++;
+  });
+  return moved;
+}
+function migrateRestart(s){
+  sweepPreRun(s);
+  s.engineSeam=RUN_START;   /* the run scores from day one and not one day earlier */
+  s.preHigh=0;              /* the high-water mark belonged to the run he discarded */
+}
 function migrate(s){
-  if(s.v>=8)return s;
-  if(s.v>=7){migrateEngine(s);s.v=8;return s}
-  if(s.v>=6){migrateStandards(s);migrateEngine(s);s.v=8;return s}
-  if(s.v>=5){migrateCoffee(s);migrateStandards(s);migrateEngine(s);s.v=8;return s}
-  if(s.v>=4){migrateBoosts(s);migrateCoffee(s);migrateStandards(s);migrateEngine(s);s.v=8;return s}
+  if(s.v>=9)return s;
+  if(s.v>=8){migrateRestart(s);s.v=9;return s}
+  if(s.v>=7){migrateEngine(s);migrateRestart(s);s.v=9;return s}
+  if(s.v>=6){migrateStandards(s);migrateEngine(s);migrateRestart(s);s.v=9;return s}
+  if(s.v>=5){migrateCoffee(s);migrateStandards(s);migrateEngine(s);migrateRestart(s);s.v=9;return s}
+  if(s.v>=4){migrateBoosts(s);migrateCoffee(s);migrateStandards(s);migrateEngine(s);migrateRestart(s);s.v=9;return s}
   const OLD=[1200,1500,2000,2500];
   const untouched=Array.isArray(s.rewards)&&s.rewards.length===OLD.length&&
     s.rewards.every((r,i)=>r.cost===OLD[i]&&!r.done);
@@ -1715,7 +1762,8 @@ function migrate(s){
   migrateCoffee(s);
   migrateStandards(s);
   migrateEngine(s);
-  s.v=8;
+  migrateRestart(s);
+  s.v=9;
   return s;
 }
 /* XP SESSION PHASE 1 (2026-07-29): standards get a lifetime. A live def has one open
@@ -1766,8 +1814,29 @@ function migrateBoosts(s){
     delete s.boosts;
   }
 }
-function load(){try{const r=localStorage.getItem('btb3');if(r)return migrate(merge(JSON.parse(JSON.stringify(DEFAULT)),JSON.parse(r)))}catch(e){}
-  return JSON.parse(JSON.stringify(DEFAULT))}
+let BOOT_ERR=null;
+function load(){
+  const fresh=()=>JSON.parse(JSON.stringify(DEFAULT));
+  let raw=null;try{raw=localStorage.getItem('btb3')}catch(e){}
+  if(!raw)return fresh();                       /* genuinely a first run */
+  let parsed=null;try{parsed=JSON.parse(raw)}catch(e){BOOT_ERR='unreadable save';}
+  if(!parsed)return fresh();
+  const merged=merge(fresh(),parsed);
+  try{
+    const st=migrate(merged);
+    sweepPreRun(st);            /* the deploy-day exemption expires on the next open */
+    return st;
+  }catch(e){
+    /* NEVER fall back to DEFAULT here. An exception means the APP is wrong, not
+       his data — and returning a blank save would write that blank over the only
+       copy of everything he has. Hand back the un-migrated but INTACT save and
+       say so out loud. This empty catch is exactly how a pre-v8 save silently
+       lost everything on the real boot path (L02-0715). */
+    BOOT_ERR=String((e&&e.message)||e);
+    try{console.error('BURN THE BOATS — migration failed, save preserved:',e)}catch(_){}
+    return merged;
+  }
+}
 function save(){try{localStorage.setItem('btb3',JSON.stringify(S))}catch(e){}}
 function day(k){k=k||today();if(!S.days[k])S.days[k]={done:{},miss:{},wait:{},produced:{},focus:{},prio:[],wins:{},off:0,credited:{}};
   if(!S.days[k].credited)S.days[k].credited={};return S.days[k]}
@@ -2082,6 +2151,15 @@ function domainProgress(cutoff){
 
   const weeks={};
   Object.keys(S.days).forEach(k=>{
+    /* A day before RUN_START is not history, not points, not anything. The sweep
+       archives them, but the day he is STANDING IN on a pre-run deploy day is
+       deliberately exempt so Record and its credited map survive the evening —
+       and that one surviving day sits in the week of Mon Jul 27, which is before
+       the seam, so domainProgress() banked it as pre-run history and handed him a
+       head start on the run he asked to throw away. Measured: preFrac 0.000227 at
+       18:00 on the deploy day, and preFrac is a HIGH-WATER MARK, so it sticks.
+       The rule the engine actually wants is this one line. */
+    if(k<RUN_START)return;
     const dt=new Date(k+'T00:00:00'); if(dt.getDay()===0)return;
     const wk0=mondayOf(dt);
     if(cutoff&&wk0>=cutoff)return;
