@@ -1,0 +1,24 @@
+/* =====================================================================
+   Rendition C — the doorway as it is today, with the same ring field used as a
+   LIGHT-NATIVE tint. Loaded AFTER styles.css; overrides only.
+
+   Why C exists: the shader's character is additive glow, which is a thing that
+   only happens on black. On a light page the same geometry has to be rendered
+   subtractively — the field tints Warm Vanilla toward Electric Blue and is
+   clamped at 30% so it can never reach the point of fighting body-copy
+   contrast. Nothing about the brand, the tiles or the layout changes.
+   ===================================================================== */
+html{background:var(--paper)}
+#sano-bg{position:fixed;inset:0;z-index:0;background:var(--paper)}
+#sano-scrim{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 75% 65% at 50% 42%,rgba(245,240,232,.50),rgba(245,240,232,.78));
+}
+body{background:transparent}
+/* ⚠️ NOT .skip — see the same note in skin-dark.css: it is absolute at
+   left:-9999px, and position:relative drags it into flow as a 27px bar. */
+header,#main,#site-footer,.ribbon{position:relative;z-index:1}
+
+/* the tiles stay white and now read as cards floating on the field, which is
+   what they already do against --paper elsewhere on the site */
+.door-tile{box-shadow:0 6px 24px rgba(9,9,11,.06)}
