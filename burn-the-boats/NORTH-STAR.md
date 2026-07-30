@@ -176,6 +176,23 @@ reframed around words he'd use ("my standards", "what came out of my weeks").
     only way to complete a block that happened off-screen — the investigation's real fix
     for that is **AWAY mode**, still unbuilt.
 
+### Added 2026-07-29 (late) — THE TODAY SURFACE, his pick from five drawings (locked)
+
+27. **THE DAY AND THE BLOCK ARE ONE COMPONENT — N3 THE FISHEYE.** His brief, verbatim:
+    *"I want us to have the one block that we're on and the whole day kind of all in one…
+    the block that you're on right now is just a bit larger, but you can also partly see
+    the other parts of the day."* Drawn five ways in `renditions/rend-today-oneview.html`;
+    he picked N3 with the recommended sub-decision — *"Your recommendation is perfect."*
+    **The rule: one list, and the rows ramp by DISTANCE FROM NOW.** The live block is the
+    full card; two rows either side keep their body; everything beyond compresses to a time
+    and a name; the morning folds to a single line. The card is a **row in the list**, not a
+    thing above it — there must never again be two places one block can be drawn.
+    **A far row is display-only** (11px cannot be a 44px target): tapping the far zone opens
+    the day out first, and then every row is a real target. His approved trade.
+    Shipped btb-v47/48. Kills the SEAM, the day DOOR, `.blk.now` and the collapsing arcs
+    (funeral §10). **Not yet lived on** — `MID_SPAN=2` and the expand-then-tap are the two
+    dials to revisit after he uses it for a real day.
+
 ---
 
 ## 3 · THE ONE PUSHBACK MADE, AND WHY
