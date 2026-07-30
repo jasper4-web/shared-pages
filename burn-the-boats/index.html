@@ -45,9 +45,34 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:400;
 h1,h2,h3{font-family:'Clash Display',sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
 .mono{font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums}
 .app{max-width:520px;margin:0 auto;padding:calc(6px + var(--st)) 13px calc(124px + var(--sb))}
+/* "double-tap zooms" — his second complaint about the installed app. This kills
+   the double-tap-to-zoom gesture and the 300ms tap delay that comes with it,
+   and deliberately leaves PINCH zoom working: `user-scalable=no` would have
+   taken away his ability to zoom at all, which is a real accessibility loss in
+   exchange for an accidental gesture. */
+html{touch-action:manipulation}
+button,.blk,.chip,.tab,.card,.row,label,summary{touch-action:manipulation}
 .view{display:none}.view.on{display:block}
 .vhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
-  padding:calc(16px + var(--st)) 0 14px;border-bottom:1px solid var(--line);margin-bottom:16px}
+  padding:16px 0 14px;border-bottom:1px solid var(--line);margin-bottom:16px}
+/* ═══ THE INSET CONTRACT — ONE OWNER PER LAYER ════════════════════════════
+   2026-07-30. He said the app "doesn't fit the screen right" once it was on his
+   home screen. Measured, and he was right: `.app` pays `var(--st)` and BOTH
+   `.vhead` (x3) and `.furnace` sit INSIDE it and paid it again. In a browser the
+   inset is 0 and nothing shows. Installed, `--st` is ~59px, so:
+
+       .app padding-top   6px -> 65px
+       .furnace padding   20px -> 79px      content began 144px down, not 85px
+
+   Roughly 59px of dead space above everything, on the only surface he actually
+   uses. Every measurement this project ever took was in a browser, where the
+   bug is invisible by construction.
+
+   THE CONTRACT: the element that OWNS a layer pays the inset, once.
+     · `.app` owns the scrolling page  -> pays --st and --sb
+     · `.vhead`/`.furnace` live inside it -> pay NOTHING
+     · `.vicev`, `.charv`, `.toast`, `.tabs` are `position:fixed` and own their
+       own layer -> they pay it, correctly, and are left alone. */
 .vhead h2{font-size:26px;letter-spacing:-.03em}
 .vhead span{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint)}
 
@@ -101,7 +126,7 @@ body.noTabs .tabs{display:none}
 button{font-family:inherit}
 
 /* ---------- THE FURNACE ---------- */
-.furnace{position:relative;margin:0 -13px;padding:calc(20px + var(--st)) 16px 17px;
+.furnace{position:relative;margin:0 -13px;padding:20px 16px 17px;   /* inset contract: .app pays it */
   background:linear-gradient(180deg,#0d0c10,#0a090d);overflow:hidden;border-bottom:1px solid #1c1a22}
 .furnace::before{content:'';position:absolute;left:-10%;right:-10%;top:-40%;height:150%;
   background:radial-gradient(50% 46% at 50% 62%,rgba(255,107,44,.2),rgba(179,42,0,.08) 44%,transparent 70%);
@@ -2741,6 +2766,7 @@ function render(){
   else if(VIEW==='bank') renderBank();
   else if(VIEW==='record') renderRecord();
   if($('charv').classList.contains('on')) renderChar();
+  syncBadge();
 }
 function renderStatus(){
   $('cvOvr').textContent=ovr();
@@ -3443,12 +3469,78 @@ function renderDeck(){
 const IS_INSTALLED=()=>!!(navigator.standalone||
   (window.matchMedia&&matchMedia('(display-mode: standalone)').matches));
 let NUDGE_OFF=false;                       /* per-open, deliberately not persisted */
+/* ═══ THE ICON ASKS THE QUESTION ══════════════════════════════════════════
+   2026-07-30. He asked for notifications that are "more prevalent … show up
+   when the phone is locked … more integrated into the phone."
+
+   The badge is the one piece of that which needs NO server: `setAppBadge` is
+   supported on installed iOS home-screen web apps since 16.4, it paints a
+   number on the icon, and it survives the app being closed. So the home screen
+   itself carries the debt — blocks that have ENDED and were never done.
+
+   Deliberately NOT the count of work remaining: a number that only ever falls
+   as the day passes is a countdown, not a question. This one only appears when
+   he is actually behind, and clears the moment he is not. */
+function badgeCount(){
+  const d=day();
+  return dueSoFar().filter(b=>!d.done[b.id]).length;
+}
+function syncBadge(){
+  if(!('setAppBadge'in navigator))return;                 /* not iOS 16.4+, or a tab */
+  if(!('Notification'in window)||Notification.permission!=='granted')return;
+  const n=badgeCount();
+  (n>0?navigator.setAppBadge(n):navigator.clearAppBadge()).catch(()=>{});
+}
 function renderHomeNudge(){
   const el=$('homeNudge');if(!el)return;
-  el.innerHTML=(IS_INSTALLED()||NUDGE_OFF)?'':
-    `<button class="homenudge" onclick="homeNudgeSheet()">
-      <b>TAB</b><span>This is a browser tab — Safari can wipe what lives here.
-      Tap for the 2-minute fix.</span></button>`;
+  /* the tab warning outranks everything — data loss beats a missing buzz */
+  if(!IS_INSTALLED()){
+    el.innerHTML=NUDGE_OFF?'':
+      `<button class="homenudge" onclick="homeNudgeSheet()">
+        <b>TAB</b><span>This is a browser tab — Safari can wipe what lives here.
+        Tap for the 2-minute fix.</span></button>`;
+    return;
+  }
+  /* installed, but the phone is silent. Two different states, two different
+     answers, because once iOS has been told "Don't Allow" the app can never
+     ask again and pretending otherwise would send him in a circle. */
+  const perm=('Notification'in window)?Notification.permission:'unsupported';
+  el.innerHTML=(perm==='granted'||perm==='unsupported'||NUDGE_OFF)?'':
+    perm==='denied'
+      ? `<button class="homenudge" onclick="notifySheet()">
+          <b>OFF</b><span>Notifications are blocked for this app. It can't ask again —
+          Settings → Notifications → Burn.</span></button>`
+      : `<button class="homenudge" onclick="notifySheet()">
+          <b>NUDGE</b><span>Your phone isn't buzzing you. Turn nudges on.</span></button>`;
+}
+/* The ask, with its reason attached, from a tap he chose to make. It used to
+   fire on `document.addEventListener('click', askNotify, {once:true})` — the
+   first tap ANYWHERE in the app, with no context at all. One reflexive
+   "Don't Allow" on that prompt permanently disables notifications for the app,
+   recoverable only through Settings or a reinstall. */
+function notifySheet(){
+  const perm=('Notification'in window)?Notification.permission:'unsupported';
+  if(perm==='denied'){
+    sheet(`<div class="sh-k">NUDGES ARE BLOCKED</div>
+      <div class="sh-t">Only you can turn these back on.</div>
+      <div class="sh-sub">THE APP IS NOT ALLOWED TO ASK A SECOND TIME</div>
+      <div class="card" style="margin-top:14px;padding:14px;font-size:13.5px;line-height:1.7;color:var(--dim)">
+        Open <b style="color:var(--ink)">Settings → Notifications → Burn</b> and switch
+        Allow Notifications on. Then come back and reopen the app.</div>
+      <button class="btn" style="margin-top:12px" onclick="closeSheet()">Got it</button>
+      <div style="height:8px"></div>
+      <button class="btn gh" onclick="NUDGE_OFF=true;closeSheet();render()">Hide this for now</button>`);
+    return;
+  }
+  sheet(`<div class="sh-k">NUDGES</div>
+    <div class="sh-t">Let it tap you on the shoulder.</div>
+    <div class="sh-sub">A BLOCK STARTED AND YOU HAVEN'T OPENED IT · THE ICON CARRIES WHAT YOU OWE</div>
+    <div class="card" style="margin-top:14px;padding:14px;font-size:13.5px;line-height:1.7;color:var(--dim)">
+      iOS will ask once. If you say no, this app can never ask again — you would have to
+      turn it back on in Settings. So say yes here if you want it at all.</div>
+    <button class="btn" style="margin-top:12px" onclick="askNotify(true)">Turn nudges on</button>
+    <div style="height:8px"></div>
+    <button class="btn gh" onclick="NUDGE_OFF=true;closeSheet();render()">Not now</button>`);
 }
 function homeNudgeSheet(){
   sheet(`<div class="sh-k">YOUR DATA, MADE PERMANENT</div>
@@ -4138,9 +4230,12 @@ function notify(title,body){
   navigator.serviceWorker&&navigator.serviceWorker.ready.then(r=>
     r.active&&r.active.postMessage({type:'notify',title,body,tag:'btb'})).catch(()=>{});
 }
-function askNotify(){
+function askNotify(deliberate){
   if(!('Notification'in window))return;
-  if(Notification.permission==='default')Notification.requestPermission();
+  /* only ever from a control he chose to press — see notifySheet() */
+  if(!deliberate)return;
+  if(Notification.permission!=='default'){closeSheet();render();return}
+  Notification.requestPermission().then(()=>{closeSheet();syncBadge();render()}).catch(()=>{});
 }
 /* morning · evening · and when a block has started and he hasn't opened it */
 let lastNudge='';
@@ -6812,7 +6907,7 @@ $('sabPlan').onclick=()=>{sabOff=true;$('sabbath').classList.remove('on');
   WK_VIEW=1;                      /* Sunday plans the week AHEAD, not the one behind */
   go('push')};
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
-document.addEventListener('click',askNotify,{once:true});
+/* the first-tap permission ambush is gone — the ask lives in notifySheet() */
 recount();
 route();
 HDR.show();        // sets the active view AND lights its tab
