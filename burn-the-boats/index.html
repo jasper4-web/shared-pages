@@ -6422,10 +6422,29 @@ function renderRecord(){
      failure built out of almost no data. Two guards, and neither one lies:
        · nothing due yet  -> "—", no number invented
        · fewer than 5 due -> the real number, but no verdict colour yet
-     The verdict arrives when there is enough week to judge. */
+     The verdict arrives when there is enough week to judge.
+
+     2026-07-30 — THE GUARD SAID "WEEK" AND COUNTED BLOCKS. `due` is blocks due,
+     not days lived, and one ordinary day supplies eight of them. So by 18:00 on
+     ANY Monday the week called itself settled off a single day and painted the
+     verdict — 0% in blood, the first thing on the page, on the evening of day
+     one. That is the exact wall this comment was written to prevent, arriving a
+     few hours later than the version it describes. Measured on the shipped
+     build: `2026-08-03 18:00  due 8  done 0  ->  blood`. Day one of his restart.
+
+     This is the third time this week a comment stated the intent and the code
+     underneath it read the wrong quantity (`shapeFor()` said "the constant" and
+     read the mutable store; `projection()` put a partial day over a whole one).
+     The rule is the same one that fixed the pace line: JUDGE ON DAYS THAT HAVE
+     ENDED. A week made only of the day still in progress gets no verdict — and
+     from the first ended day onward the verdict is real, so a genuinely bad week
+     still goes red on Tuesday morning. This suppresses no honest failure. */
   const EARLY=5;
   const w=week(),p=w.due?Math.round(w.done/w.due*100):null;
-  const settled=w.due>=EARLY;
+  const wkMon=mondayOf(new Date());
+  const ended=Math.max(0,Math.round(
+    (new Date(iso(new Date())+'T00:00:00')-new Date(wkMon+'T00:00:00'))/864e5));
+  const settled=ended>=1&&w.due>=EARLY;
   const pc=(p===null||!settled)?'var(--faint)':p>=85?'var(--phos)':p>=70?'var(--gold)':'var(--blood)';
   $('recWk').textContent=`WK ${pad(weekNo())}`;
   const mon=mondayOf(new Date());
