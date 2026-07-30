@@ -548,6 +548,8 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
   color:var(--faint);font-weight:400}
 .dayfold u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:11px;
   letter-spacing:.1em;color:var(--gold);text-decoration:none}
+/* the same control, the other direction — solid, because the day is open, not folded */
+.dayfold.open{border-style:solid}
 
 /* ---------- small wins ---------- */
 /* THE SHELF — the magic list's home in the Bank (C1, his pick): a 2-up card grid */
@@ -3039,6 +3041,18 @@ function renderSched(){
   if(DAY_OPEN||sh.length===0){
     /* THE WHOLE DAY, opened out: every row full, the arcs back as headers. This is
        what the fold's SHOW and openDay() reach, and where a past row is tappable. */
+    /* THE WAY BACK. He caught this before I did: "make sure that after I expand the
+       day, I can easily collapse it back." v47/48 had NO collapse affordance at all —
+       the fold and the far rows only ever OPEN, so the only way out was killing the
+       app. The control lives in the SAME PLACE in both states (top of the list), with
+       two labels — one door, like the rest of this app. */
+    if(sh.length){
+      const back=document.createElement('button');
+      back.className='dayfold open';
+      back.onclick=()=>toggleDay();
+      back.innerHTML=`<b>THE WHOLE DAY</b><u>FOLD IT BACK ▴</u>`;
+      frag.appendChild(back);
+    }
     const groups=dow()===6?[['Saturday',0,99]]:ARCS;
     let placed=false;
     groups.forEach(([name,a,z])=>{
