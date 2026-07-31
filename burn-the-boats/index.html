@@ -300,6 +300,23 @@ button{font-family:inherit}
   font-family:'Geist Mono',monospace;font-size:var(--vt-micro);letter-spacing:.14em;
   text-transform:uppercase;color:var(--ember)}
 .m-board .ft s{text-decoration:none;color:#4b4560}
+/* THE ALLOWANCE STRIP — the dish counterpart of the board. Short on purpose: a
+   budget has one number and it does not tick, so it does not earn 112px. */
+.m-allow{display:flex;align-items:center;gap:13px;margin:0 12px var(--v1);
+  border:1px solid var(--line2);border-radius:16px;padding:11px 14px;
+  background:linear-gradient(160deg,rgba(224,178,94,.07),rgba(224,178,94,.012))}
+.m-allow .tk{display:flex;gap:6px;flex:none}
+.m-allow .tk i{width:17px;height:17px;border-radius:99px;border:2px solid #4a4560;background:#0b0912}
+.m-allow .tk i.on{border-color:var(--gold);background:rgba(224,178,94,.2);
+  box-shadow:0 0 9px rgba(224,178,94,.45)}
+.m-allow .tx{min-width:0}
+.m-allow .tx b{display:block;font-size:14px;font-weight:500;color:var(--ink);line-height:1.25}
+.m-allow .tx span{display:block;font-family:'Geist Mono',monospace;font-size:var(--vt-micro);
+  letter-spacing:.16em;text-transform:uppercase;color:#6d5c3c;font-weight:700;margin-top:5px}
+.m-allow.over{border-color:rgba(255,107,44,.42);
+  background:linear-gradient(160deg,rgba(255,107,44,.085),rgba(255,107,44,.015))}
+.m-allow.over .tx b{color:#eccbb1}
+.m-allow.over .tk i{border-color:#5a4a5e}
 /* modules reflow: two-up for two offers, full width for one, one line of type for none.
    A fixed grid spends most of its life with a hole in it, and an empty card reads as something owed. */
 .m-mods{padding:0 16px;display:grid;gap:var(--v1)}
@@ -2476,7 +2493,15 @@ function rollDishWeek(){
 function logDish(){
   const v=S.vices.dish;
   v.week++;
-  if(v.week>v.allow){save();lapseCh('dish');logSlip('dish',true);return}
+  /* 2026-07-30 · ANY use voids the running challenge, including one INSIDE the
+     allowance. Every dish challenge is a "clean"/"at zero" challenge, but this
+     lapsed only when the week went OVER — so taking "A week at zero", using the
+     dishwasher once on Tuesday and claiming on Sunday paid in full for a week that
+     was not zero. Measured, not read: xp 0 -> 90 with week=1 on the shipped build.
+     The allowance still governs SLIPS — one use is not a slip and never was. It
+     simply is not zero, and a challenge that said zero has to know the difference. */
+  lapseCh('dish');
+  if(v.week>v.allow){save();logSlip('dish',true);return}
   save();render();
   toast(`Logged — ${v.week} of ${v.allow} this week`,'good');
 }
@@ -2545,10 +2570,17 @@ const VRING=(()=>{
     o=o||{};const C=SZ/2,R=SZ*0.379,SW=Math.max(7,SZ*0.049);let s='';
     if(mode==='week'){
       const held=o.held==null?0:o.held,GAP=3.2;
+      /* 2026-07-30 · the day segments state the WEEK, not merely the calendar. They
+         filled ember purely by days elapsed, so a flawless week glowed like a relapse
+         by Sunday — the ring looking alarmed at the passage of time. Gold while he is
+         at or under the allowance, ember only once he is genuinely over it. Days
+         survived should look like days survived. */
+      const OVER=!!o.over,LIT=OVER?'#FF6B2C':'#E0B25E';
+      const GLOW=OVER?'rgba(255,107,44,.55)':'rgba(224,178,94,.5)';
       for(let i=0;i<7;i++){
         const a0=135+i*(270/7)+GAP,a1=135+(i+1)*(270/7)-GAP;
-        s+=stroke(arcD(C,R,a0,a1),i<held?'#FF6B2C':'#231f31',SW,'round',
-          i<held?' style="filter:drop-shadow(0 0 6px rgba(255,107,44,.55))"':'');
+        s+=stroke(arcD(C,R,a0,a1),i<held?LIT:'#231f31',SW,'round',
+          i<held?` style="filter:drop-shadow(0 0 6px ${GLOW})"`:'');
       }
       /* the rule at the crown: the allowance token, gold when unspent, hollow when used */
       /* The glyph inside this token is sized from the token's radius, so at the
@@ -2625,12 +2657,20 @@ const VGRAPH=(()=>{
      called it "THE ALLOWANCE" — on any allowance but 1 the chart stated a rule the
      app was not enforcing. Labelling the line forced the bug into the open. */
   function week(weeks,allow){
-    const A=Math.max(1,allow||1),MAXU=Math.max(3,A+1);
+    /* MAXU was a flat 3. On his allowance of 1 that pinned every real week into the
+       top third and stranded the bottom label under empty space. A+1 keeps one clear
+       step above the line, which is the range a weekly allowance actually lives in. */
+    const A=Math.max(1,allow||1),MAXU=Math.max(2,A+1);
     const y=n=>PADT+IN*(Math.min(MAXU,n)/MAXU);
     let s=base(y(A))+lab(PADT,'0')+lab(y(A),String(A),1)+lab(PADT+IN,MAXU+'+');
     weeks.forEach((n,i)=>{
-      const x=xs(i,weeks.length);
+      const x=xs(i,weeks.length),cur=i===weeks.length-1;
       if(n==='open'){s+=open(x,y(0));return}
+      if(n==='none'){s+=absent(x);return}          /* a week he never ran the app */
+      /* THE WEEK IN PROGRESS IS DRAWN HOLLOW, exactly as today is on the smoke chart.
+         A filled green ring on Thursday claims a perfect week that still has three
+         days left to go wrong in. */
+      if(cur){s+=(n>0?stem(x,y(n),'#2a2438'):'')+open(x,y(n));return}
       if(n===0){s+=dot(x,PADT,'#4ADE80',true);return}
       s+=stem(x,y(n),n>A?'#3a2418':'#2a2438')+dot(x,y(n),n>A?'#FF6B2C':'#E0B25E');
     });
@@ -2654,9 +2694,15 @@ const CHALLENGES={
     {id:'c48',ti:'48 hours clean',xp:180,hours:48},
     {id:'c7', ti:'A week clean',  xp:400,hours:168},
   ],
+  /* 2026-07-30 · two rungs became four. The ladder had no SHORT rung — no dish
+     equivalent of "Hold to 14:00" you could win inside a week — and a 90 -> 250
+     cliff with nothing between it. d3 and w2 are those two missing steps, not
+     padding to fill a grid. */
   dish:[
-    {id:'w0',ti:'A week at zero', xp:90, weeks:1},
-    {id:'m0',ti:'A month at zero',xp:250,weeks:4},
+    {id:'d3',ti:'Three days clean', xp:50, hours:72},
+    {id:'w0',ti:'A week at zero',   xp:90, weeks:1},
+    {id:'w2',ti:'Two weeks at zero',xp:160,weeks:2},
+    {id:'m0',ti:'A month at zero',  xp:250,weeks:4},
   ],
 };
 function chDef(k,id){return (CHALLENGES[k]||[]).find(c=>c.id===id)}
@@ -2703,13 +2749,18 @@ function smokeDays(n){
   }
   return out;
 }
+/* A week with NO record is not a week at zero — it is a week he did not run the app.
+   This is the same rule smokeDays() has carried since Phase 2, and the dish side
+   never got it: `hist[key]==null?0:` painted every unlived week as a perfect one, so
+   a fresh save drew eleven green weeks he never lived. rollDishWeek() only writes
+   hist for a week it can prove was lived, so the absence here is real information. */
 function dishWeeks(n){
   const out=[],hist=S.vices.dish.hist||{};
   for(let i=n-1;i>=0;i--){
     const dt=new Date();dt.setDate(dt.getDate()-i*7);
     const key=mondayOf(dt);
     if(i===0){out.push(S.vices.dish.week||0);continue}
-    out.push(hist[key]==null?0:hist[key]);
+    out.push(hist[key]==null?'none':hist[key]);
   }
   return out;
 }
@@ -2738,7 +2789,7 @@ function boardTick(){
   if(VKEY!=='smoke')return;
   const h=$('mbH');if(!h)return;                 /* no board on screen: nothing to tick */
   const left=gateLeftS(S.vices.smoke);
-  if(left<=0){renderVice(VKEY);return}
+  if(left<=0){clearInterval(VTICK);VTICK=null;renderVice(VKEY);return}
   h.textContent=pad(Math.floor(left/3600));
   $('mbM').textContent=pad(Math.floor(left%3600/60));
   $('mbS').textContent=pad(left%60);
@@ -2747,7 +2798,11 @@ function openVice(k){
   renderVice(k);
   $('vicev').classList.add('on');
   document.body.classList.add('noTabs');
-  VKEY=k;clearInterval(VTICK);VTICK=setInterval(boardTick,1000);
+  /* only start the clock when a clock is actually on screen. It used to start for
+     ANY vice and boardTick() bailed on the first line, so the dishwasher screen ran
+     a do-nothing timer once a second for as long as it was open. */
+  VKEY=k;clearInterval(VTICK);VTICK=null;
+  if($('mbH'))VTICK=setInterval(boardTick,1000);
 }
 function closeVice(){
   clearInterval(VTICK);VTICK=null;VKEY=null;
@@ -2816,7 +2871,7 @@ function renderVice(k){
       if(!smoke)return true;
       if(c.mins!=null)return nowMin()<c.mins-30&&!vs.smoked;   /* only offer what is still winnable */
       return !vs.smoked;
-    }).slice(0,board||!smoke?2:4);       /* the board's space becomes offers once it goes */
+    }).slice(0,smoke&&board?2:4);        /* the board's space becomes offers once it goes */
     const SLOT=['On offer','Tonight','Tomorrow','This week'];
     avail.forEach((c,i)=>mods.push({cls:'offer',st:SLOT[i]||'Also',xp:c.xp,ti:c.ti,
       ladder:Math.min(3,list.indexOf(c)+1),act:`takeCh('${k}','${c.id}')`,actLabel:'Take it'}));
@@ -2829,7 +2884,30 @@ function renderVice(k){
   const held=smoke?0:Math.min(7,((new Date().getDay()+6)%7)+1);
   const ring=smoke
     ? VRING.build(128,'day',{now:nowMin(),logAt:vs.smoked?mins(vs.smoked.at):null})
-    : VRING.build(128,'week',{held,used:v.week>=v.allow});
+    : VRING.build(128,'week',{held,used:v.week>=v.allow,over:v.week>v.allow});
+
+  /* THE ALLOWANCE STRIP — the dish answer to the smoke board. The gate is a moment,
+     so it gets a clock; the allowance is a BUDGET, so it gets a balance. Forcing
+     HH:MM:SS onto a weekly budget would copy the costume and lose the function.
+     One token per unit of allowance, filled while unspent, plus the one genuinely
+     live number the week has: how long until it refills. */
+  let strip='';
+  if(!smoke){
+    const nextMon=new Date(mondayOf(new Date())+'T00:00:00');
+    nextMon.setDate(nextMon.getDate()+7);
+    const msLeft=Math.max(0,nextMon.getTime()-Date.now());
+    const hLeft=Math.ceil(msLeft/3600000);
+    const resets=hLeft>=48?`${Math.round(hLeft/24)} DAYS`:(hLeft>1?`${hLeft} HOURS`:'UNDER AN HOUR');
+    const left=Math.max(0,v.allow-v.week);
+    const over=v.week>v.allow;
+    const toks=Array.from({length:Math.max(1,v.allow)},(_,i)=>
+      `<i class="${i<left?'on':''}"></i>`).join('');
+    strip=`<div class="m-allow${over?' over':''}">`+
+      `<div class="tk">${toks}</div>`+
+      `<div class="tx"><b>${over?`Over by ${v.week-v.allow}`
+        :left>0?`${left} left this week`:'Allowance spent'}</b>`+
+      `<span>REFILLS IN ${resets}</span></div></div>`;
+  }
 
   const hist=smoke?smokeDays(14):dishWeeks(12);
   const hasHist=smoke?hist.some(x=>x!=='open'):Object.keys(S.vices.dish.hist||{}).length>0;
@@ -2856,6 +2934,7 @@ function renderVice(k){
          it in both places is the screen saying the same sentence to itself twice */
       (board?'':`<div class="m-today ${todayCls}"><i></i>${today_}</div>`)+
     `</div><div class="m-ringwrap"><span class="m-ring">${ring}</span></div></div>`+
+    strip+
     (owed?`<div class="m-makeup${S.penance.level>=3?' final':''}">`+
       `<div class="k"><span>MAKE IT UP</span><span>Streak intact</span></div>`+
       `<div class="t">${esc(S.penance.text||PENANCE[0].t)}</div>`+
