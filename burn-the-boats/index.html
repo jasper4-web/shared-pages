@@ -278,6 +278,28 @@ button{font-family:inherit}
   background:transparent;color:var(--hot);font-family:'Geist Mono',monospace;font-size:11px;
   letter-spacing:.17em;font-weight:700;cursor:pointer}
 .m-makeup.final{border-color:rgba(255,178,94,.75);background:rgba(255,107,44,.13)}
+/* THE BOARD — the morning countdown, built like a departure board. It is ember
+   because the morning IS the risk window; it has exactly one job and so one colour.
+   The seam across each tile is what makes a digit read as a flap rather than a label. */
+.m-board{margin:2px 12px var(--v1);border:1px solid var(--line2);border-radius:16px;
+  background:linear-gradient(160deg,rgba(255,107,44,.09),rgba(255,107,44,.015));padding:12px 13px 13px}
+.m-board .k{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  font-family:'Geist Mono',monospace;font-size:var(--vt-micro);letter-spacing:.2em;
+  text-transform:uppercase;color:#6d5c3c;font-weight:700}
+.m-board .k em{font-style:normal;color:var(--hot)}
+.m-board .fl{display:flex;align-items:center;gap:5px;margin-top:11px}
+.m-board .fl i{flex:1;background:#0a0812;border:1px solid #221d33;border-radius:9px;
+  padding:9px 0 8px;text-align:center;position:relative;overflow:hidden;font-style:normal}
+.m-board .fl i::after{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:#000;opacity:.55}
+.m-board .fl b{display:block;font-family:'Geist Mono',monospace;font-weight:700;font-size:29px;
+  color:var(--hot);line-height:1;font-variant-numeric:tabular-nums}
+.m-board .fl s{display:block;text-decoration:none;font-family:'Geist Mono',monospace;
+  font-size:var(--vt-micro);letter-spacing:.2em;color:#4b4560;margin-top:6px;text-transform:uppercase}
+.m-board .fl u{text-decoration:none;font-family:'Geist Mono',monospace;font-size:22px;color:#332c48;margin-top:-14px}
+.m-board .ft{display:flex;justify-content:space-between;gap:8px;margin-top:11px;
+  font-family:'Geist Mono',monospace;font-size:var(--vt-micro);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ember)}
+.m-board .ft s{text-decoration:none;color:#4b4560}
 /* modules reflow: two-up for two offers, full width for one, one line of type for none.
    A fixed grid spends most of its life with a hole in it, and an empty card reads as something owed. */
 .m-mods{padding:0 16px;display:grid;gap:var(--v1)}
@@ -2560,11 +2582,17 @@ const VRING=(()=>{
 
 /* ---- the graph. Deliberately rudimentary: a DOT placed against a LINE. ---- */
 const VGRAPH=(()=>{
-  const W=300,H=74,PADT=8,PADB=16,IN=H-PADT-PADB;
-  const base=y=>`<line x1="0" y1="${PADT}" x2="${W}" y2="${PADT}" stroke="#1e1a2b" stroke-width="1"/>`+
-    `<line x1="0" y1="${y.toFixed(1)}" x2="${W}" y2="${y.toFixed(1)}" stroke="#3a3350" stroke-width="1" stroke-dasharray="3 4"/>`;
-  const ends=(l,r)=>`<text x="14" y="${H-3}" fill="#3b3549" font-family="Geist Mono, monospace" font-size="11" letter-spacing="1.2">${l}</text>`+
-    `<text x="${W-14}" y="${H-3}" fill="#3b3549" font-family="Geist Mono, monospace" font-size="11" letter-spacing="1.2" text-anchor="end">${r}</text>`;
+  /* 2026-07-30 · THE KEY IS GONE. It was four lines of monospace explaining the
+     chart to the only person who will ever see it — a code comment that got
+     rendered ("THE DOT IS THE TIME. 11:40 IS NOT 7 AM, AND THE CHART SAYS SO.").
+     Everything it carried is now in THREE AXIS LABELS down the left gutter. A dot
+     low on the plot is obviously a morning when the axis says 7AM underneath it,
+     so the paragraph is not shortened, it is unnecessary. L is that gutter. */
+  const W=300,H=80,PADT=9,PADB=9,L=34,IN=H-PADT-PADB;
+  const lab=(y,t,hot)=>`<text x="${L-8}" y="${(y+3.4).toFixed(1)}" fill="${hot?'#8a7448':'#3b3549'}" `+
+    `font-family="Geist Mono, monospace" font-size="11" text-anchor="end">${t}</text>`;
+  const base=y=>`<line x1="${L}" y1="${PADT}" x2="${W}" y2="${PADT}" stroke="#1e1a2b" stroke-width="1"/>`+
+    `<line x1="${L}" y1="${y.toFixed(1)}" x2="${W}" y2="${y.toFixed(1)}" stroke="#6b5836" stroke-width="1" stroke-dasharray="3 4"/>`;
   /* today is drawn HOLLOW until it resolves — a filled dot would claim a result the day has not produced */
   const open=(x,y)=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="none" stroke="#8b8398" stroke-width="1.6" stroke-dasharray="2.4 2.2"/>`;
   const dot=(x,y,col,ring)=>(ring?`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="7.5" fill="none" stroke="${col}" stroke-opacity=".3"/>`:'')+
@@ -2572,33 +2600,41 @@ const VGRAPH=(()=>{
   const stem=(x,y,col)=>`<line x1="${x.toFixed(1)}" y1="${PADT}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="${col}" stroke-width="1.5"/>`;
   /* a day he never opened the app: a faint absence, NOT a clean day */
   const absent=x=>`<circle cx="${x.toFixed(1)}" cy="${PADT}" r="1.5" fill="#2a2438"/>`;
-  const wrap=(s,key)=>`<svg width="100%" viewBox="0 0 ${W} ${H}" aria-hidden="true">${s}</svg><div class="key">${key}</div>`;
-  function day(days){
-    const GATE=720,LO=600,HI=1320;
+  const wrap=s=>`<svg width="100%" viewBox="0 0 ${W} ${H}" aria-hidden="true">${s}</svg>`;
+  const xs=(i,n)=>L+8+i*((W-L-20)/Math.max(1,n-1));
+  /* the gate is PASSED IN, not assumed. It is his setting, and 720 was hardcoded
+     here while the screen next to it read the real one out of S.vices.smoke.gate. */
+  function day(days,gate,gateLab){
+    /* LO was 600 (10:00). Every slip before ten pinned to the same pixel and the gate
+       line sat 11px off the floor, with no room to label either. 420 (07:00) spreads
+       the morning — which is the whole half of the day this chart is about. */
+    const GATE=gate==null?720:gate,LO=420,HI=1320;
     const y=m=>PADT+IN*(1-(Math.max(LO,Math.min(HI,m))-LO)/(HI-LO));
-    let s=base(y(GATE));
+    let s=base(y(GATE))+lab(PADT,'10PM')+lab(y(GATE),GATE===720?'NOON':(gateLab||'GATE'),1)+lab(PADT+IN,'7AM');
     days.forEach((m,i)=>{
-      const x=14+i*((W-28)/Math.max(1,days.length-1));
+      const x=xs(i,days.length);
       if(m==='open'){s+=open(x,PADT);return}
       if(m==='none'){s+=absent(x);return}
       if(m===null){s+=dot(x,PADT,'#4ADE80',true);return}
       const yy=y(m),held=m>=GATE;
       s+=stem(x,yy,held?'#2a2438':'#3a2418')+dot(x,yy,held?'#E0B25E':'#FF6B2C');
     });
-    return wrap(s+ends('14 DAYS AGO','TODAY'),
-      'GREEN — CLEAN ALL DAY · GOLD — HELD PAST NOON · EMBER — BEFORE NOON · HOLLOW — TODAY, STILL RUNNING<br>THE DOT IS THE TIME. 11:40 IS NOT 7 AM, AND THE CHART SAYS SO.');
+    return wrap(s);
   }
-  function week(weeks){
-    const MAXU=3,y=n=>PADT+IN*(Math.min(MAXU,n)/MAXU);
-    let s=base(y(1));
+  /* allow is now PASSED IN. The dashed line was hardcoded at y(1) while the old key
+     called it "THE ALLOWANCE" — on any allowance but 1 the chart stated a rule the
+     app was not enforcing. Labelling the line forced the bug into the open. */
+  function week(weeks,allow){
+    const A=Math.max(1,allow||1),MAXU=Math.max(3,A+1);
+    const y=n=>PADT+IN*(Math.min(MAXU,n)/MAXU);
+    let s=base(y(A))+lab(PADT,'0')+lab(y(A),String(A),1)+lab(PADT+IN,MAXU+'+');
     weeks.forEach((n,i)=>{
-      const x=14+i*((W-28)/Math.max(1,weeks.length-1));
+      const x=xs(i,weeks.length);
       if(n==='open'){s+=open(x,y(0));return}
       if(n===0){s+=dot(x,PADT,'#4ADE80',true);return}
-      s+=stem(x,y(n),n>1?'#3a2418':'#2a2438')+dot(x,y(n),n>1?'#FF6B2C':'#E0B25E');
+      s+=stem(x,y(n),n>A?'#3a2418':'#2a2438')+dot(x,y(n),n>A?'#FF6B2C':'#E0B25E');
     });
-    return wrap(s+ends('12 WEEKS AGO','THIS WEEK'),
-      'GREEN — A WEEK AT ZERO · GOLD — INSIDE THE ALLOWANCE · EMBER — OVER IT<br>THE DASHED LINE IS THE ALLOWANCE.');
+    return wrap(s);
   }
   return {day,week};
 })();
@@ -2609,6 +2645,11 @@ const CHALLENGES={
   smoke:[
     {id:'h14',ti:'Hold to 14:00',xp:35, mins:840},
     {id:'h18',ti:'Hold to 18:00',xp:60, mins:1080},
+    /* 2026-07-30 · h22 exists so the AFTERNOON has a fourth winnable rung. Noon is
+       permission, not a deadline — by 18:54 h14 and h18 are already unwinnable and
+       the ladder had only three left, one short of the four-up grid. Holding past
+       22:00 is genuinely more than the gate asked for, so this is a rung, not filler. */
+    {id:'h22',ti:'Hold to 22:00',xp:90, mins:1320},
     {id:'c24',ti:'24 hours clean',xp:120,hours:24},
     {id:'c48',ti:'48 hours clean',xp:180,hours:48},
     {id:'c7', ti:'A week clean',  xp:400,hours:168},
@@ -2683,12 +2724,33 @@ function mod(o){
   return h+'</div>';
 }
 
+/* seconds until the gate opens, from midnight-anchored wall time so it never drifts */
+function gateLeftS(v){
+  const d=new Date();d.setHours(0,0,0,0);
+  return Math.max(0,Math.round((d.getTime()+mins(v.gate)*60000-Date.now())/1000));
+}
+/* The board ticks by PATCHING THREE TEXT NODES, never by re-rendering. renderVice()
+   rebuilds the whole innerHTML; doing that once a second would tear a "Take it" tap
+   out from under his thumb. The one second it IS allowed to re-render is the second
+   the gate opens, because that is when the screen legitimately changes shape. */
+let VTICK=null,VKEY=null;
+function boardTick(){
+  if(VKEY!=='smoke')return;
+  const h=$('mbH');if(!h)return;                 /* no board on screen: nothing to tick */
+  const left=gateLeftS(S.vices.smoke);
+  if(left<=0){renderVice(VKEY);return}
+  h.textContent=pad(Math.floor(left/3600));
+  $('mbM').textContent=pad(Math.floor(left%3600/60));
+  $('mbS').textContent=pad(left%60);
+}
 function openVice(k){
   renderVice(k);
   $('vicev').classList.add('on');
   document.body.classList.add('noTabs');
+  VKEY=k;clearInterval(VTICK);VTICK=setInterval(boardTick,1000);
 }
 function closeVice(){
+  clearInterval(VTICK);VTICK=null;VKEY=null;
   $('vicev').classList.remove('on');
   document.body.classList.remove('noTabs');
   render();
@@ -2718,10 +2780,12 @@ function renderVice(k){
   if(smoke){
     if(vs.smoked&&vs.brokeGate){today_='Gate broken · logged '+esc(vs.smoked.at);todayCls='plain'}
     else if(vs.smoked){today_='Gate held · logged '+esc(vs.smoked.at);todayCls='held'}
-    else if(vs.beforeNoon){
-      const left=mins(v.gate)-nowMin();
-      today_=`Gate live · ${Math.floor(left/60)}h ${pad(left%60)}m to noon`;todayCls='live';
-    }else{today_='Gate held · nothing logged';todayCls='held'}
+    /* Reaching here before the gate means nothing is logged, which is exactly the
+       condition the board renders on — so this string only ever appears in the
+       board's footer, one line under the same countdown in 29px digits. It names
+       the state and lets the digits carry the number. */
+    else if(vs.beforeNoon){today_='Gate live · nothing logged';todayCls='live'}
+    else{today_='Gate held · nothing logged';todayCls='held'}
   }else{
     today_=v.week>v.allow?`Over the allowance · ${v.week} of ${v.allow}`
           :v.week>0?`${v.week} of ${v.allow} used this week`:'Week at zero so far';
@@ -2741,14 +2805,20 @@ function renderVice(k){
       foot:done?null:[leftTxt+' left','Taken '+new Date(a.takenAt).toTimeString().slice(0,5)],
       act:done?`claimCh('${k}')`:null,actLabel:done?`Claim +${a.def.xp} XP`:null});
   }
+  /* THE BOARD is a MORNING object. The gate is permission, not a deadline — past it
+     there is nothing left to count to, so the band deletes itself and its ~112px is
+     spent on two more offers instead. A broken gate kills it too: counting down to a
+     gate that is already gone is the app not knowing what happened. */
+  const board=smoke&&vs.beforeNoon&&!vs.smoked;
   if(!a){
     const list=CHALLENGES[k]||[];
     const avail=list.filter(c=>{
       if(!smoke)return true;
       if(c.mins!=null)return nowMin()<c.mins-30&&!vs.smoked;   /* only offer what is still winnable */
       return !vs.smoked;
-    }).slice(0,2);
-    avail.forEach((c,i)=>mods.push({cls:'offer',st:i===0?'On offer':'Tonight',xp:c.xp,ti:c.ti,
+    }).slice(0,board||!smoke?2:4);       /* the board's space becomes offers once it goes */
+    const SLOT=['On offer','Tonight','Tomorrow','This week'];
+    avail.forEach((c,i)=>mods.push({cls:'offer',st:SLOT[i]||'Also',xp:c.xp,ti:c.ti,
       ladder:Math.min(3,list.indexOf(c)+1),act:`takeCh('${k}','${c.id}')`,actLabel:'Take it'}));
   }
   const lapsed=S.vices[k].chLapsed===today()&&!a;
@@ -2772,11 +2842,19 @@ function renderVice(k){
   $('viceBody').innerHTML=
     `<div class="m-bar"><button class="bk" onclick="closeVice()" aria-label="Back">‹</button>`+
       `<span class="lb">${esc(v.label)}</span><span class="rt">${hhmm} · ${dayNames[now.getDay()]}</span></div>`+
+    (board?(l=>`<div class="m-board"><div class="k"><span>UNTIL THE GATE OPENS</span>`+
+      `<em>${esc(v.gate)}</em></div><div class="fl">`+
+      `<i><b id="mbH">${pad(Math.floor(l/3600))}</b><s>hrs</s></i><u>:</u>`+
+      `<i><b id="mbM">${pad(Math.floor(l%3600/60))}</b><s>min</s></i><u>:</u>`+
+      `<i><b id="mbS">${pad(l%60)}</b><s>sec</s></i></div>`+
+      `<div class="ft"><span>${today_}</span><s>${hhmm}</s></div></div>`)(gateLeftS(v)):'')+
     `<div class="m-head"><div>`+
       `<div class="m-streak${n>0?' held':''}"><b${word?' class="word"':''}>${big}</b>`+
       `${unit?`<em>${unit}</em>`:''}</div>`+
       `<div class="m-sub">${sub}</div>`+
-      `<div class="m-today ${todayCls}"><i></i>${today_}</div>`+
+      /* the today-line lives in the board's footer while the board exists — printing
+         it in both places is the screen saying the same sentence to itself twice */
+      (board?'':`<div class="m-today ${todayCls}"><i></i>${today_}</div>`)+
     `</div><div class="m-ringwrap"><span class="m-ring">${ring}</span></div></div>`+
     (owed?`<div class="m-makeup${S.penance.level>=3?' final':''}">`+
       `<div class="k"><span>MAKE IT UP</span><span>Streak intact</span></div>`+
@@ -2787,8 +2865,8 @@ function renderVice(k){
         ?`<div class="m-lapsed"><b>Offer expired. Nothing lost.</b><br>It comes back tomorrow. Nothing was recorded.</div>`
         :`<div class="m-none">Nothing on offer right now.<br>The next one opens tomorrow.</div>`}</div>`)+
     `<div class="m-graph"><div class="k"><span>${smoke?'THE LAST 14 DAYS':'THE LAST 12 WEEKS'}</span>`+
-      `<span>${smoke?'AGAINST NOON':'AGAINST THE ALLOWANCE'}</span></div>`+
-      (hasHist?(smoke?VGRAPH.day(hist):VGRAPH.week(hist))
+      `<span>${smoke?'AGAINST '+(mins(v.gate)===720?'NOON':esc(v.gate)):'AGAINST THE ALLOWANCE'}</span></div>`+
+      (hasHist?(smoke?VGRAPH.day(hist,mins(v.gate),esc(v.gate)):VGRAPH.week(hist,v.allow))
         :`<div class="m-empty">Nothing recorded yet.<br>This fills in as you go.</div>`)+`</div>`+
     `<div class="m-log">${smoke
       ?`<button onclick="closeVice();logSmoked()">Log that I smoked</button>`
