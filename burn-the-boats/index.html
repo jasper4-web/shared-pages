@@ -764,6 +764,22 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 .pdwarn .wact button{width:100%;min-height:44px;border-radius:9px;cursor:pointer;
   border:1px solid rgba(224,178,94,.45);background:transparent;color:var(--gold);
   font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.11em}
+
+/* ---------- the day, end to end, in 22px ----------
+   Fixed 6a–10p span (widened only if the day runs outside it) so two days can be
+   compared at a glance. A bar that rescaled to its own contents would make an
+   empty day and a packed one look identical. */
+.daybar{margin:2px 0 14px}
+.dbtrack{position:relative;height:22px;border-radius:6px;background:#100d18;
+  border:1px solid var(--line);overflow:hidden}
+.dbtrack i{position:absolute;top:0;bottom:0;display:block}
+.dbtrack i.d{background:var(--gold);opacity:.85}
+.dbtrack i.o{background:var(--line2)}
+.dbax{position:relative;height:14px;margin-top:4px}
+.dbax u{position:absolute;top:0;transform:translateX(-50%);text-decoration:none;
+  font-family:'Geist Mono',monospace;font-size:11px;color:#4e4860;letter-spacing:.04em}
+.dbleg{margin-top:5px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#4e4860}
+.dbleg b{color:var(--gold);font-weight:400}
 /* the fold must never look like the goal was finished or deleted: a quiet dashed
    row that states the count and offers the way back */
 .g2shutrow{margin-left:15px;width:calc(100% - 15px);min-height:var(--tap);
@@ -855,7 +871,13 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 .pdrow{display:grid;grid-template-columns:46px 1fr auto;gap:10px;align-items:start;
   width:100%;text-align:left;cursor:pointer;padding:10px 12px;margin-bottom:6px;
   border:1px solid var(--line);border-radius:12px;background:var(--panel);
-  position:relative;overflow:hidden;min-height:52px}
+  position:relative;overflow:hidden;
+  /* TIME LOOKS LIKE TIME. Every row used to be 52px whether it held a 15-minute
+     wake or a 180-minute class, so duration was a number you had to READ. Height
+     now follows length — not literally (a true 1px:1min day is 690px of scroll)
+     but enough that the shape of the day is visible without reading a digit.
+     The 52px floor is the tap target and is never traded away. */
+  min-height:clamp(52px, calc(40px + var(--len,15) * 0.42px), 152px)}
 .pdrow::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c,var(--line2))}
 .pdrow .t{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--faint);line-height:1.5}
 .pdrow .t b{display:block;color:var(--dim);font-weight:400}
@@ -960,7 +982,10 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 .pdrow .inwrap{grid-column:1/-1;margin-top:4px;display:flex;flex-direction:column;gap:6px}
 .pdrow .pdsub{display:grid;grid-template-columns:46px 1fr auto;gap:10px;align-items:start;
   width:100%;text-align:left;cursor:pointer;padding:9px 11px;border:1px solid var(--line2);
-  border-radius:10px;background:var(--panel2);position:relative;overflow:hidden;min-height:48px}
+  border-radius:10px;background:var(--panel2);position:relative;overflow:hidden;
+  /* same law as .pdrow, gentler slope — a nested row lives inside its host and
+     must never grow taller than the block it runs alongside */
+  min-height:clamp(48px, calc(40px + var(--len,15) * 0.3px), 104px)}
 .pdrow .pdsub::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c,var(--line2))}
 .pdrow .pdsub .al{display:block;font-family:'Geist Mono',monospace;font-size:11px;
   letter-spacing:.1em;color:var(--faint);margin-top:3px}
@@ -5905,7 +5930,7 @@ function planDay(date){
   const hostOf=b=>rows.find(x=>x!==b&&mins(x.s)<=mins(b.s)&&mins(x.e)>=mins(b.e)&&
       (mins(x.e)-mins(x.s))>(mins(b.e)-mins(b.s)));
   const subRow=(b,j)=>{const len=mins(b.e)-mins(b.s),g=rowGoalOf(date,b);
-    return `<button class="pdsub" style="--c:${domColour((b.dom||[])[0])}"
+    return `<button class="pdsub" style="--c:${domColour((b.dom||[])[0])};--len:${len}"
         onclick="event.stopPropagation();planRow('${date}',${j})">
       <span class="t">${t12(b.s)}<b>${t12(b.e)}</b></span>
       <span class="n">${esc(b.n)}<span class="al">runs alongside${g?` · → ${esc(cut(g.title,18))}`:''}</span></span>
@@ -5922,12 +5947,17 @@ function planDay(date){
     cur=cur===null?mins(b.e):Math.max(cur,mins(b.e));
     const kids=rows.map((x,j)=>[x,j]).filter(([x])=>hostOf(x)===b);
     const len=mins(b.e)-mins(b.s),deep=b.kind==='deep';
-    list+=`<div class="pdrow${deep?' deep':''}${kids.length?' pdhost':''}" style="--c:${domColour((b.dom||[])[0])}"
+    list+=`<div class="pdrow${deep?' deep':''}${kids.length?' pdhost':''}"
+        style="--c:${domColour((b.dom||[])[0])};--len:${len}"
         onclick="planRow('${date}',${i})">
       <span class="t">${t12(b.s)}<b>${t12(b.e)}</b></span>
       <span class="n">${esc(b.n)}${(()=>{const g=rowGoalOf(date,b);
-        return deep?`<u class="pdtag">◆ SACRED${g?` · ${esc(cut(g.title,18)).toUpperCase()}`:''}</u>`
-          :(g?`<u class="al" style="display:block;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint);margin-top:3px">→ ${esc(cut(g.title,22))}</u>`:'')})()}</span>
+        /* SACRED was printed on all four deep rows. Repeated on everything that
+           qualifies, it stops meaning "protect this" — and it was crowding out
+           the one thing that IS different per row, the goal it serves. The gold
+           ◆ and the gold rule already say sacred; the words say what for. */
+        return deep?(g?`<u class="pdtag">◆ ${esc(cut(g.title,30)).toUpperCase()}</u>`:'')
+          :(g?`<u class="al" style="display:block;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint);margin-top:3px">→ ${esc(cut(g.title,30))}</u>`:'')})()}</span>
       <span class="len">${len}m</span>
       ${kids.length?`<div class="inwrap">${kids.map(([x,j])=>subRow(x,j)).join('')}</div>`:''}
     </div>`;
@@ -5936,6 +5966,7 @@ function planDay(date){
     <div class="sh-t">${dayWord(date)==='TOMORROW'?'Tomorrow — '+DAYFULL:DAYFULL}.</div>
     <div class="pd-stats"><span><i class="dm" style="font-style:normal">◆</i> <b>${hrs(deepM)}</b> DEEP</span><span><b>${
       gapN?hrs(openM):'NOTHING'}</b> OPEN</span><span>ENDS <b>${rows.length?t12(rows[rows.length-1].e):'—'}</b></span></div>
+    ${dayBar(rows)}
     <!-- TEMPLATES IS THE FIRST THING, NOT THE LAST. It shipped ninth down, below
          every block on the page, framed as "save this day" — but the act while
          planning is STARTING from a shape, not filing one away. -->
@@ -6041,6 +6072,33 @@ function nextDow(g){
 /* ═══ WHAT THE DAY ACTUALLY SAYS ══════════════════════════════════════════
    Three readings the page used to get wrong, all of them about overlap.       */
 
+/* ── THE DAY AS ONE OBJECT ────────────────────────────────────────────────
+   Fourteen rows told him nothing about the SHAPE of the day — where it is
+   dense, where it is hollow, how late it runs — without scrolling all of it
+   and holding it in his head. This is that answer in one 22px strip: the
+   whole day end to end, deep time solid, everything else quiet, gaps empty. */
+function dayBar(rows){
+  if(!rows.length)return'';
+  const first=Math.min(...rows.map(b=>mins(b.s))), last=Math.max(...rows.map(b=>mins(b.e)));
+  /* always show at least 6a→10p so two different days are comparable at a glance
+     — a bar that rescales to its own contents makes every day look equally full */
+  const A=Math.min(first,6*60), B=Math.max(last,22*60), SP=B-A;
+  const seg=b=>{
+    const l=(mins(b.s)-A)/SP*100, w=(mins(b.e)-mins(b.s))/SP*100;
+    return `<i class="${b.kind==='deep'?'d':'o'}" style="left:${l.toFixed(2)}%;width:${w.toFixed(2)}%"></i>`;
+  };
+  const tick=m=>`<u style="left:${((m-A)/SP*100).toFixed(2)}%">${t12(hhmm(m)).replace(':00','')}</u>`;
+  /* SACRED is said ONCE, here. It used to be printed on every deep row — four
+     times on his Monday — and a word repeated on everything that qualifies stops
+     meaning "protect this". The gold rule and gold tint mark the rows; this
+     names what the gold IS, and the rows get to spend their line on the goal. */
+  const anyDeep=rows.some(b=>b.kind==='deep');
+  return `<div class="daybar">
+    <div class="dbtrack">${rows.map(seg).join('')}</div>
+    <div class="dbax">${[6*60,9*60,12*60,15*60,18*60,21*60].filter(m=>m>=A&&m<=B).map(tick).join('')}</div>
+    ${anyDeep?'<div class="dbleg"><b>◆ GOLD IS SACRED</b> · EVERYTHING ELSE BENDS</div>':''}
+  </div>`;
+}
 /* minutes of CLOCK covered by these blocks — overlapping stretches counted once */
 function unionMins(bs){
   const iv=bs.map(b=>[mins(b.s),mins(b.e)]).sort((a,b)=>a[0]-b[0]);
