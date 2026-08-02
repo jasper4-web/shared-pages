@@ -702,6 +702,42 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 .chip.seg.on{border-color:var(--violet);color:var(--violet);background:rgba(176,140,255,.1)}
 .hintline{margin-top:7px;font-size:11.5px;line-height:1.4;color:var(--faint)}
 
+/* ---------- an area's colour ----------
+   Swatches are buttons, not <label>s wrapping a hidden radio, so they inherit the
+   app-wide 44px floor from .chip.tap like every other tappable thing. The custom
+   one is a real <input type=color> stretched over the whole 44px button: iOS opens
+   its system picker on tap, which is the only way to give full-wheel control
+   without hand-rolling a wheel that fights the OS. */
+.swr{display:flex;gap:7px;flex-wrap:wrap}
+.sw{width:44px;height:44px;flex:none;padding:0;border-radius:12px;border:1px solid var(--line2);
+  background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden}
+.sw i{display:block;width:21px;height:21px;border-radius:50%;background:var(--s)}
+.sw.on{border-color:var(--s);box-shadow:inset 0 0 0 1px var(--s)}
+.sw.on::after{content:'';position:absolute;bottom:5px;width:12px;height:2px;border-radius:2px;background:var(--s)}
+/* THE DOMAIN-DEFAULT SWATCH. It shows the domain's real colour at full strength —
+   dimming it to .5 made amber read as mud and buried the glyph sitting on top, so
+   the one swatch meaning "this is what you already have" looked like the ugliest
+   option on the row. The dashed ring, not opacity, is what says "automatic". */
+.sw.auto{border-style:dashed;border-color:var(--line2)}
+.sw.auto i{background:var(--s)}
+.sw.auto::before{content:'A';position:absolute;z-index:1;font-family:'Geist Mono',monospace;
+  font-size:10px;letter-spacing:.06em;color:#0b0910;font-weight:700}
+.sw.auto.on{border-style:solid}
+.sw.cus input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;cursor:pointer}
+.sw.cus i{background:conic-gradient(#FF5FA2,#E0B25E,#C6F24E,#4ADE80,#38E1D8,#5B8DEF,#9B7BD4,#FF5FA2)}
+/* the rule he is about to live with, at the size he will actually see it */
+.swp{margin-top:12px;padding:11px 12px;border-radius:12px;background:#0a0812;border:1px solid var(--line)}
+.swp .pk{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.17em;color:#4e4860;margin-bottom:8px}
+.swp .pr{padding-left:9px;border-left:3px solid var(--c);font-family:'Geist Mono',monospace;
+  font-size:11px;letter-spacing:.19em;color:var(--faint);font-weight:700;margin-bottom:6px}
+.swp .pc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--c);
+  border-radius:10px;padding:9px 11px;font-family:'Clash Display',sans-serif;font-size:15px;
+  font-weight:600;letter-spacing:-.02em;color:var(--ink)}
+.swp .pw{margin-left:11px;margin-top:5px;background:var(--panel);border:1px solid var(--line);
+  border-left:2px solid color-mix(in srgb,var(--c) 40%,transparent);border-radius:9px;
+  padding:8px 11px;font-size:12.5px;color:var(--dim)}
+
 /* ---------- the goals tab, v2 ----------
    The capacity line is first and never moves; the WIG is the screen, not a tag. */
 .g2cap{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;padding:11px 13px;margin-bottom:14px;
@@ -3389,7 +3425,7 @@ function goalStrip2(b){
   }
   const g=GM.goalOf(G,c.goalId);
   if(!g||g.state!=='active')return'';               /* same rule on the daily surface */
-  const a=GM.areaById(G,g.areaId)||{},col=domColour(a.domain);
+  const a=GM.areaById(G,g.areaId)||{},col=areaColour(a);
   const n=GM.commitsOfWeek(G,wk).filter(x=>x.goalId===g.id&&x.done).length;
   const tot=GM.commitsOfWeek(G,wk).filter(x=>x.goalId===g.id).length;
   return `<div class="nu-goal" style="--gc:${col}">
@@ -4473,7 +4509,7 @@ function renderChar(){
   const cg=GM.liveGoals(G);
   const cw=cg.find(x=>x.wig), cl=(cw?[cw].concat(cg.filter(x=>x!==cw)):cg).slice(0,6);
   $('cvGoals').innerHTML=cl.length?cl.map(g=>{
-    const a=GM.areaById(G,g.areaId)||{},c=domColour(a.domain);
+    const a=GM.areaById(G,g.areaId)||{},c=areaColour(a);
     return `<div class="gchip" onclick="$('charv').classList.remove('on');go('push');setTimeout(()=>g2Open('${g.id}'),420)">
       <div class="gl">${esc((a.name||'').slice(0,12))}</div>
       <div class="gp" style="color:${c}">${g.target!==null?`${fmtN(g.at)}<span style="font-size:11px;color:#7a7191">/${fmtN(g.target)}</span>`
@@ -5355,7 +5391,7 @@ function g2PickWig(){
     <div class="sh-sub">IT GETS THE NEXT FREE BLOCK. YOU CAN CHANGE IT ANY TIME.</div>
     <div class="chips" style="margin-top:14px">
       ${live.map(g=>`<button class="chip tap seg${g.wig?' on':''}"
-        style="--gc:${domColour((GM.areaById(G,g.areaId)||{}).domain)}"
+        style="--gc:${areaColour(GM.areaById(G,g.areaId))}"
         onclick="g2SetWig('${g.id}');closeSheet()">${esc(cut(g.title,34))}</button>`).join('')}
     </div>`);
 }
@@ -5376,7 +5412,7 @@ function g2Tiers(){
        used to fall out of every view. */
     const under=G.goals.filter(g=>g.areaId===a.id&&g.state==='active'&&(!anc||g.id!==anc.id))
       .sort((x,y)=>(x.rank||0)-(y.rank||0));
-    const c=domColour(a.domain);
+    const c=areaColour(a);
     return `<div class="g2tier">
       <h2 class="sec g2sec tr-h" style="--c:${c}"><span>${esc(a.name)}</span>
         <u>${anc?`${under.length} under it`:`${under.length} goal${under.length===1?'':'s'}`}</u></h2>
@@ -5680,7 +5716,7 @@ function g2Week(){
          the model. */
       const past=gone(wk,d);
       out+=`<button class="g2slot${g?' on':''}${done?' done':''}${past&&!g?' settled':''}"
-        ${g?`style="--c:${domColour((a||{}).domain)}"`:''}
+        ${g?`style="--c:${areaColour(a)}"`:''}
         onclick="${past?`g2Past(${d})`:`g2Slot('${wk}',${d},'${bid}')`}">
         ${g?'<span class="dom"></span>':''}
         <span class="sk">${bid.toUpperCase()}<u>${blk?t12(blk.s):''}</u></span>
@@ -6357,7 +6393,7 @@ function g2ByDate(){
     out+=`<h2 class="sec g2sec ah" style="--c:${past?'var(--line2)':'var(--violet)'}">
       <span>${esc(h.label)}</span><u>${hzWhenH(h)}</u></h2>
       <div class="g2area g2board">
-      ${gs.map(g=>g2Row(g,domColour((GM.areaById(G,g.areaId)||{}).domain))).join('')}</div>`;
+      ${gs.map(g=>g2Row(g,areaColour(GM.areaById(G,g.areaId)))).join('')}</div>`;
   });
   const un=GM.undated(G);
   if(un.length)out+=`<h2 class="sec g2sec ah" style="--c:var(--line2)">
@@ -6513,6 +6549,19 @@ const fmtN=n=>(n===null||n===undefined||isNaN(n))?'—':Number(n).toLocaleString
 /* imported units arrive with a leading space, typed ones don't — normalise once */
 const fmtU=u=>{u=(u||'').trim();return u?(u==='%'?u:' '+u):''};
 const domColour=k=>{const d=DOMAINS.find(x=>x.k===k);return d?d.c:'var(--gold)'};
+/* AN AREA'S OWN COLOUR, falling back to its domain's. Two businesses can both be
+   THE WORK and still be told apart at a squint — which is the whole point, since
+   SANO and Fruits were pixel-identical amber before this.
+
+   The split that matters: anything that resolves an AREA (a goal's area, the tier
+   header, the Bank attribution) asks this. Anything coloured by a DOMAIN directly
+   — the schedule blocks' b.dom, a question's q.dom — still asks domColour, because
+   a block belongs to a part of life, not to a business. Miss that and Today starts
+   speaking a different colour language than Goals.
+
+   colour is null on every area that predates this, so untouched areas render
+   byte-identically to v63. */
+const areaColour=a=>(a&&a.colour)||domColour(a&&a.domain);
 /* BY DATE rendered NO area at all, so it read as seven consecutive rows of
    "Dec 25 · 150 days · 0%" distinguishable only by title. Record prints the domain as
    a small grey mono suffix on the row itself — so does this now. */
@@ -6551,7 +6600,7 @@ function g2Ready(areas){
   return `<div class="g2ready">
     <div class="k">READY AND WAITING<u>${areas.length} AREA${areas.length>1?'S':''}${
       hz.length?` · ${hz.length} DATE${hz.length>1?'S':''}`:''}</u></div>
-    <div class="ch">${areas.map(a=>`<span class="rc" style="--c:${domColour(a.domain)}">${esc(a.name)}</span>`).join('')}</div>
+    <div class="ch">${areas.map(a=>`<span class="rc" style="--c:${areaColour(a)}">${esc(a.name)}</span>`).join('')}</div>
     ${hz.length?`<div class="ch" style="margin-top:7px">${hz.map(h=>
       `<span class="rc" style="--c:var(--violet)">${esc(h.label)}</span>`).join('')}</div>`:''}
     <div class="s">Whatever you write above lands in one of these. You can rename, reorder or delete any of them.</div>
@@ -6718,15 +6767,17 @@ function g2State(id,st){
 }
 function g2EditArea(id){
   const a=GM.areaById(G,id);if(!a)return;
-  GB.dom=a.domain;GB.areaEdit=id;
+  GB.dom=a.domain;GB.areaEdit=id;GB.col=a.colour||null;
   sheet(`<div class="sh-k">AN AREA NEVER ENDS</div><div class="sh-t">${esc(a.name)}</div>
     <div class="sh-sub">${GM.goalsOfArea(G,id).length} GOAL${GM.goalsOfArea(G,id).length===1?'':'S'} IN IT</div>
-    <div class="fld"><label>Name</label><input id="g2AN" maxlength="40" value="${esc(a.name)}"></div>
+    <div class="fld"><label>Name</label><input id="g2AN" maxlength="40" value="${esc(a.name)}" oninput="g2ColName()"></div>
     <div class="fld"><label>Which part of life it belongs to</label>
       <div class="chips" id="g2AD">${DOMAINS.map(d=>
         `<button class="chip tap seg${d.k===a.domain?' on':''}" data-d="${d.k}" onclick="g2PickDom('${d.k}')">${esc(d.label.replace('THE ',''))}</button>`).join('')}</div>
       <div class="hintline">Blocks pointed at this area now credit this part of your rating.</div></div>
+    ${g2ColField(a.colour||null)}
     <button class="btn" onclick="g2SaveArea()">Save it</button>`);
+  g2ColName();
 }
 /* whatever he'd typed before tapping "+ new" must survive the trip */
 /* keep EVERYTHING he'd typed across "+ new area/date", not just the title —
@@ -6744,27 +6795,82 @@ function g2Stash(){
 function g2ClearDraft(){GB.trip=0;GB.tripLive=0;['g2T','g2C','g2G','g2U','g2E'].forEach(k=>delete GB['d_'+k])}
 function g2NewArea(){
   g2Stash();GB.tripLive=GB.trip?1:0;
+  /* BEFORE the template, not after: g2ColField() reads GB.dom to work out what the
+     "follow the domain" swatch should show, and the old code set it on the line
+     below sheet() — which was harmless while nothing read it during the build. */
+  GB.dom='WORK';GB.col=null;
   sheet(`<div class="sh-k">AN AREA NEVER ENDS</div><div class="sh-t">New area</div>
     <div class="sh-sub">A BUSINESS, OR A PART OF YOUR LIFE</div>
-    <div class="fld"><label>Name</label><input id="g2AN" maxlength="40" placeholder="SANO"></div>
+    <div class="fld"><label>Name</label><input id="g2AN" maxlength="40" placeholder="SANO" oninput="g2ColName()"></div>
     <div class="fld"><label>Which part of the rating does it feed</label>
       <div class="chips" id="g2AD">${DOMAINS.map((d,i)=>
         `<button class="chip tap seg${i===0?' on':''}" data-d="${d.k}" onclick="g2PickDom('${d.k}')"
           style="${''}">${esc(d.label.replace('THE ',''))}</button>`).join('')}</div>
-      <div class="hintline">Which part of life this area belongs to. Sets its colour throughout the app.
+      <div class="hintline">Which part of life this area belongs to. Sets its colour unless you pick one below.
         <b style="color:var(--gold)">It does not yet feed your rating</b> — that's coming with the day system.</div></div>
+    ${g2ColField(null)}
     <button class="btn" onclick="g2SaveArea()">Add it</button>`);
-  GB.dom='WORK';
 }
-function g2PickDom(k){GB.dom=k;$('g2AD').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',e.dataset.d===k))}
+/* SIX QUICK PICKS, THEN THE WHOLE WHEEL. The row is convenience, not a fence —
+   the last swatch is a real colour input, so nothing is out of reach.
+
+   Deliberately absent from the quick row: --phos green and --blood red. Those two
+   already mean DONE and MISSED everywhere else in the app, and an area wearing
+   "succeeded" as its identity makes a finished goal unreadable. They are still
+   reachable through the custom picker; this only declines to *suggest* them. */
+const AREA_SWATCHES=['#E0B25E','#FF5FA2','#C6F24E','#5B8DEF','#E8734A','#9B7BD4'];
+/* null colour = follow the domain, which is every area that predates this field */
+function g2ColField(cur){
+  const auto=domColour(GB.dom||'WORK');
+  return `<div class="fld"><label>Colour</label>
+    <div class="swr" id="g2AC">
+      <button type="button" class="sw auto${cur?'':' on'}" style="--s:${auto}"
+        data-c="" onclick="g2PickCol('')" aria-label="Follow the domain"><i></i></button>
+      ${AREA_SWATCHES.map(c=>`<button type="button" class="sw${cur&&cur.toLowerCase()===c.toLowerCase()?' on':''}"
+        style="--s:${c}" data-c="${c}" onclick="g2PickCol('${c}')"><i></i></button>`).join('')}
+      <button type="button" class="sw cus${cur&&!AREA_SWATCHES.some(c=>c.toLowerCase()===cur.toLowerCase())?' on':''}"
+        style="--s:${cur||auto}" data-cus="1"><i></i>
+        <input type="color" value="${cur||auto}" oninput="g2PickCol(this.value)" aria-label="Any colour"></button>
+    </div>
+    <div class="hintline">A is the domain's own colour. Everything under this area —
+      its December goal and every goal beneath it — follows whatever you pick.</div>
+    <div class="swp" id="g2CP" style="--c:${cur||auto}">
+      <div class="pk">HOW IT WILL LOOK</div>
+      <div class="pr" id="g2CPn">AREA</div>
+      <div class="pc">Its December goal</div>
+      <div class="pw">A goal underneath it</div>
+    </div></div>`;
+}
+function g2PickCol(v){
+  GB.col=v||null;
+  const auto=domColour(GB.dom||'WORK'),shown=GB.col||auto;
+  const box=$('g2AC');if(box)box.querySelectorAll('.sw').forEach(e=>{
+    e.classList.toggle('on',e.dataset.cus
+      ? !!GB.col&&!AREA_SWATCHES.some(c=>c.toLowerCase()===GB.col.toLowerCase())
+      : (e.dataset.c||'').toLowerCase()===(GB.col||'').toLowerCase());
+    if(e.dataset.cus)e.style.setProperty('--s',shown);
+    if(e.classList.contains('auto'))e.style.setProperty('--s',auto);
+  });
+  const p=$('g2CP');if(p)p.style.setProperty('--c',shown);
+}
+/* the preview header echoes the name as he types it, so the rule he is judging
+   sits next to the word it will sit next to on the Goals screen */
+function g2ColName(){const n=$('g2AN'),t=$('g2CPn');if(n&&t)t.textContent=(n.value.trim()||'AREA').toUpperCase()}
+function g2PickDom(k){
+  GB.dom=k;$('g2AD').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',e.dataset.d===k));
+  g2PickCol(GB.col||'');   /* an untouched colour must follow the domain he just changed */
+}
 function g2SaveArea(){
   const n=$('g2AN').value.trim();if(!n){toast('Name it','bad');return}
   if(GB.areaEdit){                       /* renaming an existing one */
     const a=GM.areaById(G,GB.areaEdit);
-    if(a){a.name=n;a.domain=GB.dom||a.domain;delete a.auto}
-    GB.areaEdit=null;gsave();closeSheet();render();toast('Saved','good');return;
+    /* null, not delete: an area that HAS been set back to "follow the domain" and
+       one that never had a colour must round-trip through the cloud identically. */
+    if(a){a.name=n;a.domain=GB.dom||a.domain;a.colour=GB.col||null;delete a.auto}
+    GB.areaEdit=null;GB.col=null;gsave();closeSheet();render();toast('Saved','good');return;
   }
-  const a=GM.addArea(G,{name:n,domain:GB.dom||'WORK'});
+  const a=GM.addArea(G,{name:n,domain:GB.dom||'WORK',colour:GB.col||null});
+  GB.col=null;
   GB.areaId=a.id;gsave();closeSheet();render();toast('Area added','good');
   setTimeout(()=>{GB.id?g2Open(GB.id):g2New(1)},240);
 }
@@ -6792,7 +6898,7 @@ function g2Manage(){
     <div class="sh-t">Areas and dates</div>
     <h2 class="sec"><span>Areas</span><u>never end</u></h2>
     ${A.length?A.map((a,i)=>`<div class="g2m">
-      <span class="d" style="background:${domColour(a.domain)}"></span>
+      <span class="d" style="background:${areaColour(a)}"></span>
       <span class="n" style="cursor:pointer" onclick="g2EditArea('${a.id}')">${esc(a.name)}<u>${GM.goalsOfArea(G,a.id).length} goal${GM.goalsOfArea(G,a.id).length===1?'':'s'} · ${a.domain} · TAP TO RENAME</u></span>
       <button class="mb" onclick="g2Move('${a.id}',-1)" ${i===0?'disabled':''}>↑</button>
       <button class="mb" onclick="g2Move('${a.id}',1)" ${i===A.length-1?'disabled':''}>↓</button>
@@ -7108,7 +7214,7 @@ function xpAttribution(){
   const top=rows[0].n;
   return `<h2 class="sec"><span>What bought this shelf</span><u>attributed</u></h2>
     <div class="card">${rows.map(r=>{
-      const a=GM.areaById(G,r.g.areaId)||{},c=domColour(a.domain);
+      const a=GM.areaById(G,r.g.areaId)||{},c=areaColour(a);
       return `<div class="attr">
         <span class="an">${esc(r.g.title)}${r.g.state==='done'?' <b style="color:var(--phos);font-size:11px">DONE</b>':''}</span>
         <span class="at"><i style="width:${Math.round(r.n/top*100)}%;background:${c}"></i></span>
