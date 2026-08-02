@@ -749,6 +749,21 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
   border:1px solid var(--line2);background:transparent;color:var(--dim);cursor:pointer;
   font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.11em}
 .tplb.on{border-color:var(--violet);color:var(--violet);background:rgba(176,140,255,.1)}
+.pd-tpl{width:100%;margin:2px 0 12px;min-height:var(--tap);border-radius:11px;
+  border:1px solid rgba(176,140,255,.35);background:rgba(176,140,255,.07);color:var(--violet);
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.15em;cursor:pointer}
+/* A CONFLICT IS A FACT, NOT A FAILURE. Amber, not blood: he has not missed
+   anything, the day simply cannot be lived as written. It states the collision,
+   then offers the one move that resolves it — and never moves anything itself. */
+.pdwarn{border:1px solid rgba(224,178,94,.35);background:rgba(224,178,94,.06);
+  border-radius:12px;padding:11px 12px;margin-bottom:12px}
+.pdwarn .w1{font-size:12.5px;color:var(--dim);line-height:1.45}
+.pdwarn .w1 b{color:var(--gold);font-weight:600}
+.pdwarn .w1+.w1{margin-top:6px}
+.pdwarn .wact{margin-top:8px;margin-bottom:4px}
+.pdwarn .wact button{width:100%;min-height:44px;border-radius:9px;cursor:pointer;
+  border:1px solid rgba(224,178,94,.45);background:transparent;color:var(--gold);
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.11em}
 /* the fold must never look like the goal was finished or deleted: a quiet dashed
    row that states the count and offers the way back */
 .g2shutrow{margin-left:15px;width:calc(100% - 15px);min-height:var(--tap);
@@ -5873,7 +5888,12 @@ function planDay(date){
   const rows=shape(date),own=!!S.dayPlan[date];
   const DAYFULL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dw];
   /* the numbers that describe the day, said once, up top */
-  const deepM=rows.filter(b=>b.kind==='deep').reduce((a,b)=>a+mins(b.e)-mins(b.s),0);
+  /* DEEP IS CLOCK TIME, NOT A SUM OF LENGTHS. Summing durations counts an
+     overlap twice: a Monday with "Sano weekly goal" 1:00–2:15 and "Block 3"
+     1:20–2:35 printed 6h45m when only 5h50m of the day was deep — 55 minutes of
+     credit for one 55-minute stretch, on the single most prominent number here.
+     The gap maths below already merged intervals; this did not. */
+  const deepM=unionMins(rows.filter(b=>b.kind==='deep'));
   let openM=0,gapN=0;{let cur=null;
   rows.forEach(b=>{if(cur!==null){const g=mins(b.s)-cur;if(g>=15){openM+=g;gapN++}}
     cur=cur===null?mins(b.e):Math.max(cur,mins(b.e));});}
@@ -5916,12 +5936,26 @@ function planDay(date){
     <div class="sh-t">${dayWord(date)==='TOMORROW'?'Tomorrow — '+DAYFULL:DAYFULL}.</div>
     <div class="pd-stats"><span><i class="dm" style="font-style:normal">◆</i> <b>${hrs(deepM)}</b> DEEP</span><span><b>${
       gapN?hrs(openM):'NOTHING'}</b> OPEN</span><span>ENDS <b>${rows.length?t12(rows[rows.length-1].e):'—'}</b></span></div>
+    <!-- TEMPLATES IS THE FIRST THING, NOT THE LAST. It shipped ninth down, below
+         every block on the page, framed as "save this day" — but the act while
+         planning is STARTING from a shape, not filing one away. -->
+    <button class="btn gh sm pd-tpl" onclick="planTpl('${date}')">TEMPLATES${
+      (()=>{const t=tplForDow(dw);return t?` · ${esc(t.name.toUpperCase())}`:''})()} ▸</button>
+    ${(()=>{
+      const cl=clashes(rows),dp=dupeNames(rows);
+      if(!cl.length&&!dp.length)return'';
+      return `<div class="pdwarn">
+        ${cl.map(c=>`<div class="w1"><b>${esc(cut(c.a.n,20))}</b> and <b>${esc(cut(c.b.n,20))}</b>
+          overlap by ${c.ov}m</div>
+          <div class="wact"><button onclick="planPush('${date}','${esc(c.b.n).replace(/'/g,"\\'")}',${c.to})">
+            MOVE ${esc(cut(c.b.n,14)).toUpperCase()} TO ${t12(hhmm(c.to))}</button></div>`).join('')}
+        ${dp.map(n=>`<div class="w1"><b>${esc(cut(n,24))}</b> is on the day twice</div>`).join('')}
+      </div>`;
+    })()}
     <div class="pd">${list}</div>
     <button class="btn gh" style="margin-top:4px" onclick="planAdd('${date}')">+ Add to the evening</button>
     ${own?`<button class="btn gh" style="margin-top:8px" onclick="planReset('${date}')">Back to my normal ${dw===6?'Saturday':'day'}</button>`:''}
     <button class="btn gh" style="margin-top:8px" onclick="planAsNormal('${date}')">Make this my normal ${dw===6?'Saturday':'weekday'}</button>
-    <button class="btn gh" style="margin-top:8px" onclick="planTpl('${date}')">Templates${
-      (()=>{const t=tplForDow(dw);return t?` · on ${esc(t.name)}`:''})()} ▸</button>
     <div class="hintline" style="margin-top:10px;text-align:center">Planning pays nothing — doing does.</div>`);
 }
 /* ═══ THE TEMPLATE SHEET ══════════════════════════════════════════════════
@@ -5942,18 +5976,24 @@ function planTpl(date){
       <button class="tplb${(S.tplDow||{})[dw]===t.id?' on':''}"
         onclick="tplAssign(${dw},'${t.id}')">EVERY ${DAYSHORT[dw]}</button>
     </div></div>`;
-  sheet(`<div class="sh-k">BUILD IT ONCE</div><div class="sh-t">Day templates</div>
-    <div class="sh-sub">A SHAPE YOU CAN PUT ON ANY DAY</div>
-    <div class="fld"><label>Save ${DAYNAMES[dw]}'s plan as a template</label>
-      <input id="tplN" maxlength="28" placeholder="Deep work day">
-      <button class="btn gh sm" style="margin-top:9px" onclick="tplSaveFrom('${date}')">Save this shape</button>
-      <div class="hintline">Saves the ${shape(date).length} blocks you are looking at right now.</div></div>
-    <h2 class="sec" style="margin-top:20px"><span>Your templates</span><u>${list.length||'none yet'}</u></h2>
+  /* START FROM ONE FIRST. Saving is the occasional act; picking the shape you
+     are about to work in is the daily one, so it leads and the save form sits
+     underneath it. The old order had him scroll past a naming field to reach
+     the thing he opened this sheet to do. */
+  sheet(`<div class="sh-k">START FROM A SHAPE</div><div class="sh-t">Day templates</div>
+    <div class="sh-sub">${DAYNAMES[dw].toUpperCase()} · ${shape(date).length} BLOCKS RIGHT NOW</div>
     ${list.length?list.map(rows).join('')
-      :'<div class="card" style="color:var(--dim);font-size:13.5px">None yet. Shape a day the way you want it, then save it here.</div>'}
-    ${tplForDow(dw)?`<button class="btn gh" style="margin-top:12px" onclick="tplUnassign(${dw})">
+      :`<div class="card" style="color:var(--dim);font-size:13.5px;line-height:1.5">
+         No templates yet. Shape ${DAYNAMES[dw]} the way you want it, then save it below —
+         after that it is one tap to put that shape on any day.</div>`}
+    ${tplForDow(dw)?`<button class="btn gh" style="margin-top:10px" onclick="tplUnassign(${dw})">
       Put ${DAYNAMES[dw]}s back to my normal day</button>`:''}
-    <div class="hintline" style="margin-top:12px">A plan written for one specific date still wins over its template —
+    <h2 class="sec" style="margin-top:22px"><span>Save this day as a template</span><u>reusable</u></h2>
+    <div class="fld"><input id="tplN" maxlength="28" placeholder="Deep work day">
+      <button class="btn gh sm" style="margin-top:9px" onclick="tplSaveFrom('${date}')">Save this shape</button>
+      <div class="hintline">Saves the ${shape(date).length} blocks you are looking at right now.
+        Same name as an existing one updates it instead of making a second.</div></div>
+    <div class="hintline" style="margin-top:14px">A plan written for one specific date still wins over its template —
       the more specific thing always does. Sunday stays the Sabbath and takes no template.</div>`);
 }
 function tplSaveFrom(date){
@@ -5997,6 +6037,56 @@ function nextDow(g){
   const d=new Date(today()+'T00:00:00');
   for(let i=1;i<=7;i++){d.setDate(d.getDate()+1);if(d.getDay()===g)return iso(d)}
   return today();
+}
+/* ═══ WHAT THE DAY ACTUALLY SAYS ══════════════════════════════════════════
+   Three readings the page used to get wrong, all of them about overlap.       */
+
+/* minutes of CLOCK covered by these blocks — overlapping stretches counted once */
+function unionMins(bs){
+  const iv=bs.map(b=>[mins(b.s),mins(b.e)]).sort((a,b)=>a[0]-b[0]);
+  let t=0,cs=null,ce=null;
+  iv.forEach(([s,e])=>{
+    if(cs===null){cs=s;ce=e}
+    else if(s<=ce){ce=Math.max(ce,e)}
+    else{t+=ce-cs;cs=s;ce=e}
+  });
+  return cs===null?0:t+(ce-cs);
+}
+/* A PARTIAL overlap is the one the layout cannot draw. A block wholly inside
+   another is deliberate — it renders "runs alongside" — but two blocks that
+   merely collide render as ordinary stacked rows, so the page shows a day that
+   cannot happen. Two SACRED blocks were double-booked and nothing said so. */
+function clashes(rows){
+  const out=[];
+  for(let i=0;i<rows.length;i++)for(let j=i+1;j<rows.length;j++){
+    const A=rows[i],B=rows[j];
+    const a1=mins(A.s),a2=mins(A.e),b1=mins(B.s),b2=mins(B.e);
+    const ov=Math.min(a2,b2)-Math.max(a1,b1);
+    if(ov<=0)continue;
+    if((a1<=b1&&a2>=b2)||(b1<=a1&&b2>=a2))continue;   /* nested: drawn alongside */
+    /* the later-starting one is the one that moves */
+    const [first,late]=a1<=b1?[A,B]:[B,A];
+    out.push({a:first,b:late,ov,to:(a1<=b1?a2:b2)});
+  }
+  return out;
+}
+/* the same block twice — his Monday carried two "Coffee & breakfast" and the
+   page never mentioned it */
+function dupeNames(rows){
+  const seen={};rows.forEach(b=>{const k=(b.n||'').trim().toLowerCase();seen[k]=(seen[k]||0)+1});
+  return Object.keys(seen).filter(k=>seen[k]>1)
+    .map(k=>(rows.find(b=>(b.n||'').trim().toLowerCase()===k)||{}).n);
+}
+const hhmm=m=>`${pad(Math.floor(m/60))}:${pad(m%60)}`;
+/* push the later block forward so it starts when the earlier one ends, keeping
+   its length. Order and clock may move; content and amount may not — §2.2. */
+function planPush(date,name,toMin){
+  const rows=shape(date).map(b=>({...b}));
+  const b=rows.find(x=>(x.n||'')===name);if(!b)return;
+  const len=mins(b.e)-mins(b.s);
+  b.s=hhmm(toMin);b.e=hhmm(Math.min(toMin+len,23*60+59));
+  planWrite(date,rows);planDay(date);
+  toast(`${cut(name,18)} moved to ${t12(b.s)}`,'good');
 }
 function planRows(date){return shape(date).map(b=>({...b}))}
 function planWrite(date,rows){

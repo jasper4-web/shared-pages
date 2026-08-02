@@ -3,7 +3,7 @@
    (non-installed sites lose localStorage after ~7 idle days — exactly the scenario where
    he has stopped opening it, which would silently delete the run). */
 
-const CACHE = 'btb-v68';
+const CACHE = 'btb-v69';
 const ASSETS = [
   './',
   './index.html',
