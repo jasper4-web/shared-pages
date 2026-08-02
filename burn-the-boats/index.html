@@ -780,6 +780,21 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
   font-family:'Geist Mono',monospace;font-size:11px;color:#4e4860;letter-spacing:.04em}
 .dbleg{margin-top:5px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#4e4860}
 .dbleg b{color:var(--gold);font-weight:400}
+
+/* ---------- the handles ----------
+   touch-action:none is not optional: without it the browser claims the vertical
+   gesture for scrolling and the drag never fires a single pointermove. The grip
+   sits in the row's own padding so it costs no layout, and the resize strip is
+   the bottom edge — the edge you would instinctively pull. */
+.pdgrip{position:absolute;right:0;top:4px;z-index:5;
+  width:44px;height:44px;padding:0;border:0;background:none;cursor:grab;
+  color:#3f3950;font-size:15px;line-height:1;touch-action:none;
+  display:flex;align-items:center;justify-content:center}
+.pdgrip:active{cursor:grabbing;color:var(--gold)}
+.pdrow.lift{border-color:var(--line2);box-shadow:0 10px 26px -14px #000;z-index:3}
+/* while it is being dragged the row says its new time in gold — the change is
+   legible before the finger lifts, so a wrong drag is abandoned, not undone */
+.pdrow.shifted .t,.pdrow.shifted .t b,.pdrow.shifted .len{color:var(--gold)}
 /* the fold must never look like the goal was finished or deleted: a quiet dashed
    row that states the count and offers the way back */
 .g2shutrow{margin-left:15px;width:calc(100% - 15px);min-height:var(--tap);
@@ -869,7 +884,11 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
    open air you can tap to fill. Deep blocks carry gold and one ◆ tag. */
 .pd{margin-top:14px}
 .pdrow{display:grid;grid-template-columns:46px 1fr auto;gap:10px;align-items:start;
-  width:100%;text-align:left;cursor:pointer;padding:10px 12px;margin-bottom:6px;
+  /* the right gutter is the grip's, on EVERY row. Without it the grip floats over
+     whatever the row happens to contain — and on a host row that is the nested
+     cards, which sit later in the DOM, paint above it and swallow the gesture
+     entirely. A reserved column costs 32px and makes the handle unconditional. */
+  width:100%;text-align:left;cursor:pointer;padding:10px 48px 10px 12px;margin-bottom:6px;
   border:1px solid var(--line);border-radius:12px;background:var(--panel);
   position:relative;overflow:hidden;
   /* TIME LOOKS LIKE TIME. Every row used to be 52px whether it held a 15-minute
@@ -5959,6 +5978,10 @@ function planDay(date){
         return deep?(g?`<u class="pdtag">◆ ${esc(cut(g.title,30)).toUpperCase()}</u>`:'')
           :(g?`<u class="al" style="display:block;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint);margin-top:3px">→ ${esc(cut(g.title,30))}</u>`:'')})()}</span>
       <span class="len">${len}m</span>
+      <button class="pdgrip" aria-label="Drag ${esc(b.n)} to another time"
+        onpointerdown="pdGrab(event,'${date}',${i},'move')"
+        onpointermove="pdMove(event)" onpointerup="pdDrop(event)"
+        onpointercancel="pdDrop(event)" onclick="event.stopPropagation()">⠿</button>
       ${kids.length?`<div class="inwrap">${kids.map(([x,j])=>subRow(x,j)).join('')}</div>`:''}
     </div>`;
   });
@@ -6343,6 +6366,61 @@ function planRow(date,i){
     <button class="btn" style="margin-top:6px" onclick="planRowSave('${date}',${i})">Save the change</button>
     ${deep?''
       :`<button class="btn gh" style="margin-top:8px" onclick="planRowDrop('${date}',${i})">Take it off this day</button>`}`);
+}
+/* ═══ THE DAY BENDS — WITHOUT OPENING ANYTHING ════════════════════════════
+   His words, 2026-07-30: "like whenever I hold an app down on an iPhone and
+   everything kind of shows that it can be reconstructed and I can just drag and
+   move things and it will adjust the time accordingly."
+
+   The ruling that came with it (JASPER-1145) is the safety rail: the bar follows
+   the AMOUNT of work in a day, not its ARRANGEMENT. So a drag may change WHEN a
+   block sits and HOW LONG it runs — the two things the sheet already let him
+   change — and nothing else. No block is created, destroyed, or re-domained by a
+   gesture, which is why this cannot be used to inflate a day.
+
+   15-minute snapping, because the whole schedule is built on quarter hours and a
+   drag that lands on 9:07 is a drag that has to be corrected. */
+let PDRAG=null;
+const PD_PX_PER_STEP=11;                 /* finger travel for one 15-minute step */
+function pdGrab(ev,date,i,mode){
+  ev.preventDefault();ev.stopPropagation();
+  const rows=planRows(date),b=rows[i];if(!b)return;
+  const el=ev.currentTarget.closest('.pdrow');
+  PDRAG={date,i,mode,y0:ev.clientY,el,moved:0,
+    s0:mins(b.s),len0:mins(b.e)-mins(b.s),
+    s:mins(b.s),len:mins(b.e)-mins(b.s)};
+  el.classList.add('lift');
+  try{ev.currentTarget.setPointerCapture(ev.pointerId)}catch(e){}
+}
+function pdMove(ev){
+  if(!PDRAG)return;
+  const d=ev.clientY-PDRAG.y0;
+  PDRAG.moved=Math.max(PDRAG.moved,Math.abs(d));
+  const steps=Math.round(d/PD_PX_PER_STEP);
+  if(PDRAG.mode==='move'){
+    PDRAG.s=Math.max(0,Math.min(23*60+45-PDRAG.len,PDRAG.s0+steps*15));
+  }else{
+    /* length may not go below a quarter hour, and may not run past midnight */
+    PDRAG.len=Math.max(15,Math.min(600,PDRAG.len0+steps*15));
+    PDRAG.len=Math.min(PDRAG.len,23*60+59-PDRAG.s);
+  }
+  const el=PDRAG.el;if(!el)return;
+  const t=el.querySelector('.t'),ln=el.querySelector('.len');
+  if(t)t.innerHTML=`${t12(hhmm(PDRAG.s))}<b>${t12(hhmm(PDRAG.s+PDRAG.len))}</b>`;
+  if(ln)ln.textContent=`${PDRAG.len}m`;
+  el.style.setProperty('--len',PDRAG.len);
+  el.classList.toggle('shifted',PDRAG.s!==PDRAG.s0||PDRAG.len!==PDRAG.len0);
+}
+function pdDrop(ev){
+  if(!PDRAG)return;
+  const {date,i,s,len,s0,len0,moved,el}=PDRAG;PDRAG=null;
+  if(el)el.classList.remove('lift','shifted');
+  /* a tap that never travelled is a tap, not a drag — leave the day alone */
+  if(moved<6||(s===s0&&len===len0)){planDay(date);return}
+  const rows=planRows(date),b=rows[i];if(!b){planDay(date);return}
+  b.s=hhmm(s);b.e=hhmm(s+len);
+  planWrite(date,rows);planDay(date);
+  toast(`${cut(b.n,16)} · ${t12(b.s)}–${t12(b.e)}`,'good');
 }
 /* the ±15 nudge — moving a block should feel like nudging, not like filling in a form */
 function ndg(d,w){
