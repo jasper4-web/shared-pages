@@ -726,17 +726,6 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 .sw.auto.on{border-style:solid}
 .sw.cus input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;cursor:pointer}
 .sw.cus i{background:conic-gradient(#FF5FA2,#E0B25E,#C6F24E,#4ADE80,#38E1D8,#5B8DEF,#9B7BD4,#FF5FA2)}
-/* the rule he is about to live with, at the size he will actually see it */
-.swp{margin-top:12px;padding:11px 12px;border-radius:12px;background:#0a0812;border:1px solid var(--line)}
-.swp .pk{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.17em;color:#4e4860;margin-bottom:8px}
-.swp .pr{padding-left:9px;border-left:3px solid var(--c);font-family:'Geist Mono',monospace;
-  font-size:11px;letter-spacing:.19em;color:var(--faint);font-weight:700;margin-bottom:6px}
-.swp .pc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--c);
-  border-radius:10px;padding:9px 11px;font-family:'Clash Display',sans-serif;font-size:15px;
-  font-weight:600;letter-spacing:-.02em;color:var(--ink)}
-.swp .pw{margin-left:11px;margin-top:5px;background:var(--panel);border:1px solid var(--line);
-  border-left:2px solid color-mix(in srgb,var(--c) 40%,transparent);border-radius:9px;
-  padding:8px 11px;font-size:12.5px;color:var(--dim)}
 
 /* ---------- the goals tab, v2 ----------
    The capacity line is first and never moves; the WIG is the screen, not a tag. */
@@ -3425,7 +3414,7 @@ function goalStrip2(b){
   }
   const g=GM.goalOf(G,c.goalId);
   if(!g||g.state!=='active')return'';               /* same rule on the daily surface */
-  const a=GM.areaById(G,g.areaId)||{},col=areaColour(a);
+  const a=GM.areaById(G,g.areaId)||{},col=goalPaint(g);
   const n=GM.commitsOfWeek(G,wk).filter(x=>x.goalId===g.id&&x.done).length;
   const tot=GM.commitsOfWeek(G,wk).filter(x=>x.goalId===g.id).length;
   return `<div class="nu-goal" style="--gc:${col}">
@@ -4509,7 +4498,7 @@ function renderChar(){
   const cg=GM.liveGoals(G);
   const cw=cg.find(x=>x.wig), cl=(cw?[cw].concat(cg.filter(x=>x!==cw)):cg).slice(0,6);
   $('cvGoals').innerHTML=cl.length?cl.map(g=>{
-    const a=GM.areaById(G,g.areaId)||{},c=areaColour(a);
+    const a=GM.areaById(G,g.areaId)||{},c=goalPaint(g);
     return `<div class="gchip" onclick="$('charv').classList.remove('on');go('push');setTimeout(()=>g2Open('${g.id}'),420)">
       <div class="gl">${esc((a.name||'').slice(0,12))}</div>
       <div class="gp" style="color:${c}">${g.target!==null?`${fmtN(g.at)}<span style="font-size:11px;color:#7a7191">/${fmtN(g.target)}</span>`
@@ -4770,7 +4759,7 @@ const GM=(()=>{
     G.horizons=G.horizons.filter(x=>x.id!==id);return freed;
   }
 
-  function addGoal(G,{title,areaId,horizonId,kind,start,at,target,unit,evidence,obstacle,lead,wig,anchor,parentId}={}){
+  function addGoal(G,{title,areaId,horizonId,kind,start,at,target,unit,evidence,obstacle,lead,wig,anchor,parentId,colour}={}){
     if(!title||!String(title).trim())throw new Error('a goal needs a title');
     if(!areaById(G,areaId))throw new Error('a goal needs a real area');
     const nums=target!==undefined&&target!==null&&target!=='';
@@ -4781,7 +4770,7 @@ const GM=(()=>{
       at:nums?Number(at||0):null,target:nums?Number(target):null,unit:unit||'',
       evidence:evidence||'',obstacle:obstacle||'',
       lead:lead&&lead.name?{name:lead.name,target:Number(lead.target)||0}:null,
-      wig:wig?1:0,anchor:anchor?1:0,
+      wig:wig?1:0,anchor:anchor?1:0,colour:colour||null,
       rank:G.goals.length+1,state:'active',confidence:[],history:[]};
     G.goals.push(g);return g;
   }
@@ -5391,7 +5380,7 @@ function g2PickWig(){
     <div class="sh-sub">IT GETS THE NEXT FREE BLOCK. YOU CAN CHANGE IT ANY TIME.</div>
     <div class="chips" style="margin-top:14px">
       ${live.map(g=>`<button class="chip tap seg${g.wig?' on':''}"
-        style="--gc:${areaColour(GM.areaById(G,g.areaId))}"
+        style="--gc:${goalPaint(g)}"
         onclick="g2SetWig('${g.id}');closeSheet()">${esc(cut(g.title,34))}</button>`).join('')}
     </div>`);
 }
@@ -5412,19 +5401,21 @@ function g2Tiers(){
        used to fall out of every view. */
     const under=G.goals.filter(g=>g.areaId===a.id&&g.state==='active'&&(!anc||g.id!==anc.id))
       .sort((x,y)=>(x.rank||0)-(y.rank||0));
-    const c=areaColour(a);
+    /* THE HEADER FOLLOWS ITS MAIN GOAL. Colour is set on the goal now, so the
+       strip above SANO must show what SANO's December goal is wearing — otherwise
+       recolouring the goal leaves the header behind and the block reads as two
+       different things. With no anchor yet there is no goal to follow, so it
+       falls back to the area. */
+    const c=anc?goalPaint(anc):areaColour(a);
     return `<div class="g2tier">
-      <!-- THE HEADER IS THE DOOR. The colour picker lived only behind
-           Goals -> Areas and dates -> tap the name, three taps down and invisible
-           from the screen the colour is actually on. The area's own name, sitting
-           right next to its rule, is what a hand reaches for. Same .sec.g2sec
-           styling as before via button.sec, so nothing moves. -->
+      <!-- the header is still a door to the area itself: rename, domain, and the
+           area-level colour that any goal without its own falls back to -->
       <button class="sec g2sec tr-h" style="--c:${c}" onclick="g2EditArea('${a.id}')"
         aria-label="Edit ${esc(a.name)}"><span>${esc(a.name)}</span>
         <u>${anc?`${under.length} under it`:`${under.length} goal${under.length===1?'':'s'}`}</u></button>
       ${anc?g2AnchorCard(anc,c,shared):`<button class="g2addanc" onclick="g2NewGoal('${a.id}',1)">
         + Give ${esc(a.name)} a December goal</button>`}
-      ${under.map(g=>g2Read(g,c)).join('')}
+      ${under.map(g=>g2Read(g,goalPaint(g))).join('')}
       ${anc?`<button class="g2addsub" onclick="g2NewGoal('${a.id}',0,'${anc.id}')">+ Add one under this</button>`:''}
     </div>`;
   }).join('');
@@ -5722,7 +5713,7 @@ function g2Week(){
          the model. */
       const past=gone(wk,d);
       out+=`<button class="g2slot${g?' on':''}${done?' done':''}${past&&!g?' settled':''}"
-        ${g?`style="--c:${areaColour(a)}"`:''}
+        ${g?`style="--c:${goalPaint(g)}"`:''}
         onclick="${past?`g2Past(${d})`:`g2Slot('${wk}',${d},'${bid}')`}">
         ${g?'<span class="dom"></span>':''}
         <span class="sk">${bid.toUpperCase()}<u>${blk?t12(blk.s):''}</u></span>
@@ -6399,7 +6390,7 @@ function g2ByDate(){
     out+=`<h2 class="sec g2sec ah" style="--c:${past?'var(--line2)':'var(--violet)'}">
       <span>${esc(h.label)}</span><u>${hzWhenH(h)}</u></h2>
       <div class="g2area g2board">
-      ${gs.map(g=>g2Row(g,areaColour(GM.areaById(G,g.areaId)))).join('')}</div>`;
+      ${gs.map(g=>g2Row(g,goalPaint(g))).join('')}</div>`;
   });
   const un=GM.undated(G);
   if(un.length)out+=`<h2 class="sec g2sec ah" style="--c:var(--line2)">
@@ -6568,6 +6559,25 @@ const domColour=k=>{const d=DOMAINS.find(x=>x.k===k);return d?d.c:'var(--gold)'}
    colour is null on every area that predates this, so untouched areas render
    byte-identically to v63. */
 const areaColour=a=>(a&&a.colour)||domColour(a&&a.domain);
+/* A GOAL'S COLOUR — set on the goal itself, in the goal sheet, next to its area
+   and its date. Two main goals inside THE WORK need to be told apart, and the
+   thing he opens to change a goal is the goal.
+
+   Resolution walks OUTWARD, so a colour set once on a main goal dresses the whole
+   family: the goal's own colour, else its parent's (recursively, which is what
+   makes sub-goals match without ever being set), else its area's, else the domain.
+   The depth guard is for a parentId cycle a bad restore could produce — an
+   infinite walk here would hang the render, not just mis-colour it. */
+function goalColour(g){
+  let n=0;
+  while(g&&n++<24){
+    if(g.colour)return g.colour;
+    g=g.parentId?GM.goalOf(G,g.parentId):null;
+  }
+  return null;
+}
+/* what a goal actually paints with, area and domain included */
+const goalPaint=g=>g?(goalColour(g)||areaColour(GM.areaById(G,g.areaId))):'var(--gold)';
 /* BY DATE rendered NO area at all, so it read as seven consecutive rows of
    "Dec 25 · 150 days · 0%" distinguishable only by title. Record prints the domain as
    a small grey mono suffix on the row itself — so does this now. */
@@ -6650,12 +6660,15 @@ function g2New(keep){
   /* keep=true when we're coming BACK from "+ new area/date" — rebuilding GB
      there discarded the anchor intent, the parent link and the chosen area. */
   /* only reuse GB if a round trip is genuinely in flight */
-  if(!keep||!GB.trip)GB={areaId:(GM.liveAreas(G)[0]||{}).id||null,horizonId:null,id:null,anchor:0,parentId:null};
+  if(!keep||!GB.trip)GB={areaId:(GM.liveAreas(G)[0]||{}).id||null,horizonId:null,id:null,anchor:0,parentId:null,gcol:null};
   sheet(g2Form(GB.anchor?'The December goal':'New goal',chk));
 }
 function g2Open(id){
   const g=GM.goalOf(G,id);if(!g)return;
-  GB={areaId:g.areaId,horizonId:g.horizonId,id:g.id};
+  /* gcol is the goal's OWN colour, never the inherited one — seeding it with what
+     the goal merely displays would silently harden a sub-goal's inheritance into
+     a fixed colour the moment he opened it and pressed Save. */
+  GB={areaId:g.areaId,horizonId:g.horizonId,id:g.id,gcol:g.colour||null};
   sheet(g2Form('The goal',null,g));
 }
 function g2Form(title,chk,g){
@@ -6672,6 +6685,9 @@ function g2Form(title,chk,g){
       ${areas.map(a=>`<button class="chip tap seg${GB.areaId===a.id?' on':''}" data-a="${a.id}"
         onclick="g2Pick('a','${a.id}')">${esc(a.name)}</button>`).join('')}
       <button class="chip tap" onclick="g2NewArea()">+ NEW AREA</button></div></div>
+    <div class="fld"><label>Colour</label>
+      <div class="swr" id="g2GC">${g2GoalSwatches()}</div>
+      <div class="hintline" id="g2GCh">${g2GoalColHint()}</div></div>
     <div class="fld"><label>Due by <span style="text-transform:none;letter-spacing:0">— optional</span></label>
       <div class="chips" id="g2H">
       <button class="chip tap seg${!GB.horizonId?' on':''}" data-h="" onclick="g2Pick('h','')">NO DATE</button>
@@ -6722,9 +6738,41 @@ function g2More(){const e=$('g2Extra'),on=e.style.display==='none';
   e.style.display=on?'block':'none';
   $('g2MoreB').textContent=on?'Hide the number and the evidence':'Add a number or your evidence'}
 function g2Pick(k,v){
-  if(k==='a'){GB.areaId=v;$('g2A').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',e.dataset.a===v))}
+  if(k==='a'){GB.areaId=v;$('g2A').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',e.dataset.a===v));
+    g2GCRefresh();}   /* the inherit swatch shows the NEW area's colour */
   else{GB.horizonId=v||null;$('g2H').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',(e.dataset.h||'')===v))}
 }
+/* ---- the goal's own colour, on the goal sheet ----------------------------
+   GB.gcol is the pending pick: null means "inherit", which is every goal that
+   predates this field. Nothing is written until Save it, so backing out of the
+   sheet leaves the goal exactly as it was. */
+function g2InheritColour(){
+  const g=GB.id?GM.goalOf(G,GB.id):null;
+  /* what this goal WOULD wear with no colour of its own: its parent's, else the
+     area's. Computed off the parent so the swatch tells the truth for sub-goals. */
+  const p=(g&&g.parentId)?GM.goalOf(G,g.parentId):(GB.parentId?GM.goalOf(G,GB.parentId):null);
+  return (p&&goalColour(p))||areaColour(GM.areaById(G,GB.areaId))||'var(--gold)';
+}
+function g2GoalSwatches(){
+  const cur=GB.gcol||null,auto=g2InheritColour();
+  return `<button type="button" class="sw auto${cur?'':' on'}" style="--s:${auto}"
+      data-c="" onclick="g2PickGoalCol('')" aria-label="Inherit"><i></i></button>
+    ${AREA_SWATCHES.map(c=>`<button type="button" class="sw${cur&&cur.toLowerCase()===c.toLowerCase()?' on':''}"
+      style="--s:${c}" data-c="${c}" onclick="g2PickGoalCol('${c}')"><i></i></button>`).join('')}
+    <button type="button" class="sw cus${cur&&!AREA_SWATCHES.some(c=>c.toLowerCase()===cur.toLowerCase())?' on':''}"
+      style="--s:${cur||auto}" data-cus="1"><i></i>
+      <input type="color" value="${cur||auto}" oninput="g2PickGoalCol(this.value)" aria-label="Any colour"></button>`;
+}
+function g2GoalColHint(){
+  return GB.gcol
+    ? 'Every goal under this one follows this colour.'
+    : 'A follows the area — pick one to give this goal its own.';
+}
+function g2GCRefresh(){
+  const box=$('g2GC');if(box)box.innerHTML=g2GoalSwatches();
+  const h=$('g2GCh');if(h)h.textContent=g2GoalColHint();
+}
+function g2PickGoalCol(v){GB.gcol=v||null;g2GCRefresh()}
 function g2PickW(v){
   GB.worth=v;
   const h=$('g2W');if(h)h.querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',Number(e.dataset.w)===v));
@@ -6743,6 +6791,9 @@ function g2Save(){
     evidence:$('g2E').value.trim()};
   if(GB.id){
     const g=GM.goalOf(G,GB.id);
+    /* null, not delete: a goal put back to "inherit" and one that never had a
+       colour must round-trip through the cloud identically */
+    if(g)g.colour=GB.gcol||null;
     /* target goes through editGoal so easing leaves its trail; start/at do not */
     GM.editGoal(G,GB.id,{...patch,start:st,at:at},dayNo());
     if(tg!==null)GM.editGoal(G,GB.id,{target:tg},dayNo());else if(g)g.target=null;
@@ -6754,6 +6805,7 @@ function g2Save(){
     const firstInArea=!G.goals.some(x=>x.areaId===GB.areaId&&x.anchor&&x.state!=='dropped');
     const ng=GM.addGoal(G,{...patch,start:st,at:at,target:tg,
       parentId:GB.parentId,wig:GM.liveGoals(G).length===0?1:0});
+    ng.colour=GB.gcol||null;
     if(GB.worth&&!GB.anchor)ng.worth=GB.worth;    /* the knock-out price, his nudge */
     /* explicit ask, or the first goal this area has ever had */
     const promoted=askedHere||(firstInArea&&!GB.parentId);
@@ -6773,17 +6825,15 @@ function g2State(id,st){
 }
 function g2EditArea(id){
   const a=GM.areaById(G,id);if(!a)return;
-  GB.dom=a.domain;GB.areaEdit=id;GB.col=a.colour||null;
+  GB.dom=a.domain;GB.areaEdit=id;
   sheet(`<div class="sh-k">AN AREA NEVER ENDS</div><div class="sh-t">${esc(a.name)}</div>
     <div class="sh-sub">${GM.goalsOfArea(G,id).length} GOAL${GM.goalsOfArea(G,id).length===1?'':'S'} IN IT</div>
-    <div class="fld"><label>Name</label><input id="g2AN" maxlength="40" value="${esc(a.name)}" oninput="g2ColName()"></div>
+    <div class="fld"><label>Name</label><input id="g2AN" maxlength="40" value="${esc(a.name)}"></div>
     <div class="fld"><label>Which part of life it belongs to</label>
       <div class="chips" id="g2AD">${DOMAINS.map(d=>
         `<button class="chip tap seg${d.k===a.domain?' on':''}" data-d="${d.k}" onclick="g2PickDom('${d.k}')">${esc(d.label.replace('THE ',''))}</button>`).join('')}</div>
       <div class="hintline">Blocks pointed at this area now credit this part of your rating.</div></div>
-    ${g2ColField(a.colour||null)}
     <button class="btn" onclick="g2SaveArea()">Save it</button>`);
-  g2ColName();
 }
 /* whatever he'd typed before tapping "+ new" must survive the trip */
 /* keep EVERYTHING he'd typed across "+ new area/date", not just the title —
@@ -6801,82 +6851,35 @@ function g2Stash(){
 function g2ClearDraft(){GB.trip=0;GB.tripLive=0;['g2T','g2C','g2G','g2U','g2E'].forEach(k=>delete GB['d_'+k])}
 function g2NewArea(){
   g2Stash();GB.tripLive=GB.trip?1:0;
-  /* BEFORE the template, not after: g2ColField() reads GB.dom to work out what the
-     "follow the domain" swatch should show, and the old code set it on the line
-     below sheet() — which was harmless while nothing read it during the build. */
-  GB.dom='WORK';GB.col=null;
+  GB.dom='WORK';
   sheet(`<div class="sh-k">AN AREA NEVER ENDS</div><div class="sh-t">New area</div>
     <div class="sh-sub">A BUSINESS, OR A PART OF YOUR LIFE</div>
-    <div class="fld"><label>Name</label><input id="g2AN" maxlength="40" placeholder="SANO" oninput="g2ColName()"></div>
+    <div class="fld"><label>Name</label><input id="g2AN" maxlength="40" placeholder="SANO"></div>
     <div class="fld"><label>Which part of the rating does it feed</label>
       <div class="chips" id="g2AD">${DOMAINS.map((d,i)=>
         `<button class="chip tap seg${i===0?' on':''}" data-d="${d.k}" onclick="g2PickDom('${d.k}')"
           style="${''}">${esc(d.label.replace('THE ',''))}</button>`).join('')}</div>
-      <div class="hintline">Which part of life this area belongs to. Sets its colour unless you pick one below.
+      <div class="hintline">Which part of life this area belongs to, and the colour its goals start from.
         <b style="color:var(--gold)">It does not yet feed your rating</b> — that's coming with the day system.</div></div>
-    ${g2ColField(null)}
     <button class="btn" onclick="g2SaveArea()">Add it</button>`);
 }
-/* SIX QUICK PICKS, THEN THE WHOLE WHEEL. The row is convenience, not a fence —
-   the last swatch is a real colour input, so nothing is out of reach.
-
-   Deliberately absent from the quick row: --phos green and --blood red. Those two
-   already mean DONE and MISSED everywhere else in the app, and an area wearing
-   "succeeded" as its identity makes a finished goal unreadable. They are still
-   reachable through the custom picker; this only declines to *suggest* them. */
+/* the quick-pick palette, shared by the goal sheet's Colour row.
+   Green and red are deliberately absent: they already mean DONE and MISSED,
+   and a goal wearing "succeeded" as its identity is unreadable when it
+   actually succeeds. Both stay reachable through the custom wheel. */
 const AREA_SWATCHES=['#E0B25E','#FF5FA2','#C6F24E','#5B8DEF','#E8734A','#9B7BD4'];
-/* null colour = follow the domain, which is every area that predates this field */
-function g2ColField(cur){
-  const auto=domColour(GB.dom||'WORK');
-  return `<div class="fld"><label>Colour</label>
-    <div class="swr" id="g2AC">
-      <button type="button" class="sw auto${cur?'':' on'}" style="--s:${auto}"
-        data-c="" onclick="g2PickCol('')" aria-label="Follow the domain"><i></i></button>
-      ${AREA_SWATCHES.map(c=>`<button type="button" class="sw${cur&&cur.toLowerCase()===c.toLowerCase()?' on':''}"
-        style="--s:${c}" data-c="${c}" onclick="g2PickCol('${c}')"><i></i></button>`).join('')}
-      <button type="button" class="sw cus${cur&&!AREA_SWATCHES.some(c=>c.toLowerCase()===cur.toLowerCase())?' on':''}"
-        style="--s:${cur||auto}" data-cus="1"><i></i>
-        <input type="color" value="${cur||auto}" oninput="g2PickCol(this.value)" aria-label="Any colour"></button>
-    </div>
-    <div class="hintline">A is the domain's own colour. Everything under this area —
-      its December goal and every goal beneath it — follows whatever you pick.</div>
-    <div class="swp" id="g2CP" style="--c:${cur||auto}">
-      <div class="pk">HOW IT WILL LOOK</div>
-      <div class="pr" id="g2CPn">AREA</div>
-      <div class="pc">Its December goal</div>
-      <div class="pw">A goal underneath it</div>
-    </div></div>`;
-}
-function g2PickCol(v){
-  GB.col=v||null;
-  const auto=domColour(GB.dom||'WORK'),shown=GB.col||auto;
-  const box=$('g2AC');if(box)box.querySelectorAll('.sw').forEach(e=>{
-    e.classList.toggle('on',e.dataset.cus
-      ? !!GB.col&&!AREA_SWATCHES.some(c=>c.toLowerCase()===GB.col.toLowerCase())
-      : (e.dataset.c||'').toLowerCase()===(GB.col||'').toLowerCase());
-    if(e.dataset.cus)e.style.setProperty('--s',shown);
-    if(e.classList.contains('auto'))e.style.setProperty('--s',auto);
-  });
-  const p=$('g2CP');if(p)p.style.setProperty('--c',shown);
-}
-/* the preview header echoes the name as he types it, so the rule he is judging
-   sits next to the word it will sit next to on the Goals screen */
-function g2ColName(){const n=$('g2AN'),t=$('g2CPn');if(n&&t)t.textContent=(n.value.trim()||'AREA').toUpperCase()}
-function g2PickDom(k){
-  GB.dom=k;$('g2AD').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',e.dataset.d===k));
-  g2PickCol(GB.col||'');   /* an untouched colour must follow the domain he just changed */
-}
+function g2PickDom(k){GB.dom=k;$('g2AD').querySelectorAll('.seg').forEach(e=>e.classList.toggle('on',e.dataset.d===k))}
 function g2SaveArea(){
   const n=$('g2AN').value.trim();if(!n){toast('Name it','bad');return}
   if(GB.areaEdit){                       /* renaming an existing one */
     const a=GM.areaById(G,GB.areaEdit);
-    /* null, not delete: an area that HAS been set back to "follow the domain" and
-       one that never had a colour must round-trip through the cloud identically. */
-    if(a){a.name=n;a.domain=GB.dom||a.domain;a.colour=GB.col||null;delete a.auto}
-    GB.areaEdit=null;GB.col=null;gsave();closeSheet();render();toast('Saved','good');return;
+    /* a.colour is deliberately NOT touched here. Colour is picked on the GOAL now;
+       this sheet has no swatches, so writing GB.col would silently wipe whatever an
+       area already carried the moment he renamed it. */
+    if(a){a.name=n;a.domain=GB.dom||a.domain;delete a.auto}
+    GB.areaEdit=null;gsave();closeSheet();render();toast('Saved','good');return;
   }
-  const a=GM.addArea(G,{name:n,domain:GB.dom||'WORK',colour:GB.col||null});
-  GB.col=null;
+  const a=GM.addArea(G,{name:n,domain:GB.dom||'WORK'});
   GB.areaId=a.id;gsave();closeSheet();render();toast('Area added','good');
   setTimeout(()=>{GB.id?g2Open(GB.id):g2New(1)},240);
 }
@@ -7220,7 +7223,7 @@ function xpAttribution(){
   const top=rows[0].n;
   return `<h2 class="sec"><span>What bought this shelf</span><u>attributed</u></h2>
     <div class="card">${rows.map(r=>{
-      const a=GM.areaById(G,r.g.areaId)||{},c=areaColour(a);
+      const a=GM.areaById(G,r.g.areaId)||{},c=goalPaint(r.g);
       return `<div class="attr">
         <span class="an">${esc(r.g.title)}${r.g.state==='done'?' <b style="color:var(--phos);font-size:11px">DONE</b>':''}</span>
         <span class="at"><i style="width:${Math.round(r.n/top*100)}%;background:${c}"></i></span>
