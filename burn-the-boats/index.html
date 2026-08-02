@@ -2561,19 +2561,29 @@ function streakFrom(map){
    An unlived day still breaks it: a day with no record is not a clean day. */
 function smokeStreakNow(){
   const v=S.vices.smoke,g=mins(v.gate);
-  const held=k=>{const r=S.days[k];if(!r)return null;
-    return !(r.smoked&&mins(r.smoked.at)<g)};
+  /* Three states per day, not two. The make-up strip promises STREAK INTACT and
+     donePenance() stamps `slipHealed` on the slip's day for exactly that promise
+     — but nothing ever READ the stamp, so the promise was never kept (the same
+     disease as viceClean, inverted: a writer with no reader). A healed break now
+     preserves the chain without counting: the days around it still add, the
+     broken day itself never does. An unhealed break still ends everything. */
+  const state=k=>{const r=S.days[k];if(!r)return 'end';
+    if(r.smoked&&mins(r.smoked.at)<g)
+      return (r.slipHealed&&r.slipHealed.smoke)?'healed':'end';
+    return 'held'};
   let n=0;
   const vs=viceState();
-  /* a break TODAY is the crash, today: the number falls to zero the moment the
-     gate breaks, not tomorrow morning. Yesterday's held days are history the
-     RECORD keeps — the streak is what is alive right now, and it is dead. */
-  if(vs.brokeGate){v.cleanStreak=0;return 0}
-  if(!vs.beforeNoon)n++;                           /* today, once the gate held */
+  /* a break TODAY is the crash, today — unless today's make-up is already done,
+     in which case the chain stands and today simply doesn't count. */
+  const todayHealed=!!(day().slipHealed&&day().slipHealed.smoke);
+  if(vs.brokeGate&&!todayHealed){v.cleanStreak=0;return 0}
+  if(!vs.beforeNoon&&!vs.brokeGate)n++;            /* today, once the gate held */
   const c=new Date();c.setDate(c.getDate()-1);
   for(let i=0;i<400;i++){
-    if(held(iso(c))!==true)break;
-    n++;c.setDate(c.getDate()-1);
+    const st=state(iso(c));
+    if(st==='end')break;
+    if(st==='held')n++;
+    c.setDate(c.getDate()-1);
   }
   v.cleanStreak=n;v.bestClean=Math.max(v.bestClean||0,n);   /* keep every reader true */
   return n;
@@ -2725,6 +2735,13 @@ const CHALLENGES={
        the ladder had only three left, one short of the four-up grid. Holding past
        22:00 is genuinely more than the gate asked for, so this is a rung, not filler. */
     {id:'h22',ti:'Hold to 22:00',xp:90, mins:1320},
+    /* 2026-08-01 · THE KEPT-DAY RUNG. Smoke legally in the afternoon and every
+       other rung filtered out — the screen went thin on precisely the day he
+       KEPT the rule. `after` inverts the offer condition: this one exists ONLY
+       once a smoke is logged, because after any smoke the next fight is not
+       tomorrow's gate, it is the second smoke. Runs to midnight; a second log
+       voids it through the same lapseCh guard every window lives under. */
+    {id:'one',ti:'One and done', xp:45, mins:1440, after:true},
     {id:'c24',ti:'24 hours clean',xp:120,hours:24},
     {id:'c48',ti:'48 hours clean',xp:180,hours:48},
     {id:'c7', ti:'A week clean',  xp:400,hours:168},
@@ -2910,6 +2927,7 @@ function renderVice(k){
     const list=CHALLENGES[k]||[];
     const avail=list.filter(c=>{
       if(!smoke)return true;
+      if(c.after)return !!vs.smoked&&nowMin()<c.mins-30;       /* the kept-day rung: only AFTER a smoke */
       if(c.mins!=null)return nowMin()<c.mins-30&&!vs.smoked;   /* only offer what is still winnable */
       return !vs.smoked;
     }).slice(0,smoke&&board?2:4);        /* the board's space becomes offers once it goes */
