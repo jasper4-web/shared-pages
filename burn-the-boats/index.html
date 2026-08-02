@@ -1893,7 +1893,8 @@ function load(){
     return merged;
   }
 }
-function save(){try{localStorage.setItem('btb3',JSON.stringify(S))}catch(e){}}
+function save(){try{localStorage.setItem('btb3',JSON.stringify(S))}catch(e){}
+  if(typeof SYNC!=='undefined')SYNC.queue()}
 function day(k){k=k||today();if(!S.days[k])S.days[k]={done:{},miss:{},wait:{},produced:{},focus:{},prio:[],wins:{},off:0,credited:{}};
   if(!S.days[k].credited)S.days[k].credited={};return S.days[k]}
 function week(k){k=k||mondayOf(new Date());
@@ -4929,7 +4930,92 @@ function backfillAnchors(g){
 }
 let G=(()=>{try{const r=localStorage.getItem(GKEY);if(r)return backfillAnchors(Object.assign(GM.empty(),JSON.parse(r)))}
   catch(e){}return GM.empty()})();
-function gsave(){try{localStorage.setItem(GKEY,JSON.stringify(G))}catch(e){}}
+function gsave(){try{localStorage.setItem(GKEY,JSON.stringify(G))}catch(e){}
+  if(typeof SYNC!=='undefined')SYNC.queue()}
+
+/* ═══ CLOUD SYNC — dark until connected ══════════════════════════════════════
+   2026-08-01. His goals were lost to four separate causes: the installed app and
+   Safari are DIFFERENT storage buckets, Safari evicts tab storage after ~7 idle
+   days, deleting the icon deletes its data, and two since-fixed app bugs. Sync
+   makes one cloud copy the truth: push (debounced) after every save, pull once
+   at boot. With no URL+key in localStorage this module does NOTHING — the app
+   is behaviourally identical to v62, which is what the dark-mode harness pins.
+
+   THE GUARD, learned from load()'s scar: the cloud never overwrites a local
+   save with more history in it. A wiped save looks exactly like a fresh one, so
+   RICHNESS decides, never recency. Richer side wins; the poorer side gets
+   corrected by a push. Applying a cloud save walks restoreSave()'s exact ritual
+   — migrate(merge(DEFAULT,…)) + seedOwned + backfillAnchors — one door, not two. */
+const SYNC=(()=>{
+  const CFG='btb3sync';
+  const cfg=()=>{try{return JSON.parse(localStorage.getItem(CFG)||'null')}catch(e){return null}};
+  const on=()=>{const c=cfg();return !!(c&&c.url&&c.key)};
+  const state={last:0,err:null};
+  let t=null;
+  const rich=(s,g)=>((s&&s.ledger)||[]).length
+    +Object.keys((s&&s.days)||{}).length
+    +(((g&&g.goals)||[]).length*10);          /* a goal outweighs a day on purpose */
+  const ep=c=>c.url.replace(/\/+$/,'')+'/save';
+  const hd=c=>({'Authorization':'Bearer '+c.key,'Content-Type':'application/json'});
+  async function push(){
+    const c=cfg();if(!c||!c.url||!c.key)return;
+    try{
+      const body=JSON.stringify({fmt:SAVE_FMT,at:new Date().toISOString(),d:today(),
+        rich:rich(S,G),s:S,g:G});
+      const r=await fetch(ep(c),{method:'PUT',headers:hd(c),body,
+        keepalive:body.length<60000});        /* keepalive rejects large bodies */
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      state.last=Date.now();state.err=null;
+    }catch(e){state.err=String((e&&e.message)||e)}
+    paintSync();
+  }
+  const queue=()=>{if(!on())return;clearTimeout(t);t=setTimeout(push,2500)};
+  async function pull(){
+    const c=cfg();if(!c||!c.url||!c.key)return;
+    try{
+      const r=await fetch(ep(c),{headers:hd(c)});
+      if(r.status===204){state.err=null;return push()}   /* empty cloud: seed it */
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      const j=await r.json();
+      if(rich(j.s,j.g)>rich(S,G)){
+        S=migrate(merge(JSON.parse(JSON.stringify(DEFAULT)),j.s));seedOwned();save();
+        if(j.g){G=backfillAnchors(Object.assign(GM.empty(),j.g));gsave()}
+        state.last=Date.now();state.err=null;
+        render();toast('Synced down from the cloud','good');
+      }else{state.err=null;push()}            /* local is the truth: correct the cloud */
+    }catch(e){state.err=String((e&&e.message)||e);paintSync()}
+  }
+  const connect=(url,key)=>{try{localStorage.setItem(CFG,JSON.stringify({url,key}))}catch(e){}
+    pull()};
+  const disconnect=()=>{try{localStorage.removeItem(CFG)}catch(e){};paintSync()};
+  return {queue,push,pull,connect,disconnect,on,cfg,state};
+})();
+function syncLabel(){
+  if(!SYNC.on())return 'SYNC · off';
+  if(SYNC.state.err)return 'SYNC · retrying';
+  return SYNC.state.last?'SYNC · on · pushed '+new Date(SYNC.state.last).toTimeString().slice(0,5):'SYNC · on';
+}
+function paintSync(){const el=$('syncStat');if(el)el.textContent=syncLabel()}
+function syncSheet(){
+  const c=SYNC.cfg()||{};
+  sheet(`<div class="sh-k">CLOUD SYNC</div>
+    <div class="sh-t">One copy of the truth</div>
+    <div class="sh-sub">EVERY DEVICE, THE SAME SAVE · SETUP-SYNC.MD HAS YOUR STEPS</div>
+    <div class="fld"><label>Worker URL</label>
+      <input type="url" id="syUrl" value="${esc(c.url||'')}" placeholder="https://btb-sync.….workers.dev"></div>
+    <div class="fld"><label>Key — paste once, it lives in your Notes</label>
+      <input type="password" id="syKey" value="${esc(c.key||'')}" placeholder="the key from SETUP-SYNC.md"></div>
+    <button class="btn" onclick="syncConnect()">Connect</button>
+    ${SYNC.on()?`<div style="height:8px"></div>
+      <button class="btn gh sm" onclick="SYNC.push();toast('Pushing…','good')">Push now</button>
+      <div style="height:8px"></div>
+      <button class="btn gh sm" onclick="SYNC.disconnect();closeSheet();render();toast('Sync off — local only','bad')">Disconnect</button>`:''}`);
+}
+function syncConnect(){
+  const u=$('syUrl').value.trim(),k=$('syKey').value.trim();
+  if(!u||!k){toast('Both fields — URL and key','bad');return}
+  SYNC.connect(u,k);closeSheet();render();toast('Sync on — first pull running','good');
+}
 /* The old Goals model was deleted 2026-07-26. gOn() stays as a constant so every
    call site reads the same, and so a save carrying optedOut:1 from the opt-in
    period cannot strand him on a screen that no longer exists. */
@@ -7378,10 +7464,14 @@ function renderRecord(){
     </div>
 
     <h2 class="sec">Data</h2>
-    <div class="card"><div class="stat" style="border-bottom:0;gap:8px">
+    <div class="card"><div class="stat" style="gap:8px">
       <button class="btn gh sm" onclick="exportSave()">Backup</button>
       <button class="btn gh sm" onclick="$('restoreIn').click()">Restore</button>
       <input type="file" id="restoreIn" accept=".json" style="display:none" onchange="restoreSave(this)">
+    </div>
+    <div class="stat" style="border-bottom:0">
+      <span id="syncStat">${syncLabel()}</span>
+      <button class="btn gh sm" onclick="syncSheet()">Sync…</button>
     </div></div>`;
 }
 /* (nextWeek / saveNextWeek buried with the second planner — planning pays nothing.) */
@@ -7521,6 +7611,13 @@ if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch((
 /* the first-tap permission ambush is gone — the ask lives in notifySheet() */
 recount();
 route();
+/* sync joins AFTER first paint — boot never waits on the network, and a dead
+   worker can only ever cost the sync, never the app. A final push rides the
+   app going to background, since iOS closes PWAs without warning. */
+if(SYNC.on())setTimeout(()=>SYNC.pull(),900);
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden'&&SYNC.on())SYNC.push();
+});
 HDR.show();        // sets the active view AND lights its tab
 resumeRun();    // an interrupted run comes straight back
 setInterval(()=>{if(!run)render()},60000);
