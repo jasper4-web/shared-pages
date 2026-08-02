@@ -734,6 +734,21 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 /* 11px, not 10: the suites enforce an app-wide legibility floor and this arrow
    broke it in six screens at once. Nothing on this app is smaller than 11px. */
 .g2sec .fchv{font-size:11px;color:var(--faint);margin-left:4px;font-weight:400}
+
+/* ---------- day templates ---------- */
+.tplrow{display:grid;grid-template-columns:1fr 44px;gap:4px 8px;align-items:center;
+  padding:11px 12px;margin-bottom:8px;border:1px solid var(--line);border-radius:12px;
+  background:var(--panel)}
+.tplrow .tn{font-size:14px;color:var(--ink);line-height:1.3;min-width:0}
+.tplrow .tn u{display:block;text-decoration:none;font-family:'Geist Mono',monospace;
+  font-size:11px;letter-spacing:.1em;color:var(--faint);margin-top:3px}
+.tplx{width:44px;height:44px;padding:0;border:0;background:none;color:var(--faint);
+  font-size:14px;cursor:pointer}
+.tplacts{grid-column:1/3;display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.tplb{flex:1;min-width:120px;min-height:44px;padding:0 11px;border-radius:9px;
+  border:1px solid var(--line2);background:transparent;color:var(--dim);cursor:pointer;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.11em}
+.tplb.on{border-color:var(--violet);color:var(--violet);background:rgba(176,140,255,.1)}
 /* the fold must never look like the goal was finished or deleted: a quiet dashed
    row that states the count and offers the way back */
 .g2shutrow{margin-left:15px;width:calc(100% - 15px);min-height:var(--tap);
@@ -1714,10 +1729,37 @@ function mondayOf(d){const x=new Date(d);const w=(x.getDay()+6)%7;x.setDate(x.ge
      S.dayPlan[date]                  one specific date, planned differently
    Sunday stays [] — the Sabbath is a decision, not a missing template.
    Day one renders pixel-identical, because the seed IS his current day. */
+/* ── NAMED TEMPLATES (Phase 4) ──────────────────────────────────────────────
+   Two shapes could not describe his week: Monday and Wednesday changed, and the
+   only options were to edit `weekday` (which drags Tue/Thu/Fri with it) or to
+   re-plan each date by hand every week, forever.
+
+   A template is a named set of rows. S.tplDow maps a day-of-week to one, so two
+   days can SHARE a template — Monday and Wednesday are the same today and may
+   drift apart later, at which point one of them is simply assigned a different
+   one. Sunday is deliberately unassignable: the Sabbath is a decision, not a
+   missing template, and it stays [].
+
+   It slots BELOW dayPlan and ABOVE the weekday/saturday seed, so a plan written
+   for one specific date still wins — the more specific statement always does. */
+/* GM.uid is private to the goals module and templates are an S concern, so they
+   get their own. The counter makes two saves in the same millisecond distinct. */
+let _tplSeq=0;
+const tplUid=()=>{_tplSeq++;return 't'+Date.now().toString(36)+_tplSeq.toString(36)};
+const tplById=id=>(S.tpl||[]).find(t=>t.id===id)||null;
+function tplForDow(g){
+  if(g===0)return null;
+  const t=tplById((S.tplDow||{})[g]);
+  return t&&Array.isArray(t.rows)&&t.rows.length?t:null;
+}
+const tplDaysOf=id=>Object.keys(S.tplDow||{})
+  .filter(g=>S.tplDow[g]===id).map(Number).sort((a,b)=>a-b);
 function shape(date){
   const k=date||today();
   if(S.dayPlan&&S.dayPlan[k]&&S.dayPlan[k].length)return S.dayPlan[k];
   const g=date?new Date(k+'T00:00:00').getDay():dow();
+  const t=tplForDow(g);
+  if(t)return t.rows;
   return g===0?[]:g===6?S.templates.saturday:S.templates.weekday;
 }
 const allBlocks=()=>S.templates.weekday.concat(S.templates.saturday);
@@ -2158,6 +2200,10 @@ function seedOwned(){
   if(!S.templates||!Array.isArray(S.templates.weekday)||!S.templates.weekday.length)
     S.templates={weekday:WEEKDAY.map(b=>({...b})),saturday:SATURDAY.map(b=>({...b}))};
   S.dayPlan=S.dayPlan||{};
+  /* Phase 4: named day templates and what weekday each one runs on. Both empty
+     on every existing save, which is why nothing moves until he makes one. */
+  S.tpl=Array.isArray(S.tpl)?S.tpl:[];
+  S.tplDow=(S.tplDow&&typeof S.tplDow==='object')?S.tplDow:{};
 }
 seedOwned();
 const winsAll=()=>S.winDefs.filter(w=>!w.arc);      /* what shows */
@@ -5874,7 +5920,83 @@ function planDay(date){
     <button class="btn gh" style="margin-top:4px" onclick="planAdd('${date}')">+ Add to the evening</button>
     ${own?`<button class="btn gh" style="margin-top:8px" onclick="planReset('${date}')">Back to my normal ${dw===6?'Saturday':'day'}</button>`:''}
     <button class="btn gh" style="margin-top:8px" onclick="planAsNormal('${date}')">Make this my normal ${dw===6?'Saturday':'weekday'}</button>
+    <button class="btn gh" style="margin-top:8px" onclick="planTpl('${date}')">Templates${
+      (()=>{const t=tplForDow(dw);return t?` · on ${esc(t.name)}`:''})()} ▸</button>
     <div class="hintline" style="margin-top:10px;text-align:center">Planning pays nothing — doing does.</div>`);
+}
+/* ═══ THE TEMPLATE SHEET ══════════════════════════════════════════════════
+   Build a day the way you want it, name it, and put it on the days it belongs
+   to. Nothing here can touch a day already lived: assigning only changes what
+   FUTURE days resolve to, and a lived day carries its own stamped shape. */
+const DAYNAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DAYSHORT=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+function planTpl(date){
+  const dw=new Date(date+'T00:00:00').getDay();
+  const list=S.tpl||[];
+  const rows=t=>`<div class="tplrow">
+    <span class="tn">${esc(t.name)}<u>${t.rows.length} blocks${(()=>{
+      const d=tplDaysOf(t.id);return d.length?' · '+d.map(g=>DAYSHORT[g]).join(' '):' · not on any day yet'})()}</u></span>
+    <button class="tplx" onclick="tplDelete('${t.id}')" aria-label="Delete ${esc(t.name)}">✕</button>
+    <div class="tplacts">
+      <button class="tplb" onclick="tplUseOn('${date}','${t.id}')">JUST THIS ${DAYSHORT[dw]}</button>
+      <button class="tplb${(S.tplDow||{})[dw]===t.id?' on':''}"
+        onclick="tplAssign(${dw},'${t.id}')">EVERY ${DAYSHORT[dw]}</button>
+    </div></div>`;
+  sheet(`<div class="sh-k">BUILD IT ONCE</div><div class="sh-t">Day templates</div>
+    <div class="sh-sub">A SHAPE YOU CAN PUT ON ANY DAY</div>
+    <div class="fld"><label>Save ${DAYNAMES[dw]}'s plan as a template</label>
+      <input id="tplN" maxlength="28" placeholder="Deep work day">
+      <button class="btn gh sm" style="margin-top:9px" onclick="tplSaveFrom('${date}')">Save this shape</button>
+      <div class="hintline">Saves the ${shape(date).length} blocks you are looking at right now.</div></div>
+    <h2 class="sec" style="margin-top:20px"><span>Your templates</span><u>${list.length||'none yet'}</u></h2>
+    ${list.length?list.map(rows).join('')
+      :'<div class="card" style="color:var(--dim);font-size:13.5px">None yet. Shape a day the way you want it, then save it here.</div>'}
+    ${tplForDow(dw)?`<button class="btn gh" style="margin-top:12px" onclick="tplUnassign(${dw})">
+      Put ${DAYNAMES[dw]}s back to my normal day</button>`:''}
+    <div class="hintline" style="margin-top:12px">A plan written for one specific date still wins over its template —
+      the more specific thing always does. Sunday stays the Sabbath and takes no template.</div>`);
+}
+function tplSaveFrom(date){
+  const n=($('tplN').value||'').trim();
+  if(!n){toast('Name it','bad');return}
+  const rows=shape(date).map(b=>({...b}));
+  if(!rows.length){toast('Nothing to save','bad');return}
+  S.tpl=S.tpl||[];
+  const ex=S.tpl.find(t=>t.name.toLowerCase()===n.toLowerCase());
+  /* same name = the same template, updated. Two templates called "Deep work day"
+     is a worse outcome than overwriting the one he clearly meant. */
+  if(ex){ex.rows=rows;toast('Template updated','good')}
+  else{S.tpl.push({id:tplUid(),name:n,rows});toast('Template saved','good')}
+  save();planTpl(date);
+}
+function tplUseOn(date,id){
+  const t=tplById(id);if(!t)return;
+  planWrite(date,t.rows.map(b=>({...b})));
+  closeSheet();render();toast(`${t.name} · just this day`,'good');
+}
+function tplAssign(g,id){
+  const t=tplById(id);if(!t)return;
+  S.tplDow=S.tplDow||{};S.tplDow[g]=id;save();render();
+  toast(`Every ${DAYNAMES[g]} is now ${t.name}`,'good');
+  planTpl(nextDow(g));
+}
+function tplUnassign(g){
+  S.tplDow=S.tplDow||{};delete S.tplDow[g];save();render();
+  toast(`${DAYNAMES[g]}s back to normal`,'good');planTpl(nextDow(g));
+}
+function tplDelete(id){
+  const t=tplById(id);if(!t)return;
+  S.tpl=(S.tpl||[]).filter(x=>x.id!==id);
+  /* a day pointing at a deleted template would resolve to nothing and render an
+     empty day — unassign it here rather than guard for it at every read */
+  Object.keys(S.tplDow||{}).forEach(g=>{if(S.tplDow[g]===id)delete S.tplDow[g]});
+  save();render();toast(`${t.name} deleted`,'bad');
+}
+/* the next date that falls on this weekday and is still plannable (tomorrow on) */
+function nextDow(g){
+  const d=new Date(today()+'T00:00:00');
+  for(let i=1;i<=7;i++){d.setDate(d.getDate()+1);if(d.getDay()===g)return iso(d)}
+  return today();
 }
 function planRows(date){return shape(date).map(b=>({...b}))}
 function planWrite(date,rows){
