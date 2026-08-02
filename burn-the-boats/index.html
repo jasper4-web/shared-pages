@@ -1698,7 +1698,7 @@ const DEFAULT={
      fresh install re-walked the migrations on its second load — harmless until
      migrateEngine, which would have stamped a fresh sliced-from-day-one save with
      a seam and flipped its first days onto the OLD engine. Hostile QC, 2026-07-29. */
-  v:9, xp:0,
+  v:10, xp:0,
   /* THE LEDGER (Phase 1, 2026-07-28). Every XP movement is an entry: {k,xp,d,g,t}.
      S.xp stays the running balance every screen reads; the ledger is what makes a
      movement REVERSIBLE — his accidental-tap bug, fixed by architecture. The rule:
@@ -1721,7 +1721,14 @@ const DEFAULT={
   vices:{
     dish:{label:'THE DISHWASHER', mode:'weekly', allow:1, week:0, weekKey:null,
           streak:0, streakBest:0, lastSlip:null, slips:0, hist:{}, ch:null, chDone:{}, chLapsed:null},
-    smoke:{label:'SMOKE',        mode:'gate',   gate:'12:00', cleanStreak:0, bestClean:0, slips:0, lastSlip:null, target24:24,
+    /* THE GATE MOVED 12:00 -> 13:30 (2026-08-02, his call). gateSeam/gatePrev exist
+       because smokeStreakNow() judges EVERY past day against the current gate: without
+       a seam, raising it turns every historical smoke between noon and 1:30 into a
+       retroactive break and resets a streak that was honestly earned. Same disease the
+       engine already has a seam for, same cure — history keeps the rule it was lived
+       under. gateSeam is null on a fresh install: there is no history to protect. */
+    smoke:{label:'SMOKE',        mode:'gate',   gate:'13:30', gateSeam:null, gatePrev:'12:00',
+           cleanStreak:0, bestClean:0, slips:0, lastSlip:null, target24:24,
           ch:null, chDone:{}, chLapsed:null},
   },
   penance:null,
@@ -1937,12 +1944,13 @@ function migrateRestart(s){
   s.preHigh=0;              /* the high-water mark belonged to the run he discarded */
 }
 function migrate(s){
-  if(s.v>=9)return s;
-  if(s.v>=8){migrateRestart(s);s.v=9;return s}
-  if(s.v>=7){migrateEngine(s);migrateRestart(s);s.v=9;return s}
-  if(s.v>=6){migrateStandards(s);migrateEngine(s);migrateRestart(s);s.v=9;return s}
-  if(s.v>=5){migrateCoffee(s);migrateStandards(s);migrateEngine(s);migrateRestart(s);s.v=9;return s}
-  if(s.v>=4){migrateBoosts(s);migrateCoffee(s);migrateStandards(s);migrateEngine(s);migrateRestart(s);s.v=9;return s}
+  if(s.v>=10)return s;
+  if(s.v>=9){migrateGate(s);s.v=10;return s}
+  if(s.v>=8){migrateRestart(s);migrateGate(s);s.v=10;return s}
+  if(s.v>=7){migrateEngine(s);migrateRestart(s);migrateGate(s);s.v=10;return s}
+  if(s.v>=6){migrateStandards(s);migrateEngine(s);migrateRestart(s);migrateGate(s);s.v=10;return s}
+  if(s.v>=5){migrateCoffee(s);migrateStandards(s);migrateEngine(s);migrateRestart(s);migrateGate(s);s.v=10;return s}
+  if(s.v>=4){migrateBoosts(s);migrateCoffee(s);migrateStandards(s);migrateEngine(s);migrateRestart(s);migrateGate(s);s.v=10;return s}
   const OLD=[1200,1500,2000,2500];
   const untouched=Array.isArray(s.rewards)&&s.rewards.length===OLD.length&&
     s.rewards.every((r,i)=>r.cost===OLD[i]&&!r.done);
@@ -1964,7 +1972,8 @@ function migrate(s){
   migrateStandards(s);
   migrateEngine(s);
   migrateRestart(s);
-  s.v=9;
+  migrateGate(s);
+  s.v=10;
   return s;
 }
 /* XP SESSION PHASE 1 (2026-07-29): standards get a lifetime. A live def has one open
@@ -1982,6 +1991,30 @@ function migrateStandards(s){
 /* PHASE 2: the engine seam. A save with lived days keeps its history scored the
    old way — the sliced day takes over on the NEXT Monday, the same forward-only
    rule every standard already follows. A fresh save has nothing to protect. */
+/* THE GATE MOVED, AND YESTERDAY DID NOT. A saved gate beats the DEFAULT through
+   merge(), so his 12:00 would have survived the update untouched and this change
+   would have done nothing at all. Write the new gate — and, if he has lived days,
+   stamp the seam FIRST so every one of them is still judged at the gate it was
+   actually lived under. A save with no days needs no seam: there is no past to
+   protect, and a seam there would only make a fresh install lie about its own
+   history. */
+function migrateGate(s){
+  const v=s.vices&&s.vices.smoke;if(!v)return;
+  if(v.gate==='13:30')return;                       /* already moved */
+  const lived=Object.keys(s.days||{}).length>0;
+  /* the date is formatted INLINE. migrate() runs inside load(), which is called
+     at `let S=load()` — twenty lines ABOVE where today() and iso() are declared.
+     They are const arrows, so reaching for either here throws a temporal-dead-zone
+     ReferenceError that kills the boot before S exists, and the app opens to a
+     blank screen. migrateEngine gets away with nextWeekKey() only because that one
+     is a hoisted function declaration. */
+  if(lived&&!v.gateSeam){
+    v.gatePrev=v.gate||'12:00';
+    const d=new Date(),z=n=>String(n).padStart(2,'0');
+    v.gateSeam=`${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`;
+  }
+  v.gate='13:30';
+}
 function migrateEngine(s){
   /* HOSTILE QC D1: migrate() runs on merge(DEFAULT, saved), and DEFAULT's
      '0000-00-00' is truthy — so `if(!s.engineSeam)` never fired and every lived
@@ -2595,10 +2628,12 @@ function projection(){
 /* ---------- vices ---------- */
 function viceState(){
   const d=day(),m=nowMin(),v=S.vices;
-  const beforeNoon=m<mins(v.smoke.gate);
+  /* named for the CONCEPT, not the clock: the gate has moved once already
+     (12:00 -> 13:30) and a variable called beforeNoon lies the moment it does */
+  const gateOpen=m>=mins(v.smoke.gate), beforeGate=!gateOpen;
   const smoked=d.smoked||null;                          // {at:'HH:MM'} written by the sheet
   const brokeGate=!!(smoked&&mins(smoked.at)<mins(v.smoke.gate));
-  return {smokeClean:!smoked,beforeNoon,brokeGate,smoked};
+  return {smokeClean:!smoked,beforeGate,brokeGate,smoked};
 }
 function logSmoked(){
   const d=day(),t=new Date();
@@ -2615,7 +2650,7 @@ function logSmoked(){
     logSlip('smoke');
     return;
   }
-  save();closeSheet();render();toast('Logged — after noon, gate held','good');
+  save();closeSheet();render();toast(`Logged — after ${t12(S.vices.smoke.gate)}, gate held`,'good');
 }
 /* The dishwasher streak = consecutive weeks kept at or under the threshold.
    Rolls when the week changes; only a week that went OVER breaks it. */
@@ -2679,12 +2714,12 @@ function logSlip(k,noCount){
 function viceClean(k){
   const v=S.vices[k],d=day();
   if(d.credited['clean:'+k]){toast('Already logged clean today','bad');return}
-  /* The smoke gate runs until noon. Banking a clean day at 9 AM and breaking it at 11
+  /* The smoke gate runs until 1:30pm. Banking a clean day at 9 AM and breaking it at 11
      was a free +40 XP and a fraudulent streak day — the claim has to wait for the gate. */
   if(k==='smoke'){
     const vs=viceState();
     if(vs.brokeGate){toast('The gate broke today','bad');return}
-    if(vs.beforeNoon){toast(`Not yet — the gate holds until ${S.vices.smoke.gate}`,'bad');return}
+    if(vs.beforeGate){toast(`Not yet — the gate holds until ${t12(S.vices.smoke.gate)}`,'bad');return}
   }
   v.cleanDays=v.cleanDays||{};
   v.cleanDays[today()]=1;
@@ -2709,8 +2744,13 @@ function streakFrom(map){
    A day counts when it was LIVED (a record exists) and no smoke broke the gate.
    Today joins only once the gate has actually held — not at 09:00 on faith.
    An unlived day still breaks it: a day with no record is not a clean day. */
+/* the gate a given DAY was lived under — before the seam, the old one */
+function gateFor(k){
+  const v=S.vices.smoke;
+  return (v.gateSeam&&k<v.gateSeam)?(v.gatePrev||'12:00'):v.gate;
+}
 function smokeStreakNow(){
-  const v=S.vices.smoke,g=mins(v.gate);
+  const v=S.vices.smoke;
   /* Three states per day, not two. The make-up strip promises STREAK INTACT and
      donePenance() stamps `slipHealed` on the slip's day for exactly that promise
      — but nothing ever READ the stamp, so the promise was never kept (the same
@@ -2718,7 +2758,7 @@ function smokeStreakNow(){
      preserves the chain without counting: the days around it still add, the
      broken day itself never does. An unhealed break still ends everything. */
   const state=k=>{const r=S.days[k];if(!r)return 'end';
-    if(r.smoked&&mins(r.smoked.at)<g)
+    if(r.smoked&&mins(r.smoked.at)<mins(gateFor(k)))
       return (r.slipHealed&&r.slipHealed.smoke)?'healed':'end';
     return 'held'};
   let n=0;
@@ -2727,7 +2767,7 @@ function smokeStreakNow(){
      in which case the chain stands and today simply doesn't count. */
   const todayHealed=!!(day().slipHealed&&day().slipHealed.smoke);
   if(vs.brokeGate&&!todayHealed){v.cleanStreak=0;return 0}
-  if(!vs.beforeNoon&&!vs.brokeGate)n++;            /* today, once the gate held */
+  if(!vs.beforeGate&&!vs.brokeGate)n++;            /* today, once the gate held */
   const c=new Date();c.setDate(c.getDate()-1);
   for(let i=0;i<400;i++){
     const st=state(iso(c));
@@ -2794,7 +2834,10 @@ const VRING=(()=>{
       });
       s+=stroke(arcD(C,R,ang(DAY_A),ang(Math.max(DAY_A,Math.min(DAY_B,now)))),'#FF6B2C',SW,'round',
         ' style="filter:drop-shadow(0 0 6px rgba(255,107,44,.7))"');
-      s+=tick(C,R,ang(720),SW*2.3,'#E0B25E',Math.max(2.4,SZ*0.021));           /* the gate */
+      /* 720 was hardcoded here — the ring would have kept drawing the gate at noon
+         while every number beside it said 1:30. */
+      s+=tick(C,R,ang(mins((S.vices&&S.vices.smoke&&S.vices.smoke.gate)||'13:30')),
+        SW*2.3,'#E0B25E',Math.max(2.4,SZ*0.021));                              /* the gate */
       if(o.flag)s+=tick(C,R,ang(o.flag),SW*1.7,'#4ADE80',Math.max(2,SZ*0.017));
       s+=tick(C,R,ang(Math.max(DAY_A,Math.min(DAY_B,now))),SW*1.6,'#FFF4E2',Math.max(1.9,SZ*0.015));
       if(o.logAt!=null){                                                        /* what actually happened */
@@ -3047,7 +3090,7 @@ function renderVice(k){
        condition the board renders on — so this string only ever appears in the
        board's footer, one line under the same countdown in 29px digits. It names
        the state and lets the digits carry the number. */
-    else if(vs.beforeNoon){today_='Gate live · nothing logged';todayCls='live'}
+    else if(vs.beforeGate){today_='Gate live · nothing logged';todayCls='live'}
     else{today_='Gate held · nothing logged';todayCls='held'}
   }else{
     today_=v.week>v.allow?`Over the allowance · ${v.week} of ${v.allow}`
@@ -3072,7 +3115,7 @@ function renderVice(k){
      there is nothing left to count to, so the band deletes itself and its ~112px is
      spent on two more offers instead. A broken gate kills it too: counting down to a
      gate that is already gone is the app not knowing what happened. */
-  const board=smoke&&vs.beforeNoon&&!vs.smoked;
+  const board=smoke&&vs.beforeGate&&!vs.smoked;
   if(!a){
     const list=CHALLENGES[k]||[];
     const avail=list.filter(c=>{
@@ -3154,7 +3197,7 @@ function renderVice(k){
         :`<div class="m-none">Nothing on offer right now.<br>The next one opens tomorrow.</div>`}</div>`)+
     `<div class="m-graph"><div class="k"><span>${smoke?'THE LAST 14 DAYS':'THE LAST 12 WEEKS'}</span>`+
       `<span>${smoke?'AGAINST '+(mins(v.gate)===720?'NOON':esc(v.gate)):'AGAINST THE ALLOWANCE'}</span></div>`+
-      (hasHist?(smoke?VGRAPH.day(hist,mins(v.gate),esc(v.gate)):VGRAPH.week(hist,v.allow))
+      (hasHist?(smoke?VGRAPH.day(hist,mins(v.gate),esc(t12(v.gate))):VGRAPH.week(hist,v.allow))
         :`<div class="m-empty">Nothing recorded yet.<br>This fills in as you go.</div>`)+`</div>`+
     `<div class="m-log">${smoke
       ?`<button onclick="closeVice();logSmoked()">Log that I smoked</button>`
@@ -3275,10 +3318,10 @@ function renderGauges(){
   $('ggA').onclick=()=>openVice('dish');
 
   const gateOK=!vs.brokeGate;
-  const toNoon=mins(v.smoke.gate)-nowMin();
+  const toGate=mins(v.smoke.gate)-nowMin();
   dial($('ggB'),{pct:Math.min(1,smokeStreakNow()/7),val:v.smoke.cleanStreak+'d',
     label:vs.brokeGate?'Smoke · broke'
-      :vs.beforeNoon?`Smoke · ${Math.floor(toNoon/60)}h${pad(toNoon%60)}`:'Smoke · open',
+      :vs.beforeGate?`Smoke · ${Math.floor(toGate/60)}h${pad(toGate%60)}`:'Smoke · open',
     hot:gateOK&&v.smoke.cleanStreak>0,color:gateOK?'#FF6B2C':'#FF4D5E'});
   $('ggB').onclick=()=>openVice('smoke');
 
@@ -4761,7 +4804,7 @@ function closeDay(){
      dated record so nothing downstream loses its history. Awarded before the
      verdict is shown so the +40 is inside the number the verdict states. */
   const vs=viceState();
-  if(!vs.brokeGate&&!vs.beforeNoon&&!d.credited['clean:smoke']){
+  if(!vs.brokeGate&&!vs.beforeGate&&!d.credited['clean:smoke']){
     const v=S.vices.smoke;v.cleanDays=v.cleanDays||{};v.cleanDays[today()]=1;
     award('clean:smoke',40,'the gate held');
   }
