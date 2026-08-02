@@ -2454,9 +2454,13 @@ function logSmoked(){
   const d=day(),t=new Date();
   d.smoked={at:pad(t.getHours())+':'+pad(t.getMinutes())};
   const vs=viceState();
+  /* ANY smoke voids a still-open challenge window — every smoke challenge is a
+     "hold" or a "clean" and this smoke is inside it. The gate decides the STREAK;
+     the smoke itself decides the challenge. lapseCh's own guard keeps a window
+     that already closed (earned, unclaimed) safe from this. */
+  lapseCh('smoke');
   if(vs.brokeGate){                                     // before noon = the rule broke, not just a use
     S.vices.smoke.cleanStreak=0;
-    lapseCh('smoke');            // a running challenge lapses. Nothing recorded, nothing lost.
     save();closeSheet();render();
     logSlip('smoke');
     return;
@@ -2541,6 +2545,37 @@ function viceClean(k){
 function streakFrom(map){
   let n=0;const c=new Date();
   for(let i=0;i<400;i++){ if(map[iso(c)])n++; else if(i>0)break; c.setDate(c.getDate()-1) }
+  return n;
+}
+/* ═══ THE STREAK THE MASTHEAD SHOWS ═══════════════════════════════════════════
+   2026-08-01. viceClean() — the only writer of cleanDays — had NO CALLER. The
+   door was never built (or was swept), so "DAYS THE GATE HELD" could never leave
+   DAY 1: the headline number of the vice page was a counter nothing could
+   advance. Found by living three days of the restart and watching a kept Monday
+   not count.
+
+   So the streak is now DERIVED from the day records directly, the same way
+   streakFrom() derives from cleanDays — no claim to remember, no door to forget.
+   A day counts when it was LIVED (a record exists) and no smoke broke the gate.
+   Today joins only once the gate has actually held — not at 09:00 on faith.
+   An unlived day still breaks it: a day with no record is not a clean day. */
+function smokeStreakNow(){
+  const v=S.vices.smoke,g=mins(v.gate);
+  const held=k=>{const r=S.days[k];if(!r)return null;
+    return !(r.smoked&&mins(r.smoked.at)<g)};
+  let n=0;
+  const vs=viceState();
+  /* a break TODAY is the crash, today: the number falls to zero the moment the
+     gate breaks, not tomorrow morning. Yesterday's held days are history the
+     RECORD keeps — the streak is what is alive right now, and it is dead. */
+  if(vs.brokeGate){v.cleanStreak=0;return 0}
+  if(!vs.beforeNoon)n++;                           /* today, once the gate held */
+  const c=new Date();c.setDate(c.getDate()-1);
+  for(let i=0;i<400;i++){
+    if(held(iso(c))!==true)break;
+    n++;c.setDate(c.getDate()-1);
+  }
+  v.cleanStreak=n;v.bestClean=Math.max(v.bestClean||0,n);   /* keep every reader true */
   return n;
 }
 
@@ -2729,9 +2764,15 @@ function claimCh(k){
   award('ch:'+k+':'+a.id+':'+today(),a.def.xp,a.def.ti);
   renderVice(k);
 }
-/* a broken rule lapses the running challenge. Nothing is recorded, nothing is lost. */
+/* a broken rule lapses the running challenge. Nothing is recorded, nothing is lost.
+   2026-08-01 · but a window that already CLOSED was earned — "Hold to 14:00"
+   completed at 14:00 is not voided by a 15:00 smoke. Only a still-open window
+   lapses. Measured before the guard: "24 hours clean" paid +120 on a day with a
+   13:30 smoke in it, because logSmoked() only lapsed on a BROKEN GATE and a legal
+   afternoon smoke walked straight past a running clean-streak window. */
 function lapseCh(k){
-  if(!S.vices[k].ch)return;
+  const ch=S.vices[k].ch;if(!ch)return;
+  if(Date.now()>=ch.endsAt)return;       /* completed, unclaimed — it stands */
   S.vices[k].chLapsed=today();S.vices[k].ch=null;save();
 }
 
@@ -2818,7 +2859,7 @@ function renderVice(k){
 
   /* THE MASTHEAD. Day one shows "DAY 1", never "0 days" — a zero in 64px display type
      on the first morning is precisely the wall of failure, before he has had a chance. */
-  const n=smoke?v.cleanStreak:v.streak;
+  const n=smoke?smokeStreakNow():v.streak;
   const best=Math.max(n,smoke?v.bestClean:v.streakBest);   // best can never read below the live streak
   const word=n===0;
   const big=word?(smoke?'DAY 1':'WEEK 1'):String(n);
@@ -3067,7 +3108,7 @@ function renderGauges(){
 
   const gateOK=!vs.brokeGate;
   const toNoon=mins(v.smoke.gate)-nowMin();
-  dial($('ggB'),{pct:Math.min(1,v.smoke.cleanStreak/7),val:v.smoke.cleanStreak+'d',
+  dial($('ggB'),{pct:Math.min(1,smokeStreakNow()/7),val:v.smoke.cleanStreak+'d',
     label:vs.brokeGate?'Smoke · broke'
       :vs.beforeNoon?`Smoke · ${Math.floor(toNoon/60)}h${pad(toNoon%60)}`:'Smoke · open',
     hot:gateOK&&v.smoke.cleanStreak>0,color:gateOK?'#FF6B2C':'#FF4D5E'});
@@ -4545,6 +4586,17 @@ function closeDay(){
   const due=dueSoFar(),hit=due.filter(b=>d.done[b.id]).length;
   const pct=due.length?hit/due.length:1;
   award('close:'+today(),50,'day closed');
+  /* 2026-08-01 · the held gate PAYS at day close. viceClean() was the door for
+     this +40 and nothing in the build called it — the guards live on here.
+     Closing the day is the moment the day is over, so it is the moment the gate's
+     verdict is in: past the gate, not broken, paid once. cleanDays keeps its
+     dated record so nothing downstream loses its history. Awarded before the
+     verdict is shown so the +40 is inside the number the verdict states. */
+  const vs=viceState();
+  if(!vs.brokeGate&&!vs.beforeNoon&&!d.credited['clean:smoke']){
+    const v=S.vices.smoke;v.cleanDays=v.cleanDays||{};v.cleanDays[today()]=1;
+    award('clean:smoke',40,'the gate held');
+  }
   save();showVerdict(pct,hit,due.length);
 }
 /* The rival as a DAILY verdict — winnable today, never a permanent deficit. */
