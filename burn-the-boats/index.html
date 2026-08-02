@@ -5414,8 +5414,14 @@ function g2Tiers(){
       .sort((x,y)=>(x.rank||0)-(y.rank||0));
     const c=areaColour(a);
     return `<div class="g2tier">
-      <h2 class="sec g2sec tr-h" style="--c:${c}"><span>${esc(a.name)}</span>
-        <u>${anc?`${under.length} under it`:`${under.length} goal${under.length===1?'':'s'}`}</u></h2>
+      <!-- THE HEADER IS THE DOOR. The colour picker lived only behind
+           Goals -> Areas and dates -> tap the name, three taps down and invisible
+           from the screen the colour is actually on. The area's own name, sitting
+           right next to its rule, is what a hand reaches for. Same .sec.g2sec
+           styling as before via button.sec, so nothing moves. -->
+      <button class="sec g2sec tr-h" style="--c:${c}" onclick="g2EditArea('${a.id}')"
+        aria-label="Edit ${esc(a.name)}"><span>${esc(a.name)}</span>
+        <u>${anc?`${under.length} under it`:`${under.length} goal${under.length===1?'':'s'}`}</u></button>
       ${anc?g2AnchorCard(anc,c,shared):`<button class="g2addanc" onclick="g2NewGoal('${a.id}',1)">
         + Give ${esc(a.name)} a December goal</button>`}
       ${under.map(g=>g2Read(g,c)).join('')}
@@ -6899,7 +6905,7 @@ function g2Manage(){
     <h2 class="sec"><span>Areas</span><u>never end</u></h2>
     ${A.length?A.map((a,i)=>`<div class="g2m">
       <span class="d" style="background:${areaColour(a)}"></span>
-      <span class="n" style="cursor:pointer" onclick="g2EditArea('${a.id}')">${esc(a.name)}<u>${GM.goalsOfArea(G,a.id).length} goal${GM.goalsOfArea(G,a.id).length===1?'':'s'} · ${a.domain} · TAP TO RENAME</u></span>
+      <span class="n" style="cursor:pointer" onclick="g2EditArea('${a.id}')">${esc(a.name)}<u>${GM.goalsOfArea(G,a.id).length} goal${GM.goalsOfArea(G,a.id).length===1?'':'s'} · ${a.domain} · TAP TO RENAME OR RECOLOUR</u></span>
       <button class="mb" onclick="g2Move('${a.id}',-1)" ${i===0?'disabled':''}>↑</button>
       <button class="mb" onclick="g2Move('${a.id}',1)" ${i===A.length-1?'disabled':''}>↓</button>
       <button class="mb" onclick="g2DropArea('${a.id}')">✕</button></div>`).join('')
