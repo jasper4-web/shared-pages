@@ -727,6 +727,25 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 .sw.cus input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;cursor:pointer}
 .sw.cus i{background:conic-gradient(#FF5FA2,#E0B25E,#C6F24E,#4ADE80,#38E1D8,#5B8DEF,#9B7BD4,#FF5FA2)}
 
+/* ---------- folding the smaller goals away ----------
+   The chevron is absolutely positioned so adding it cannot reflow the anchor
+   card's grid — that card is tier 1 of the blur test and its geometry is load-
+   bearing. It gets a 44px box in the corner where no text goes. */
+/* 11px, not 10: the suites enforce an app-wide legibility floor and this arrow
+   broke it in six screens at once. Nothing on this app is smaller than 11px. */
+.g2sec .fchv{font-size:11px;color:var(--faint);margin-left:4px;font-weight:400}
+/* the fold must never look like the goal was finished or deleted: a quiet dashed
+   row that states the count and offers the way back */
+.g2shutrow{margin-left:15px;width:calc(100% - 15px);min-height:var(--tap);
+  border:1px dashed var(--line2);border-radius:11px;background:none;cursor:pointer;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.11em;color:var(--faint);
+  text-align:left;padding:0 13px}
+.g2foldall{width:100%;min-height:var(--tap);margin:-4px 0 14px;padding:0 13px;
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  border:1px solid var(--line);border-radius:11px;background:var(--panel);cursor:pointer;
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.13em;color:var(--dim)}
+.g2foldall u{text-decoration:none;color:var(--faint);letter-spacing:.09em}
+
 /* ---------- the goals tab, v2 ----------
    The capacity line is first and never moves; the WIG is the screen, not a tag. */
 .g2cap{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;padding:11px 13px;margin-bottom:14px;
@@ -5247,7 +5266,7 @@ function renderGoals2(){
   if(view==='week'){$('pushBody').innerHTML=g2Banners()+tabs+g2Week()+g2Foot();return}
   if(view==='date'){$('pushBody').innerHTML=g2Banners()+tabs+g2ByDate()+g2Foot();return}
 
-  $('pushBody').innerHTML=g2Banners()+g2Apex()+g2Capacity()+tabs+g2Tiers()+g2Orphans()+g2Quiet()+g2Foot();
+  $('pushBody').innerHTML=g2Banners()+g2Apex()+g2Capacity()+tabs+g2FoldBar()+g2Tiers()+g2Orphans()+g2Quiet()+g2Foot();
 }
 /* Parked and dropped goals had NO screen anywhere and no way back — the only
    recovery was hand-editing a backup file. "Parked, not lost" was false. */
@@ -5407,16 +5426,29 @@ function g2Tiers(){
        different things. With no anchor yet there is no goal to follow, so it
        falls back to the area. */
     const c=anc?goalPaint(anc):areaColour(a);
+    /* an area with nothing under it can never be folded — otherwise the fold
+       would hide a December goal, which is the one thing this screen is for */
+    const shut=under.length>0&&folded(a.id);
     return `<div class="g2tier">
-      <!-- the header is still a door to the area itself: rename, domain, and the
-           area-level colour that any goal without its own falls back to -->
-      <button class="sec g2sec tr-h" style="--c:${c}" onclick="g2EditArea('${a.id}')"
-        aria-label="Edit ${esc(a.name)}"><span>${esc(a.name)}</span>
-        <u>${anc?`${under.length} under it`:`${under.length} goal${under.length===1?'':'s'}`}</u></button>
-      ${anc?g2AnchorCard(anc,c,shared):`<button class="g2addanc" onclick="g2NewGoal('${a.id}',1)">
+      <!-- THE HEADER IS THE FOLD. A floating chevron in the card's corner fought
+           the DONE tag for the same 40px and lost — it read as a rendering
+           artefact, not a control. The header already states the count, so the
+           count becomes the switch: one 48px row, no new glyph to learn. An area
+           with nothing under it has nothing to fold and stays a plain heading.
+           Renaming an area lives where it always did: Goals -> Areas and dates. -->
+      ${under.length?`<button class="sec g2sec tr-h" style="--c:${c}"
+        aria-expanded="${shut?'false':'true'}" onclick="g2Fold('${a.id}')"
+        aria-label="${shut?'Show':'Hide'} the goals under ${esc(a.name)}"><span>${esc(a.name)}</span>
+        <u>${under.length} under it <b class="fchv">${shut?'▸':'▾'}</b></u></button>`
+       :`<h2 class="sec g2sec tr-h" style="--c:${c}"><span>${esc(a.name)}</span>
+        <u>${anc?'0 under it':'0 goals'}</u></h2>`}
+      ${anc?g2AnchorCard(anc,c,shared)
+        :`<button class="g2addanc" onclick="g2NewGoal('${a.id}',1)">
         + Give ${esc(a.name)} a December goal</button>`}
-      ${under.map(g=>g2Read(g,goalPaint(g))).join('')}
-      ${anc?`<button class="g2addsub" onclick="g2NewGoal('${a.id}',0,'${anc.id}')">+ Add one under this</button>`:''}
+      ${shut?'':under.map(g=>g2Read(g,goalPaint(g))).join('')}
+      ${anc&&!shut?`<button class="g2addsub" onclick="g2NewGoal('${a.id}',0,'${anc.id}')">+ Add one under this</button>`:''}
+      ${shut?`<button class="g2shutrow" onclick="g2Fold('${a.id}')">
+        ${under.length} hidden · tap to show</button>`:''}
     </div>`;
   }).join('');
 }
@@ -5441,6 +5473,45 @@ function commonAnchorHorizon(){
   let best=null,c=0;
   Object.keys(n).forEach(k=>{if(n[k]>c){c=n[k];best=k}});
   return c>=2?best:null;        /* said once, it is information; said seven times, it is noise */
+}
+/* ---------- FOLDING THE SMALL GOALS AWAY -----------------------------------
+   BY AREA grows with every sub-goal, and a screen you must scroll to see your
+   own December goals stops being a dashboard. Folding is per AREA (keyed by
+   area id, not by the anchor's id: the anchor can be swapped or dropped, and a
+   fold that forgets itself when you promote a different goal is worse than no
+   fold at all). Kept in G.meta.fold, which is where the BY AREA/BY DATE choice
+   already lives, so it rides the same save and the same sync. */
+const folded=id=>!!(G.meta&&G.meta.fold&&G.meta.fold[id]);
+/* the tiers that HAVE something to fold — an area with no sub-goals must not
+   make the page-wide button claim there is anything to hide */
+function g2Foldable(){
+  return GM.liveAreas(G).filter(a=>{
+    const anc=GM.anchorOf(G,a.id);
+    return G.goals.some(g=>g.areaId===a.id&&g.state==='active'&&(!anc||g.id!==anc.id));
+  });
+}
+function g2FoldBar(){
+  const f=g2Foldable();if(!f.length)return'';
+  const allShut=f.every(a=>folded(a.id));
+  /* the count is GOALS, not areas. It said "2 hidden" while five sub-goals were
+     hidden, because it was counting the tiers doing the hiding. */
+  const n=f.filter(a=>folded(a.id)).reduce((t,a)=>t+g2UnderCount(a.id),0);
+  const tot=f.reduce((t,a)=>t+g2UnderCount(a.id),0);
+  return `<button class="g2foldall" onclick="g2FoldAll(${allShut?0:1})">
+    <span>${allShut?'SHOW THE SMALLER GOALS':'HIDE THE SMALLER GOALS'}</span>
+    <u>${n?n+' hidden':tot+' under '+f.length+' goal'+(f.length===1?'':'s')}</u></button>`;
+}
+const g2UnderCount=id=>{const anc=GM.anchorOf(G,id);
+  return G.goals.filter(g=>g.areaId===id&&g.state==='active'&&(!anc||g.id!==anc.id)).length};
+function g2FoldAll(shut){
+  G.meta=G.meta||{};G.meta.fold=G.meta.fold||{};
+  g2Foldable().forEach(a=>{if(shut)G.meta.fold[a.id]=1;else delete G.meta.fold[a.id]});
+  gsave();render();
+}
+function g2Fold(areaId){
+  G.meta=G.meta||{};G.meta.fold=G.meta.fold||{};
+  if(G.meta.fold[areaId])delete G.meta.fold[areaId];else G.meta.fold[areaId]=1;
+  gsave();render();
 }
 function g2AnchorCard(g,c,shared){
   const h=g.horizonId?GM.horizonById(G,g.horizonId):null,p=GM.progress(g);
