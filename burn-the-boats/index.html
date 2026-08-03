@@ -183,6 +183,20 @@ button{font-family:inherit}
 .ms .t{height:4px;border-radius:99px;background:#221d33;overflow:hidden;position:relative}
 .ms .t i{position:absolute;left:0;top:0;bottom:0;border-radius:99px}
 .ms .v{font-family:'Geist Mono',monospace;font-size:11px;font-weight:700;text-align:right;color:var(--ink)}
+/* ---- the three slices on the glance (2026-08-02) ----
+   Four columns, not three: label · bar · banked/weight · the live rate. The radar
+   is hidden here rather than removed, so the six domains keep their one home in the
+   status window without this file growing a second layout. */
+.mini.gone{display:none}
+.ms.sl{grid-template-columns:44px 1fr 46px 44px}
+.ms.sl .v s{text-decoration:none;color:#6b6480;font-weight:400}
+.ms.sl .nt{font-family:'Geist Mono',monospace;font-size:9.5px;color:var(--faint);text-align:right}
+.sltot{display:grid;grid-template-columns:1fr auto;align-items:center;gap:7px;
+  margin-top:3px;padding-top:6px;border-top:1px solid var(--line)}
+.sltot span{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.15em;color:var(--faint)}
+.sltot b{font-family:'Geist Mono',monospace;font-size:13px;color:var(--gold)}
+.sltot b s{text-decoration:none;font-size:10px;color:#6b6480;font-weight:400}
+.slnone{font-size:12px;color:var(--faint);line-height:1.45}
 .ovrbox{grid-column:1/-1;display:flex;align-items:baseline;gap:8px;padding-top:11px;margin-top:2px;
   border-top:1px solid rgba(255,255,255,.07);cursor:pointer}
 .ovrbox b{font-family:'Clash Display',sans-serif;font-size:34px;line-height:.85;letter-spacing:-.045em;color:var(--gold)}
@@ -701,6 +715,125 @@ h2.sec.g2sec,button.sec.g2sec{padding-left:9px;border-left:3px solid var(--c,var
 .bst-f{margin-top:9px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)}
 .chip.seg.on{border-color:var(--violet);color:var(--violet);background:rgba(176,140,255,.1)}
 .hintline{margin-top:7px;font-size:11.5px;line-height:1.4;color:var(--faint)}
+
+/* ═══ THE STANDARDS (2026-08-02) ═══════════════════════════════════════════════
+   Three surfaces, one vocabulary: the GRID under a live block on Today, the BOARD
+   on Record, and the editor sheet. Everything tappable keeps the app-wide 44px
+   floor; the grid tile is 52 because it stacks a name over a count. */
+
+/* ---- the editor: a stepper that goes both ways, and a window ---- */
+.stp{display:grid;grid-template-columns:var(--tap) 1fr var(--tap);gap:7px}
+.stp button{min-height:var(--tap);border:1px solid var(--line2);border-radius:9px;
+  background:var(--panel2);color:var(--ink);font-family:'Geist Mono',monospace;font-size:18px;cursor:pointer}
+.stp button:active{transform:scale(.97)}
+.stp .val{display:flex;align-items:center;justify-content:center;border:1px solid var(--line2);
+  border-radius:9px;background:var(--panel2);font-family:'Geist Mono',monospace;font-size:14px}
+.segs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.segs .chip{justify-content:center;text-align:center;padding:4px 2px}
+.inp{display:flex;align-items:center;min-height:var(--tap);padding:0 12px;border:1px solid var(--line2);
+  border-radius:9px;background:var(--panel2);font-size:14px;color:var(--dim)}
+.btn.dan{background:none;border:1px solid rgba(255,77,94,.32);color:#ff8f80;font-weight:500}
+
+/* ---- domain coverage: which of the six a standard is currently feeding ---- */
+.cov{display:flex;align-items:center;gap:5px;padding:10px 12px;border:1px solid var(--line2);
+  border-radius:11px;background:var(--panel);margin-bottom:9px}
+.cov .lb{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--faint);margin-right:auto}
+.cov .dm{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:31px}
+.cov .dm i{width:9px;height:9px;border-radius:99px;display:block}
+/* 9.5, not 8. The first draft of this strip shipped the only 8px text in the app
+   and dragged Record's smallest font below the craft floor every other screen keeps. */
+.cov .dm s{text-decoration:none;font-family:'Geist Mono',monospace;font-size:9.5px;color:var(--faint)}
+.cov .dm.off i{background:transparent;border:1.5px dashed #4a4360}
+.cov .dm.off s{color:#5a5470}
+.stdwarn{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border-radius:10px;
+  border:1px solid rgba(255,77,94,.3);background:rgba(255,77,94,.06);margin-bottom:10px}
+.stdwarn i{width:5px;height:5px;border-radius:99px;background:var(--blood);flex:none;margin-top:6px}
+.stdwarn span{font-size:12px;color:#ffa9a9;line-height:1.45}
+.stdwarn b{color:var(--ink)}
+
+/* ---- the board on Record ---- */
+.stdbrd{border:1px solid var(--line2);border-radius:12px;background:var(--panel);padding:1px 12px;margin-bottom:9px}
+.stdbr{display:grid;grid-template-columns:1fr auto;align-items:center;gap:11px;width:100%;
+  padding:11px 0;border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;
+  text-align:left;min-height:var(--tap);cursor:pointer;font-family:'Satoshi',sans-serif}
+.stdbr:last-child{border-bottom:0}
+.stdbr .sn{font-size:13.5px;line-height:1.2;min-width:0;color:var(--ink)}
+.stdbr .sn s{display:block;text-decoration:none;font-family:'Geist Mono',monospace;font-size:9.5px;
+  letter-spacing:.11em;color:var(--faint);margin-top:3px}
+.stdbr .rt{text-align:right;white-space:nowrap}
+.stdbr .rt b{display:block;font-family:'Geist Mono',monospace;font-size:13px;color:var(--ink)}
+.stdbr .rt s{text-decoration:none;font-family:'Geist Mono',monospace;font-size:9px;color:var(--faint)}
+.stdbr.won .rt b{color:var(--phos)}
+.stdbr.dim{cursor:default}
+.stdbr.dim .sn,.stdbr.dim .rt b{color:var(--faint)}
+.stdbr .tm{display:block;position:relative;height:3px;border-radius:99px;background:#1b1728;
+  margin-top:7px;overflow:hidden}
+.stdbr .tm i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--c,var(--gold))}
+.stdbr.won .tm i{background:var(--phos)}
+
+/* ---- the grid under a live block on Today ----
+   FILL = how far through the TERM. GREEN RIM + CHECK = logged TODAY. Two different
+   axes, so they must never share a colour: at 100% and logged you have to be able
+   to tell "the term is finished" from "I did it this morning". That is why the fill
+   takes the standard's own domain colour and the day-state stays green. The leading
+   edge is a fading gradient, NOT a hard border — a hard border lands mid-word on a
+   short label, which is exactly what made the full-width version unreadable. */
+.stdw{margin-top:11px;padding-top:11px;border-top:1px solid rgba(255,255,255,.08)}
+.stdh{display:flex;align-items:center;margin-bottom:9px}
+.stdh span{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.17em;color:var(--faint)}
+.stdh u{margin-left:auto;font-family:'Geist Mono',monospace;font-size:9.5px;color:var(--faint);text-decoration:none}
+.stdh u b{color:var(--phos);font-weight:400}
+.stdgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.stdt{position:relative;overflow:hidden;isolation:isolate;min-height:52px;padding:8px 9px 8px 13px;
+  border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.017);
+  text-align:left;display:block;cursor:pointer;font-family:'Satoshi',sans-serif}
+.stdt .edge{position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c,var(--gold));z-index:2}
+.stdt .fill{position:absolute;left:0;top:0;bottom:0;z-index:1;
+  background:linear-gradient(90deg,
+    color-mix(in srgb,var(--c,var(--gold)) 22%,transparent) 0%,
+    color-mix(in srgb,var(--c,var(--gold)) 15%,transparent) 62%,transparent 100%)}
+.stdt .fill::after{content:'';position:absolute;right:0;top:6px;bottom:6px;width:1px;
+  background:linear-gradient(180deg,transparent,
+    color-mix(in srgb,var(--c,var(--gold)) 55%,transparent),transparent)}
+.stdt .sn{position:relative;z-index:3;display:block;font-size:12.5px;line-height:1.15;color:var(--ink);
+  margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stdt .bt{position:relative;z-index:3;display:flex;align-items:center;gap:6px}
+.stdt .ct{margin-left:auto;font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--dim)}
+.stdt .tk{width:15px;height:15px;border-radius:4px;border:1.5px solid #3a3350;flex:none;
+  display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:transparent}
+.stdt.on{border-color:rgba(74,222,128,.5)}
+.stdt.on .tk{background:var(--phos);border-color:var(--phos);color:#0b1a10}
+.stdt.on .ct{color:var(--phos)}
+.stdt.more{display:flex;align-items:center;justify-content:center;border-style:dashed;color:var(--faint);
+  font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em}
+.stdmore{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:var(--tap);
+  margin-top:7px;padding:0 12px;border:1px dashed var(--line2);border-radius:10px;background:none;
+  color:var(--dim);font-size:12.5px;cursor:pointer;font-family:'Satoshi',sans-serif}
+.stdmore u{text-decoration:none;font-family:'Geist Mono',monospace;font-size:15px;color:var(--faint)}
+
+/* ---- the catch-up sheet: one list, grouped only by whether a term is running ---- */
+.grp{display:flex;align-items:center;gap:8px;margin:14px 0 7px;
+  font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.18em;color:var(--faint)}
+.grp:first-of-type{margin-top:0}
+.grp b{flex:1;height:1px;background:var(--line);display:block}
+.pickr{display:grid;grid-template-columns:19px 1fr auto;align-items:center;gap:10px;width:100%;
+  min-height:var(--tap);padding:0 11px;margin-bottom:6px;border:1px solid var(--line);
+  border-radius:10px;background:var(--panel2);text-align:left;cursor:pointer;font-family:'Satoshi',sans-serif}
+.pickr .tk{width:17px;height:17px;border-radius:5px;border:1.5px solid #3a3350;flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent}
+.pickr .sn{font-size:13.5px;line-height:1.2;color:var(--ink);min-width:0}
+.pickr .sn s{display:block;text-decoration:none;font-family:'Geist Mono',monospace;font-size:9.5px;
+  letter-spacing:.12em;color:var(--faint);margin-top:2px}
+.pickr .mt{font-family:'Geist Mono',monospace;font-size:11px;color:var(--dim);white-space:nowrap}
+.pickr .mt.xp{color:var(--gold)}
+.pickr.on{border-color:rgba(74,222,128,.34);background:rgba(74,222,128,.07)}
+.pickr.on .tk{background:var(--phos);border-color:var(--phos);color:#0b1a10}
+.pickr.on .mt{color:var(--phos)}
+
+/* ---- the verdict when a term runs out ---- */
+.stdvd{text-align:center;padding:8px 0 14px}
+.stdvd .big{font-family:'Clash Display',sans-serif;font-size:40px;line-height:1;margin:10px 0 7px}
+.stdvd .lb{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;color:var(--faint)}
 
 /* ---------- an area's colour ----------
    Swatches are buttons, not <label>s wrapping a hidden radio, so they inherit the
@@ -1345,9 +1478,10 @@ input:focus,textarea:focus{outline:none;border-color:var(--gold)}
 .run-obj{font-size:12.5px;color:var(--dim);margin-top:5px;max-width:300px;line-height:1.4}
 .run-mult{font-family:'Geist Mono',monospace;font-size:11px;color:var(--phos);font-weight:700;letter-spacing:.09em;margin:16px 0 6px}
 .run-warn{font-size:12.5px;color:var(--faint);max-width:290px;margin:0 auto 20px;line-height:1.5}
-.run.broke .fgc{stroke:var(--blood)} .run.broke .run-mult{color:var(--blood)}
-.run.paused .fgc{stroke:var(--gold)} .run.paused .run-mult{color:var(--gold)}
+/* `.run.broke` and `.run.paused` are BURIED (2026-08-03) — there is no broken run and no
+   pause any more, so the two states that recoloured this screen cannot occur. */
 .run-acts{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;max-width:340px}
+.run-acts.one{grid-template-columns:1fr}
 
 /* an off-script day stops shouting: the schedule and the push calm down, wins stay live */
 body.offday #sched,body.offday .pushstrip{opacity:.32;pointer-events:none}
@@ -1590,9 +1724,9 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
   </div>
   <div class="run-mult mono" id="runMult"></div>
   <p class="run-warn" id="runWarn"></p>
-  <div class="run-acts">
-    <button class="btn gh" id="runStep">Step away</button>
-    <button class="btn gh" id="runEnd">End</button>
+  <div class="run-acts" id="runActs">
+    <button class="btn gh" id="runStep">Stop</button>
+    <button class="btn gh" id="runEnd">Skip</button>
   </div>
 </div>
 
@@ -1649,6 +1783,7 @@ body[data-veil="him"] .srow .v{color:var(--ghost)}
 const RUN_START='2026-08-03', RUN_END='2026-12-26', HIM=99;
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+const DOM_TAG={WORK:'WRK',CAPITAL:'CAP',BODY:'BDY',FAITH:'FTH',MIND:'MND',PEOPLE:'PPL'};
 const DOMAINS=[
   {k:'WORK',   label:'THE WORK', c:'#E0B25E'},
   {k:'CAPITAL',label:'CAPITAL',  c:'#7FB4FF'},
@@ -1877,9 +2012,22 @@ function workdaysLeft(){
   const b=new Date(RUN_END+'T00:00:00');let n=0;const c=new Date();c.setHours(0,0,0,0);
   while(c<b){const g=c.getDay();if(g>0&&g<6)n++;c.setDate(c.getDate()+1)}return n;
 }
-const TOTAL_DAYS=(()=>{let n=0;const c=new Date(RUN_START+'T00:00:00'),b=new Date(RUN_END+'T00:00:00');
+/* ═══ THE DENOMINATOR ══════════════════════════════════════════════════════════
+   This used to COUNT the weekdays in the run — 105 of them — which made the target
+   exactly equal to the supply. The run demanded an average of 1.000 on every single
+   weekday with ZERO slack: one day off was unrecoverable, and one day off per week
+   made 99 mathematically impossible (84 lived days × the 1.20 ceiling = 100.8 < 105).
+   Simulated across seven archetypes: nobody below flawless ever finished.
+
+   90 is a deliberate constant, not a count. It leaves ~15 weekdays of slack for
+   illness, travel and the five sanctioned off-script days, and it is the number
+   that puts "slacking a little" on Dec 25 and "very very good" on Nov 27 in all
+   four simulated years. Re-derive it with scratchpad/xp-final.js if the shape of
+   the day ever changes — it is tuned against THIS day, not against the calendar. */
+const TOTAL_DAYS=90;
+const RUN_WEEKDAYS=(()=>{let n=0;const c=new Date(RUN_START+'T00:00:00'),b=new Date(RUN_END+'T00:00:00');
   while(c<b){const g=c.getDay();if(g>0&&g<6)n++;c.setDate(c.getDate()+1)}return n})();
-function dayNo(){return Math.max(1,Math.min(TOTAL_DAYS,TOTAL_DAYS-workdaysLeft()+1))}
+function dayNo(){return Math.max(1,Math.min(RUN_WEEKDAYS,RUN_WEEKDAYS-workdaysLeft()+1))}
 function weekNo(){const a=new Date(mondayOf(new Date(RUN_START+'T00:00:00'))),b=new Date(mondayOf(new Date()));
   return Math.max(1,Math.round((b-a)/6048e5)+1)}
 /* The last weekday actually counted, and its label. Everything that used to say a
@@ -2073,7 +2221,12 @@ function load(){
 }
 function save(){try{localStorage.setItem('btb3',JSON.stringify(S))}catch(e){}
   if(typeof SYNC!=='undefined')SYNC.queue()}
-function day(k){k=k||today();if(!S.days[k])S.days[k]={done:{},miss:{},wait:{},produced:{},focus:{},prio:[],wins:{},off:0,credited:{}};
+/* `focus:{}` is gone (2026-08-03). It held 'clean'/'broke'/'quit' and had THREE writers
+   and ZERO readers — the same writer-with-no-reader disease as viceClean (v61) and
+   slipHealed (v62). `spent` replaces it and is read everywhere: seconds banked toward a
+   block, so a run can be stopped and picked back up. `doneAt` stamps the clock a block
+   actually finished at, which is the whole reason the day can bend without lying. */
+function day(k){k=k||today();if(!S.days[k])S.days[k]={done:{},miss:{},wait:{},produced:{},spent:{},doneAt:{},prio:[],wins:{},off:0,credited:{}};
   if(!S.days[k].credited)S.days[k].credited={};return S.days[k]}
 function week(k){k=k||mondayOf(new Date());
   /* FUNERAL 2026-07-28: the `theme` seed (his business names, hardcoded) and the
@@ -2508,16 +2661,35 @@ function slicesFor(k){
   if(vks.length){let sum=0;vks.forEach(v=>{
     sum+=(rec.slip&&rec.slip[v])?((rec.slipHealed&&rec.slipHealed[v])?0.5:0):1});
     cr=sum/vks.length;}
-  /* ABOVE AND BEYOND — only a perfect, clean day may go past 100. No leveling in
-     the penalty zone. */
+  /* ABOVE AND BEYOND — a strong, clean day may go past 100.
+     REBALANCED 2026-08-02 after a full-run simulation of seven player archetypes
+     (XP-AUDIT.md). Three things were wrong and all three are fixed here:
+
+     1 · THE GATE WAS BINARY AND BRUTAL. `wr===1 && cr===1 && !waited` meant ONE
+         missed block out of six cost 0.30 of a day (0.10 of work PLUS the whole
+         0.20 overflow) — the sixth block was worth 3× the fifth. It also charged
+         0.20 for a block marked WAITING, which the app forgives out of the
+         denominator and then billed for anyway. Now: 5 of 6 blocks and 3/4 clean
+         still earns. The waiting contradiction is gone.
+     2 · THE BOOST COUNT WAS UNBOUNDED. `5*boosts` read the raw LOG LENGTH, so
+         four taps of a self-priced 5-XP gesture turned a 1.00 day into a 1.20 —
+         measured. The XP pocket capped the money, never the points. Capped at 2.
+     3 · THE CEILING WAS TOO HIGH relative to a real day. 20 points of overflow
+         let a flawless day run 20% ahead of the denominator while a merely
+         excellent day fell behind it — no middle. 6 at 3/unit. */
   let over=0;
-  /* ...and a day held up by someone else is not "above and beyond". The overflow
-     lane wants a day that actually happened: work full, clean, nothing waited. */
-  if(wAvail&&wr===1&&cr===1&&!waited){
+  if(wAvail&&wr>=0.83&&cr>=0.75){
     const boosts=(S.boostLog||[]).filter(e=>e.date===k).length;
-    over=Math.min(20,5*Math.max(0,units-4)+5*boosts);
+    over=Math.min(6,3*Math.max(0,units-4)+3*Math.min(2,boosts));
   }
-  const pts=Math.min(120,60*wr+25*lr+15*cr+over)/100;
+  /* THE SLICES · 45 work / 40 life / 15 clean (was 60/25/15).
+     A flawless day is 100 under either split — this only changes what a REAL day
+     is worth. At 60/25 a user doing 85% of his work blocks and everything else
+     perfectly scored 0.89 and could never reach 99 in the days available; the run
+     demanded flawless, not dedicated. Moving 15 points onto the slice he actually
+     completes is what makes "slacking a little" land on Dec 25 instead of never.
+     Simulated across 4 seeded years per archetype before it was written. */
+  const pts=Math.min(106,45*wr+40*lr+15*cr+over)/100;
   return {wr,lr,cr,units,over,pts,wAvail};
 }
 /* ONE door for "does this day move the number" — the numerator must speak the
@@ -2573,7 +2745,7 @@ function showRankUp(i){
   el.innerHTML=`<div class="ru-in">
     <div class="ru-k">◆ RANK UP ◆</div>
     <div class="ru-n">${RANKS[i].n} · ${ovr()}</div>
-    <div class="ru-s">${i>0?RANKS[i-1].n+' is behind you. ':''}Day ${dayNo()} of ${TOTAL_DAYS}${
+    <div class="ru-s">${i>0?RANKS[i-1].n+' is behind you. ':''}Day ${dayNo()} of ${RUN_WEEKDAYS}${
       pf.inRun?` — pace holds ${pf.md}.`:'.'}</div>
     ${i>=1?`<div class="ru-u">UNLOCKED · A NEW SHELF IN THE BANK</div>`:''}
     <button class="btn" style="margin-top:16px" onclick="$('rankUp').classList.remove('on')">Carry on</button>
@@ -3268,13 +3440,14 @@ function render(){
   $('sabbath').classList.remove('on');document.body.classList.remove('noTabs');
   autoMark(); recount(); badges();
   rankUpCheck();                       /* HIS ROAD — crossing a band is an event */
+  stdExpiryCheck();                    /* a term that ran out says something, once */
   if(VIEW==='today'){
     stampToday();
     document.body.classList.toggle('offday',!!day().off);
     renderStatus(); renderGauges(); renderGlance(); renderTimeLeft(); renderHomeNudge();
     renderPenance(); renderNext(); renderBoostCard();
     renderWins(); renderExtrasLine(); renderDeck(); renderSched(); renderClose(); renderRunStrip();
-    $('foot').innerHTML=`BURN THE BOATS · DAY ${dayNo()} / ${TOTAL_DAYS}<br>WHAT IS THE MILLIONAIRE VERSION OF YOURSELF DOING RIGHT NOW?`;
+    $('foot').innerHTML=`BURN THE BOATS · DAY ${dayNo()} / ${RUN_WEEKDAYS}<br>WHAT IS THE MILLIONAIRE VERSION OF YOURSELF DOING RIGHT NOW?`;
   }
   else if(VIEW==='push') renderPush();
   else if(VIEW==='bank') renderBank();
@@ -3286,7 +3459,7 @@ function renderStatus(){
   $('cvOvr').textContent=ovr();
   const wl=workdaysLeft();
   $('fDays').textContent=wl;
-  $('fFuel').style.width=(wl/TOTAL_DAYS*100)+'%';
+  $('fFuel').style.width=(wl/RUN_WEEKDAYS*100)+'%';
   $('fTo').textContent='WORKDAYS TO '+END_LABEL_U;
   $('fWk').textContent='WK '+pad(weekNo());
 }
@@ -3358,23 +3531,53 @@ function renderGlance(){
   if(!glanceOpen)return;
   _renderGlanceFull();
 }
-function _renderGlanceFull(){
-  const s=domainStats(),p=domainProgress();
-  const n=DOMAINS.length,C=52,RD=38;
-  const pt2=(i,v)=>{const a=(-90+i*(360/n))*Math.PI/180;return[C+Math.cos(a)*RD*v,C+Math.sin(a)*RD*v]};
-  const pl=vs=>vs.map((v,i)=>pt2(i,v).join(',')).join(' ');
-  let h='';
-  [.33,.66,1].forEach(r=>h+=`<polygon points="${pl(DOMAINS.map(()=>r))}" fill="none" stroke="#2a2438" stroke-width="1"/>`);
-  h+=`<polygon points="${pl(DOMAINS.map(()=>1))}" fill="none" stroke="#3d3550" stroke-width="1"/>`;
-  h+=`<polygon points="${pl(DOMAINS.map(d=>s[d.k]/100))}" fill="rgba(224,178,94,.28)" stroke="#E0B25E" stroke-width="1.6"/>`;
-  DOMAINS.forEach((d,i)=>{const[x,y]=pt2(i,s[d.k]/100);
-    h+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.1" fill="${d.c}"/>`});
-  $('miniRadar').innerHTML=h;
+/* THE THREE SLICES, NOT THE SIX DOMAINS (2026-08-02).
+   The six-domain radar lived here and it did not explain the number sitting beside
+   it. Measured: ignore two whole domains for a month and the Overall moves 2 points
+   — because domainProgress() feeds the RADAR, and slicesFor() feeds the 99, and they
+   are different functions. Six bars that don't move the score, next to the score.
 
-  $('miniStats').innerHTML=DOMAINS.map(d=>`<div class="ms">
-    <span class="n">${d.label.replace('THE ','')}</span>
-    <span class="t"><i style="width:${s[d.k]}%;background:${d.c}"></i></span>
-    <span class="v">${s[d.k]}</span></div>`).join('');
+   These three ARE the score. 45 work + 40 life + 15 clean is literally the formula
+   in slicesFor(), so the rows add up to the average day, and the average day is what
+   the pace line below turns into a date. Read as POINTS BANKED OUT OF POINTS
+   AVAILABLE rather than percentages, because "51 / 60" says what to do next and
+   "85%" doesn't.
+
+   The six domains are not deleted — they keep the full radar in the status window,
+   one tap away on the Overall, next to the standards that feed them. Demoted to
+   where they diagnose something, off the surface where they explained nothing. */
+function _renderGlanceFull(){
+  /* same door as runPoints(): only days that actually score, since the seam */
+  let n=0,w=0,l=0,c=0,u=0;const tk=today();
+  Object.keys(S.days).forEach(k=>{
+    if(k<S.engineSeam||k>tk)return;
+    if(!scoresOn(k))return;
+    const sl=slicesFor(k);if(!sl)return;
+    n++;w+=sl.wr;l+=sl.lr;c+=sl.cr;u+=sl.units;});
+  $('miniRadar').classList.toggle('gone',true);
+  const row=(label,frac,weight,col,note)=>{
+    const got=frac*weight;
+    return `<div class="ms sl"><span class="n">${label}</span>
+      <span class="t"><i style="width:${Math.round(frac*100)}%;background:${col}"></i></span>
+      <span class="v">${Math.round(got)}<s>/${weight}</s></span>
+      ${note?`<span class="nt">${note}</span>`:'<span class="nt"></span>'}</div>`;
+  };
+  if(!n){
+    $('miniStats').innerHTML=`<div class="slnone">Nothing scored yet — the three
+      slices fill in from your first weekday.</div>`;
+  }else{
+    /* THE LIFE ROW CARRIES ITS RATE, NOT JUST ITS BAR. lr = min(1, units/4), so it
+       saturates the moment he does four small things — measured at 100% on 100% of
+       days for everyone from "slacking a little" upward. The bar still shows the
+       truth (this slice is fully banked); the note shows the number that keeps
+       moving, so the row is never dead. */
+    $('miniStats').innerHTML=
+       row('WORK',  w/n, 45, 'var(--blue)')
+      +row('LIFE',  l/n, 40, 'var(--violet)', (u/n).toFixed(1)+'/day')
+      +row('CLEAN', c/n, 15, 'var(--phos)')
+      +`<div class="sltot"><span>AN AVERAGE DAY</span>
+         <b>${Math.round(45*w/n+40*l/n+15*c/n)}<s> / 100</s></b></div>`;
+  }
 
   const o=ovr();
   $('ovrBox').innerHTML=`<b>${o}</b><span class="l">OVERALL<br>RATING</span>
@@ -3454,8 +3657,9 @@ function actsFor(b){
     case 'reset': return {row:'pair', acts:[A('Done — phone away',"markDone('reset')",'primary'),
                                             A('Close the day →',"closeDay()")]};
     /* the reading is not what he misses — the texting is. sms: is live before the timer too. */
+    /* "20 min LOCKED" was the break rule's language — nothing is locked any more. */
     case 'bible': return {row:'pair', quota:{label:'THIS WEEK',have:weekCount(['bible']),need:qNeed('block','bible')},
-                          acts:[A('Read · 20 min locked',"startRun('bible')",'primary'),
+                          acts:[A(runLabel(shape().find(x=>x.id==='bible')||{id:'bible',focus:20}),"startRun('bible')",'primary'),
                                 A('Text Kells',null,'sms')]};
     /* a long hike overruns — "still out" holds it open instead of failing it at 10:30 */
     case 'hike':  return {row:'pair', quota:{label:'MOVEMENT',have:weekCount(['walk','hike']),need:qNeed('block','hike')},
@@ -3470,7 +3674,7 @@ function actsFor(b){
   /* b1–b4 · deep work. Only the timer completes a work block — there is no "mark complete",
      because a manual tick would hollow out the one measure the whole score is built on. */
   if(b.kind==='deep')return {row:'primary-pair',
-    acts:[A(`Start focus run · ${b.focus}m`,`startRun('${b.id}')`,'primary'),
+    acts:[A(runLabel(b),`startRun('${b.id}')`,'primary'),
           A('Waiting on someone',`markWait('${b.id}')`),
           A('Detail',`openBlk('${b.id}')`)]};
   return {row:'one', acts:[A('Open',`openBlk('${b.id}')`,'primary')]};
@@ -3521,11 +3725,13 @@ function actionRow(b,state){
   return `<div class="acts">${h}</div>`;
 }
 
-function quotaChip(q){
-  if(!q||!q.need)return '';   /* no standard for this block -> no phantom weekly count */
-  let pips='';for(let i=0;i<q.need;i++)pips+=`<i class="${i<q.have?'on':''}"></i>`;
-  return `<span class="quota">${q.label}<span class="pips">${pips}</span><b>${q.have}/${q.need}</b></span>`;
-}
+/* FUNERAL 2026-08-02 — quotaChip() is buried. It drew a weekly count in the live
+   card's kicker for exactly four block ids, two of which (walk, hike) could never
+   be populated: REQABLE() only ever offered gym and bible, and neither walk nor
+   hike is in the QUOTAS seed. So it was a chip for two things out of eight, with
+   two dead branches. stdGrid() replaced it and covers every standard.
+   `spec.quota` is still built by actsFor() — it is the block's honest weekly count
+   and the journey suite asserts bible carries one. It simply has no renderer now. */
 
 function renderNext(){
   const sh=shape(),ci=curIdx(),ni=nxtIdx(),i=ci>=0?ci:ni,el=$('nextUp');
@@ -3552,13 +3758,18 @@ function renderNext(){
      this card. The seam carried the row before and after INSIDE the card because the
      day was closed underneath; the day is now always open and this card sits IN it,
      so its neighbours are simply the rows above and below — real rows, not copies. */
+  /* the quotaChip is gone from the kicker (2026-08-02). It drew a weekly count for
+     four block ids and nothing else, so six of eight standards never appeared on
+     Today at all — and two of the four could never populate. stdGrid() replaces it
+     BELOW the action row, where an optional extra belongs, and covers every kind. */
   el.innerHTML=`
-    <div class="nu-k">${live&&state==='live'?'<i></i>':''}<span>${kick}</span>${quotaChip(spec.quota)}
+    <div class="nu-k">${live&&state==='live'?'<i></i>':''}<span>${kick}</span>
       <u>${t12(b.s)}–${t12(b.e)} · ${mins(b.e)-mins(b.s)}m</u></div>
     <div class="nu-t">${b.kind==='deep'&&t?esc(t):title}</div>
     <div class="nu-obj">${sub}</div>
     ${goalStrip(b)}
-    ${actionRow(b,state)}`;
+    ${actionRow(b,state)}
+    ${stdGrid(b)}`;
 }
 /* THE HANDSHAKE — a block knows which goal it serves, and what it moves.
    Renders nothing when no goal is attached, so it can never be in the way. */
@@ -3645,7 +3856,7 @@ function schedRow(b,i,ci,weight){
     ${b.kind==='deep'
       ?(t?`<div class="bo">${esc(b.n)+(biz?' · '+esc(biz):'')}</div>`:'')
       :(b.sub?`<div class="bo">${esc(b.sub)}</div>`:'')}
-    <div class="bd">${mins(b.e)-mins(b.s)}m · ${b.dom.join(' + ')}${b.opt?' · OPTIONAL':''}</div></div>
+    <div class="bd">${mins(b.e)-mins(b.s)}m · ${b.dom.join(' + ')}${b.opt?' · OPTIONAL':''}${blkNote(b)}</div></div>
     <span class="bc"></span>`;
   return el;
 }
@@ -3853,11 +4064,19 @@ function winsBankList(){
     const pips=need?`<span class="pips">${Array.from({length:need},(_,i)=>
       `<i class="${i<hits?(met?'full':'on'):''}"></i>`).join('')}</span>`:'';
     /* THE SHELF (C1, his pick): a card per thing, the tap and its EDIT stacked —
-       his content, so every card is editable (buttons can't nest, hence the pair) */
+       his content, so every card is editable (buttons can't nest, hence the pair)
+       STANDARDS 2026-08-02: this second line is now the ONLY per-thing render of a
+       weekly count in the app. The Bank's "The standards" section used to repeat all
+       six of these as rows saying "3× a week" three hundred pixels below — one number,
+       two renders, in two different vocabularies. The section is buried; the count
+       lives on the card it describes, because a term is a PROPERTY of a thing rather
+       than a thing of its own. A win with no live term says so plainly instead of
+       rendering an empty row. */
     return `<div class="shcell">
       <button class="win${d.wins[w.k]?' on':''}" onclick="tapWin('${w.k}')">
         <span class="wtop">${esc(w.n)}<b>+${w.xp}</b></span>
-        ${need?`<span class="wtop" style="gap:6px">${pips}<b style="margin-left:auto;font-size:11px">${hits}/${need} this week</b></span>`:''}
+        ${need?`<span class="wtop" style="gap:6px">${pips}<b style="margin-left:auto;font-size:11px">${hits}/${need} · this week</b></span>`
+             :`<span class="wtop"><b style="margin-left:auto;font-size:11px;color:var(--faint);font-weight:400">no term running</b></span>`}
       </button>
       <button class="bst-e" onclick="editWin('${w.k}')" aria-label="Edit ${esc(w.n)}">EDIT</button>
     </div>`}).join('')+`</div>`;
@@ -3894,52 +4113,485 @@ function dropWin(k){
   S.quotaDefs.forEach(q=>{if(q.src==='win'&&q.id===k&&!q.arc)qRetire(q)});   /* its standard retires with it, credit kept */
   save();closeSheet();render();toast('Removed','bad');
 }
-/* the weekly standards: one row each, tap cycles the count 1..7 then retires it */
-function standardsList(){
-  const qs=quotasAll();
-  if(!qs.length)return `<div class="card" style="color:var(--dim);font-size:13.5px;padding:12px">
-    No standards set. A standard is a thing that should happen n× a week — you choose what and how many.</div>`;
-  return `<div class="card" style="padding:2px 13px">${qs.map(q=>`
-    <button class="g2m" style="border:0;border-bottom:1px solid var(--line);border-radius:0;margin:0;width:100%;cursor:pointer;background:none;text-align:left"
-      onclick="qBump('${q.src}','${q.id}')">
-      <span class="d" style="background:${domColour(q.dom)}"></span>
-      <span class="n">${esc(quotaLabel(q))}<u>${q.src==='block'?'A BLOCK ON THE DAY':'ALWAYS COUNTS'}</u></span>
-      <b style="font-family:'Geist Mono',monospace;font-size:12px;color:var(--ink)">${q.n}× a week</b>
-    </button>`).join('')}</div>`;
+/* ═══ THE STANDARDS · {thing, count, window} ═══════════════════════════════════
+   Rebuilt 2026-08-02 against STANDARDS-SPEC.md. Two things died here:
+
+     · standardsList() — a SECOND render of a number the win cards already carried.
+       "Real time with someone" appeared on the Bank as `0/3 this week` and again,
+       300px lower, as `3× a week`. One number, two vocabularies, and Record made
+       it a third. The count now lives on the card it describes; the BOARD lives on
+       Record. A term is a PROPERTY of a thing, not a sibling of it — which is why
+       the section never sat right no matter how it was styled.
+     · qBump() — the only control a standard had, and it counted UP only:
+       3→4→5→6→7 and the FIFTH tap retired it. Removing a 3× standard meant first
+       telling the app you owed it seven times a week. No way down, no rename, no
+       term, and no remove button anywhere in the app.
+
+   What the engine already held and nothing could reach: a span is {from, until},
+   and qActiveIn() has ALWAYS honoured `until`. Nothing ever set it in advance —
+   saveStandard pushed a span with `from` only, and qRetire wrote `until`
+   retroactively. Setting it at creation is the entire term feature. Measured
+   2026-08-02: standards cannot move the 99 (slicesFor, the only input to
+   runPoints, never reads quotaDefs), so the scoring engine is untouched here. */
+
+/* SIX DAYS, NOT SEVEN. The engine counts a quota's hits out of `weeks[wk]`, which
+   is built skipping Sunday — so Mon–Sat is what actually scores. weekHitsIn() was
+   looping 7, which made a 7× standard reachable in the graduation check and
+   unreachable in the Bank. One definition now, and it is the engine's. */
+const STD_WEEK=6;
+function stdHits(q,mon){
+  let n=0;const d=new Date(mon+'T00:00:00');
+  for(let i=0;i<STD_WEEK;i++){
+    const r=S.days[iso(d)];
+    if(r&&!r.off&&(q.src==='block'?r.done[q.id]:(r.wins&&r.wins[q.id])))n++;
+    d.setDate(d.getDate()+1);
+  }
+  return n;
 }
-function qBump(src,id){
-  const q=S.quotaDefs.find(x=>x.src===src&&x.id===id&&!x.arc);if(!q)return;
-  if(q.n>=7){qRetire(q);toast('Standard retired — the thing still counts, it just isn\'t owed','bad')}
-  else{qHistSet(q,q.n+1);toast(`${quotaLabel(q)} · ${q.n}× a week`,'good')}
-  save();render();
+/* weeks -> the Monday it stops being owed. 0 is open-ended. Every change lands on
+   a Monday, so a term is always a whole number of scored weeks. */
+function stdUntil(weeks){
+  if(!weeks)return null;
+  const d=new Date(nextWeekKey()+'T00:00:00');
+  d.setDate(d.getDate()+7*weeks);
+  return iso(d);
 }
-function addStandard(){
-  const have=new Set(quotasAll().map(q=>q.src+':'+q.id));
-  const opts=REQABLE().filter(o=>!have.has(o.src+':'+o.id));
-  if(!opts.length){toast('Everything already has a standard','bad');return}
-  /* ask #8: "clear differentiation between quotas and goals". The rule, in his
-     own vocabulary and stated where he is about to choose: a RHYTHM is a
-     standard, a FINISH LINE is a goal. "Gym 2x every week" is a standard wearing
-     a goal's clothes; "get to 185 lbs" is the goal it serves. */
+/* EVERY reader and writer of a lifetime goes through here. A standard seeded from
+   the QUOTAS constant has NO spans array at all — seedOwned() copies the constant
+   and migrateStandards() only ever runs on a save that already has a version, so a
+   fresh install has six standards with undefined spans. qActiveIn has always
+   applied exactly this fallback inline; the first cut of stdSpan() didn't, and
+   every tile on Today read 0/0. Normalise once, in one place. */
+function stdSpans(q){
+  if(!q.spans||!q.spans.length)q.spans=q.arc?[]:[{from:'0000-00-00'}];
+  return q.spans;
+}
+/* the span it is living in now — or its last one, once the term has run out */
+function stdSpan(q){
+  const sp=stdSpans(q),wk=weekKeyNow();
+  return sp.find(s=>s.from<=wk&&(!s.until||wk<s.until))||sp[sp.length-1]||null;
+}
+const stdEnds=q=>{const s=stdSpan(q);return s&&s.until?s.until:null};
+const stdOver=q=>{const u=stdEnds(q);return !!(u&&u<=weekKeyNow())};
+/* the engine speaks in whole weeks; a human on a Thursday only understands days */
+function stdDaysLeft(q){
+  const u=stdEnds(q);if(u==null)return null;
+  return Math.max(0,Math.round((new Date(u+'T00:00:00')-new Date(today()+'T00:00:00'))/864e5));
+}
+function stdSetTerm(q,weeks){
+  const at=stdUntil(weeks);
+  const sp=stdSpans(q);
+  if(!sp.length)sp.push({from:nextWeekKey()});      /* only a retired one is empty */
+  const open=sp.find(s=>!s.until)||sp[sp.length-1];
+  if(!at){delete open.until;delete q.termFrom;return}
+  open.until=at;
+  /* WHERE THE TERM STARTED COUNTING, which is not the same as where the standard's
+     LIFETIME started. Put a 2-week term on something that has been running since
+     August and the tally walked every week since RUN_START — it read 2/21. The
+     alternative was splitting the span, which risks a gap or a double-scored week
+     right where the forward-only engine is most delicate. This is a display-only
+     marker: the scoring engine reads spans and hist and never looks at it. */
+  if(!q.termFrom||q.termFrom<weekKeyNow())q.termFrom=nextWeekKey();
+}
+const stdWeeksLeft=q=>{const d=stdDaysLeft(q);return d==null?0:Math.max(1,Math.round(d/7))};
+/* what the row says under the name — his words, never weeks-since-epoch */
+function stdWindow(q){
+  const n=qNAt(q,weekKeyNow())||q.n,u=stdEnds(q);
+  if(!u)return `${n}× A WEEK · NO END`;
+  const dl=stdDaysLeft(q);
+  if(dl<=0)return `${n}× A WEEK · ENDED`;
+  /* a one-week term is not "7d left", it is THIS WEEK — and the count beside it is
+     the week's, so the two have to agree about what they are describing */
+  if(dl<=7)return `${n}× · THIS WEEK`;
+  return `${n}× A WEEK · ${dl}D LEFT`;
+}
+/* WHAT THE NUMBER ON A TILE MEANS depends on whether the thing has an end.
+   A bounded term wants its WHOLE tally — "3/6" of a 2×-a-week-for-three-weeks run
+   is the only number that means anything. An OPEN-ENDED standard has no total: the
+   first cut showed "9/21", its tally since RUN_START, which is a statistic rather
+   than something you can act on at 2pm. Open-ended shows THIS WEEK. */
+function stdCount(q){
+  if(stdEnds(q))return stdTally(q);
+  const wk=weekKeyNow(),need=qNAt(q,wk)||0;
+  return {hits:Math.min(need,stdHits(q,wk)),need};
+}
+/* the whole term's tally, walked a Monday at a time so it uses the count each week
+   actually carried — the same min(need,hits) the scoring engine uses */
+function stdTally(q){
+  const sp=stdSpan(q);if(!sp)return{hits:0,need:0};
+  let hits=0,need=0,guard=0;
+  /* the term's start, then the span's, then the run's — never before the run */
+  let from=q.termFrom||sp.from;
+  if(from==='0000-00-00'||from<RUN_START)from=RUN_START;
+  const d=new Date(from+'T00:00:00');
+  const wk=weekKeyNow();
+  /* NEED IS THE WHOLE TERM. HITS ARE ONLY THE WEEKS THAT HAVE HAPPENED.
+     The first cut accumulated both only over elapsed weeks, so a term starting next
+     Monday read 0/0 — which looks broken rather than "not started" — and a term
+     halfway through measured itself against half of itself, so the bar could never
+     express "three of the six I signed up for". Walk the FULL term for the
+     denominator; add to the numerator only up to this week. */
+  const stop=sp.until||null;
+  while((stop?iso(d)<stop:iso(d)<=wk)&&guard++<120){
+    const k=iso(d),n=qNAt(q,k);
+    if(n){need+=n;if(k<=wk)hits+=Math.min(n,stdHits(q,k))}
+    d.setDate(d.getDate()+7);
+  }
+  return {hits,need};
+}
+
+/* ═══ THE DOMAINS A STANDARD IS THE ONLY SOURCE FOR ════════════════════════════
+   Measured 2026-08-02, and the reason this feature is load-bearing rather than
+   decorative. `bible` is dom FAITH and opt:1, so domainProgress() skips it in the
+   block loop and scores it ONLY through its standard. `life` is dom PEOPLE and
+   kind:'life', which SCORED excludes outright. So avail[] for those two is ZERO
+   without a standard, domainProgress bails on `if(!avail[d.k])return`, and both
+   sit at the 50 floor for the entire run with nothing on screen saying why.
+   DERIVED from the shape, never hardcoded — give PEOPLE a real scored block one
+   day and this quietly stops warning about it. */
+function domStdOnly(){
+  const fed=new Set();
+  allBlocks().forEach(b=>{ if(!SCORED(b)||b.opt)return; (b.dom||[]).forEach(d=>fed.add(d)) });
+  return DOMAINS.filter(d=>!fed.has(d.k)).map(d=>d.k);
+}
+/* "running" includes one that starts Monday — otherwise adding a PEOPLE standard
+   would leave the warning up until the week turned, which reads as a broken save */
+const domsLive=()=>new Set(quotasAll().filter(q=>!stdOver(q)).map(q=>q.dom));
+
+/* ═══ THE BOARD — Record owns it ═══════════════════════════════════════════════
+   Decided against two alternatives. The BANK is what he owns and what he spends;
+   a term with a countdown is not currency, and leaving the board there fixes the
+   duplication while keeping the thing that made it feel bolted on. A SHEET with
+   doors from everywhere is not a PLACE — no address, nothing to scroll back to,
+   invisible to anyone who forgot it exists. Record is where the run is read, and
+   standards are the only scoring input two of the six domains have, so the board
+   IS a reading of how the run is going. */
+function stdCoverage(){
+  const live=domsLive(),only=domStdOnly();
+  const gaps=only.filter(k=>!live.has(k));
+  const strip=`<div class="cov">
+    <span class="lb">FEEDING</span>
+    ${DOMAINS.map(d=>`<span class="dm${live.has(d.k)?'':' off'}" title="${esc(d.label)}">
+      <i style="${live.has(d.k)?`background:${d.c}`:''}"></i><s>${DOM_TAG[d.k]||d.k.slice(0,3)}</s></span>`).join('')}
+  </div>`;
+  const warn=gaps.length?`<div class="stdwarn"><i></i><span><b>${gaps.map(k=>{
+    const d=DOMAINS.find(x=>x.k===k);return esc(d?d.label:k)}).join(' and ')} ${
+    gaps.length>1?'have':'has'} nothing running.</b> ${gaps.length>1?'They are':'It is'}
+    only fed by a standard — ${gaps.length>1?'they':'it'} will sit at 50 all run.</span></div>`:'';
+  return strip+warn;
+}
+function stdBoard(){
+  const wk=weekKeyNow();
+  const live=quotasAll().filter(q=>!stdOver(q));
+  const past=(S.quotaDefs||[]).filter(q=>stdOver(q));
+  const rows=L=>`<div class="stdbrd">${L.map(q=>{
+    const t=stdCount(q),pc=t.need?Math.round(100*Math.min(1,t.hits/t.need)):0;
+    const met=t.need&&t.hits>=t.need,left=Math.max(0,t.need-t.hits);
+    return `<button class="stdbr${met?' won':''}" style="--c:${domColour(q.dom)}"
+      onclick="editStandard('${q.src}','${esc(q.id)}')">
+      <span class="sn">${esc(quotaLabel(q))}<s>${stdWindow(q)}</s>
+        <span class="tm"><i style="width:${pc}%"></i></span></span>
+      <span class="rt"><b>${t.hits}/${t.need}</b><s>${met?'held':left+' to go'}</s></span>
+    </button>`}).join('')}</div>`;
+  const gone=`<div class="stdbrd">${past.map(q=>{
+    const t=stdTally(q),met=t.need&&t.hits>=t.need;
+    return `<div class="stdbr dim" style="--c:${domColour(q.dom)}">
+      <span class="sn">${esc(quotaLabel(q))}<s>ENDED ${(stdEnds(q)||'').slice(5)}</s></span>
+      <span class="rt"><b>${t.hits}/${t.need}</b><s>${met?'ran it':'let it go'}</s></span>
+    </div>`}).join('')}</div>`;
+  return stdCoverage()
+    +(live.length?rows(live):`<div class="card" style="color:var(--dim);font-size:13.5px;padding:13px">
+        Nothing running. A standard is a small thing you want to happen a few times —
+        you pick what, how many, and for how long.</div>`)
+    +(past.length?`<h2 class="sec"><span>Finished</span><u>kept, not scored</u></h2>`+gone:'')
+    +`<button class="btn gh" style="margin-top:8px" onclick="newStandard()">+ Start a standard</button>`;
+}
+
+/* ═══ THE GRID — standards under a live block on Today ═════════════════════════
+   Six of his eight standards used to be INVISIBLE here. quotaChip() only ever drew
+   for block-sourced ones, and only four block ids were wired for it — two of which
+   (walk, hike) could never be populated because REQABLE() didn't offer them. So the
+   rhythm was scored, fed the radar, and was never shown on the screen where the
+   decision actually gets made. To log one he had to leave Today, open the Bank and
+   scroll past the rewards.
+
+   A PIN IS A REMINDER, NOT A CAGE. Nothing here is exclusive to this block: every
+   block can log every standard, always. Pinning only decides which few sit on the
+   card instead of one tap behind it, so he isn't scrolling sixteen things at 9 a.m.
+   With nothing pinned it falls back to whatever is furthest from its number, which
+   means the feature works before he has ever pinned anything.
+
+   AND IT NEVER GATES THE BLOCK. The strip sits BELOW the action row behind a
+   divider, labelled NOT OWED, and "Done ✓" completes with every tile untapped. */
+function stdGrid(b){
+  if(!b)return'';
+  const live=quotasAll().filter(q=>!stdOver(q));
+  if(!live.length)return'';
+  const d=day();
+  const pins=(S.pins&&S.pins[b.id])||[];
+  const rank=q=>{
+    const i=pins.indexOf(q.src+':'+q.id);
+    if(i>=0)return i-100;                       /* pinned ones lead, in the order he pinned */
+    const t=stdCount(q);return t.need?t.hits/t.need:0;   /* furthest from its number leads */
+  };
+  const sorted=live.slice().sort((x,y)=>rank(x)-rank(y));
+  /* six slots. Past six the last tile becomes the door, so the grid is a fixed
+     height no matter how many terms he has running. */
+  const show=sorted.slice(0,sorted.length>6?5:6);
+  const rest=sorted.length-show.length;
+  const isOn=q=>q.src==='block'?!!d.done[q.id]:!!(d.wins&&d.wins[q.id]);
+  const inToday=live.filter(isOn).length;
+  const tile=q=>{
+    const t=stdCount(q),pc=t.need?Math.round(100*Math.min(1,t.hits/t.need)):0;
+    /* FILL = term progress, in the domain's own colour. RIM+CHECK = logged today.
+       Two axes; if both were green "nearly finished" and "did it this morning"
+       would look identical at a glance. */
+    return `<button class="stdt${isOn(q)?' on':''}" style="--c:${domColour(q.dom)}"
+      onclick="stdTap('${q.src}','${esc(q.id)}')">
+      <span class="fill" style="width:${pc}%"></span><span class="edge"></span>
+      <span class="sn">${esc(quotaLabel(q))}</span>
+      <span class="bt"><span class="tk">✓</span><span class="ct">${t.hits}/${t.need}</span></span>
+    </button>`;
+  };
+  return `<div class="stdw">
+    <div class="stdh"><span>ALSO IN REACH</span>
+      <u>NOT OWED${inToday?` · <b>${inToday} IN TODAY</b>`:''}</u></div>
+    <div class="stdgrid">${show.map(tile).join('')}${
+      rest>0?`<button class="stdt more" onclick="stdLogSheet()">＋ ${rest} MORE ›</button>`:''}</div>
+    <button class="stdmore" onclick="stdLogSheet()"><span>Something else I did</span><u>›</u></button>
+  </div>`;
+}
+/* one tap, whichever kind of thing it is — he does not think "am I logging a win
+   or a standard", he thinks "I did that" */
+function stdTap(src,id){
+  if(src==='win'){tapWin(id);return}
+  const d=day();
+  if(d.done[id])unDone(id);else markDone(id);
+}
+/* THE CATCH-UP — "oh yeah, I did the laundry and never added it." ONE list. It does
+   not ask which kind of thing he is logging; it groups by whether something happens
+   to be running a term, and that is the only place the distinction ever appears. */
+function stdLogSheet(){
+  const d=day();
+  const live=quotasAll().filter(q=>!stdOver(q));
+  const termed=new Set(live.filter(q=>q.src==='win').map(q=>q.id));
+  const isOn=q=>q.src==='block'?!!d.done[q.id]:!!(d.wins&&d.wins[q.id]);
+  const A=live.map(q=>{const t=stdCount(q);
+    return `<button class="pickr${isOn(q)?' on':''}"
+      onclick="stdTap('${q.src}','${esc(q.id)}');stdLogSheet()">
+      <span class="tk">✓</span>
+      <span class="sn">${esc(quotaLabel(q))}<s>${stdWindow(q)}</s></span>
+      <span class="mt">${t.hits}/${t.need}</span></button>`}).join('');
+  const B=winsAll().filter(w=>!termed.has(w.k)).map(w=>
+    `<button class="pickr${d.wins[w.k]?' on':''}" onclick="tapWin('${w.k}');stdLogSheet()">
+      <span class="tk">✓</span><span class="sn">${esc(w.n)}</span>
+      <span class="mt xp">+${w.xp}</span></button>`).join('');
+  sheet(`<div class="sh-k">WHAT ELSE DID YOU GET IN?</div>
+    <div class="sh-t">Mark it — any of it.</div>
+    <div class="sh-sub">IT ALL PAYS · NONE OF IT IS OWED HERE</div>
+    ${A?`<div class="grp">RUNNING A TERM<b></b></div>${A}`:''}
+    ${B?`<div class="grp">NO TERM — JUST COUNTS<b></b></div>${B}`:''}
+    <button class="btn gh sm" style="margin-top:11px" onclick="newStandard()">+ Start a standard</button>`);
+}
+
+/* ═══ THE TERM RUNS OUT AND SAYS SOMETHING ═════════════════════════════════════
+   Expiry used to be impossible, because nothing ever set an end date. Now that a
+   term can finish, it must not simply vanish off the board — he'd never learn
+   whether he held it. Fires once per span, at most one per open, and it is the
+   ONLY place graduation lives now: a term is the trial, this is the promotion.
+   The old three-weeks-running prompt ambushed him mid-day off a win tap; this
+   arrives at the natural end of something he chose to run. */
+function stdExpiryCheck(){
+  if($('ovA')&&$('ovA').classList.contains('on'))return;   /* never over an open sheet */
+  S.stdSeen=S.stdSeen||{};
+  const wk=weekKeyNow();
+  const q=(S.quotaDefs||[]).find(x=>{
+    const u=stdEnds(x);
+    return u&&u<=wk&&!S.stdSeen[x.src+':'+x.id+':'+u];
+  });
+  if(!q)return;
+  const u=stdEnds(q);
+  S.stdSeen[q.src+':'+q.id+':'+u]=1;save();
+  const t=stdTally(q),met=t.need&&t.hits>=t.need,label=quotaLabel(q);
+  const n=qNAt(q,u)||q.n||1;
+  sheet(`<div class="sh-k">A TERM JUST ENDED</div>
+    <div class="sh-t">${esc(label)}.</div>
+    <div class="sh-sub">YOU SET ${n}× A WEEK</div>
+    <div class="stdvd">
+      <div class="big" style="color:${met?'var(--phos)':'var(--faint)'}">${t.hits}/${t.need}</div>
+      <div class="lb">${met?'YOU HELD IT EVERY TIME':'IT DIDN\'T TAKE — THAT\'S DATA, NOT A DEBT'}</div>
+    </div>
+    ${met
+      ? `<button class="btn" onclick="stdAgain('${q.src}','${esc(q.id)}',${n},2)">Run it again — two more weeks</button>
+         <button class="btn gh sm" style="margin-top:8px"
+           onclick="stdAgain('${q.src}','${esc(q.id)}',${n},0)">Make it standing · no end date</button>`
+      : `<button class="btn gh sm" onclick="stdAgain('${q.src}','${esc(q.id)}',1,2)">Try it smaller — 1× a week</button>`}
+    <button class="btn gh" style="margin-top:8px;color:var(--faint)"
+      onclick="closeSheet();toast('Let go — what it earned is kept','bad')">Let it go</button>`);
+}
+function stdAgain(src,id,n,weeks){
+  const q=(S.quotaDefs||[]).find(x=>x.src===src&&x.id===id);if(!q)return;
+  qRevive(q,n);stdSetTerm(q,weeks);
+  save();closeSheet();render();
+  toast(`${quotaLabel(q)} · ${n}× a week — starts Monday`,'good');
+}
+
+/* ═══ THE EDITOR — up AND down, a term, and a way out ══════════════════════════ */
+let STDW=2;                                        /* the window picked in the open sheet */
+function stdWinRow(sel){
+  return `<div class="segs" id="stdW">${[[1,'1 WK'],[2,'2 WKS'],[4,'4 WKS'],[0,'NO END']].map(([w,l])=>
+    `<button class="chip tap seg${w===sel?' on':''}" data-w="${w}"
+      onclick="STDW=${w};[...this.parentNode.children].forEach(e=>e.classList.remove('on'));
+               this.classList.add('on');stdEndsEcho()">${l}</button>`).join('')}</div>`;
+}
+/* the resolved date, said out loud — a segmented control that only says "2 WKS"
+   leaves him doing calendar arithmetic to find out what he just agreed to */
+function stdEndsEcho(){
+  const el=$('stdEnds');if(!el)return;
+  const u=stdUntil(STDW);
+  if(!u){el.textContent='Runs until you end it';return}
+  const d=new Date(u+'T00:00:00'),days=Math.max(0,Math.round((d-new Date(today()+'T00:00:00'))/864e5));
+  el.textContent=`${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.getDay()]}, `
+    +`${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getDate()}`
+    +` · ${days} days`;
+}
+function stdStep(delta){
+  const el=$('stdN');if(!el)return;
+  const v=Math.max(1,Math.min(STD_WEEK,(parseInt(el.dataset.n,10)||1)+delta));
+  el.dataset.n=v;el.textContent=v+'× a week';
+}
+function editStandard(src,id){
+  const q=(S.quotaDefs||[]).find(x=>x.src===src&&x.id===id);if(!q)return;
+  const n=qNAt(q,weekKeyNow())||q.n||1;
+  const u=stdEnds(q);
+  STDW=u?stdWeeksLeft(q):0;
+  const cur=qNAt(q,weekKeyNow());
   sheet(`<div class="sh-k">A STANDARD</div>
-    <div class="sh-t">What should happen every week?</div>
-    <div class="sh-sub">STARTS AT 3× — TAP ITS ROW AFTER TO CHANGE THE COUNT</div>
-    <div class="hintline" style="margin-top:10px">A <b>standard</b> is a rhythm — 2× a week,
-      every day. It never finishes; it just holds. A <b>goal</b> has a finish line you
-      cross once. "Gym twice a week" is a standard. "Get to 185" is the goal it serves.</div>
-    <div class="chips" style="margin-top:14px">${opts.map(o=>
-      `<button class="chip tap seg" onclick="saveStandard('${o.src}','${o.id}')">${esc(o.label)}</button>`).join('')}
-    </div>`);
+    <div class="sh-t">${esc(quotaLabel(q))}</div>
+    <div class="sh-sub">CHANGES LAND MONDAY${cur?` · THIS WEEK STILL OWES ${cur}×`:''}</div>
+    <div class="fld" style="margin-top:14px"><label>How many times</label>
+      <div class="stp"><button onclick="stdStep(-1)" aria-label="Fewer">−</button>
+        <div class="val" id="stdN" data-n="${n}">${n}× a week</div>
+        <button onclick="stdStep(1)" aria-label="More">+</button></div></div>
+    <div class="fld"><label>For how long</label>${stdWinRow(STDW)}</div>
+    <div class="fld"><label>Ends</label><div class="inp" id="stdEnds">—</div></div>
+    <button class="btn" onclick="saveStdEdit('${src}','${esc(id)}')">Save</button>
+    <button class="btn dan" style="margin-top:8px"
+      onclick="dropStandard('${src}','${esc(id)}')">Remove it</button>`);
+  stdEndsEcho();
+}
+function saveStdEdit(src,id){
+  const q=(S.quotaDefs||[]).find(x=>x.src===src&&x.id===id);if(!q)return;
+  const n=Math.max(1,Math.min(STD_WEEK,parseInt(($('stdN')||{}).dataset?$('stdN').dataset.n:1,10)||1));
+  if(n!==(qNAt(q,weekKeyNow())||q.n))qHistSet(q,n);else q.n=n;
+  stdSetTerm(q,STDW);
+  q.arc=0;
+  save();closeSheet();render();
+  toast(`${quotaLabel(q)} · ${n}× a week — changes land Monday`,'good');
+}
+/* THE GUARD. FAITH and PEOPLE have no other scoring input in the entire app, so
+   dropping the last standard on one silently freezes that domain at 50 for the
+   rest of the run. The old app let that happen on the fifth accidental tap of a
+   row. Nothing is destroyed without saying what it costs. */
+function dropStandard(src,id){
+  const q=(S.quotaDefs||[]).find(x=>x.src===src&&x.id===id);if(!q)return;
+  const only=domStdOnly(),live=domsLive();
+  const others=quotasAll().filter(x=>!(x.src===src&&x.id===id)&&x.dom===q.dom&&!stdOver(x));
+  if(only.indexOf(q.dom)>=0&&!others.length&&live.has(q.dom)){
+    const d=DOMAINS.find(x=>x.k===q.dom);
+    sheet(`<div class="sh-k">THIS IS THE LAST ONE</div>
+      <div class="sh-t">${esc(d?d.label:q.dom)} has no other source.</div>
+      <div class="sh-sub">NOTHING ELSE IN THE APP FEEDS IT</div>
+      <div class="hintline" style="margin-top:12px">No block scores
+        ${esc(d?d.label:q.dom)} — a standard is the only thing that can. Drop this and
+        it sits at 50 for the rest of the run, and nothing will tell you why.</div>
+      <button class="btn" style="margin-top:14px"
+        onclick="editStandard('${src}','${esc(id)}')">Keep it</button>
+      <button class="btn dan" style="margin-top:8px"
+        onclick="stdDropNow('${src}','${esc(id)}')">Remove it anyway</button>`);
+    return;
+  }
+  stdDropNow(src,id);
+}
+function stdDropNow(src,id){
+  const q=(S.quotaDefs||[]).find(x=>x.src===src&&x.id===id);if(!q)return;
+  qRetire(q);                       /* archived, never deleted — the credit it earned stays */
+  save();closeSheet();render();
+  toast('Removed — the thing still counts, it just isn\'t owed','bad');
+}
+
+/* ═══ STARTING ONE — a thing, a count, a window ════════════════════════════════
+   The old picker offered REQABLE() minus what he already had: his always-counts
+   list plus two hardcoded block ids. It could not take a new thing, everything
+   started at 3× whether he liked it or not, and it could RUN OUT — there was a
+   real toast that said "Everything already has a standard." A feature that can be
+   exhausted was never a feature. This is a text field.
+   A typed thing becomes an always-counts win as well as a standard, because a
+   standard has no log of its own: the engine counts rec.wins[id]. One thing, one
+   log, a term laid over it. */
+function newStandard(){
+  STDW=1;
+  const spare=winsAll().filter(w=>!quotasAll().some(q=>q.src==='win'&&q.id===w.k&&!stdOver(q)));
+  sheet(`<div class="sh-k">A STANDARD</div>
+    <div class="sh-t">What are you running?</div>
+    <div class="sh-sub">A THING · A COUNT · A WINDOW</div>
+    <div class="fld" style="margin-top:14px"><label>What is it</label>
+      <input id="stdName" maxlength="40" placeholder="Stretch 10 min"></div>
+    ${spare.length?`<div class="fld"><label>Or something you already log</label>
+      <div class="chips">${spare.slice(0,8).map(w=>
+        `<button class="chip tap seg" onclick="stdPick('${w.k}')">${esc(w.n)}</button>`).join('')}</div></div>`:''}
+    <div class="fld"><label>How many times</label>
+      <div class="stp"><button onclick="stdStep(-1)" aria-label="Fewer">−</button>
+        <div class="val" id="stdN" data-n="3">3× a week</div>
+        <button onclick="stdStep(1)" aria-label="More">+</button></div></div>
+    <div class="fld"><label>For how long</label>${stdWinRow(1)}</div>
+    <div class="fld"><label>Feeds</label>
+      <div class="chips" id="stdD">${DOMAINS.map(d0=>`<button class="chip tap seg${d0.k==='BODY'?' on':''}"
+        data-d="${d0.k}" onclick="[...this.parentNode.children].forEach(e=>e.classList.remove('on'));
+        this.classList.add('on')">${d0.label}</button>`).join('')}</div></div>
+    <div class="fld"><label>Ends</label><div class="inp" id="stdEnds">—</div></div>
+    <button class="btn" onclick="saveStandard()">Start it Monday</button>`);
+  stdEndsEcho();
+}
+/* tapping an existing thing fills the field and points the domain at what that
+   thing already feeds — never a silent second copy of a win he already owns */
+function stdPick(k){
+  const w=winByK(k);if(!w)return;
+  const el=$('stdName');if(el){el.value=w.n;el.dataset.k=k}
+  const host=$('stdD');
+  if(host)[...host.children].forEach(e=>e.classList.toggle('on',e.dataset.d===w.dom));
 }
 function saveStandard(src,id,n){
-  n=n||3;
-  const w=src==='win'?winByK(id):null;
-  const dom=w?w.dom:(id==='gym'?'BODY':id==='bible'?'FAITH':'MIND');
-  const old=S.quotaDefs.find(x=>x.src===src&&x.id===id);
-  /* it starts counting MONDAY — this week owes nothing it never promised */
-  if(old)qRevive(old,n);
-  else S.quotaDefs.push({src,id,dom,n,spans:[{from:nextWeekKey()}],hist:[{from:nextWeekKey(),n}]});
-  save();closeSheet();render();toast(quotaLabel({src,id})+` · ${n}× a week — starts counting Monday`,'good');
+  /* the graduation offer still calls this the old way: saveStandard('win',k,n) */
+  if(src&&id){
+    const w=winByK(id),dom=w?w.dom:'BODY';
+    const old=(S.quotaDefs||[]).find(x=>x.src===src&&x.id===id);
+    n=n||3;
+    if(old){qRevive(old,n);stdSetTerm(old,0)}
+    else S.quotaDefs.push({src,id,dom,n,spans:[{from:nextWeekKey()}],hist:[{from:nextWeekKey(),n}]});
+    save();closeSheet();render();
+    toast(`${quotaLabel({src,id})} · ${n}× a week — starts counting Monday`,'good');
+    return;
+  }
+  const nm=($('stdName').value||'').trim();
+  if(!nm){toast('Give it a name','bad');return}
+  const cnt=Math.max(1,Math.min(STD_WEEK,parseInt($('stdN').dataset.n,10)||3));
+  const sel=$('stdD').querySelector('.on');
+  const dom=sel?sel.dataset.d:'BODY';
+  /* reuse the win it names rather than minting a duplicate — matching on the typed
+     text as well as the tapped key, because he will type "Gym" over the chip */
+  let k=($('stdName').dataset||{}).k||'';
+  if(!k){const hit=winsAll().find(w=>w.n.toLowerCase()===nm.toLowerCase());if(hit)k=hit.k}
+  if(k){const w=winByK(k);if(w){w.n=nm;w.dom=dom}}
+  else{k='w'+Date.now().toString(36);S.winDefs.push({k,n:nm,xp:15,dom})}
+  const old=(S.quotaDefs||[]).find(x=>x.src==='win'&&x.id===k);
+  if(old){qRevive(old,cnt);old.dom=dom;stdSetTerm(old,STDW)}
+  else{
+    const q={src:'win',id:k,dom,n:cnt,spans:[{from:nextWeekKey()}],hist:[{from:nextWeekKey(),n:cnt}]};
+    stdSetTerm(q,STDW);S.quotaDefs.push(q);
+  }
+  save();closeSheet();render();
+  toast(`${nm} · ${cnt}× a week — starts counting Monday`,'good');
 }
 /* The single trace the two sections leave on Today: a total that only ever goes up, and a
    door to where they now live. Never a count of what he hasn't done. */
@@ -4117,12 +4769,11 @@ function tapWin(k){
    NOT move the 99 — measured 2026-07-29, one 110-day run scores the same with standards
    seeded, absent, or impossible. The WIN underneath it scores, through the LIFE slice.
    Declined, it never asks about that habit again. */
-function weekHitsIn(k,mon){
-  let hits=0;const d=new Date(mon+'T00:00:00');
-  for(let i=0;i<7;i++){const rec=S.days[iso(d)];
-    if(rec&&rec.wins&&rec.wins[k])hits++;d.setDate(d.getDate()+1)}
-  return hits;
-}
+/* Mon–Sat, not Mon–Sun. This looped 7 while the Bank looped 6 and the ENGINE counts
+   out of weeks[] with Sunday skipped — so the same question had two answers in one
+   file, and a 7× standard was reachable here and unreachable everywhere else.
+   One definition now, and it is the engine's. */
+const weekHitsIn=(k,mon)=>stdHits({src:'win',id:k},mon);
 function gradCheck(k){
   S.gradAsked=S.gradAsked||{};
   if(S.gradAsked[k])return;
@@ -4181,7 +4832,7 @@ function openPenance(){
    the Bank. Found by the Bank review; verified unreachable before removal. */
 function renderRunStrip(){
   const m=monthKey(),used=S.offScript[m]||0,d=day();
-  $('runStrip').innerHTML=`<span>DAY <b>${dayNo()}</b> / ${TOTAL_DAYS}</span><span>WK <b>${pad(weekNo())}</b></span>
+  $('runStrip').innerHTML=`<span>DAY <b>${dayNo()}</b> / ${RUN_WEEKDAYS}</span><span>WK <b>${pad(weekNo())}</b></span>
     <button onclick="offScript()" ${used>=1||d.off?'disabled':''}>${d.off?'OFF-SCRIPT':'OFF-SCRIPT · '+(1-used)}</button>`;
 }
 
@@ -4365,11 +5016,13 @@ function openBlk(id){
     </div>
     <div class="fld"><label>What did you produce?</label>
       <input type="text" id="prodIn" value="${esc(d.produced[b.id]||'')}" placeholder="Logged when you finish"></div>
-    ${b.focus?`<button class="btn" onclick="closeSheet();startRun('${b.id}')">Start focus run · ${b.focus}m</button>
+    ${b.focus?`<button class="btn" onclick="closeSheet();startRun('${b.id}')">${esc(runLabel(b))}</button>
        <div style="height:8px"></div>
        <div class="row2"><button class="btn gh sm" onclick="markWait('${b.id}')">Waiting on someone</button>
        <button class="btn gh sm" onclick="markMiss('${b.id}')">Missed</button></div>
-       <div class="sh-sub" style="margin:12px 0 0;text-align:center">Only the timer completes a work block.</div>`
+       <div class="sh-sub" style="margin:12px 0 0;text-align:center">${blockSpent(b.id)>=60
+         ? `${Math.floor(blockSpent(b.id)/60)} of ${b.focus} minutes done. Pick it back up any time today.`
+         : 'The timer completes a work block. Stop and pick it back up as many times as you need.'}</div>`
      :`<div class="row2"><button class="btn" onclick="markDone('${b.id}')">Mark complete</button>
        <button class="btn gh sm" onclick="markMiss('${b.id}')">Missed</button></div>`}`);
   const oi=$('objIn');if(oi)oi.onchange=()=>{setTactic(b.id,oi.value);render()};
@@ -4385,7 +5038,9 @@ function lastProduced(id){
   for(const k of ks){if(k===today())continue;const p=S.days[k].produced&&S.days[k].produced[id];if(p)return p}
   return null;
 }
-function markDone(id){const d=day();d.done[id]=true;stampDom(d,today(),id);delete d.miss[id];delete d.wait[id];save();closeSheet();
+function markDone(id){const d=day();d.done[id]=true;stampDom(d,today(),id);delete d.miss[id];delete d.wait[id];
+  d.doneAt=d.doneAt||{};d.doneAt[id]=new Date().toTimeString().slice(0,5);
+  save();closeSheet();
   if(!payRowDone(id,'block done'))render();}
 /* A miss must never be a terminal red row with no way out. */
 function markMiss(id){
@@ -4400,6 +5055,7 @@ function markMiss(id){
 }
 function unMiss(id){const d=day();delete d.miss[id];save();closeSheet();render()}
 function unDone(id){const d=day();delete d.done[id];
+  if(d.doneAt)delete d.doneAt[id];        /* the stamp is part of "it was done" — both go */
   /* undoing a block returns whatever it paid today — the tap route and the run route */
   const back=refund('blk:'+id)+refund('run:'+id+':'+today())+refund('plan:'+id);
   save();closeSheet();render();
@@ -4434,59 +5090,125 @@ function markWait(id){const d=day();d.wait[id]=true;delete d.miss[id];save();clo
     ? "Marked waiting — it won't score against you."
     : `Marked waiting. ${WAIT_FREE} come free each day — this one stays on the day.`,'good')}
 
-/* ---------- FOCUS RUN — 4 phone passes per block, splittable ---------- */
+/* ═══════════ THE FOCUS RUN — a timer that keeps count, not a referee ═══════════
+   Rebuilt 2026-08-03 on his ruling: "I am not trying to live around the app. The app
+   needs to live around me." What died here, and why it had to:
+
+   THE BREAK RULE measured something iOS gives a web app no way to measure — which app is
+   in front. visibilitychange fires the same way for a screen lock, Control Center, a call
+   banner and switching to Messages, so the rule fired on a phone going to sleep and on
+   every message sent during a block whose whole JOB was sending messages. It could also
+   be laundered: End + Start reset broken to false and refilled all four passes, so the
+   only thing between a broken run and a clean one was 75 more minutes of clock.
+   And it was guarding 40 XP of a currency that slicesFor() cannot see — the Overall reads
+   d.done, never d.focus. Expensive, wrong on his real work, protecting nothing.
+
+   It was also the ONLY surface in this app that does not trust him. Every checkbox, win,
+   standard, vice log and trading-rules toggle is self-report. The run is now too.
+
+   THE MODEL: a block has a target; `d.spent[id]` holds seconds banked against it; a run is
+   a session that adds to it. Stop at 30 minutes, come back at 8pm, open at 45 left. Three
+   sessions of 25 are worth exactly one session of 75, with no asterisk — he did the work
+   either way, and the old "you split it, so you lose the bonus" argument was circular
+   (the bonus was called UNBROKEN, so it required unbroken).
+
+   WALL CLOCK, CAPPED AT THE TARGET. No foreground policing at all — which is what makes
+   screen-off, in-your-pocket and in-another-room the same thing, and why none of them
+   needs a mode to pick between. The cap is what makes trusting the clock safe: forgetting
+   to stop can never credit past the block's own length. */
+function blockSpent(id){const s=day().spent||{};return s[id]||0}
+/* ONE door for the run button's words, so a half-finished block never reads "Start" on one
+   surface and "Keep going" on another — the two-places-for-one-block bug this app has
+   already paid for twice (the SEAM, and the card at the bottom of an opened day). */
+function runLabel(b){
+  const sp=blockSpent(b.id),total=(b.focus||0)*60;
+  return sp>=60?`Keep going · ${Math.ceil((total-sp)/60)}m left`:`Start focus run · ${b.focus}m`;
+}
+/* THE DAY BENDS; THE RECORD DOES NOT. His line, and the one thing held back from the "no
+   referee" pass. A block finished at 9pm keeps its 3:30 slot — the plan is a plan, not a
+   gate, and the door does not lock at 4:45 — but the row says when it actually landed.
+   Not red, not a miss, no ember: information, because a record that smooths over when the
+   day really went sideways cannot tell him anything in November. */
+function blkNote(b){
+  const d=day(),at=(d.doneAt||{})[b.id];
+  if(d.done[b.id])return at&&mins(at)>mins(b.e)?` · done ${t12(at)}`:'';
+  const sp=blockSpent(b.id);
+  return sp>=60?` · ${Math.floor(sp/60)}m done`:'';
+}
+function runElapsed(){
+  if(!run)return 0;
+  return Math.min(run.total, run.base+Math.floor((Date.now()-run.startedAt)/1000));
+}
+function bankRun(){
+  if(!run)return 0;
+  const d=day(),el=runElapsed();
+  d.spent=d.spent||{};d.spent[run.b.id]=el;save();
+  return el;
+}
 function startRun(id,resume){
   const b=shape().find(x=>x.id===id);if(!b||!b.focus)return;
-  run={b,total:b.focus*60,broken:resume?!!resume.broken:false,paused:false,pauseLeft:0,
-       passes:resume?resume.passes:4,hiddenAt:null,
-       endAt:resume?resume.endAt:Date.now()+b.focus*60000};
-  run.left=Math.max(0,Math.round((run.endAt-Date.now())/1000));
-  $('run').className='run on'+(run.broken?' broke':'');document.body.classList.add('noTabs');
-  $('runK').textContent=`Focus run · ${b.focus}m`;
+  const total=b.focus*60;
+  run={b,total,
+       base:Math.min(total, resume?resume.base:blockSpent(id)),
+       startedAt:resume?resume.startedAt:Date.now()};
+  $('run').className='run on';document.body.classList.add('noTabs');
+  const leftM=Math.ceil((total-run.base)/60);
+  $('runK').textContent=run.base>0?`Picking it back up · ${leftM}m left of ${b.focus}m`
+                                 :`Focus run · ${b.focus}m`;
   $('runTask').textContent=b.n+(bizFor(b)?' · '+bizFor(b):'');
   $('runObj').textContent=tacticFor(b)||'';
-  $('runMult').textContent=run.broken?'BROKEN · BONUS LOST':'UNBROKEN · +65 XP ON FINISH';
-  $('runWarn').textContent='Screen off is fine. Using another app for more than 10s without tapping Step away breaks it.';
-  $('runStep').textContent=`Step away · ${run.passes}`;
-  $('runStep').onclick=stepAway;$('runEnd').textContent='End';
+  /* The header already says "60m left of 90m". "30M ALREADY BANKED" underneath it is the
+     same fact a second time — the repeated-string defect stage 4 spent a whole pass
+     deleting (DECEMBER · Dec 25 · 150 days, on every card). One statement, one place. */
+  $('runMult').textContent='+65 XP ON FINISH';
+  $('runWarn').textContent='Screen off, phone down, or phone in your hand — whatever this block needs. Stop any time; the minutes you did are kept.';
+  runActs(1);$('runStep').onclick=stopRun;
   tick();run.t=setInterval(tick,500);
-  reacquireLock();persistRun();
+  persistRun();
+}
+/* ONE control while a run is going. A second destructive button on a concentration screen
+   is just a question about which button to press, and this screen is the opposite of that.
+   Both come back for the SHIP / Skip pair at the end. */
+function runActs(n){
+  const w=$('runActs');if(w)w.classList.toggle('one',n===1);
+  $('runEnd').hidden=(n===1);
 }
 function tick(){
   if(!run)return;
-  if(run.paused){
-    run.pauseLeft=Math.max(0,Math.round((run.pauseEnd-Date.now())/1000));
-    $('runTime').textContent=`${pad(Math.floor(run.pauseLeft/60))}:${pad(run.pauseLeft%60)}`;
-    if(run.pauseLeft<=0){run.paused=false;$('run').classList.remove('paused');breakRun("You didn't come back in time.")}
-    return;
-  }
-  run.left=Math.max(0,Math.round((run.endAt-Date.now())/1000));  // anchored to the clock, so it can't drift
-  $('runTime').textContent=`${pad(Math.floor(run.left/60))}:${pad(run.left%60)}`;
+  const el=runElapsed(),left=Math.max(0,run.total-el);
+  $('runTime').textContent=`${pad(Math.floor(left/60))}:${pad(left%60)}`;
+  $('runStep').textContent=el>=60?`Stop · keep ${Math.floor(el/60)}m`:'Stop';
   const C=2*Math.PI*94,r=$('runRing');
-  r.style.strokeDasharray=C;r.style.strokeDashoffset=C*(1-run.left/run.total);
-  if(run.left<=0)finishRun();
+  r.style.strokeDasharray=C;r.style.strokeDashoffset=C*(1-left/run.total);
+  if(left<=0)finishRun();
 }
-function breakRun(msg){
-  if(!run||run.broken)return;
-  run.broken=true;$('run').classList.add('broke');
-  $('runMult').textContent='BROKEN · BONUS LOST';
-  $('runWarn').textContent=msg||'You picked up the phone. The block still counts — the bonus does not.';
-  day().focus[run.b.id]='broke';persistRun();save();
+/* Stop is not the old End. End shredded every minute worked and wrote 'quit' to a field
+   nothing read. Stop banks the time and leaves the block open — that IS the feature. */
+function stopRun(){
+  if(!run)return;
+  const el=bankRun(),b=run.b;
+  clearInterval(run.t);closeRun();
+  toast(el>=60?`Stopped · ${Math.floor(el/60)}m kept on ${b.n}. Pick it back up any time today.`
+              :'Stopped — nothing lost.','good');
 }
 function finishRun(){
   if(!run)return;clearInterval(run.t);
   const d=day(),b=run.b;
-  d.done[b.id]=true;stampDom(d,today(),b.id);d.focus[b.id]=run.broken?'broke':'clean';
-  /* through the ONE DOOR now — this block used to be an inline copy of award() */
-  const xp=run.broken?25:65;
-  awardBlock(b.id,'run:'+b.id+':'+today(),xp,run.broken?'run done':'clean run',goalOf2(b));
+  d.spent=d.spent||{};d.spent[b.id]=run.total;
+  d.done[b.id]=true;stampDom(d,today(),b.id);
+  /* WHEN it actually finished. The day bends; the record does not — his line, and the one
+     thing that keeps a block finished at 9pm from reading as a block that went to plan. */
+  d.doneAt=d.doneAt||{};d.doneAt[b.id]=new Date().toTimeString().slice(0,5);
+  /* through the ONE DOOR — a flat 65 now, because there is no broken run any more */
+  awardBlock(b.id,'run:'+b.id+':'+today(),65,'block done',goalOf2(b));
   save();recount();
-  $('runTime').textContent=run.broken?'TIME':'DONE';
-  $('runMult').textContent=run.broken?`BLOCK COUNTED · +${xp} XP`:`CLEAN RUN · +${xp} XP`;
-  notify(run.broken?'Block done (bonus lost)':'Clean run', b.n);
+  $('runTime').textContent='DONE';
+  $('runMult').textContent='BLOCK DONE · +65 XP';
+  notify('Block done', b.n);
   const id=b.id;
   $('runWarn').innerHTML=`<input id="shipIn" placeholder="What came out of this?"
       style="margin-bottom:9px" value="${esc(d.produced[id]||'')}">`;
+  runActs(2);
   $('runStep').textContent='SHIP IT';$('runStep').onclick=()=>shipIt(id);
   /* Skip must not skip the question — it skips the SHIP field, then still asks. */
   $('runEnd').textContent='Skip';$('runEnd').onclick=()=>elseStep(id);
@@ -4554,77 +5276,53 @@ function elseTap(k,bid){
 }
 function closeRun(){
   if(run&&run.t)clearInterval(run.t);
-  if(run&&run.lock)try{run.lock.release()}catch(e){}
   run=null;S.activeRun=null;save();$('run').className='run';document.body.classList.remove('noTabs');
   /* the end-of-run steps rebind these two buttons — hand them back, or the NEXT run's
-     "give up" button is still wired to the last run's "carry on". */
-  $('runEnd').hidden=false;$('runEnd').textContent='End';$('runEnd').onclick=runEndDefault;
+     controls are still wired to the last run's "carry on". */
+  runActs(2);$('runEnd').textContent='Skip';
+  $('runStep').textContent='Stop';$('runStep').onclick=stopRun;
   render();
 }
-function runEndDefault(){if(run&&!run.broken&&run.left>0){day().focus[run.b.id]='quit';save()}closeRun()}
-$('runEnd').onclick=runEndDefault;
-function stepAway(){
-  if(!run||run.paused)return;
-  if(run.passes<=0){toast('No passes left on this block','bad');return}
-  run.passes--;run.paused=true;run.pauseEnd=Date.now()+120000;
-  run.endAt+=120000;                                  // the pause doesn't eat your block
-  $('run').classList.add('paused');
-  $('runStep').textContent=`Step away · ${run.passes}`;
-  $('runStep').onclick=stepAway;$('runEnd').textContent='End';
-  $('runMult').textContent='PAUSED · 2 MINUTES';persistRun();
-  $('runWarn').textContent='Come back inside the window and nothing is lost.';
-}
-$('runStep').onclick=stepAway;
-/* A screen that goes to sleep is NOT you picking up your phone.
-   visibilitychange also fires for Control Center, a call banner and an expanded notification.
-   Breaking on all of that is a wall of failure the OS causes and he cannot appeal — so we
-   time the absence and only break past a real grace window. */
-const HIDE_GRACE_MS=10000;
+$('runStep').onclick=stopRun;
+/* BURIED 2026-08-03, with kill-tests in model/runbank.js:
+     stepAway() · run.passes · run.paused / pauseEnd / pauseLeft · breakRun() · run.broken
+     runEndDefault() · d.focus · HIDE_GRACE_MS · the wake lock.
+   Step away only ever existed to pause WITHOUT breaking. With nothing left to break it has
+   no job, and Stop does the honest version of it — you cannot need a way back in from a
+   state that no longer exists. The wake lock went with it: it fought the screen-off this
+   design now explicitly invites, and iOS drops it on hide anyway. */
+/* This handler used to be the referee — it timed how long the app was hidden and broke the
+   run past 10 seconds. It could not tell a screen lock from Messages, because iOS does not
+   expose that to a web app, so it punished a sleeping phone and every message sent during a
+   block whose job was sending messages.
+   Nothing here judges him now. A run is wall-clock, so being away IS the run; the handler
+   exists only to keep the save current and to repaint on return. */
 document.addEventListener('visibilitychange',()=>{
-  if(!run){if(!document.hidden)render();return}
-  if(document.hidden){
-    run.hiddenAt=Date.now(); persistRun();
-    return;
-  }
-  // back on screen
-  reacquireLock();                                   // iOS silently drops the wake lock on hide
-  if(run.paused){
-    run.paused=false;$('run').classList.remove('paused');
-    $('runMult').textContent='RESUMED CLEAN';$('runWarn').textContent='Back inside the window.';
-    run.hiddenAt=null; persistRun(); return;
-  }
-  if(run.hiddenAt && !run.broken){
-    const away=Date.now()-run.hiddenAt;
-    run.hiddenAt=null;
-    if(away>HIDE_GRACE_MS) breakRun(`You were away ${Math.round(away/1000)}s without a pass.`);
-    else persistRun();
-  }
+  if(document.hidden){ if(run)persistRun(); return }
+  if(run)tick(); else render();
 });
-function reacquireLock(){
-  if(!run||!navigator.wakeLock)return;
-  navigator.wakeLock.request('screen').then(l=>{if(run)run.lock=l}).catch(()=>{});
-}
 /* The run must survive the app being evicted — iOS drops backgrounded PWAs routinely,
    and a call at minute 70 of a 75-minute block would otherwise erase the whole block. */
 function persistRun(){
   if(!run){S.activeRun=null;save();return}
-  S.activeRun={id:run.b.id,endAt:run.endAt,passes:run.passes,broken:run.broken,
-               paused:run.paused,pauseEnd:run.pauseEnd||null,day:today()};
+  S.activeRun={id:run.b.id,base:run.base,startedAt:run.startedAt,day:today()};
   save();
 }
 /* Only ever WRITE on pagehide. persistRun() clears activeRun when run is null, and pagehide
    fires on reload and on close — so binding it directly wiped the run at exactly the moment
    this feature exists to survive. Clearing is closeRun()'s job alone. */
 window.addEventListener('pagehide',()=>{ if(run) persistRun(); });
+/* DAY BOUNDARIES STAY HARD. Minutes bank on the day record and die at midnight — he can
+   split a block across a day, never finish Monday's block on Tuesday. That is not taste:
+   the Overall self-heals because a day means a day, which is the best property in the
+   system. A session that ran past its target while the app was evicted simply lands on
+   tick()'s finishRun() the moment it comes back. */
 function resumeRun(){
-  const a=S.activeRun; if(!a||a.day!==today())return false;
+  const a=S.activeRun; if(!a)return false;
+  if(a.day!==today()){S.activeRun=null;save();return false}
   const b=shape().find(x=>x.id===a.id); if(!b)return false;
-  if(Date.now()<a.endAt+300000){
-    startRun(a.id,{endAt:a.endAt,passes:a.passes,broken:a.broken});
-    return true;
-  }
-  S.activeRun=null;save();
-  return false;
+  startRun(a.id,{base:a.base,startedAt:a.startedAt});
+  return true;
 }
 
 /* ---------- character + veil ---------- */
@@ -4787,6 +5485,7 @@ function ccMark(id,how){
   /* re-marking a done block as missed/waiting takes today's payment back with it */
   if(d.done[id]&&how!=='done'){refund('blk:'+id);refund('run:'+id+':'+today());refund('plan:'+id)}
   delete d.done[id];delete d.miss[id];delete d.wait[id];
+  if(d.doneAt)delete d.doneAt[id];    /* a correction clears the stamp with the state */
   if(how==='done'){d.done[id]=true;stampDom(d,today(),id);payRowDone(id,'marked done')}
   else if(how==='miss')d.miss[id]=true; else d.wait[id]={who:'someone',since:today()};
   save();render();
@@ -4825,7 +5524,7 @@ function showVerdict(pct,hit,total){
   ov.className='verdict-ov on '+cls;
   document.body.classList.add('noTabs');
   $('vdK').textContent=k;$('vdBig').textContent=big;$('vdLine').textContent=line;
-  $('vdMeta').innerHTML=`${hit} OF ${total} DUE · +${xp} XP TODAY<br>DAY ${dayNo()} OF ${TOTAL_DAYS}`;
+  $('vdMeta').innerHTML=`${hit} OF ${total} DUE · +${xp} XP TODAY<br>DAY ${dayNo()} OF ${RUN_WEEKDAYS}`;
 }
 $('vdClose').onclick=()=>{$('verdictOv').className='verdict-ov';document.body.classList.remove('noTabs');render()};
 
@@ -5408,7 +6107,11 @@ function renderGoals2(){
     $('pushBody').innerHTML=g2Empty(areas)+g2Orphans()+g2Quiet();return}
 
   const view=G.meta.view||'area';
-  const tabs=`<div class="g2tabs">${[['area','BY AREA'],['date','BY DATE'],['week','THE WEEK']]
+  /* The third view is where the four blocks of each day get their goal — it IS the
+     day planner, and calling it "THE WEEK" made it read as a third way to sort goals
+     rather than the place you plan. The key stays 'week' (storage, g2View, harnesses);
+     only the word he reads changed. */
+  const tabs=`<div class="g2tabs">${[['area','BY AREA'],['date','BY DATE'],['week','DAY PLANNER']]
     .map(([k,l])=>`<button class="g2tab${view===k?' on':''}" onclick="g2View('${k}')">${l}</button>`).join('')}</div>`;
 
   if(view==='week'){$('pushBody').innerHTML=g2Banners()+tabs+g2Week()+g2Foot();return}
@@ -7059,7 +7762,7 @@ function g2Row(g,c){
 /* Day one. Asks for a GOAL in plain words — not an area, and no legend. */
 function g2Empty(areas){
   return `<div class="g2empty">
-    <div class="k">DAY ${dayNo()} OF ${TOTAL_DAYS}</div>
+    <div class="k">DAY ${dayNo()} OF ${RUN_WEEKDAYS}</div>
     <div class="t">What do you want to be true<br>by ${END_LABEL}?</div>
     <div class="s">Write it the way you'd say it out loud. One line. You can change every word of it later.</div>
     <div class="fld" style="margin-top:16px">
@@ -7663,9 +8366,12 @@ function renderBank(){
       <h2 class="sec"><span>Always counts</span><u>${winsPaidToday()} today</u></h2>
       ${winsBankList()}
       <button class="btn gh" style="margin-top:8px" onclick="slate({kind:'win'})">+ Add one of your own</button>
-      <h2 class="sec"><span>The standards</span><u>a rhythm, not a finish line</u></h2>
-      ${standardsList()}
-      <button class="btn gh" style="margin-top:8px" onclick="addStandard()">+ Set a standard</button>
+      <!-- FUNERAL 2026-08-02: "The standards" lived here and repeated six of the
+           cards directly above it, in a different visual language, as rows saying
+           "3× a week" while the card said "0/3 this week". The Bank is what he OWNS
+           and what he SPENDS; a term with a countdown is not currency. The count now
+           rides on the win card, and the board is on Record. The Bank keeps ZERO
+           standards UI on purpose — do not add a summary row back here. -->
       <h2 class="sec"><span>Boosts</span><u>never scored against you</u></h2>
       ${boostList()}
       <button class="btn gh" style="margin-top:12px" onclick="editBoost(null)">+ Write a boost</button>
@@ -8016,12 +8722,13 @@ function renderRecord(){
         p===null?'IT STARTS WHEN YOU COMMIT ONE':settled?'85% = ROUND WON':'TOO EARLY TO CALL'}</span></div>
     </div>
 
-    <h2 class="sec">The standards</h2>
-    <div class="card">
-      ${quotasAll().map(q=>{const need=qNAt(q,mon),h=weekHits(q.src,q.id),met=need&&h>=need;
-        return `<div class="stat"><span>${esc(quotaLabel(q))} <span style="color:var(--faint);font-size:11px">· ${q.dom}</span></span>
-          <b style="color:${met?'var(--phos)':'var(--faint)'}">${h} / ${need}</b></div>`}).join('')}
-    </div>
+    <!-- THE BOARD LIVES HERE NOW (2026-08-02). It replaced a read-only tally that
+         was the THIRD render of the same weekly count. Record is where the run is
+         read, and standards are the only scoring input FAITH and PEOPLE have — so
+         this is not a list bolted to a report, it is the report. Tap any row to
+         change its count, its window, or to drop it. -->
+    <h2 class="sec"><span>The standards</span><u>tap one to change it</u></h2>
+    ${stdBoard()}
 
     <h2 class="sec">What came out of it <u>last 14 days</u></h2>
     <div class="card">
