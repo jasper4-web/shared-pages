@@ -167,6 +167,25 @@ reframed around words he'd use ("my standards", "what came out of my weeks").
     **60 / 25 / 15 with the overflow lane and the vice rules as drawn.** These close the
     design session; Phase 2 builds exactly this.
 
+    ⚠ **AMENDED IN CODE ON 2026-08-02 WITHOUT A RECORDED DECISION FROM HIM. AWAITING HIS
+    RATIFICATION.** The shipped engine reads **45 / 40 / 15**, not the 60 / 25 / 15 he
+    picked here, and the flawless run now lands **Nov 27**, not the "~Dec 1 and never
+    earlier" locked in item 20. Both changes came from the rebalance in `XP-AUDIT.md`.
+    Flagged rather than reverted, because the rebalance solves something real and
+    measured: at the old denominator a *dedicated* run finished at 93–94 and could never
+    reach 99, which made his own Dec 25 target arithmetically impossible. Two honest
+    notes on it, though:
+    - The audit's own recommendation (§8.1) was **`TOTAL_DAYS = 92`, overflow cap 8**.
+      What shipped was **90 / 6 / 3 plus the slice change**, and **the slice move from
+      60/25/15 to 45/40/15 appears nowhere in the audit's recommendations.** It arrived
+      with no written reasoning at all.
+    - It does pull toward something he *did* say — chores and habits should bring the 99
+      closer (item 19) — so it may well be right. But it is his number, not ours.
+
+    **His call, and only two answers are honest:** ratify 45/40/15 and let this item and
+    item 20 be rewritten to match, or put it back to 60/25/15 and re-tune the denominator
+    around it. Do not leave the code and this file disagreeing.
+
 ### Added 2026-07-29 (late) — raised by the Phase 2 verification, **ANSWERED BY HIM**
 
 25. **THE SATURDAY QUESTION — LOCKED: Saturday pays XP, it does not move the 99.**
@@ -215,6 +234,41 @@ reframed around words he'd use ("my standards", "what came out of my weeks").
     Shipped btb-v47/48. Kills the SEAM, the day DOOR, `.blk.now` and the collapsing arcs
     (funeral §10). **Not yet lived on** — `MID_SPAN=2` and the expand-then-tap are the two
     dials to revisit after he uses it for a real day.
+
+### Added 2026-08-03 — THE FOCUS RUN STOPS REFEREEING HIM (locked)
+
+28. **"I am not trying to live around the app. The app needs to live around me."** His
+    ruling, verbatim, and it settles three things he raised together — so read them as
+    one instruction, not three features:
+    - *"If I say I'm gonna work for an hour and fifteen minutes and I end up stopping
+      halfway through but coming back and finishing it — I still did it."* **Splitting a
+      block is free.** Three sessions of 25 are worth exactly one session of 75, with no
+      asterisk and no lost bonus. `d.spent[id]` banks the seconds; Stop keeps them; the
+      block opens at what is left. *(The argument for charging him was circular — the
+      bonus was labelled UNBROKEN, so it required unbroken. Nothing under it.)*
+    - *"It's not that critical that I have to do it beforehand… maybe beforehand I thought
+      I wasn't gonna need my phone, but in the moment I do."* **No phone/phoneless mode
+      was built, and that is the point.** The mode only existed as an escape from the
+      break rule; deleting the rule dissolved the need. Shipping the toggle anyway would
+      have been the hoop he was objecting to. *"For phoneless it could literally be either
+      or"* — screen off, in a pocket, in another room are now the same thing.
+    - *"I should have real structure in control over my day."* Structure is the planned
+      day, the sacred blocks and an honest 99. **Refereeing whether he really worked is
+      not structure**, and it is what he means by the app babying him.
+    **THE BREAK RULE IS BURIED.** It measured which app was in front — something iOS does
+    not expose to a web app — so it fired on a screen lock and on every message sent during
+    a block whose whole job was sending messages. It was escapable (End + Start reset it and
+    refilled all four passes) and it guarded 40 XP of a currency `slicesFor()` cannot see.
+    It was also the ONLY surface in this app that did not trust him, while every checkbox,
+    win, standard and vice log is self-report.
+    **The two things held back, and he agreed to both:** the day bends but **the record does
+    not** — a block finished at 9pm keeps its 3:30 slot and the row says when it landed; and
+    **day boundaries stay hard** — banked minutes die at midnight, because the Overall
+    self-heals only while a day means a day.
+    Shipped btb-v73. Kill-tests: `model/runbank.js` §9 (66 checks).
+    ⚠ **Untested by him.** The two dials to revisit after real use: whether wall-clock with
+    no foreground check ever credits a block he did not do (the cap bounds it to one block),
+    and whether Stop wants a companion "give up on this block" once he has lived with it.
 
 ---
 
