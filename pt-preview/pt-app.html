@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Your front desk — a preview for Carolyn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ZERO JAVASCRIPT — tabs are radio inputs + :checked selectors. */
+  :root{
+    --bg:#FFFCF9; --panel:#FFFFFF; --soft:#FDF3EC; --soft2:#FAEBE0;
+    --peach:#DE9169; --peach2:#F0BFA4; --pink:#E495A0; --blush:#FBE7DC; --gold:#D0A874;
+    --ink:#40332E; --cocoa:#6B4E42; --mut:#8A7268; --dim:#B5A096; --line:rgba(107,78,66,.14);
+    --serif:'Fraunces',Georgia,serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;
+    width:390px;min-height:844px;margin:0 auto;position:relative;overflow-x:hidden}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none}
+
+  .status{display:flex;justify-content:space-between;align-items:center;padding:12px 20px 2px;font-size:11.5px;font-weight:600;color:var(--cocoa)}
+  .hdr{padding:6px 20px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#FDF1E8,#FFFCF9)}
+  .hdr .biz{font-family:var(--serif);font-size:25px;font-weight:500;color:var(--cocoa);line-height:1.1}
+  .hdr .sub{font-size:10.5px;color:var(--dim);letter-spacing:.16em;text-transform:uppercase;margin-top:4px;font-weight:600}
+  .sample{background:var(--blush);color:#8A5C43;font-size:10.5px;text-align:center;padding:7px 16px;line-height:1.45}
+  .sample b{font-weight:600}
+
+  .pane{display:none;padding:16px 18px 96px}
+  #t1:checked~.panes .p1,#t2:checked~.panes .p2,#t3:checked~.panes .p3,#t4:checked~.panes .p4{display:block}
+
+  .ttl{font-family:var(--serif);overflow-wrap:anywhere;font-size:21px;font-weight:500;color:var(--cocoa);margin-bottom:3px;line-height:1.2}
+  .cap{font-size:12px;color:var(--mut);margin-bottom:15px;line-height:1.55}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px 16px;margin-bottom:11px;box-shadow:0 8px 20px -18px rgba(107,78,66,.5)}
+  .row{display:flex;align-items:center;gap:11px}
+  .av{width:38px;height:38px;border-radius:50%;background:linear-gradient(140deg,#F7D9C6,#EFC0A8);color:#8A5C43;
+    display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:16px;font-weight:600;flex:none}
+  .av.p{background:linear-gradient(140deg,#F7D3D8,#EFB4BC);color:#8F5560}
+  .nm{font-weight:600;font-size:14px;color:var(--ink);line-height:1.3}
+  .meta{font-size:11.5px;color:var(--dim);margin-top:1px}
+  .pill{margin-left:auto;font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+    padding:4px 9px;border-radius:999px;background:var(--blush);color:#8A5C43;flex:none}
+  .pill.gold{background:rgba(208,168,116,.18);color:#7E6334}
+  .pill.done{background:#E9F1E7;color:#4F7048}
+  .pill.pink{background:#FBE4E7;color:#8F5560}
+  .note{font-size:12.5px;color:var(--mut);margin-top:11px;padding-top:11px;border-top:1px dashed var(--line);line-height:1.55}
+  .note b{color:var(--ink);font-weight:600}
+
+  .banner{background:linear-gradient(140deg,#FDEFE6,#FBE9EC);border:1px solid rgba(222,145,105,.26);border-radius:18px;padding:17px;margin-bottom:16px}
+  .banner .k{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--peach);font-weight:700}
+  .banner .h{font-family:var(--serif);overflow-wrap:anywhere;font-size:23px;font-weight:500;color:var(--cocoa);margin:6px 0 8px;line-height:1.18}
+  .banner .t{font-size:12.5px;color:var(--mut);line-height:1.6}
+  .stats{display:flex;gap:8px;margin-top:13px}
+  .stat{flex:1;background:rgba(255,255,255,.8);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+  .stat b{display:block;font-family:var(--serif);font-size:25px;font-weight:600;color:var(--peach);line-height:1}
+  .stat span{display:block;font-size:9px;color:var(--mut);margin-top:4px;line-height:1.35}
+
+  /* chat */
+  .chat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px 14px;margin-bottom:12px;box-shadow:0 8px 20px -18px rgba(107,78,66,.5)}
+  .who{display:flex;align-items:center;gap:10px;padding-bottom:12px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+  .who .nm{font-size:13.5px}
+  .chan{display:flex;align-items:center;gap:6px;margin:12px 0 8px;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:700}
+  .chan:before,.chan:after{content:"";height:1px;background:var(--line);flex:1}
+  .b{max-width:82%;padding:10px 13px;border-radius:16px;font-size:12.5px;line-height:1.55;margin-bottom:8px}
+  .them{background:var(--soft2);color:var(--ink);border-bottom-left-radius:5px}
+  .us{background:linear-gradient(135deg,#DE9169,#EDAE9A);color:#fff;border-bottom-right-radius:5px;margin-left:auto}
+  .auto{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;color:var(--dim);margin:-3px 0 10px 3px}
+  .auto i{width:5px;height:5px;border-radius:50%;background:var(--peach);display:inline-block;font-style:normal}
+  .handoff{background:#FCF5E9;border:1px solid rgba(208,168,116,.4);border-radius:12px;padding:11px 12px;font-size:11.5px;color:#7E6334;line-height:1.55;margin-top:6px}
+  .handoff b{font-weight:600}
+
+  /* timeline */
+  .tl{position:relative;padding-left:22px;margin-top:4px}
+  .tl:before{content:"";position:absolute;left:6px;top:6px;bottom:10px;width:2px;background:linear-gradient(180deg,var(--peach2),var(--blush))}
+  .ev{position:relative;margin-bottom:13px}
+  .ev:before{content:"";position:absolute;left:-20px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--peach);border:2px solid #fff;box-shadow:0 0 0 2px var(--blush)}
+  .ev .d{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--peach);font-weight:700}
+  .ev .w{font-size:12.5px;color:var(--ink);margin-top:3px;line-height:1.5}
+  .ev .w b{font-weight:600}
+  .ev .who2{font-size:11px;color:var(--dim);margin-top:2px}
+
+  .stars{color:var(--gold);font-size:13px;letter-spacing:2px}
+  .bar{height:6px;border-radius:99px;background:var(--soft2);margin-top:8px;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#DE9169,#EDAE9A)}
+
+  .tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:390px;display:flex;
+    background:rgba(255,252,249,.97);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:9px 6px 22px;z-index:20}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:5px 2px;color:var(--dim);
+    -webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .tab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .tab span{font-size:9.5px;font-weight:600}
+  #t1:checked~.tabs .l1,#t2:checked~.tabs .l2,#t3:checked~.tabs .l3,#t4:checked~.tabs .l4{color:var(--peach)}
+  .hint{text-align:center;font-size:10.5px;color:var(--dim);padding:0 20px 8px}
+</style>
+</head>
+<body>
+
+<input type="radio" name="tab" id="t1" checked>
+<input type="radio" name="tab" id="t2">
+<input type="radio" name="tab" id="t3">
+<input type="radio" name="tab" id="t4">
+
+<div class="status"><span>9:41</span><span>●●● ▲ ▮</span></div>
+<div class="hdr">
+  <div class="biz">Peach &amp; Tefi ✿</div>
+  <div class="sub">Thursday · Houston</div>
+</div>
+<div class="sample"><b>Example only.</b> Every name here is made up. Yours would be in your words — and you approve every message before it sends.</div>
+
+<div class="panes">
+
+  <!-- ══ INBOX ══ -->
+  <div class="pane p1">
+    <div class="banner">
+      <div class="k">One inbox</div>
+      <div class="h">Bre messaged you three times,<br>in three different places.</div>
+      <div class="t">Instagram at 11pm. A text the next morning. Then she called. <b>It's all one conversation now</b> — and you didn't touch any of it.</div>
+    </div>
+
+    <div class="chat">
+      <div class="who"><div class="av p">B</div><div><div class="nm">Bre N.</div><div class="meta">New client · first time</div></div><div class="pill pink">Booked ✓</div></div>
+
+      <div class="chan">Instagram DM · 11:07pm</div>
+      <div class="b them">hiii do y'all do lip— sorry lashes 🙈 do you do a full set?</div>
+      <div class="b us">Hi love! ✨ We do — Have you had extensions before, or would this be your first set?</div>
+      <div class="auto"><i></i>Replied in 11 seconds. At 11pm.</div>
+      <div class="b them">first time!! how much and does it hurt lol</div>
+      <div class="b us">A classic full set is $115 and it's genuinely relaxing — most girls fall asleep. Takes about two hours 🤍</div>
+
+      <div class="chan">Text · 8:42am</div>
+      <div class="b them">hey it's Bre from instagram, could I do saturday?</div>
+      <div class="b us">Of course! Saturday 11:00 or 1:30 — which suits you better?</div>
+      <div class="auto"><i></i>She didn't have to re-explain who she was</div>
+      <div class="b them">11 please 🥹</div>
+
+      <div class="chan">Missed call · 9:15am</div>
+      <div class="b us">Sorry I missed you, I'm with a client! You're all set for Saturday at 11. I'll send your prep the day before 🤍</div>
+
+      <div class="handoff"><b>What Carolyn saw:</b> one line on her phone — <i>"Bre N. booked Saturday 11:00, classic full set, new client."</i> That's it.</div>
+    </div>
+
+    <div class="ttl" style="margin-top:20px">And when it's not<br>for the front desk</div>
+    <div class="cap">Anything you'd want to answer yourself comes straight to you.</div>
+    <div class="chat">
+      <div class="who"><div class="av">K</div><div><div class="nm">Kayla B.</div><div class="meta">Text · 7:12pm</div></div></div>
+      <div class="b them">my lashes have been irritating my eye since yesterday, is that normal??</div>
+      <div class="b us">Let me have a proper look at that and come straight back to you — give me two minutes 🤍</div>
+      <div class="handoff">🔔 <b>Straight to your phone, flagged:</b> "Kayla B. — irritation since yesterday. Needs you." Never answered automatically — and <b>she's never told she's talking to anyone but you.</b></div>
+    </div>
+  </div>
+
+  <!-- ══ TIMELINE ══ -->
+  <div class="pane p2">
+    <div class="banner">
+      <div class="k">This week</div>
+      <div class="h">Nine messages go out.<br>You send none of them.</div>
+      <div class="t">Seven are about an appointment she already has. <b>Only two are personal</b> — because nobody wants to feel marketed at by their lash girl. You approved the wording once; now it just runs.</div>
+    </div>
+
+    <div class="tl">
+      <div class="ev"><div class="d">Mon · appointment</div><div class="w"><b>3 fill reminders</b> — girls hitting week three</div><div class="who2">Sofia R. · Daniela M. · Alexis T.</div></div>
+      <div class="ev"><div class="d">Mon · appointment</div><div class="w"><b>Aftercare check-in</b> — "how are they feeling?"</div><div class="who2">Bre N., 1 day after her first set</div></div>
+      <div class="ev"><div class="d">Tue · personal</div><div class="w"><b>1 review request</b> — sent once they've settled, not the same night</div><div class="who2">Marisol V.</div></div>
+      <div class="ev"><div class="d">Wed · appointment</div><div class="w"><b>A slot opened.</b> Waitlist texted — filled in 9 minutes</div><div class="who2">Thursday 2pm, someone cancelled</div></div>
+      <div class="ev"><div class="d">Thu · appointment</div><div class="w"><b>Tomorrow's reminders</b> + prep instructions</div><div class="who2">6 clients</div></div>
+      <div class="ev"><div class="d">Fri · personal</div><div class="w"><b>1 "haven't seen you in a minute"</b> — no discount, no guilt</div><div class="who2">Valeria G., 6 weeks out</div></div>
+      <div class="ev"><div class="d">Held back</div><div class="w">Two birthdays and the holiday campaign — <b>queued for next month</b>, so nobody gets more than one personal message in a month</div><div class="who2">The cap, working</div></div>
+    </div>
+  </div>
+
+  <!-- ══ DUE BACK ══ -->
+  <div class="pane p3">
+    <div class="banner">
+      <div class="k">The fill clock</div>
+      <div class="h">Fourteen girls are due.</div>
+      <div class="t">Lashes come off on a schedule. The day someone's in your chair, we already know roughly when she'll need you again — so she hears from you instead of drifting.</div>
+    </div>
+
+    <div class="card"><div class="row"><div class="av">S</div><div><div class="nm">Sofia R.</div><div class="meta">Hybrid full set · 18 days ago</div></div><div class="pill">Due now</div></div>
+      <div class="note">"Hi Sofia! You're coming up on three weeks — want me to hold your usual Thursday? 🤍"</div></div>
+
+    <div class="card"><div class="row"><div class="av">D</div><div><div class="nm">Daniela M.</div><div class="meta">Volume · 21 days ago</div></div><div class="pill done">Rebooked</div></div>
+      <div class="note"><b>Came back after one text.</b> She'd been meaning to message you for a week.</div></div>
+
+    <div class="card"><div class="row"><div class="av p">V</div><div><div class="nm">Valeria G.</div><div class="meta">Classic · 6 weeks ago</div></div><div class="pill gold">Slipping</div></div>
+      <div class="note">Twice as long as usual and no booking. <b>This is the one you'd have lost without ever knowing.</b></div></div>
+
+    <div class="card"><div class="row"><div class="av">J</div><div><div class="nm">Jenny K.</div><div class="meta">Asked about a full set · 4 days ago</div></div><div class="pill">Follow up</div></div>
+      <div class="note">"No rush at all — just making sure you got your questions answered! 🤍"</div></div>
+  </div>
+
+  <!-- ══ YOUR GIRLS ══ -->
+  <div class="pane p4">
+    <div class="banner">
+      <div class="k">Your girls</div>
+      <div class="h">Six applied.<br>Not one of them in your DMs.</div>
+      <div class="t">They fill in a form, they land here, and everyone gets an answer — without you writing a single reply.</div>
+    </div>
+
+    <div class="ttl">Applications</div>
+    <div class="cap">Move someone along and the next message sends itself.</div>
+    <div class="card"><div class="row"><div class="av p">A</div><div><div class="nm">Ashley P.</div><div class="meta">2 yrs experience · applied Tue</div></div><div class="pill done">Tryout Sat</div></div>
+      <div class="note">✅ <b>TDLR licence verified</b> — checked before she gets near a chair.<br>Booked herself into your Saturday slot. Prep already sent.</div></div>
+    <div class="card"><div class="row"><div class="av">N</div><div><div class="nm">Nayeli C.</div><div class="meta">Applied Mon</div></div><div class="pill">Screened</div></div>
+      <div class="note">⏳ <b>Licence not verified yet</b> — she can't move to Tryout until it is.</div></div>
+    <div class="card"><div class="row"><div class="av">R</div><div><div class="nm">Riley S.</div><div class="meta">Applied today</div></div><div class="pill pink">New</div></div>
+      <div class="note">Auto-reply already went out: <i>"Thank you so much! Carolyn will look over everything this week 🤍"</i></div></div>
+
+    <div class="ttl" style="margin-top:22px">Training</div>
+    <div class="cap">You uploaded it once. Nobody touches a client until it's done.</div>
+    <div class="card">
+      <div class="row"><div class="av p">A</div><div><div class="nm">Ashley P.</div><div class="meta">4 of 6 modules · quiz passed 92%</div></div></div>
+      <div class="bar"><i style="width:67%"></i></div>
+    </div>
+    <div class="card">
+      <div class="row"><div class="av">N</div><div><div class="nm">Nayeli C.</div><div class="meta">1 of 6 modules · started yesterday</div></div></div>
+      <div class="bar"><i style="width:17%"></i></div>
+      <div class="note">Paperwork <b>signed and filed</b> ✓ · Nudge scheduled if she stalls past Friday<br><b>Day 90:</b> she's cleared, on the schedule, and taking her own clients.</div>
+    </div>
+
+    <div class="card" style="background:var(--soft)">
+      <div class="note" style="border:0;padding:0;margin:0">🧴 <b>Adhesive is down to 2.</b> Reorder link's in here — you'll always get told before you run out, not after.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="hint">Tap the tabs below ↓</div>
+
+<div class="tabs">
+  <label class="tab l1" for="t1"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Inbox</span></label>
+  <label class="tab l2" for="t2"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Timeline</span></label>
+  <label class="tab l3" for="t3"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 9 8 9"/><polyline points="12 7 12 12 15 14"/></svg><span>Due back</span></label>
+  <label class="tab l4" for="t4"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg><span>Your girls</span></label>
+</div>
+
+</body>
+</html>
