@@ -243,7 +243,7 @@ window.SANO_BOT_CONFIG = {
       id:'raiseprices', chip:'Should I raise my prices?', q:'raise prices price increase charge more pricing too cheap',
       phrases:['raise my prices','price increase','charge more','put my prices up','am i too cheap'],
       keys:'price raise increase charge higher cheap underpriced pricing',
-      a:"Probably, yes — but treat it as <b>free money on the side, not the plan.</b><br><br>You're at around <b>$115</b> for a classic set with a 4.8 and girls you can't fit in. That's a demand signal, and putting your prices up costs you nothing and needs no paperwork.<br><br><b>But you don't grow by charging more for the same two pairs of hands.</b> It lifts the ceiling a bit; it doesn't move it. <b>Hiring moves it</b> — and you've already got the girls waiting, which is the part most studios never get.",
+      a:"Probably, yes — but treat it as <b>free money on the side, not the plan.</b><br><br>A 4.8 and more girls than you can fit in is a demand signal, and putting your prices up costs you nothing and needs no paperwork.<br><br><b>But you don't grow by charging more for the same two pairs of hands.</b> It lifts the ceiling a bit; it doesn't move it. <b>Hiring moves it</b> — and you've already got the girls waiting, which is the part most studios never get.",
       next:['capacity','day90','hiring']
     },
     {
