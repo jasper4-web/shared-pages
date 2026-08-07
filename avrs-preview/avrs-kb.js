@@ -4,7 +4,7 @@
 
    EVERY factual claim here must match PITCH-KIT.md and README.md.
    If the offer changes, this file changes in the same commit.
-   Locked facts (D-0058, 2026-07-25): he is on the GROWTH package -
+   Locked facts: he is on the GROWTH package -
    $1/month for SIX months ($6 total) -> then the full $999/mo -
    $2,497 setup fee waived in trade for 3 phone videos - total saved
    $8,485 - cancel anytime, no contract - his (936) number untouched -
