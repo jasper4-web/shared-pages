@@ -10,7 +10,7 @@
    $8,485 - cancel anytime, no contract - his (936) number untouched -
    ~30 days to live (Growth standard) - A2P carrier registration is
    the long pole. NEVER say he can put his name/icon on his owner app:
-   verified impossible at any price (D-0057 s4).
+   verified impossible at any price.
    ============================================================ */
 window.SANO_BOT_CONFIG = {
   title: 'SANO Assistant',
