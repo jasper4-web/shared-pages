@@ -4,12 +4,12 @@
    Engine only. The knowledge base is per-client and supplied by
    the host page as window.SANO_BOT_CONFIG before this loads.
 
-   Lineage: structurally descended from the PD Towing "Dee"
+   Lineage: structurally descended from an earlier SANO
    conversation-tree bot (never dead-ends, always offers a next
    step), but with a real free-text retrieval layer on top so a
    typed question is understood instead of pattern-matched.
 
-   Design rules (learned the hard way on the AVRS build):
+   Design rules (learned the hard way on earlier builds):
    - NEVER return the same fallback twice in a row.
    - NEVER answer with something unrelated; low confidence must
      surface choices, not a wrong confident answer.

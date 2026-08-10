@@ -146,6 +146,21 @@ const TOOLS = {
   sms:{name:"SMS Blasts",icon:"i-mega",vis:"sms",tier:"growth",
     blurb:"One tap sends a seasonal push to your whole customer list — AC tune-up specials in May, gutter cleanups in October. Your past customers are your cheapest revenue; this is how you wake them up.",
     sms:[{side:"out",text:"🍂 Fall special: full cleanup $99 this week only"},{side:"in",text:"Yes! Book me for Saturday"},{side:"in",text:"I'll take Sunday if it's open"}]},
+  socialdm:{name:"Instagram & Facebook DMs",icon:"i-share",vis:"sms",tier:"growth",
+    blurb:"The DM asking \"how much?\" lands in the same inbox as your calls and texts and gets answered the same way — booked, not left on read. One conversation, wherever it started.",
+    sms:[{side:"in",text:"IG DM: Do you have Saturday openings?"},{side:"out",text:"We do — 10 AM or 1 PM. Want one?"},{side:"in",text:"10 AM! 🙌"}]},
+  recall:{name:"Rebooking & Win-Backs",icon:"i-cal",vis:"scene",tier:"growth",
+    blurb:"Customers come back when they're due — rebooking on their natural cycle, win-backs for the ones who went quiet, and day-after check-ins that catch a problem while it's still small. The customers you already earned, brought back on schedule."},
+  hiring:{name:"Hiring Pipeline",icon:"i-funnel",vis:"scene",tier:"growth",
+    blurb:"Applications, screening, tryouts, hired — one pipeline with automatic follow-up, so a good candidate is never lost to a faster offer. For licensed trades, a license check is built into the screening step."},
+  training:{name:"Training Portal",icon:"i-gauge",vis:"scene",tier:"growth",
+    blurb:"Your training, turned into a portal — quizzes and completion tracking, so nobody touches a customer until they've passed YOUR bar. You see exactly who has passed what."},
+  scorecards:{name:"Tryout Scorecards",icon:"i-star",vis:"scene",tier:"growth",
+    blurb:"Every candidate's tryout scored the same way, every result on record. When you compare two people, you're comparing scorecards — not memories."},
+  esign:{name:"E-Sign Onboarding Paperwork",icon:"i-mail",vis:"scene",tier:"growth",
+    blurb:"Onboarding paperwork goes out the moment you say \"hired,\" gets signed from a phone, and files itself. To be clear about the boundary: this is paperwork collection & e-signature — not HR, payroll, or classification compliance. How you classify and pay your team is a question for an employment attorney or payroll service — and we'll say so."},
+  inventory:{name:"Simple Inventory",icon:"i-crm",vis:"scene",tier:"growth",
+    blurb:"A simple count of what you use and sell, with a low-stock alert before you run out of the one thing tomorrow's jobs need. Not a warehouse system — just never running out."},
   funnels:{name:"Funnels & Landing Pages",icon:"i-funnel",vis:"scene",tier:"scale",
     blurb:"Purpose-built pages for whatever you're pushing — a spring special, a new service area, a hiring drive. Each one is designed to do exactly one thing: turn a click into a booked job."},
   social:{name:"Auto Social Posts",icon:"i-share",vis:"scene",tier:"scale",
@@ -241,7 +256,10 @@ const SCENE_CHIPS = {
   social:["Facebook","Instagram","Google"], referral:["Refer a neighbor","Both rewarded","Tracked"],
   app:["Book","Message","Pay"], photoquote:["📷 Snap","🤖 Draft","💵 Quote"],
   website:["Fast","Ranks","You own it"], branding:["Logo","Colors","Domain"],
-  integrations:["QuickBooks","ServiceTitan","+ yours"], whiteglove:["In-person","Weekly calls","24/7 person"]
+  integrations:["QuickBooks","ServiceTitan","+ yours"], whiteglove:["In-person","Weekly calls","24/7 person"],
+  recall:["Due? Rebooked","Win-back","Day-after check-in"], hiring:["Applied","Tryout","Hired ✓"],
+  training:["Lessons","Quizzes","Tracked ✓"], scorecards:["Scored","On record","Compare"],
+  esign:["Sent","Signed ✓","Filed"], inventory:["Counted","Low-stock alert","Restocked"]
 };
 
 function toolVisual(id){
@@ -290,15 +308,16 @@ function closeTool(){document.querySelectorAll(".tmodal,.tmodal-bg").forEach(x=>
 </script>
 <script>/* Network engine v2 — free-form layouts, semantic links, smooth tier transitions */
 const TOOL_ORDER = ["textback","reviews","booking","gbp","voice","chatbot","followup","email","crm","sms",
+  "socialdm","recall","hiring","training","scorecards","esign","inventory",
   "funnels","social","reputation","pay","referral","app","photoquote","website","branding","integrations","whiteglove"];
 const TIERS = {
   starter:{n:4, name:"Starter", price:"$397", setup:"$997 setup", line:"Never miss another customer."},
-  growth:{n:10, name:"Growth", price:"$999", setup:"$2,497 setup", line:"The automation engine turns on."},
-  scale:{n:16, name:"Scale", price:"$1,995", setup:"$4,997 setup", line:"Built for teams and multiple crews."},
-  tt:{n:21, name:"Total Transformation", price:"$4,997", setup:"$14,997 setup", line:"By invitation — built just for you."}
+  growth:{n:17, name:"Growth", price:"$999", setup:"$2,497 setup", line:"Your front desk — and your back office."},
+  scale:{n:23, name:"Scale", price:"$1,995", setup:"$4,997 setup", line:"Built for teams and multiple crews."},
+  tt:{n:28, name:"Total Transformation", price:"$4,997", setup:"$14,997 setup", line:"By invitation — built just for you."}
 };
-const TIER_START = {starter:0, growth:4, scale:10, tt:16};
-const TIER_OF = id => { const i=TOOL_ORDER.indexOf(id); return i<4?"starter":i<10?"growth":i<16?"scale":"tt"; };
+const TIER_START = {starter:0, growth:4, scale:17, tt:23};
+const TIER_OF = id => { const i=TOOL_ORDER.indexOf(id); return i<4?"starter":i<17?"growth":i<23?"scale":"tt"; };
 
 /* how the tools actually wire together (a = earlier node or hub, b = the tool) */
 const NET_LINKS = [
@@ -307,7 +326,9 @@ const NET_LINKS = [
   ["reviews","crm"],["crm","followup"],["reviews","sms"],["hub","crm"],
   ["booking","funnels"],["funnels","social"],["social","reputation"],["gbp","pay"],
   ["pay","referral"],["crm","app"],
-  ["email","photoquote"],["followup","website"],["social","branding"],["referral","integrations"],["voice","whiteglove"]
+  ["email","photoquote"],["followup","website"],["social","branding"],["referral","integrations"],["voice","whiteglove"],
+  ["chatbot","socialdm"],["email","recall"],["crm","hiring"],["hiring","training"],["training","scorecards"],
+  ["hiring","esign"],["crm","inventory"]
 ];
 
 const NET2_CSS = `
@@ -442,7 +463,7 @@ function netSetTier(el, key){
     const order=["starter","growth","scale","tt"];
     bd.classList.toggle("onb", order.indexOf(bd.dataset.tier)<=order.indexOf(key));
   });
-  el._hub.querySelector(".hn").textContent=n===21?"20+":n;
+  el._hub.querySelector(".hn").textContent=n===28?"25+":n;
   el._hub.querySelector(".hn").style.color = key==="tt"?"var(--amber)":"var(--cyan)";
 }
 
@@ -473,13 +494,13 @@ function fillMeta(lineEl,rowEl,key){
 <script>
 const POS_D={
   textback:{x:28,y:17}, reviews:{x:25,y:42}, booking:{x:29,y:68}, gbp:{x:24,y:90},
-  voice:{x:44,y:7}, chatbot:{x:38,y:28}, followup:{x:48,y:46}, email:{x:40,y:64}, crm:{x:50,y:80}, sms:{x:38,y:94},
+  voice:{x:44,y:4}, chatbot:{x:38,y:12}, socialdm:{x:51,y:16}, followup:{x:44,y:24}, email:{x:38,y:32}, recall:{x:51,y:36}, crm:{x:44,y:44}, sms:{x:38,y:52}, hiring:{x:51,y:56}, training:{x:44,y:64}, scorecards:{x:38,y:72}, esign:{x:51,y:76}, inventory:{x:44,y:86},
   funnels:{x:62,y:13}, social:{x:71,y:24}, reputation:{x:64,y:42}, pay:{x:72,y:58}, referral:{x:65,y:74}, app:{x:72,y:90},
   photoquote:{x:86,y:8}, website:{x:90,y:28}, branding:{x:85,y:48}, integrations:{x:91,y:68}, whiteglove:{x:87,y:90}
 };
 const POS_M={
   textback:{x:37,y:12}, reviews:{x:36,y:37}, booking:{x:36,y:64}, gbp:{x:36,y:87},
-  voice:{x:53,y:5}, chatbot:{x:52,y:22}, followup:{x:54,y:40}, email:{x:53,y:58}, crm:{x:53,y:75}, sms:{x:52,y:92},
+  voice:{x:52,y:4}, chatbot:{x:47,y:11}, socialdm:{x:58,y:14}, followup:{x:52,y:21}, email:{x:47,y:28}, recall:{x:58,y:31}, crm:{x:52,y:38}, sms:{x:47,y:45}, hiring:{x:58,y:48}, training:{x:52,y:55}, scorecards:{x:47,y:62}, esign:{x:58,y:65}, inventory:{x:52,y:72},
   funnels:{x:71,y:9}, social:{x:70,y:26}, reputation:{x:72,y:43}, pay:{x:70,y:60}, referral:{x:71,y:77}, app:{x:70,y:94},
   photoquote:{x:88,y:16}, website:{x:87,y:34}, branding:{x:89,y:52}, integrations:{x:87,y:70}, whiteglove:{x:88,y:88}
 };
