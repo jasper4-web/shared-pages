@@ -172,7 +172,7 @@ const TOOLS = {
     sms:[{side:"out",text:"Invoice #204 — $385. Tap to pay 💳"},{side:"in",text:"Paid ✓ — thanks for the fast work!"}]},
   referral:{name:"Referral Engine",icon:"i-gift",vis:"scene",tier:"scale",
     blurb:"Your happiest customers get an automatic nudge — refer a neighbor, both of you get rewarded. Word of mouth stops being luck and becomes a system with a scoreboard."},
-  app:{name:"Your Branded App",icon:"i-app",vis:"scene",tier:"scale",
+  app:{name:"Your Branded App",icon:"i-app",vis:"scene",tier:"tt",
     blurb:"Your own app, with your logo, in your customers' pocket — book, message, pay, all in one place. When rebooking is one tap away, they stop Googling your competitors."},
   photoquote:{name:"AI Photo Quotes",icon:"i-cam",vis:"scene",tier:"tt",
     blurb:"Customer snaps a photo of the job; the AI drafts the estimate using your pricing. Quotes that used to cost you a drive across town now happen in minutes — built specifically for your business."},
@@ -313,11 +313,11 @@ const TOOL_ORDER = ["textback","reviews","booking","gbp","voice","chatbot","foll
 const TIERS = {
   starter:{n:4, name:"Starter", price:"$397", setup:"$997 setup", line:"Never miss another customer."},
   growth:{n:17, name:"Growth", price:"$999", setup:"$2,497 setup", line:"Your front desk — and your back office."},
-  scale:{n:23, name:"Scale", price:"$1,995", setup:"$4,997 setup", line:"Built for teams and multiple crews."},
+  scale:{n:22, name:"Scale", price:"$1,995", setup:"$4,997 setup", line:"Built for teams and multiple crews."},
   tt:{n:28, name:"Total Transformation", price:"$4,997", setup:"$14,997 setup", line:"By invitation — built just for you."}
 };
-const TIER_START = {starter:0, growth:4, scale:17, tt:23};
-const TIER_OF = id => { const i=TOOL_ORDER.indexOf(id); return i<4?"starter":i<17?"growth":i<23?"scale":"tt"; };
+const TIER_START = {starter:0, growth:4, scale:17, tt:22};
+const TIER_OF = id => { const i=TOOL_ORDER.indexOf(id); return i<4?"starter":i<17?"growth":i<22?"scale":"tt"; };
 
 /* how the tools actually wire together (a = earlier node or hub, b = the tool) */
 const NET_LINKS = [
@@ -495,14 +495,14 @@ function fillMeta(lineEl,rowEl,key){
 const POS_D={
   textback:{x:28,y:17}, reviews:{x:25,y:42}, booking:{x:29,y:68}, gbp:{x:24,y:90},
   voice:{x:44,y:4}, chatbot:{x:38,y:12}, socialdm:{x:51,y:16}, followup:{x:44,y:24}, email:{x:38,y:32}, recall:{x:51,y:36}, crm:{x:44,y:44}, sms:{x:38,y:52}, hiring:{x:51,y:56}, training:{x:44,y:64}, scorecards:{x:38,y:72}, esign:{x:51,y:76}, inventory:{x:44,y:86},
-  funnels:{x:62,y:13}, social:{x:71,y:24}, reputation:{x:64,y:42}, pay:{x:72,y:58}, referral:{x:65,y:74}, app:{x:72,y:90},
-  photoquote:{x:86,y:8}, website:{x:90,y:28}, branding:{x:85,y:48}, integrations:{x:91,y:68}, whiteglove:{x:87,y:90}
+  funnels:{x:62,y:13}, social:{x:71,y:24}, reputation:{x:64,y:42}, pay:{x:72,y:58}, referral:{x:65,y:74},
+  photoquote:{x:86,y:8}, website:{x:90,y:24}, branding:{x:85,y:40}, integrations:{x:91,y:56}, app:{x:87,y:72}, whiteglove:{x:87,y:88}
 };
 const POS_M={
   textback:{x:37,y:12}, reviews:{x:36,y:37}, booking:{x:36,y:64}, gbp:{x:36,y:87},
   voice:{x:52,y:4}, chatbot:{x:47,y:11}, socialdm:{x:58,y:14}, followup:{x:52,y:21}, email:{x:47,y:28}, recall:{x:58,y:31}, crm:{x:52,y:38}, sms:{x:47,y:45}, hiring:{x:58,y:48}, training:{x:52,y:55}, scorecards:{x:47,y:62}, esign:{x:58,y:65}, inventory:{x:52,y:72},
-  funnels:{x:71,y:9}, social:{x:70,y:26}, reputation:{x:72,y:43}, pay:{x:70,y:60}, referral:{x:71,y:77}, app:{x:70,y:94},
-  photoquote:{x:88,y:16}, website:{x:87,y:34}, branding:{x:89,y:52}, integrations:{x:87,y:70}, whiteglove:{x:88,y:88}
+  funnels:{x:71,y:9}, social:{x:70,y:26}, reputation:{x:72,y:43}, pay:{x:70,y:60}, referral:{x:71,y:77},
+  photoquote:{x:88,y:12}, website:{x:87,y:28}, branding:{x:89,y:44}, integrations:{x:87,y:60}, app:{x:88,y:76}, whiteglove:{x:88,y:92}
 };
 const BANDS_D=[
  {tier:"starter",x:16,y:4,w:20,h:94,bg:"radial-gradient(ellipse 60% 50% at 50% 50%,rgba(0,112,243,.07),transparent 70%)"},
