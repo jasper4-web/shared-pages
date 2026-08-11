@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0a0d1c">
+<meta property="og:title" content="A story is waiting for you">
+<meta property="og:description" content="Press play before sleep.">
+<meta property="og:image" content="https://jasper4-web.github.io/shared-pages/the-story-of-bwh/artwork.png">
+<title>A Story Before Sleep</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%99%3C/text%3E%3C/svg%3E">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --night: #0a0d1c;
+    --panel: #121732;
+    --line: #262d52;
+    --text: #ece8dd;
+    --dim: #8e92ab;
+    --gold: #d4a94e;
+    --gold-deep: #b8892e;
+    --gold-soft: rgba(212, 169, 78, .14);
+    --err: #e07a6a;
+  }
+  html, body { height: 100%; }
+  body {
+    background: var(--night);
+    color: var(--text);
+    font: 17px/1.6 Georgia, "Times New Roman", serif;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button, input, a.pill { touch-action: manipulation; }
+  #sky { position: fixed; inset: 0; z-index: 0; }
+  .stage {
+    position: relative; z-index: 1;
+    min-height: 100dvh;
+    display: flex; align-items: center; justify-content: center;
+    padding: max(28px, env(safe-area-inset-top)) 22px max(40px, env(safe-area-inset-bottom));
+  }
+  .card { max-width: 430px; width: 100%; text-align: center; }
+  section { display: none; }
+  body[data-view="lock"] #lockView { display: block; }
+  body[data-view="player"] #playerView { display: block; }
+
+  .eyebrow {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 11px; letter-spacing: .3em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+  }
+  h1 {
+    font-size: clamp(26px, 7vw, 34px); font-weight: 500;
+    line-height: 1.3; margin-bottom: 12px; text-wrap: balance;
+  }
+  .sub { color: var(--dim); font-size: 15px; font-style: italic; }
+
+  /* ---------- lock screen ---------- */
+  .moonwrap { width: 168px; height: 168px; margin: 0 auto 34px; position: relative; }
+  .moonwrap img {
+    width: 100%; height: 100%; border-radius: 50%; display: block;
+    box-shadow: 0 0 70px rgba(212, 169, 78, .18), 0 0 140px rgba(93, 108, 199, .15);
+  }
+  .lockform { margin-top: 36px; display: flex; flex-direction: column; gap: 14px; align-items: center; }
+  .pwrow { display: flex; gap: 10px; width: 100%; max-width: 330px; }
+  #pw {
+    flex: 1; min-width: 0;
+    font: 17px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    padding: 14px 18px; border-radius: 14px;
+    border: 1px solid var(--line); background: var(--panel); color: var(--text);
+    outline: none; transition: border-color .2s;
+  }
+  #pw::placeholder { color: var(--dim); }
+  #pw:focus { border-color: var(--gold); }
+  #unlockBtn {
+    font: 600 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    padding: 14px 22px; border-radius: 14px; border: none; cursor: pointer;
+    background: var(--gold); color: #241a05;
+    transition: transform .15s, opacity .2s;
+  }
+  #unlockBtn:active { transform: scale(.96); }
+  #unlockBtn:disabled { opacity: .55; cursor: default; }
+  .remember {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 13px; color: var(--dim);
+    display: flex; align-items: center; gap: 8px; cursor: pointer;
+  }
+  .remember input { accent-color: var(--gold); width: 16px; height: 16px; cursor: pointer; }
+  #lockMsg {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14px; min-height: 22px; color: var(--dim);
+  }
+  #lockMsg.err { color: var(--err); }
+  .shake { animation: shake .45s; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); } 40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); } 80% { transform: translateX(5px); }
+  }
+
+  /* ---------- player ---------- */
+  .playwrap { position: relative; width: 172px; height: 172px; margin: 6px auto 26px; }
+  .ring { position: absolute; inset: 0; transform: rotate(-90deg); }
+  .ring circle { fill: none; stroke-width: 3.5; }
+  .ring .track { stroke: var(--line); }
+  .ring .prog { stroke: var(--gold); stroke-linecap: round; transition: stroke-dashoffset .25s linear; }
+  #playBtn {
+    position: absolute; inset: 14px; border-radius: 50%;
+    border: none; cursor: pointer;
+    background: radial-gradient(circle at 38% 32%, #1b2148, var(--panel) 70%);
+    color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 44px rgba(212, 169, 78, .10);
+  }
+  #playBtn:active { transform: scale(.97); }
+  #playBtn svg { width: 50px; height: 50px; fill: currentColor; }
+  body.playing #playBtn { animation: breathe 6s ease-in-out infinite; }
+  @keyframes breathe {
+    0%, 100% { box-shadow: 0 0 40px rgba(212, 169, 78, .12); }
+    50% { box-shadow: 0 0 85px rgba(212, 169, 78, .32); }
+  }
+  .skips { display: flex; justify-content: center; gap: 90px; margin-bottom: 26px; }
+  .skip {
+    width: 52px; height: 52px; border-radius: 50%;
+    border: 1px solid var(--line); background: transparent; color: var(--dim);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 10px; transition: color .15s, border-color .15s;
+  }
+  .skip svg { width: 20px; height: 20px; fill: currentColor; }
+  .skip:hover { color: var(--text); border-color: var(--dim); }
+  .scrub { width: 100%; max-width: 330px; margin: 0 auto 8px; display: block; }
+  #seek {
+    -webkit-appearance: none; appearance: none; width: 100%;
+    height: 26px; background: transparent; cursor: pointer;
+  }
+  #seek::-webkit-slider-runnable-track {
+    height: 4px; border-radius: 2px;
+    background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--pct, 0%), var(--line) var(--pct, 0%));
+  }
+  #seek::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--gold); margin-top: -6px;
+    box-shadow: 0 0 10px rgba(212, 169, 78, .5);
+  }
+  #seek::-moz-range-track { height: 4px; border-radius: 2px; background: var(--line); }
+  #seek::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--gold); }
+  #seek::-moz-range-thumb { width: 16px; height: 16px; border: none; border-radius: 50%; background: var(--gold); }
+  .time {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 14px; color: var(--dim); margin-bottom: 30px;
+    font-variant-numeric: tabular-nums;
+    display: flex; justify-content: space-between; max-width: 330px; margin-inline: auto;
+  }
+  .row { display: flex; gap: 12px; justify-content: center; margin-bottom: 38px; flex-wrap: wrap; }
+  .pill {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14px; letter-spacing: .03em;
+    padding: 12px 20px; border-radius: 999px;
+    border: 1px solid var(--line); background: transparent; color: var(--dim);
+    cursor: pointer; text-decoration: none;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .pill:hover { color: var(--text); border-color: var(--dim); }
+  .pill.on { color: var(--gold); border-color: var(--gold); background: var(--gold-soft); }
+  .hint {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 13px; line-height: 1.65; color: var(--dim);
+    border-top: 1px solid var(--line); padding-top: 20px; text-align: left;
+  }
+  .hint strong { color: var(--text); font-weight: 600; }
+  #resumeNote {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 13px; color: var(--gold); min-height: 20px; margin-bottom: 14px;
+  }
+  button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) {
+    .ring .prog { transition: none; }
+    body.playing #playBtn { animation: none; box-shadow: 0 0 70px rgba(212, 169, 78, .25); }
+    .shake { animation: none; }
+  }
+</style>
+</head>
+<body data-view="lock">
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="stage"><div class="card">
+
+  <section id="lockView">
+    <div class="moonwrap"><img src="artwork.png" alt=""></div>
+    <div class="eyebrow">For your ears only</div>
+    <h1>A story is waiting for&nbsp;you</h1>
+    <p class="sub">Enter the password you were given.</p>
+    <form class="lockform" id="lockForm">
+      <div class="pwrow">
+        <input type="password" id="pw" placeholder="Password" autocomplete="current-password" aria-label="Password">
+        <button type="submit" id="unlockBtn">Unlock</button>
+      </div>
+      <label class="remember"><input type="checkbox" id="rememberMe" checked> Remember on this device</label>
+      <div id="lockMsg" role="status"></div>
+    </form>
+  </section>
+
+  <section id="playerView">
+    <div class="eyebrow">Listen &middot; Believe &middot; Sleep</div>
+    <h1 id="storyTitle">&nbsp;</h1>
+    <p class="sub" style="margin-bottom: 30px;">Press play. Close your eyes. Let it in.</p>
+    <div id="resumeNote"></div>
+
+    <div class="playwrap">
+      <svg class="ring" viewBox="0 0 172 172">
+        <circle class="track" cx="86" cy="86" r="82"></circle>
+        <circle class="prog" cx="86" cy="86" r="82" stroke-dasharray="515.2" stroke-dashoffset="515.2"></circle>
+      </svg>
+      <button id="playBtn" aria-label="Play">
+        <svg viewBox="0 0 24 24"><path id="iconPath" d="M8 5v14l11-7z"/></svg>
+      </button>
+    </div>
+
+    <div class="skips">
+      <button class="skip" id="back15" aria-label="Back 15 seconds">
+        <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z"/></svg>
+        <span>15</span>
+      </button>
+      <button class="skip" id="fwd15" aria-label="Forward 15 seconds">
+        <svg viewBox="0 0 24 24"><path d="M12 5V1l5 5-5 5V7a6 6 0 1 0 6 6h2a8 8 0 1 1-8-8z"/></svg>
+        <span>15</span>
+      </button>
+    </div>
+
+    <div class="scrub"><input type="range" id="seek" min="0" max="1000" value="0" aria-label="Seek"></div>
+    <div class="time"><span id="cur">0:00</span><span id="dur">0:00</span></div>
+
+    <div class="row">
+      <button class="pill" id="repeatBtn">Repeat: off</button>
+      <a class="pill" id="dlBtn" href="#" download>Download MP3</a>
+    </div>
+
+    <p class="hint"><strong>Playing this before bed:</strong> press play, then lock your phone. On Android it keeps playing. On iPhone, if it pauses when you lock, tap the play button right on your lock screen &mdash; it keeps playing with the screen off. For guaranteed background play every night, tap Download once and play it from your Files or Music app.</p>
+  </section>
+
+</div></div>
+
+<script>
+"use strict";
+
+/* ---------- starfield ---------- */
+(function () {
+  const c = document.getElementById("sky");
+  const ctx = c.getContext("2d");
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let stars = [];
+  function build() {
+    c.width = innerWidth * devicePixelRatio;
+    c.height = innerHeight * devicePixelRatio;
+    const n = Math.min(180, Math.floor(innerWidth * innerHeight / 6000));
+    stars = Array.from({ length: n }, () => ({
+      x: Math.random() * c.width, y: Math.random() * c.height,
+      r: (Math.random() * 1.3 + .4) * devicePixelRatio,
+      base: Math.random() * .5 + .25,
+      spd: Math.random() * 1.2 + .3,
+      ph: Math.random() * Math.PI * 2
+    }));
+  }
+  function draw(t) {
+    ctx.clearRect(0, 0, c.width, c.height);
+    const g = ctx.createRadialGradient(c.width / 2, -c.height * .2, 0, c.width / 2, c.height * .3, c.height);
+    g.addColorStop(0, "#161c3a"); g.addColorStop(1, "#0a0d1c");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, c.width, c.height);
+    for (const s of stars) {
+      const a = reduced ? s.base : s.base * (0.6 + 0.4 * Math.sin(t / 1000 * s.spd + s.ph));
+      ctx.globalAlpha = a;
+      ctx.fillStyle = "#dfe3f0";
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 7); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (!reduced) requestAnimationFrame(draw);
+  }
+  build();
+  addEventListener("resize", () => { build(); if (reduced) draw(0); });
+  reduced ? draw(0) : requestAnimationFrame(draw);
+})();
+
+/* ---------- crypto unlock ---------- */
+const ENC_URL = "the-story.enc";
+const STORE_KEY = "bwh-pass";
+const POS_KEY = "bwh-pos";
+const lockForm = document.getElementById("lockForm");
+const pwInput = document.getElementById("pw");
+const unlockBtn = document.getElementById("unlockBtn");
+const lockMsg = document.getElementById("lockMsg");
+const rememberMe = document.getElementById("rememberMe");
+let encBytes = null;
+
+function setMsg(text, isErr) {
+  lockMsg.textContent = text;
+  lockMsg.classList.toggle("err", !!isErr);
+}
+
+async function fetchEnc() {
+  if (encBytes) return encBytes;
+  setMsg("Fetching the story…");
+  const res = await fetch(ENC_URL);
+  if (!res.ok) throw new Error("download");
+  encBytes = await res.arrayBuffer();
+  return encBytes;
+}
+
+async function decrypt(password) {
+  const buf = await fetchEnc();
+  const salt = new Uint8Array(buf, 4, 16);
+  const iv = new Uint8Array(buf, 20, 12);
+  const data = new Uint8Array(buf, 32);
+  const km = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt, iterations: 250000, hash: "SHA-256" },
+    km, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, data);
+  const metaLen = new DataView(plain).getUint32(0, true);
+  const meta = JSON.parse(new TextDecoder().decode(new Uint8Array(plain, 4, metaLen)));
+  const audio = new Blob([new Uint8Array(plain, 4 + metaLen)], { type: "audio/mpeg" });
+  return { meta, audio };
+}
+
+async function tryUnlock(password, silent) {
+  unlockBtn.disabled = true;
+  try {
+    if (!silent) setMsg("Unlocking…");
+    const { meta, audio } = await decrypt(password);
+    if (rememberMe.checked || silent) { try { localStorage.setItem(STORE_KEY, password); } catch (e) {} }
+    openPlayer(meta, audio);
+    return true;
+  } catch (err) {
+    if (err.message === "download") {
+      setMsg("Couldn’t load the audio — check your connection and try again.", true);
+    } else if (!silent) {
+      setMsg("That password isn’t right — check it and try again.", true);
+      lockForm.classList.remove("shake");
+      void lockForm.offsetWidth;
+      lockForm.classList.add("shake");
+    } else {
+      try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+      setMsg("");
+    }
+    return false;
+  } finally {
+    unlockBtn.disabled = false;
+  }
+}
+
+lockForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const pw = pwInput.value.trim();
+  if (!pw) { setMsg("Enter the password first.", true); return; }
+  tryUnlock(pw, false);
+});
+
+/* ---------- player ---------- */
+const player = new Audio();
+const playBtn = document.getElementById("playBtn");
+const iconPath = document.getElementById("iconPath");
+const cur = document.getElementById("cur");
+const dur = document.getElementById("dur");
+const prog = document.querySelector(".prog");
+const seek = document.getElementById("seek");
+const repeatBtn = document.getElementById("repeatBtn");
+const resumeNote = document.getElementById("resumeNote");
+const CIRC = 515.2;
+const PLAY_D = "M8 5v14l11-7z";
+const PAUSE_D = "M6 5h4v14H6zM14 5h4v14h-4z";
+let scrubbing = false;
+
+function fmt(s) {
+  if (!isFinite(s)) return "0:00";
+  const m = Math.floor(s / 60), r = Math.floor(s % 60);
+  return m + ":" + String(r).padStart(2, "0");
+}
+
+function openPlayer(meta, audioBlob) {
+  document.getElementById("storyTitle").textContent = meta.title;
+  document.title = meta.title;
+  player.src = URL.createObjectURL(audioBlob);
+  const dl = document.getElementById("dlBtn");
+  dl.href = player.src;
+  dl.setAttribute("download", meta.filename);
+  document.body.dataset.view = "player";
+
+  player.addEventListener("loadedmetadata", () => {
+    dur.textContent = fmt(player.duration);
+    let saved = 0;
+    try { saved = parseFloat(localStorage.getItem(POS_KEY)) || 0; } catch (e) {}
+    if (saved > 15 && saved < player.duration - 30) {
+      player.currentTime = saved;
+      resumeNote.textContent = "Picking up where you left off — " + fmt(saved);
+    }
+    paint();
+  }, { once: true });
+
+  if ("mediaSession" in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: meta.title,
+      artist: meta.artist,
+      album: "Bedtime Listening",
+      artwork: [{ src: new URL("artwork.png", location.href).href, sizes: "1024x1024", type: "image/png" }]
+    });
+    navigator.mediaSession.setActionHandler("play", () => player.play());
+    navigator.mediaSession.setActionHandler("pause", () => player.pause());
+    navigator.mediaSession.setActionHandler("seekbackward", () => { player.currentTime = Math.max(0, player.currentTime - 15); });
+    navigator.mediaSession.setActionHandler("seekforward", () => { player.currentTime = Math.min(player.duration || 0, player.currentTime + 15); });
+  }
+}
+
+function paint() {
+  cur.textContent = fmt(player.currentTime);
+  if (player.duration) {
+    const pct = player.currentTime / player.duration;
+    prog.style.strokeDashoffset = CIRC * (1 - pct);
+    if (!scrubbing) {
+      seek.value = Math.round(pct * 1000);
+      seek.style.setProperty("--pct", (pct * 100) + "%");
+    }
+  }
+}
+
+playBtn.addEventListener("click", () => { player.paused ? player.play() : player.pause(); });
+document.getElementById("back15").addEventListener("click", () => { player.currentTime = Math.max(0, player.currentTime - 15); });
+document.getElementById("fwd15").addEventListener("click", () => { player.currentTime = Math.min(player.duration || 0, player.currentTime + 15); });
+
+repeatBtn.addEventListener("click", () => {
+  player.loop = !player.loop;
+  repeatBtn.textContent = "Repeat: " + (player.loop ? "on" : "off");
+  repeatBtn.classList.toggle("on", player.loop);
+});
+
+seek.addEventListener("input", () => {
+  scrubbing = true;
+  seek.style.setProperty("--pct", (seek.value / 10) + "%");
+  if (player.duration) cur.textContent = fmt(seek.value / 1000 * player.duration);
+});
+seek.addEventListener("change", () => {
+  if (player.duration) player.currentTime = seek.value / 1000 * player.duration;
+  scrubbing = false;
+});
+
+player.addEventListener("timeupdate", () => {
+  paint();
+  if (!player.paused) {
+    try { localStorage.setItem(POS_KEY, String(player.currentTime)); } catch (e) {}
+  }
+});
+player.addEventListener("play", () => {
+  iconPath.setAttribute("d", PAUSE_D);
+  playBtn.setAttribute("aria-label", "Pause");
+  document.body.classList.add("playing");
+  resumeNote.textContent = "";
+});
+player.addEventListener("pause", () => {
+  iconPath.setAttribute("d", PLAY_D);
+  playBtn.setAttribute("aria-label", "Play");
+  document.body.classList.remove("playing");
+});
+player.addEventListener("ended", () => {
+  try { localStorage.removeItem(POS_KEY); } catch (e) {}
+  prog.style.strokeDashoffset = CIRC;
+  seek.value = 0;
+  seek.style.setProperty("--pct", "0%");
+  cur.textContent = "0:00";
+});
+
+/* ---------- auto-unlock for returning visitors ---------- */
+(function () {
+  let saved = null;
+  try { saved = localStorage.getItem(STORE_KEY); } catch (e) {}
+  if (saved) tryUnlock(saved, true);
+})();
+</script>
+</body>
+</html>
