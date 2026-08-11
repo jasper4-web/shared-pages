@@ -173,7 +173,10 @@
   var planEl = document.getElementById('plan');
   var PLAN_LABEL = { starter: 'Starter — $397/mo', growth: 'Growth — $999/mo', scale: 'Scale — $1,995/mo', total: 'Total Transformation — $4,997/mo' };
   var planParam = params.get('plan') || '';
-  if (planEl) planEl.value = planParam;
+  /* the tier picked on a trade page persists in sessionStorage; a hop through
+     about/resources drops the ?plan param, so fall back to the stored one */
+  if (!PLAN_LABEL[planParam]) { try { planParam = sessionStorage.getItem('sano_plan') || planParam; } catch (e) {} }
+  if (planEl) planEl.value = PLAN_LABEL[planParam] ? planParam : '';
   var echo = document.getElementById('plan-echo');
   if (echo && PLAN_LABEL[planParam]) {
     echo.textContent = "You're asking about " + PLAN_LABEL[planParam] + ". Not sure it's the right one? We'll tell you honestly.";

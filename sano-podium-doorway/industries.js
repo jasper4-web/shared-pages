@@ -345,8 +345,8 @@ window.SANO_CAPABILITIES = [
     d:'We plan and run the ads; the media budget stays yours and is paid straight to Google or Meta.',
     more:'We plan the campaigns, write them, and manage them month to month. The media budget is paid straight to Google or Meta and stays yours — we are not marking it up.' },
   { key:'payments', short:'Pay by text', tier:'scale', name:'Invoices &amp; pay-by-text',
-    d:'The invoice goes out and gets paid from a phone, so money stops sitting in your truck for a week.',
-    more:'The invoice goes out the moment the job is done and gets paid from a phone. Money stops sitting in your truck or your head for a week.' },
+    d:'The invoice goes out and gets paid from a phone, so the money lands the day the work is done.',
+    more:'The invoice goes out the moment the job is done and gets paid from a phone. No more waiting a week for money you already earned.' },
   { key:'strategy', short:'Strategy call', tier:'scale', name:'A monthly strategy call',
     d:'A standing call to look at what’s working, what isn’t, and what we should change next month.',
     more:'A standing call every month with a person who has been watching your numbers — what worked, what did not, and what we are changing next. Not a support ticket.' },
@@ -363,6 +363,7 @@ window.SANO_CAPABILITIES = [
    Anything not overridden falls back to the catalogue's default `d`. */
 window.SANO_CAPS_BY_INDUSTRY = {
   'hvac': {
+    payments: 'The invoice goes out and gets paid from a phone, so money stops sitting in your truck for a week.',
     textback: 'The 102-degree Tuesday when four people call in the same hour — all four get a text back in seconds, instead of three hitting voicemail.',
     voice: 'The compressor dies at 9pm. Your phone gets picked up out loud and the job is on tomorrow’s schedule before you’ve read the message.',
     booking: 'Tune-ups and service calls drop into the slots you actually run, with drive time built in.',
@@ -371,6 +372,7 @@ window.SANO_CAPS_BY_INDUSTRY = {
     reviews: 'Every finished install asks for the Google review — at the moment the house is finally cool.',
   },
   'plumbing': {
+    payments: 'The invoice goes out and gets paid from a phone, so money stops sitting in your truck for a week.',
     textback: 'Both hands are under a sink. The active leak calling down the list gets answered anyway.',
     voice: 'The 2am burst pipe gets a real conversation, gets the address taken, and reaches you as an emergency — not a voicemail.',
     booking: 'Service calls land on your schedule sorted by what’s actually urgent, with drive time built in.',
@@ -379,6 +381,7 @@ window.SANO_CAPS_BY_INDUSTRY = {
     reviews: 'The review gets asked for right after the leak stops, which is when people actually feel like writing one.',
   },
   'roofing': {
+    payments: 'The invoice goes out and gets paid from a phone, so money stops sitting in your truck for a week.',
     textback: 'The morning after the storm, when every roof in the county is calling — nobody drops to voicemail.',
     voice: 'Hail hit last night and they’re calling down the list. Yours gets picked up out loud and the inspection gets set.',
     booking: 'Inspections and estimates land on your schedule around the crews you already have out.',
@@ -387,6 +390,7 @@ window.SANO_CAPS_BY_INDUSTRY = {
     reviews: 'The review gets asked for once the roof is finished and the yard is clean — not a month later.',
   },
   'home-services': {
+    payments: 'The invoice goes out and gets paid from a phone, so money stops sitting in your truck for a week.',
     textback: 'You’re on a ladder or behind a mower. The call still gets answered, in English or Spanish.',
     voice: 'The after-hours call about a dead breaker or a wasp nest gets a real conversation instead of a beep.',
     booking: 'Jobs drop into the routes and days you actually work, with travel time built in.',
