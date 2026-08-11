@@ -25,6 +25,7 @@
             '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#followup"><b>The follow-up</b><span>Chased until you get an answer</span></a>' +
             '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#reviews"><b>Reviews</b><span>Asked for after every job</span></a>' +
             '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#marketing"><b>Marketing &amp; payments</b><span>Campaigns, follow-up, pay-by-text</span></a>' +
+            '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#backoffice"><b>The back office</b><span>Hiring, training &amp; paperwork, run for you</span></a>' +
             '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#command"><b>Your monthly report</b><span>What happened, in plain English</span></a>' +
             '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/sample-blueprint.html"><b>See a sample blueprint</b><span>The document a client actually approves</span></a>' +
           '</div>' +
@@ -265,7 +266,10 @@
 
   /* the header/ribbon mount after the browser resolved the fragment — re-scroll */
   if (location.hash) {
-    var target = document.querySelector(location.hash);
+    /* fragments arrive from the wild (#_=_, tracking junk) — never let a bad
+       selector throw and kill the reveal system below */
+    var target = null;
+    try { target = document.getElementById(location.hash.slice(1)); } catch (e) {}
     if (target) requestAnimationFrame(function () { target.scrollIntoView(); });
   }
 
