@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex">
+<title>Field Deck — Mock 2 · The Rolodex</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{ --bg:#0A0A0C; --panel:#131318; --panel2:#1A1A22; --line:#26262f;
+--cream:#F2EBE0; --dim:#9b95a8; --blue:#3B82F6; --cyan:#22D3EE;
+--red:#F87171; --green:#34D399; --amber:#FBBF24; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:#000}
+body{background:var(--bg);color:var(--cream);font-family:'Space Grotesk',sans-serif;
+max-width:430px;margin:0 auto;min-height:100vh;padding:34px 0 92px;position:relative}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer;text-align:left}
+a{color:var(--dim)}
+
+/* ---------- banner ---------- */
+.mockbanner{position:fixed;top:0;left:0;right:0;z-index:60;text-align:center;
+font-size:10px;font-weight:700;letter-spacing:.08em;padding:6px 8px;color:#08111c;
+background:linear-gradient(90deg,var(--blue),var(--cyan));text-transform:uppercase}
+
+/* ---------- views ---------- */
+.view{display:none;animation:fade .18s ease}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ---------- home header ---------- */
+.apphead{padding:18px 16px 4px;display:flex;align-items:baseline;justify-content:space-between}
+.apphead h1{font-size:22px;font-weight:700;letter-spacing:-.01em}
+.apphead h1 span{background:linear-gradient(90deg,var(--blue),var(--cyan));
+-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.apphead .sub{font-size:11px;color:var(--dim)}
+.backchooser{display:block;padding:4px 16px 0;font-size:11px;text-decoration:none}
+
+/* ---------- search ---------- */
+.searchwrap{padding:12px 16px 4px;position:relative}
+.searchwrap input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;
+padding:14px 46px 14px 16px;color:var(--cream);font-family:inherit;font-size:15px;outline:none}
+.searchwrap input::placeholder{color:var(--dim)}
+.searchwrap input:focus{border-color:var(--blue)}
+.searchmic{position:absolute;right:26px;top:50%;transform:translateY(-42%);font-size:18px;background:none;border:none}
+.searchhint{padding:4px 18px 0;font-size:10.5px;color:var(--dim)}
+
+/* ---------- today strip ---------- */
+.todaystrip{display:flex;gap:8px;overflow-x:auto;padding:12px 16px 4px;scrollbar-width:none}
+.todaystrip::-webkit-scrollbar{display:none}
+.tchip{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:var(--panel2);
+border:1px solid var(--line);border-radius:999px;padding:9px 14px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.tchip .tdot{width:7px;height:7px;border-radius:50%}
+.tchip.hot{border-color:rgba(59,130,246,.55);background:linear-gradient(90deg,rgba(59,130,246,.16),rgba(34,211,238,.10))}
+
+/* ---------- shelves ---------- */
+.shelf{padding:18px 16px 0}
+.shelfhead{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:9px}
+.shelfhead h2{font-size:12px;font-weight:700;letter-spacing:.10em;text-transform:uppercase}
+.shelfhead .count{font-size:11px;color:var(--dim)}
+.sh-close h2{color:var(--cyan)} .sh-cold h2{color:var(--blue)}
+.sh-mid h2{color:var(--dim)} .sh-champ h2{color:var(--amber)} .sh-client h2{color:var(--green)}
+.shelfnote{font-size:11px;color:var(--dim);margin:-5px 0 9px}
+
+/* ---------- person cards ---------- */
+.pcard{width:100%;display:flex;gap:12px;align-items:flex-start;background:var(--panel);
+border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;position:relative}
+.pcard:active{background:var(--panel2)}
+.avatar{flex:0 0 46px;width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+font-weight:700;font-size:18px;color:#0b0f16}
+.av-rudy{background:linear-gradient(135deg,var(--blue),var(--cyan))}
+.av-dale{background:linear-gradient(135deg,#60A5FA,#818CF8)}
+.av-mari{background:linear-gradient(135deg,var(--amber),#FB923C)}
+.av-bree{background:linear-gradient(135deg,#F472B6,#C084FC)}
+.av-kim{background:linear-gradient(135deg,#5EEAD4,#22D3EE)}
+.av-andre{background:linear-gradient(135deg,#A3E635,#34D399)}
+.av-hid{background:linear-gradient(135deg,var(--green),#22D3EE)}
+.pmain{flex:1;min-width:0}
+.prow1{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.pname{font-size:15.5px;font-weight:700}
+.recency{width:8px;height:8px;border-radius:50%;flex:0 0 8px}
+.rec-fresh{background:var(--green);box-shadow:0 0 6px rgba(52,211,153,.7)}
+.rec-warm{background:var(--amber)} .rec-stale{background:var(--red)}
+.pbiz{font-size:12px;color:var(--dim);margin-top:1px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.chip{font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--dim)}
+.chip.val{color:#0b0f16;border:none;font-weight:700}
+.chip.vA{background:linear-gradient(90deg,var(--blue),var(--cyan))}
+.chip.vB{background:var(--cream)}
+.chip.vC{background:var(--dim)}
+.chip.warm{border-color:rgba(242,235,224,.25);color:var(--cream)}
+.chip.w-vouch{border-color:rgba(251,191,36,.6);color:var(--amber)}
+.chip.w-cold{color:var(--dim)}
+.pwhy{font-size:12.5px;color:var(--cream);opacity:.85;margin-top:8px;line-height:1.45}
+.pwhy em{color:var(--dim);font-style:normal}
+.pcard .goto{position:absolute;right:12px;top:14px;color:var(--dim);font-size:16px}
+
+/* client card style */
+.pcard.client{border-color:rgba(52,211,153,.45);background:linear-gradient(160deg,rgba(52,211,153,.10),var(--panel) 55%)}
+.clientribbon{position:absolute;right:12px;top:12px;font-size:9.5px;font-weight:700;letter-spacing:.1em;
+color:#06251b;background:var(--green);padding:3px 8px;border-radius:6px;text-transform:uppercase}
+.clientstat{display:flex;gap:14px;margin-top:9px}
+.clientstat div{font-size:11px;color:var(--dim)}
+.clientstat b{display:block;font-size:15px;color:var(--green);font-weight:700}
+
+/* claude line */
+.claudeline{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11px;color:var(--cyan)}
+.claudeline .pulse{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pul 1.6s infinite}
+@keyframes pul{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ---------- matrix ---------- */
+.mx-intro{padding:14px 16px 6px;font-size:12.5px;color:var(--dim);line-height:1.5}
+.matrix{padding:8px 16px}
+.mxgrid{display:grid;grid-template-columns:34px repeat(4,1fr);gap:6px}
+.mxlab{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;
+letter-spacing:.06em;color:var(--dim);text-transform:uppercase}
+.mxlab.col{padding:4px 0;text-align:center;line-height:1.2}
+.mxcell{border:1px solid var(--line);border-radius:12px;min-height:64px;display:flex;flex-direction:column;
+align-items:center;justify-content:center;gap:2px;background:var(--panel);width:100%}
+.mxcell b{font-size:19px;font-weight:700}
+.mxcell span{font-size:9px;color:var(--dim);letter-spacing:.04em}
+.mxcell.empty{opacity:.32}
+.mxcell.hotcell{border-color:rgba(34,211,238,.6);background:linear-gradient(150deg,rgba(59,130,246,.18),rgba(34,211,238,.08))}
+.mxcell.clientcell{border-color:rgba(52,211,153,.55)}
+.mxcell.picked{outline:2px solid var(--cyan)}
+.mxdetail{margin:14px 16px 0;border:1px dashed var(--line);border-radius:14px;padding:14px;font-size:12.5px;color:var(--dim)}
+.mxdetail h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--cream);margin-bottom:8px}
+
+/* ---------- journal ---------- */
+.jday{margin:14px 16px 0;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}
+.jday .jdate{font-size:11px;font-weight:700;letter-spacing:.09em;color:var(--cyan);text-transform:uppercase}
+.jday p{font-size:13.5px;line-height:1.55;margin-top:6px}
+.jday.recap{border-color:rgba(251,191,36,.4)}
+.jday.recap .jdate{color:var(--amber)}
+
+/* ---------- person page ---------- */
+.phead{position:sticky;top:26px;z-index:40;background:rgba(10,10,12,.94);backdrop-filter:blur(8px);
+border-bottom:1px solid var(--line);padding:12px 16px 12px}
+.phead .topline{display:flex;align-items:center;gap:10px}
+.backbtn{font-size:13px;color:var(--dim);padding:6px 10px 6px 0}
+.phead .avatar{width:40px;height:40px;flex:0 0 40px;font-size:16px;border-radius:12px}
+.phead .who{flex:1;min-width:0}
+.phead .who .nm{font-size:16px;font-weight:700}
+.phead .who .bz{font-size:11px;color:var(--dim)}
+.phead .chips{margin-top:8px}
+.actrow{display:flex;gap:8px;padding:14px 16px 0}
+.abtn{flex:1;text-align:center;border-radius:14px;padding:13px 4px;font-size:13px;font-weight:700;border:1px solid var(--line);background:var(--panel)}
+.abtn.primary{background:linear-gradient(90deg,var(--blue),var(--cyan));color:#08111c;border:none}
+.nextmove{margin:16px 16px 0;border-radius:16px;padding:15px;border:1px solid rgba(34,211,238,.45);
+background:linear-gradient(150deg,rgba(59,130,246,.16),rgba(34,211,238,.06))}
+.nextmove .lbl{font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--cyan);text-transform:uppercase}
+.nextmove p{font-size:14.5px;line-height:1.5;margin-top:6px;font-weight:600}
+.nextmove p em{font-style:normal;color:var(--dim);font-weight:400;font-size:12.5px;display:block;margin-top:5px}
+
+.sect{padding:20px 16px 0}
+.sect h2{font-size:11.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+
+/* timeline */
+.tl{border-left:2px solid var(--line);margin-left:7px;padding-left:16px}
+.tli{position:relative;padding-bottom:18px}
+.tli:last-child{padding-bottom:4px}
+.tli::before{content:"";position:absolute;left:-22.5px;top:4px;width:9px;height:9px;border-radius:50%;
+background:var(--panel2);border:2px solid var(--dim)}
+.tli.today::before{background:var(--cyan);border-color:var(--cyan);box-shadow:0 0 8px rgba(34,211,238,.7)}
+.tli.claude::before{border-color:var(--cyan)}
+.tli .twhen{font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.tli.today .twhen{color:var(--cyan)}
+.tli .twhat{font-size:13.5px;line-height:1.5;margin-top:3px}
+.quote{margin-top:8px;border-left:3px solid var(--amber);background:var(--panel2);border-radius:0 12px 12px 0;
+padding:10px 12px;font-size:13.5px;line-height:1.5;color:var(--cream)}
+.quote::before{content:"“";color:var(--amber);font-size:16px;font-weight:700;margin-right:2px}
+.quote::after{content:"”";color:var(--amber);font-size:16px;font-weight:700;margin-left:2px}
+.quote .qwho{display:block;font-size:10.5px;color:var(--dim);margin-top:4px}
+.quote .qwho::before,.quote .qwho::after{content:""}
+
+/* two-col info panels */
+.panelgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.infopanel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:13px}
+.infopanel h3{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+.infopanel.personal h3{color:var(--amber)}
+.kv{font-size:12.5px;line-height:1.5;margin-bottom:7px}
+.kv:last-child{margin-bottom:0}
+.kv b{display:block;font-size:10px;color:var(--dim);font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+
+/* files row */
+.filesrow{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.filesrow::-webkit-scrollbar{display:none}
+.ftile{flex:0 0 104px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--panel)}
+.fthumb{height:76px;position:relative;overflow:hidden}
+.flabel{font-size:10px;color:var(--dim);padding:7px 8px;line-height:1.3}
+/* business card thumb */
+.th-card{background:linear-gradient(160deg,#26262f,#131318);display:flex;align-items:center;justify-content:center}
+.th-card .mini{width:78px;height:46px;background:var(--cream);border-radius:5px;padding:6px 7px;transform:rotate(-4deg);
+box-shadow:0 6px 14px rgba(0,0,0,.55)}
+.th-card .mini i{display:block;font-style:normal;font-size:6.5px;font-weight:700;color:#12131a;letter-spacing:.03em}
+.th-card .mini s{display:block;text-decoration:none;height:2.5px;background:#b9b2c4;border-radius:2px;margin-top:3px}
+.th-card .mini s.short{width:58%}
+/* storefront thumb */
+.th-store{background:linear-gradient(#4c6f9e 0 38%,#2a3348 38% 100%)}
+.th-store .bldg{position:absolute;left:8px;right:8px;bottom:0;top:30px;background:#3a3f52;border-radius:4px 4px 0 0}
+.th-store .awn{position:absolute;left:4px;right:4px;top:26px;height:12px;border-radius:3px;
+background:repeating-linear-gradient(90deg,var(--blue) 0 8px,var(--cream) 8px 16px)}
+.th-store .win{position:absolute;left:16px;bottom:8px;width:26px;height:22px;background:linear-gradient(160deg,#8fd8ea,#3b6f8c);border-radius:2px}
+.th-store .door{position:absolute;right:18px;bottom:0;width:16px;height:28px;background:#1b1f2c;border-radius:2px 2px 0 0}
+/* truck thumb */
+.th-truck{background:linear-gradient(#2e3550 0 60%,#232838 60% 100%);display:flex;align-items:flex-end;justify-content:center}
+.th-truck .body{position:relative;width:74px;height:24px;background:linear-gradient(#c2483f,#8e2f2a);border-radius:5px 7px 2px 2px;margin-bottom:12px}
+.th-truck .cab{position:absolute;left:8px;top:-13px;width:26px;height:14px;background:linear-gradient(#c2483f,#a03832);border-radius:4px 6px 0 0}
+.th-truck .cab i{position:absolute;left:4px;top:2px;width:16px;height:8px;background:#9fd4e8;border-radius:2px}
+.th-truck .w1,.th-truck .w2{position:absolute;bottom:-8px;width:16px;height:16px;background:#0c0d12;border:3px solid #454b60;border-radius:50%}
+.th-truck .w1{left:8px}.th-truck .w2{right:8px}
+/* reviews thumb */
+.th-rev{background:linear-gradient(160deg,#1A1A22,#131318);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.th-rev .stars{color:var(--amber);font-size:13px;letter-spacing:2px}
+.th-rev .num{font-size:15px;font-weight:700}
+.th-rev .sub{font-size:8px;color:var(--dim)}
+
+/* talk to log */
+.talklog{margin:20px 16px 0;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}
+.talklog textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:12px;
+padding:12px;color:var(--cream);font-family:inherit;font-size:14px;min-height:64px;resize:none;outline:none}
+.talklog textarea:focus{border-color:var(--cyan)}
+.talklog .hint{font-size:11px;color:var(--dim);margin:8px 0 10px}
+.savebtn{width:100%;text-align:center;border-radius:12px;padding:13px;font-weight:700;font-size:14px;
+background:linear-gradient(90deg,var(--blue),var(--cyan));color:#08111c}
+
+/* hidalgo page bits */
+.wonband{margin:14px 16px 0;border-radius:16px;padding:15px;border:1px solid rgba(52,211,153,.5);
+background:linear-gradient(150deg,rgba(52,211,153,.14),rgba(34,211,238,.04))}
+.wonband .lbl{font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--green);text-transform:uppercase}
+.wonband .big{font-size:26px;font-weight:700;color:var(--green);margin-top:4px}
+.wonband p{font-size:12.5px;color:var(--dim);margin-top:3px}
+
+/* bottom nav */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:50;
+display:flex;background:rgba(19,19,24,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:8px 6px calc(10px + env(safe-area-inset-bottom))}
+.bnav button{flex:1;text-align:center;font-size:10.5px;font-weight:600;color:var(--dim);padding:6px 2px;border-radius:10px}
+.bnav button .ic{display:block;font-size:19px;margin-bottom:2px}
+.bnav button.on{color:var(--cream)}
+.bnav button.on .ic{filter:drop-shadow(0 0 6px rgba(34,211,238,.6))}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(16px);max-width:360px;width:calc(100% - 48px);
+background:var(--panel2);border:1px solid rgba(34,211,238,.5);color:var(--cream);font-size:13px;line-height:1.45;
+padding:12px 15px;border-radius:14px;opacity:0;pointer-events:none;transition:.22s ease;z-index:70;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.nores{padding:22px 16px;font-size:13px;color:var(--dim);text-align:center;display:none}
+</style>
+</head>
+<body>
+
+<div class="mockbanner">Mock 2 of 4 · “The Rolodex” · Fake data — tap around</div>
+
+<!-- ================= HOME / THE VAULT ================= -->
+<section class="view on" id="view-home">
+  <div class="apphead">
+    <h1>Field <span>Deck</span></h1>
+    <div class="sub">Thu Aug 13 · Houston</div>
+  </div>
+  <a class="backchooser" href="index.html">‹ all four mocks</a>
+
+  <div class="searchwrap">
+    <input id="vaultsearch" type="text" placeholder="Search your people — name, trade, street…" oninput="filterVault()">
+    <button class="searchmic" onclick="toast('(mock) voice search — say a name or a trade and the vault jumps to them')">🎤</button>
+  </div>
+  <div class="searchhint">7 connections and counting. Ten years from now, this list IS the company.</div>
+
+  <div class="todaystrip">
+    <button class="tchip hot" onclick="openPerson('rudy')"><span class="tdot" style="background:var(--cyan)"></span>Demo at 2 — Rudy</button>
+    <button class="tchip" onclick="toast('(mock) opens Bree — Lonestar Lash. Re-visit due this afternoon; owner answers PMs, so swing by after the demo.')"><span class="tdot" style="background:var(--amber)"></span>1 re-visit — Bree</button>
+    <button class="tchip" onclick="toast('(mock) 2 texts due: confirm Rudy for 2:00, and a thank-you to Marisol for the intro to the taqueria.')"><span class="tdot" style="background:var(--green)"></span>2 texts due</button>
+  </div>
+
+  <div id="vaultlist">
+
+  <!-- WARM & VALUABLE -->
+  <div class="shelf sh-close" data-shelf>
+    <div class="shelfhead"><h2>Warm &amp; valuable — close these</h2><span class="count">1</span></div>
+    <button class="pcard" data-search="rudy reyes auto care auto westheimer" onclick="openPerson('rudy')">
+      <div class="avatar av-rudy">R</div>
+      <div class="pmain">
+        <div class="prow1"><span class="pname">Rudy Reyes</span><span class="recency rec-fresh" title="touched yesterday"></span></div>
+        <div class="pbiz">Reyes Auto Care</div>
+        <div class="chips">
+          <span class="chip">Auto</span>
+          <span class="chip val vA">A</span>
+          <span class="chip warm">Trusts me</span>
+        </div>
+        <div class="pwhy">Demo today 2:00p. His after-hours calls are the whole pitch.</div>
+        <div class="claudeline"><span class="pulse"></span>Pitch page building — ready before 2</div>
+      </div>
+      <span class="goto">›</span>
+    </button>
+  </div>
+
+  <!-- COLD A'S -->
+  <div class="shelf sh-cold" data-shelf>
+    <div class="shelfhead"><h2>Cold A’s — earn a first hello</h2><span class="count">1</span></div>
+    <div class="shelfnote">Big businesses that don’t know you yet. Different moves than the warm ones.</div>
+    <button class="pcard" data-search="dale gulf coast plumbing plumbing" onclick="toast('(mock) opens Dale\'s page — Rudy\'s is the fully built example in this mock')">
+      <div class="avatar av-dale">D</div>
+      <div class="pmain">
+        <div class="prow1"><span class="pname">Dale</span><span class="recency rec-warm" title="last touch Tue"></span></div>
+        <div class="pbiz">Gulf Coast Plumbing Co.</div>
+        <div class="chips">
+          <span class="chip">Plumbing</span>
+          <span class="chip val vA">A</span>
+          <span class="chip warm w-cold">Cold</span>
+        </div>
+        <div class="pwhy">4.9★ · 212 reviews, dead website link. <em>Tue 2:10p rang out, no voicemail. Never met.</em></div>
+        <div class="claudeline"><span class="pulse"></span>Researched by Claude last night — review themes on file</div>
+      </div>
+      <span class="goto">›</span>
+    </button>
+  </div>
+
+  <!-- WORKING THE MIDDLE -->
+  <div class="shelf sh-mid" data-shelf>
+    <div class="shelfhead"><h2>Working the middle — B’s in play</h2><span class="count">3</span></div>
+    <button class="pcard" data-search="bree lonestar lash studio beauty" onclick="toast('(mock) opens Bree\'s page — re-visit due today PM, owner answers PMs only')">
+      <div class="avatar av-bree">B</div>
+      <div class="pmain">
+        <div class="prow1"><span class="pname">Bree</span><span class="recency rec-warm"></span></div>
+        <div class="pbiz">Lonestar Lash Studio</div>
+        <div class="chips">
+          <span class="chip">Beauty</span>
+          <span class="chip val vB">B</span>
+          <span class="chip warm">Knows me</span>
+        </div>
+        <div class="pwhy">Talked once; owner lives in the PMs. Re-visit due today PM.</div>
+      </div>
+      <span class="goto">›</span>
+    </button>
+    <button class="pcard" data-search="dr kim smile lane dental dental" onclick="toast('(mock) opens Dr. Kim\'s page — gatekeeper stage; owner is in Thursdays. That\'s today.')">
+      <div class="avatar av-kim">K</div>
+      <div class="pmain">
+        <div class="prow1"><span class="pname">Dr. Kim</span><span class="recency rec-stale"></span></div>
+        <div class="pbiz">Smile Lane Dental</div>
+        <div class="chips">
+          <span class="chip">Dental</span>
+          <span class="chip val vB">B</span>
+          <span class="chip warm w-cold">Cold</span>
+        </div>
+        <div class="pwhy">Gatekeeper stage; owner in Thursdays. Reviews say “phone never picked up” ×4 — the pain is public.</div>
+      </div>
+      <span class="goto">›</span>
+    </button>
+    <button class="pcard" data-search="andre bayou fade barbershop barber" onclick="toast('(mock) opens Andre\'s page — friendly no. Ghost until late Sep, then re-approach.')">
+      <div class="avatar av-andre">A</div>
+      <div class="pmain">
+        <div class="prow1"><span class="pname">Andre</span><span class="recency rec-stale"></span></div>
+        <div class="pbiz">Bayou Fade Barbershop</div>
+        <div class="chips">
+          <span class="chip">Barber</span>
+          <span class="chip val vB">B</span>
+          <span class="chip warm">Knows me</span>
+        </div>
+        <div class="pwhy">Said no — “my cousin does our stuff” — but friendly. 6-week ghost, then re-approach.</div>
+      </div>
+      <span class="goto">›</span>
+    </button>
+  </div>
+
+  <!-- CHAMPIONS -->
+  <div class="shelf sh-champ" data-shelf>
+    <div class="shelfhead"><h2>Champions — they vouch for you</h2><span class="count">1</span></div>
+    <button class="pcard" data-search="marisol casa verde landscaping home services spanish" onclick="toast('(mock) opens Marisol\'s page — 2 intro leads so far. Worth a visit every week, not for the sale.')">
+      <div class="avatar av-mari">M</div>
+      <div class="pmain">
+        <div class="prow1"><span class="pname">Marisol</span><span class="recency rec-fresh"></span></div>
+        <div class="pbiz">Casa Verde Landscaping</div>
+        <div class="chips">
+          <span class="chip">Home Services</span>
+          <span class="chip val vC">C</span>
+          <span class="chip warm w-vouch">Would vouch</span>
+          <span class="chip">Español first</span>
+        </div>
+        <div class="pwhy">Knows everyone on the strip; has sent two intro leads. The classic warm C — visits pay in referrals.</div>
+      </div>
+      <span class="goto">›</span>
+    </button>
+  </div>
+
+  <!-- CLIENTS -->
+  <div class="shelf sh-client" data-shelf>
+    <div class="shelfhead"><h2>Clients</h2><span class="count">1</span></div>
+    <button class="pcard client" data-search="hidalgo roofing client roofing" onclick="openPerson('hidalgo')">
+      <div class="avatar av-hid">H</div>
+      <div class="pmain">
+        <div class="prow1"><span class="pname">Hidalgo Roofing</span><span class="recency rec-fresh"></span></div>
+        <div class="pbiz">Client since Aug 1</div>
+        <div class="chips">
+          <span class="chip">Roofing</span>
+          <span class="chip val vA">A</span>
+          <span class="chip warm w-vouch">Would vouch</span>
+        </div>
+        <div class="clientstat">
+          <div><b>42</b>AI-answered calls this month</div>
+          <div><b>Day 12</b>of check-in cadence</div>
+        </div>
+        <div class="pwhy" style="color:var(--green)">Referral ask due — they’re happy. Ask who else on their supplier route needs this.</div>
+      </div>
+      <span class="clientribbon">Client</span>
+    </button>
+  </div>
+
+  </div><!-- /vaultlist -->
+  <div class="nores" id="nores">Nobody by that name yet. Meet them today, log them tonight.</div>
+</section>
+
+<!-- ================= MATRIX ================= -->
+<section class="view" id="view-matrix">
+  <div class="apphead"><h1>The <span>Board</span></h1><div class="sub">Value × Warmth</div></div>
+  <div class="mx-intro">Every connection lives in one square. The play changes by square — a cold A gets an earned hello, a warm C gets a coffee and a referral ask. Tap a square.</div>
+  <div class="matrix">
+    <div class="mxgrid">
+      <div class="mxlab"></div>
+      <div class="mxlab col">Cold</div>
+      <div class="mxlab col">Knows<br>me</div>
+      <div class="mxlab col">Trusts<br>me</div>
+      <div class="mxlab col">Would<br>vouch</div>
+
+      <div class="mxlab">A</div>
+      <button class="mxcell" id="cell-A-cold" onclick="pickCell('A-cold')"><b>1</b><span>Dale</span></button>
+      <button class="mxcell empty" onclick="pickCell('empty')"><b>0</b><span>—</span></button>
+      <button class="mxcell hotcell" id="cell-A-trusts" onclick="pickCell('A-trusts')"><b>1</b><span>Rudy</span></button>
+      <button class="mxcell clientcell" id="cell-A-vouch" onclick="pickCell('A-vouch')"><b>1</b><span>client</span></button>
+
+      <div class="mxlab">B</div>
+      <button class="mxcell" id="cell-B-cold" onclick="pickCell('B-cold')"><b>1</b><span>Dr. Kim</span></button>
+      <button class="mxcell" id="cell-B-knows" onclick="pickCell('B-knows')"><b>2</b><span>Bree · Andre</span></button>
+      <button class="mxcell empty" onclick="pickCell('empty')"><b>0</b><span>—</span></button>
+      <button class="mxcell empty" onclick="pickCell('empty')"><b>0</b><span>—</span></button>
+
+      <div class="mxlab">C</div>
+      <button class="mxcell empty" onclick="pickCell('empty')"><b>0</b><span>—</span></button>
+      <button class="mxcell empty" onclick="pickCell('empty')"><b>0</b><span>—</span></button>
+      <button class="mxcell empty" onclick="pickCell('empty')"><b>0</b><span>—</span></button>
+      <button class="mxcell" id="cell-C-vouch" onclick="pickCell('C-vouch')"><b>1</b><span>Marisol</span></button>
+    </div>
+  </div>
+  <div class="mxdetail" id="mxdetail">
+    <h3>Tap a square</h3>
+    The goal of every week: move people right. Value rarely changes — warmth is what you earn.
+  </div>
+</section>
+
+<!-- ================= JOURNAL ================= -->
+<section class="view" id="view-journal">
+  <div class="apphead"><h1>Looking <span>back</span></h1><div class="sub">your own trail</div></div>
+  <div class="jday recap">
+    <div class="jdate">Friday recap · builds itself</div>
+    <p>Week 1: 27 doors, 11 conversations, top objection “we already have someone” ×4. Full recap lands Friday 5p.</p>
+  </div>
+  <div class="jday">
+    <div class="jdate">Tue · Aug 11</div>
+    <p>Westheimer strip — 9 doors, 4 conversations, met Rudy, 1 demo booked.</p>
+  </div>
+  <div class="jday">
+    <div class="jdate">Mon · Aug 10</div>
+    <p>First calls day — 11 pre-calls, 2 numbers.</p>
+  </div>
+  <div class="talklog">
+    <textarea placeholder="What happened out there today?"></textarea>
+    <div class="hint">Tap the 🎤 on your keyboard and just talk — Claude files it into the right person’s story tonight.</div>
+    <button class="savebtn" onclick="toast('(mock) saved to today\'s journal — Claude will sort the names into their pages tonight')">Save today’s entry</button>
+  </div>
+</section>
+
+<!-- ================= RUDY — HERO PERSON PAGE ================= -->
+<section class="view" id="view-rudy">
+  <div class="phead">
+    <div class="topline">
+      <button class="backbtn" onclick="showView('view-home','nav-home')">‹ Vault</button>
+      <div class="avatar av-rudy">R</div>
+      <div class="who">
+        <div class="nm">Rudy Reyes</div>
+        <div class="bz">Reyes Auto Care · Westheimer · 713-555-0142</div>
+      </div>
+    </div>
+    <div class="chips">
+      <span class="chip">Auto</span>
+      <span class="chip val vA">Value A</span>
+      <span class="chip warm">Trusts me</span>
+      <span class="chip" style="border-color:rgba(34,211,238,.5);color:var(--cyan)">Growth fit</span>
+    </div>
+  </div>
+
+  <div class="actrow">
+    <button class="abtn primary" onclick="toast('(mock) calls Rudy — 713-555-0142')">📞 Call</button>
+    <button class="abtn" onclick="toast('(mock) drafts the 2:00 confirmation text in Rudy\'s tone — you approve before it sends')">💬 Text</button>
+    <button class="abtn" onclick="toast('(mock) opens the pitch page Claude built from Rudy\'s exact words')">📄 Pitch page</button>
+  </div>
+
+  <div class="nextmove">
+    <div class="lbl">Next move</div>
+    <p>Demo at 2 today. Leave by 1:35.
+    <em>After he signs: check-in day 3, results text day 14, referral ask at day 30.</em></p>
+  </div>
+
+  <div class="sect">
+    <h2>His story</h2>
+    <div class="tl">
+      <div class="tli today">
+        <div class="twhen">Today · Thu Aug 13</div>
+        <div class="twhat"><b>Demo, 2:00p at the shop.</b> Lead with after-hours calls — that’s the door he opened.</div>
+        <div class="claudeline"><span class="pulse"></span>Pitch page building from his exact words — ready before 2</div>
+      </div>
+      <div class="tli claude">
+        <div class="twhen">Overnight · Claude</div>
+        <div class="twhat">Researched Reyes Auto Care: 4.7★, reviews praise honesty, three mention slow callbacks. Summary saved to files.</div>
+      </div>
+      <div class="tli">
+        <div class="twhen">Tue Aug 11 · in person</div>
+        <div class="twhat">Met him on the Westheimer walk. Fifteen real minutes over the C10. He named the pain himself:</div>
+        <div class="quote">my wife answers the phones and she’s out Tuesdays<span class="qwho">— Rudy, at the counter</span></div>
+        <div class="quote">If it can catch the after-hours calls I’m listening.<span class="qwho">— Rudy, walking me out</span></div>
+      </div>
+      <div class="tli">
+        <div class="twhen">Mon Aug 10 · pre-call</div>
+        <div class="twhat">First calls day. He picked up, straight shooter — gave me his cell before we hung up.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sect">
+    <h2>Two panels, one man</h2>
+    <div class="panelgrid">
+      <div class="infopanel personal">
+        <h3>Personal</h3>
+        <div class="kv"><b>Wife</b>Carla — runs the phones, out Tuesdays</div>
+        <div class="kv"><b>Project</b>Restoring a ’68 C10 pickup — ask about the carb rebuild</div>
+        <div class="kv"><b>Kids</b>Two — little league season</div>
+      </div>
+      <div class="infopanel">
+        <h3>Business</h3>
+        <div class="kv"><b>Pain, one line</b>After-hours calls go nowhere</div>
+        <div class="kv"><b>Package fit</b>Growth</div>
+        <div class="kv"><b>Who decides</b>Rudy — but Carla answers the phones. Win them both.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sect">
+    <h2>Files</h2>
+    <div class="filesrow">
+      <button class="ftile" onclick="toast('(mock) opens the business card scan — full size, both sides')">
+        <div class="fthumb th-card"><div class="mini"><i>REYES AUTO CARE</i><s></s><s class="short"></s><s></s></div></div>
+        <div class="flabel">Business card · Mon</div>
+      </button>
+      <button class="ftile" onclick="toast('(mock) opens the storefront photo from the Tuesday walk')">
+        <div class="fthumb th-store"><div class="awn"></div><div class="bldg"></div><div class="win"></div><div class="door"></div></div>
+        <div class="flabel">Storefront · Tue</div>
+      </button>
+      <button class="ftile" onclick="toast('(mock) opens the C10 photo — he\'ll love that you kept it')">
+        <div class="fthumb th-truck"><div class="body"><div class="cab"><i></i></div><div class="w1"></div><div class="w2"></div></div></div>
+        <div class="flabel">The ’68 C10 · Tue</div>
+      </button>
+      <button class="ftile" onclick="toast('(mock) opens Claude\'s overnight review research — themes, quotes, callback complaints')">
+        <div class="fthumb th-rev"><div class="stars">★★★★★</div><div class="num">4.7</div><div class="sub">Claude · overnight</div></div>
+        <div class="flabel">Review research · Claude</div>
+      </button>
+    </div>
+  </div>
+
+  <div class="talklog">
+    <textarea placeholder="What did Rudy say? What did you notice?"></textarea>
+    <div class="hint">🎤 Add to Rudy’s story — tap the mic on your keyboard and just talk. It lands on his timeline, exact words kept.</div>
+    <button class="savebtn" onclick="toast('(mock) added to Rudy\'s story — his exact words stay in quotes forever')">🎤 Add to Rudy’s story</button>
+  </div>
+</section>
+
+<!-- ================= HIDALGO — CLIENT PAGE ================= -->
+<section class="view" id="view-hidalgo">
+  <div class="phead">
+    <div class="topline">
+      <button class="backbtn" onclick="showView('view-home','nav-home')">‹ Vault</button>
+      <div class="avatar av-hid">H</div>
+      <div class="who">
+        <div class="nm">Hidalgo Roofing</div>
+        <div class="bz">Client since Aug 1 · 713-555-0107</div>
+      </div>
+    </div>
+    <div class="chips">
+      <span class="chip">Roofing</span>
+      <span class="chip val vA">Value A</span>
+      <span class="chip warm w-vouch">Would vouch</span>
+      <span class="chip" style="border-color:rgba(52,211,153,.6);color:var(--green)">CLIENT</span>
+    </div>
+  </div>
+
+  <div class="wonband">
+    <div class="lbl">What winning looks like</div>
+    <div class="big">42 calls</div>
+    <p>answered by the AI this month — every one of those used to ring out.</p>
+  </div>
+
+  <div class="actrow">
+    <button class="abtn primary" onclick="toast('(mock) drafts the referral ask — they\'re 12 days happy, this is the moment')">🤝 Referral ask — due</button>
+    <button class="abtn" onclick="toast('(mock) sends the day-14 results text with this month\'s call count')">💬 Check-in</button>
+  </div>
+
+  <div class="sect">
+    <h2>Their story</h2>
+    <div class="tl">
+      <div class="tli today">
+        <div class="twhen">Today · Day 12 as a client</div>
+        <div class="twhat">Cadence says: referral ask lands this week. They know every roofer and supplier on the east side.</div>
+      </div>
+      <div class="tli claude">
+        <div class="twhen">Aug 8 · Claude</div>
+        <div class="twhat">Monthly report drafted from the call log — 42 answered, 6 booked jobs traced back to after-hours calls.</div>
+      </div>
+      <div class="tli">
+        <div class="twhen">Aug 1 · signed</div>
+        <div class="twhat">Closed. Growth fit. Whole shop watched the AI take its first call in the parking lot.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sect">
+    <h2>Why they stay in the vault</h2>
+    <div class="infopanel">
+      <div class="kv"><b>The point</b>A client isn’t a finished row — it’s the warmest square on the board. Check-ins, referrals, the case study: it all runs from this same page.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= NAV + TOAST ================= -->
+<nav class="bnav">
+  <button id="nav-home" class="on" onclick="showView('view-home','nav-home')"><span class="ic">🗂️</span>Rolodex</button>
+  <button id="nav-matrix" onclick="showView('view-matrix','nav-matrix')"><span class="ic">🎯</span>Board</button>
+  <button id="nav-journal" onclick="showView('view-journal','nav-journal')"><span class="ic">📓</span>Journal</button>
+</nav>
+<div id="toast"></div>
+
+<script>
+var toastTimer=null;
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove('show');},3200);
+}
+
+function showView(viewId,navId){
+  var views=document.querySelectorAll('.view');
+  for(var i=0;i<views.length;i++){views[i].classList.remove('on');}
+  document.getElementById(viewId).classList.add('on');
+  var navs=document.querySelectorAll('.bnav button');
+  for(var j=0;j<navs.length;j++){navs[j].classList.remove('on');}
+  if(navId&&document.getElementById(navId)){document.getElementById(navId).classList.add('on');}
+  window.scrollTo(0,0);
+}
+
+function openPerson(who){
+  if(who==='rudy'){showView('view-rudy','nav-home');}
+  else if(who==='hidalgo'){showView('view-hidalgo','nav-home');}
+}
+
+function filterVault(){
+  var q=document.getElementById('vaultsearch').value.trim().toLowerCase();
+  var shelves=document.querySelectorAll('[data-shelf]');
+  var any=false;
+  for(var i=0;i<shelves.length;i++){
+    var cards=shelves[i].querySelectorAll('.pcard');
+    var visible=0;
+    for(var j=0;j<cards.length;j++){
+      var hay=(cards[j].getAttribute('data-search')||'')+' '+cards[j].textContent.toLowerCase();
+      var show=!q||hay.indexOf(q)>-1;
+      cards[j].style.display=show?'':'none';
+      if(show){visible++;}
+    }
+    shelves[i].style.display=visible?'':'none';
+    if(visible){any=true;}
+  }
+  document.getElementById('nores').style.display=any?'none':'block';
+}
+
+var cellPlays={
+ 'A-cold':{ids:['cell-A-cold'],title:'A × Cold — Dale, Gulf Coast Plumbing',
+   body:'The play: earn a first hello, don’t pitch. His website link is dead and his phone rang out with no voicemail — walk in with that found, not sold. Claude already has the review themes.'},
+ 'A-trusts':{ids:['cell-A-trusts'],title:'A × Trusts me — Rudy, Reyes Auto Care',
+   body:'The play: close. Demo at 2 today. He named the pain himself — just show him the AI catching an after-hours call. Tap Rudy in the vault for the full page.'},
+ 'A-vouch':{ids:['cell-A-vouch'],title:'A × Would vouch — Hidalgo Roofing (CLIENT)',
+   body:'The play: keep the cadence, then the referral ask — due this week. A client is the warmest square on the board, not a finished row.'},
+ 'B-cold':{ids:['cell-B-cold'],title:'B × Cold — Dr. Kim, Smile Lane Dental',
+   body:'The play: get past the gatekeeper. Owner is in Thursdays — that’s today. Four reviews say “phone never picked up”; the pain is public.'},
+ 'B-knows':{ids:['cell-B-knows'],title:'B × Knows me — Bree · Andre',
+   body:'The play: stay warm cheap. Bree gets the re-visit today PM (she answers PMs). Andre said a friendly no — ghost 6 weeks, re-approach late Sep.'},
+ 'C-vouch':{ids:['cell-C-vouch'],title:'C × Would vouch — Marisol, Casa Verde',
+   body:'The play: never sell, always visit. Two intro leads already. She knows everyone on the strip — the referral engine runs on coffee, en español.'},
+ 'empty':{ids:[],title:'Empty square',
+   body:'Nobody here yet. Squares fill as you walk streets and log people — the Friday recap shows which way the board moved.'}
+};
+function pickCell(key){
+  var cells=document.querySelectorAll('.mxcell');
+  for(var i=0;i<cells.length;i++){cells[i].classList.remove('picked');}
+  var play=cellPlays[key]||cellPlays['empty'];
+  for(var k=0;k<play.ids.length;k++){
+    var el=document.getElementById(play.ids[k]);
+    if(el){el.classList.add('picked');}
+  }
+  var d=document.getElementById('mxdetail');
+  d.innerHTML='<h3></h3>';
+  d.querySelector('h3').textContent=play.title;
+  var p=document.createElement('div');
+  p.textContent=play.body;
+  d.appendChild(p);
+}
+</script>
+</body>
+</html>

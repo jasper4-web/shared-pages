@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex">
+<title>Field Deck — Mock 3 · The Command Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{ --bg:#0A0A0C; --panel:#131318; --panel2:#1A1A22; --line:#26262f;
+--cream:#F2EBE0; --dim:#9b95a8; --blue:#3B82F6; --cyan:#22D3EE;
+--red:#F87171; --green:#34D399; --amber:#FBBF24; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:#000}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--cream);max-width:430px;margin:0 auto;min-height:100vh;padding:34px 0 92px;position:relative}
+.mockbanner{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:60;background:linear-gradient(90deg,var(--blue),var(--cyan));color:#08121c;font-size:10px;font-weight:700;letter-spacing:.08em;text-align:center;padding:5px 8px;text-transform:uppercase}
+a{color:var(--cyan)}
+.wrap{padding:12px 14px 0}
+/* ---------- top strip ---------- */
+.topstrip{display:flex;justify-content:space-between;align-items:center;padding:2px 0 10px}
+.brand{font-weight:700;font-size:15px;letter-spacing:.02em}
+.brand span{background:linear-gradient(90deg,var(--blue),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.datechip{font-size:11px;color:var(--dim)}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tab{flex:1;text-align:center;font-size:12px;font-weight:600;padding:9px 0;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--dim);cursor:pointer}
+.tab.on{background:linear-gradient(90deg,var(--blue),var(--cyan));color:#08121c;border-color:transparent}
+/* ---------- scoreboard ---------- */
+.zonelabel{font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin:14px 2px 8px;display:flex;align-items:center;gap:8px}
+.zonelabel::after{content:"";flex:1;height:1px;background:var(--line)}
+.scoreboard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}
+.scoretop{display:flex;align-items:stretch;gap:12px}
+.hero{flex:1;cursor:pointer}
+.hero .big{font-size:44px;font-weight:700;line-height:1;color:var(--amber)}
+.hero .big small{font-size:20px;color:var(--dim);font-weight:500}
+.hero .cap{font-size:11px;color:var(--dim);margin-top:4px}
+.herobar{height:5px;border-radius:3px;background:var(--panel2);margin-top:8px;overflow:hidden}
+.herobar i{display:block;height:100%;width:33%;border-radius:3px;background:var(--amber)}
+.sidecells{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.cell{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:7px 12px;text-align:center;cursor:pointer}
+.cell b{display:block;font-size:16px}
+.cell span{font-size:9.5px;color:var(--dim);letter-spacing:.05em;text-transform:uppercase}
+.tierrow{display:flex;gap:6px;margin-top:12px}
+.tierchip{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:6px 4px;text-align:center;cursor:pointer}
+.tierchip b{font-size:14px;display:block}
+.tierchip span{font-size:9px;color:var(--dim);letter-spacing:.04em}
+.tierchip .a{color:var(--cyan)} .tierchip .b{color:var(--blue)} .tierchip .c{color:var(--dim)} .tierchip .w{color:var(--green)}
+.claudeline{display:flex;align-items:center;gap:9px;margin-top:12px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex:none;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,.5)}50%{box-shadow:0 0 0 6px rgba(52,211,153,0)}}
+.claudeline .t{font-size:12px;line-height:1.35}
+.claudeline .t b{color:var(--green);font-weight:600}
+.claudeline .t small{color:var(--dim);display:block;font-size:10.5px}
+/* ---------- board ---------- */
+.board{display:flex;gap:10px;overflow-x:auto;padding:2px 14px 10px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.board::-webkit-scrollbar{display:none}
+.col{flex:0 0 240px;scroll-snap-align:start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px}
+.colhead{display:flex;justify-content:space-between;align-items:center;margin:2px 2px 9px}
+.colhead b{font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.colhead .n{font-size:11px;color:var(--dim);background:var(--panel2);border-radius:8px;padding:1px 8px}
+.col.hotcol{border-color:rgba(251,191,36,.45)}
+.col.hotcol .colhead b{color:var(--amber)}
+.pcard{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:10px 11px;margin-bottom:8px;cursor:pointer}
+.pcard:active{border-color:var(--cyan)}
+.pcard .nm{font-size:14px;font-weight:600}
+.pcard .biz{font-size:11px;color:var(--dim);margin-top:1px}
+.pcard .st{font-size:11px;margin-top:6px;color:var(--cream);opacity:.85;line-height:1.35}
+.badges{display:flex;gap:5px;margin-top:7px}
+.bdg{font-size:9.5px;font-weight:700;letter-spacing:.04em;border-radius:6px;padding:2px 7px;text-transform:uppercase}
+.bdg.val{background:rgba(59,130,246,.16);color:var(--blue);border:1px solid rgba(59,130,246,.4)}
+.bdg.val.A{background:rgba(34,211,238,.14);color:var(--cyan);border-color:rgba(34,211,238,.45)}
+.bdg.warm{background:var(--panel);color:var(--dim);border:1px solid var(--line)}
+.bdg.warm.hot{background:rgba(52,211,153,.13);color:var(--green);border-color:rgba(52,211,153,.4)}
+.bdg.gold{background:rgba(251,191,36,.14);color:var(--amber);border:1px solid rgba(251,191,36,.45)}
+.hint-swipe{font-size:10px;color:var(--dim);text-align:right;margin:2px 16px 0}
+/* ---------- missions ---------- */
+.missions{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:6px 8px}
+.mi{display:flex;align-items:flex-start;gap:11px;padding:11px 8px;border-bottom:1px solid var(--line);cursor:pointer}
+.mi:last-child{border-bottom:0}
+.mi .box{width:22px;height:22px;border:2px solid var(--dim);border-radius:7px;flex:none;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#08121c}
+.mi.done .box{background:var(--green);border-color:var(--green)}
+.mi.done .txt .h{text-decoration:line-through;color:var(--dim)}
+.mi .txt .h{font-size:13.5px;font-weight:600}
+.mi .txt .s{font-size:11px;color:var(--dim);margin-top:2px;line-height:1.35}
+.mi.hot{background:rgba(251,191,36,.07);border-left:3px solid var(--amber);border-radius:10px;margin:4px 0}
+.mi.hot .txt .h{color:var(--amber)}
+.ticker{margin-top:10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 12px;cursor:pointer}
+.ticker .row{display:flex;gap:9px;font-size:11px;padding:4px 0;color:var(--dim);line-height:1.4}
+.ticker .row b{color:var(--cream);font-weight:600;flex:none;font-size:10.5px}
+/* ---------- command bar ---------- */
+.cmdbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:10px 14px 16px;background:linear-gradient(180deg,transparent,rgba(10,10,12,.94) 34%);z-index:50}
+.cmdbtn{width:100%;border:0;border-radius:14px;padding:15px;font-family:inherit;font-size:15px;font-weight:700;color:#08121c;background:linear-gradient(90deg,var(--blue),var(--cyan));cursor:pointer;box-shadow:0 8px 24px rgba(34,211,238,.22)}
+/* ---------- sheets & views ---------- */
+.view{display:none}.view.on{display:block}
+.sheetveil{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:70;display:none}
+.sheetveil.on{display:block}
+.sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--panel);border:1px solid var(--line);border-radius:20px 20px 0 0;z-index:71;padding:16px 16px 22px;display:none}
+.sheet.on{display:block}
+.sheet h3{font-size:15px;margin-bottom:4px}
+.sheet .sub{font-size:11px;color:var(--dim);margin-bottom:10px}
+.sheet textarea{width:100%;min-height:96px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--cream);font-family:inherit;font-size:14px;padding:12px;resize:none}
+.sheet textarea::placeholder{color:var(--dim)}
+.chiprow{display:flex;gap:7px;margin:10px 0}
+.chip{flex:1;font-size:11.5px;font-weight:600;text-align:center;padding:9px 4px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--cream);cursor:pointer}
+.chip.sel{border-color:var(--cyan);color:var(--cyan)}
+.savebtn{width:100%;border:0;border-radius:12px;padding:13px;font-family:inherit;font-size:14px;font-weight:700;color:#08121c;background:linear-gradient(90deg,var(--blue),var(--cyan));cursor:pointer}
+/* ---------- person page ---------- */
+.pback{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--dim);background:none;border:0;font-family:inherit;cursor:pointer;padding:4px 2px;margin-bottom:8px}
+.phead{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}
+.phead .top{display:flex;gap:12px;align-items:center}
+.avatar{width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#08121c;flex:none}
+.phead h2{font-size:18px;line-height:1.15}
+.phead .biz{font-size:12px;color:var(--dim)}
+.demopill{display:inline-block;margin-top:10px;background:rgba(251,191,36,.13);border:1px solid rgba(251,191,36,.5);color:var(--amber);font-size:12px;font-weight:700;border-radius:9px;padding:6px 12px}
+.actrow{display:flex;gap:8px;margin:12px 0}
+.act{flex:1;text-align:center;font-size:12px;font-weight:600;padding:11px 4px;border-radius:11px;border:1px solid var(--line);background:var(--panel);color:var(--cream);cursor:pointer}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:10px}
+.card h4{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-bottom:9px}
+.kv{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)}
+.kv:last-child{border-bottom:0}
+.kv span{color:var(--dim);flex:none}
+.kv b{font-weight:600;text-align:right}
+.quote{border-left:3px solid var(--cyan);padding:2px 0 2px 11px;font-size:14px;line-height:1.45;font-style:italic}
+.quote small{display:block;font-style:normal;color:var(--dim);font-size:11px;margin-top:5px}
+.clivework{display:flex;gap:9px;align-items:center}
+.clivework .t{font-size:12.5px;line-height:1.4}
+.clivework .t b{color:var(--green)}
+.clivework .t small{display:block;color:var(--dim);font-size:11px}
+.tl{position:relative;padding-left:18px}
+.tl::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.ev{position:relative;padding:0 0 14px}
+.ev:last-child{padding-bottom:2px}
+.ev::before{content:"";position:absolute;left:-17px;top:5px;width:8px;height:8px;border-radius:50%;background:var(--blue)}
+.ev.hotev::before{background:var(--amber)}
+.ev .when{font-size:10.5px;color:var(--dim);letter-spacing:.05em;text-transform:uppercase}
+.ev .what{font-size:13px;margin-top:2px;line-height:1.45}
+.ev .what i{color:var(--cyan);font-style:italic}
+.filesrow{display:flex;gap:8px;overflow-x:auto}
+.filesrow::-webkit-scrollbar{display:none}
+.file{flex:0 0 auto;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:11.5px;color:var(--cream);cursor:pointer;display:flex;align-items:center;gap:7px}
+.personlog{width:100%;margin:4px 0 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--cream);font-family:inherit;font-size:13px;font-weight:600;padding:12px;cursor:pointer}
+/* ---------- week ---------- */
+.funnel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}
+.frow{display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer}
+.frow .lbl{width:96px;font-size:11.5px;color:var(--dim);flex:none}
+.fbarwrap{flex:1;height:22px;background:var(--panel2);border-radius:7px;overflow:hidden}
+.fbar{height:100%;border-radius:7px;background:linear-gradient(90deg,var(--blue),var(--cyan))}
+.frow b{width:26px;text-align:right;font-size:14px;flex:none}
+.insight{margin-top:12px;border-radius:16px;padding:1px;background:linear-gradient(120deg,var(--blue),var(--cyan))}
+.insight .in{background:var(--panel);border-radius:15px;padding:14px}
+.insight h4{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+.insight p{font-size:13.5px;line-height:1.5}
+.insight p+p{margin-top:9px}
+.insight .move{margin-top:11px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.45;cursor:pointer}
+.insight .move b{color:var(--amber)}
+.weekfoot{font-size:11px;color:var(--dim);text-align:center;margin-top:12px}
+/* ---------- toast ---------- */
+#toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(14px);max-width:380px;width:calc(100% - 48px);background:var(--panel2);border:1px solid var(--cyan);color:var(--cream);font-size:12.5px;line-height:1.4;padding:11px 14px;border-radius:12px;opacity:0;pointer-events:none;transition:.22s;z-index:90;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.backlink{display:block;text-align:center;font-size:11px;color:var(--dim);text-decoration:none;padding:18px 0 4px}
+</style>
+</head>
+<body>
+
+<div class="mockbanner">MOCK 3 OF 4 · "THE COMMAND DECK" · FAKE DATA — TAP AROUND</div>
+
+<!-- ================= DECK (HOME) ================= -->
+<div class="view on" id="view-deck">
+  <div class="wrap">
+    <div class="topstrip">
+      <div class="brand">SANO <span>Field Deck</span></div>
+      <div class="datechip">Wed · Aug 13 · Houston</div>
+    </div>
+    <div class="tabs">
+      <button class="tab on" id="tab-deck" onclick="go('deck')">Deck</button>
+      <button class="tab" id="tab-week" onclick="go('week')">Week</button>
+    </div>
+
+    <div class="zonelabel">Scoreboard</div>
+    <div class="scoreboard">
+      <div class="scoretop">
+        <div class="hero" onclick="toast('Demos held this week. Target resets Monday. Rudy at 2:00 makes it 2 of 3.')">
+          <div class="big">1<small> / 3</small></div>
+          <div class="cap">demos held · weekly target</div>
+          <div class="herobar"><i></i></div>
+        </div>
+        <div class="sidecells">
+          <div class="cell" onclick="toast('9 straight weekdays with at least one logged rep. Keep the chain.')"><b>9</b><span>day streak</span></div>
+          <div class="cell" onclick="toast('1 paying client: Hidalgo Roofing, live since Aug 1.')"><b>1</b><span>client</span></div>
+        </div>
+      </div>
+      <div class="tierrow">
+        <div class="tierchip" onclick="toast('Value A prospects: Rudy, Dale. The money doors.')"><b class="a">2</b><span>A&nbsp;value</span></div>
+        <div class="tierchip" onclick="toast('Value B: Bree, Dr. Kim, Andre.')"><b class="b">3</b><span>B&nbsp;value</span></div>
+        <div class="tierchip" onclick="toast('Value C: Marisol. Low ticket, high referral juice.')"><b class="c">1</b><span>C&nbsp;value</span></div>
+        <div class="tierchip" onclick="toast('Warm = Trusts me or Would vouch: Rudy, Marisol, Hidalgo.')"><b class="w">3</b><span>warm</span></div>
+      </div>
+      <div class="claudeline" onclick="toast('(mock) Opens the overnight report: 11 doors researched, 2 texts drafted, Rudy pitch page in progress.')">
+        <div class="dot"></div>
+        <div class="t"><b>Claude overnight:</b> 11 doors researched · 2 texts drafted<small>Rudy's pitch page is building — ready by 1:15p. One brain, two faces.</small></div>
+      </div>
+    </div>
+
+    <div class="zonelabel">The Board</div>
+  </div>
+
+  <div class="board" id="board"></div>
+  <div class="hint-swipe">swipe →</div>
+
+  <div class="wrap">
+    <div class="zonelabel">Today's Missions</div>
+    <div class="missions">
+      <div class="mi" id="mi0" onclick="toggleMission(0)">
+        <div class="box" id="mibox0">✓</div>
+        <div class="txt"><div class="h">Route: Westheimer strip, 10:00a</div><div class="s">6 doors mapped. Start at Gulf Coast Plumbing — the cold A. Dale never picks up; go in person.</div></div>
+      </div>
+      <div class="mi hot" id="mi1" onclick="toggleMission(1)">
+        <div class="box" id="mibox1">✓</div>
+        <div class="txt"><div class="h">Rudy's demo is at 2:00. Leave by 1:35.</div><div class="s">Reyes Auto Care. Lead with after-hours calls — his exact words. Pitch page ready by 1:15.</div></div>
+      </div>
+      <div class="mi" id="mi2" onclick="toggleMission(2)">
+        <div class="box" id="mibox2">✓</div>
+        <div class="txt"><div class="h">Bree — PM re-visit</div><div class="s">Lonestar Lash. She knows you now; owner talks in PMs only. Swing by after Rudy.</div></div>
+      </div>
+      <div class="mi" id="mi3" onclick="toggleMission(3)">
+        <div class="box" id="mibox3">✓</div>
+        <div class="txt"><div class="h">Evening: send the 2 drafted texts</div><div class="s">Claude drafted follow-ups for Dale and Dr. Kim's front desk. Review, then send from your phone.</div></div>
+      </div>
+    </div>
+
+    <div class="ticker" onclick="toast('(mock) Opens the full day-by-day journal. Every rep you log lands here forever.')">
+      <div class="row"><b>Tue 8/12</b>Westheimer strip — 9 doors, 4 conversations, met Rudy, 1 demo booked.</div>
+      <div class="row"><b>Mon 8/11</b>First calls day — 11 pre-calls, 2 numbers.</div>
+      <div class="row"><b>Fri recap</b>Week 1: 27 doors, 11 conversations, top objection "we already have someone" ×4.</div>
+    </div>
+
+    <a class="backlink" href="index.html">‹ all four mocks</a>
+  </div>
+</div>
+
+<!-- ================= WEEK ================= -->
+<div class="view" id="view-week">
+  <div class="wrap">
+    <div class="topstrip">
+      <div class="brand">SANO <span>Field Deck</span></div>
+      <div class="datechip">Week of Aug 10</div>
+    </div>
+    <div class="tabs">
+      <button class="tab" id="tab-deck2" onclick="go('deck')">Deck</button>
+      <button class="tab on" id="tab-week2" onclick="go('week')">Week</button>
+    </div>
+
+    <div class="zonelabel">The Funnel · so far this week</div>
+    <div class="funnel">
+      <div class="frow" onclick="toast('Every door you physically walked. Tue was the big day: 9.')"><div class="lbl">Doors</div><div class="fbarwrap"><div class="fbar" style="width:100%"></div></div><b>16</b></div>
+      <div class="frow" onclick="toast('Real conversations — someone with a name talked back.')"><div class="lbl">Conversations</div><div class="fbarwrap"><div class="fbar" style="width:44%"></div></div><b>7</b></div>
+      <div class="frow" onclick="toast('Numbers collected: Rudy (Mon). Cell numbers are gold.')"><div class="lbl">Numbers</div><div class="fbarwrap"><div class="fbar" style="width:13%"></div></div><b>2</b></div>
+      <div class="frow" onclick="toast('Demos booked: Rudy today 2:00p.')"><div class="lbl">Demos set</div><div class="fbarwrap"><div class="fbar" style="width:7%;background:var(--amber)"></div></div><b>1</b></div>
+      <div class="frow" onclick="toast('None closed yet this week — Rudy is the live shot.')"><div class="lbl">Closed</div><div class="fbarwrap"><div class="fbar" style="width:0%"></div></div><b>0</b></div>
+    </div>
+
+    <div class="insight">
+      <div class="in">
+        <h4>What the week is telling you</h4>
+        <p>Doors are turning into conversations at a healthy clip — but the "we already have someone" wall came up 4 times last week and it's back this week. You're pitching the what before the gap.</p>
+        <p>Rudy bit because you led with <i style="color:var(--cyan)">his</i> hole: nobody answers the phone on Tuesdays. Dale's hole is a dead website link and no voicemail. Dr. Kim's is 4 reviews saying the phone never gets picked up.</p>
+        <div class="move" onclick="toast('(mock) Claude turns this into an opener card for tomorrow morning\'s briefing.')"><b>The move:</b> open every cold door with their specific leak, not the product. "Y'all's website link is dead — you know that?" beats any pitch.</div>
+      </div>
+    </div>
+
+    <div class="weekfoot">Friday recap drops here at 5:00p — written up by Claude from everything you logged.</div>
+    <a class="backlink" href="index.html">‹ all four mocks</a>
+  </div>
+</div>
+
+<!-- ================= PERSON: RUDY (full) ================= -->
+<div class="view" id="view-rudy">
+  <div class="wrap">
+    <button class="pback" onclick="go('deck')">‹ back to the deck</button>
+
+    <div class="phead">
+      <div class="top">
+        <div class="avatar">RR</div>
+        <div>
+          <h2>Rudy Reyes</h2>
+          <div class="biz">Reyes Auto Care · Auto · 713-555-0114</div>
+        </div>
+      </div>
+      <div class="badges" style="margin-top:11px">
+        <span class="bdg val A">Value A</span>
+        <span class="bdg warm hot">Trusts me</span>
+        <span class="bdg gold">Demo today</span>
+      </div>
+      <div class="demopill">⏱ DEMO TODAY · 2:00p — leave by 1:35</div>
+    </div>
+
+    <div class="actrow">
+      <button class="act" onclick="toast('(mock) Calls Rudy at 713-555-0114.')">📞 Call</button>
+      <button class="act" onclick="toast('(mock) Opens the text thread — tonight\'s draft is already waiting.')">💬 Text</button>
+      <button class="act" onclick="toast('(mock) Opens Maps to Reyes Auto Care. 19 min from here.')">🧭 Route</button>
+    </div>
+
+    <div class="card">
+      <div class="clivework">
+        <div class="dot"></div>
+        <div class="t"><b>Claude is on it:</b> pitch page building from Rudy's exact words — ready by 1:15p.<small>Researched overnight: 4.6★, 89 reviews, no after-hours line, competitor 2 blocks down.</small></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4>Their words, on file</h4>
+      <div class="quote">"If it can catch the after-hours calls I'm listening."<small>— Rudy, at the counter, Tue Aug 12</small></div>
+    </div>
+
+    <div class="card">
+      <h4>Business snapshot</h4>
+      <div class="kv"><span>Package fit</span><b>Growth</b></div>
+      <div class="kv"><span>Pain in one line</span><b>Wife answers phones; she's out Tuesdays</b></div>
+      <div class="kv"><span>Who decides</span><b>Rudy — solo owner, decides on the spot</b></div>
+      <div class="kv"><span>Reviews</span><b>4.6★ · 89 on Google</b></div>
+      <div class="kv"><span>Next step</span><b>Demo 2:00p today</b></div>
+    </div>
+
+    <div class="card">
+      <h4>Personal</h4>
+      <div class="kv"><span>Spouse</span><b>Carla (answers the phones)</b></div>
+      <div class="kv"><span>Kids</span><b>Two</b></div>
+      <div class="kv"><span>Into</span><b>Restoring a '68 C10 pickup</b></div>
+      <div class="kv"><span>Birthday</span><b style="color:var(--dim)">unknown — ask sometime</b></div>
+    </div>
+
+    <div class="card">
+      <h4>Story so far</h4>
+      <div class="tl">
+        <div class="ev hotev"><div class="when">Today · Wed Aug 13</div><div class="what">Demo at 2:00p. Plan: lead with after-hours calls, show the AI answering while "Carla is out."</div></div>
+        <div class="ev"><div class="when">Tue Aug 12 · door visit</div><div class="what">Talked 15 min at the counter. He brought up Tuesdays himself. <i>"If it can catch the after-hours calls I'm listening."</i> Booked the demo on the spot.</div></div>
+        <div class="ev"><div class="when">Mon Aug 11 · pre-call</div><div class="what">Picked up on the 4th ring. Friendly, rushed. Collected his cell — said come by the shop.</div></div>
+        <div class="ev"><div class="when">Sun Aug 10 · Claude research</div><div class="what">Flagged as a Value A: strong reviews, zero after-hours coverage, busy corner lot on Westheimer.</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4>Photos & files</h4>
+      <div class="filesrow">
+        <div class="file" onclick="toast('(mock) Opens the storefront photo from Tuesday\'s visit.')">📷 Storefront</div>
+        <div class="file" onclick="toast('(mock) Opens the \'68 C10 photo Rudy showed you — good demo icebreaker.')">📷 The '68 C10</div>
+        <div class="file" onclick="toast('(mock) Plays your 40-sec voice memo from the truck after Tuesday\'s visit.')">🎙 Voice memo · Tue</div>
+        <div class="file" onclick="toast('(mock) Opens the pitch page draft Claude is building.')">📄 Pitch page (building…)</div>
+      </div>
+    </div>
+
+    <button class="personlog" onclick="openLog('Rudy')">🎤 Add to Rudy's story — just talk</button>
+    <a class="backlink" href="index.html">‹ all four mocks</a>
+  </div>
+</div>
+
+<!-- ================= PERSON: OTHERS (lite, data-driven) ================= -->
+<div class="view" id="view-person">
+  <div class="wrap">
+    <button class="pback" onclick="go('deck')">‹ back to the deck</button>
+    <div id="person-body"></div>
+    <button class="personlog" id="person-logbtn" onclick="openLog(curPerson)">🎤 Add to their story — just talk</button>
+    <a class="backlink" href="index.html">‹ all four mocks</a>
+  </div>
+</div>
+
+<!-- ================= COMMAND BAR ================= -->
+<div class="cmdbar" id="cmdbar">
+  <button class="cmdbtn" onclick="openLog('')">🎤 log it</button>
+</div>
+
+<!-- ================= LOG SHEET ================= -->
+<div class="sheetveil" id="veil" onclick="closeLog()"></div>
+<div class="sheet" id="logsheet">
+  <h3 id="logtitle">Log it</h3>
+  <div class="sub">Goes straight into the shared brain — Claude sees it the second you save.</div>
+  <textarea id="logta" placeholder="Tap the 🎤 on your keyboard and just talk. 'Hit Gulf Coast Plumbing, Dale wasn't in, girl at the desk said Thursdays…'"></textarea>
+  <div class="chiprow">
+    <button class="chip" id="chip0" onclick="pickChip(0)">🚪 A door</button>
+    <button class="chip" id="chip1" onclick="pickChip(1)">📞 A call</button>
+    <button class="chip" id="chip2" onclick="pickChip(2)">👤 New person</button>
+  </div>
+  <button class="savebtn" onclick="saveLog()">Save to the brain</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ---------- toast ---------- */
+var toastTimer=null;
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove('show');},2600);
+}
+
+/* ---------- navigation ---------- */
+function go(v){
+  ['view-deck','view-week','view-rudy','view-person'].forEach(function(id){
+    document.getElementById(id).classList.remove('on');
+  });
+  document.getElementById('view-'+v).classList.add('on');
+  document.getElementById('cmdbar').style.display=(v==='deck'||v==='week')?'block':'none';
+  window.scrollTo(0,0);
+}
+
+/* ---------- cast data ---------- */
+var people={
+  rudy:{full:true},
+  dale:{nm:'Dale',biz:'Gulf Coast Plumbing Co. · Plumbing · 713-555-0121',ini:'D',val:'A',warm:'Cold',warmHot:false,
+    snapshot:[['Package fit','Growth (guess — never met)'],['Pain in one line','Dead website link · no voicemail'],['Reviews','4.9★ · 212 on Google'],['Who decides','Dale (assumed owner)'],['Next step','In person — first stop on today\'s route']],
+    quote:null,
+    story:[['Tue Aug 12 · pre-call 2:10p','Rang out. No voicemail set up — that IS the pitch.'],['Sun Aug 10 · Claude research','Flagged the classic cold A: 4.9★, 212 reviews, website link dead. Big business, leaky front door.']],
+    claude:'Overnight: drafted a text opener about the dead website link. Review it tonight.'},
+  marisol:{nm:'Marisol',biz:'Casa Verde Landscaping · Home Services · 713-555-0138',ini:'M',val:'C',warm:'Would vouch',warmHot:true,
+    snapshot:[['Package fit','Starter, someday — not the point'],['Why she matters','Knows everyone on the strip; 2 intro leads sent'],['Language','Spanish-first — bring the Spanish one-pager'],['Next step','Casual visit this week, no pitch']],
+    quote:null,
+    story:[['Mon Aug 11 · pre-call','Answered in 3 rings, warm as ever. Asked about the Reyes shop — she knows Rudy.'],['Last week','Sent two intro leads without being asked. The warm C: worth visits for referrals, not for the sale.']],
+    claude:'Overnight: noted both her intro leads in the referral ledger.'},
+  bree:{nm:'Bree',biz:'Lonestar Lash Studio · Beauty · 713-555-0142',ini:'B',val:'B',warm:'Knows me',warmHot:false,
+    snapshot:[['Package fit','Starter'],['Pain in one line','Owner only reachable in PMs'],['Who decides','Bree — but she books over DMs'],['Next step','Re-visit today PM, after Rudy']],
+    quote:null,
+    story:[['Today','Re-visit due this afternoon. She remembered your name last time — that\'s movement.'],['Last week · door visit','Talked once at the front. Friendly, non-committal. Owner in PMs only.']],
+    claude:'Overnight: pulled her booking-page gaps — she loses DMs after 7p.'},
+  kim:{nm:'Dr. Kim',biz:'Smile Lane Dental · Dental · 713-555-0157',ini:'K',val:'B',warm:'Cold',warmHot:false,
+    snapshot:[['Package fit','Growth'],['Pain in one line','Reviews say "phone never picked up" ×4'],['Who decides','Dr. Kim — in Thursdays only'],['Gatekeeper','Front desk holds the calendar'],['Next step','Thursday run at the front desk']],
+    quote:null,
+    story:[['Tue Aug 12','Front desk took a card, gave nothing back. Gatekeeper stage.'],['Sun Aug 10 · Claude research','4 separate reviews complain the phone never gets answered. The pitch writes itself — if you can reach her.']],
+    claude:'Overnight: drafted a front-desk-friendly text for the evening batch.'},
+  andre:{nm:'Andre',biz:'Bayou Fade Barbershop · Barber · 713-555-0163',ini:'A',val:'B',warm:'Knows me',warmHot:false,
+    snapshot:[['Package fit','Starter'],['Status','Said no — "my cousin does our stuff"'],['Vibe','Friendly no. Door\'s not closed.'],['Next step','6-week ghost · re-approach Sep 23']],
+    quote:'"My cousin does our stuff."',quoteBy:'Andre, at the chair, last week',
+    story:[['Last week · door visit','Friendly no. Cousin handles their web stuff. Laughed, said come back anytime.'],['Plan','Ghost 6 weeks, then re-approach with something the cousin can\'t do: the phone.']],
+    claude:'Reminder set: Sep 23 re-approach, with the after-hours angle.'},
+  hidalgo:{nm:'Hidalgo Roofing',biz:'Roofing · CLIENT since Aug 1 · 713-555-0170',ini:'H',val:'A',warm:'Would vouch',warmHot:true,client:true,
+    snapshot:[['Status','CLIENT — live since Aug 1'],['This month','42 calls answered by the AI'],['Check-in cadence','Every other Friday · next: Aug 15'],['Referral ask','DUE — he said he\'d vouch. Collect it.']],
+    quote:null,
+    story:[['Fri Aug 15 · upcoming','Check-in call. Bring the 42-calls number. Make the referral ask.'],['Aug 1','Went live. First closed connection — this is what a WON card looks like.'],['July','Two visits, one demo, closed on the follow-up.']],
+    claude:'Overnight: built his monthly numbers card — 42 calls answered, 0 missed.'}
+};
+
+/* ---------- board render ---------- */
+var cols=[
+  {name:'Cold A\u2019s',hot:false,ids:['dale']},
+  {name:'In play',hot:false,ids:['bree','kim','marisol','andre']},
+  {name:'Demo set',hot:true,ids:['rudy']},
+  {name:'Clients',hot:false,ids:['hidalgo']}
+];
+var cardMeta={
+  rudy:{nm:'Rudy Reyes',biz:'Reyes Auto Care · Auto',st:'DEMO TODAY 2:00p · leave by 1:35',val:'A',warm:'Trusts me',warmHot:true,gold:true},
+  dale:{nm:'Dale',biz:'Gulf Coast Plumbing Co.',st:'4.9★ ×212 · dead site link · rang out Tue',val:'A',warm:'Cold',warmHot:false},
+  bree:{nm:'Bree',biz:'Lonestar Lash Studio',st:'Re-visit due today PM',val:'B',warm:'Knows me',warmHot:false},
+  kim:{nm:'Dr. Kim',biz:'Smile Lane Dental',st:'Gatekeeper stage · owner in Thursdays',val:'B',warm:'Cold',warmHot:false},
+  marisol:{nm:'Marisol',biz:'Casa Verde Landscaping',st:'2 intro leads sent · Spanish-first',val:'C',warm:'Would vouch',warmHot:true},
+  andre:{nm:'Andre',biz:'Bayou Fade Barbershop',st:'Friendly no · re-approach Sep 23',val:'B',warm:'Knows me',warmHot:false},
+  hidalgo:{nm:'Hidalgo Roofing',biz:'CLIENT since Aug 1',st:'42 AI-answered calls this mo · referral ask due',val:'A',warm:'Would vouch',warmHot:true,gold:true}
+};
+(function(){
+  var html='';
+  cols.forEach(function(c){
+    html+='<div class="col'+(c.hot?' hotcol':'')+'"><div class="colhead"><b>'+c.name+'</b><span class="n">'+c.ids.length+'</span></div>';
+    c.ids.forEach(function(id){
+      var m=cardMeta[id];
+      html+='<div class="pcard" onclick="openPerson(\''+id+'\')">'
+        +'<div class="nm">'+m.nm+'</div><div class="biz">'+m.biz+'</div>'
+        +'<div class="st">'+m.st+'</div>'
+        +'<div class="badges"><span class="bdg val '+(m.val==='A'?'A':'')+'">Val '+m.val+'</span>'
+        +'<span class="bdg warm'+(m.warmHot?' hot':'')+'">'+m.warm+'</span>'
+        +(m.gold?'<span class="bdg gold">'+(id==='rudy'?'2:00p':'won')+'</span>':'')
+        +'</div></div>';
+    });
+    html+='</div>';
+  });
+  document.getElementById('board').innerHTML=html;
+})();
+
+/* ---------- person pages ---------- */
+var curPerson='';
+function openPerson(id){
+  if(id==='rudy'){go('rudy');return;}
+  var p=people[id]; curPerson=p.nm;
+  var h='';
+  h+='<div class="phead"><div class="top"><div class="avatar">'+p.ini+'</div><div><h2>'+p.nm+'</h2><div class="biz">'+p.biz+'</div></div></div>';
+  h+='<div class="badges" style="margin-top:11px"><span class="bdg val '+(p.val==='A'?'A':'')+'">Value '+p.val+'</span><span class="bdg warm'+(p.warmHot?' hot':'')+'">'+p.warm+'</span>'+(p.client?'<span class="bdg gold">Client</span>':'')+'</div></div>';
+  h+='<div class="actrow">'
+    +'<button class="act" onclick="toast(\'(mock) Calls '+p.nm.replace(/'/g,"\\'")+'.\')">📞 Call</button>'
+    +'<button class="act" onclick="toast(\'(mock) Opens the text thread.\')">💬 Text</button>'
+    +'<button class="act" onclick="toast(\'(mock) Opens Maps to the shop.\')">🧭 Route</button></div>';
+  h+='<div class="card"><div class="clivework"><div class="dot"></div><div class="t"><b>Claude:</b> '+p.claude+'</div></div></div>';
+  if(p.quote){h+='<div class="card"><h4>Their words, on file</h4><div class="quote">'+p.quote+'<small>— '+p.quoteBy+'</small></div></div>';}
+  h+='<div class="card"><h4>Business snapshot</h4>';
+  p.snapshot.forEach(function(kv){h+='<div class="kv"><span>'+kv[0]+'</span><b>'+kv[1]+'</b></div>';});
+  h+='</div>';
+  h+='<div class="card"><h4>Story so far</h4><div class="tl">';
+  p.story.forEach(function(ev){h+='<div class="ev"><div class="when">'+ev[0]+'</div><div class="what">'+ev[1]+'</div></div>';});
+  h+='</div></div>';
+  document.getElementById('person-body').innerHTML=h;
+  document.getElementById('person-logbtn').textContent='🎤 Add to '+p.nm+"'s story — just talk";
+  go('person');
+}
+
+/* ---------- missions ---------- */
+var mdone=[false,false,false,false];
+var mmsg=[
+  'Route checked off. 6 doors on the strip — Dale first.',
+  'Demo held. That\u2019s 2 of 3 on the week — scoreboard just moved.',
+  'Bree re-visit logged. Warmth inching up.',
+  'Texts sent. Claude will watch for replies overnight.'
+];
+function toggleMission(i){
+  mdone[i]=!mdone[i];
+  document.getElementById('mi'+i).classList.toggle('done',mdone[i]);
+  if(mdone[i]) toast(mmsg[i]); else toast('Un-checked. Back on the list.');
+}
+
+/* ---------- log sheet ---------- */
+var chipSel=-1;
+function openLog(who){
+  document.getElementById('logtitle').textContent = who ? 'Add to '+who+"'s story" : 'Log it';
+  document.getElementById('veil').classList.add('on');
+  document.getElementById('logsheet').classList.add('on');
+}
+function closeLog(){
+  document.getElementById('veil').classList.remove('on');
+  document.getElementById('logsheet').classList.remove('on');
+}
+function pickChip(i){
+  chipSel=i;
+  for(var k=0;k<3;k++) document.getElementById('chip'+k).classList.toggle('sel',k===i);
+}
+function saveLog(){
+  closeLog();
+  document.getElementById('logta').value='';
+  pickChip(-1);
+  toast('(mock) Saved to the shared brain. Claude sees it now — it\u2019ll shape tomorrow\u2019s briefing.');
+}
+</script>
+</body>
+</html>
