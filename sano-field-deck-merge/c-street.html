@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Field Deck — Draft C · One Street</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{ --bg:#0A0A0C; --panel:#131318; --panel2:#1A1A22; --line:#26262f;
+--cream:#F2EBE0; --dim:#9b95a8; --blue:#3B82F6; --cyan:#22D3EE;
+--red:#F87171; --green:#34D399; --amber:#FBBF24; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--cream);font-family:"Space Grotesk",sans-serif;font-size:15px;line-height:1.45}
+.wrap{max-width:430px;margin:0 auto;padding:88px 12px calc(40px + env(safe-area-inset-bottom)) 12px}
+a{color:var(--cyan);text-decoration:none}
+/* ---- banner + top bar ---- */
+.banner{position:fixed;top:0;left:0;right:0;z-index:60;background:linear-gradient(90deg,var(--blue),var(--cyan));color:#07070a;font-size:10px;font-weight:700;letter-spacing:.08em;text-align:center;padding:5px 8px;display:flex;justify-content:center;gap:10px;align-items:center}
+.banner a{color:#07070a;font-weight:600;opacity:.75;font-size:10px}
+.topbar{position:fixed;top:22px;left:0;right:0;z-index:55;background:rgba(10,10,12,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar .in{max-width:430px;margin:0 auto;display:flex;align-items:center;gap:8px;padding:10px 12px}
+.brand{font-weight:700;font-size:15px;letter-spacing:.02em;cursor:pointer}
+.clock{color:var(--dim);font-size:12px;margin-left:2px}
+.tspace{flex:1}
+.tbtn{background:var(--panel);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:7px 11px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.tbtn.flame{color:var(--amber)}
+/* ---- generic ---- */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.btnP{display:inline-block;background:linear-gradient(90deg,var(--blue),var(--cyan));color:#07070a;border:none;border-radius:11px;padding:11px 16px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer}
+.btnG{display:inline-block;background:var(--panel2);border:1px solid var(--line);color:var(--cream);border-radius:11px;padding:10px 14px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer}
+.btnS{background:none;border:none;color:var(--dim);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:10px 8px}
+.dimtxt{color:var(--dim)}
+h3.shelf{position:sticky;top:74px;z-index:20;background:var(--bg);padding:14px 2px 8px 2px;font-size:12px;letter-spacing:.14em;color:var(--dim);font-weight:700;display:flex;align-items:baseline;gap:8px}
+h3.shelf .n{color:var(--cream);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:0 7px;font-size:11px}
+h3.shelf .why{font-weight:500;letter-spacing:0;text-transform:none;font-size:11px;flex:1;text-align:right}
+/* ---- chips ---- */
+.chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.chip{font-size:10.5px;font-weight:700;border-radius:7px;padding:2px 7px;border:1px solid var(--line);color:var(--dim);letter-spacing:.03em;white-space:nowrap}
+.chip.val{color:var(--cream);border-color:#3a3a46}
+.chip.valA{border-color:var(--cream);}
+.chip.w0{color:var(--dim)} .chip.w1{color:var(--blue);border-color:#26436e}
+.chip.w2{color:var(--cyan);border-color:#1c4b57} .chip.w3{color:var(--green);border-color:#1e5a45}
+.chip.rec{color:var(--dim)} .chip.rec.fresh{color:var(--green)} .chip.rec.cold{color:var(--red);border-color:#5c2f33;font-weight:700}
+.chip.client{color:var(--green);border-color:#1e5a45}
+.chip.new{color:var(--cyan);border-color:#1c4b57}
+/* ---- person cards on the street ---- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;cursor:pointer}
+.card .top{display:flex;gap:10px;align-items:flex-start}
+.ava{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:none;border:1px solid var(--line)}
+.card .who{flex:1;min-width:0}
+.card .nm{font-weight:700;font-size:15px}
+.card .bz{color:var(--dim);font-size:12.5px;margin-bottom:5px}
+.play{margin-top:9px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px;display:flex;gap:8px;align-items:flex-start}
+.play .arrow{color:var(--cyan);font-weight:700}
+.acts{display:flex;gap:8px;margin-top:9px}
+.acts .btnG{padding:8px 12px;font-size:12.5px}
+/* NEXT hero card — the one amber moment */
+.nextcard{border:1px solid #5c4a1a;background:linear-gradient(180deg,#1b160c,var(--panel));border-radius:16px;padding:16px;margin-bottom:12px;cursor:pointer}
+.nextcard .tag{color:var(--amber);font-size:11px;font-weight:700;letter-spacing:.16em}
+.nextcard .big{font-size:21px;font-weight:700;margin:6px 0 2px 0}
+.nextcard .sub{color:var(--dim);font-size:13px}
+.nextcard .cta{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+/* rescue card */
+.rescue{border:1px solid #5c2f33;border-left:4px solid var(--red);background:linear-gradient(180deg,#1a1113,var(--panel))}
+.msg{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:10px 12px;font-size:13.5px;margin-top:9px}
+.msg .from{color:var(--dim);font-size:11px;font-weight:700;letter-spacing:.06em;margin-bottom:4px}
+.msg textarea{width:100%;background:var(--bg);color:var(--cream);border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:13.5px;padding:8px;min-height:70px}
+.sentok{color:var(--green);font-weight:700;font-size:13px}
+/* scoreboard */
+.score{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:12px}
+.score .row1{display:flex;align-items:center;gap:12px}
+.hero{font-size:26px;font-weight:700;color:var(--amber);line-height:1}
+.hero small{font-size:12px;color:var(--dim);font-weight:500;display:block;margin-top:3px}
+.score .div{width:1px;height:34px;background:var(--line)}
+.mini{font-size:13px;font-weight:700}
+.mini small{display:block;font-size:11px;color:var(--dim);font-weight:500;margin-top:2px}
+.claude{display:flex;align-items:center;gap:7px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--dim);cursor:pointer}
+.dotp{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex:none;animation:pul 2.2s infinite}
+@keyframes pul{0%,100%{opacity:1}50%{opacity:.45}}
+.pipes{display:flex;gap:6px;margin-top:10px;overflow-x:auto;padding-bottom:2px}
+.pipes .pc{flex:none;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:5px 9px;font-size:11.5px;font-weight:600;color:var(--dim);cursor:pointer}
+.pipes .pc b{color:var(--cream)}
+/* today feed */
+.feed{border-left:2px solid var(--line);margin:4px 0 0 8px;padding-left:14px}
+.fitem{position:relative;padding:7px 0;font-size:13.5px}
+.fitem::before{content:"";position:absolute;left:-19px;top:14px;width:8px;height:8px;border-radius:50%;background:var(--panel2);border:1px solid var(--dim)}
+.fitem.done::before{background:var(--green);border-color:var(--green)}
+.fitem .t{color:var(--dim);font-size:11.5px;font-weight:700;letter-spacing:.05em}
+/* person view */
+.phead{position:sticky;top:74px;z-index:22;background:rgba(10,10,12,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 2px;margin:0 -2px 12px -2px}
+.phead .nm{font-size:19px;font-weight:700}
+.phead .bz{color:var(--dim);font-size:13px;margin-bottom:6px}
+.sect{margin:16px 0 8px 0;font-size:11px;letter-spacing:.14em;color:var(--dim);font-weight:700}
+.tl{border-left:2px solid var(--line);margin-left:8px;padding-left:14px}
+.tl .ev{position:relative;padding:8px 0}
+.tl .ev::before{content:"";position:absolute;left:-19px;top:15px;width:8px;height:8px;border-radius:50%;background:var(--blue)}
+.tl .ev .d{color:var(--dim);font-size:11.5px;font-weight:700}
+.quote{background:var(--panel2);border-left:3px solid var(--cyan);border-radius:0 11px 11px 0;padding:10px 12px;font-size:14.5px;font-style:italic;margin:6px 0}
+.quote .q{color:var(--cyan);font-weight:700;font-style:normal;font-size:11px;letter-spacing:.08em;display:block;margin-bottom:3px}
+.files{display:flex;gap:9px;overflow-x:auto;padding:4px 0}
+.file{flex:none;width:92px;height:92px;border-radius:13px;border:1px solid var(--line);padding:9px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer}
+.file .ic{font-size:20px}
+.file .lb{font-size:10.5px;font-weight:600;line-height:1.25}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kv .k{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:9px 10px}
+.kv .k b{display:block;font-size:14px}
+.kv .k span{font-size:11px;color:var(--dim)}
+.movecard{border:1px solid transparent;border-radius:15px;padding:1px;background:linear-gradient(90deg,var(--blue),var(--cyan));margin-top:6px}
+.movecard .in{background:#101018;border-radius:14px;padding:13px}
+.movecard .t{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--cyan)}
+.movecard .m{font-size:15px;font-weight:600;margin:5px 0 10px 0}
+.statband{display:flex;gap:8px;margin:8px 0}
+.stat{flex:1;background:var(--panel2);border:1px solid #1e5a45;border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:20px;color:var(--green)}
+.stat span{font-size:10.5px;color:var(--dim)}
+/* week */
+.frow{display:flex;align-items:center;gap:10px;margin:9px 0}
+.frow .lbl{width:118px;font-size:12.5px;color:var(--dim);flex:none}
+.frow .barbox{flex:1;background:var(--panel2);border-radius:7px;height:22px;overflow:hidden}
+.frow .bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:7px}
+.frow .num{width:26px;text-align:right;font-weight:700;font-size:14px}
+/* overlays */
+.ov{position:fixed;inset:0;z-index:70;background:rgba(6,6,8,.82);backdrop-filter:blur(6px);display:none}
+.ov.on{display:block}
+.ovin{max-width:430px;margin:0 auto;padding:70px 14px 20px 14px}
+.sin{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:13px;color:var(--cream);font-family:inherit;font-size:16px;padding:13px 14px;outline:none}
+.srow{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px;cursor:pointer}
+.srow .who{flex:1;min-width:0}
+.srow .nm{font-weight:700;font-size:14px}
+.srow .bz{color:var(--dim);font-size:12px}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:75;transform:translateY(110%);transition:transform .25s;padding-bottom:env(safe-area-inset-bottom)}
+.sheet.on{transform:translateY(0)}
+.sheet .in{max-width:430px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:18px 18px 0 0;padding:16px}
+.sheet textarea{width:100%;min-height:90px;background:var(--bg);border:1px solid var(--line);border-radius:11px;color:var(--cream);font-family:inherit;font-size:15px;padding:11px;margin:10px 0}
+#toast{position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:var(--panel2);border:1px solid var(--line);color:var(--cream);padding:11px 16px;border-radius:12px;font-size:13.5px;font-weight:600;z-index:90;opacity:0;transition:all .25s;max-width:86%;text-align:center;pointer-events:none}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.view{display:none}.view.on{display:block}
+.micfab{position:fixed;right:calc(50% - 215px + 14px);bottom:calc(18px + env(safe-area-inset-bottom));z-index:50;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--cyan));border:none;font-size:22px;cursor:pointer;box-shadow:0 6px 20px rgba(34,211,238,.35)}
+@media (max-width:460px){.micfab{right:14px}}
+.donecard{opacity:.45}
+.strike{text-decoration:line-through}
+.insight{border:1px solid var(--line);border-left:3px solid var(--cyan);background:var(--panel);border-radius:0 14px 14px 0;padding:13px 14px;margin-top:12px}
+.insight .move{margin-top:10px;font-weight:700;color:var(--cream)}
+.insight .move b{color:var(--cyan)}
+.note{font-size:12px;color:var(--dim);padding:2px 2px 8px 2px}
+</style>
+</head>
+<body>
+
+<div class="banner">DRAFT C · "ONE STREET" · FAKE DATA — TAP AROUND <a href="index.html">‹ all three drafts</a></div>
+
+<div class="topbar"><div class="in">
+  <span class="brand" onclick="goHome()">FIELD DECK</span><span class="clock">Wed · 12:40p</span>
+  <span class="tspace"></span>
+  <button class="tbtn" onclick="openSearch()" aria-label="Search">🔍</button>
+  <button class="tbtn" onclick="openWeek()">Week</button>
+  <button class="tbtn flame" onclick="streakInfo()">🔥 6</button>
+</div></div>
+
+<div class="wrap">
+
+<!-- ============ HOME: THE STREET ============ -->
+<div id="v-home" class="view on">
+
+  <!-- 1 · scoreboard band -->
+  <div class="score">
+    <div class="row1">
+      <div class="hero" onclick="heroInfo()">1<span style="color:var(--dim);font-size:16px">/3</span><small>demos held · wk</small></div>
+      <div class="div"></div>
+      <div class="mini">27<small>doors</small></div>
+      <div class="mini">11<small>convos</small></div>
+      <div class="mini">1<small>client</small></div>
+      <div class="tspace" style="flex:1"></div>
+      <div class="mini" style="color:var(--amber)">🔥 6<small>day streak</small></div>
+    </div>
+    <div class="pipes">
+      <span class="pc" onclick="scrollToShelf('sh-close')">Close these <b>3</b></span>
+      <span class="pc" onclick="scrollToShelf('sh-cold')">Cold A's <b>3</b></span>
+      <span class="pc" onclick="scrollToShelf('sh-champ')">Champions <b>2</b></span>
+      <span class="pc" onclick="scrollToShelf('sh-client')">Clients <b>1</b></span>
+      <span class="pc" onclick="scrollToShelf('sh-park')">Parked <b>1</b></span>
+    </div>
+    <div class="claude" onclick="claudeInfo()"><span class="dotp"></span>Claude · overnight: 11 doors researched · 3 texts drafted · Rudy pitch page ready 1:15</div>
+  </div>
+
+  <!-- 2 · NEXT -->
+  <h3 class="shelf">NEXT <span class="why">the street decides — you just walk it</span></h3>
+  <div class="nextcard" id="nextcard" onclick="openPerson('rudy')">
+    <div class="tag">⏱ LEAVE BY 1:35 — 55 MIN OUT</div>
+    <div class="big" id="next-title">Rudy Reyes · 2:00 demo</div>
+    <div class="sub">Reyes Auto Care, Long Point Rd. Traffic on Westheimer is normal. Pitch page ready at 1:15 — Growth fit teed up.</div>
+    <div class="cta">
+      <button class="btnP" onclick="openPerson('rudy');event.stopPropagation()">Study up → Rudy's page</button>
+      <button class="btnG" onclick="doneNext(event)" id="next-done-btn">I'm rolling ✓</button>
+      <button class="btnG" onclick="callP('rudy',event)">📞 Call</button>
+    </div>
+  </div>
+
+  <!-- 3 · NEEDS YOU TODAY -->
+  <h3 class="shelf">NEEDS YOU TODAY <span class="n">3</span></h3>
+
+  <div class="card" id="breecard" onclick="openPerson('bree')">
+    <div class="top">
+      <div class="ava" style="background:#221722;color:#e8a3c8">BL</div>
+      <div class="who">
+        <div class="nm">4:00 · Bree — re-visit <span id="bree-done" class="sentok" style="display:none">✓ done</span></div>
+        <div class="bz">Lonestar Lash Studio · PM-only, she said afternoons</div>
+        <div class="chips"><span class="chip val">B</span><span class="chip w1">Knows me</span><span class="chip rec fresh">2d</span></div>
+      </div>
+    </div>
+    <div class="play"><span class="arrow">▸</span><span>Swing by after Rudy. She's seen the one-pager — today's ask is a 15-minute sit-down.</span></div>
+    <div class="acts"><button class="btnG" onclick="doneBree(event)" id="bree-btn">Mark done ✓</button><button class="btnG" onclick="textP('bree',event)">💬 Text</button></div>
+  </div>
+
+  <div class="card rescue" onclick="openPerson('marisol')">
+    <div class="top">
+      <div class="ava" style="background:#12201a;color:var(--green)">MC</div>
+      <div class="who">
+        <div class="nm">Marisol — going cold <span class="chip rec cold">12d ⚠</span></div>
+        <div class="bz">Casa Verde Landscaping · Champion — she'd vouch for you</div>
+        <div class="chips"><span class="chip val">C</span><span class="chip w3">Would vouch</span></div>
+      </div>
+    </div>
+    <div class="play"><span class="arrow">▸</span><span>She's sent you <b>2 intro leads</b> (the lash studio + a fence guy). 12 days quiet. A hey-text keeps her warm — <b>not a pitch</b>.</span></div>
+    <div class="msg" id="mwrap-m" onclick="event.stopPropagation()">
+      <div class="from">DRAFTED FOR YOU</div>
+      <div id="mtxt-m">Marisol! Saw a crew of yours on Bissonnet this morning — yard looked sharp. Hope the season's treating you right. Coffee on me one of these mornings 🤝</div>
+      <div class="acts" id="macts-m">
+        <button class="btnP" style="padding:9px 13px;font-size:13px" onclick="sendText('m')">Send ✓</button>
+        <button class="btnG" onclick="editText('m')">Edit</button>
+        <button class="btnS" onclick="skipText('m')">Skip</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" onclick="openJournal()">
+    <div class="top">
+      <div class="ava" style="background:#101725;color:var(--blue)">7p</div>
+      <div class="who">
+        <div class="nm">Tonight · 3 texts drafted <span id="tex-count" class="chip new">0/3 sent</span></div>
+        <div class="bz">Approve from the couch — 2 minutes, day closed.</div>
+      </div>
+    </div>
+    <div id="texts" onclick="event.stopPropagation()"></div>
+  </div>
+
+  <!-- 4 · THE SHELVES -->
+  <h3 class="shelf" id="sh-close">CLOSE THESE <span class="n">3</span><span class="why">Rudy &amp; Bree are up top — they ARE today</span></h3>
+  <div id="shelf-close"></div>
+
+  <h3 class="shelf" id="sh-cold">COLD A's WORTH A FIRST HELLO <span class="n">3</span></h3>
+  <div id="shelf-cold"></div>
+
+  <h3 class="shelf" id="sh-champ">CHAMPIONS — THEY SEND YOU WORK <span class="n">2</span></h3>
+  <div id="shelf-champ"></div>
+
+  <h3 class="shelf" id="sh-client">CLIENTS — KEEP THE PROMISE <span class="n">1</span></h3>
+  <div id="shelf-client"></div>
+
+  <h3 class="shelf" id="sh-park">PARKED — NOT NOW, NOT NEVER <span class="n">1</span></h3>
+  <div id="shelf-park"></div>
+
+  <!-- 5 · TODAY SO FAR -->
+  <h3 class="shelf">TODAY SO FAR <span class="why"><a onclick="openJournal();event.preventDefault()" href="#">full journal ›</a></span></h3>
+  <div class="note">Newest on top. Done sinks to the bottom — that's the whole idea.</div>
+  <div class="feed" id="todayfeed"></div>
+  <div style="height:70px"></div>
+</div>
+
+<!-- ============ PERSON ============ -->
+<div id="v-person" class="view"></div>
+
+<!-- ============ WEEK ============ -->
+<div id="v-week" class="view">
+  <button class="btnS" onclick="goHome()">‹ street</button>
+  <div class="panel" style="margin-top:6px">
+    <div style="font-size:11px;letter-spacing:.14em;color:var(--dim);font-weight:700">THIS WEEK · MON AUG 11 – WED 12:40P</div>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-top:8px">
+      <span class="hero">1<span style="color:var(--dim);font-size:16px">/3</span></span>
+      <span class="dimtxt" style="font-size:13px">demos held vs target · Rudy at 2:00 makes it 2</span>
+    </div>
+    <div style="margin-top:14px">
+      <div class="frow"><span class="lbl">Doors knocked</span><span class="barbox"><span class="bar" style="width:100%"></span></span><span class="num">27</span></div>
+      <div class="frow"><span class="lbl">Real conversations</span><span class="barbox"><span class="bar" style="width:41%"></span></span><span class="num">11</span></div>
+      <div class="frow"><span class="lbl">Demos booked</span><span class="barbox"><span class="bar" style="width:8%"></span></span><span class="num">2</span></div>
+      <div class="frow"><span class="lbl">Demos held</span><span class="barbox"><span class="bar" style="width:4%;background:var(--amber)"></span></span><span class="num">1</span></div>
+      <div class="frow"><span class="lbl">Clients live</span><span class="barbox"><span class="bar" style="width:4%;background:var(--green)"></span></span><span class="num">1</span></div>
+    </div>
+  </div>
+  <div class="insight">
+    <div style="font-size:11px;letter-spacing:.14em;color:var(--cyan);font-weight:700">WHAT THE WEEK IS TELLING YOU</div>
+    <div style="margin-top:8px;font-size:14px">4 of 11 conversations hit the same wall: <i>"we already have someone."</i> But Hidalgo had someone too — the AI answers what their someone misses. Your two demo books both came off the <b>after-hours line</b>, and both landed between 11a and 1p when owners are actually at the counter.</div>
+    <div class="move"><b>The move.</b> Lead every door with the after-hours miss, and stack your knocking 11-to-1. That's the line that booked Rudy.</div>
+  </div>
+  <div class="panel" style="margin-top:12px">
+    <div style="font-size:11px;letter-spacing:.14em;color:var(--dim);font-weight:700">FRIDAY 6P</div>
+    <div style="margin-top:6px;font-size:14px">Your Week-1 recap lands here — early cut says: <i>27 doors, 11 conversations, top objection "we already have someone" ×4.</i></div>
+    <div class="acts"><button class="btnG" onclick="openJournal()">Open journal</button><button class="btnG" onclick="scrollHomeTo('sh-cold')">Who's next to hello →</button></div>
+  </div>
+  <div style="height:70px"></div>
+</div>
+
+<!-- ============ JOURNAL ============ -->
+<div id="v-journal" class="view">
+  <button class="btnS" onclick="goHome()">‹ street</button>
+  <div style="font-size:18px;font-weight:700;padding:4px 2px 2px 2px">Journal</div>
+  <div class="note">The day writes itself. Tap 🎤 to add to it.</div>
+  <div class="sect">WEDNESDAY AUG 13 · LIVE</div>
+  <div class="feed" id="jfeed"></div>
+  <div class="sect">TUESDAY AUG 12</div>
+  <div class="feed">
+    <div class="fitem done"><span class="t">DAY</span><br>9 doors, 4 conversations, met Rudy, demo booked.</div>
+  </div>
+  <div class="sect">MONDAY AUG 11</div>
+  <div class="feed">
+    <div class="fitem done"><span class="t">DAY</span><br>11 pre-calls, 2 numbers.</div>
+  </div>
+  <div class="panel" style="margin-top:16px;border-left:3px solid var(--cyan)">
+    <div style="font-size:11px;letter-spacing:.14em;color:var(--cyan);font-weight:700">FRIDAY RECAP · TEASER</div>
+    <div style="margin-top:6px;font-size:14px">"Week 1: 27 doors, 11 conversations, top objection <i>'we already have someone'</i> ×4." Full cut Friday 6p, with the move for week 2.</div>
+  </div>
+  <div style="height:70px"></div>
+</div>
+
+</div><!-- /wrap -->
+
+<button class="micfab" onclick="openMic()" aria-label="Talk to log">🎤</button>
+
+<!-- search overlay -->
+<div class="ov" id="searchOv">
+  <div class="ovin">
+    <div style="display:flex;gap:8px">
+      <input class="sin" id="sin" placeholder="Anyone — name, shop, trade…" oninput="filterPeople()">
+      <button class="tbtn" onclick="closeSearch()" style="font-size:15px">✕</button>
+    </div>
+    <div id="sres"></div>
+  </div>
+</div>
+
+<!-- mic sheet -->
+<div class="ov" id="micOvBg"></div>
+<div class="sheet" id="micSheet">
+  <div class="in">
+    <div style="font-weight:700;font-size:16px">🎤 Talk to log</div>
+    <div class="dimtxt" style="font-size:12.5px;margin-top:3px">Tap the mic on your keyboard and just talk — "knocked the nail bar, owner out till 3." Claude files it to the right person.</div>
+    <textarea id="micText" placeholder='"Left a card at Gulf Coast, nobody up front…"'></textarea>
+    <div class="acts"><button class="btnP" onclick="saveLog()">Log it ✓</button><button class="btnS" onclick="closeMic()">Cancel</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ================= DATA ================= */
+var P = {
+ rudy:{nm:"Rudy Reyes",bz:"Reyes Auto Care",trade:"Auto",val:"A",w:2,rec:"1d",recCls:"fresh",ph:"713-555-0101",hero:"rudy",
+  play:"Demo at 2:00 today. Leave by 1:35 — traffic on Westheimer is normal.",
+  ava:["#101725","#3B82F6","RR"]},
+ dale:{nm:"Dale",bz:"Gulf Coast Plumbing",trade:"Plumbing",val:"A",w:0,rec:"today",recCls:"fresh",ph:"713-555-0102",
+  play:"Left a card at 11:52a — nobody up front. Second knock Thu 7:30a; plumbers are in the shop early.",
+  quote:null, ava:["#0e1c1f","#22D3EE","D"],
+  story:[["Wed Aug 13 · 11:52a","Door 3 on the route. Rang the bell, nobody front, left a card."],["Tue Aug 12 · 2:10p","Pre-call rang out. No voicemail box set up — that IS the pitch."]],
+  personal:"Never met yet. 212 reviews means a real operation — somebody there cares.",
+  biz:[["4.9★","212 reviews"],["Website","dead link"],["Booking","phone only"],["Best window","early a.m."]],
+  files:[["📇","Card left — door photo","#0e1c1f"],["🔎","Claude research sheet","#101725"]],
+  move:["FIRST HELLO — TAKE TWO","4.9 stars and a dead website is free money walking past him daily. Thursday 7:30a, catch him at the truck.","Put Thu 7:30a on the street"]},
+ marisol:{nm:"Marisol",bz:"Casa Verde Landscaping",trade:"Home Svcs",val:"C",w:3,rec:"12d",recCls:"cold",ph:"713-555-0103",
+  play:"12 days quiet on a champion. One hey-text today — never a pitch.",
+  ava:["#12201a","#34D399","MC"],
+  story:[["Jul 31","Sent intro #2 — the fence guy (Bubba). 'Y'all should talk.'"],["Jul 22","Sent intro #1 — the lash studio (Bree). Walked you in herself."],["Jul 18","Long talk at the supply yard. She gets what you're building."]],
+  quote:["HER WORDS","Anybody who answers their phone deserves to win. Most of us don't."],
+  personal:"Runs 3 crews. Daughter just started at U of H. Cafecito person, not a lunch person.",
+  biz:[["3 crews","residential"],["Sends leads","2 so far"],["Wants","nothing — yet"],["Risk","going quiet"]],
+  files:[["🌿","Crew photo she sent","#12201a"],["🤝","Intro thread — Bree","#101725"]],
+  move:["RELATIONSHIP RESCUE","She has sent you 2 leads and asked for nothing. Champions die of silence, not of no. Send the hey-text on the street.","Back to her card ↑"]},
+ bree:{nm:"Bree",bz:"Lonestar Lash Studio",trade:"Beauty",val:"B",w:1,rec:"2d",recCls:"fresh",ph:"713-555-0104",
+  play:"Re-visit TODAY 4:00 — she's PM-only. Ask for the 15-minute sit-down.",
+  ava:["#221722","#e8a3c8","BL"],
+  story:[["Mon Aug 11","Dropped the one-pager. 'Come back afternoon, mornings are chaos.'"],["Jul 22","Marisol walked you in. Good first vibe."]],
+  quote:["HER WORDS","If I'm mid-set I can't touch my phone for two hours. That's when they book elsewhere."],
+  personal:"Books solid 10a–2p. Answers nothing mid-set — her whole problem in one sentence.",
+  biz:[["Booked","10a–2p daily"],["Booking","DMs + texts"],["Misses","mid-set calls"],["Window","after 3p"]],
+  files:[["📄","One-pager v2","#221722"],["🔎","Claude research sheet","#101725"]],
+  move:["TODAY 4:00","Her mid-set blackout is the demo. Show the AI catching a booking while her hands are busy.","Mark it done on the street"]},
+ drkim:{nm:"Dr. Kim",bz:"Smile Lane Dental",trade:"Dental",val:"B",w:0,rec:"1d",recCls:"fresh",ph:"713-555-0105",
+  play:"Owner's in Thursdays — tomorrow's mission. Today: nothing. Save the gas.",
+  ava:["#1a1425","#a78bfa","SK"],
+  story:[["Tue Aug 12","Front desk again: 'Doctor's only here Thursdays.' Logged it — that's intel, not a wall."]],
+  quote:null,
+  personal:"Haven't met the doctor yet. Front desk is friendly — learn her name tomorrow.",
+  biz:[["Practice","2 chairs"],["Booking","front desk"],["Owner day","Thursdays"],["Stage","gatekeeper"]],
+  files:[["🔎","Claude research sheet","#101725"]],
+  move:["TOMORROW, 10:40A","Thursday is the only day the decision-maker exists. Walk in with coffee for the front desk.","Pin for Thursday"]},
+ andre:{nm:"Andre",bz:"Bayou Fade Barbershop",trade:"Barber",val:"B",w:1,rec:"8d",recCls:"",ph:"713-555-0106",
+  play:"He said no — parked till ~Sep 22. A no with a date is a maybe.",
+  ava:["#1f1a10","#FBBF24","AB"],
+  story:[["Aug 5","Straight no: 'my cousin does our stuff.' Friendly about it. Re-approach when football season has the shop packed."]],
+  quote:["HIS WORDS","My cousin does our stuff, man. We're good."],
+  personal:"Shop's a neighborhood institution. The cousin does the IG, not the phones — remember that.",
+  biz:[["Chairs","6"],["Booking","walk-in + IG"],["Said no","Aug 5"],["Re-approach","~Sep 22"]],
+  files:[["🔎","Claude research sheet","#101725"]],
+  move:["PARKED — SEP 22","When the cousin's IG can't answer 30 game-day calls, that's your opening. Not before.","Leave it parked"]},
+ hidalgo:{nm:"Hidalgo Roofing",bz:"Client since Aug 1 · Marco Hidalgo",trade:"Roofing",val:"A",w:3,rec:"3d",recCls:"fresh",ph:"713-555-0107",hero:"hidalgo",
+  play:"42 calls answered by the AI this month. Referral ask due FRIDAY — ride the proof while it's hot.",
+  ava:["#12201a","#34D399","HR"]},
+ kimtran:{nm:"Kim",bz:"Tran's Nail Bar",trade:"Beauty",val:"B",w:0,rec:"new",recCls:"fresh",ph:"713-555-0108",isNew:true,
+  play:"Loaded by Claude overnight. IG-only booking + 4.8★ = catching maybe half her demand.",
+  ava:["#221722","#e8a3c8","KT"],
+  story:[["Wed Aug 13 · overnight","Claude found her off your Westheimer route search. Research sheet ready."]],
+  quote:null,
+  personal:"Not met. IG shows a packed book and a 'DM to book' bio — that's the door.",
+  biz:[["4.8★","97 reviews"],["Booking","IG DMs only"],["Phone","unlisted hours"],["Stage","brand new"]],
+  files:[["🔎","Claude research sheet","#101725"],["📸","IG grid capture","#221722"]],
+  move:["FIRST HELLO","Walk in as a customer's husband would — ask how to book. When she says 'DM us,' you've both just heard the problem.","Add to tomorrow's route"]},
+ bubba:{nm:"Bubba",bz:"Katy Fence Co.",trade:"Home Svcs",val:"A",w:1,rec:"5d",recCls:"",ph:"713-555-0109",
+  play:"'Call me when school starts back.' School's back Monday — follow-up FRIDAY, text tonight tees it up.",
+  ava:["#12201a","#34D399","KB"],
+  story:[["Aug 8","Good 10 minutes at the yard. Real interest, real timing issue: 'call me when school starts back.'"],["Jul 31","Marisol intro'd you — 'Y'all should talk.'"]],
+  quote:["HIS WORDS","Call me when school starts back — right now I can't think past Friday."],
+  personal:"Coaches his kid's flag football. School calendar runs his brain — respect it, use it.",
+  biz:[["Crews","2"],["Season","slammed Aug"],["Booking","his cell"],["Follow-up","Fri"]],
+  files:[["🔎","Claude research sheet","#101725"],["🤝","Intro thread — Marisol","#12201a"]],
+  move:["FRIDAY, HIS TIMING","He set the date himself — that's a yes wearing a calendar. Tonight's drafted text tees up Friday.","See tonight's texts"]},
+ dj:{nm:"DJ",bz:"Westside Auto Detail",trade:"Auto",val:"C",w:1,rec:"4d",recCls:"",ph:"713-555-0110",
+  play:"Sends leads, huge TikTok, never a client — feed the friendship, not the funnel.",
+  ava:["#101725","#3B82F6","DJ"],
+  story:[["Aug 9","Sent a lead: shop owner who saw his TikTok. Second one this month."],["Aug 2","Filmed a walkaround at his bay. Kid's got 90k followers and hustle for days."]],
+  quote:["HIS WORDS","I don't need a receptionist, I need daylight. But I know everybody who does."],
+  personal:"22, first-name basis with half the trade shops on the west side. Thank-you text drafted for tonight.",
+  biz:[["TikTok","90k"],["Sends leads","yes"],["Fit","none — champion"],["Keep","warm always"]],
+  files:[["🎬","His TikTok walkaround","#101725"]],
+  move:["CHAMPION CARE","He's a lead machine, not a prospect. Tonight's text thanks him for Tuesday's lead. That's the whole play.","See tonight's texts"]},
+ patel:{nm:"Dr. Patel",bz:"Golden Smiles Ortho",trade:"Dental",val:"A",w:0,rec:"9d",recCls:"",ph:"713-555-0111",
+  play:"Gatekeeper wall ×2 — stop knocking, switch to the phone. Call Thu 12:15, doctors pick up at lunch.",
+  ava:["#1a1425","#a78bfa","GP"],
+  story:[["Aug 4","Wall #2 — 'leave your card.' Same desk, same script."],["Jul 29","Wall #1 — couldn't get past the front."]],
+  quote:null,
+  personal:"Big practice, bigger phone volume. The front desk IS the proof the practice needs help.",
+  biz:[["Chairs","5+"],["Booking","call center vibe"],["Walls hit","×2"],["New channel","direct call"]],
+  files:[["🔎","Claude research sheet","#101725"],["📇","Cards left ×2","#1a1425"]],
+  move:["SWITCH CHANNELS","Two walls means the door is the wrong door. Thursday 12:15 call — lunch is when doctors answer their own phones.","Queue the Thu call"]}
+};
+
+var WLBL = ["Cold","Knows me","Trusts me","Would vouch"];
+var SHELVES = [
+ ["shelf-close",["drkim","bubba"]],
+ ["shelf-cold",["dale","patel","kimtran"]],
+ ["shelf-champ",["dj","marisol"]],
+ ["shelf-client",["hidalgo"]],
+ ["shelf-park",["andre"]]
+];
+
+var TEXTS = [
+ {id:0,to:"Bubba · Katy Fence",body:"Bubba — school's back Monday, which means your phone's about to be. You said holler when it started back: Friday work for a quick call?",note:""},
+ {id:1,to:"DJ · Westside Auto Detail",body:"DJ — that lead you sent Tuesday came through the door today. Appreciate you, for real. Anybody asks me about detail work, they're getting your number.",note:""},
+ {id:2,to:"Rudy · Reyes Auto Care",body:"Rudy — good sitting down today. That after-hours catch we talked about? I'll have your line running on it by Friday. Holler with anything.",note:"queued — sends after the 2:00 demo"}
+];
+
+var FEED = [
+ {t:"12:10p",x:"Tran's Nail Bar added by search — Claude built her sheet overnight.",done:true},
+ {t:"11:52a",x:"Gulf Coast Plumbing — rang the bell, nobody front, left card.",done:true},
+ {t:"11:20a",x:"Walked Westheimer — doors 1–3 done. ✓ mission",done:true},
+ {t:"8:22a",x:"Morning texts sent (2). ✓ mission",done:true},
+ {t:"8:05a",x:"Briefing read with coffee. Day loaded.",done:true}
+];
+
+var S = {sent:{}, breeDone:false, rolling:false};
+
+/* ================= RENDER ================= */
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+
+function chipRow(p){
+ var h='<span class="chip val'+(p.val==="A"?" valA":"")+'">'+p.val+'</span>';
+ h+='<span class="chip w'+p.w+'">'+WLBL[p.w]+'</span>';
+ h+='<span class="chip rec '+p.recCls+'">'+p.rec+(p.recCls==="cold"?" ⚠":"")+'</span>';
+ if(p.hero==="hidalgo")h+='<span class="chip client">CLIENT</span>';
+ if(p.isNew)h+='<span class="chip new">NEW · overnight</span>';
+ return h;
+}
+
+function cardHTML(id){
+ var p=P[id];
+ var h='<div class="card" onclick="openPerson(\''+id+'\')"><div class="top">';
+ h+='<div class="ava" style="background:'+p.ava[0]+';color:'+p.ava[1]+'">'+p.ava[2]+'</div>';
+ h+='<div class="who"><div class="nm">'+p.nm+'</div><div class="bz">'+p.bz+' · '+p.trade+'</div>';
+ h+='<div class="chips">'+chipRow(p)+'</div></div></div>';
+ h+='<div class="play"><span class="arrow">▸</span><span>'+p.play+'</span></div>';
+ h+='<div class="acts"><button class="btnG" onclick="callP(\''+id+'\',event)">📞 Call</button>';
+ h+='<button class="btnG" onclick="textP(\''+id+'\',event)">💬 Text</button>';
+ h+='<button class="btnG" onclick="openPerson(\''+id+'\');event.stopPropagation()">Open ›</button></div></div>';
+ return h;
+}
+
+function renderShelves(){
+ for(var i=0;i<SHELVES.length;i++){
+  var el=document.getElementById(SHELVES[i][0]);
+  var ids=SHELVES[i][1],h="";
+  for(var j=0;j<ids.length;j++)h+=cardHTML(ids[j]);
+  el.innerHTML=h;
+ }
+ // hero cards on shelves get their own richer entries
+ document.getElementById("shelf-close").innerHTML =
+   cardHTML("drkim")+cardHTML("bubba");
+ document.getElementById("shelf-client").innerHTML =
+   '<div class="card" onclick="openPerson(\'hidalgo\')"><div class="top">'
+   +'<div class="ava" style="background:#12201a;color:#34D399">HR</div>'
+   +'<div class="who"><div class="nm">Hidalgo Roofing</div><div class="bz">Marco · Roofing · live since Aug 1</div>'
+   +'<div class="chips">'+chipRow(P.hidalgo)+'</div></div></div>'
+   +'<div class="statband"><div class="stat"><b>42</b><span>calls answered · AI · this mo</span></div>'
+   +'<div class="stat"><b>17</b><span>after-hours catches</span></div></div>'
+   +'<div class="play"><span class="arrow">▸</span><span>Referral ask due <b>Friday</b> — the 42-calls stat is the ask. Script is on his page.</span></div>'
+   +'<div class="acts"><button class="btnG" onclick="callP(\'hidalgo\',event)">📞 Call Marco</button>'
+   +'<button class="btnG" onclick="openPerson(\'hidalgo\');event.stopPropagation()">Open ›</button></div></div>';
+}
+
+function renderTexts(){
+ var box=document.getElementById("texts"),h="",sent=0;
+ for(var i=0;i<TEXTS.length;i++){
+  var t=TEXTS[i],k="t"+t.id;
+  if(S.sent[k]==="sent")sent++;
+  h+='<div class="msg" id="mwrap-'+t.id+'"><div class="from">TO '+t.to.toUpperCase()+(t.note?' · <span style="color:var(--amber)">'+t.note.toUpperCase()+'</span>':'')+'</div>';
+  if(S.sent[k]==="sent"){h+='<div class="strike dimtxt">'+esc(t.body)+'</div><div class="sentok" style="margin-top:6px">sent ✓</div>';}
+  else if(S.sent[k]==="skip"){h+='<div class="strike dimtxt">'+esc(t.body)+'</div><div class="dimtxt" style="margin-top:6px;font-size:12px">skipped — Claude will re-suggest tomorrow</div>';}
+  else{
+   h+='<div id="mtxt-'+t.id+'">'+esc(t.body)+'</div>';
+   h+='<div class="acts" id="macts-'+t.id+'"><button class="btnP" style="padding:9px 13px;font-size:13px" onclick="sendText('+t.id+')">Approve &amp; send ✓</button>';
+   h+='<button class="btnG" onclick="editText('+t.id+')">Edit</button>';
+   h+='<button class="btnS" onclick="skipText('+t.id+')">Skip</button></div>';
+  }
+  h+='</div>';
+ }
+ box.innerHTML=h;
+ document.getElementById("tex-count").textContent=sent+"/3 sent";
+}
+
+function renderFeed(){
+ var h="";
+ for(var i=0;i<FEED.length;i++){
+  h+='<div class="fitem'+(FEED[i].done?" done":"")+'"><span class="t">'+FEED[i].t+'</span><br>'+FEED[i].x+'</div>';
+ }
+ document.getElementById("todayfeed").innerHTML=h;
+ var j=document.getElementById("jfeed"); if(j)j.innerHTML=h;
+}
+
+/* ================= PERSON PAGES ================= */
+function tplPerson(id){
+ var p=P[id],h="";
+ h+='<button class="btnS" onclick="goHome()">‹ street</button>';
+ h+='<div class="phead"><div class="nm">'+p.nm+'</div><div class="bz">'+p.bz+' · '+p.trade+' · '+p.ph+'</div><div class="chips">'+chipRow(p)+'</div></div>';
+ h+='<div class="movecard"><div class="in"><div class="t">'+p.move[0]+'</div><div class="m">'+p.move[1]+'</div>';
+ h+='<button class="btnP" onclick="moveAct(\''+id+'\')">'+p.move[2]+'</button></div></div>';
+ if(p.quote)h+='<div class="quote"><span class="q">'+p.quote[0]+'</span>"'+p.quote[1]+'"</div>';
+ h+='<div class="sect">THE STORY SO FAR</div><div class="tl">';
+ for(var i=0;i<p.story.length;i++)h+='<div class="ev"><span class="d">'+p.story[i][0]+'</span><br>'+p.story[i][1]+'</div>';
+ h+='</div>';
+ h+='<div class="sect">THE PERSON</div><div class="panel" style="font-size:14px">'+p.personal+'</div>';
+ h+='<div class="sect">THE BUSINESS</div><div class="kv">';
+ for(var k=0;k<p.biz.length;k++)h+='<div class="k"><b>'+p.biz[k][0]+'</b><span>'+p.biz[k][1]+'</span></div>';
+ h+='</div>';
+ h+='<div class="sect">FILES</div><div class="files">';
+ for(var f=0;f<p.files.length;f++)h+='<div class="file" style="background:'+p.files[f][2]+'" onclick="fileTap()"><span class="ic">'+p.files[f][0]+'</span><span class="lb">'+p.files[f][1]+'</span></div>';
+ h+='</div>';
+ h+='<div class="acts" style="margin-top:14px"><button class="btnP" onclick="callP(\''+id+'\',event)">📞 Call</button><button class="btnG" onclick="textP(\''+id+'\',event)">💬 Text</button><button class="btnG" onclick="openMic()">🎤 Log</button></div>';
+ h+='<div style="height:70px"></div>';
+ return h;
+}
+
+function rudyPage(){
+ var p=P.rudy,h="";
+ h+='<button class="btnS" onclick="goHome()">‹ street</button>';
+ h+='<div class="phead"><div class="nm">Rudy Reyes</div><div class="bz">Reyes Auto Care · Auto · 713-555-0101</div><div class="chips">'+chipRow(p)+'<span class="chip" style="color:var(--amber);border-color:#5c4a1a">DEMO 2:00 TODAY</span></div></div>';
+ h+='<div class="movecard"><div class="in"><div class="t">THE NEXT MOVE · TODAY</div><div class="m">Leave by 1:35 — traffic on Westheimer is normal. Open with the after-hours line, demo the missed-call catch, close on <b>Growth</b>. Pitch page ready at 1:15.</div>';
+ h+='<div class="acts" style="margin-top:0"><button class="btnP" onclick="doneNext(event)">I\'m rolling ✓</button><button class="btnG" onclick="fileTap()">Preview pitch page</button></div></div></div>';
+ h+='<div class="quote"><span class="q">HIS EXACT WORDS · TUE</span>"If it can catch the after-hours calls I\'m listening."</div>';
+ h+='<div class="sect">DEMO GAME PLAN · CLAUDE PREPPED OVERNIGHT</div><div class="panel" style="font-size:14px">'
+   +'<b>1.</b> Open on HIS words — after-hours calls. Don\'t re-pitch what he already bought.<br>'
+   +'<b>2.</b> Live demo: call the demo line, let the AI book a fake brake job while he watches.<br>'
+   +'<b>3.</b> Proof: Hidalgo Roofing — 42 calls answered this month, 17 after-hours.<br>'
+   +'<b>4.</b> Fit: <b>Growth</b>. Say the tier, not the details — the page does the details.</div>';
+ h+='<div class="sect">THE STORY SO FAR</div><div class="tl">'
+   +'<div class="ev"><span class="d">Wed Aug 13 · overnight</span><br>Claude built the pitch page + this game plan. Ready 1:15.</div>'
+   +'<div class="ev"><span class="d">Tue Aug 12</span><br>20 minutes at the shop. He pulled up his phone log himself — 6 missed after close. Demo booked on the spot.</div>'
+   +'<div class="ev"><span class="d">Mon Aug 11</span><br>Pre-call — picked up rough, warmed up fast when you mentioned after-hours.</div></div>';
+ h+='<div class="sect">THE PERSON</div><div class="panel" style="font-size:14px">Wife <b>Carla</b> runs the front desk Tuesdays. Restoring a <b>\'68 C10</b> out back — ask about it, he lights up. Two kids, both in Little League. Handshake guy; don\'t rush him.</div>';
+ h+='<div class="sect">THE BUSINESS</div><div class="kv">'
+   +'<div class="k"><b>2 bays</b><span>plus the C10 bay</span></div>'
+   +'<div class="k"><b>6 missed</b><span>calls after close · his own log</span></div>'
+   +'<div class="k"><b>Booking</b><span>Carla + voicemail</span></div>'
+   +'<div class="k"><b>Fit</b><span>Growth</span></div></div>';
+ h+='<div class="sect">FILES</div><div class="files">'
+   +'<div class="file" style="background:#101725" onclick="fileTap()"><span class="ic">📄</span><span class="lb">Pitch page · ready 1:15</span></div>'
+   +'<div class="file" style="background:#0e1c1f" onclick="fileTap()"><span class="ic">📸</span><span class="lb">Shop front photo</span></div>'
+   +'<div class="file" style="background:#1f1a10" onclick="fileTap()"><span class="ic">✅</span><span class="lb">Demo checklist</span></div>'
+   +'<div class="file" style="background:#101725" onclick="fileTap()"><span class="ic">🔎</span><span class="lb">Claude research sheet</span></div></div>';
+ h+='<div class="acts" style="margin-top:14px"><button class="btnP" onclick="callP(\'rudy\',event)">📞 Call Rudy</button><button class="btnG" onclick="textP(\'rudy\',event)">💬 Text</button><button class="btnG" onclick="openMic()">🎤 Log</button></div>';
+ h+='<div style="height:70px"></div>';
+ return h;
+}
+
+function hidalgoPage(){
+ var p=P.hidalgo,h="";
+ h+='<button class="btnS" onclick="goHome()">‹ street</button>';
+ h+='<div class="phead"><div class="nm">Hidalgo Roofing</div><div class="bz">Marco Hidalgo · Roofing · 713-555-0107</div><div class="chips">'+chipRow(p)+'</div></div>';
+ h+='<div class="statband"><div class="stat"><b>42</b><span>calls answered · AI · this mo</span></div><div class="stat"><b>17</b><span>after-hours catches</span></div><div class="stat"><b>9</b><span>jobs booked off those</span></div></div>';
+ h+='<div class="movecard"><div class="in"><div class="t">THE NEXT MOVE · FRIDAY</div><div class="m">Referral ask. The 42-calls stat IS the ask — Marco loves a number he can brag on. Script below; call him Friday morning while the week\'s still his.</div>';
+ h+='<button class="btnP" onclick="queueRef()">Queue Friday call ✓</button></div></div>';
+ h+='<div class="quote"><span class="q">THE ASK · DRAFTED</span>"Marco — your line caught 42 calls this month, 17 of them after y\'all went home. Who\'s one roofer or GC you\'d want winning like that? I\'ll take care of them like I took care of you."</div>';
+ h+='<div class="sect">CLIENT STORY</div><div class="tl">'
+   +'<div class="ev"><span class="d">Sun Aug 10</span><br>Texted a screenshot of a 9:40p booking the AI caught. "This thing doesn\'t sleep."</div>'
+   +'<div class="ev"><span class="d">Fri Aug 1</span><br>WENT LIVE. First after-hours catch same night.</div>'
+   +'<div class="ev"><span class="d">Tue Jul 29</span><br>Signed. "Had someone before — they answered when they felt like it."</div></div>';
+ h+='<div class="quote"><span class="q">HIS WORDS · JUL 29</span>"Had someone before — they answered when they felt like it."</div>';
+ h+='<div class="sect">THE PERSON</div><div class="panel" style="font-size:14px">Marco, second-generation. Brother runs the crews, Marco runs the phones — which is why this landed. Astros season-ticket guy. Answers his own cell before 8a.</div>';
+ h+='<div class="sect">THE ACCOUNT</div><div class="kv">'
+   +'<div class="k"><b>Live</b><span>since Aug 1</span></div>'
+   +'<div class="k"><b>Plan</b><span>Growth</span></div>'
+   +'<div class="k"><b>Health</b><span>green · using it daily</span></div>'
+   +'<div class="k"><b>Referrals</b><span>0 asked · Fri is the first</span></div></div>';
+ h+='<div class="sect">FILES</div><div class="files">'
+   +'<div class="file" style="background:#12201a" onclick="fileTap()"><span class="ic">✍️</span><span class="lb">Signed agreement</span></div>'
+   +'<div class="file" style="background:#101725" onclick="fileTap()"><span class="ic">📊</span><span class="lb">Call log · 42 answered</span></div>'
+   +'<div class="file" style="background:#1f1a10" onclick="fileTap()"><span class="ic">📱</span><span class="lb">His 9:40p screenshot</span></div>'
+   +'<div class="file" style="background:#12201a" onclick="fileTap()"><span class="ic">✅</span><span class="lb">Onboarding · complete</span></div></div>';
+ h+='<div class="acts" style="margin-top:14px"><button class="btnP" onclick="callP(\'hidalgo\',event)">📞 Call Marco</button><button class="btnG" onclick="textP(\'hidalgo\',event)">💬 Text</button><button class="btnG" onclick="openMic()">🎤 Log</button></div>';
+ h+='<div style="height:70px"></div>';
+ return h;
+}
+
+/* ================= NAV ================= */
+function show(v){
+ var vs=["v-home","v-person","v-week","v-journal"];
+ for(var i=0;i<vs.length;i++)document.getElementById(vs[i]).classList.toggle("on",vs[i]===v);
+ window.scrollTo(0,0);
+}
+function goHome(){show("v-home");}
+function openPerson(id){
+ if(event)event.stopPropagation();
+ var el=document.getElementById("v-person");
+ if(id==="rudy")el.innerHTML=rudyPage();
+ else if(id==="hidalgo")el.innerHTML=hidalgoPage();
+ else el.innerHTML=tplPerson(id);
+ closeSearch();
+ show("v-person");
+}
+function openWeek(){closeSearch();show("v-week");}
+function openJournal(){if(event)event.stopPropagation();closeSearch();show("v-journal");}
+function scrollToShelf(id){
+ var el=document.getElementById(id);
+ var y=el.getBoundingClientRect().top+window.scrollY-96;
+ window.scrollTo({top:y,behavior:"smooth"});
+}
+function scrollHomeTo(id){goHome();setTimeout(function(){scrollToShelf(id);},80);}
+
+/* ================= SEARCH ================= */
+function openSearch(){
+ document.getElementById("searchOv").classList.add("on");
+ var inp=document.getElementById("sin");inp.value="";filterPeople();
+ setTimeout(function(){inp.focus();},60);
+}
+function closeSearch(){document.getElementById("searchOv").classList.remove("on");}
+function filterPeople(){
+ var q=document.getElementById("sin").value.toLowerCase();
+ var h="",ids=Object.keys(P);
+ for(var i=0;i<ids.length;i++){
+  var p=P[ids[i]];
+  var hay=(p.nm+" "+p.bz+" "+p.trade+" "+WLBL[p.w]+" "+p.val).toLowerCase();
+  if(q&&hay.indexOf(q)===-1)continue;
+  h+='<div class="srow" onclick="openPerson(\''+ids[i]+'\')">'
+    +'<div class="ava" style="width:34px;height:34px;font-size:12px;background:'+p.ava[0]+';color:'+p.ava[1]+'">'+p.ava[2]+'</div>'
+    +'<div class="who"><div class="nm">'+p.nm+'</div><div class="bz">'+p.bz+' · '+p.trade+'</div></div>'
+    +'<div class="chips">'+chipRow(p)+'</div></div>';
+ }
+ if(!h)h='<div class="note" style="padding:16px 4px">Nobody yet — but say the word and Claude builds their sheet overnight (that\'s how Tran\'s Nail Bar got here).</div>';
+ document.getElementById("sres").innerHTML=h;
+}
+
+/* ================= ACTIONS ================= */
+var toastTimer=null;
+function toast(m){
+ var t=document.getElementById("toast");t.textContent=m;t.classList.add("on");
+ clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove("on");},2600);
+}
+function callP(id,ev){if(ev)ev.stopPropagation();toast("Calling "+P[id].nm+" · "+P[id].ph+" — logged to their story (mock)");}
+function textP(id,ev){if(ev)ev.stopPropagation();toast("Opening thread with "+P[id].nm+" (mock) — whatever you send gets logged");}
+function fileTap(){if(event)event.stopPropagation();toast("Opens the file full-screen in the real build (mock)");}
+function heroInfo(){toast("Demos held this week vs target of 3. Rudy at 2:00 makes it 2.");}
+function streakInfo(){toast("6 straight working days with every mission cleared. Don\'t break the chain.");}
+function claudeInfo(){toast("Overnight: 11 doors researched, 3 texts drafted, Rudy pitch page building (ready 1:15), Tran\'s Nail Bar added.");}
+function queueRef(){toast("Friday 8:00a call queued — the ask script rides along ✓");}
+function moveAct(id){toast(P[id].move[2]+" — queued ✓ (mock)");}
+
+function doneNext(ev){
+ if(ev)ev.stopPropagation();
+ if(S.rolling)return;
+ S.rolling=true;
+ var c=document.getElementById("nextcard");
+ if(c){c.classList.add("donecard");document.getElementById("next-title").innerHTML="Rudy Reyes · 2:00 demo <span class=\"sentok\">— rolling ✓</span>";}
+ FEED.unshift({t:"12:41p",x:"Rolled out for Reyes Auto Care — 2:00 demo.",done:true});
+ renderFeed();
+ toast("Marked. Journal updated — go get him.");
+}
+function doneBree(ev){
+ if(ev)ev.stopPropagation();
+ if(S.breeDone)return;
+ S.breeDone=true;
+ document.getElementById("breecard").classList.add("donecard");
+ document.getElementById("bree-done").style.display="inline";
+ document.getElementById("bree-btn").textContent="Done ✓";
+ FEED.unshift({t:"12:41p",x:"Bree re-visit marked done.",done:true});
+ renderFeed();
+ toast("Bree ✓ — it sinks to the bottom of the street.");
+}
+
+function sendText(id){
+ if(event)event.stopPropagation();
+ if(id==="m"){
+  var w=document.getElementById("mwrap-m");
+  w.innerHTML='<div class="from">DRAFTED FOR YOU</div><div class="strike dimtxt">'+esc(document.getElementById("mtxt-m")?document.getElementById("mtxt-m").textContent:"")+'</div><div class="sentok" style="margin-top:6px">sent ✓ — Marisol\'s clock resets to 0d</div>';
+  FEED.unshift({t:"12:42p",x:"Hey-text sent to Marisol — champion warmed back up. ✓ mission",done:true});
+  P.marisol.rec="0d";P.marisol.recCls="fresh";
+  renderShelves();renderFeed();
+  toast("Sent. 12 days of quiet, fixed in one tap.");
+  return;
+ }
+ S.sent["t"+id]="sent";renderTexts();
+ FEED.unshift({t:"12:42p",x:"Approved tonight's text to "+TEXTS[id].to.split(" · ")[0]+".",done:true});
+ renderFeed();
+ toast("Sent ✓ — logged to their story");
+}
+function editText(id){
+ if(event)event.stopPropagation();
+ var m=document.getElementById("mtxt-"+id);
+ if(!m)return;
+ var cur=m.textContent;
+ m.innerHTML='<textarea id="med-'+id+'">'+esc(cur)+'</textarea>';
+ document.getElementById("macts-"+id).innerHTML=
+  '<button class="btnP" style="padding:9px 13px;font-size:13px" onclick="saveEdit(\''+id+'\')">Save &amp; send ✓</button>'
+  +'<button class="btnS" onclick="cancelEdit(\''+id+'\')">Cancel</button>';
+}
+function saveEdit(id){
+ if(event)event.stopPropagation();
+ var ta=document.getElementById("med-"+id);
+ var v=ta?ta.value:"";
+ if(id==="m"){
+  document.getElementById("mtxt-m").textContent=v;
+  sendText("m");return;
+ }
+ TEXTS[id].body=v;S.sent["t"+id]="sent";renderTexts();
+ toast("Your words, sent ✓");
+}
+function cancelEdit(id){
+ if(event)event.stopPropagation();
+ if(id==="m"){
+  document.getElementById("mtxt-m").textContent="Marisol! Saw a crew of yours on Bissonnet this morning — yard looked sharp. Hope the season's treating you right. Coffee on me one of these mornings 🤝";
+  document.getElementById("macts-m").innerHTML='<button class="btnP" style="padding:9px 13px;font-size:13px" onclick="sendText(\'m\')">Send ✓</button><button class="btnG" onclick="editText(\'m\')">Edit</button><button class="btnS" onclick="skipText(\'m\')">Skip</button>';
+  return;
+ }
+ renderTexts();
+}
+function skipText(id){
+ if(event)event.stopPropagation();
+ if(id==="m"){
+  document.getElementById("mwrap-m").innerHTML='<div class="from">DRAFTED FOR YOU</div><div class="dimtxt" style="font-size:13px">Skipped. She stays on the going-cold list — Claude will nudge again tomorrow.</div>';
+  toast("Skipped — but 12 days becomes 13 tomorrow.");
+  return;
+ }
+ S.sent["t"+id]="skip";renderTexts();
+ toast("Skipped — Claude re-drafts it tomorrow");
+}
+
+/* ================= MIC ================= */
+function openMic(){
+ if(event)event.stopPropagation();
+ document.getElementById("micOvBg").classList.add("on");
+ document.getElementById("micSheet").classList.add("on");
+ setTimeout(function(){document.getElementById("micText").focus();},120);
+}
+function closeMic(){
+ document.getElementById("micOvBg").classList.remove("on");
+ document.getElementById("micSheet").classList.remove("on");
+}
+function saveLog(){
+ var v=document.getElementById("micText").value.trim();
+ if(!v){toast("Say something first — even three words works");return;}
+ FEED.unshift({t:"12:4"+(2+Math.floor(Math.random()*7))+"p",x:esc(v)+" · 🎤",done:true});
+ document.getElementById("micText").value="";
+ closeMic();renderFeed();
+ toast("Logged. Claude files it to the right person overnight.");
+}
+document.getElementById("micOvBg").addEventListener("click",closeMic);
+document.getElementById("searchOv").addEventListener("click",function(e){if(e.target===this)closeSearch();});
+
+/* ================= INIT ================= */
+renderShelves();renderTexts();renderFeed();
+</script>
+</body>
+</html>
