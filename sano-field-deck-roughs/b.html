@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex">
+<title>Field Deck — Rough B "Walk Mode"</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0C; --panel:#131318; --panel2:#1A1A22; --line:#26262f;
+    --cream:#F2EBE0; --dim:#9b95a8; --blue:#3B82F6; --cyan:#22D3EE;
+    --red:#F87171; --green:#34D399; --amber:#FBBF24;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{background:var(--bg);color:var(--cream);font-family:'Space Grotesk',-apple-system,sans-serif;max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:90px}
+  .rough-tag{position:fixed;top:0;left:0;right:0;background:linear-gradient(90deg,var(--blue),var(--cyan));color:#04060a;font-size:10px;font-weight:700;letter-spacing:.12em;text-align:center;padding:3px;z-index:99}
+  .tab{display:none}.tab.on{display:block}
+  /* bottom nav */
+  nav{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:rgba(19,19,24,.97);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);z-index:98;backdrop-filter:blur(8px)}
+  nav button{background:none;border:none;color:var(--dim);font-family:inherit;font-size:11px;font-weight:600;padding:12px 0 max(12px, env(safe-area-inset-bottom));letter-spacing:.04em}
+  nav button .ic{display:block;font-size:20px;margin-bottom:3px}
+  nav button.on{color:var(--cyan)}
+  nav .badge{background:var(--red);color:#fff;border-radius:999px;font-size:9px;padding:1px 5px;margin-left:3px;vertical-align:top}
+  header{padding:38px 16px 6px}
+  .logo{font-weight:700;letter-spacing:.06em;font-size:15px}
+  .logo b{color:var(--cyan)}
+  /* walk header */
+  .strip{padding:8px 16px 0}
+  .sname{font-size:20px;font-weight:700}
+  .sprog{font-size:12px;color:var(--dim);margin:4px 0 8px}
+  .bar{height:6px;background:var(--panel2);border-radius:999px;overflow:hidden}
+  .bar i{display:block;height:100%;width:45%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:999px}
+  /* NOW card */
+  .now{margin:16px;background:linear-gradient(160deg,#141420,#0e1520);border:1px solid rgba(34,211,238,.45);border-radius:18px;padding:18px 16px;box-shadow:0 0 40px rgba(34,211,238,.07)}
+  .nowtag{font-size:10px;letter-spacing:.16em;color:var(--cyan);font-weight:700;margin-bottom:8px}
+  .nowname{font-size:23px;font-weight:700;line-height:1.1}
+  .nowsub{font-size:12.5px;color:var(--dim);margin:6px 0 12px}
+  .chip{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:3px 9px;background:rgba(34,211,238,.12);color:var(--cyan);border:1px solid rgba(34,211,238,.35);display:inline-block;margin-right:6px}
+  .ammoline{font-size:13px;line-height:1.55;padding:3px 0;color:var(--cream)}
+  .ammoline b{color:var(--amber)}
+  .opener{margin:12px 0;padding:11px 12px;border-left:2px solid var(--cyan);background:rgba(34,211,238,.06);border-radius:0 10px 10px 0;font-size:13.5px;font-style:italic;line-height:1.5}
+  .nowbtns{display:grid;grid-template-columns:56px 1fr 56px;gap:9px;margin-top:14px}
+  .nb{border:none;border-radius:13px;font-family:inherit;font-weight:700;color:#04060a;font-size:15px;padding:16px 4px}
+  .nb.side{background:var(--panel2);color:var(--cream);font-size:19px;border:1px solid var(--line)}
+  .nb.main{background:linear-gradient(90deg,var(--blue),var(--cyan))}
+  .hear{width:100%;margin-top:9px;background:none;border:1px dashed rgba(34,211,238,.4);color:var(--cyan);border-radius:12px;padding:11px;font-family:inherit;font-size:13px;font-weight:600}
+  /* walk list */
+  .sect{margin:20px 16px 8px;font-size:11px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+  .row{display:flex;align-items:center;gap:11px;padding:11px 16px;border-bottom:1px solid #17171d}
+  .st{width:24px;height:24px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+  .st.done{background:rgba(52,211,153,.15);color:var(--green)}
+  .st.cur{background:linear-gradient(90deg,var(--blue),var(--cyan));color:#04060a}
+  .st.next{background:var(--panel2);color:var(--dim);border:1px solid var(--line)}
+  .st.skip{background:var(--panel2);color:var(--dim)}
+  .rn{font-size:14.5px;font-weight:600}
+  .rn small{display:block;font-weight:400;font-size:11.5px;color:var(--dim);margin-top:1px}
+  .row.cur .rn{color:var(--cyan)}
+  /* due tab */
+  .due{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--red);border-radius:12px;margin:8px 16px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+  .due .who{font-weight:600;font-size:15px}
+  .due .why{font-size:12px;color:var(--dim);margin-top:2px}
+  .due .act{background:rgba(59,130,246,.15);border:1px solid var(--blue);color:var(--cyan);font-size:12px;font-weight:600;border-radius:999px;padding:7px 12px;white-space:nowrap}
+  .capnote{margin:12px 16px;font-size:12px;color:var(--dim);text-align:center}
+  /* week tab */
+  .big1{margin:18px 16px 6px;background:linear-gradient(160deg,#141420,#0e1a20);border:1px solid rgba(34,211,238,.35);border-radius:18px;padding:22px;text-align:center}
+  .big1 .n{font-size:52px;font-weight:700;color:var(--cyan);line-height:1}
+  .big1 .l{font-size:12px;color:var(--dim);margin-top:6px}
+  .g4{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 16px}
+  .gc{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+  .gc .n{font-size:26px;font-weight:700}
+  .gc .l{font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+  .insight{margin:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+  .insight .t{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);font-weight:700;margin-bottom:6px}
+  .insight p{font-size:13.5px;line-height:1.5;color:var(--cream)}
+  /* log overlay */
+  .overlay{position:fixed;inset:0;background:rgba(6,6,9,.92);z-index:200;display:none;overflow-y:auto;backdrop-filter:blur(4px)}
+  .overlay.on{display:block}
+  .osheet{max-width:430px;margin:0 auto;background:var(--bg);min-height:100%;padding-top:16px}
+  .oclose{color:var(--dim);background:none;border:none;font-family:inherit;font-size:14px;padding:14px 16px}
+  .lname{font-size:13px;color:var(--dim);padding:0 16px 4px}
+  .lgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 16px}
+  .ob{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 8px;color:var(--cream);font-family:inherit;font-size:13px;font-weight:600;text-align:center}
+  .ob.sel{background:rgba(59,130,246,.2);border-color:var(--cyan);color:var(--cyan)}
+  .ob.good{border-color:rgba(52,211,153,.4)}
+  .flabel{margin:12px 16px 6px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+  textarea{width:calc(100% - 32px);margin:0 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--cream);font-family:inherit;font-size:14px;padding:12px;min-height:80px;resize:none}
+  textarea::placeholder{color:#5b5568}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;padding:0 16px}
+  .c2{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:8px 13px;font-size:12.5px;color:var(--cream);font-family:inherit}
+  .c2.sel{background:rgba(34,211,238,.15);border-color:var(--cyan);color:var(--cyan)}
+  .save{display:block;width:calc(100% - 32px);margin:18px 16px 40px;background:linear-gradient(90deg,var(--blue),var(--cyan));border:none;border-radius:14px;padding:17px;font-family:inherit;font-size:16px;font-weight:700;color:#04060a}
+  .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(160px);background:var(--green);color:#04060a;font-weight:700;font-size:14px;border-radius:999px;padding:12px 22px;transition:transform .3s;z-index:300;white-space:nowrap}
+  .toast.on{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="rough-tag">ROUGH B · "WALK MODE" · FAKE DATA — TAP AROUND</div>
+
+<!-- ══ WALK TAB ══ -->
+<div class="tab on" id="walk">
+  <header><span class="logo">SANO <b>FIELD DECK</b></span></header>
+  <div class="strip">
+    <div class="sname">Westheimer strip</div>
+    <div class="sprog">Door 5 of 11 · started 2:05p · 2 conversations so far</div>
+    <div class="bar"><i></i></div>
+  </div>
+
+  <div class="now">
+    <div class="nowtag">▶ NEXT DOOR — 30 FT AHEAD</div>
+    <div class="nowname">Gulf Coast Plumbing Co.</div>
+    <div class="nowsub">2801 Westheimer Rd · <span class="chip">Plumbing · brief ✓</span></div>
+    <div class="ammoline">📞 Called Tue 2:10p — <b>rang out, no voicemail</b> (verified)</div>
+    <div class="ammoline">⭐ 4.9 · 212 reviews · dead website link on Google (verified)</div>
+    <div class="opener">"I called y'all Tuesday at 2 — it rang eleven times and nobody got it. That's what your customers get too. Got a sec?"</div>
+    <div class="nowbtns">
+      <button class="nb side" onclick="toast('(rough) would dial 713-555-0142')">📞</button>
+      <button class="nb main" onclick="openLog()">KNOCKED — LOG IT</button>
+      <button class="nb side" onclick="toast('Skipped → moves to next door')">⏭</button>
+    </div>
+    <button class="hear" onclick="toast('(rough) plays our AI receptionist on speaker')">▶ Let them HEAR the AI answer — one tap, on speaker</button>
+  </div>
+
+  <div class="sect">The walk order</div>
+  <div class="row"><span class="st done">✓</span><div class="rn">Reyes Auto Care<small>Got the number · Rudy · text tonight</small></div></div>
+  <div class="row"><span class="st done">✓</span><div class="rn">Bayou Fade Barbershop<small>Conversation · no interest — has someone</small></div></div>
+  <div class="row"><span class="st skip">—</span><div class="rn">Smoothie chain<small>Skipped — corporate, can't buy</small></div></div>
+  <div class="row"><span class="st done">✓</span><div class="rn">Smile Lane Dental<small>Gatekeeper — owner in Thursdays</small></div></div>
+  <div class="row cur"><span class="st cur">5</span><div class="rn">Gulf Coast Plumbing Co.<small>You are here</small></div></div>
+  <div class="row"><span class="st next">6</span><div class="rn">Casa Verde Landscaping<small>ES · human answered pre-call · 88 reviews, no site</small></div></div>
+  <div class="row"><span class="st next">7</span><div class="rn">Lonestar Lash Studio<small>Owner PM only</small></div></div>
+  <div class="row"><span class="st next">8</span><div class="rn">Hidalgo Roofing<small>Voicemail full on pre-call</small></div></div>
+</div>
+
+<!-- ══ DUE TAB ══ -->
+<div class="tab" id="dueTab">
+  <header><span class="logo">SANO <b>FIELD DECK</b></span></header>
+  <div class="strip"><div class="sname">Due today</div><div class="sprog">Capped at your best 12 — never a wall</div></div>
+  <div class="due"><div><div class="who">Reyes Auto Care</div><div class="why">Rudy said "call after 2" — yesterday</div></div><div class="act">📞 Call</div></div>
+  <div class="due"><div><div class="who">Lonestar Lash Studio</div><div class="why">Owner in PM only — re-visit on today's walk</div></div><div class="act">🚶 Re-visit</div></div>
+  <div class="due"><div><div class="who">Bayou Fade Barbershop</div><div class="why">Got number Mon — tonight's text is drafted</div></div><div class="act">💬 Send text</div></div>
+  <div class="capnote">2 lower-value follow-ups auto-moved to Thursday. Nothing is lost — you just never see a wall.</div>
+</div>
+
+<!-- ══ WEEK TAB ══ -->
+<div class="tab" id="week">
+  <header><span class="logo">SANO <b>FIELD DECK</b></span></header>
+  <div class="strip"><div class="sname">This week</div><div class="sprog">Mon Aug 10 – today</div></div>
+  <div class="big1"><div class="n">1<span style="font-size:22px;color:var(--dim)"> / 3</span></div><div class="l">DEMOS HELD vs your weekly target — the only number that matters</div></div>
+  <div class="g4">
+    <div class="gc"><div class="n">27</div><div class="l">Doors</div></div>
+    <div class="gc"><div class="n">11</div><div class="l">Conversations</div></div>
+    <div class="gc"><div class="n">5</div><div class="l">Numbers</div></div>
+    <div class="gc"><div class="n">2</div><div class="l">Demos booked</div></div>
+  </div>
+  <div class="insight">
+    <div class="t">What the week is telling you</div>
+    <p>Your #1 objection: <b>"we already have someone"</b> — heard 4×. Every conversation where they heard the AI answer live went to a number or a demo (3 for 3). Play it earlier.</p>
+  </div>
+  <div class="insight">
+    <div class="t">Batch quality</div>
+    <p>9 of 11 Sunday-batch doors were real and walkable (82%). 2 flagged bad → next batch gets better.</p>
+  </div>
+</div>
+
+<!-- ══ LOG OVERLAY ══ -->
+<div class="overlay" id="logOverlay">
+  <div class="osheet">
+    <button class="oclose" onclick="closeLog()">✕ Cancel</button>
+    <div class="lname">LOGGING DOOR 5 · Gulf Coast Plumbing Co. · 3:42p</div>
+    <div class="lgrid">
+      <button class="ob" onclick="sel(this)">Owner not in</button>
+      <button class="ob" onclick="sel(this)">Gatekeeper — got intel</button>
+      <button class="ob" onclick="sel(this)">Gatekeeper — wall</button>
+      <button class="ob" onclick="sel(this)">Owner — no interest</button>
+      <button class="ob good" onclick="sel(this)">Owner — interested</button>
+      <button class="ob good" onclick="sel(this)">Got the number</button>
+      <button class="ob good" onclick="sel(this)">🗓 Demo booked</button>
+      <button class="ob good" onclick="sel(this)">✦ Closed</button>
+    </div>
+    <div class="flabel">Their exact words</div>
+    <textarea placeholder="Tap the 🎤 on your keyboard and just talk…"></textarea>
+    <div class="flabel">What's driving them</div>
+    <div class="chips">
+      <button class="c2" onclick="sel2(this)">① Time back</button>
+      <button class="c2" onclick="sel2(this)">② Keep what you earned</button>
+      <button class="c2" onclick="sel2(this)">③ Bring them back</button>
+      <button class="c2" onclick="sel2(this)">④ Foundation to grow</button>
+    </div>
+    <button class="save" onclick="saveAndAdvance()">SAVE → NEXT DOOR</button>
+  </div>
+</div>
+
+<nav>
+  <button class="on" id="nb-walk" onclick="tab('walk')"><span class="ic">🚶</span>Walk</button>
+  <button id="nb-dueTab" onclick="tab('dueTab')"><span class="ic">🔔</span>Due<span class="badge">3</span></button>
+  <button id="nb-week" onclick="tab('week')"><span class="ic">📊</span>Week</button>
+</nav>
+
+<div class="toast" id="toast">Saved ✓</div>
+
+<script>
+  function tab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.getElementById(id).classList.add('on');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('on'));document.getElementById('nb-'+id).classList.add('on');scrollTo(0,0)}
+  function openLog(){document.getElementById('logOverlay').classList.add('on')}
+  function closeLog(){document.getElementById('logOverlay').classList.remove('on')}
+  function sel(b){b.parentNode.querySelectorAll('.ob').forEach(x=>x.classList.remove('sel'));b.classList.add('sel')}
+  function sel2(b){b.parentNode.querySelectorAll('.c2').forEach(x=>x.classList.remove('sel'));b.classList.add('sel')}
+  function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)}
+  function saveAndAdvance(){closeLog();toast('Logged ✓ — Casa Verde is next (they answered in Spanish)')}
+</script>
+</body>
+</html>
