@@ -164,7 +164,7 @@ window.SANO_INDUSTRIES = [
     ]
   },
   {
-    slug: 'med-spa', week: [['<svg class="ico" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.1 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7A2 2 0 0 1 22 16.9z"/></svg>','The front desk stops being a bottleneck','Inquiries get answered and booked while your team is with a client in the room.'],['<svg class="ico" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>','Gaps stop appearing overnight','Reminders and easy rescheduling protect the calendar you already filled.'],['<svg class="ico" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4.5" width="18" height="16" rx="2"/><line x1="3" y1="9.5" x2="21" y2="9.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><polyline points="9 14 11 16 15.5 12"/></svg>','Past clients come back on their own','Rebooking and new-treatment campaigns run without anyone remembering to send them.']], built: false, em: '<svg class="ico" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3c1.6 3.4 3 4.8 6.4 6.4C15 11 13.6 12.4 12 15.8 10.4 12.4 9 11 5.6 9.4 9 7.8 10.4 6.4 12 3z"/><path d="M18 15.5c.7 1.5 1.3 2.1 2.8 2.8-1.5.7-2.1 1.3-2.8 2.8-.7-1.5-1.3-2.1-2.8-2.8 1.5-.7 2.1-1.3 2.8-2.8z"/></svg>', label: 'Med Spa & Aesthetics', tag: 'Med spas, salons & wellness',
+    slug: 'med-spa', week: [['<svg class="ico" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.1 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7A2 2 0 0 1 22 16.9z"/></svg>','The front desk stops being a bottleneck','Inquiries get answered and booked while your team is with a client in the room.'],['<svg class="ico" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>','Gaps stop appearing overnight','Reminders and easy rescheduling protect the calendar you already filled.'],['<svg class="ico" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4.5" width="18" height="16" rx="2"/><line x1="3" y1="9.5" x2="21" y2="9.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><polyline points="9 14 11 16 15.5 12"/></svg>','Past clients come back on their own','Rebooking and new-treatment campaigns run without anyone remembering to send them.']], built: false, em: '<svg class="ico" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3c1.6 3.4 3 4.8 6.4 6.4C15 11 13.6 12.4 12 15.8 10.4 12.4 9 11 5.6 9.4 9 7.8 10.4 6.4 12 3z"/><path d="M18 15.5c.7 1.5 1.3 2.1 2.8 2.8-1.5.7-2.1 1.3-2.8 2.8-.7-1.5-1.3-2.1-2.8-2.8 1.5-.7 2.1-1.3 2.8-2.8z"/></svg>', label: 'Beauty, Salon & Med Spa', tag: 'Hair, lash, nails, med spa & wellness',
     headline: 'What this looks like in your business',
     sub: 'A warm, on-brand front desk that never closes — booking consultations, protecting your calendar, and bringing clients back, without adding staff.',
     pains: [
@@ -287,13 +287,13 @@ window.SANO_TIERS = [
 window.SANO_CAPABILITIES = [
   { key:'textback', short:'Missed calls', tier:'starter', name:'Missed calls texted back',
     d:'A call you can’t pick up gets a text back within seconds — in English or Spanish — and the conversation carries on without you.',
-    more:'It fires on a missed call, a text, or a web message — inside a few seconds, before they have finished dialling the next company. If the conversation needs you, the whole thing lands on your phone as a text with their name, number and what they wanted.' },
+    more:'It fires on a missed call, a text, or a web message — inside a few seconds, before they have finished dialing the next company. If the conversation needs you, the whole thing lands on your phone as a text with their name, number and what they wanted.' },
   { key:'booking', short:'Booking', tier:'starter', name:'Booking &amp; reminders',
     d:'People book into the times you actually work, and everyone gets reminded before the day arrives.',
     more:'It only ever offers times you are actually free, with travel and buffer built in. It books into the calendar we set up and keep in sync with the one you use — and where your own software will not accept an outside booking, your team gets the booking to drop in instead, so nothing is ever double-booked. We confirm exactly how it connects with you before launch. Reminders go out before the day so people turn up.' },
   { key:'reviews', short:'Reviews', tier:'starter', name:'Reviews asked for',
     d:'After every finished job the customer gets a short, well-timed text asking for a Google review. You never chase one again.',
-    more:'The ask goes out at the moment people are happiest — right after the work is finished, not a week later. You never send one by hand, and you never have to ask a customer for a favour again.' },
+    more:'The ask goes out at the moment people are happiest — right after the work is finished, not a week later. You never send one by hand, and you never have to ask a customer for a favor again.' },
   { key:'google', short:'Google listing', tier:'starter', name:'Your Google listing kept sharp',
     d:'Hours, services and photos stay current on the page most people actually judge you by.',
     more:'Hours, services, photos and holiday closures stay right on the page most people judge you by before they ever call. We keep it current; you do not log in.' },
@@ -407,7 +407,7 @@ window.SANO_CAPS_BY_INDUSTRY = {
     reviews: 'The review gets asked for when they pick the car up and it’s running right.',
   },
   'med-spa': {
-    textback: 'The consultation enquiry that came in at 10pm gets a warm, on-brand reply before she books somewhere else.',
+    textback: 'The consultation inquiry that came in at 10pm gets a warm, on-brand reply before she books somewhere else.',
     voice: 'Calls about treatments and pricing get a real, on-brand conversation instead of a voicemail she won’t leave.',
     booking: 'Appointments book into your real availability, and work with however you already take deposits.',
     followup: 'The consultation that hasn’t booked yet gets followed up warmly, not chased.',
@@ -417,7 +417,7 @@ window.SANO_CAPS_BY_INDUSTRY = {
     reviews: 'The review gets asked for after the visit, at the point the result is showing.',
   },
   'dental': {
-    textback: 'The new-patient enquiry after hours gets answered and booked, instead of going to the practice down the road.',
+    textback: 'The new-patient inquiry after hours gets answered and booked, instead of going to the practice down the road.',
     voice: 'Calls get a real conversation that never asks for clinical history and routes anything sensitive to your team.',
     booking: 'Appointments book into your real chair time, with the reminders that cut no-shows.',
     followup: 'Treatment plans that weren’t scheduled get a gentle follow-up until the patient decides.',
@@ -428,7 +428,7 @@ window.SANO_CAPS_BY_INDUSTRY = {
     textback: '“Are you open?” “Do you have it in stock?” — answered in seconds, while they’re still deciding where to drive.',
     voice: 'The call about hours, stock or a class gets picked up out loud, even when the shop floor is busy.',
     booking: 'Classes, fittings and appointments get booked into the calendar we keep in sync with yours.',
-    followup: 'The enquiry that didn’t turn into a visit gets one more touch before it goes cold.',
+    followup: 'The inquiry that didn’t turn into a visit gets one more touch before it goes cold.',
     campaigns: 'New arrivals and events go out to the customers who already know you.',
     reviews: 'The review gets asked for after the visit, while the bag is still in their hand.',
   },
@@ -505,17 +505,17 @@ window.SANO_APP = {
     rec: [['Vehicle','2019 Chevy Silverado 1500'],['Plate','KLM-4471'],['Last service','Brakes &amp; rotors · 3 weeks ago'],['Mileage','88,400 at last visit'],['Next due','Oil change'],['Preference','Early mornings']],
   },
   'med-spa': {
-    biz: 'Lumen Aesthetics',
+    biz: 'Lumen Beauty & Aesthetics',
     ini: 'LA',
     place: 'studio',
     asset: 'treatment plan',
     cfnote: 'Treatment history, preferences and consent notes',
-    subs: ['Consultation · injectables','Laser · package 3 of 6','Facial · monthly member','Consult booked · Thu','Body contouring · 2 of 4','Membership · lapsed','Filler · 6-month review'],
+    subs: ['Lash fill · 3-week cycle','Color & gloss · Saturday','Consultation · injectables','Laser · package 3 of 6','Facial · monthly member','Brow lamination · new client','Membership · lapsed'],
     miss: ['Hi — do you have any consultation openings this week?','We do. Today at 11:30, or Thursday morning?','11:30 please','Booked ✓ Today 11:30 AM for your consultation. You will get a text before it.'],
     q: ['How much is a first consultation, and is there any downtime?','The consultation is complimentary, and your provider walks you through downtime for whatever you are considering before you commit to anything.','What is your soonest?','Thursday 10:30 AM or 2:00 PM are open — want me to hold one?','Thursday 10:30','Done ✓ Thursday 10:30 AM. You will get a reminder the day before.'],
-    ev: [['Amy Donham — Laser, session 3','9:00 AM · package'],['Ray Tucker — Consultation','11:30 AM · injectables'],['Tanya Guillory — Facial','2:15 PM · member']],
+    ev: [['Amy Donham — Lash fill','9:00 AM · 3-week cycle'],['Tanya Guillory — Color & gloss','11:30 AM · new client'],['Ray Tucker — Laser, session 3','2:15 PM · package']],
     rev: [['AD','Amy Donham','Booked a consult at 10pm on my phone and had a slot by morning.'],['JW','James Watts','Never felt sold to. They explained everything first.']],
-    rec: [['Interest','Injectables — first consultation'],['History','Two facials · last one 3 weeks ago'],['Membership','Monthly — active'],['Notes','Prefers afternoons, no downtime before events'],['Next due','6-month review'],['Preference','Text, not calls']],
+    rec: [['Interest','Lash fill + brow shape'],['History','Full set 3 weeks ago · two facials this spring'],['Membership','Monthly — active'],['Notes','Prefers afternoons, no downtime before events'],['Next due','6-month review'],['Preference','Text, not calls']],
   },
   'dental': {
     biz: 'Northgate Dental',

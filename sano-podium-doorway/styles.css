@@ -220,10 +220,18 @@ section.band{padding:84px 0}
 .price .btn{width:100%;margin-top:16px}
 .price ul{list-style:none;margin-top:auto;padding-top:18px;display:grid;gap:9px}
 .price li{font-size:13.5px;color:var(--ink-soft);display:flex;gap:8px}
-.price li.li-group{font-size:11px;font-weight:700;color:var(--blue-d);text-transform:uppercase;letter-spacing:.08em;margin-top:6px}
+.price li.li-group{font-size:11px;font-weight:700;color:var(--blue-d);text-transform:uppercase;letter-spacing:.06em;margin-top:6px}
+.price a.fn{color:inherit;text-decoration:none}
+.gx,.price .g-more{display:none}
 .price li svg{color:var(--blue-d);flex:none;margin-top:3px}
 @media(max-width:1149px){.price-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:480px){.price-grid{grid-template-columns:1fr}.cap-count{min-height:3em}}
+@media(max-width:480px){.price-grid{grid-template-columns:1fr}.cap-count{min-height:3em}
+  .price .g-xtra{display:none}
+  .price .gx:checked ~ ul .g-xtra{display:flex}
+  .price .g-more{display:flex}
+  .price .gx:checked ~ ul .g-more{display:none}
+  .price .g-more label{cursor:pointer;color:var(--blue-d);font-weight:600;font-size:13.5px}
+}
 
 /* ---------- FAQ ---------- */
 .faq{max-width:820px;margin:0 auto;display:grid;gap:12px}
@@ -775,6 +783,10 @@ table.cmp .gl{display:inline-block;width:15px;height:15px;vertical-align:-2px;ma
 .cap-count{text-align:center;margin-top:16px;font-size:15.5px;color:#9FB0BF;min-height:1.5em}
 .cap-count b{color:#fff;font-weight:700}
 .cap-count .cc{display:none}
+.cap-count .cc-growth{display:inline}
+.cap-band:has(#t-starter:checked) .cc-growth,
+.cap-band:has(#t-scale:checked) .cc-growth,
+.cap-band:has(#t-total:checked) .cc-growth{display:none}
 .cap-band:has(#t-starter:checked) .cc-starter,
 .cap-band:has(#t-growth:checked) .cc-growth,
 .cap-band:has(#t-scale:checked) .cc-scale,
@@ -1370,3 +1382,11 @@ header{z-index:90}
 /* the close glyph was bottom-aligned in a 136px box, so with the ribbon hidden it
    sat ~60px below where the burger actually is */
 .mm-close{align-items:center;padding-bottom:0}
+
+/* ---------- print ---------- */
+@media print{
+  header,footer,.menu-btn,.hero-cta,.btn,.cta-box{display:none!important}
+  body{background:#fff;color:#000}
+  .dark-band,.cap-band{background:#fff!important;color:#000!important}
+  .reveal{opacity:1!important;transform:none!important}
+}
