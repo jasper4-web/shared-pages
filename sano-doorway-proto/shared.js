@@ -3,7 +3,7 @@
    Each page sets <body data-page="home|product|industries|pricing|resources|about|demo">. */
 (function () {
   var page = document.body.getAttribute('data-page') || '';
-  var PHONE = '+18325557266', PHONE_D = '(832) 555-SANO', EMAIL = 'hello@sanosystems.com';
+  var PHONE = '+18323962496', PHONE_D = '(832) 396-2496';
   var IND = window.SANO_INDUSTRIES || [];
 
   var indDrop = IND.map(function (i) {
@@ -15,7 +15,6 @@
   var caret = '<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
 
   var nav =
-    '<div class="ribbon"><span class="rib-dot" aria-hidden="true"></span> DESIGN TEST — SANO Systems inside Podium\'s structure &amp; flow. <b>Not our live site;</b> phone &amp; email shown are placeholders.</div>' +
     '<header><div class="wrap nav">' +
       '<a href="doorway.html" class="brand" aria-label="SANO Systems — home"><img src="sano-logo.png" alt="" width="30" height="30"/><span class="bt">SANO Systems</span></a>' +
       '<nav aria-label="Main"><ul class="nav-links">' +
@@ -25,7 +24,7 @@
             '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#followup"><b>The follow-up</b><span>Chased until you get an answer</span></a>' +
             '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#reviews"><b>Reviews</b><span>Asked for after every job</span></a>' +
             '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#marketing"><b>Marketing &amp; payments</b><span>Campaigns, follow-up, pay-by-text</span></a>' +
-            '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#backoffice"><b>The back office</b><span>Hiring, training &amp; paperwork, run for you</span></a>' +
+            '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#backoffice"><b>Hiring &amp; team systems</b><span>Hiring, training &amp; paperwork, run for you</span></a>' +
             '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#command"><b>Your monthly report</b><span>What happened, in plain English</span></a>' +
             '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/sample-blueprint.html"><b>See a sample blueprint</b><span>The document a client actually approves</span></a>' +
           '</div>' +
@@ -68,7 +67,7 @@
           '<div class="brand"><img src="sano-logo.png" alt="" width="30" height="30"/> SANO Systems</div>' +
           '<p>You run your business. We run the systems.</p>' +
           '<a href="tel:' + PHONE + '" class="c">' + PHONE_D + '</a>' +
-          '<a href="mailto:' + EMAIL + '" class="c">' + EMAIL + '</a>' +
+          '<a href="sms:+18323962496?&body=I%27d%20like%20a%20demo%20for%20my%20business" class="c">Text ' + PHONE_D + '</a>' +
         '</div>' +
         '<div class="foot-col"><h2 class="foot-col-h">What we run</h2>' +
           '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#frontdesk">The front desk</a><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#reviews">Reviews</a>' +
@@ -89,7 +88,7 @@
     'The one-time setup pays for building it and isn\'t refunded once we start, but it is <strong>split half to begin, half the day it starts answering</strong> — and you don\'t owe the second half if we don\'t deliver the plan you approved.';
   var CONTACT = 'Or <a href="sms:' + PHONE + '?&body=' + encodeURIComponent('I\'d like a demo for my business') + '">text us</a>, ' +
     'or call <a href="tel:' + PHONE + '">' + PHONE_D + '</a> — you\'ll get a person, not a queue. ' +
-    '<em>(Placeholder number on this test site.)</em>';
+    '';
   document.querySelectorAll('.cta-box').forEach(function (box) {
     var g = box.querySelector('.cta-guarantee'); if (g) g.innerHTML = GUARANTEE;
     var c = box.querySelector('.cta-phone'); if (c) c.innerHTML = CONTACT;
@@ -139,14 +138,6 @@
       }
     });
   }
-  /* the picker is the centrepiece: clicking a tile must arm the branch for the
-     nav, footer and mobile menu too, not just for the panel's own button. */
-  window.SANO_setInd = function (slug) {
-    if (!slug || !IND.some(function (x) { return x.slug === slug; })) return;
-    IND_CTX = slug;
-    try { sessionStorage.setItem('sano_ind', slug); } catch (e) {}
-    carryInd(true);
-  };
 
   /* The trade page spends its whole middle section getting the owner to choose a
      level, then threw that choice away at the handoff: every CTA linked to
