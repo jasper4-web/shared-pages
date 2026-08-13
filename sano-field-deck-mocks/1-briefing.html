@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex">
+<title>Field Deck — The Morning Paper</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{ --bg:#0A0A0C; --panel:#131318; --panel2:#1A1A22; --line:#26262f;
+--cream:#F2EBE0; --dim:#9b95a8; --blue:#3B82F6; --cyan:#22D3EE;
+--red:#F87171; --green:#34D399; --amber:#FBBF24; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--cream);font-family:'Space Grotesk',sans-serif;max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:120px}
+.mockbanner{position:fixed;top:0;left:0;right:0;z-index:60;background:linear-gradient(90deg,var(--blue),var(--cyan));color:#07131c;font-size:10px;font-weight:700;letter-spacing:.08em;text-align:center;padding:5px 8px;text-transform:uppercase}
+.wrap{padding:40px 20px 0}
+/* masthead */
+.masthead{text-align:center;padding:26px 0 14px;border-bottom:3px double var(--line)}
+.masthead .paper{font-size:11px;letter-spacing:.34em;color:var(--dim);text-transform:uppercase}
+.masthead h1{font-size:30px;font-weight:700;letter-spacing:-.01em;margin:6px 0 2px;background:linear-gradient(90deg,var(--cream) 60%,var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.masthead .date{font-size:13px;color:var(--dim);margin-top:4px}
+.masthead .rule{width:64px;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));margin:12px auto 0;border-radius:2px}
+/* tabs */
+.tabs{display:flex;gap:8px;justify-content:center;padding:14px 0 6px;border-bottom:1px solid var(--line);position:sticky;top:22px;background:var(--bg);z-index:40}
+.tab{border:1px solid var(--line);background:var(--panel);color:var(--dim);font-family:inherit;font-size:13px;font-weight:600;padding:9px 16px;border-radius:999px;cursor:pointer}
+.tab.on{color:#07131c;background:linear-gradient(90deg,var(--blue),var(--cyan));border-color:transparent}
+/* prose */
+.prose{padding:22px 2px 6px;font-size:16.5px;line-height:1.78;color:var(--cream)}
+.prose p{margin:0 0 18px}
+.prose .lede::first-letter{float:left;font-size:52px;line-height:.86;font-weight:700;padding:4px 10px 0 0;color:var(--cyan)}
+.name{font-weight:700;color:var(--cream);border-bottom:2px solid var(--cyan);cursor:pointer}
+.name:active{color:var(--cyan)}
+.rank{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;border-radius:5px;padding:1px 6px;margin-left:5px;vertical-align:2px;border:1px solid var(--line);color:var(--dim);background:var(--panel)}
+.rank.a{color:var(--amber);border-color:rgba(251,191,36,.45)}
+.rank.warm{color:var(--green);border-color:rgba(52,211,153,.4)}
+.rank.cold{color:var(--cyan);border-color:rgba(34,211,238,.4)}
+/* overnight card */
+.overnight{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:14px;padding:16px 16px 8px;margin:6px 0 24px}
+.overnight h3{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px}
+.ovitem{display:flex;gap:10px;align-items:flex-start;padding:9px 4px;border-top:1px solid var(--line);font-size:14.5px;line-height:1.55;cursor:pointer}
+.ovitem:first-of-type{border-top:none}
+.ovitem .dot{color:var(--cyan);font-size:12px;margin-top:4px}
+.ovitem .go{margin-left:auto;color:var(--dim);font-size:13px;padding-left:8px}
+/* section heads */
+.shead{display:flex;align-items:center;gap:12px;margin:26px 0 14px}
+.shead h2{font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--dim);white-space:nowrap}
+.shead::before,.shead::after{content:"";height:1px;background:var(--line);flex:1}
+/* timeline */
+.tl{position:relative;padding-left:26px}
+.tl::before{content:"";position:absolute;left:8px;top:8px;bottom:8px;width:2px;background:var(--line)}
+.tlrow{position:relative;margin-bottom:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;cursor:pointer}
+.tlrow::before{content:"";position:absolute;left:-24px;top:20px;width:10px;height:10px;border-radius:50%;background:var(--panel2);border:2px solid var(--dim)}
+.tlrow.hot::before{background:linear-gradient(135deg,var(--blue),var(--cyan));border-color:var(--cyan)}
+.tlrow .time{font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--cyan);text-transform:uppercase}
+.tlrow.hot .time{color:var(--amber)}
+.tlrow .what{font-size:15.5px;font-weight:600;margin-top:3px}
+.tlrow .sub{font-size:13.5px;color:var(--dim);margin-top:3px;line-height:1.5}
+.tlrow.hot{border-color:rgba(251,191,36,.4)}
+/* past days */
+.daycard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 16px;margin-bottom:14px;cursor:pointer}
+.daycard .d{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.daycard h3{font-size:17px;font-weight:700;margin:6px 0 6px}
+.daycard p{font-size:14.5px;color:var(--dim);line-height:1.6}
+.daycard.recap{border-color:rgba(251,191,36,.4)}
+.daycard.recap .d{color:var(--amber)}
+.stats{display:flex;gap:8px;margin-top:12px}
+.stat{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:10px;text-align:center;padding:8px 4px}
+.stat b{display:block;font-size:18px}
+.stat span{font-size:10.5px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+/* person page */
+.pback{display:inline-block;font-size:14px;color:var(--dim);text-decoration:none;padding:14px 4px 4px;cursor:pointer;background:none;border:none;font-family:inherit}
+.phead{padding:8px 2px 16px;border-bottom:3px double var(--line)}
+.phead h2{font-size:26px;font-weight:700;letter-spacing:-.01em}
+.phead .biz{font-size:15px;color:var(--dim);margin-top:2px}
+.badges{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.badge{font-size:12px;font-weight:700;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel)}
+.badge.val{color:var(--amber);border-color:rgba(251,191,36,.45)}
+.badge.wrm{color:var(--green);border-color:rgba(52,211,153,.4)}
+.badge.client{color:#07131c;background:linear-gradient(90deg,var(--blue),var(--cyan));border-color:transparent}
+.ladder{display:flex;gap:5px;align-items:center;margin-top:10px;font-size:11.5px;color:var(--dim)}
+.ldot{width:9px;height:9px;border-radius:50%;background:var(--panel2);border:1px solid var(--line)}
+.ldot.lit{background:var(--green);border-color:var(--green)}
+.quote{margin:18px 0;padding:14px 16px;background:var(--panel);border-left:3px solid var(--amber);border-radius:0 12px 12px 0;font-size:16px;line-height:1.6;font-style:italic}
+.quote .who{display:block;font-style:normal;font-size:12px;color:var(--dim);margin-top:8px;letter-spacing:.08em;text-transform:uppercase}
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.pcard h4{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px solid var(--line);font-size:14.5px}
+.kv:first-of-type{border-top:none}
+.kv .k{color:var(--dim)}
+.kv .v{text-align:right;font-weight:600;max-width:60%}
+.ptl .ev{padding:11px 0;border-top:1px solid var(--line);font-size:14.5px;line-height:1.55}
+.ptl .ev:first-of-type{border-top:none}
+.ptl .ev .ed{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.ptl .ev .claude{color:var(--cyan)}
+.files{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 8px}
+.file{min-width:96px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 10px;text-align:center;cursor:pointer}
+.file .ic{font-size:24px}
+.file .fn{font-size:11.5px;color:var(--dim);margin-top:6px;line-height:1.35}
+.actions{display:flex;gap:10px;margin:16px 0 8px}
+.abtn{flex:1;font-family:inherit;font-size:14px;font-weight:700;padding:14px 8px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--cream);cursor:pointer}
+.abtn.primary{background:linear-gradient(90deg,var(--blue),var(--cyan));color:#07131c;border-color:transparent}
+/* mic + sheet */
+.mic{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:50;font-family:inherit;font-size:15px;font-weight:700;color:#07131c;background:linear-gradient(90deg,var(--blue),var(--cyan));border:none;border-radius:999px;padding:15px 24px;cursor:pointer;box-shadow:0 8px 28px rgba(34,211,238,.35)}
+.sheetveil{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:70;display:none}
+.sheet{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:430px;background:var(--panel2);border:1px solid var(--line);border-bottom:none;border-radius:20px 20px 0 0;padding:18px 18px 26px;z-index:71;display:none}
+.sheet.open,.sheetveil.open{display:block}
+.sheet h3{font-size:17px;font-weight:700;margin-bottom:4px}
+.sheet .hint{font-size:13px;color:var(--dim);margin-bottom:12px}
+.sheet textarea{width:100%;min-height:110px;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--cream);font-family:inherit;font-size:16px;line-height:1.5;padding:12px;resize:none}
+.sheet textarea::placeholder{color:var(--dim)}
+.chips{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+.chip{font-family:inherit;font-size:13px;font-weight:600;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--dim);cursor:pointer}
+.chip.on{color:#07131c;background:linear-gradient(90deg,var(--blue),var(--cyan));border-color:transparent}
+/* toast */
+#toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%) translateY(20px);max-width:360px;width:calc(100% - 48px);background:var(--panel2);border:1px solid var(--cyan);color:var(--cream);font-size:14px;line-height:1.45;padding:12px 16px;border-radius:12px;z-index:80;opacity:0;pointer-events:none;transition:all .25s;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.footer{padding:34px 0 10px;text-align:center}
+.footer a{color:var(--dim);font-size:12.5px;text-decoration:none;border-bottom:1px solid var(--line)}
+.view{display:none}
+.view.on{display:block}
+.small{font-size:12.5px;color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="mockbanner">MOCK 1 OF 4 · "THE MORNING PAPER" · FAKE DATA — TAP AROUND</div>
+<div class="wrap">
+
+<!-- ============ HOME: THE BRIEFING ============ -->
+<div class="view on" id="view-home">
+  <div class="masthead">
+    <div class="paper">Field Deck · The Morning Briefing</div>
+    <h1>Wednesday, August 13</h1>
+    <div class="date">Day 3 on the doors · Houston, 91° by 2pm</div>
+    <div class="rule"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" onclick="showView('home',this)">Today's Paper</button>
+    <button class="tab" onclick="showView('past',this)">Past Days</button>
+    <button class="tab" onclick="showView('rolodex',this)">Rolodex</button>
+  </div>
+
+  <div class="prose">
+    <p class="lede">Morning. One thing matters today: <span class="name" onclick="openPerson('rudy')">Rudy Reyes</span><span class="rank a">A</span><span class="rank warm">Trusts me</span> and his 2:00 demo at Reyes Auto Care. Leave by 1:35 — Westheimer's torn up past Fountain View. He gave you his number Monday and his exact words are still the pitch: <em>"If it can catch the after-hours calls I'm listening."</em> Carla runs his phones and she's out Tuesdays. That's the whole demo. Show him Tuesday.</p>
+    <p><span class="name" onclick="openPerson('bree')">Bree</span><span class="rank">B</span><span class="rank warm">Knows me</span> at Lonestar Lash told you PM only, and you'll be about 400 feet from her studio when you walk out of Rudy's — she's on the way home, not a detour. Second visit, so no pitch; just be a face she recognizes.</p>
+    <p>The one that should bug you is <span class="name" onclick="openPerson('dale')">Dale</span><span class="rank a">A</span><span class="rank cold">Cold</span> at Gulf Coast Plumbing — 4.9 stars, 212 reviews, and a website link that's been dead for who knows how long. Tuesday's pre-call rang out with no voicemail, which tells its own story. He's the biggest fish on this strip nobody's met. Not today's problem, but he's Thursday's first door.</p>
+    <p>And if you pass Casa Verde, wave at <span class="name" onclick="openPerson('marisol')">Marisol</span><span class="rank">C</span><span class="rank warm">Would vouch</span>. She's sent you two doors already. Thirty seconds of hello is worth more than an hour of cold knocking on this street.</p>
+  </div>
+
+  <div class="overnight">
+    <h3>⚡ While you slept, I worked</h3>
+    <div class="ovitem" onclick="toast('(mock) Opens Thursday\'s route — 11 fresh doors, pre-researched, mapped in walking order.')"><span class="dot">●</span><span>Loaded <b>11 fresh doors</b> for Thursday and put them in walking order.</span><span class="go">›</span></div>
+    <div class="ovitem" onclick="toast('(mock) Opens the drafted follow-up text to Rudy for your review — nothing sends without you.')"><span class="dot">●</span><span>Drafted <b>tonight's text to Rudy</b> — review it when you're back.</span><span class="go">›</span></div>
+    <div class="ovitem" onclick="openPerson('dale')"><span class="dot">●</span><span>Researched <b>Dale at Gulf Coast</b>: confirmed the dead site, pulled his review themes. It's on his page.</span><span class="go">›</span></div>
+    <div class="ovitem" onclick="openPerson('rudy')"><span class="dot">●</span><span><b>Rudy's pitch page is building</b> from his own words — draft's in his files.</span><span class="go">›</span></div>
+  </div>
+
+  <div class="shead"><h2>Today</h2></div>
+  <div class="tl">
+    <div class="tlrow" onclick="toast('(mock) Opens the Westheimer strip route — 6 doors mapped in walking order with notes on each.')">
+      <div class="time">10:00 – 1:15</div>
+      <div class="what">Westheimer strip — 6 doors</div>
+      <div class="sub">Walking order set. Dr. Kim's gatekeeper is door 3 — owner's only in Thursdays, so today is just charm and a card.</div>
+    </div>
+    <div class="tlrow" onclick="toast('(mock) Sets a leave-by alarm and opens directions to Reyes Auto Care.')">
+      <div class="time">1:35</div>
+      <div class="what">Leave for Rudy's</div>
+      <div class="sub">Construction past Fountain View — don't cut it close.</div>
+    </div>
+    <div class="tlrow hot" onclick="openPerson('rudy')">
+      <div class="time">2:00 · The Main Event</div>
+      <div class="what">Demo — Rudy Reyes, Reyes Auto Care</div>
+      <div class="sub">Growth fit. Lead with the after-hours catch. His page has the whole story ›</div>
+    </div>
+    <div class="tlrow" onclick="openPerson('bree')">
+      <div class="time">~3:00</div>
+      <div class="what">Swing by Bree — Lonestar Lash</div>
+      <div class="sub">400 ft from Rudy's. PM only, per her. Face time, not pitch time.</div>
+    </div>
+    <div class="tlrow" onclick="toast('(mock) Opens the evening send queue — drafted texts wait for your thumb, nothing goes out alone.')">
+      <div class="time">Evening</div>
+      <div class="what">Texts block</div>
+      <div class="sub">Rudy's thank-you draft is ready. I'll have a Bree note drafted too if you log the visit.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAST DAYS ============ -->
+<div class="view" id="view-past">
+  <div class="masthead">
+    <div class="paper">Field Deck · Back Issues</div>
+    <h1>Past Days</h1>
+    <div class="date">Every day you've worked, written down</div>
+    <div class="rule"></div>
+  </div>
+  <div class="tabs">
+    <button class="tab" onclick="showView('home',this)">Today's Paper</button>
+    <button class="tab on" onclick="showView('past',this)">Past Days</button>
+    <button class="tab" onclick="showView('rolodex',this)">Rolodex</button>
+  </div>
+
+  <div style="height:18px"></div>
+  <div class="daycard recap" onclick="toast('(mock) Friday I write your Week 1 recap in full — what worked, what stalled, and the one move for Week 2.')">
+    <div class="d">Coming Friday · Weekly Recap</div>
+    <h3>Week 1, so far</h3>
+    <p>27 doors, 11 conversations, and the top objection is "we already have someone" — heard it 4 times. I'm drafting the counter for that line now.</p>
+    <div class="stats">
+      <div class="stat"><b>27</b><span>doors</span></div>
+      <div class="stat"><b>11</b><span>convos</span></div>
+      <div class="stat"><b>1</b><span>demo set</span></div>
+    </div>
+  </div>
+
+  <div class="daycard" onclick="toast('(mock) Opens the full Aug 11 issue — every door, every word, exactly as you logged it that day.')">
+    <div class="d">Tue · August 11</div>
+    <h3>Westheimer opens up</h3>
+    <p>9 doors, 4 real conversations. Met Rudy at Reyes Auto Care and he bit on the after-hours line — demo booked for Wednesday. Marisol answered her pre-call in 3 rings and talked the whole strip.</p>
+    <div class="stats">
+      <div class="stat"><b>9</b><span>doors</span></div>
+      <div class="stat"><b>4</b><span>convos</span></div>
+      <div class="stat"><b>1</b><span>demo</span></div>
+    </div>
+  </div>
+
+  <div class="daycard" onclick="toast('(mock) Opens the full Aug 10 issue — the pre-call list with outcomes on every dial.')">
+    <div class="d">Mon · August 10</div>
+    <h3>First calls day</h3>
+    <p>11 pre-calls to warm the strip before walking it. 2 numbers collected. Dale at Gulf Coast rang out — no voicemail set up, which is exactly the kind of leak we sell the fix for.</p>
+    <div class="stats">
+      <div class="stat"><b>11</b><span>pre-calls</span></div>
+      <div class="stat"><b>2</b><span>numbers</span></div>
+      <div class="stat"><b>0</b><span>doors</span></div>
+    </div>
+  </div>
+  <p class="small" style="text-align:center;padding:8px 0 4px">Weeks from now, this page is how you prove what you did — day by day, in your own words.</p>
+</div>
+
+<!-- ============ ROLODEX ============ -->
+<div class="view" id="view-rolodex">
+  <div class="masthead">
+    <div class="paper">Field Deck · The Rolodex</div>
+    <h1>Everyone</h1>
+    <div class="date">Value A–C × Warmth, at a glance</div>
+    <div class="rule"></div>
+  </div>
+  <div class="tabs">
+    <button class="tab" onclick="showView('home',this)">Today's Paper</button>
+    <button class="tab" onclick="showView('past',this)">Past Days</button>
+    <button class="tab on" onclick="showView('rolodex',this)">Rolodex</button>
+  </div>
+  <div style="height:18px"></div>
+  <div id="rolodexlist"></div>
+  <p class="small" style="text-align:center;padding:10px 0 4px">A cold A gets different moves than a warm C — the paper writes the plays, this drawer holds the people.</p>
+</div>
+
+<!-- ============ PERSON PAGE (rendered) ============ -->
+<div class="view" id="view-person">
+  <button class="pback" onclick="backFromPerson()">‹ Back to the paper</button>
+  <div id="personbody"></div>
+</div>
+
+<div class="footer"><a href="index.html">‹ all four mocks</a></div>
+</div>
+
+<button class="mic" onclick="openLog()">🎤 Tell me what happened</button>
+
+<div class="sheetveil" id="veil" onclick="closeLog()"></div>
+<div class="sheet" id="sheet">
+  <h3>Log it in your own words</h3>
+  <div class="hint">Tap the 🎤 on your keyboard and just talk. I'll file it to the right person, update the timeline, and it'll be in tomorrow's paper.</div>
+  <div class="chips" id="logchips">
+    <button class="chip" onclick="pickChip(this)">Rudy</button>
+    <button class="chip" onclick="pickChip(this)">Bree</button>
+    <button class="chip" onclick="pickChip(this)">Dale</button>
+    <button class="chip" onclick="pickChip(this)">New door</button>
+  </div>
+  <textarea id="logtext" placeholder="e.g. &quot;Just left Rudy's — demo went great, Carla was there too, he wants to talk to her tonight, said call Friday morning…&quot;"></textarea>
+  <div class="actions">
+    <button class="abtn" onclick="closeLog()">Not now</button>
+    <button class="abtn primary" onclick="saveLog()">Save it</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+var lastView='home';
+function showView(v,btn){
+  document.querySelectorAll('.view').forEach(function(x){x.classList.remove('on')});
+  document.getElementById('view-'+v).classList.add('on');
+  if(v!=='person'){lastView=v;}
+  window.scrollTo(0,0);
+}
+function backFromPerson(){showView(lastView);}
+var toastTimer=null;
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove('show')},2600);
+}
+function openLog(){document.getElementById('sheet').classList.add('open');document.getElementById('veil').classList.add('open');}
+function closeLog(){document.getElementById('sheet').classList.remove('open');document.getElementById('veil').classList.remove('open');}
+function pickChip(el){
+  document.querySelectorAll('#logchips .chip').forEach(function(c){c.classList.remove('on')});
+  el.classList.add('on');
+}
+function saveLog(){
+  var txt=document.getElementById('logtext').value.trim();
+  closeLog();
+  document.getElementById('logtext').value='';
+  document.querySelectorAll('#logchips .chip').forEach(function(c){c.classList.remove('on')});
+  toast(txt? '(mock) Logged. Filed to the right person — Claude sees it at the desk the second you hit save.' : '(mock) Nothing to save yet — tap the 🎤 on your keyboard and just talk.');
+}
+
+/* warmth ladder: 1 Cold · 2 Knows me · 3 Trusts me · 4 Would vouch */
+var WARMTH=['Cold','Knows me','Trusts me','Would vouch'];
+var PEOPLE={
+ rudy:{
+  name:'Rudy Reyes', biz:'Reyes Auto Care · Auto', val:'A', warm:3,
+  quote:'"If it can catch the after-hours calls I\'m listening."',
+  quoteWho:'Rudy, Tuesday Aug 11 — his exact words, on file',
+  snapshot:[['Package fit','Growth'],['Pain, one line','Wife answers the phones — she\'s out Tuesdays'],['Who decides','Rudy (talks it over with Carla)'],['Next move','Demo today 2:00p · leave by 1:35'],['Phone','713-555-0142']],
+  personal:[['Spouse','Carla — runs the front desk'],['Kids','Two'],['His thing','Restoring a \'68 C10 pickup — ask about it'],['Met','Mon Aug 10, pre-call · in person Tue Aug 11']],
+  timeline:[
+   ['TODAY · 2:00P','Demo at the shop. The play: show Tuesday — the day Carla\'s out and the phone rings into nothing.',''],
+   ['LAST NIGHT','Pitch page draft built from his exact words. In his files below.','claude'],
+   ['TUE AUG 11','Door visit, ~12 min. Talked the C10 before business. He said the line that\'s now the whole pitch. Demo booked.',''],
+   ['MON AUG 10','Pre-call — answered, friendly, gave his number.','']],
+  files:[['📄','Pitch page (draft) — built by Claude','(mock) Opens the draft pitch page built overnight from Rudy\'s exact words.'],['📷','Shop front, Tue','(mock) Opens the photo from Tuesday\'s visit.'],['📷','\'68 C10 in bay 2','(mock) Opens the truck photo — your icebreaker.'],['💬','Text draft, tonight','(mock) Opens tonight\'s drafted thank-you text — you approve every send.']],
+  actions:[['Call Rudy','(mock) Dials 713-555-0142.'],['Directions','(mock) Opens directions — leave by 1:35, construction past Fountain View.'],['Draft text','(mock) Claude drafts a text in your voice from today\'s log.']]
+ },
+ dale:{
+  name:'Dale', biz:'Gulf Coast Plumbing Co. · Plumbing', val:'A', warm:1,
+  quote:'"4.9 stars, 212 reviews, dead website, no voicemail. Best business on the strip that nobody can reach."',
+  quoteWho:'Claude\'s overnight research note',
+  snapshot:[['Package fit','Too early to call — meet him first'],['Pain, one line','Great reputation, unreachable — dead site, no VM'],['Who decides','Dale (never met)'],['Next move','Thursday, first door of the day'],['Phone','713-555-0117']],
+  personal:[['Known so far','Nothing personal yet — that\'s the point of Thursday']],
+  timeline:[
+   ['LAST NIGHT','Researched: confirmed the website link is dead, review themes pulled — customers love the work, complain they can\'t get him on the phone.','claude'],
+   ['TUE AUG 11 · 2:10P','Pre-call rang out. No voicemail set up.',''],
+   ['MON AUG 10','Added from the strip sweep — flagged as the classic cold A.','claude']],
+  files:[['🔗','Dead site — screenshot','(mock) Opens the screenshot of his broken website link.'],['⭐','Review themes','(mock) Opens Claude\'s pull of his 212 reviews, sorted by theme.']],
+  actions:[['Put on Thursday','(mock) Already first door on Thursday\'s route.'],['Pre-call again','(mock) Dials 713-555-0117 — third ring\'s the charm.']]
+ },
+ marisol:{
+  name:'Marisol', biz:'Casa Verde Landscaping · Home Services', val:'C', warm:4,
+  quote:'"She knows everyone on the strip — two of your doors this week came from her."',
+  quoteWho:'Why a C stays on the route',
+  snapshot:[['Package fit','C — small ticket, huge network'],['Play','Referrals, not the sale'],['Language','Spanish-first — lead in Spanish'],['Next move','30-second hello when you pass today'],['Phone','713-555-0163']],
+  personal:[['Style','Answered pre-call in 3 rings, talked the whole strip'],['Sent you','2 intro leads so far']],
+  timeline:[
+   ['THIS WEEK','Two intro leads from her, both on Thursday\'s route.',''],
+   ['MON AUG 10','Pre-call — answered in 3 rings, warm from hello.','']],
+  files:[['🗺️','Her strip intel, mapped','(mock) Opens the map of who-knows-who that Marisol gave you.']],
+  actions:[['Say thanks','(mock) Drafts a Spanish-first thank-you text for the two leads.'],['Log a hello','(mock) Opens the capture sheet pre-tagged Marisol.']]
+ },
+ bree:{
+  name:'Bree', biz:'Lonestar Lash Studio · Beauty', val:'B', warm:2,
+  quote:'"PM only." — remembered, which is why today\'s stop is after Rudy, not before.',
+  quoteWho:'Her one rule, on file',
+  snapshot:[['Package fit','Reads Starter — confirm on visit two'],['Pain, one line','Owner\'s in PMs only; mornings go unanswered'],['Who decides','Bree'],['Next move','Swing by ~3:00 today — face time, not pitch time'],['Phone','713-555-0128']],
+  personal:[['Rule','PM only — she told you once, we never forget it'],['Talked','Once, brief and friendly']],
+  timeline:[
+   ['TODAY · ~3:00','Re-visit due. 400 ft from Rudy\'s — on the way home.',''],
+   ['LAST WEEK','First conversation. Short, warm, "come back in the afternoon."','']],
+  files:[['📷','Studio storefront','(mock) Opens the storefront photo from visit one.']],
+  actions:[['Directions','(mock) Opens the 400-ft walk from Reyes Auto Care.'],['Log the visit','(mock) Opens the capture sheet pre-tagged Bree.']]
+ },
+ kim:{
+  name:'Dr. Kim', biz:'Smile Lane Dental · Dental', val:'B', warm:1,
+  quote:'"Phone never picked up" — said 4 separate times in her own reviews.',
+  quoteWho:'Claude\'s review sweep',
+  snapshot:[['Package fit','Reads Growth — unconfirmed'],['Stage','Gatekeeper — owner\'s in Thursdays only'],['Pain, one line','Patients say the phone never gets answered'],['Next move','Door 3 today: charm the gatekeeper, leave a card'],['Phone','713-555-0195']],
+  personal:[['Gatekeeper','Front desk holds the calendar — be memorable, not pushy']],
+  timeline:[
+   ['TODAY','Door 3 on the strip walk. Owner not in — plant the seed with the front desk.',''],
+   ['LAST NIGHT','Review sweep: "phone never picked up" ×4. That\'s the opener when you meet her Thursday.','claude']],
+  files:[['⭐','The 4 phone complaints','(mock) Opens the four reviews, highlighted.']],
+  actions:[['Thursday plan','(mock) Adds Dr. Kim to Thursday — the day she\'s in.'],['Log the stop','(mock) Opens the capture sheet pre-tagged Smile Lane.']]
+ },
+ andre:{
+  name:'Andre', biz:'Bayou Fade Barbershop · Barber', val:'B', warm:2,
+  quote:'"My cousin does our stuff." — a no, but a friendly one.',
+  quoteWho:'His words, week 1',
+  snapshot:[['Status','Said no — parked, not dead'],['Play','6-week ghost, then re-approach when the cousin\'s backlog shows'],['Re-approach','Week of Sep 21 — I\'ll put it in that morning\'s paper'],['Phone','713-555-0179']],
+  personal:[['Vibe','Friendly no — door\'s closed, not locked']],
+  timeline:[
+   ['WEEK 1','Pitched, declined — cousin handles it. Logged, parked, 6-week timer set.',''],
+   ['SEP 21 (SET)','Timer fires: he shows up in that morning\'s briefing automatically.','claude']],
+  files:[['⏰','Re-approach timer','(mock) Shows the Sep 21 timer — the paper brings him back, you don\'t have to remember.']],
+  actions:[['Move the timer','(mock) Slide the re-approach date — the paper adjusts itself.'],['Add a note','(mock) Opens the capture sheet pre-tagged Andre.']]
+ },
+ hidalgo:{
+  name:'Hidalgo Roofing', biz:'Roofing · CLIENT since Aug 1', val:'A', warm:4, client:true,
+  quote:'42 calls answered by the AI this month — every one of them used to be a coin flip.',
+  quoteWho:'This month, from the receptionist logs',
+  snapshot:[['Status','Won · live since Aug 1'],['This month','42 calls answered by the AI'],['Check-in cadence','Every other Friday — next one Aug 15'],['Referral ask','DUE — they\'d vouch, so ask'],['Phone','713-555-0104']],
+  personal:[['Relationship','Would vouch — your proof story for every roofer on the strip']],
+  timeline:[
+   ['AUG 15 (NEXT)','Check-in call + the referral ask. Script drafting from their call stats.','claude'],
+   ['THIS MONTH','42 calls answered by the AI. Zero missed after-hours.',''],
+   ['AUG 1','Went live. First closed client.','']],
+  files:[['📊','Month-one call report','(mock) Opens the answered-calls report — the demo you show Rudy today.'],['🤝','Referral ask draft','(mock) Opens the drafted referral ask for Friday\'s check-in.']],
+  actions:[['Show Rudy this','(mock) Queues the Hidalgo call report as today\'s demo proof.'],['Check-in Fri','(mock) Confirms Friday\'s check-in on the calendar.']]
+ }
+};
+
+function ladderHtml(w){
+  var h='<div class="ladder">';
+  for(var i=1;i<=4;i++){h+='<span class="ldot'+(i<=w?' lit':'')+'"></span>';}
+  h+='<span style="margin-left:6px">'+WARMTH[w-1]+'</span></div>';
+  return h;
+}
+function openPerson(key){
+  var p=PEOPLE[key];
+  var h='<div class="phead"><h2>'+p.name+'</h2><div class="biz">'+p.biz+'</div>'
+   +'<div class="badges">'
+   +(p.client?'<span class="badge client">CLIENT</span>':'')
+   +'<span class="badge val">Value '+p.val+'</span>'
+   +'<span class="badge wrm">'+WARMTH[p.warm-1]+'</span></div>'
+   +ladderHtml(p.warm)+'</div>';
+  h+='<div class="quote">'+p.quote+'<span class="who">'+p.quoteWho+'</span></div>';
+  h+='<div class="actions">';
+  p.actions.forEach(function(a,i){
+    h+='<button class="abtn'+(i===0?' primary':'')+'" onclick="toast(\''+esc(a[1])+'\')">'+a[0]+'</button>';
+  });
+  h+='</div>';
+  h+='<div class="pcard"><h4>Business snapshot</h4>';
+  p.snapshot.forEach(function(kv){h+='<div class="kv"><span class="k">'+kv[0]+'</span><span class="v">'+kv[1]+'</span></div>';});
+  h+='</div>';
+  h+='<div class="pcard"><h4>Personal</h4>';
+  p.personal.forEach(function(kv){h+='<div class="kv"><span class="k">'+kv[0]+'</span><span class="v">'+kv[1]+'</span></div>';});
+  h+='</div>';
+  h+='<div class="pcard ptl"><h4>The whole story</h4>';
+  p.timeline.forEach(function(ev){
+    h+='<div class="ev"><div class="ed'+(ev[2]==='claude'?' claude':'')+'">'+ev[0]+(ev[2]==='claude'?' · ⚡ Claude':'')+'</div>'+ev[1]+'</div>';
+  });
+  h+='</div>';
+  h+='<div class="pcard"><h4>Photos &amp; files</h4><div class="files">';
+  p.files.forEach(function(f){
+    h+='<div class="file" onclick="toast(\''+esc(f[2])+'\')"><div class="ic">'+f[0]+'</div><div class="fn">'+f[1]+'</div></div>';
+  });
+  h+='</div></div>';
+  document.getElementById('personbody').innerHTML=h;
+  showView('person');
+}
+function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+
+/* rolodex list */
+(function(){
+  var order=['rudy','dale','hidalgo','bree','kim','andre','marisol'];
+  var h='';
+  order.forEach(function(k){
+    var p=PEOPLE[k];
+    h+='<div class="tlrow" style="margin-left:0" onclick="openPerson(\''+k+'\')">'
+     +'<div class="what">'+p.name+(p.client?' <span class="rank a">CLIENT</span>':'')+'</div>'
+     +'<div class="sub">'+p.biz+'</div>'
+     +'<div class="badges" style="margin-top:8px"><span class="badge val" style="font-size:11px;padding:4px 10px">Value '+p.val+'</span>'
+     +'<span class="badge wrm" style="font-size:11px;padding:4px 10px">'+WARMTH[p.warm-1]+'</span></div>'
+     +'</div>';
+  });
+  document.getElementById('rolodexlist').innerHTML=h;
+})();
+</script>
+</body>
+</html>
