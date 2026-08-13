@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex">
+<title>Field Deck — Rough A "The Sheet"</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0C; --panel:#131318; --panel2:#1A1A22; --line:#26262f;
+    --cream:#F2EBE0; --dim:#9b95a8; --blue:#3B82F6; --cyan:#22D3EE;
+    --red:#F87171; --green:#34D399; --amber:#FBBF24;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{background:var(--bg);color:var(--cream);font-family:'Space Grotesk',-apple-system,sans-serif;max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:40px}
+  .screen{display:none}.screen.on{display:block}
+  header{padding:18px 16px 10px;display:flex;justify-content:space-between;align-items:baseline}
+  .logo{font-weight:700;letter-spacing:.06em;font-size:15px}
+  .logo b{color:var(--cyan)}
+  .datestrip{font-size:12px;color:var(--dim)}
+  .rough-tag{position:fixed;top:0;left:0;right:0;background:linear-gradient(90deg,var(--blue),var(--cyan));color:#04060a;font-size:10px;font-weight:700;letter-spacing:.12em;text-align:center;padding:3px;z-index:99}
+  .pad{padding:34px 16px 0}
+  /* funnel strip */
+  .funnel{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 16px 4px}
+  .fcell{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 4px;text-align:center}
+  .fcell .n{font-size:22px;font-weight:700}
+  .fcell .l{font-size:9.5px;color:var(--dim);letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
+  .fcell.hot .n{color:var(--cyan)}
+  .sect{margin:18px 16px 6px;font-size:11px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
+  .sect .note{letter-spacing:0;text-transform:none;font-size:11px}
+  /* due cards */
+  .due{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--red);border-radius:12px;margin:8px 16px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+  .due .who{font-weight:600;font-size:15px}
+  .due .why{font-size:12px;color:var(--dim);margin-top:2px}
+  .due .act{background:rgba(59,130,246,.15);border:1px solid var(--blue);color:var(--cyan);font-size:12px;font-weight:600;border-radius:999px;padding:7px 12px;white-space:nowrap}
+  /* queue cards */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin:8px 16px;padding:13px 14px;position:relative}
+  .card.done{opacity:.45}
+  .card .top{display:flex;justify-content:space-between;align-items:center}
+  .card .name{font-weight:600;font-size:16px}
+  .chip{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:3px 9px;background:rgba(34,211,238,.12);color:var(--cyan);border:1px solid rgba(34,211,238,.35)}
+  .card .hook{font-size:12.5px;color:var(--dim);margin-top:5px}
+  .precall{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:11.5px;font-weight:600;color:var(--amber);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:8px;padding:4px 8px}
+  .precall.ok{color:var(--green);background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.25)}
+  .tick{position:absolute;top:12px;right:12px;color:var(--green);font-size:14px;font-weight:700}
+  /* prospect sheet */
+  .back{color:var(--cyan);font-size:14px;font-weight:600;padding:34px 16px 8px;display:block;background:none;border:none}
+  .psheet{padding:0 16px}
+  .pname{font-size:24px;font-weight:700;line-height:1.15}
+  .prow{display:flex;gap:8px;margin:10px 0 4px;flex-wrap:wrap}
+  .chip.gray{background:rgba(155,149,168,.12);color:var(--dim);border-color:var(--line)}
+  .chip.warn{background:rgba(248,113,113,.1);color:var(--red);border-color:rgba(248,113,113,.3)}
+  .ammo{background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(34,211,238,.06));border:1px solid rgba(34,211,238,.3);border-radius:14px;padding:14px;margin:14px 0}
+  .ammo .t{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px;font-weight:700}
+  .ammo p{font-size:13.5px;line-height:1.5;margin-bottom:8px}
+  .ammo p:last-child{margin-bottom:0}
+  .ammo .opener{color:var(--cream);font-style:italic;border-left:2px solid var(--cyan);padding-left:10px}
+  .bigbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0}
+  .bb{border:none;border-radius:14px;padding:16px 8px;font-family:inherit;font-size:14px;font-weight:700;color:#04060a}
+  .bb.call{background:var(--green)}
+  .bb.demo{background:var(--cyan)}
+  .bb.log{grid-column:1/-1;background:linear-gradient(90deg,var(--blue),var(--cyan));font-size:16px;padding:18px}
+  .hist{margin-top:16px}
+  .hitem{border-left:2px solid var(--line);padding:2px 0 14px 12px;margin-left:6px;font-size:12.5px;color:var(--dim)}
+  .hitem b{color:var(--cream);display:block;font-size:13px}
+  /* log sheet */
+  .lname{font-size:13px;color:var(--dim);padding:0 16px}
+  .lgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 16px}
+  .ob{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 8px;color:var(--cream);font-family:inherit;font-size:13px;font-weight:600;text-align:center}
+  .ob.sel{background:rgba(59,130,246,.2);border-color:var(--cyan);color:var(--cyan)}
+  .ob.good{border-color:rgba(52,211,153,.4)}
+  .subq{margin:4px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;display:none}
+  .subq.on{display:block}
+  .subq .q{font-size:12px;color:var(--dim);margin-bottom:8px}
+  .chips{display:flex;gap:7px;flex-wrap:wrap}
+  .c2{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:8px 13px;font-size:12.5px;color:var(--cream);font-family:inherit}
+  .c2.sel{background:rgba(34,211,238,.15);border-color:var(--cyan);color:var(--cyan)}
+  .flabel{margin:14px 16px 6px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+  textarea{width:calc(100% - 32px);margin:0 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--cream);font-family:inherit;font-size:14px;padding:12px;min-height:84px;resize:none}
+  textarea::placeholder{color:#5b5568}
+  .save{display:block;width:calc(100% - 32px);margin:18px 16px 30px;background:linear-gradient(90deg,var(--blue),var(--cyan));border:none;border-radius:14px;padding:17px;font-family:inherit;font-size:16px;font-weight:700;color:#04060a}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green);color:#04060a;font-weight:700;font-size:14px;border-radius:999px;padding:12px 22px;transition:transform .3s;z-index:100;white-space:nowrap}
+  .toast.on{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="rough-tag">ROUGH A · "THE SHEET" · FAKE DATA — TAP AROUND</div>
+
+<!-- ══ HOME ══ -->
+<div class="screen on" id="home">
+  <div class="pad"></div>
+  <header><span class="logo">SANO <b>FIELD DECK</b></span><span class="datestrip">Tue · Westheimer strip</span></header>
+
+  <div class="funnel">
+    <div class="fcell"><div class="n">9</div><div class="l">Doors</div></div>
+    <div class="fcell"><div class="n">4</div><div class="l">Convos</div></div>
+    <div class="fcell"><div class="n">2</div><div class="l">Numbers</div></div>
+    <div class="fcell hot"><div class="n">1</div><div class="l">Demos</div></div>
+  </div>
+
+  <div class="sect">Due today <span class="note" style="color:var(--red)">3 of 3</span></div>
+  <div class="due"><div><div class="who">Reyes Auto Care</div><div class="why">Rudy said "call after 2" — yesterday</div></div><div class="act">📞 Call</div></div>
+  <div class="due"><div><div class="who">Lonestar Lash Studio</div><div class="why">Owner in PM only — re-visit</div></div><div class="act">🚶 Re-visit</div></div>
+  <div class="due"><div><div class="who">Bayou Fade Barbershop</div><div class="why">Got number Mon — send the text</div></div><div class="act">💬 Text</div></div>
+
+  <div class="sect">This week's strip <span class="note">11 loaded Sunday · 2 done</span></div>
+
+  <div class="card" onclick="show('sheet')">
+    <div class="top"><span class="name">Gulf Coast Plumbing Co.</span><span class="chip">Plumbing</span></div>
+    <div class="hook">4.9★ · 212 reviews · website is a dead Facebook link</div>
+    <div class="precall">📞 Called Tue 2:10p — rang out, no voicemail</div>
+  </div>
+  <div class="card">
+    <div class="top"><span class="name">Casa Verde Landscaping</span><span class="chip">Home Svcs</span></div>
+    <div class="hook">Spanish-first · 4.7★ · 88 reviews · no website at all</div>
+    <div class="precall ok">📞 Called Tue 2:14p — human answered in 3 rings</div>
+  </div>
+  <div class="card">
+    <div class="top"><span class="name">Smile Lane Dental</span><span class="chip">Dental</span></div>
+    <div class="hook">3.9★ · reviews mention "phone never picked up" ×4</div>
+    <div class="precall">📞 Called Tue 2:20p — voicemail after 6 rings</div>
+  </div>
+  <div class="card done">
+    <div class="top"><span class="name">Reyes Auto Care</span><span class="chip">Auto</span></div>
+    <div class="hook">4.8★ · 156 reviews · owner: Rudy</div>
+    <div class="precall ok">Logged today — got the number</div><span class="tick">✓</span>
+  </div>
+  <div class="card done">
+    <div class="top"><span class="name">Bayou Fade Barbershop</span><span class="chip">Retail</span></div>
+    <div class="hook">4.9★ · 301 reviews · books by Instagram DM only</div>
+    <div class="precall ok">Logged Mon — number collected</div><span class="tick">✓</span>
+  </div>
+</div>
+
+<!-- ══ PROSPECT SHEET ══ -->
+<div class="screen" id="sheet">
+  <button class="back" onclick="show('home')">‹ Back to strip</button>
+  <div class="psheet">
+    <div class="pname">Gulf Coast Plumbing Co.</div>
+    <div class="prow">
+      <span class="chip">Plumbing · brief ✓</span>
+      <span class="chip gray">2801 Westheimer Rd</span>
+      <span class="chip gray">EN</span>
+    </div>
+    <div class="ammo">
+      <div class="t">Your ammo</div>
+      <p>📞 We called <b>Tuesday 2:10pm</b> — it rang out. No voicemail even picked up. <span style="color:var(--dim)">(verified)</span></p>
+      <p>⭐ 4.9 stars, 212 reviews — busy shop. Website link on Google is dead. <span style="color:var(--dim)">(verified)</span></p>
+      <p class="opener">"I called y'all Tuesday at 2 — it rang eleven times and nobody got it. That's what your customers get too. Got a sec?"</p>
+    </div>
+    <div class="bigbtns">
+      <button class="bb call" onclick="toast('(rough) would dial 713-555-0142')">📞 CALL</button>
+      <button class="bb demo" onclick="toast('(rough) plays our AI line on speaker')">▶ HEAR THE AI</button>
+      <button class="bb log" onclick="show('log')">LOG THIS DOOR</button>
+    </div>
+    <div class="sect" style="margin-left:0">History</div>
+    <div class="hist">
+      <div class="hitem"><b>Tue 2:10p — pre-call test</b>Rang out, no VM · by Claude batch</div>
+      <div class="hitem"><b>Sun — added to strip</b>Batch "Westheimer wk of Aug 10" · 11 doors</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LOG SHEET ══ -->
+<div class="screen" id="log">
+  <button class="back" onclick="show('sheet')">‹ Cancel</button>
+  <div class="lname">LOGGING · Gulf Coast Plumbing Co. · 3:42p</div>
+
+  <div class="lgrid">
+    <button class="ob" onclick="pick(this,'q-notin')">Owner not in</button>
+    <button class="ob" onclick="pick(this,'q-intel')">Gatekeeper — got intel</button>
+    <button class="ob" onclick="pick(this,'q-none')">Gatekeeper — wall</button>
+    <button class="ob" onclick="pick(this,'q-reason')">Owner — no interest</button>
+    <button class="ob good" onclick="pick(this,'q-follow')">Owner — interested</button>
+    <button class="ob good" onclick="pick(this,'q-contact')">Got the number</button>
+    <button class="ob good" onclick="pick(this,'q-demo')">🗓 Demo booked</button>
+    <button class="ob good" onclick="pick(this,'q-close')">✦ Closed</button>
+  </div>
+
+  <div class="subq" id="q-notin"><div class="q">When are they usually in?</div><div class="chips"><button class="c2" onclick="c(this)">Mornings</button><button class="c2" onclick="c(this)">Afternoons</button><button class="c2" onclick="c(this)">They said a day</button><button class="c2" onclick="c(this)">No idea</button></div></div>
+  <div class="subq" id="q-intel"><div class="q">Owner's name + best time (type or dictate below)</div><div class="chips"><button class="c2" onclick="c(this)">Got name</button><button class="c2" onclick="c(this)">Name + time</button><button class="c2" onclick="c(this)">Name + direct #</button></div></div>
+  <div class="subq" id="q-none"><div class="q">Auto: re-visit in 7 days at a different time.</div></div>
+  <div class="subq" id="q-reason"><div class="q">What was the reason?</div><div class="chips"><button class="c2" onclick="c(this)">Has someone</button><button class="c2" onclick="c(this)">Too expensive (assumed)</button><button class="c2" onclick="c(this)">"We don't miss calls"</button><button class="c2" onclick="c(this)">Brush-off</button></div></div>
+  <div class="subq" id="q-follow"><div class="q">Follow up when?</div><div class="chips"><button class="c2" onclick="c(this)">Tomorrow</button><button class="c2 sel">3 days</button><button class="c2" onclick="c(this)">Next week</button><button class="c2" onclick="c(this)">Pick date</button></div></div>
+  <div class="subq" id="q-contact"><div class="q">Who is it? (auto-drafts tonight's text)</div><div class="chips"><button class="c2" onclick="c(this)">The owner</button><button class="c2" onclick="c(this)">Manager</button><button class="c2" onclick="c(this)">Front desk</button></div></div>
+  <div class="subq" id="q-demo"><div class="q">Day + time (goes on your calendar, texts them a confirm)</div><div class="chips"><button class="c2" onclick="c(this)">Thu 10:00a</button><button class="c2" onclick="c(this)">Thu 2:00p</button><button class="c2" onclick="c(this)">Pick…</button></div></div>
+  <div class="subq" id="q-close"><div class="q">Which package?</div><div class="chips"><button class="c2" onclick="c(this)">Starter</button><button class="c2" onclick="c(this)">Growth</button><button class="c2" onclick="c(this)">Scale</button><button class="c2" onclick="c(this)">Total</button></div></div>
+
+  <div class="flabel">Their exact words</div>
+  <textarea placeholder="Tap the 🎤 on your keyboard and just talk — 'guy said his wife answers the phones but she's out Tuesdays…'"></textarea>
+
+  <div class="flabel">What's driving them (one tap)</div>
+  <div class="chips" style="padding:0 16px">
+    <button class="c2" onclick="c(this)">① Time back</button>
+    <button class="c2" onclick="c(this)">② Keep what you earned</button>
+    <button class="c2" onclick="c(this)">③ Bring them back</button>
+    <button class="c2" onclick="c(this)">④ Foundation to grow</button>
+  </div>
+
+  <button class="save" onclick="saveLog()">SAVE — 5 SECONDS, DONE</button>
+</div>
+
+<div class="toast" id="toast">Saved ✓</div>
+
+<script>
+  function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');scrollTo(0,0)}
+  function pick(btn,q){document.querySelectorAll('.ob').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');document.querySelectorAll('.subq').forEach(s=>s.classList.remove('on'));document.getElementById(q).classList.add('on')}
+  function c(btn){btn.parentNode.querySelectorAll('.c2').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel')}
+  function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)}
+  function saveLog(){show('home');toast('Logged ✓ Follow-up set — Fri')}
+</script>
+</body>
+</html>
