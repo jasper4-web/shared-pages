@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Field Deck — Draft B · Vault-Led</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{ --bg:#0A0A0C; --panel:#131318; --panel2:#1A1A22; --line:#26262f;
+--cream:#F2EBE0; --dim:#9b95a8; --blue:#3B82F6; --cyan:#22D3EE;
+--red:#F87171; --green:#34D399; --amber:#FBBF24; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--cream);font-family:'Space Grotesk',sans-serif;min-height:100vh}
+#app{max-width:430px;margin:0 auto;padding:30px 0 90px;position:relative;min-height:100vh}
+
+/* ── banner ── */
+.banner{position:fixed;top:0;left:0;right:0;z-index:120;background:linear-gradient(90deg,var(--blue),var(--cyan));
+color:#08131c;font-size:10px;font-weight:700;letter-spacing:.14em;text-align:center;padding:6px 8px;text-transform:uppercase}
+
+/* ── command strip ── */
+.strip{position:sticky;top:24px;z-index:90;background:rgba(10,10,12,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+border-bottom:1px solid var(--line);padding:10px 14px 0}
+.strip-r1{display:flex;align-items:center;gap:10px}
+.hero-num{display:flex;align-items:baseline;gap:6px}
+.hero-num b{font-size:26px;font-weight:700;color:var(--amber);letter-spacing:-.02em}
+.hero-num span{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;line-height:1.2}
+.streak{display:flex;align-items:baseline;gap:5px;margin-left:2px}
+.streak b{font-size:17px;font-weight:700}
+.streak span{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+.strip-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.clockchip{font-size:10px;color:var(--dim);letter-spacing:.04em;text-align:right;line-height:1.3}
+.claude-light{display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:20px;
+padding:6px 11px;cursor:pointer;font-size:11px;color:var(--cream)}
+.claude-light .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.ribbon{display:flex;align-items:center;gap:10px;margin:10px -14px 0;padding:12px 14px calc(12px);cursor:pointer;
+background:linear-gradient(90deg,rgba(59,130,246,.14),rgba(34,211,238,.10));border-top:1px solid rgba(59,130,246,.28)}
+.ribbon .rtime{font-weight:700;font-size:15px;color:var(--amber);white-space:nowrap}
+.ribbon.calm .rtime{color:var(--cyan)}
+.ribbon .rbody{flex:1;min-width:0}
+.ribbon .rmain{font-size:14px;font-weight:600;line-height:1.25}
+.ribbon .rsub{font-size:11px;color:var(--dim);margin-top:2px;line-height:1.3}
+.ribbon .chev{color:var(--dim);font-size:16px;flex-shrink:0}
+.coldband{display:flex;align-items:center;gap:8px;margin:0 -14px;padding:9px 14px;cursor:pointer;font-size:12px;
+background:rgba(251,191,36,.07);border-top:1px solid rgba(251,191,36,.35);border-bottom:1px solid var(--line);color:var(--cream)}
+.coldband .cb-ico{flex-shrink:0}
+.coldband b{color:var(--amber)}
+.coldband .go{margin-left:auto;color:var(--amber);font-weight:600;white-space:nowrap}
+.coldband.done{background:rgba(52,211,153,.07);border-top-color:rgba(52,211,153,.4)}
+.coldband.done b,.coldband.done .go{color:var(--green)}
+
+/* ── search + shelves ── */
+.searchwrap{padding:14px 14px 4px;position:relative}
+.searchwrap input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--cream);
+font-family:inherit;font-size:15px;padding:12px 14px 12px 40px;outline:none}
+.searchwrap input:focus{border-color:var(--blue)}
+.searchwrap input::placeholder{color:var(--dim)}
+.searchwrap .sico{position:absolute;left:27px;top:27px;color:var(--dim)}
+.shelf{padding:14px 14px 2px}
+.shelf-h{display:flex;align-items:baseline;gap:8px;margin-bottom:9px}
+.shelf-h h2{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--cream)}
+.shelf-h .cnt{font-size:11px;color:var(--dim)}
+.shelf-h .why{font-size:11px;color:var(--dim);margin-left:auto;text-align:right}
+.pcard{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:16px;
+padding:13px;margin-bottom:9px;cursor:pointer;transition:border-color .15s}
+.pcard:active{border-color:var(--blue)}
+.pcard.client{background:linear-gradient(135deg,rgba(52,211,153,.10),var(--panel) 55%);border-color:rgba(52,211,153,.4)}
+.pcard.prize{background:linear-gradient(135deg,rgba(251,191,36,.08),var(--panel) 60%);border-color:rgba(251,191,36,.3)}
+.pcard.parked{opacity:.62}
+.av{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+font-weight:700;font-size:15px;flex-shrink:0;color:#0a0e14;letter-spacing:.02em}
+.pmain{flex:1;min-width:0}
+.pname{font-weight:600;font-size:15px;line-height:1.2;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pbiz{font-size:12px;color:var(--dim);margin-top:1px}
+.badges{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;align-items:center}
+.pill{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;padding:2.5px 7px;border:1px solid}
+.pill.vA{color:var(--cream);border-color:rgba(242,235,224,.55);background:rgba(242,235,224,.08)}
+.pill.vB{color:var(--dim);border-color:rgba(155,149,168,.5)}
+.pill.vC{color:var(--dim);border-color:rgba(155,149,168,.3);opacity:.8}
+.pill.w1{color:#8aa0b8;border-color:rgba(138,160,184,.4)}
+.pill.w2{color:var(--blue);border-color:rgba(59,130,246,.5)}
+.pill.w3{color:var(--cyan);border-color:rgba(34,211,238,.5)}
+.pill.w4{color:var(--green);border-color:rgba(52,211,153,.5)}
+.pill.tag-client{color:var(--green);border-color:rgba(52,211,153,.6);background:rgba(52,211,153,.1)}
+.pill.tag-prize{color:var(--amber);border-color:rgba(251,191,36,.5)}
+.nextmove{font-size:12px;color:var(--cyan);margin-top:6px;line-height:1.35}
+.pcard.client .nextmove{color:var(--green)}
+.rec{font-size:10.5px;color:var(--dim);white-space:nowrap;align-self:flex-start;margin-top:2px;
+border:1px solid var(--line);border-radius:6px;padding:2px 6px}
+.rec.hot{color:var(--amber);border-color:rgba(251,191,36,.5)}
+.rec.today{color:var(--green);border-color:rgba(52,211,153,.4)}
+.nomatch{padding:26px 14px;text-align:center;color:var(--dim);font-size:13px;display:none}
+.homefoot{padding:26px 14px 10px;text-align:center}
+.homefoot a{color:var(--dim);font-size:11px;text-decoration:none;opacity:.7}
+
+/* ── views ── */
+.view{display:none}
+.view.on{display:block}
+.vhead{display:flex;align-items:center;gap:10px;padding:18px 14px 6px}
+.vhead h1{font-size:20px;font-weight:700;letter-spacing:-.01em}
+.vhead .sub{font-size:11px;color:var(--dim);margin-top:2px}
+.vhead .vsearch{margin-left:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;
+padding:8px 10px;cursor:pointer;color:var(--dim);display:flex}
+
+/* ── board ── */
+.board{padding:8px 14px}
+.bgrid{display:grid;grid-template-columns:34px repeat(4,1fr);gap:5px}
+.bhdr{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);
+display:flex;align-items:flex-end;justify-content:center;text-align:center;padding-bottom:4px;line-height:1.25}
+.brow{font-size:12px;font-weight:700;color:var(--dim);display:flex;align-items:center;justify-content:center}
+.bcell{min-height:64px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px;
+display:flex;flex-wrap:wrap;gap:3px;align-content:flex-start;cursor:pointer;transition:border-color .15s}
+.bcell.sel{border-color:var(--cyan)}
+.bcell.gold{background:linear-gradient(135deg,rgba(251,191,36,.09),var(--panel))}
+.bcell.green{background:linear-gradient(135deg,rgba(52,211,153,.09),var(--panel))}
+.chipav{width:24px;height:24px;border-radius:8px;font-size:8.5px;font-weight:700;display:flex;align-items:center;
+justify-content:center;color:#0a0e14}
+.bplay{margin:12px 14px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px}
+.bplay .bp-cell{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.bplay .bp-play{font-size:14px;line-height:1.45}
+.bplay .bp-who{font-size:12px;color:var(--dim);margin-top:8px;line-height:1.4}
+.legend{padding:4px 14px 0;font-size:10.5px;color:var(--dim);line-height:1.5}
+
+/* ── week ── */
+.wk{padding:6px 14px}
+.scorecards{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.scard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px}
+.scard .sc-n{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.scard .sc-n.amber{color:var(--amber)}
+.scard .sc-n.green{color:var(--green)}
+.scard .sc-l{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-top:3px;line-height:1.3}
+.funnel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+.funnel h3, .tellbox h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.13em;color:var(--dim);margin-bottom:12px}
+.frow{margin-bottom:11px}
+.frow:last-child{margin-bottom:0}
+.frow .fl{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
+.frow .fl b{font-weight:600}
+.frow .fl span{color:var(--dim)}
+.fbar{height:9px;border-radius:5px;background:var(--panel2);overflow:hidden;position:relative}
+.fbar i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--blue),var(--cyan))}
+.fbar i.amberbar{background:var(--amber)}
+.fbar .ghost{position:absolute;top:0;bottom:0;border-right:2px dashed rgba(251,191,36,.6)}
+.tellbox{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.tellbox p{font-size:13.5px;line-height:1.55;color:var(--cream);margin-bottom:10px}
+.tellbox p span{color:var(--dim)}
+.themove{border-top:1px solid var(--line);padding-top:12px;margin-top:2px}
+.themove .tm-l{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:5px}
+.themove p{font-size:14.5px;font-weight:600;line-height:1.5;margin:0}
+
+/* ── journal ── */
+.jr{padding:6px 14px}
+.jcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:11px}
+.jcard h3{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:baseline;gap:8px}
+.jcard h3 span{font-size:10px;color:var(--dim);font-weight:500;letter-spacing:.04em;text-transform:none}
+.jline{display:flex;gap:9px;font-size:13px;line-height:1.45;padding:5px 0;border-bottom:1px dashed rgba(38,38,47,.7)}
+.jline:last-child{border-bottom:none}
+.jline .jt{color:var(--dim);font-size:11.5px;white-space:nowrap;min-width:44px;padding-top:1px}
+.jsum{font-size:13px;color:var(--cream);line-height:1.5}
+.jcard.tonight{background:linear-gradient(135deg,rgba(59,130,246,.12),var(--panel) 60%);border-color:rgba(59,130,246,.4)}
+.jcard.teaser{border-style:dashed;background:transparent}
+.jcard.teaser p{font-size:12.5px;color:var(--dim);line-height:1.5}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:11px;
+font-family:inherit;font-weight:600;font-size:13px;padding:11px 16px;cursor:pointer;color:var(--cream);background:var(--panel2)}
+.btn.primary{background:linear-gradient(90deg,var(--blue),var(--cyan));color:#08131c}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--dim)}
+.btn.small{padding:8px 12px;font-size:12px;border-radius:9px}
+.btn:active{transform:scale(.97)}
+
+/* ── person page ── */
+.phead{position:sticky;top:24px;z-index:80;background:rgba(10,10,12,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+border-bottom:1px solid var(--line);padding:10px 14px 12px}
+.pback{background:none;border:none;color:var(--cyan);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:4px 0;margin-bottom:8px}
+.phead-main{display:flex;gap:12px;align-items:center}
+.phead .av{width:54px;height:54px;border-radius:16px;font-size:18px}
+.phead h1{font-size:19px;font-weight:700;line-height:1.15}
+.phead .pbiz{font-size:13px}
+.pactions{display:flex;gap:8px;margin-top:11px}
+.pactions .btn{flex:1;padding:10px 8px;font-size:12.5px}
+.psec{padding:14px 14px 0}
+.psec h3{font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-bottom:9px}
+.nm-card{background:linear-gradient(135deg,rgba(59,130,246,.16),rgba(34,211,238,.08));border:1px solid rgba(59,130,246,.45);
+border-radius:14px;padding:14px}
+.nm-card .nm-l{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.nm-card p{font-size:14.5px;font-weight:600;line-height:1.5}
+.nm-card .nm-sub{font-size:12px;color:var(--dim);font-weight:400;margin-top:6px;line-height:1.4}
+.clientstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cstat{background:var(--panel);border:1px solid rgba(52,211,153,.35);border-radius:12px;padding:11px 9px;text-align:center}
+.cstat b{display:block;font-size:19px;font-weight:700;color:var(--green)}
+.cstat span{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;line-height:1.3;display:block;margin-top:3px}
+.tl{border-left:2px solid var(--line);margin-left:6px;padding-left:16px}
+.tl-item{position:relative;padding-bottom:16px}
+.tl-item:last-child{padding-bottom:2px}
+.tl-item::before{content:'';position:absolute;left:-21.5px;top:4px;width:9px;height:9px;border-radius:50%;
+background:var(--panel2);border:2px solid var(--dim)}
+.tl-item.hot::before{border-color:var(--amber);background:rgba(251,191,36,.3)}
+.tl-t{font-size:11px;color:var(--dim);letter-spacing:.03em;margin-bottom:3px}
+.tl-x{font-size:13.5px;line-height:1.45}
+.quote{margin-top:8px;background:var(--panel);border-left:3px solid var(--cyan);border-radius:0 10px 10px 0;
+padding:10px 12px;font-size:13.5px;line-height:1.5;font-style:italic;color:var(--cream)}
+.quote::before{content:'\201C';color:var(--cyan);font-weight:700;margin-right:2px}
+.quote::after{content:'\201D';color:var(--cyan);font-weight:700;margin-left:2px}
+.factrow{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed rgba(38,38,47,.7);font-size:13px}
+.factrow:last-child{border-bottom:none}
+.factrow .fk{color:var(--dim);white-space:nowrap}
+.factrow .fv{text-align:right;line-height:1.4}
+.pchips{display:flex;flex-wrap:wrap;gap:7px}
+.pchip{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:7px 12px;font-size:12.5px}
+.files{display:flex;gap:9px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+.file{flex:0 0 118px;border-radius:12px;border:1px solid var(--line);overflow:hidden;cursor:pointer;background:var(--panel)}
+.file .fthumb{height:64px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.file .fmeta{padding:8px 9px}
+.file .fname{font-size:11.5px;font-weight:600;line-height:1.25}
+.file .fsub{font-size:10px;color:var(--dim);margin-top:2px;line-height:1.3}
+.pfootpad{height:26px}
+
+/* ── bottom nav ── */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:110;
+background:rgba(15,15,19,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+border-top:1px solid var(--line);display:flex;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+.nav button{flex:1;background:none;border:none;color:var(--dim);font-family:inherit;font-size:9.5px;font-weight:600;
+letter-spacing:.09em;text-transform:uppercase;cursor:pointer;padding:5px 0 3px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav button svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nav button.on{color:var(--cyan)}
+
+/* ── FAB mic ── */
+.fab{position:fixed;bottom:calc(76px + env(safe-area-inset-bottom));right:calc(50% - 215px + 14px);z-index:105;
+width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+background:linear-gradient(135deg,var(--blue),var(--cyan));box-shadow:0 6px 20px rgba(34,211,238,.35)}
+@media(max-width:430px){.fab{right:14px}}
+.fab svg{width:22px;height:22px;stroke:#08131c;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── sheets & toast ── */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:130;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;bottom:0;left:50%;transform:translate(-50%,105%);width:100%;max-width:430px;z-index:140;
+background:var(--panel2);border:1px solid var(--line);border-bottom:none;border-radius:22px 22px 0 0;
+padding:10px 16px calc(20px + env(safe-area-inset-bottom));transition:transform .25s ease;max-height:82vh;overflow-y:auto}
+.sheet.on{transform:translate(-50%,0)}
+.grab{width:38px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 14px}
+.sheet h2{font-size:16px;font-weight:700;margin-bottom:3px}
+.sheet .shsub{font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.4}
+.mrow{display:flex;align-items:flex-start;gap:11px;padding:12px 0;border-bottom:1px dashed rgba(38,38,47,.8);cursor:pointer}
+.mrow:last-child{border-bottom:none}
+.mcheck{width:22px;height:22px;border-radius:7px;border:2px solid var(--dim);flex-shrink:0;margin-top:1px;
+display:flex;align-items:center;justify-content:center;font-size:13px;color:#08131c;font-weight:700}
+.mrow.done .mcheck{background:var(--green);border-color:var(--green)}
+.mrow.done .mlabel{text-decoration:line-through;color:var(--dim)}
+.mrow.warn .mcheck{border-color:var(--amber)}
+.mtime{font-size:12px;font-weight:700;min-width:46px;padding-top:2px;color:var(--dim)}
+.mrow.next .mtime{color:var(--amber)}
+.mlabel{font-size:14px;line-height:1.35;flex:1}
+.mlabel .msub{display:block;font-size:11.5px;color:var(--dim);margin-top:2px}
+.mgo{color:var(--cyan);font-size:12px;font-weight:600;white-space:nowrap;padding-top:3px}
+.txcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:11px}
+.txcard .txwho{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.txcard .txwho .av{width:34px;height:34px;border-radius:11px;font-size:12px}
+.txcard .txname{font-size:13.5px;font-weight:600}
+.txcard .txwhy{font-size:11px;color:var(--dim)}
+.txmsg{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px 12px;font-size:13.5px;line-height:1.5;outline:none}
+.txmsg[contenteditable="true"]{border-color:var(--cyan)}
+.txbtns{display:flex;gap:7px;margin-top:10px}
+.txbtns .btn{flex:1}
+.txstatus{margin-top:10px;font-size:13px;font-weight:600;text-align:center;padding:9px;border-radius:10px}
+.txstatus.sent{color:var(--green);background:rgba(52,211,153,.1)}
+.txstatus.skip{color:var(--dim);background:var(--panel)}
+.capture textarea{width:100%;min-height:110px;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+color:var(--cream);font-family:inherit;font-size:14px;line-height:1.5;padding:12px;outline:none;resize:vertical}
+.capture textarea:focus{border-color:var(--cyan)}
+.michint{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--dim);margin:10px 0 12px;line-height:1.4}
+.clist{list-style:none}
+.clist li{display:flex;gap:10px;padding:9px 0;font-size:13.5px;line-height:1.45;border-bottom:1px dashed rgba(38,38,47,.8)}
+.clist li:last-child{border-bottom:none}
+.clist .ci{flex-shrink:0}
+#toast{position:fixed;bottom:calc(84px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);
+max-width:360px;width:calc(100% - 48px);z-index:200;background:#20202a;border:1px solid var(--line);border-radius:13px;
+padding:12px 16px;font-size:13px;line-height:1.4;text-align:center;opacity:0;pointer-events:none;transition:all .25s;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="banner">DRAFT B &middot; &ldquo;VAULT-LED&rdquo; &middot; FAKE DATA &mdash; TAP AROUND</div>
+<div id="app">
+
+  <!-- ════════ PEOPLE (home) ════════ -->
+  <section class="view on" id="view-people">
+    <div class="strip">
+      <div class="strip-r1">
+        <div class="hero-num"><b id="heroNum">1<span style="font-size:15px;color:var(--dim);font-weight:600">/3</span></b><span>demos<br>this wk</span></div>
+        <div class="streak"><b>9</b><span>day<br>streak</span></div>
+        <div class="strip-right">
+          <div class="clockchip">Wed Aug 13<br><b style="color:var(--cream)">12:40p</b></div>
+          <div class="claude-light" onclick="openSheet('sh-claude')"><span class="dot"></span>Claude</div>
+        </div>
+      </div>
+      <div class="ribbon" id="ribbon" onclick="openSheet('sh-missions')"></div>
+      <div class="coldband" id="coldband" onclick="openSheet('sh-marisol')">
+        <span class="cb-ico">&#9888;&#65039;</span>
+        <span><b>Marisol</b> &mdash; 12 days quiet &middot; she&rsquo;s sent you 2 leads</span>
+        <span class="go">send the hey-text &rarr;</span>
+      </div>
+    </div>
+
+    <div class="searchwrap">
+      <svg class="sico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="text" id="search" placeholder="Search your people&hellip;" oninput="filterPeople()" autocomplete="off">
+    </div>
+
+    <div id="shelves"></div>
+    <div class="nomatch" id="nomatch">Nobody by that name in the vault yet.<br><span style="font-size:11px">Tap the mic to log someone new.</span></div>
+    <div class="homefoot"><a href="index.html">&lsaquo; all three drafts</a></div>
+  </section>
+
+  <!-- ════════ BOARD ════════ -->
+  <section class="view" id="view-board">
+    <div class="vhead">
+      <div><h1>The Board</h1><div class="sub">Value &times; warmth &mdash; tap a square, it tells you the play.</div></div>
+      <button class="vsearch" onclick="focusSearch()" aria-label="search"><svg width="17" height="17" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+    </div>
+    <div class="board"><div class="bgrid" id="bgrid"></div></div>
+    <div class="legend">Rows = what they&rsquo;re worth (A biggest). Columns = how warm. Everything drifts left when you go quiet &mdash; the vault flags it before it slides.</div>
+    <div class="bplay" id="bplay"><div class="bp-cell">A &times; Trusts me</div><div class="bp-play">Close range. This is demo territory &mdash; stop warming, start asking.</div><div class="bp-who">Here now: Rudy Reyes &mdash; demo today at 2:00.</div></div>
+  </section>
+
+  <!-- ════════ WEEK ════════ -->
+  <section class="view" id="view-week">
+    <div class="vhead">
+      <div><h1>The Week</h1><div class="sub">Mon Aug 11 &ndash; Fri Aug 15 &middot; week 1 of the push</div></div>
+      <button class="vsearch" onclick="focusSearch()" aria-label="search"><svg width="17" height="17" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+    </div>
+    <div class="wk">
+      <div class="scorecards">
+        <div class="scard"><div class="sc-n amber" id="wkDemos">1<span style="font-size:14px;color:var(--dim)"> / 3</span></div><div class="sc-l">Demos held vs target</div></div>
+        <div class="scard"><div class="sc-n">9</div><div class="sc-l">Day streak &mdash; kept every day</div></div>
+        <div class="scard"><div class="sc-n">27</div><div class="sc-l">Doors this week</div></div>
+        <div class="scard"><div class="sc-n green">1</div><div class="sc-l">Client live &amp; answering</div></div>
+      </div>
+      <div class="funnel">
+        <h3>The funnel</h3>
+        <div class="frow"><div class="fl"><b>Doors knocked</b><span>27</span></div><div class="fbar"><i style="width:100%"></i></div></div>
+        <div class="frow"><div class="fl"><b>Real conversations</b><span>11 &middot; 41%</span></div><div class="fbar"><i style="width:41%"></i></div></div>
+        <div class="frow"><div class="fl"><b>Demos held</b><span>1 of 3 target</span></div><div class="fbar"><i class="amberbar" style="width:12%"></i><span class="ghost" style="left:33%"></span></div></div>
+        <div class="frow"><div class="fl"><b>Clients live</b><span>1</span></div><div class="fbar"><i style="width:8%;background:var(--green)"></i></div></div>
+      </div>
+      <div class="tellbox">
+        <h3>What the week is telling you</h3>
+        <p>Your door-to-conversation rate is <b>41%</b> &mdash; that&rsquo;s strong. The leak is between conversation and demo. <span>People like you; they just don&rsquo;t feel the problem yet.</span></p>
+        <p>Top objection: <b>&ldquo;we already have someone&rdquo; &times;4.</b> <span>Every one of the four still misses after-hours calls.</span></p>
+        <p>Beauty trades answered the door <b>after 3pm</b> both times. <span>Bree told you straight: PM only. Route accordingly.</span></p>
+        <div class="themove">
+          <div class="tm-l">The move.</div>
+          <p>Lead every pitch with the after-hours miss. Nobody&rsquo;s &ldquo;someone we already have&rdquo; picks up the phone at 9pm &mdash; Rudy heard that line and booked a demo the same afternoon.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ JOURNAL ════════ -->
+  <section class="view" id="view-journal">
+    <div class="vhead">
+      <div><h1>Journal</h1><div class="sub">The day, written down. Fridays it writes the week.</div></div>
+      <button class="vsearch" onclick="focusSearch()" aria-label="search"><svg width="17" height="17" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+    </div>
+    <div class="jr">
+      <div class="jcard tonight">
+        <h3>Tonight &middot; 7:00 <span id="txTeaseState">3 texts drafted, waiting on your thumb</span></h3>
+        <div class="jsum" style="margin-bottom:11px">Claude wrote the evening three: Marisol&rsquo;s hey-text, Dale&rsquo;s card follow-up, Bubba&rsquo;s heads-up. Approve, tweak, or skip &mdash; each one&rsquo;s a tap.</div>
+        <button class="btn primary" onclick="openSheet('sh-texts')">Open the evening texts</button>
+      </div>
+      <div class="jcard">
+        <h3>Today &middot; Wed Aug 13 <span>live &mdash; still writing itself</span></h3>
+        <div id="todayFeed"></div>
+      </div>
+      <div class="jcard">
+        <h3>Tue Aug 12</h3>
+        <div class="jsum">9 doors, 4 conversations. Met <b>Rudy</b> at the counter &mdash; demo booked for today at 2:00. Best day of the week so far.</div>
+      </div>
+      <div class="jcard">
+        <h3>Mon Aug 11</h3>
+        <div class="jsum">11 pre-calls, 2 direct numbers pulled. Quiet start, but the list got sharper.</div>
+      </div>
+      <div class="jcard teaser">
+        <h3>Friday &middot; the week recap <span>lands automatically</span></h3>
+        <p>Week 1 so far: <b>27 doors, 11 conversations</b>, top objection &ldquo;we already have someone&rdquo; &times;4. Friday night this becomes the full story &mdash; what worked, what to drop, next week&rsquo;s three moves.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ PERSON ════════ -->
+  <section class="view" id="view-person"></section>
+
+</div><!-- /app -->
+
+<!-- ════════ NAV ════════ -->
+<nav class="nav">
+  <button id="nav-people" class="on" onclick="showView('people')"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>People</button>
+  <button id="nav-board" onclick="showView('board')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Board</button>
+  <button id="nav-week" onclick="showView('week')"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 3 6-7 3 3"/><path d="M3 21h18"/></svg>Week</button>
+  <button id="nav-journal" onclick="showView('journal')"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Journal</button>
+</nav>
+
+<button class="fab" onclick="openCapture('')" aria-label="talk to log"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4"/></svg></button>
+
+<!-- ════════ SHEETS ════════ -->
+<div class="scrim" id="scrim" onclick="closeSheet()"></div>
+
+<div class="sheet" id="sh-missions">
+  <div class="grab"></div>
+  <h2>Today&rsquo;s missions</h2>
+  <div class="shsub">Wednesday Aug 13 &middot; the strip up top always shows the next one.</div>
+  <div id="mlist"></div>
+</div>
+
+<div class="sheet" id="sh-texts">
+  <div class="grab"></div>
+  <h2>Evening texts</h2>
+  <div class="shsub">Claude drafted three. Your voice, your thumb &mdash; nothing sends itself.</div>
+  <div id="txlist"></div>
+</div>
+
+<div class="sheet" id="sh-marisol">
+  <div class="grab"></div>
+  <h2>Marisol &mdash; going cold</h2>
+  <div class="shsub">12 days quiet &middot; C-value but <b style="color:var(--green)">would vouch</b> &middot; she&rsquo;s sent you 2 intro leads. The play is a hey-text, not a pitch.</div>
+  <div class="txcard">
+    <div class="txmsg" id="marisolMsg">Marisol! Drove past a Casa Verde crew on Richmond this morning &mdash; y&rsquo;all are everywhere. Hope the fall rush is shaping up good. Lunch is on me one of these weeks.</div>
+    <div class="txbtns">
+      <button class="btn primary" onclick="sendMarisol()">Send it now</button>
+      <button class="btn" onclick="editBox('marisolMsg')">Edit</button>
+      <button class="btn ghost" onclick="closeSheet();toast('Kept for tonight &mdash; it&rsquo;s in the evening three.')">Tonight</button>
+    </div>
+    <div class="txstatus sent" id="marisolDone" style="display:none">Sent &#10003; &mdash; warmth restored. She&rsquo;ll answer.</div>
+  </div>
+</div>
+
+<div class="sheet capture" id="sh-capture">
+  <div class="grab"></div>
+  <h2>Talk it in</h2>
+  <div class="michint"><svg width="15" height="15" viewBox="0 0 24 24" stroke="var(--cyan)" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4"/></svg>Tap the mic on your keyboard and just say what happened &mdash; five seconds between doors is plenty.</div>
+  <textarea id="capText" placeholder="&ldquo;Dale wasn&rsquo;t in, left a card with the tech out front&hellip;&rdquo;"></textarea>
+  <div class="txbtns" style="margin-top:12px">
+    <button class="btn primary" onclick="saveLog()">Log it</button>
+    <button class="btn ghost" onclick="closeSheet()">Cancel</button>
+  </div>
+</div>
+
+<div class="sheet" id="sh-claude">
+  <div class="grab"></div>
+  <h2><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);margin-right:7px"></span>Claude &mdash; working while you walk</h2>
+  <div class="shsub">Overnight and this morning:</div>
+  <ul class="clist">
+    <li><span class="ci">&#128269;</span><span><b>11 doors researched</b> for tomorrow&rsquo;s route &mdash; reviews, hours, who owns what.</span></li>
+    <li><span class="ci">&#9997;&#65039;</span><span><b>3 evening texts drafted</b> &mdash; Marisol, Dale, Bubba. Ready at 7:00.</span></li>
+    <li><span class="ci">&#128221;</span><span><b>Tran&rsquo;s Nail Bar added</b> &mdash; 4.8&#9733;/97, booking runs through IG DMs only. That&rsquo;s the opening.</span></li>
+    <li><span class="ci">&#9889;</span><span><b>Rudy&rsquo;s pitch page building</b> &mdash; ready by 1:15, twenty minutes before you leave.</span></li>
+  </ul>
+  <button class="btn" style="width:100%;margin-top:14px" onclick="closeSheet()">Good. Back to it.</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ═══════════ DATA ═══════════ */
+var WNAMES = {1:'Cold', 2:'Knows me', 3:'Trusts me', 4:'Would vouch'};
+var AVG = {
+  Auto:'linear-gradient(135deg,#3B82F6,#22D3EE)',
+  Plumbing:'linear-gradient(135deg,#22D3EE,#34D399)',
+  'Home Svcs':'linear-gradient(135deg,#34D399,#a3e635)',
+  Beauty:'linear-gradient(135deg,#F87171,#FBBF24)',
+  Dental:'linear-gradient(135deg,#93c5fd,#F2EBE0)',
+  Barber:'linear-gradient(135deg,#FBBF24,#F87171)',
+  Roofing:'linear-gradient(135deg,#34D399,#22D3EE)'
+};
+
+var P = {
+  rudy:{ id:'rudy', name:'Rudy Reyes', ini:'RR', biz:'Reyes Auto Care', trade:'Auto', val:'A', warm:3, rec:'1d',
+    phone:'713-555-0101',
+    next:'Demo 2:00 today &middot; leave by 1:35',
+    nm:{head:'Leave by 1:35 &mdash; demo at 2:00.', sub:'Traffic on Westheimer is normal. Open with the after-hours miss &mdash; his words, not yours. Pitch page ready at 1:15.'},
+    timeline:[
+      {t:'Today &middot; 11:05a', x:'Claude started his pitch page &mdash; ready 1:15. Growth fit penciled in.', hot:true},
+      {t:'Tue Aug 12 &middot; 3:40p', x:'Met him at the counter, hands still in an oil pan. Ten real minutes.', q:'If it can catch the after-hours calls I&rsquo;m listening.'},
+      {t:'Tue Aug 12 &middot; 3:20p', x:'Walked in on the Westheimer route &mdash; door 7 of 9.'}
+    ],
+    personal:['Wife &mdash; Carla','&rsquo;68 C10 project in bay 3','Two kids'],
+    snapshot:[['Trade','Auto repair &middot; Westheimer'],['The leak','After-hours calls go to voicemail &mdash; and to the shop up the street'],['Front desk','Rudy himself, between jobs'],['Fit','Growth']],
+    files:[
+      {ic:'&#9889;', bg:'linear-gradient(135deg,rgba(59,130,246,.35),rgba(34,211,238,.2))', n:'Pitch page', s:'building &middot; ready 1:15'},
+      {ic:'&#128663;', bg:'linear-gradient(135deg,rgba(251,191,36,.25),rgba(248,113,113,.15))', n:'The &rsquo;68 C10', s:'photo &middot; Tue'},
+      {ic:'&#128203;', bg:'linear-gradient(135deg,rgba(52,211,153,.25),rgba(34,211,238,.15))', n:'Demo checklist', s:'6 beats &middot; ready'}
+    ]},
+  dale:{ id:'dale', name:'Dale', ini:'D', biz:'Gulf Coast Plumbing', trade:'Plumbing', val:'A', warm:1, rec:'today',
+    phone:'713-555-0102', prize:true,
+    next:'Card left today &middot; text tonight, re-door Fri',
+    nm:{head:'Text tonight, re-door Friday morning.', sub:'Card&rsquo;s on his counter with today&rsquo;s date on it. The text lands while it&rsquo;s still sitting there.'},
+    timeline:[
+      {t:'Today &middot; 11:52a', x:'Door 3 on the route. Rang the bell &mdash; nobody front, left a card with the tech.', hot:true},
+      {t:'Tue Aug 12 &middot; 2:10p', x:'Pre-call rang out. No voicemail box set up &mdash; which is the whole story.'}
+    ],
+    personal:[],
+    snapshot:[['Trade','Plumbing &middot; Gulf Coast'],['Reviews','4.9&#9733; across 212 &mdash; the work sells itself'],['Website','Dead &mdash; last touched years ago'],['The leak','A 4.9 shop that can&rsquo;t be reached is handing calls to 4.2 shops that answer']],
+    files:[{ic:'&#128221;', bg:'linear-gradient(135deg,rgba(34,211,238,.25),rgba(52,211,153,.15))', n:'Door log', s:'today 11:52a'}]},
+  marisol:{ id:'marisol', name:'Marisol', ini:'M', biz:'Casa Verde Landscaping', trade:'Home Svcs', val:'C', warm:4, rec:'12d',
+    phone:'713-555-0103', cold:true,
+    next:'One hey-text today. No pitch.',
+    nm:{head:'One hey-text, today. No pitch.', sub:'She&rsquo;s sent you 2 intro leads. 12 days quiet is how vouchers turn into acquaintances. The draft&rsquo;s already written.'},
+    timeline:[
+      {t:'Aug 1', x:'Sent her second intro lead your way &mdash; unprompted.', q:'You boys actually answer the phone. I&rsquo;ll keep sending folks.'},
+      {t:'Jul 24', x:'Coffee near her Richmond job site. First intro lead came two days later.'}
+    ],
+    personal:['Crew works the Richmond corridor','Rescue mutt rides in the truck &mdash; Tejano'],
+    snapshot:[['Trade','Landscaping &middot; residential'],['Value to you','Referral engine &mdash; not a prospect'],['Rule','Never pitch her. Feed the friendship.']],
+    files:[]},
+  bree:{ id:'bree', name:'Bree', ini:'B', biz:'Lonestar Lash Studio', trade:'Beauty', val:'B', warm:2, rec:'2d',
+    phone:'713-555-0104',
+    next:'Re-visit 4:00 today &mdash; PM window',
+    nm:{head:'Back at 4:00 &mdash; after the Rudy demo.', sub:'She told you mornings are chaos. Show up in the calm, ask about the missed-booking DMs.'},
+    timeline:[
+      {t:'Mon Aug 11 &middot; 10:40a', x:'First knock &mdash; mid-appointment, two clients waiting.', q:'Come back after 3 &mdash; mornings here are a rodeo.'}
+    ],
+    personal:['Solo operator, books out 2 weeks'],
+    snapshot:[['Trade','Lash studio &middot; Beauty'],['Window','PM only &mdash; her words'],['The leak','Booking DMs pile up while she&rsquo;s mid-set']],
+    files:[]},
+  drkim:{ id:'drkim', name:'Dr. Kim', ini:'DK', biz:'Smile Lane Dental', trade:'Dental', val:'B', warm:1, rec:'1d',
+    phone:'713-555-0105',
+    next:'Owner&rsquo;s in Thursdays &mdash; go tomorrow',
+    nm:{head:'Tomorrow&rsquo;s mission: Thursday is owner day.', sub:'Front desk holds the wall Mon&ndash;Wed. Walk in Thursday morning, ask for Dr. Kim by name.'},
+    timeline:[
+      {t:'Tue Aug 12', x:'Gatekeeper stage &mdash; front desk polite, no pass-through. Learned the Thursday pattern.'}
+    ],
+    personal:[],
+    snapshot:[['Trade','Dental &middot; family practice'],['Stage','Gatekeeper'],['The key','Owner in-office Thursdays']],
+    files:[]},
+  andre:{ id:'andre', name:'Andre', ini:'A', biz:'Bayou Fade Barbershop', trade:'Barber', val:'B', warm:2, rec:'8d',
+    phone:'713-555-0106', parked:true,
+    next:'Parked. Re-approach Sep 22',
+    nm:{head:'Parked till Sep 22.', sub:'He said no with a smile. When the cousin&rsquo;s season gets busy, the door reopens. Calendar&rsquo;s already holding it.'},
+    timeline:[
+      {t:'Aug 5', x:'Straight no &mdash; friendly about it.', q:'My cousin does our stuff.'}
+    ],
+    personal:['Chair-side talker &mdash; knows everybody on the block'],
+    snapshot:[['Trade','Barbershop'],['Status','Said no &mdash; parked, not dead'],['Re-approach','~Sep 22']],
+    files:[]},
+  hidalgo:{ id:'hidalgo', name:'Hidalgo Roofing', ini:'HR', biz:'Client since Aug 1', trade:'Roofing', val:'A', warm:4, rec:'3d',
+    phone:'713-555-0107', client:true,
+    next:'Referral ask Friday &mdash; he&rsquo;d vouch',
+    nm:{head:'Friday &mdash; the referral ask.', sub:'He&rsquo;d vouch today. Ask for two names, not &ldquo;anyone you know.&rdquo; Script&rsquo;s drafted in his files.'},
+    stats:[['42','calls answered by the AI this month'],['Aug 1','went live'],['Fri','referral ask due']],
+    timeline:[
+      {t:'Today &middot; 7:10a', x:'3 calls answered overnight &mdash; 1 inspection booked while everybody slept.', hot:true},
+      {t:'Fri Aug 8', x:'Check-in call. Happy is an understatement.', q:'First weekend it booked two roof inspections while I was at my kid&rsquo;s game.'},
+      {t:'Aug 1', x:'Went live &mdash; SANO answering the phones from day one.'}
+    ],
+    personal:['Crew of 6 &middot; storm-season heavy','Kid plays select ball &mdash; weekends are sacred'],
+    snapshot:[['Trade','Roofing &middot; residential'],['Lifecycle','Live client &mdash; month 1'],['Health','Green &mdash; using it daily'],['Next milestone','First referral, Friday']],
+    files:[
+      {ic:'&#9989;', bg:'linear-gradient(135deg,rgba(52,211,153,.3),rgba(34,211,238,.15))', n:'Launch checklist', s:'complete Aug 1'},
+      {ic:'&#128222;', bg:'linear-gradient(135deg,rgba(59,130,246,.3),rgba(52,211,153,.15))', n:'Call log', s:'42 answered &middot; Aug'},
+      {ic:'&#128172;', bg:'linear-gradient(135deg,rgba(251,191,36,.25),rgba(52,211,153,.15))', n:'Referral script', s:'drafted &middot; for Fri'}
+    ]},
+  kimtran:{ id:'kimtran', name:'Kim', ini:'KT', biz:'Tran&rsquo;s Nail Bar', trade:'Beauty', val:'B', warm:1, rec:'new',
+    phone:'713-555-0108',
+    next:'Pre-call this week &mdash; IG-only booking is the opening',
+    nm:{head:'Pre-call this week.', sub:'Booking runs entirely through IG DMs &mdash; every missed DM is a missed set. That&rsquo;s the opening line.'},
+    timeline:[
+      {t:'Today &middot; 12:10a', x:'Loaded by Claude overnight &mdash; found in the beauty-corridor search.', hot:true}
+    ],
+    personal:[],
+    snapshot:[['Trade','Nail bar &middot; Beauty'],['Reviews','4.8&#9733; across 97'],['Booking','IG DMs only &mdash; no phone line, no site']],
+    files:[]},
+  bubba:{ id:'bubba', name:'Bubba', ini:'BK', biz:'Katy Fence Co.', trade:'Home Svcs', val:'A', warm:2, rec:'5d',
+    phone:'713-555-0109',
+    next:'Call Friday &mdash; school&rsquo;s back',
+    nm:{head:'Call Friday morning &mdash; school&rsquo;s back.', sub:'He set the timing himself: &ldquo;call me when school starts back.&rdquo; Tonight&rsquo;s text is the friendly warning shot.'},
+    timeline:[
+      {t:'Aug 8', x:'Good talk at the yard. Timing, not interest, was the holdup.', q:'Call me when school starts back.'}
+    ],
+    personal:['Runs the yard with his brother'],
+    snapshot:[['Trade','Fencing &middot; Katy'],['Status','Warm A &mdash; timing set by him'],['Window','Opens Friday']],
+    files:[]},
+  dj:{ id:'dj', name:'DJ', ini:'DJ', biz:'Westside Auto Detail', trade:'Auto', val:'C', warm:2, rec:'4d',
+    phone:'713-555-0110',
+    next:'Keep him fed &mdash; comment on the TikToks',
+    nm:{head:'Keep him fed.', sub:'Huge TikTok, sends leads, will never be a client &mdash; and doesn&rsquo;t need to be. A comment and a share a week keeps the pipe open.'},
+    timeline:[
+      {t:'Aug 9', x:'Sent a body-shop lead over from his comments section. Second one this month.'}
+    ],
+    personal:['Young hustler &middot; TikTok in the six figures'],
+    snapshot:[['Trade','Auto detail'],['Value to you','Lead source &mdash; never a client'],['Feed it with','Comments, shares, the odd shoutout']],
+    files:[]},
+  patel:{ id:'patel', name:'Dr. Patel', ini:'DP', biz:'Golden Smiles Ortho', trade:'Dental', val:'A', warm:1, rec:'9d',
+    phone:'713-555-0111', prize:true,
+    next:'Switch to phone &mdash; gatekeeper wall &times;2',
+    nm:{head:'Switch channels &mdash; the door is walled.', sub:'Two visits, two polite stone walls. Ortho front desks are pros. Call the practice line at 12:30 when the desk rotates to lunch cover.'},
+    timeline:[
+      {t:'Aug 4', x:'Second attempt &mdash; same wall, different smile. Channel&rsquo;s dead; switching to phone.'},
+      {t:'Jul 30', x:'First walk-in. Card taken, nothing passed through.'}
+    ],
+    personal:[],
+    snapshot:[['Trade','Orthodontics'],['Stage','Gatekeeper wall &times;2'],['New channel','Phone &middot; 12:30 lunch-cover window']],
+    files:[]}
+};
+
+var SHELVES = [
+  {name:'Close these', why:'money on the table today', ids:['rudy','bree']},
+  {name:'Your clients', why:'protect &amp; grow', ids:['hidalgo']},
+  {name:'Cold A&rsquo;s &mdash; big fish', why:'worth the patience', ids:['dale','patel']},
+  {name:'Keep &rsquo;em warm', why:'they feed the pipe', ids:['marisol','bubba','dj']},
+  {name:'Working the door', why:'not through yet', ids:['drkim','kimtran']},
+  {name:'Parked till fall', why:'timing, not no forever', ids:['andre']}
+];
+
+var MISSIONS = [
+  {id:'m1', time:'8:15a', label:'Morning texts (2)', sub:'Both out before the coffee was cold.', done:true},
+  {id:'m2', time:'11:00a', label:'Westheimer doors 1&ndash;3', sub:'Walked. Gulf Coast logged at 11:52.', done:true},
+  {id:'m3', time:'1:35p', label:'Leave for Rudy &mdash; 2:00 demo', sub:'Traffic normal. Pitch page ready 1:15.', done:false,
+    ribbon:{t:'1:35', main:'Leave for Rudy&rsquo;s demo &middot; Reyes Auto Care at 2:00', sub:'Traffic on Westheimer is normal. Pitch page ready 1:15.', amber:true}},
+  {id:'m4', time:'4:00p', label:'Bree re-visit &mdash; PM window', sub:'She said after 3. Lonestar Lash.', done:false,
+    ribbon:{t:'4:00', main:'Bree&rsquo;s re-visit &middot; Lonestar Lash (PM window)', sub:'Her calm hours. Ask about the booking DMs piling up.'}},
+  {id:'m5', time:'7:00p', label:'Evening texts &mdash; 3 drafted', sub:'Marisol &middot; Dale &middot; Bubba. Open &amp; approve.', done:false, action:'texts',
+    ribbon:{t:'7:00', main:'Evening texts &middot; 3 ready for your thumb', sub:'Marisol&rsquo;s hey-text, Dale&rsquo;s follow-up, Bubba&rsquo;s heads-up.'}},
+  {id:'m6', time:'today', label:'Marisol going cold &mdash; one text, today', sub:'12 days quiet. She&rsquo;s sent 2 leads.', done:false, warn:true, action:'marisol'}
+];
+
+var TEXTS = [
+  {id:'t1', pid:'marisol', why:'going cold &middot; 12d &middot; hey-text, no pitch',
+   msg:'Marisol! Drove past a Casa Verde crew on Richmond this morning &mdash; y&rsquo;all are everywhere. Hope the fall rush is shaping up good. Lunch is on me one of these weeks.', state:''},
+  {id:'t2', pid:'dale', why:'card left today &middot; strike while it&rsquo;s on the counter',
+   msg:'Mr. Dale &mdash; swung by Gulf Coast around noon and left my card up front. I help plumbing shops catch the calls that ring out after hours. Worth ten minutes this week?', state:''},
+  {id:'t3', pid:'bubba', why:'his timing opens Friday &mdash; the warning shot',
+   msg:'Bubba &mdash; school&rsquo;s back Monday, and you said call you then. Consider this the friendly warning: I&rsquo;m ringing you Friday morning. Katy Fence, first on the list.', state:''}
+];
+
+var BOARD = {
+  rows:['A','B','C'],
+  cols:[1,2,3,4],
+  plays:{
+    'A1':'The big fish. Worth doors, pre-calls, and patience. Your only job here is face time.',
+    'A2':'Warm A&rsquo;s. Small touches on their timing, not yours &mdash; then be first through the door when it opens.',
+    'A3':'Close range. This is demo territory &mdash; stop warming, start asking.',
+    'A4':'Gold. Protect the relationship, deliver loud, and ask for referrals by name.',
+    'B1':'Volume country. Doors and pre-calls in batches &mdash; don&rsquo;t hand-craft here.',
+    'B2':'Stay visible. Re-visits and check-ins on their windows. Cheap touches, steady drip.',
+    'B3':'Move &rsquo;em up &mdash; find the demo moment before they cool.',
+    'B4':'Rare and nice. Referrals without the A-size deal &mdash; take them gladly.',
+    'C1':'Don&rsquo;t spend real hours here. Let Claude watch it.',
+    'C2':'Friendlies. Low effort, door stays open.',
+    'C3':'Pleasant, low stakes. A touch a month.',
+    'C4':'Your street team. They send leads &mdash; never, ever let &rsquo;em go quiet.'
+  }
+};
+
+/* ═══════════ STATE ═══════════ */
+var marisolSent = false;
+var logCounter = 0;
+
+/* ═══════════ HELPERS ═══════════ */
+function $(id){ return document.getElementById(id); }
+function toast(msg){
+  var t = $('toast');
+  t.innerHTML = msg;
+  t.classList.add('on');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(function(){ t.classList.remove('on'); }, 2600);
+}
+function esc(s){ return s; }
+
+/* ═══════════ VIEWS ═══════════ */
+var VIEWS = ['people','board','week','journal','person'];
+function showView(v){
+  VIEWS.forEach(function(x){
+    $('view-'+x).classList.toggle('on', x===v);
+    var nb = $('nav-'+x);
+    if(nb) nb.classList.toggle('on', x===v || (v==='person' && x==='people'));
+  });
+  window.scrollTo(0,0);
+}
+function focusSearch(){
+  showView('people');
+  setTimeout(function(){ $('search').focus(); }, 60);
+}
+
+/* ═══════════ PEOPLE / SHELVES ═══════════ */
+function pillW(w){ return '<span class="pill w'+w+'">'+WNAMES[w]+'</span>'; }
+function pillV(v){ return '<span class="pill v'+v+'">'+v+'</span>'; }
+function avatar(p, cls){
+  return '<div class="av '+(cls||'')+'" style="background:'+AVG[p.trade]+'">'+p.ini+'</div>';
+}
+function recTag(p){
+  var cls = '';
+  if(p.cold && !marisolSent) cls = 'hot';
+  if(p.rec==='today' || p.rec==='new' || (p.cold && marisolSent)) cls = 'today';
+  var txt = (p.cold && marisolSent) ? 'today' : p.rec;
+  return '<span class="rec '+cls+'">'+txt+'</span>';
+}
+function cardHTML(p){
+  var cls = 'pcard';
+  if(p.client) cls += ' client';
+  if(p.prize) cls += ' prize';
+  if(p.parked) cls += ' parked';
+  var tags = '';
+  if(p.client) tags = '<span class="pill tag-client">Client</span>';
+  if(p.prize) tags = '<span class="pill tag-prize">Big fish</span>';
+  var next = p.next;
+  if(p.cold && marisolSent) next = 'Hey-text sent today &#10003; &mdash; back to warm';
+  return '<div class="'+cls+'" data-search="'+(p.name+' '+p.biz+' '+p.trade).toLowerCase()+'" onclick="showPerson(\''+p.id+'\')">'
+    + avatar(p)
+    + '<div class="pmain">'
+    +   '<div class="pname">'+p.name+' '+tags+'</div>'
+    +   '<div class="pbiz">'+p.biz+' &middot; '+p.trade+'</div>'
+    +   '<div class="badges">'+pillV(p.val)+pillW(p.warm)+'</div>'
+    +   '<div class="nextmove">&rarr; '+next+'</div>'
+    + '</div>'
+    + recTag(p)
+    + '</div>';
+}
+function renderShelves(){
+  var h = '';
+  SHELVES.forEach(function(s, i){
+    h += '<div class="shelf" data-shelf="'+i+'">'
+      + '<div class="shelf-h"><h2>'+s.name+'</h2><span class="cnt">'+s.ids.length+'</span><span class="why">'+s.why+'</span></div>';
+    s.ids.forEach(function(id){ h += cardHTML(P[id]); });
+    h += '</div>';
+  });
+  $('shelves').innerHTML = h;
+  filterPeople();
+}
+function filterPeople(){
+  var q = $('search').value.trim().toLowerCase();
+  var any = false;
+  var shelves = document.querySelectorAll('#shelves .shelf');
+  shelves.forEach(function(sh){
+    var vis = 0;
+    sh.querySelectorAll('.pcard').forEach(function(c){
+      var hit = !q || c.getAttribute('data-search').indexOf(q) > -1;
+      c.style.display = hit ? '' : 'none';
+      if(hit) vis++;
+    });
+    sh.style.display = vis ? '' : 'none';
+    if(vis) any = true;
+  });
+  $('nomatch').style.display = any ? 'none' : 'block';
+}
+
+/* ═══════════ COMMAND STRIP ═══════════ */
+function nextMission(){
+  for(var i=0;i<MISSIONS.length;i++){
+    var m = MISSIONS[i];
+    if(m.ribbon && !m.done) return m;
+  }
+  return null;
+}
+function renderRibbon(){
+  var m = nextMission();
+  var r = $('ribbon');
+  if(m){
+    r.className = 'ribbon' + (m.ribbon.amber ? '' : ' calm');
+    r.innerHTML = '<span class="rtime">'+m.ribbon.t+'</span>'
+      + '<div class="rbody"><div class="rmain">'+m.ribbon.main+'</div><div class="rsub">'+m.ribbon.sub+'</div></div>'
+      + '<span class="chev">&#9662;</span>';
+  } else {
+    r.className = 'ribbon calm';
+    r.innerHTML = '<span class="rtime">&#10003;</span>'
+      + '<div class="rbody"><div class="rmain">Day&rsquo;s missions are done.</div><div class="rsub">Close it out in the Journal &mdash; Friday&rsquo;s recap is building.</div></div>'
+      + '<span class="chev">&#9662;</span>';
+  }
+}
+function renderColdband(){
+  var b = $('coldband');
+  if(marisolSent){
+    b.className = 'coldband done';
+    b.innerHTML = '<span class="cb-ico">&#10003;</span><span><b>Marisol</b> &mdash; hey-text sent today. Warmth restored.</span><span class="go">see her &rarr;</span>';
+    b.onclick = function(){ showPerson('marisol'); };
+  }
+}
+
+/* ═══════════ MISSIONS SHEET ═══════════ */
+function renderMissions(){
+  var nm = nextMission();
+  var h = '';
+  MISSIONS.forEach(function(m){
+    var cls = 'mrow' + (m.done ? ' done' : '') + (m.warn && !m.done ? ' warn' : '') + (nm && nm.id===m.id ? ' next' : '');
+    var go = '';
+    if(m.action==='texts' && !m.done) go = '<span class="mgo" onclick="event.stopPropagation();closeSheet();setTimeout(function(){openSheet(\'sh-texts\')},260)">open &rarr;</span>';
+    if(m.action==='marisol' && !m.done) go = '<span class="mgo" onclick="event.stopPropagation();closeSheet();setTimeout(function(){openSheet(\'sh-marisol\')},260)">text &rarr;</span>';
+    h += '<div class="'+cls+'" onclick="toggleMission(\''+m.id+'\')">'
+      + '<div class="mcheck">'+(m.done?'&#10003;':'')+'</div>'
+      + '<div class="mtime">'+m.time+'</div>'
+      + '<div class="mlabel">'+m.label+'<span class="msub">'+m.sub+'</span></div>'
+      + go + '</div>';
+  });
+  $('mlist').innerHTML = h;
+}
+function toggleMission(id){
+  var m = MISSIONS.filter(function(x){return x.id===id;})[0];
+  if(m.action==='marisol' && !m.done){ closeSheet(); setTimeout(function(){openSheet('sh-marisol');},260); return; }
+  if(m.action==='texts' && !m.done){ closeSheet(); setTimeout(function(){openSheet('sh-texts');},260); return; }
+  m.done = !m.done;
+  renderMissions(); renderRibbon();
+  if(m.done){
+    if(id==='m3'){ toast('Rudy demo &#10003; &mdash; the strip&rsquo;s already moved on to Bree at 4:00.'); addLog('2:55p','Reyes Auto Care &mdash; demo held. &#10003;'); }
+    else if(id==='m4'){ toast('Bree&rsquo;s re-visit &#10003; &mdash; next up: the evening texts at 7:00.'); addLog('4:35p','Lonestar Lash &mdash; re-visit done.'); }
+    else toast('Ticked &#10003;');
+  } else {
+    toast('Unticked &mdash; back on the strip.');
+  }
+}
+
+/* ═══════════ EVENING TEXTS ═══════════ */
+function renderTexts(){
+  var h = '';
+  TEXTS.forEach(function(t){
+    var p = P[t.pid];
+    h += '<div class="txcard" id="card-'+t.id+'">'
+      + '<div class="txwho">'+avatar(p)+'<div><div class="txname">'+p.name+' &middot; '+p.biz+'</div><div class="txwhy">'+t.why+'</div></div></div>'
+      + '<div class="txmsg" id="msg-'+t.id+'">'+t.msg+'</div>';
+    if(t.state==='sent'){ h += '<div class="txstatus sent">Sent &#10003;</div>'; }
+    else if(t.state==='skip'){ h += '<div class="txstatus skip">Skipped &mdash; kept for tomorrow</div>'; }
+    else {
+      h += '<div class="txbtns">'
+        + '<button class="btn primary" onclick="sendText(\''+t.id+'\')">Approve &amp; send</button>'
+        + '<button class="btn" onclick="editBox(\'msg-'+t.id+'\')">Edit</button>'
+        + '<button class="btn ghost" onclick="skipText(\''+t.id+'\')">Skip</button>'
+        + '</div>';
+    }
+    h += '</div>';
+  });
+  $('txlist').innerHTML = h;
+}
+function textsSettled(){
+  var open = TEXTS.filter(function(t){ return !t.state; }).length;
+  if(open===0){
+    var m5 = MISSIONS.filter(function(x){return x.id==='m5';})[0];
+    if(!m5.done){ m5.done = true; renderMissions(); renderRibbon(); }
+    var sent = TEXTS.filter(function(t){return t.state==='sent';}).length;
+    $('txTeaseState').innerHTML = sent+' of 3 sent &#10003;';
+  }
+}
+function sendText(id){
+  var t = TEXTS.filter(function(x){return x.id===id;})[0];
+  t.msg = $('msg-'+id).innerHTML;
+  t.state = 'sent';
+  var p = P[t.pid];
+  if(t.pid==='marisol') markMarisolSent(false);
+  renderTexts(); textsSettled();
+  toast('Sent to '+p.name+' &#10003;');
+  addLog('7:0'+(++logCounter)+'p', p.name+' &mdash; evening text sent.');
+}
+function skipText(id){
+  var t = TEXTS.filter(function(x){return x.id===id;})[0];
+  t.state = 'skip';
+  renderTexts(); textsSettled();
+  toast('Skipped &mdash; Claude keeps it warm for tomorrow.');
+}
+function editBox(elId){
+  var el = $(elId);
+  if(el.getAttribute('contenteditable')==='true'){
+    el.setAttribute('contenteditable','false');
+    toast('Edit saved &mdash; still your words, still your thumb.');
+  } else {
+    el.setAttribute('contenteditable','true');
+    el.focus();
+    toast('Tweak it, then tap Edit again to lock it.');
+  }
+}
+function sendMarisol(){
+  var t = TEXTS[0];
+  t.msg = $('marisolMsg').innerHTML;
+  t.state = 'sent';
+  $('marisolDone').style.display = 'block';
+  markMarisolSent(true);
+  renderTexts(); textsSettled();
+  addLog('12:41p','Marisol &mdash; hey-text sent. Warmth restored.');
+  setTimeout(closeSheet, 900);
+  toast('Sent &#10003; &mdash; Marisol&rsquo;s off the cold list.');
+}
+function markMarisolSent(fromBand){
+  marisolSent = true;
+  P.marisol.rec = 'today';
+  var m6 = MISSIONS.filter(function(x){return x.id==='m6';})[0];
+  m6.done = true;
+  renderColdband(); renderShelves(); renderMissions(); renderRibbon();
+}
+
+/* ═══════════ CAPTURE / JOURNAL ═══════════ */
+var TODAY = [
+  ['8:05a','Morning briefing read &mdash; route locked.'],
+  ['11:20a','Walked Westheimer &mdash; doors 1&ndash;3.'],
+  ['11:52a','Gulf Coast Plumbing &mdash; nobody front, left a card.'],
+  ['12:10p','Tran&rsquo;s Nail Bar added by Claude&rsquo;s search.']
+];
+function renderToday(){
+  var h = '';
+  TODAY.forEach(function(l){
+    h += '<div class="jline"><span class="jt">'+l[0]+'</span><span>'+l[1]+'</span></div>';
+  });
+  $('todayFeed').innerHTML = h;
+}
+function addLog(time, text){
+  TODAY.push([time, text]);
+  renderToday();
+}
+function openCapture(prefill){
+  $('capText').value = prefill || '';
+  openSheet('sh-capture');
+  setTimeout(function(){ $('capText').focus(); }, 300);
+}
+function saveLog(){
+  var v = $('capText').value.trim();
+  if(!v){ toast('Say something first &mdash; even three words works.'); return; }
+  addLog('12:41p', v);
+  closeSheet();
+  toast('Logged &#10003; &mdash; it&rsquo;s in today&rsquo;s journal.');
+}
+
+/* ═══════════ BOARD ═══════════ */
+function boardPeople(row, col){
+  var out = [];
+  Object.keys(P).forEach(function(k){
+    var p = P[k];
+    var w = p.warm;
+    if(p.id==='marisol' && marisolSent) w = 4;
+    if(p.val===row && w===col) out.push(p);
+  });
+  return out;
+}
+function renderBoard(){
+  var h = '<div class="bhdr"></div>';
+  BOARD.cols.forEach(function(c){ h += '<div class="bhdr">'+WNAMES[c]+'</div>'; });
+  BOARD.rows.forEach(function(r){
+    h += '<div class="brow">'+r+'</div>';
+    BOARD.cols.forEach(function(c){
+      var folks = boardPeople(r,c);
+      var extra = '';
+      if(r==='A' && c===1) extra = ' gold';
+      if(c===4) extra = ' green';
+      h += '<div class="bcell'+extra+'" id="cell-'+r+c+'" onclick="boardCell(\''+r+'\','+c+')">';
+      folks.forEach(function(p){
+        h += '<span class="chipav" style="background:'+AVG[p.trade]+'" onclick="event.stopPropagation();showPerson(\''+p.id+'\')">'+p.ini+'</span>';
+      });
+      h += '</div>';
+    });
+  });
+  $('bgrid').innerHTML = h;
+}
+function boardCell(r, c){
+  document.querySelectorAll('.bcell').forEach(function(x){ x.classList.remove('sel'); });
+  $('cell-'+r+c).classList.add('sel');
+  var folks = boardPeople(r,c);
+  var who = folks.length
+    ? 'Here now: ' + folks.map(function(p){ return p.name + ' (' + p.biz + ')'; }).join(' &middot; ')
+    : 'Nobody here right now &mdash; and that&rsquo;s information too.';
+  $('bplay').innerHTML = '<div class="bp-cell">'+r+' &times; '+WNAMES[c]+'</div>'
+    + '<div class="bp-play">'+BOARD.plays[r+c]+'</div>'
+    + '<div class="bp-who">'+who+'</div>';
+}
+
+/* ═══════════ PERSON PAGE ═══════════ */
+function showPerson(id){
+  var p = P[id];
+  var h = '';
+  h += '<div class="phead">'
+    + '<button class="pback" onclick="showView(\'people\')">&lsaquo; People</button>'
+    + '<div class="phead-main">'+avatar(p)
+    + '<div><h1>'+p.name+'</h1><div class="pbiz">'+p.biz+' &middot; '+p.trade+'</div>'
+    + '<div class="badges" style="margin-top:5px">'+pillV(p.val)+pillW((p.id==='marisol'||!p.cold)?p.warm:p.warm)
+    + (p.client?'<span class="pill tag-client">Client</span>':'')
+    + (p.prize?'<span class="pill tag-prize">Big fish</span>':'')
+    + '<span class="rec'+((p.cold&&!marisolSent)?' hot':'')+'">last touch '+((p.cold&&marisolSent)?'today':p.rec)+'</span>'
+    + '</div></div></div>'
+    + '<div class="pactions">'
+    + '<button class="btn" onclick="doCall(\''+id+'\')">&#128222; Call</button>'
+    + '<button class="btn" onclick="doText(\''+id+'\')">&#128172; Text</button>'
+    + '<button class="btn" onclick="openCapture(\''+p.name+': \')">&#127908; Log</button>'
+    + '</div></div>';
+
+  if(p.client && p.stats){
+    h += '<div class="psec"><h3>Client health &mdash; green</h3><div class="clientstats">';
+    p.stats.forEach(function(s){ h += '<div class="cstat"><b>'+s[0]+'</b><span>'+s[1]+'</span></div>'; });
+    h += '</div></div>';
+  }
+
+  h += '<div class="psec"><h3>The next move</h3><div class="nm-card"><div class="nm-l">Claude&rsquo;s read</div>'
+    + '<p>'+p.nm.head+'</p><div class="nm-sub">'+p.nm.sub+'</div></div></div>';
+
+  if(p.timeline && p.timeline.length){
+    h += '<div class="psec"><h3>The story so far</h3><div class="tl">';
+    p.timeline.forEach(function(ti){
+      h += '<div class="tl-item'+(ti.hot?' hot':'')+'"><div class="tl-t">'+ti.t+'</div><div class="tl-x">'+ti.x+'</div>';
+      if(ti.q) h += '<div class="quote">'+ti.q+'</div>';
+      h += '</div>';
+    });
+    h += '</div></div>';
+  }
+
+  if(p.personal && p.personal.length){
+    h += '<div class="psec"><h3>Personal &mdash; what matters to them</h3><div class="pchips">';
+    p.personal.forEach(function(c){ h += '<div class="pchip">'+c+'</div>'; });
+    h += '</div></div>';
+  }
+
+  if(p.snapshot && p.snapshot.length){
+    h += '<div class="psec"><h3>Business snapshot</h3><div class="jcard" style="margin:0">';
+    p.snapshot.forEach(function(f){ h += '<div class="factrow"><span class="fk">'+f[0]+'</span><span class="fv">'+f[1]+'</span></div>'; });
+    h += '</div></div>';
+  }
+
+  if(p.files && p.files.length){
+    h += '<div class="psec"><h3>Files</h3><div class="files">';
+    p.files.forEach(function(f){
+      h += '<div class="file" onclick="toast(\'Opening &ldquo;'+f.n+'&rdquo; (mock)\')"><div class="fthumb" style="background:'+f.bg+'">'+f.ic+'</div>'
+        + '<div class="fmeta"><div class="fname">'+f.n+'</div><div class="fsub">'+f.s+'</div></div></div>';
+    });
+    h += '</div></div>';
+  }
+  h += '<div class="pfootpad"></div>';
+  $('view-person').innerHTML = h;
+  showView('person');
+}
+function doCall(id){ toast('&#128222; Dialing '+P[id].name+' &middot; '+P[id].phone+' (mock)'); }
+function doText(id){ toast('&#128172; Opening a text to '+P[id].name+' (mock)'); }
+
+/* ═══════════ SHEETS ═══════════ */
+var openSheetId = null;
+function openSheet(id){
+  if(openSheetId) $(openSheetId).classList.remove('on');
+  openSheetId = id;
+  if(id==='sh-missions') renderMissions();
+  if(id==='sh-texts') renderTexts();
+  $('scrim').classList.add('on');
+  $(id).classList.add('on');
+}
+function closeSheet(){
+  if(openSheetId) $(openSheetId).classList.remove('on');
+  openSheetId = null;
+  $('scrim').classList.remove('on');
+}
+
+/* ═══════════ BOOT ═══════════ */
+renderShelves();
+renderRibbon();
+renderMissions();
+renderTexts();
+renderToday();
+renderBoard();
+</script>
+</body>
+</html>
