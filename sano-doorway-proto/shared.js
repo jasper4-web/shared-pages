@@ -66,32 +66,29 @@
         '<div class="foot-brand">' +
           '<div class="brand"><img src="sano-logo.png" alt="" width="30" height="30"/> SANO Systems</div>' +
           '<p>You run your business. We run the systems.</p>' +
-          '<a href="tel:' + PHONE + '" class="c">' + PHONE_D + '</a>' +
           '<a href="sms:+18323962496?&body=I%27d%20like%20a%20demo%20for%20my%20business" class="c">Text ' + PHONE_D + '</a>' +
         '</div>' +
         '<div class="foot-col"><h2 class="foot-col-h">What we run</h2>' +
           '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#frontdesk">The front desk</a><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#reviews">Reviews</a>' +
-          '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#marketing">Marketing &amp; payments</a><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/sample-blueprint.html">Sample blueprint</a></div>' +
+          '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#marketing">Marketing &amp; payments</a><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/what-we-run.html#backoffice">Hiring &amp; team systems</a><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/sample-blueprint.html">Sample blueprint</a></div>' +
         '<div class="foot-col"><h2 class="foot-col-h">Industries</h2>' + indFoot + '</div>' +
         '<div class="foot-col"><h2 class="foot-col-h">Company</h2>' +
           '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/about.html">Why SANO</a><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/resources.html">Resources</a><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/pricing.html">Pricing</a>' +
           '<a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/about.html#bilingual" lang="es">Se habla Español</a><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/demo.html">Request a demo</a></div>' +
         
       '</div></nav>' +
-      '<div class="foot-base"><span>© 2026 SANO Systems LLC. (Design test — not the live site.)</span>' +
+      '<div class="foot-base"><span>© 2026 SANO Systems LLC.</span>' +
         '<span><a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/privacy.html" style="color:#8A8A93">Privacy Policy</a> · <a href="https://jasper4-web.github.io/shared-pages/sano-podium-doorway/terms.html" style="color:#8A8A93">Terms of Service</a></span></div>' +
     '</div></footer>';
 
   /* One source of truth for the risk-reversal + contact lines under every CTA.
      These were hardcoded in 18 files and had already drifted apart. */
-  var GUARANTEE = '<strong>30 days after it starts answering, money-back on the monthly fee</strong> — taking it also ends the minimum term. ' +
-    'The one-time setup pays for building it and isn\'t refunded once we start, but it is <strong>split half to begin, half the day it starts answering</strong> — and you don\'t owe the second half if we don\'t deliver the plan you approved.';
-  var CONTACT = 'Or <a href="sms:' + PHONE + '?&body=' + encodeURIComponent('I\'d like a demo for my business') + '">text us</a>, ' +
-    'or call <a href="tel:' + PHONE + '">' + PHONE_D + '</a> — you\'ll get a person, not a queue. ' +
-    '';
+  var GUARANTEE = '<strong>30 days from go-live, money-back on the monthly fee</strong> — taking it also ends the minimum term. ' +
+    'The one-time setup is separate: <strong>half at kickoff, half at go-live</strong>, and you don\'t owe the balance if we don\'t deliver your approved blueprint.';
+  var CONTACT = 'Or <a href="sms:' + PHONE + '?&body=' + encodeURIComponent('I\'d like a demo for my business') + '">text us at ' + PHONE_D + '</a> — a real person reads it and replies.';
   document.querySelectorAll('.cta-box').forEach(function (box) {
     var g = box.querySelector('.cta-guarantee'); if (g) g.innerHTML = GUARANTEE;
-    var c = box.querySelector('.cta-phone'); if (c) c.innerHTML = CONTACT;
+    var c = box.querySelector('.cta-phone:not(.cta-hire)'); if (c) c.innerHTML = CONTACT;
   });
 
   /* The picker's whole value is the branch it puts a visitor on. Every demo link
