@@ -63,6 +63,7 @@
       <ul class="vp-mobile"><li>Your phone answered &mdash; by text on Starter, live voice from Growth, in English or Spanish</li><li id="vp-b2">A missed call turning into a booked job on its own</li><li>Exactly what we&rsquo;d run for you, and what it costs</li></ul>
       <p class="fsub"><span style="font-size:13px">No account needed: the button opens a prefilled text to us, or copies your details to send any way you like.</span></p>
       <form id="demo-form" action="#">
+        <input type="text" id="website2" name="website2" autocomplete="off" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;height:0;width:0;border:0;padding:0;overflow:hidden">
         <div class="frow2">
           <div class="field">
             <label for="name">Your name</label>
@@ -232,6 +233,23 @@
     });
     globalErr.hidden = !firstBad;
     if (firstBad) { firstBad.focus(); return; }
+
+    /* S1: also land the lead in the deck (best-effort, never blocks the SMS path). */
+    try {
+      var gv = function (id) { var el = document.getElementById(id); return el ? (el.value || '').trim() : ''; };
+      var selEl = document.getElementById('industry');
+      fetch('https://field-deck.sano-systems.workers.dev/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: gv('name'), business: gv('business'), phone: gv('phone'), email: gv('email'),
+          industry: selEl && selEl.options[selEl.selectedIndex] ? selEl.options[selEl.selectedIndex].textContent : '',
+          plan: (typeof planEl !== 'undefined' && planEl && planEl.value) ? planEl.value : '',
+          note: gv('note'), sms_ok: !!(document.getElementById('sms') && document.getElementById('sms').checked),
+          website2: gv('website2')
+        })
+      }).catch(function () {});
+    } catch (e) {}
 
     /* Static site, no server — build a real prefilled text so the lead is never silently destroyed. */
     try {
