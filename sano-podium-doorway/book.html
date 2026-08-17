@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book 30 minutes — SANO Systems</title>
+<meta name="description" content="Grab 30 minutes with SANO Systems — we'll show you exactly what your phones are missing.">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F6F4EF;--card:#fff;--ink:#171A21;--ink2:#4C5160;--line:#E5E2D9;--blue:#3B82F6;--blueink:#1D4ED8;--grad:linear-gradient(90deg,#3B82F6,#22D3EE)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:'Space Grotesk',-apple-system,system-ui,sans-serif;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:28px 20px 60px}
+.brand{font-weight:700;letter-spacing:.05em;font-size:16px}
+.brand b{color:var(--blueink)}
+.brand a{color:inherit;text-decoration:none}
+h1{font-size:clamp(26px,5vw,36px);line-height:1.15;margin:26px 0 10px;position:relative;padding-bottom:12px}
+h1::after{content:"";position:absolute;left:0;bottom:0;width:64px;height:3px;background:var(--grad);border-radius:99px}
+.sub{color:var(--ink2);font-size:16px;line-height:1.6;max-width:56ch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;margin-top:24px;padding:8px;min-height:520px}
+.fallback{padding:36px 24px;text-align:center}
+.fallback p{color:var(--ink2);font-size:15.5px;line-height:1.65;max-width:46ch;margin:0 auto 18px}
+.cta{display:inline-block;background:var(--grad);color:#fff;text-decoration:none;font-weight:700;font-size:16px;border-radius:12px;padding:15px 26px}
+.alt{display:block;margin-top:14px;color:var(--blueink);font-size:14px}
+.note{margin-top:16px;color:var(--ink2);font-size:12.5px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><a href="index.html">SANO <b>SYSTEMS</b></a></div>
+  <h1>Grab 30 minutes with us</h1>
+  <p class="sub">Pick a time that works — we'll look at how your phones, bookings, and follow-ups run today, and show you exactly what's slipping through. No pitch deck, no pressure, and you'll leave with something useful either way.</p>
+
+  <div class="card">
+    <!-- When the calendar goes live, set CAL_LINK below (e.g. "sano-systems/intro-30") and this
+         card becomes the live scheduler. Until then, the text path works today. -->
+    <div id="cal-embed" style="width:100%;height:640px;display:none"></div>
+    <div class="fallback" id="fallback">
+      <p><strong>Fastest way right now:</strong> text us what you do and when's good — a real person (Jasper) replies and locks the time with you.</p>
+      <a class="cta" href="sms:+18323962496?&amp;body=I%27d%20like%20to%20book%2030%20minutes%20%E2%80%94%20my%20business%20is%3A%20">💬 Text (832) 396-2496</a>
+      <a class="alt" href="demo.html">Or request a demo with the form →</a>
+    </div>
+  </div>
+  <p class="note">Prefer email? The form on the <a href="demo.html" style="color:var(--blueink)">demo page</a> reaches us the same day.</p>
+</div>
+<script>
+  var CAL_LINK = ""; /* set to "username/event-type" when the calendar is connected */
+  if (CAL_LINK) {
+    document.getElementById('fallback').style.display = 'none';
+    var el = document.getElementById('cal-embed');
+    el.style.display = 'block';
+    (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+    Cal("init", { origin: "https://cal.com" });
+    Cal("inline", { elementOrSelector: "#cal-embed", calLink: CAL_LINK, layout: "month_view" });
+  }
+</script>
+</body>
+</html>
