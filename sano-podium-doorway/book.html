@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Book 30 minutes — SANO Systems</title>
-<meta name="description" content="Grab 30 minutes with SANO Systems — we'll show you exactly what your phones are missing.">
+<meta name="description" content="Pick a time with SANO Systems — we'll show you exactly what your phones are missing.">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--paper:#F6F4EF;--card:#fff;--ink:#171A21;--ink2:#4C5160;--line:#E5E2D9;--blue:#3B82F6;--blueink:#1D4ED8;--grad:linear-gradient(90deg,#3B82F6,#22D3EE)}
+:root{--paper:#F6F4EF;--card:#fff;--ink:#171A21;--ink2:#4C5160;--ink3:#878D9B;--line:#E5E2D9;--blue:#3B82F6;--blueink:#1D4ED8;--bluetint:#EAF1FE;--good:#059669;--goodt:#E6F5EE;--danger:#DC2626;--grad:linear-gradient(90deg,#3B82F6,#22D3EE)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--paper);color:var(--ink);font-family:'Space Grotesk',-apple-system,system-ui,sans-serif;min-height:100vh}
 .wrap{max-width:760px;margin:0 auto;padding:28px 20px 60px}
@@ -16,43 +16,173 @@ body{background:var(--paper);color:var(--ink);font-family:'Space Grotesk',-apple
 .brand a{color:inherit;text-decoration:none}
 h1{font-size:clamp(26px,5vw,36px);line-height:1.15;margin:26px 0 10px;position:relative;padding-bottom:12px}
 h1::after{content:"";position:absolute;left:0;bottom:0;width:64px;height:3px;background:var(--grad);border-radius:99px}
-.sub{color:var(--ink2);font-size:16px;line-height:1.6;max-width:56ch}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;margin-top:24px;padding:8px;min-height:520px}
-.fallback{padding:36px 24px;text-align:center}
-.fallback p{color:var(--ink2);font-size:15.5px;line-height:1.65;max-width:46ch;margin:0 auto 18px}
-.cta{display:inline-block;background:var(--grad);color:#fff;text-decoration:none;font-weight:700;font-size:16px;border-radius:12px;padding:15px 26px}
-.alt{display:block;margin-top:14px;color:var(--blueink);font-size:14px}
-.note{margin-top:16px;color:var(--ink2);font-size:12.5px;text-align:center}
+.sub{color:var(--ink2);font-size:16px;line-height:1.6;max-width:58ch}
+.demo{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.demo .tx{flex:1;min-width:220px}
+.demo .tx b{font-size:16px}
+.demo .tx p{color:var(--ink2);font-size:13.5px;line-height:1.5;margin-top:3px}
+.demo a.call{background:var(--grad);color:#fff;text-decoration:none;font-weight:700;font-size:15px;border-radius:12px;padding:13px 20px;white-space:nowrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;margin-top:22px;padding:20px 18px}
+.card h2{font-size:19px;margin-bottom:4px}
+.hint{color:var(--ink3);font-size:12.5px;margin-bottom:14px}
+.days{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+.day{flex:0 0 auto;border:1px solid var(--line);background:var(--paper);border-radius:12px;padding:9px 13px;text-align:center;font-family:inherit;cursor:pointer}
+.day b{display:block;font-size:14px}
+.day span{font-size:11px;color:var(--ink3);font-weight:600}
+.day.on{background:var(--bluetint);border-color:var(--blue)}
+.day.on b,.day.on span{color:var(--blueink)}
+.times{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-top:14px}
+.tm{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:11px 4px;text-align:center;font-family:inherit;font-weight:600;font-size:14px;color:var(--ink);cursor:pointer}
+.tm.on{background:var(--blueink);border-color:var(--blueink);color:#fff}
+.form{margin-top:16px;display:none}
+.form.show{display:block}
+.form .picked{background:var(--goodt);color:var(--good);font-weight:700;font-size:13.5px;border-radius:10px;padding:9px 12px;margin-bottom:12px}
+.form input{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-family:inherit;font-size:16px;margin-bottom:10px;background:var(--paper)}
+.form input:focus{outline:2px solid var(--blue);outline-offset:-1px}
+.hp{position:absolute;left:-9999px;opacity:0;height:0;width:0}
+.book{width:100%;background:var(--grad);color:#fff;border:0;font-family:inherit;font-weight:700;font-size:16px;border-radius:12px;padding:15px;cursor:pointer}
+.book:disabled{opacity:.6}
+.err{color:var(--danger);font-size:13.5px;margin-top:8px;display:none}
+.ok{display:none;text-align:center;padding:26px 10px}
+.ok .big{font-size:44px}
+.ok h2{margin:10px 0 6px}
+.ok p{color:var(--ink2);font-size:15px;line-height:1.6;max-width:44ch;margin:0 auto}
+.loading{color:var(--ink3);font-size:14px;padding:14px 2px}
+.textus{margin-top:22px;text-align:center;color:var(--ink2);font-size:14px;line-height:1.6}
+.textus a{display:inline-block;margin-top:8px;background:var(--card);border:1px solid var(--line);color:var(--blueink);text-decoration:none;font-weight:700;font-size:14.5px;border-radius:12px;padding:12px 20px}
+.note{margin-top:16px;color:var(--ink3);font-size:12px;text-align:center}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="brand"><a href="index.html">SANO <b>SYSTEMS</b></a></div>
   <h1>Grab 30 minutes with us</h1>
-  <p class="sub">Pick a time that works — we'll look at how your phones, bookings, and follow-ups run today, and show you exactly what's slipping through. No pitch deck, no pressure, and you'll leave with something useful either way.</p>
+  <p class="sub">Pick a time that works — we'll look at how your phones, bookings, and follow-ups run today, and show you exactly what's slipping through. No pitch deck, no pressure.</p>
 
-  <div class="card">
-    <!-- When the calendar goes live, set CAL_LINK below (e.g. "sano-systems/intro-30") and this
-         card becomes the live scheduler. Until then, the text path works today. -->
-    <div id="cal-embed" style="width:100%;height:640px;display:none"></div>
-    <div class="fallback" id="fallback">
-      <p><strong>Fastest way right now:</strong> text us what you do and when's good — a real person (Jasper) replies and locks the time with you.</p>
-      <a class="cta" href="sms:+18323962496?&amp;body=I%27d%20like%20to%20book%2030%20minutes%20%E2%80%94%20my%20business%20is%3A%20">💬 Text (832) 396-2496</a>
-      <a class="alt" href="demo.html">Or request a demo with the form →</a>
+  <div class="demo">
+    <div class="tx"><b>Hear it answer first 📞</b>
+      <p>That number rings our live AI receptionist. Call it right now — yours would sound like your shop.</p></div>
+    <a class="call" href="tel:8329170090">Call the demo — (832) 917-0090</a>
+  </div>
+
+  <div class="card" id="sched">
+    <h2>Pick your time</h2>
+    <div class="hint" id="tzhint">30 minutes · times shown in your local time</div>
+    <div class="loading" id="loading">Loading open times…</div>
+    <div class="days" id="days"></div>
+    <div class="times" id="times"></div>
+    <div class="form" id="form">
+      <div class="picked" id="picked"></div>
+      <input id="f_name" placeholder="Your name" autocomplete="name">
+      <input id="f_biz" placeholder="Business name" autocomplete="organization">
+      <input id="f_phone" placeholder="Cell number" inputmode="tel" autocomplete="tel">
+      <input id="f_email" placeholder="Email" inputmode="email" autocomplete="email">
+      <input class="hp" id="website2" tabindex="-1" autocomplete="off">
+      <button class="book" id="bookBtn" onclick="doBook()">Lock it in ✓</button>
+      <p class="err" id="err"></p>
     </div>
+    <div class="ok" id="ok">
+      <div class="big">✅</div>
+      <h2 id="okTitle">You're locked in</h2>
+      <p id="okBody"></p>
+    </div>
+  </div>
+
+  <div class="textus">
+    Rather not pick a time? Text us what you do and when's good — a real person (Jasper) replies and locks it with you.
+    <br><a href="sms:+18323962496?&amp;body=I%27d%20like%20to%20book%2030%20minutes%20%E2%80%94%20my%20business%20is%3A%20">💬 Text (832) 396-2496</a>
   </div>
   <p class="note">Prefer email? The form on the <a href="demo.html" style="color:var(--blueink)">demo page</a> reaches us the same day.</p>
 </div>
+
 <script>
-  var CAL_LINK = ""; /* set to "username/event-type" when the calendar is connected */
-  if (CAL_LINK) {
-    document.getElementById('fallback').style.display = 'none';
-    var el = document.getElementById('cal-embed');
-    el.style.display = 'block';
-    (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
-    Cal("init", { origin: "https://cal.com" });
-    Cal("inline", { elementOrSelector: "#cal-embed", calLink: CAL_LINK, layout: "month_view" });
-  }
+var API = "https://field-deck.sano-systems.workers.dev";
+var DATA = null, selDay = null, selSlot = null;
+
+function localTime(ms){return new Date(ms).toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});}
+function dayLabel(dateStr){
+  var d = new Date(dateStr + "T12:00:00Z");
+  return {top: d.toLocaleDateString("en-US",{weekday:"short", timeZone:"UTC"}),
+          bot: d.toLocaleDateString("en-US",{month:"short", day:"numeric", timeZone:"UTC"})};
+}
+function load(){
+  fetch(API + "/api/slots").then(function(r){return r.json();}).then(function(d){
+    if(!d || !d.ok) throw new Error("bad");
+    DATA = d;
+    document.getElementById("loading").style.display = "none";
+    renderDays();
+  }).catch(function(){
+    document.getElementById("loading").textContent = "Couldn't load the calendar — text us below and we'll lock your time the human way.";
+  });
+}
+function renderDays(){
+  var days = DATA.days.filter(function(x){return x.open.length;});
+  var el = document.getElementById("days");
+  el.innerHTML = days.map(function(x,i){
+    var l = dayLabel(x.date);
+    return '<button class="day'+(selDay===x.date?" on":"")+'" onclick="pickDay(\''+x.date+'\')"><b>'+l.top+'</b><span>'+l.bot+'</span></button>';
+  }).join("");
+  if(!selDay && days.length){pickDay(days[0].date); return;}
+  renderTimes();
+}
+function pickDay(d){selDay = d; selSlot = null; hideForm(); renderDays();}
+function renderTimes(){
+  var day = DATA.days.filter(function(x){return x.date===selDay;})[0];
+  var el = document.getElementById("times");
+  if(!day){el.innerHTML=""; return;}
+  el.innerHTML = day.open.map(function(o){
+    return '<button class="tm'+(selSlot&&selSlot.t===o.t?" on":"")+'" onclick="pickTime(\''+o.t+'\','+o.ms+')">'+localTime(o.ms)+'</button>';
+  }).join("");
+}
+function pickTime(t, ms){
+  selSlot = {t:t, ms:ms};
+  renderTimes();
+  var d = dayLabel(selDay);
+  document.getElementById("picked").textContent = "📅 " + d.top + ", " + d.bot + " at " + localTime(ms) + " — 30 minutes with Jasper";
+  document.getElementById("form").className = "form show";
+  document.getElementById("form").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+function hideForm(){document.getElementById("form").className = "form";}
+function showErr(m){var e=document.getElementById("err"); e.textContent=m; e.style.display="block";}
+function doBook(){
+  var name=document.getElementById("f_name").value.trim(),
+      biz=document.getElementById("f_biz").value.trim(),
+      phone=document.getElementById("f_phone").value.trim(),
+      email=document.getElementById("f_email").value.trim();
+  document.getElementById("err").style.display="none";
+  if(!name){showErr("Your name, so we know who we're meeting."); return;}
+  if(phone.replace(/\D/g,"").length < 10){showErr("A real cell number — that's how we call you."); return;}
+  if(!selSlot || !selDay){showErr("Pick a day and time above."); return;}
+  var btn=document.getElementById("bookBtn"); btn.disabled=true; btn.textContent="Locking it in…";
+  fetch(API + "/api/book", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({date:selDay, time:selSlot.t, name:name, business:biz, phone:phone, email:email,
+                          website2:document.getElementById("website2").value})
+  }).then(function(r){return r.json();}).then(function(d){
+    btn.disabled=false; btn.textContent="Lock it in ✓";
+    if(d && d.ok){
+      var lbl = dayLabel(selDay);
+      document.getElementById("sched").querySelector("h2").style.display="none";
+      document.getElementById("tzhint").style.display="none";
+      document.getElementById("days").style.display="none";
+      document.getElementById("times").style.display="none";
+      hideForm();
+      document.getElementById("okBody").textContent = name.split(" ")[0] + ", you're on the calendar for " + lbl.top + ", " + lbl.bot + " at " + localTime(selSlot.ms) + ". Jasper calls you at " + phone + ". If anything changes, text (832) 396-2496.";
+      document.getElementById("ok").style.display="block";
+    } else if(d && d.code==="slot_taken"){
+      showErr("Somebody just grabbed that slot — pick another and it's yours.");
+      selSlot=null; hideForm(); load();
+    } else if(d && d.code==="rate_limited"){
+      showErr("Too many tries from this connection — text us below and we'll lock it by hand.");
+    } else {
+      showErr("Didn't go through — try once more, or text us below.");
+    }
+  }).catch(function(){
+    btn.disabled=false; btn.textContent="Lock it in ✓";
+    showErr("No connection — text us below and we'll lock your time.");
+  });
+}
+load();
 </script>
 </body>
 </html>
