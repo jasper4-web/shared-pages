@@ -770,8 +770,16 @@ player.addEventListener("ended", () => {
   const msg = document.getElementById("ownerMsg");
   let doc = null, dirty = false;
 
-  const api = (path, opts = {}) =>
-    fetch(ENGINE + path, { credentials: "include", ...opts });
+  /* The session rides in a header, not a cookie: github.io calling workers.dev is a
+     third-party cookie, which Safari blocks and Chrome is removing. With a cookie the
+     code was accepted and then silently discarded, so everything after said "locked". */
+  let session = null;
+  try { session = sessionStorage.getItem("bwh_owner"); } catch (e) {}
+  const api = (path, opts = {}) => {
+    const headers = { ...(opts.headers || {}) };
+    if (session) headers["x-owner-session"] = session;
+    return fetch(ENGINE + path, { ...opts, headers });
+  };
 
   function say(t, isErr) { msg.textContent = t; msg.classList.toggle("err", !!isErr); }
 
@@ -794,6 +802,10 @@ player.addEventListener("ended", () => {
         body: JSON.stringify({ code }),
       });
       if (!r.ok) { setLockMsg("That is not the owner code.", true); return; }
+      const out = await r.json().catch(() => ({}));
+      if (!out.session) { setLockMsg("The engine did not hand back a session.", true); return; }
+      session = out.session;
+      try { sessionStorage.setItem("bwh_owner", session); } catch (e) {}
       await openOwner();
     } catch (e) { setLockMsg("Could not reach the engine.", true); }
   });
@@ -805,6 +817,13 @@ player.addEventListener("ended", () => {
 
   async function openOwner() {
     const r = await api("/api/script");
+    if (r.status === 401) {
+      session = null;
+      try { sessionStorage.removeItem("bwh_owner"); } catch (e) {}
+      setLockMsg("That session expired — enter the owner code again.", true);
+      gate.hidden = false; codeIn.focus();
+      return;
+    }
     if (!r.ok) { setLockMsg("The engine would not open the story.", true); return; }
     doc = await r.json();
     document.body.dataset.view = "owner";
@@ -851,8 +870,11 @@ player.addEventListener("ended", () => {
   let previewing = null;
   function play(key) {
     if (previewing) { previewing.pause(); previewing = null; }
-    previewing = new Audio(ENGINE + "/api/preview?audio=" + encodeURIComponent(key));
-    previewing.play().catch(() => say("That part would not play.", true));
+    say("Loading…");
+    api("/api/preview?audio=" + encodeURIComponent(key))
+      .then((r) => (r.ok ? r.blob() : Promise.reject(new Error("no audio"))))
+      .then((b) => { say(""); previewing = new Audio(URL.createObjectURL(b)); return previewing.play(); })
+      .catch(() => say("That part would not play.", true));
   }
 
   async function save() {
