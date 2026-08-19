@@ -77,6 +77,9 @@
   }
   #pw::placeholder { color: var(--dim); }
   #pw:focus { border-color: var(--gold); }
+  #ownerGo { font: 600 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    padding: 14px 22px; border-radius: 14px; border: 1px solid var(--gold); cursor: pointer;
+    background: transparent; color: var(--gold); }
   #unlockBtn {
     font: 600 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     padding: 14px 22px; border-radius: 14px; border: none; cursor: pointer;
@@ -180,6 +183,38 @@
     font-size: 13px; color: var(--gold); min-height: 20px; margin-bottom: 14px;
   }
   #resumeNote.err { color: var(--err); }
+
+  /* ---------- owner mode ---------- */
+  body[data-view="owner"] #ownerView { display: block; }
+  #ownerView { text-align: left; }
+  .obar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 22px; }
+  .obar h2 { font-size: 19px; font-weight: 500; }
+  .osub { color: var(--dim); font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin-bottom: 24px; }
+  .sec { border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 12px; background: rgba(18,23,50,.55); }
+  .sec.changed { border-color: var(--gold); }
+  .sechead { display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 12px; color: var(--dim); }
+  .sechead .n { color: var(--gold); font-variant-numeric: tabular-nums; }
+  .tag { margin-left: auto; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; }
+  .tag.need { color: var(--err); }
+  .sec textarea {
+    width: 100%; min-height: 82px; resize: vertical;
+    font: 15px/1.55 Georgia, serif; color: var(--text);
+    background: transparent; border: none; outline: none; padding: 0;
+  }
+  .secacts { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .mini {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 12px;
+    padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line);
+    background: transparent; color: var(--dim); cursor: pointer;
+  }
+  .mini:hover { color: var(--text); border-color: var(--dim); }
+  .mini.go { color: var(--gold); border-color: var(--gold); }
+  .obtns { display: flex; gap: 10px; margin: 22px 0 10px; flex-wrap: wrap; }
+  #ownerMsg { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 13px; color: var(--gold); min-height: 20px; margin-bottom: 8px; }
+  #ownerMsg.err { color: var(--err); }
+  #ownerGate { margin-top: 26px; }
   button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
   @media (prefers-reduced-motion: reduce) {
     .ring .prog { transition: none; }
@@ -193,7 +228,7 @@
 <div class="stage"><div class="card">
 
   <section id="lockView">
-    <div class="moonwrap"><img src="artwork.png" alt=""></div>
+    <div class="moonwrap" id="moon"><img src="artwork.png" alt=""></div>
     <div class="eyebrow">For your ears only</div>
     <h1>A story is waiting for&nbsp;you</h1>
     <p class="sub">Enter the password you were given.</p>
@@ -204,6 +239,12 @@
       </div>
       <label class="remember"><input type="checkbox" id="rememberMe" checked> Remember on this device</label>
       <div id="lockMsg" role="status"></div>
+      <div id="ownerGate" hidden>
+        <div class="pwrow">
+          <input type="password" id="ownerCode" placeholder="Owner code" autocomplete="off" aria-label="Owner code">
+          <button type="button" id="ownerGo">Enter</button>
+        </div>
+      </div>
     </form>
   </section>
 
@@ -243,6 +284,21 @@
     </div>
 
     <p class="hint"><strong>Playing this before bed:</strong> press play, then lock your phone. On Android it keeps playing. On iPhone, if it pauses when you lock, tap the play button right on your lock screen &mdash; it keeps playing with the screen off. For guaranteed background play every night, tap Download once and play it from your Files or Music app.</p>
+  </section>
+
+
+  <section id="ownerView">
+    <div class="obar">
+      <h2>The story, in your hands</h2>
+      <button class="mini" id="ownerClose">Done</button>
+    </div>
+    <p class="osub">Change any part. Add to the end. Nothing moves until you publish.</p>
+    <div id="ownerMsg" role="status"></div>
+    <div id="secList"></div>
+    <div class="obtns">
+      <button class="mini" id="addSec">Add to the end</button>
+      <button class="mini go" id="publishBtn">Publish</button>
+    </div>
   </section>
 
 </div></div>
@@ -699,6 +755,179 @@ player.addEventListener("ended", () => {
   cur.textContent = "0:00";
   setNote("");
 });
+
+
+/* ---------- owner mode ----------
+   Inert for a listener: nothing here runs until the owner code is accepted, and the
+   engine re-checks that code on every single call. The page holds no secret — it
+   cannot generate a voice, cannot re-encrypt, and cannot publish on its own.        */
+(function () {
+  const ENGINE = "https://bwh-story.sano-systems.workers.dev";
+  const moon = document.getElementById("moon");
+  const gate = document.getElementById("ownerGate");
+  const codeIn = document.getElementById("ownerCode");
+  const list = document.getElementById("secList");
+  const msg = document.getElementById("ownerMsg");
+  let doc = null, dirty = false;
+
+  const api = (path, opts = {}) =>
+    fetch(ENGINE + path, { credentials: "include", ...opts });
+
+  function say(t, isErr) { msg.textContent = t; msg.classList.toggle("err", !!isErr); }
+
+  /* the way in: hold the moon. no button, nothing to notice. */
+  let held;
+  const start = () => { held = setTimeout(() => { gate.hidden = false; codeIn.focus(); }, 700); };
+  const stop = () => clearTimeout(held);
+  if (moon) {
+    moon.addEventListener("pointerdown", start);
+    ["pointerup", "pointerleave", "pointercancel"].forEach((e) => moon.addEventListener(e, stop));
+  }
+
+  document.getElementById("ownerGo")?.addEventListener("click", async () => {
+    const code = codeIn.value.trim();
+    if (!code) return;
+    codeIn.value = "";
+    try {
+      const r = await api("/api/login", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      if (!r.ok) { setLockMsg("That is not the owner code.", true); return; }
+      await openOwner();
+    } catch (e) { setLockMsg("Could not reach the engine.", true); }
+  });
+
+  function setLockMsg(t, e) {
+    const m = document.getElementById("lockMsg");
+    m.textContent = t; m.classList.toggle("err", !!e);
+  }
+
+  async function openOwner() {
+    const r = await api("/api/script");
+    if (!r.ok) { setLockMsg("The engine would not open the story.", true); return; }
+    doc = await r.json();
+    document.body.dataset.view = "owner";
+    render();
+  }
+
+  function render() {
+    list.innerHTML = "";
+    doc.sections.forEach((s, i) => {
+      const el = document.createElement("div");
+      el.className = "sec" + (s.audio ? "" : " changed");
+      const words = s.text.trim().split(/\s+/).length;
+      el.innerHTML =
+        '<div class="sechead"><span class="n">' + String(i + 1).padStart(2, "0") + '</span>' +
+        '<span>' + words + ' words</span>' +
+        '<span class="tag ' + (s.audio ? '' : 'need') + '">' +
+        (s.audio ? (s.source === "original" ? "as recorded" : s.source) : "needs a voice") +
+        '</span></div>';
+      const ta = document.createElement("textarea");
+      ta.value = s.text;
+      ta.addEventListener("input", () => { s.text = ta.value; dirty = true; say("Unsaved changes."); });
+      el.appendChild(ta);
+
+      const acts = document.createElement("div");
+      acts.className = "secacts";
+      if (s.audio) acts.appendChild(btn("Hear it", () => play(s.audio)));
+      acts.appendChild(btn("Give it a voice", () => voice(s), "go"));
+      acts.appendChild(btn("Use a recording", () => upload(s)));
+      if (doc.sections.length > 1) acts.appendChild(btn("Remove", () => {
+        doc.sections.splice(i, 1); dirty = true; render(); say("Unsaved changes.");
+      }));
+      el.appendChild(acts);
+      list.appendChild(el);
+    });
+  }
+
+  function btn(label, fn, cls) {
+    const b = document.createElement("button");
+    b.className = "mini" + (cls ? " " + cls : "");
+    b.textContent = label; b.addEventListener("click", fn);
+    return b;
+  }
+
+  let previewing = null;
+  function play(key) {
+    if (previewing) { previewing.pause(); previewing = null; }
+    previewing = new Audio(ENGINE + "/api/preview?audio=" + encodeURIComponent(key));
+    previewing.play().catch(() => say("That part would not play.", true));
+  }
+
+  async function save() {
+    const r = await api("/api/script", {
+      method: "PUT", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ sections: doc.sections }),
+    });
+    if (!r.ok) { say("Could not save.", true); return false; }
+    doc = await r.json(); dirty = false; render();
+    return true;
+  }
+
+  async function voice(s) {
+    if (dirty && !(await save())) return;
+    const live = doc.sections.find((x) => x.id === s.id) || s;
+    say("Asking for the voice…");
+    const r = await api("/api/voice", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ id: live.id }),
+    });
+    const out = await r.json().catch(() => ({}));
+    if (!r.ok) {
+      say(out.code === "no_voice"
+        ? "The voice isn't connected yet — record it on your phone with “Use a recording” instead."
+        : (out.error || "The voice service refused."), true);
+      return;
+    }
+    say("Done — press Hear it.");
+    await refresh();
+  }
+
+  function upload(s) {
+    const f = document.createElement("input");
+    f.type = "file"; f.accept = "audio/*";
+    f.addEventListener("change", async () => {
+      if (!f.files[0]) return;
+      if (dirty && !(await save())) return;
+      say("Uploading…");
+      const r = await api("/api/upload?id=" + encodeURIComponent(s.id), {
+        method: "POST", body: f.files[0],
+      });
+      if (!r.ok) { say("Upload failed.", true); return; }
+      say("Added — press Hear it.");
+      await refresh();
+    });
+    f.click();
+  }
+
+  async function refresh() {
+    const r = await api("/api/script");
+    if (r.ok) { doc = await r.json(); render(); }
+  }
+
+  document.getElementById("addSec")?.addEventListener("click", () => {
+    doc.sections.push({ id: "n" + Date.now(), text: "", audio: null, source: "pending" });
+    dirty = true; render();
+    list.lastElementChild.querySelector("textarea").focus();
+  });
+
+  document.getElementById("publishBtn")?.addEventListener("click", async () => {
+    if (dirty && !(await save())) return;
+    const missing = doc.sections.filter((s) => !s.audio).length;
+    if (missing) { say(missing + " part(s) still need a voice.", true); return; }
+    if (!confirm("Publish? This replaces the story everyone hears.")) return;
+    say("Publishing…");
+    const r = await api("/api/publish", { method: "POST" });
+    const out = await r.json().catch(() => ({}));
+    say(r.ok ? "Published. Live in about a minute." : (out.error || "Publish failed."), !r.ok);
+  });
+
+  document.getElementById("ownerClose")?.addEventListener("click", () => {
+    if (dirty && !confirm("You have unsaved changes. Leave anyway?")) return;
+    document.body.dataset.view = player.src ? "player" : "lock";
+  });
+})();
 
 /* ---------- auto-unlock for returning visitors ---------- */
 (function () {
