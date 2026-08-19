@@ -33,7 +33,10 @@
     -webkit-tap-highlight-color: transparent;
   }
   button, input, a.pill { touch-action: manipulation; }
-  #sky { position: fixed; inset: 0; z-index: 0; }
+  /* width/height are load-bearing: an absolutely-positioned <canvas> with auto size
+     lays out at its BITMAP size, so on a 2x/3x screen the sky drew at 2x/3x the
+     viewport and only its top-left corner was visible. */
+  #sky { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
   .stage {
     position: relative; z-index: 1;
     min-height: 100vh;
@@ -306,6 +309,8 @@
 /* ---------- crypto unlock ---------- */
 const ENC_URL = "the-story.enc";
 const MAGIC = "BWH1";
+const CACHE_NAME = "bwh-story-v1";
+const VALIDATOR_HDR = "x-bwh-validator";
 const STORE_KEY = "bwh-pass";
 const POS_KEY = "bwh-pos";
 const lockForm = document.getElementById("lockForm");
@@ -316,6 +321,7 @@ const rememberMe = document.getElementById("rememberMe");
 let encBytes = null;
 let encPromise = null;
 let unlocking = false;
+let encFromCache = false;
 let opened = false;
 let queued = null;
 
@@ -323,39 +329,108 @@ function setMsg(text, isErr) {
   lockMsg.textContent = text;
   lockMsg.classList.toggle("err", !!isErr);
 }
+/* The download line must never make a queued tap look ignored: while a typed
+   password is waiting its turn, the progress text says so. (Without this, the
+   "One moment…" acknowledgement is overwritten by the very next percent tick.) */
+function fetchMsg(pct) {
+  setMsg("Fetching the story…" + (pct === null ? "" : " " + pct + "%") +
+         (queued ? " — unlocking as soon as it lands" : ""));
+}
 function tagged(tag, detail) { const e = new Error(detail || tag); e.tag = tag; return e; }
 function forgetPass() { try { localStorage.removeItem(STORE_KEY); } catch (e) {} }
+
+/* ---------- keeping one copy of the story on the device ----------
+   GitHub Pages serves the .enc with cache-control: max-age=600, so without this the
+   full 8.8 MB is re-downloaded almost every night. Cache Storage holds one copy for
+   good: after the first listen the story opens instantly and works with no signal.
+   Deliberately NOT a service worker — this page shares an origin with other live
+   pages, and a page-level cache has no scope and no update-lifecycle to get stuck in.
+   Every call below is fail-soft: a cache problem must never stop the story opening. */
+function looksLikeContainer(buf) {
+  return buf.byteLength >= 49 &&
+    String.fromCharCode.apply(null, new Uint8Array(buf, 0, 4)) === MAGIC;
+}
+function validatorOf(res) {
+  const lm = res.headers.get("last-modified");
+  if (lm) return "lm:" + lm;                      /* identical whether or not gzip is used */
+  const et = res.headers.get("etag");
+  return et ? "et:" + et.replace(/^W\//, "") : "";
+}
+async function cacheDrop() {
+  try { if (typeof caches !== "undefined") await (await caches.open(CACHE_NAME)).delete(ENC_URL); }
+  catch (e) {}
+}
+async function cacheRead() {
+  try {
+    if (typeof caches === "undefined") return null;
+    const hit = await (await caches.open(CACHE_NAME)).match(ENC_URL);
+    if (!hit) return null;
+    const buf = await hit.arrayBuffer();
+    if (!looksLikeContainer(buf)) { await cacheDrop(); return null; }
+    revalidate(hit.headers.get(VALIDATOR_HDR) || "");
+    return buf;
+  } catch (e) { return null; }
+}
+async function cacheWrite(buf, validator) {
+  try {
+    if (typeof caches === "undefined") return;
+    const headers = { "content-type": "application/octet-stream" };
+    if (validator) headers[VALIDATOR_HDR] = validator;
+    await (await caches.open(CACHE_NAME)).put(ENC_URL, new Response(buf, { headers }));
+  } catch (e) {}
+}
+/* If the story file is ever replaced, the saved copy would play the OLD recording
+   forever. One tiny header request, well after the audio is already open, drops the
+   copy so the next visit picks up the new one. */
+function revalidate(known) {
+  if (!known) return;
+  setTimeout(() => {
+    fetch(ENC_URL, { method: "HEAD", cache: "no-store" })
+      .then((r) => { const now = r.ok ? validatorOf(r) : ""; if (now && now !== known) return cacheDrop(); })
+      .catch(() => {});
+  }, 4000);
+}
 
 async function fetchEnc() {
   if (encBytes) return encBytes;
   if (encPromise) return encPromise;           /* one download, however many unlock attempts */
   encPromise = (async () => {
-    setMsg("Fetching the story…");
+    const saved = await cacheRead();
+    if (saved) { encFromCache = true; return saved; }   /* opens instantly, works offline */
+    encFromCache = false;
+    fetchMsg(null);
     let res;
     try { res = await fetch(ENC_URL); }
     catch (e) { throw tagged("download", "network"); }
     if (!res.ok) throw tagged("download", "http " + res.status);
+    const validator = validatorOf(res);
     const total = Number(res.headers.get("content-length")) || 0;
-    if (!res.body || !total) return await res.arrayBuffer();
-    const reader = res.body.getReader();
-    const chunks = [];
-    let got = 0;
-    for (;;) {
-      let step;
-      try { step = await reader.read(); }
-      catch (e) { throw tagged("download", "stream"); }
-      if (step.done) break;
-      chunks.push(step.value);
-      got += step.value.length;
-      setMsg("Fetching the story… " + Math.min(100, Math.round(got / total * 100)) + "%");
+    let buf;
+    if (!res.body || !total) {
+      buf = await res.arrayBuffer();
+    } else {
+      const reader = res.body.getReader();
+      const chunks = [];
+      let got = 0;
+      for (;;) {
+        let step;
+        try { step = await reader.read(); }
+        catch (e) { throw tagged("download", "stream"); }
+        if (step.done) break;
+        chunks.push(step.value);
+        got += step.value.length;
+        fetchMsg(Math.min(100, Math.round(got / total * 100)));
+      }
+      /* content-length is only a progress hint: GitHub Pages gzips this file, so the
+         decoded byte count never matches it. A genuinely truncated body makes
+         reader.read() reject above, which is the real truncation signal. */
+      const out = new Uint8Array(got);
+      let at = 0;
+      for (const ch of chunks) { out.set(ch, at); at += ch.length; }
+      buf = out.buffer;
     }
-    /* content-length is only a progress hint: GitHub Pages gzips this file, so the
-       decoded byte count never matches it. A genuinely truncated body makes
-       reader.read() reject above, which is the real truncation signal. */
-    const out = new Uint8Array(got);
-    let at = 0;
-    for (const ch of chunks) { out.set(ch, at); at += ch.length; }
-    return out.buffer;
+    cacheWrite(buf, validator);        /* not awaited — the story opens now, the copy lands behind it */
+    return buf;
   })();
   try {
     encBytes = await encPromise;
@@ -369,8 +444,7 @@ async function fetchEnc() {
 async function decrypt(password) {
   if (!(window.crypto && crypto.subtle)) throw tagged("unsupported");
   const buf = await fetchEnc();
-  if (buf.byteLength < 49 ||
-      String.fromCharCode.apply(null, new Uint8Array(buf, 0, 4)) !== MAGIC) {
+  if (!looksLikeContainer(buf)) {
     throw tagged("download", "bad container");  /* truncated file / 404 page, not a bad password */
   }
   const salt = new Uint8Array(buf, 4, 16);
@@ -395,6 +469,24 @@ async function decrypt(password) {
   return { meta, audio };
 }
 
+/* A damaged saved copy would fail the same way a wrong password does, and would then
+   fail that way forever. So: any failure on bytes that came from the device's copy
+   throws that copy away and tries the network once before blaming the listener.
+   "That password isn't right" can only ever come from freshly downloaded bytes. */
+async function decryptChecked(password) {
+  try {
+    return await decrypt(password);
+  } catch (err) {
+    const tag = err && err.tag;
+    if (encFromCache && (tag === "badpass" || tag === "corrupt" || tag === "download")) {
+      await cacheDrop();
+      encBytes = null; encPromise = null; encFromCache = false;
+      return await decrypt(password);
+    }
+    throw err;
+  }
+}
+
 async function tryUnlock(password, silent) {
   if (opened) return false;
   if (unlocking) {
@@ -406,7 +498,7 @@ async function tryUnlock(password, silent) {
   unlockBtn.disabled = true;
   try {
     if (!silent) setMsg("Unlocking…");
-    const { meta, audio } = await decrypt(password);
+    const { meta, audio } = await decryptChecked(password);
     if (rememberMe.checked) { try { localStorage.setItem(STORE_KEY, password); } catch (e) {} }
     else forgetPass();
     openPlayer(meta, audio);
