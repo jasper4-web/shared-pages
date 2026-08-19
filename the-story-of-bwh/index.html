@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0a0d1c">
+<meta name="color-scheme" content="dark">
 <meta property="og:title" content="A story is waiting for you">
 <meta property="og:description" content="Press play before sleep.">
 <meta property="og:image" content="https://jasper4-web.github.io/shared-pages/the-story-of-bwh/artwork.png">
@@ -35,6 +36,7 @@
   #sky { position: fixed; inset: 0; z-index: 0; }
   .stage {
     position: relative; z-index: 1;
+    min-height: 100vh;
     min-height: 100dvh;
     display: flex; align-items: center; justify-content: center;
     padding: max(28px, env(safe-area-inset-top)) 22px max(40px, env(safe-area-inset-bottom));
@@ -174,6 +176,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: 13px; color: var(--gold); min-height: 20px; margin-bottom: 14px;
   }
+  #resumeNote.err { color: var(--err); }
   button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
   @media (prefers-reduced-motion: reduce) {
     .ring .prog { transition: none; }
@@ -205,7 +208,7 @@
     <div class="eyebrow">Listen &middot; Believe &middot; Sleep</div>
     <h1 id="storyTitle">&nbsp;</h1>
     <p class="sub" style="margin-bottom: 30px;">Press play. Close your eyes. Let it in.</p>
-    <div id="resumeNote"></div>
+    <div id="resumeNote" role="status"></div>
 
     <div class="playwrap">
       <svg class="ring" viewBox="0 0 172 172">
@@ -232,7 +235,7 @@
     <div class="time"><span id="cur">0:00</span><span id="dur">0:00</span></div>
 
     <div class="row">
-      <button class="pill" id="repeatBtn">Repeat: off</button>
+      <button class="pill" id="repeatBtn" aria-pressed="false">Repeat: off</button>
       <a class="pill" id="dlBtn" href="#" download>Download MP3</a>
     </div>
 
@@ -248,21 +251,29 @@
 (function () {
   const c = document.getElementById("sky");
   const ctx = c.getContext("2d");
-  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let stars = [];
+  const mq = matchMedia("(prefers-reduced-motion: reduce)");
+  let reduced = mq.matches;
+  let running = false;
+  let stars = [], builtArea = 0;
   function build() {
-    c.width = innerWidth * devicePixelRatio;
-    c.height = innerHeight * devicePixelRatio;
     const n = Math.min(180, Math.floor(innerWidth * innerHeight / 6000));
+    builtArea = innerWidth * innerHeight;
+    /* normalised coords: a resize re-maps the sky instead of re-scattering it */
     stars = Array.from({ length: n }, () => ({
-      x: Math.random() * c.width, y: Math.random() * c.height,
-      r: (Math.random() * 1.3 + .4) * devicePixelRatio,
+      nx: Math.random(), ny: Math.random(),
+      r: Math.random() * 1.3 + .4,
       base: Math.random() * .5 + .25,
       spd: Math.random() * 1.2 + .3,
       ph: Math.random() * Math.PI * 2
     }));
   }
+  function size() {
+    const dpr = devicePixelRatio || 1;
+    c.width = Math.max(1, Math.round(innerWidth * dpr));
+    c.height = Math.max(1, Math.round(innerHeight * dpr));
+  }
   function draw(t) {
+    const dpr = devicePixelRatio || 1;
     ctx.clearRect(0, 0, c.width, c.height);
     const g = ctx.createRadialGradient(c.width / 2, -c.height * .2, 0, c.width / 2, c.height * .3, c.height);
     g.addColorStop(0, "#161c3a"); g.addColorStop(1, "#0a0d1c");
@@ -271,18 +282,30 @@
       const a = reduced ? s.base : s.base * (0.6 + 0.4 * Math.sin(t / 1000 * s.spd + s.ph));
       ctx.globalAlpha = a;
       ctx.fillStyle = "#dfe3f0";
-      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(s.nx * c.width, s.ny * c.height, s.r * dpr, 0, 7); ctx.fill();
     }
     ctx.globalAlpha = 1;
-    if (!reduced) requestAnimationFrame(draw);
+    if (!reduced) requestAnimationFrame(draw); else running = false;
   }
-  build();
-  addEventListener("resize", () => { build(); if (reduced) draw(0); });
-  reduced ? draw(0) : requestAnimationFrame(draw);
+  function start() {
+    if (reduced) { running = false; draw(0); return; }
+    if (running) return;
+    running = true; requestAnimationFrame(draw);
+  }
+  build(); size();
+  addEventListener("resize", () => {
+    size();                                          /* always recover the full viewport */
+    const area = innerWidth * innerHeight;
+    if (area > builtArea * 1.6 || area < builtArea / 1.6) build();   /* only a rotation re-scatters */
+    if (reduced) draw(0);
+  });
+  if (mq.addEventListener) mq.addEventListener("change", (e) => { reduced = e.matches; start(); });
+  start();
 })();
 
 /* ---------- crypto unlock ---------- */
 const ENC_URL = "the-story.enc";
+const MAGIC = "BWH1";
 const STORE_KEY = "bwh-pass";
 const POS_KEY = "bwh-pos";
 const lockForm = document.getElementById("lockForm");
@@ -291,23 +314,65 @@ const unlockBtn = document.getElementById("unlockBtn");
 const lockMsg = document.getElementById("lockMsg");
 const rememberMe = document.getElementById("rememberMe");
 let encBytes = null;
+let encPromise = null;
+let unlocking = false;
+let opened = false;
+let queued = null;
 
 function setMsg(text, isErr) {
   lockMsg.textContent = text;
   lockMsg.classList.toggle("err", !!isErr);
 }
+function tagged(tag, detail) { const e = new Error(detail || tag); e.tag = tag; return e; }
+function forgetPass() { try { localStorage.removeItem(STORE_KEY); } catch (e) {} }
 
 async function fetchEnc() {
   if (encBytes) return encBytes;
-  setMsg("Fetching the story…");
-  const res = await fetch(ENC_URL);
-  if (!res.ok) throw new Error("download");
-  encBytes = await res.arrayBuffer();
-  return encBytes;
+  if (encPromise) return encPromise;           /* one download, however many unlock attempts */
+  encPromise = (async () => {
+    setMsg("Fetching the story…");
+    let res;
+    try { res = await fetch(ENC_URL); }
+    catch (e) { throw tagged("download", "network"); }
+    if (!res.ok) throw tagged("download", "http " + res.status);
+    const total = Number(res.headers.get("content-length")) || 0;
+    if (!res.body || !total) return await res.arrayBuffer();
+    const reader = res.body.getReader();
+    const chunks = [];
+    let got = 0;
+    for (;;) {
+      let step;
+      try { step = await reader.read(); }
+      catch (e) { throw tagged("download", "stream"); }
+      if (step.done) break;
+      chunks.push(step.value);
+      got += step.value.length;
+      setMsg("Fetching the story… " + Math.min(100, Math.round(got / total * 100)) + "%");
+    }
+    /* content-length is only a progress hint: GitHub Pages gzips this file, so the
+       decoded byte count never matches it. A genuinely truncated body makes
+       reader.read() reject above, which is the real truncation signal. */
+    const out = new Uint8Array(got);
+    let at = 0;
+    for (const ch of chunks) { out.set(ch, at); at += ch.length; }
+    return out.buffer;
+  })();
+  try {
+    encBytes = await encPromise;
+    return encBytes;
+  } catch (e) {
+    encPromise = null;                          /* let the next attempt retry the download */
+    throw e;
+  }
 }
 
 async function decrypt(password) {
+  if (!(window.crypto && crypto.subtle)) throw tagged("unsupported");
   const buf = await fetchEnc();
+  if (buf.byteLength < 49 ||
+      String.fromCharCode.apply(null, new Uint8Array(buf, 0, 4)) !== MAGIC) {
+    throw tagged("download", "bad container");  /* truncated file / 404 page, not a bad password */
+  }
   const salt = new Uint8Array(buf, 4, 16);
   const iv = new Uint8Array(buf, 20, 12);
   const data = new Uint8Array(buf, 32);
@@ -315,38 +380,67 @@ async function decrypt(password) {
   const key = await crypto.subtle.deriveKey(
     { name: "PBKDF2", salt, iterations: 250000, hash: "SHA-256" },
     km, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
-  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, data);
+  let plain;
+  try {
+    plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, data);
+  } catch (e) {
+    throw tagged("badpass");                    /* GCM auth failure is the only real wrong-password signal */
+  }
   const metaLen = new DataView(plain).getUint32(0, true);
-  const meta = JSON.parse(new TextDecoder().decode(new Uint8Array(plain, 4, metaLen)));
+  if (metaLen < 2 || metaLen > plain.byteLength - 4) throw tagged("corrupt");
+  let meta;
+  try { meta = JSON.parse(new TextDecoder().decode(new Uint8Array(plain, 4, metaLen))); }
+  catch (e) { throw tagged("corrupt"); }
   const audio = new Blob([new Uint8Array(plain, 4 + metaLen)], { type: "audio/mpeg" });
   return { meta, audio };
 }
 
 async function tryUnlock(password, silent) {
+  if (opened) return false;
+  if (unlocking) {
+    /* auto-unlock is still grinding; hold the typed password instead of swallowing the tap */
+    if (!silent) { queued = password; setMsg("One moment…"); }
+    return false;
+  }
+  unlocking = true;
   unlockBtn.disabled = true;
   try {
     if (!silent) setMsg("Unlocking…");
     const { meta, audio } = await decrypt(password);
-    if (rememberMe.checked || silent) { try { localStorage.setItem(STORE_KEY, password); } catch (e) {} }
+    if (rememberMe.checked) { try { localStorage.setItem(STORE_KEY, password); } catch (e) {} }
+    else forgetPass();
     openPlayer(meta, audio);
     return true;
   } catch (err) {
-    if (err.message === "download") {
+    const tag = err && err.tag;
+    if (tag === "download") {
       setMsg("Couldn’t load the audio — check your connection and try again.", true);
-    } else if (!silent) {
-      setMsg("That password isn’t right — check it and try again.", true);
-      lockForm.classList.remove("shake");
-      void lockForm.offsetWidth;
-      lockForm.classList.add("shake");
+    } else if (tag === "unsupported") {
+      setMsg("This browser can’t open the story. Try Safari or Chrome, on an https link.", true);
+    } else if (tag === "corrupt") {
+      setMsg("The story file didn’t come through cleanly — reload the page and try again.", true);
+    } else if (tag === "badpass") {
+      if (silent) { forgetPass(); setMsg(""); }
+      else {
+        setMsg("That password isn’t right — check it and try again.", true);
+        lockForm.classList.remove("shake");
+        void lockForm.offsetWidth;
+        lockForm.classList.add("shake");
+      }
     } else {
-      try { localStorage.removeItem(STORE_KEY); } catch (e) {}
-      setMsg("");
+      console.error(err);
+      setMsg("Something went wrong opening the story — reload the page and try again.", true);
     }
     return false;
   } finally {
+    unlocking = false;
     unlockBtn.disabled = false;
+    if (queued && !opened) { const q = queued; queued = null; tryUnlock(q, false); }
   }
 }
+
+/* unchecking "remember" must also drop a password stored on an earlier visit */
+rememberMe.addEventListener("change", () => { if (!rememberMe.checked) forgetPass(); });
 
 lockForm.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -369,6 +463,29 @@ const CIRC = 515.2;
 const PLAY_D = "M8 5v14l11-7z";
 const PAUSE_D = "M6 5h4v14H6zM14 5h4v14h-4z";
 let scrubbing = false;
+let objUrl = null;
+let lastSave = -99;
+
+function setNote(text, isErr) {
+  resumeNote.textContent = text;
+  resumeNote.classList.toggle("err", !!isErr);
+}
+function savePos(t) { try { localStorage.setItem(POS_KEY, String(t)); } catch (e) {} }
+function clearPos() { lastSave = -99; try { localStorage.removeItem(POS_KEY); } catch (e) {} }
+function nudge(delta) {
+  if (!isFinite(player.duration)) return;      /* before metadata, duration is NaN — don't jump to 0 */
+  player.currentTime = Math.min(player.duration, Math.max(0, player.currentTime + delta));
+}
+function safePlay() {
+  const p = player.play();
+  if (p && p.catch) p.catch((err) => {
+    if (err && err.name === "NotSupportedError") {
+      setNote("This browser couldn’t play the file — tap Download MP3 and play it from your Files app.", true);
+    } else if (err && err.name !== "AbortError") {
+      setNote("Playback didn’t start — tap play once more.", true);
+    }
+  });
+}
 
 function fmt(s) {
   if (!isFinite(s)) return "0:00";
@@ -377,13 +494,19 @@ function fmt(s) {
 }
 
 function openPlayer(meta, audioBlob) {
-  document.getElementById("storyTitle").textContent = meta.title;
-  document.title = meta.title;
-  player.src = URL.createObjectURL(audioBlob);
+  opened = true;
+  const title = (meta && meta.title) || "Your story";
+  document.getElementById("storyTitle").textContent = title;
+  document.title = title;
+  if (objUrl) URL.revokeObjectURL(objUrl);     /* never leak a second ~9 MB blob */
+  objUrl = URL.createObjectURL(audioBlob);
+  encBytes = null; encPromise = null;          /* hand the ciphertext back to the browser */
+  player.src = objUrl;
   const dl = document.getElementById("dlBtn");
-  dl.href = player.src;
-  dl.setAttribute("download", meta.filename);
+  dl.href = objUrl;
+  dl.setAttribute("download", (meta && meta.filename) || "story.mp3");
   document.body.dataset.view = "player";
+  pwInput.value = "";
 
   player.addEventListener("loadedmetadata", () => {
     dur.textContent = fmt(player.duration);
@@ -391,22 +514,28 @@ function openPlayer(meta, audioBlob) {
     try { saved = parseFloat(localStorage.getItem(POS_KEY)) || 0; } catch (e) {}
     if (saved > 15 && saved < player.duration - 30) {
       player.currentTime = saved;
-      resumeNote.textContent = "Picking up where you left off — " + fmt(saved);
+      lastSave = saved;
+      setNote("Picking up where you left off — " + fmt(saved));
     }
     paint();
   }, { once: true });
 
   if ("mediaSession" in navigator) {
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: meta.title,
-      artist: meta.artist,
-      album: "Bedtime Listening",
-      artwork: [{ src: new URL("artwork.png", location.href).href, sizes: "1024x1024", type: "image/png" }]
-    });
-    navigator.mediaSession.setActionHandler("play", () => player.play());
-    navigator.mediaSession.setActionHandler("pause", () => player.pause());
-    navigator.mediaSession.setActionHandler("seekbackward", () => { player.currentTime = Math.max(0, player.currentTime - 15); });
-    navigator.mediaSession.setActionHandler("seekforward", () => { player.currentTime = Math.min(player.duration || 0, player.currentTime + 15); });
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: title,
+        artist: (meta && meta.artist) || "",
+        album: "Bedtime Listening",
+        artwork: [{ src: new URL("artwork.png", location.href).href, sizes: "1024x1024", type: "image/png" }]
+      });
+    } catch (e) {}
+    /* an unsupported action throws on some browsers and would kill the rest of the handlers */
+    const act = (name, fn) => { try { navigator.mediaSession.setActionHandler(name, fn); } catch (e) {} };
+    act("play", () => safePlay());
+    act("pause", () => player.pause());
+    act("seekbackward", (d) => nudge(-((d && d.seekOffset) || 15)));
+    act("seekforward", (d) => nudge((d && d.seekOffset) || 15));
+    act("seekto", (d) => { if (d && isFinite(d.seekTime)) player.currentTime = d.seekTime; });
   }
 }
 
@@ -418,18 +547,21 @@ function paint() {
     if (!scrubbing) {
       seek.value = Math.round(pct * 1000);
       seek.style.setProperty("--pct", (pct * 100) + "%");
+      seek.setAttribute("aria-valuetext", fmt(player.currentTime) + " of " + fmt(player.duration));
     }
   }
 }
 
-playBtn.addEventListener("click", () => { player.paused ? player.play() : player.pause(); });
-document.getElementById("back15").addEventListener("click", () => { player.currentTime = Math.max(0, player.currentTime - 15); });
-document.getElementById("fwd15").addEventListener("click", () => { player.currentTime = Math.min(player.duration || 0, player.currentTime + 15); });
+playBtn.addEventListener("click", () => { player.paused ? safePlay() : player.pause(); });
+document.getElementById("back15").addEventListener("click", () => nudge(-15));
+document.getElementById("fwd15").addEventListener("click", () => nudge(15));
 
 repeatBtn.addEventListener("click", () => {
   player.loop = !player.loop;
   repeatBtn.textContent = "Repeat: " + (player.loop ? "on" : "off");
   repeatBtn.classList.toggle("on", player.loop);
+  repeatBtn.setAttribute("aria-pressed", player.loop ? "true" : "false");
+  if (player.loop) clearPos();                 /* a looping story has no "where I left off" */
 });
 
 seek.addEventListener("input", () => {
@@ -444,27 +576,36 @@ seek.addEventListener("change", () => {
 
 player.addEventListener("timeupdate", () => {
   paint();
-  if (!player.paused) {
-    try { localStorage.setItem(POS_KEY, String(player.currentTime)); } catch (e) {}
-  }
+  /* timeupdate fires ~4x/sec; a synchronous localStorage write that often causes audible jank */
+  if (player.paused || player.loop) return;
+  const t = player.currentTime;
+  if (Math.abs(t - lastSave) >= 5) { lastSave = t; savePos(t); }
+});
+addEventListener("pagehide", () => {
+  if (!player.paused && !player.loop && player.currentTime > 0) savePos(player.currentTime);
+});
+player.addEventListener("error", () => {
+  setNote("The audio couldn’t be loaded — reload the page and try again.", true);
 });
 player.addEventListener("play", () => {
   iconPath.setAttribute("d", PAUSE_D);
   playBtn.setAttribute("aria-label", "Pause");
   document.body.classList.add("playing");
-  resumeNote.textContent = "";
+  setNote("");
 });
 player.addEventListener("pause", () => {
   iconPath.setAttribute("d", PLAY_D);
   playBtn.setAttribute("aria-label", "Play");
   document.body.classList.remove("playing");
+  if (!player.loop && player.currentTime > 0) savePos(player.currentTime);
 });
 player.addEventListener("ended", () => {
-  try { localStorage.removeItem(POS_KEY); } catch (e) {}
+  clearPos();
   prog.style.strokeDashoffset = CIRC;
   seek.value = 0;
   seek.style.setProperty("--pct", "0%");
   cur.textContent = "0:00";
+  setNote("");
 });
 
 /* ---------- auto-unlock for returning visitors ---------- */
