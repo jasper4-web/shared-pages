@@ -204,6 +204,10 @@
     }
   }
 
+  /* Which version of the SMS-consent wording this page is showing. Paired with
+     CONSENT_TEXTS in the field-deck worker; see the note at the fetch below. */
+  var CONSENT_VERSION = 'sms-2026-08-19';
+
   var form = document.getElementById('demo-form');
   form.noValidate = true;  /* we do richer, accessible validation in JS */
   var globalErr = document.getElementById('form-err');
@@ -234,18 +238,28 @@
     globalErr.hidden = !firstBad;
     if (firstBad) { firstBad.focus(); return; }
 
-    /* S1: also land the lead in the deck (best-effort, never blocks the SMS path). */
+    /* S1: also land the lead in the deck (best-effort, never blocks the SMS path).
+       It also files the consent record: whether the text box was ticked, and the EXACT
+       wording that was on screen when they ticked it. The version string below must match
+       CONSENT_TEXTS in the field-deck worker — if this label's words ever change, add a new
+       version there first, then change the number here. That pair is the proof a carrier
+       asks for. */
     try {
       var gv = function (id) { var el = document.getElementById(id); return el ? (el.value || '').trim() : ''; };
       var selEl = document.getElementById('industry');
+      var lbl = document.querySelector('label[for="sms"] span');
       fetch('https://field-deck.sano-systems.workers.dev/api/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        keepalive: true,
         body: JSON.stringify({
           name: gv('name'), business: gv('business'), phone: gv('phone'), email: gv('email'),
           industry: selEl && selEl.options[selEl.selectedIndex] ? selEl.options[selEl.selectedIndex].textContent : '',
           plan: (typeof planEl !== 'undefined' && planEl && planEl.value) ? planEl.value : '',
           note: gv('note'), sms_ok: !!(document.getElementById('sms') && document.getElementById('sms').checked),
+          consent_version: CONSENT_VERSION,
+          consent_text: lbl ? (lbl.textContent || '').replace(/\s+/g, ' ').trim() : '',
+          page_url: location.href,
           website2: gv('website2')
         })
       }).catch(function () {});
