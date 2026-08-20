@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ARARAT — Gods Promise Tee</title>
+<meta name="description" content="A heavyweight, garment-dyed tee. Hand-painted rainbow. Gods Promise. $38.">
+<meta property="og:title" content="ARARAT — Gods Promise">
+<meta property="og:description" content="Heavyweight garment-dyed tee. Hand-painted rainbow. $38.">
+<meta property="og:image" content="hero.jpg">
+<meta property="og:type" content="product">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────────
+   ARARAT storefront — single product, mobile first.
+   All traffic arrives from an Instagram bio link, so phone
+   layout is the real layout; desktop is the adaptation.
+   ───────────────────────────────────────────────────────────── */
+
+:root{
+  --ivory:#F4EEE4;        /* the shirt colour, warm natural */
+  --ivory-deep:#EAE1D3;
+  --ink:#2B2724;          /* washed charcoal, never jet black */
+  --ink-soft:#6B625A;
+  --line:#D8CDBC;
+  --accent:#2F5D8C;       /* the blue band of the rainbow */
+  --max:1100px;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--ivory);
+  color:var(--ink);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:17px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+
+.wrap{max-width:var(--max);margin:0 auto;padding:0 22px}
+
+/* ── masthead ─────────────────────────────────────────────── */
+header{
+  padding:26px 0 20px;
+  text-align:center;
+  border-bottom:1px solid var(--line);
+}
+.wordmark{
+  font-family:"DM Serif Display",Georgia,serif;
+  font-size:26px;
+  letter-spacing:.42em;
+  text-indent:.42em;          /* recentre against the tracking */
+  margin:0;
+  font-weight:400;
+}
+.tagline{
+  font-size:11px;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  margin:7px 0 0;
+}
+
+/* ── hero ─────────────────────────────────────────────────── */
+.hero{padding:34px 0 10px}
+.shot{
+  background:var(--ivory-deep);
+  border-radius:3px;
+  overflow:hidden;
+  aspect-ratio:4/5;
+  display:flex;align-items:center;justify-content:center;
+}
+.shot img{width:100%;height:100%;object-fit:cover}
+.shot svg{width:76%;height:auto;opacity:.9}
+
+/* ── product ──────────────────────────────────────────────── */
+.product{padding:34px 0 8px;text-align:center}
+.product h1{
+  font-family:"DM Serif Display",Georgia,serif;
+  font-size:clamp(38px,10vw,58px);
+  line-height:1.02;
+  margin:0 0 6px;
+  font-weight:400;
+}
+.sub{
+  font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink-soft);margin:0 0 22px;
+}
+.price{font-family:"DM Serif Display",Georgia,serif;font-size:31px;margin:0 0 4px}
+.ship-note{font-size:13px;color:var(--ink-soft);margin:0 0 26px}
+
+/* size picker */
+.sizes{
+  display:flex;gap:9px;justify-content:center;flex-wrap:wrap;
+  margin:0 0 22px;padding:0;list-style:none;
+}
+.sizes button{
+  font:inherit;font-size:14px;letter-spacing:.06em;
+  min-width:54px;padding:12px 6px;
+  background:transparent;color:var(--ink);
+  border:1px solid var(--line);border-radius:2px;
+  cursor:pointer;transition:background .15s,border-color .15s,color .15s;
+}
+.sizes button:hover{border-color:var(--ink)}
+.sizes button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--ivory)}
+
+.buy{
+  display:block;width:100%;max-width:420px;margin:0 auto;
+  font:inherit;font-size:15px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  padding:19px 20px;
+  background:var(--ink);color:var(--ivory);
+  border:0;border-radius:2px;cursor:pointer;text-decoration:none;text-align:center;
+  transition:opacity .15s;
+}
+.buy:hover{opacity:.86}
+.buy[disabled]{opacity:.45;cursor:not-allowed}
+.buy-hint{font-size:13px;color:var(--ink-soft);margin:12px 0 0;min-height:20px}
+
+/* ── scripture ────────────────────────────────────────────── */
+.scripture{
+  margin:60px auto;max-width:620px;text-align:center;
+  padding:44px 24px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.scripture blockquote{
+  font-family:"DM Serif Display",Georgia,serif;
+  font-style:italic;font-size:clamp(21px,5vw,27px);line-height:1.45;
+  margin:0 0 18px;
+}
+.scripture cite{
+  font-style:normal;font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink-soft);
+}
+.scripture p{margin:22px 0 0;color:var(--ink-soft);font-size:16px}
+
+/* ── the garment ──────────────────────────────────────────── */
+.garment{margin:0 auto 60px;max-width:620px}
+.garment h2{
+  font-family:"DM Serif Display",Georgia,serif;font-size:27px;font-weight:400;
+  margin:0 0 6px;text-align:center;
+}
+.garment .lede{text-align:center;color:var(--ink-soft);margin:0 0 30px;font-size:16px}
+.specs{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.specs li{
+  display:flex;gap:18px;justify-content:space-between;align-items:baseline;
+  padding:14px 2px;border-bottom:1px solid var(--line);font-size:15px;
+}
+.specs dt,.specs .k{
+  color:var(--ink-soft);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  flex:0 0 34%;
+}
+.specs .v{text-align:right;flex:1}
+
+/* ── list capture ─────────────────────────────────────────── */
+.capture{
+  background:var(--ivory-deep);border-radius:3px;
+  padding:40px 24px;text-align:center;margin:0 auto 60px;max-width:620px;
+}
+.capture h2{font-family:"DM Serif Display",Georgia,serif;font-size:25px;font-weight:400;margin:0 0 8px}
+.capture p{color:var(--ink-soft);margin:0 0 22px;font-size:15px}
+.capture form{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.capture input{
+  font:inherit;font-size:16px;                 /* 16px stops iOS zoom-on-focus */
+  flex:1 1 240px;min-width:0;padding:15px 16px;
+  background:var(--ivory);color:var(--ink);
+  border:1px solid var(--line);border-radius:2px;
+}
+.capture input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.capture button{
+  font:inherit;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  padding:15px 26px;flex:0 0 auto;
+  background:var(--ink);color:var(--ivory);border:0;border-radius:2px;cursor:pointer;
+}
+.capture .msg{margin:14px 0 0;font-size:14px;min-height:20px}
+
+/* ── footer ───────────────────────────────────────────────── */
+footer{
+  border-top:1px solid var(--line);padding:30px 0 46px;
+  text-align:center;font-size:13px;color:var(--ink-soft);
+}
+footer a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--line)}
+footer .mark{
+  font-family:"DM Serif Display",Georgia,serif;font-size:15px;
+  letter-spacing:.4em;text-indent:.4em;color:var(--ink);margin:0 0 10px;
+}
+
+/* ── desktop ──────────────────────────────────────────────── */
+@media (min-width:820px){
+  .hero{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center;padding:56px 0}
+  .hero .shot{aspect-ratio:4/5}
+  .product{text-align:left;padding:0}
+  .sizes{justify-content:flex-start}
+  .buy{margin:0}
+  .buy-hint{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <p class="wordmark">ARARAT</p>
+  <p class="tagline">Where it came to rest</p>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div class="shot">
+      <img id="hero-img" src="hero.jpg" alt="The Gods Promise tee, hand-painted rainbow across the back">
+      <!-- fallback rainbow, shown only if hero.jpg is missing -->
+      <svg id="hero-fallback" hidden viewBox="0 0 400 220" role="img" aria-label="Watercolour rainbow">
+        <g fill="none" stroke-linecap="round" stroke-width="19">
+          <path d="M28 210a172 172 0 0 1 344 0" stroke="#C8342B" opacity=".85"/>
+          <path d="M52 210a148 148 0 0 1 296 0" stroke="#E4761F" opacity=".85"/>
+          <path d="M76 210a124 124 0 0 1 248 0" stroke="#EBB417" opacity=".85"/>
+          <path d="M100 210a100 100 0 0 1 200 0" stroke="#3F8F49" opacity=".85"/>
+          <path d="M124 210a76 76 0 0 1 152 0" stroke="#2F6FC0" opacity=".85"/>
+          <path d="M148 210a52 52 0 0 1 104 0" stroke="#7B4FA8" opacity=".85"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="product">
+      <h1>Gods Promise</h1>
+      <p class="sub">Heavyweight tee · Vintage natural</p>
+
+      <p class="price">$38</p>
+      <p class="ship-note">Shipping calculated at checkout.</p>
+
+      <ul class="sizes" id="sizes" role="group" aria-label="Choose a size">
+        <li><button type="button" data-size="S"   aria-pressed="false">S</button></li>
+        <li><button type="button" data-size="M"   aria-pressed="false">M</button></li>
+        <li><button type="button" data-size="L"   aria-pressed="false">L</button></li>
+        <li><button type="button" data-size="XL"  aria-pressed="false">XL</button></li>
+        <li><button type="button" data-size="2XL" aria-pressed="false">2XL</button></li>
+      </ul>
+
+      <button class="buy" id="buy" disabled>Choose a size</button>
+      <p class="buy-hint" id="buy-hint">Boxy oversized fit — size down for a regular fit.</p>
+    </div>
+  </section>
+
+  <section class="scripture">
+    <blockquote>&ldquo;I have set my rainbow in the clouds, and it will be the sign of the covenant between me and the earth.&rdquo;</blockquote>
+    <cite>Genesis 9:13</cite>
+    <p>He put it in the sky after the worst thing that ever happened — so that everyone who looked up would remember it was over. It was His first.</p>
+  </section>
+
+  <section class="garment">
+    <h2>The garment</h2>
+    <p class="lede">The reason this isn&rsquo;t a fifteen dollar shirt.</p>
+    <ul class="specs">
+      <li><span class="k">Weight</span><span class="v">6.5&ndash;7.5 oz heavyweight cotton</span></li>
+      <li><span class="k">Fit</span><span class="v">Oversized, boxy, drop shoulder</span></li>
+      <li><span class="k">Fabric</span><span class="v">100% cotton, garment-dyed and washed</span></li>
+      <li><span class="k">Colour</span><span class="v">Vintage natural &mdash; never optical white</span></li>
+      <li><span class="k">Neck</span><span class="v">Traditional ribbed crew</span></li>
+      <li><span class="k">Print</span><span class="v">Soft-hand screen print, faded vintage ink</span></li>
+      <li><span class="k">Graphic</span><span class="v">14&Prime; &times; 10&Prime;, full back</span></li>
+    </ul>
+  </section>
+
+  <section class="capture">
+    <h2>The first drop is small</h2>
+    <p>Leave your email and you&rsquo;ll know before it goes.</p>
+    <form id="list-form" novalidate>
+      <input type="email" id="email" name="email" placeholder="you@email.com" autocomplete="email" required aria-label="Email address">
+      <button type="submit">Notify me</button>
+    </form>
+    <p class="msg" id="list-msg" role="status" aria-live="polite"></p>
+  </section>
+
+</main>
+
+<footer>
+  <p class="mark">ARARAT</p>
+  <p>Questions? Message us on Instagram.</p>
+</footer>
+
+<script>
+/* ─────────────────────────────────────────────────────────────
+   CONFIG — the only two things that need filling in.
+   ───────────────────────────────────────────────────────────── */
+const CONFIG = {
+  // One Stripe Payment Link per size. Leave a size null and it shows
+  // as sold out rather than sending someone to a broken checkout.
+  // If you only make ONE link, put it in `fallback` and every size uses it.
+  stripe: {
+    fallback: null,
+    S:   null,
+    M:   null,
+    L:   null,
+    XL:  null,
+    '2XL': null
+  },
+  // POST endpoint for the email list. Until this is set the form
+  // stores locally and tells the truth about it.
+  listEndpoint: null
+};
+
+/* ── hero image fallback ──────────────────────────────────── */
+const heroImg = document.getElementById('hero-img');
+heroImg.addEventListener('error', () => {
+  heroImg.hidden = true;
+  document.getElementById('hero-fallback').hidden = false;
+});
+
+/* ── size + buy ───────────────────────────────────────────── */
+const buy   = document.getElementById('buy');
+const hint  = document.getElementById('buy-hint');
+let picked  = null;
+
+function linkFor(size){
+  return CONFIG.stripe[size] || CONFIG.stripe.fallback || null;
+}
+
+document.getElementById('sizes').addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-size]');
+  if (!btn) return;
+
+  document.querySelectorAll('#sizes button').forEach(b =>
+    b.setAttribute('aria-pressed', String(b === btn)));
+
+  picked = btn.dataset.size;
+  const href = linkFor(picked);
+
+  if (href) {
+    buy.disabled = false;
+    buy.textContent = 'Buy — $38';
+    hint.textContent = 'Boxy oversized fit — size down for a regular fit.';
+  } else {
+    buy.disabled = true;
+    buy.textContent = 'Notify me when it drops';
+    hint.textContent = 'The first drop hasn’t opened yet — leave your email below and you’ll get it first.';
+  }
+});
+
+buy.addEventListener('click', () => {
+  const href = linkFor(picked);
+  if (href) window.location.href = href;
+});
+
+/* ── email list ───────────────────────────────────────────── */
+const form = document.getElementById('list-form');
+const msg  = document.getElementById('list-msg');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    msg.textContent = 'That email doesn’t look right.';
+    return;
+  }
+
+  if (!CONFIG.listEndpoint) {
+    // No backend yet. Keep it locally so nothing is lost, and don't
+    // pretend to the visitor that it went somewhere it didn't.
+    const held = JSON.parse(localStorage.getItem('ararat_list') || '[]');
+    held.push(email);
+    localStorage.setItem('ararat_list', JSON.stringify(held));
+    msg.textContent = 'Got it — we’ll be in touch before the drop.';
+    form.reset();
+    return;
+  }
+
+  msg.textContent = 'One second…';
+  try {
+    const res = await fetch(CONFIG.listEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, size: picked, source: 'site' })
+    });
+    if (!res.ok) throw new Error(res.status);
+    msg.textContent = 'Got it — we’ll be in touch before the drop.';
+    form.reset();
+  } catch (err) {
+    msg.textContent = 'That didn’t save. Try again, or email us directly.';
+  }
+});
+</script>
+
+</body>
+</html>
