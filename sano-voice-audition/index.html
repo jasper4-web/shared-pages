@@ -44,8 +44,10 @@ h1 .g{background:linear-gradient(100deg,var(--blue),var(--cyan));-webkit-backgro
 .sub{color:var(--cream-mut);font-size:16px;margin-top:12px;max-width:34em}
 
 /* ---------- toggle ---------- */
+/* Full-bleed and sticky. It must NOT be a child of .wrap: negative margins there make the
+   page wider than the phone, and a .wrap that only contains this bar is too short to stick. */
 .toggle-bar{
-  position:sticky; top:0; z-index:20; margin:22px -18px 0; padding:12px 18px;
+  position:sticky; top:0; z-index:20; margin-top:22px; padding:12px 0;
   background:rgba(9,9,11,.86); backdrop-filter:blur(14px);
   border-bottom:1px solid var(--line);
 }
@@ -143,15 +145,17 @@ footer{margin-top:30px;font-size:12.5px;color:var(--cream-dim);text-align:center
   </header>
 </div>
 
-<div class="wrap">
-  <div class="toggle-bar">
+<div class="toggle-bar">
+  <div class="wrap">
     <div class="toggle" role="group" aria-label="How to listen">
       <button id="t-phone" aria-pressed="true">As it sounds on a phone</button>
       <button id="t-studio" aria-pressed="false">Studio quality</button>
     </div>
     <div class="toggle-note" id="tnote">Phone audio is the one that predicts the real call.</div>
   </div>
+</div>
 
+<div class="wrap">
   <div class="section-label">The five candidates</div>
   <div id="candidates"></div>
 
