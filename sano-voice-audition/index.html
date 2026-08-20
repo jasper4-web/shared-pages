@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#09090B">
+<title>SANO — Pick Her Voice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#09090B; --ink-2:#131317; --ink-3:#1C1C22;
+  --cream:#F2EBE0; --cream-mut:#A9A399; --cream-dim:#726E67;
+  --blue:#0070F3; --cyan:#37D2F0; --blue-d:#0050C8;
+  --amber:#F5A623;
+  --line:rgba(242,235,224,.13);
+  --sans:"Space Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --r:16px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--sans); background:var(--ink); color:var(--cream);
+  line-height:1.55; padding:0 0 64px;
+  background-image:
+    radial-gradient(900px 500px at 12% -8%, rgba(0,112,243,.20), transparent 60%),
+    radial-gradient(700px 420px at 92% 4%, rgba(55,210,240,.13), transparent 62%);
+  background-repeat:no-repeat;
+}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px}
+h1,h2,h3{font-weight:700;letter-spacing:-.025em;line-height:1.08}
+
+/* ---------- header ---------- */
+header{padding:38px 0 22px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;
+}
+.eyebrow::before{content:"";width:22px;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:2px}
+h1{font-size:clamp(30px,8vw,46px)}
+h1 .g{background:linear-gradient(100deg,var(--blue),var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:var(--cream-mut);font-size:16px;margin-top:12px;max-width:34em}
+
+/* ---------- toggle ---------- */
+.toggle-bar{
+  position:sticky; top:0; z-index:20; margin:22px -18px 0; padding:12px 18px;
+  background:rgba(9,9,11,.86); backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.toggle{display:flex;background:var(--ink-3);border:1px solid var(--line);border-radius:999px;padding:4px;gap:4px}
+.toggle button{
+  flex:1;appearance:none;border:0;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;
+  padding:11px 8px;border-radius:999px;background:transparent;color:var(--cream-mut);transition:.16s ease;
+}
+.toggle button[aria-pressed="true"]{background:linear-gradient(100deg,var(--blue),var(--blue-d));color:#fff;box-shadow:0 4px 18px rgba(0,112,243,.4)}
+.toggle-note{font-size:12.5px;color:var(--cream-dim);text-align:center;margin-top:9px;min-height:1.2em}
+
+/* ---------- sections ---------- */
+.section-label{
+  display:flex;align-items:center;gap:12px;margin:34px 0 14px;
+  font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-dim);
+}
+.section-label::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* ---------- voice rows ---------- */
+.row{
+  display:flex;align-items:center;gap:14px;
+  background:linear-gradient(180deg,rgba(242,235,224,.045),rgba(242,235,224,.02));
+  border:1px solid var(--line); border-radius:var(--r);
+  padding:14px; margin-bottom:10px; position:relative; overflow:hidden;
+}
+.row.playing{border-color:rgba(55,210,240,.55);background:linear-gradient(180deg,rgba(0,112,243,.14),rgba(242,235,224,.03))}
+.row .bar{position:absolute;left:0;bottom:0;height:2px;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .08s linear}
+.play{
+  flex:0 0 auto;width:58px;height:58px;border-radius:50%;border:0;cursor:pointer;
+  background:linear-gradient(140deg,var(--blue),var(--blue-d));color:#fff;
+  display:grid;place-items:center;transition:.16s ease;box-shadow:0 6px 22px rgba(0,112,243,.36);
+  -webkit-tap-highlight-color:transparent;
+}
+.play:active{transform:scale(.94)}
+.row.playing .play{background:linear-gradient(140deg,var(--cyan),var(--blue))}
+.play svg{width:24px;height:24px;fill:currentColor;pointer-events:none}
+.play .ic-pause{display:none}
+.row.playing .play .ic-play{display:none}
+.row.playing .play .ic-pause{display:block}
+.play.loading{opacity:.55}
+.meta{flex:1;min-width:0}
+.name{font-size:19px;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.desc{font-size:13.5px;color:var(--cream-mut);margin-top:3px}
+.tag{
+  font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 8px;border-radius:999px;border:1px solid;
+}
+.tag.now{color:var(--amber);border-color:rgba(245,166,35,.45);background:rgba(245,166,35,.1)}
+.tag.old{color:var(--cyan);border-color:rgba(55,210,240,.4);background:rgba(55,210,240,.09)}
+.pick{
+  flex:0 0 auto;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);
+  background:transparent;color:var(--cream-dim);cursor:pointer;display:grid;place-items:center;
+  transition:.16s ease;-webkit-tap-highlight-color:transparent;
+}
+.pick svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+.pick[aria-pressed="true"]{color:var(--amber);border-color:rgba(245,166,35,.5);background:rgba(245,166,35,.1)}
+.pick[aria-pressed="true"] svg{fill:currentColor}
+
+/* ---------- pick banner ---------- */
+.banner{
+  margin-top:20px;padding:16px 18px;border-radius:var(--r);
+  border:1px solid rgba(245,166,35,.4);background:rgba(245,166,35,.08);
+  font-size:15px;display:none;
+}
+.banner.on{display:block}
+.banner b{color:var(--amber)}
+
+/* ---------- notes ---------- */
+.note{
+  border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-top:14px;
+  background:rgba(242,235,224,.03);font-size:14px;color:var(--cream-mut);
+}
+.note h3{font-size:14px;font-weight:700;color:var(--cream);letter-spacing:.01em;margin-bottom:8px}
+.note ul{margin:0;padding-left:18px}
+.note li{margin-bottom:7px}
+.note li:last-child{margin-bottom:0}
+.note b{color:var(--cream)}
+.note.warn{border-color:rgba(245,166,35,.35);background:rgba(245,166,35,.07)}
+footer{margin-top:30px;font-size:12.5px;color:var(--cream-dim);text-align:center;line-height:1.7}
+@media (max-width:400px){
+  .play{width:52px;height:52px}
+  .pick{width:40px;height:40px}
+  .name{font-size:17px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">SANO Systems · voice audition</div>
+    <h1>Pick <span class="g">her voice</span>.</h1>
+    <p class="sub">Five candidates for the phone line, plus the two voices that have actually
+    answered it. Tap play. Tap the star on the one you want.</p>
+  </header>
+</div>
+
+<div class="wrap">
+  <div class="toggle-bar">
+    <div class="toggle" role="group" aria-label="How to listen">
+      <button id="t-phone" aria-pressed="true">As it sounds on a phone</button>
+      <button id="t-studio" aria-pressed="false">Studio quality</button>
+    </div>
+    <div class="toggle-note" id="tnote">Phone audio is the one that predicts the real call.</div>
+  </div>
+
+  <div class="section-label">The five candidates</div>
+  <div id="candidates"></div>
+
+  <div class="section-label">What's been on the line</div>
+  <div id="references"></div>
+
+  <div class="banner" id="banner"></div>
+
+  <div class="note warn">
+    <h3>Read this before you judge them</h3>
+    <ul>
+      <li>The five candidate clips are <b>2–4 seconds of a generic sample line</b> — not our
+        greeting, and not carrying our settings. You're judging <b>timbre</b> here: does this
+        person sound like someone you'd trust answering your phone. You are not judging delivery.</li>
+      <li>The last two are <b>real recordings off our own line</b>, saying our real greeting.
+        Only her side is in the file — no caller audio, ever. They're already phone audio,
+        so the toggle doesn't change them.</li>
+      <li>Every clip has been levelled to the same loudness so a louder sample can't win by
+        being louder.</li>
+      <li>Once you pick, we render your voice saying our actual greeting before we put it
+        on the line. Nothing changes on the phone until you say so.</li>
+      <li><b>One catch on Marin.</b> She came from a different engine than the one answering
+        today. Picking her isn't a switch flip — I'd have to prove she works on the current
+        setup first, or move the line back. Pick her anyway if she's the one; I'll go find out.</li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <h3>One setting I want to change at the same time</h3>
+    <ul>
+      <li><b>Stability: 0.7 today → 0.40 proposed.</b> Stability is the dullness dial — high
+        keeps her flat and safe, low lets her sound alive. It got pushed up to 0.7 to cover
+        stumbles from the old worn-out voice. A current voice doesn't stumble, and phone audio
+        flattens everything anyway, so 0.7 on the phone is just dull. Dull is the one failure
+        state we wrote down.</li>
+      <li>Speed stays where it is. Changing two things at once makes it impossible to tell
+        which one you're hearing.</li>
+    </ul>
+  </div>
+
+  <footer>
+    Built 2026-08-19. Internal page — nothing here is live on the phone line.<br>
+    Text your pick and we'll build it.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var VOICES = [
+    {slug:"sarah",   name:"Sarah",   desc:"Mature, reassuring, confident", group:"candidates"},
+    {slug:"matilda", name:"Matilda", desc:"Knowledgeable, professional",   group:"candidates"},
+    {slug:"bella",   name:"Bella",   desc:"Professional, bright, warm",    group:"candidates"},
+    {slug:"jessica", name:"Jessica", desc:"Playful, bright, warm",         group:"candidates"},
+    {slug:"laura",   name:"Laura",   desc:"Enthusiastic, quirky",          group:"candidates"},
+    {slug:"marin",   name:"Marin",   desc:"The girl voice we started with — answered Aug 13–14, saying the greeting as it was then",
+     group:"references", tag:"old",  tagText:"Original", fixed:true},
+    {slug:"burt",    name:"Burt",    desc:"On the line right now — a man, and a worn-out voice. This is what we're replacing.",
+     group:"references", tag:"now",  tagText:"On the line now", fixed:true}
+  ];
+
+  var ICON_PLAY  = '<svg class="ic-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>';
+  var ICON_PAUSE = '<svg class="ic-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.2v14H7zm6.8 0H17v14h-3.2z"/></svg>';
+  var ICON_STAR  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.6l2.6 5.3 5.8.85-4.2 4.1 1 5.75L12 16.9l-5.2 2.7 1-5.75-4.2-4.1 5.8-.85z"/></svg>';
+
+  var mode = "phone";          // default: the medium the call actually happens in
+  var current = null;          // {slug, row}
+  var cache = {};              // slug|mode -> object URL (blob fallback only)
+  var picked = null;
+
+  // ONE audio element for the whole page. iOS only ever unlocks an element that was
+  // played inside a real tap, so it must be reused and it must start synchronously —
+  // never created inside a fetch callback.
+  var player = new Audio();
+  player.preload = "none";
+  try { picked = localStorage.getItem("sano-voice-pick"); } catch(e){}
+
+  function el(tag, cls, html){
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (html != null) n.innerHTML = html;
+    return n;
+  }
+
+  function build(v){
+    var row = el("div","row");
+    row.dataset.slug = v.slug;
+
+    var bar = el("div","bar");
+
+    var play = el("button","play", ICON_PLAY + ICON_PAUSE);
+    play.setAttribute("aria-label","Play " + v.name);
+
+    var meta = el("div","meta");
+    var name = el("div","name", v.name +
+      (v.tag ? ' <span class="tag '+v.tag+'">'+v.tagText+'</span>' : ""));
+    var desc = el("div","desc", v.desc);
+    meta.appendChild(name); meta.appendChild(desc);
+
+    var pick = el("button","pick", ICON_STAR);
+    pick.setAttribute("aria-label","Pick " + v.name);
+    pick.setAttribute("aria-pressed", picked === v.slug ? "true" : "false");
+
+    play.addEventListener("click", function(){ toggle(v, row, play); });
+    pick.addEventListener("click", function(){ choose(v); });
+
+    row.appendChild(bar); row.appendChild(play); row.appendChild(meta); row.appendChild(pick);
+    document.getElementById(v.group).appendChild(row);
+  }
+
+  function pathFor(v){
+    return "audio/" + (v.fixed ? "phone" : mode) + "/" + v.slug + ".mp3";
+  }
+
+  function stop(){
+    if (!current) return;
+    player.pause();
+    current.row.classList.remove("playing");
+    current.row.querySelector(".bar").style.width = "0";
+    current = null;
+  }
+
+  player.addEventListener("timeupdate", function(){
+    if (!current || !player.duration) return;
+    current.row.querySelector(".bar").style.width =
+      (player.currentTime / player.duration * 100) + "%";
+  });
+  player.addEventListener("ended", stop);
+
+  // Last resort: some hosts hand an mp3 back with a content type the element refuses.
+  // Re-fetch the bytes and wrap them in a blob we label ourselves.
+  function viaBlob(v, url, play){
+    var key = v.slug + "|" + (v.fixed ? "phone" : mode);
+    if (cache[key]) { player.src = cache[key]; player.play().catch(stop); return; }
+    play.classList.add("loading");
+    fetch(url, {cache:"force-cache"})
+      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.blob(); })
+      .then(function(b){
+        cache[key] = URL.createObjectURL(new Blob([b], {type:"audio/mpeg"}));
+        play.classList.remove("loading");
+        player.src = cache[key];
+        return player.play();
+      })
+      .catch(function(){ play.classList.remove("loading"); stop(); });
+  }
+
+  function toggle(v, row, play){
+    if (current && current.slug === v.slug) { stop(); return; }
+    stop();
+    var url = pathFor(v);
+    current = {slug:v.slug, row:row};
+    row.classList.add("playing");
+    player.src = url;                 // synchronous — keeps the tap gesture alive on iOS
+    var p = player.play();
+    if (p && p.catch) p.catch(function(){ viaBlob(v, url, play); });
+  }
+
+  function choose(v){
+    picked = (picked === v.slug) ? null : v.slug;
+    try {
+      if (picked) localStorage.setItem("sano-voice-pick", picked);
+      else localStorage.removeItem("sano-voice-pick");
+    } catch(e){}
+    document.querySelectorAll(".pick").forEach(function(b){
+      b.setAttribute("aria-pressed", b.parentNode.dataset.slug === picked ? "true" : "false");
+    });
+    banner();
+  }
+
+  function banner(){
+    var b = document.getElementById("banner");
+    if (!picked) { b.className = "banner"; b.textContent = ""; return; }
+    var v = VOICES.filter(function(x){ return x.slug === picked; })[0];
+    b.className = "banner on";
+    b.innerHTML = "Your pick: <b>" + v.name + "</b>. Text that name over and we'll render her " +
+                  "saying our real greeting, then put her on the line.";
+  }
+
+  function setMode(next){
+    if (next === mode) return;
+    stop();
+    mode = next;
+    document.getElementById("t-phone").setAttribute("aria-pressed", mode === "phone");
+    document.getElementById("t-studio").setAttribute("aria-pressed", mode === "studio");
+    document.getElementById("tnote").textContent = (mode === "phone")
+      ? "Phone audio is the one that predicts the real call."
+      : "Studio quality — nobody will ever hear her this clean.";
+  }
+
+  VOICES.forEach(build);
+  banner();
+  document.getElementById("t-phone").addEventListener("click", function(){ setMode("phone"); });
+  document.getElementById("t-studio").addEventListener("click", function(){ setMode("studio"); });
+  document.addEventListener("visibilitychange", function(){ if (document.hidden) stop(); });
+})();
+</script>
+</body>
+</html>
