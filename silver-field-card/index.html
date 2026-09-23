@@ -319,7 +319,9 @@ a{color:var(--accent)}
       <table class="tbl"><thead><tr><th>Product</th><th>Great</th><th>Still OK</th></tr></thead>
       <tbody id="tgtBody"></tbody></table>
     </div>
-    <div class="tiny" style="margin-top:9px">Local shops run 1–3% above online — that's the price of walking out with it today, and it's baked in.</div>
+    <div class="tiny" style="margin-top:9px">Bands re-cut 23 Sep 2026 against live dealer pricing, plus a few points for a local shop’s
+    overhead. Junk silver’s “great” number is <b>negative</b> on purpose — it is genuinely trading under melt,
+    so paying any premium for it today is overpaying.</div>
   </section>
 
   <section>
@@ -388,7 +390,7 @@ a{color:var(--accent)}
     <div class="co co-a">
       <h3><span data-ic="Banknote" data-sz="15"></span>Debit card — you said undecided</h3>
       <p>Same price as cash at almost every shop, no counting risk, no paperwork. <b>Credit adds 3–4%</b>, which at
-      your size burns <b>$200–$800</b> for nothing. Cash over $10,000 means the dealer files IRS Form 8300 —
+      your size burns <b>$200–$800</b> for nothing. Cash of $10,000 or more means the dealer files IRS Form 8300 —
       routine, but <b>never split payments to dodge it</b>; that's the actual crime.</p>
     </div>
     <div class="card" style="margin-top:10px">
@@ -435,6 +437,13 @@ a{color:var(--accent)}
       <p>You never pay spot — you pay <b>spot + premium</b>. At your size a 4% difference between two shops is
       <b>$200–$800</b>. That is worth three phone calls, and it is the only number worth negotiating.</p>
     </div>
+    <div class="co co-w" style="margin-top:10px">
+      <h3><span data-ic="CircleAlert" data-sz="15"></span>Before you drive: online is much cheaper right now</h3>
+      <p>Checked 23 Sep 2026. Online dealers sat at <b>−6.2%</b> on junk silver, <b>−0.5%</b> on rounds and
+      <b>+0.3%</b> on 10 oz bars. A Houston shop has rent and staff and will land several points above that.
+      On $10,000 the gap is realistically <b>$400–$800</b> — that is the price of holding it tomorrow instead
+      of waiting a week on a shipment. It can be worth paying. Just pay it <i>on purpose</i>.</p>
+    </div>
     <div class="card" style="margin-top:10px">
       <ul class="cl">
         <li><b>You'd flip it on a spike.</b> That makes premium doubly important — every point you overpay is a point silver has to climb before you're even. Run the break-even below <i>before</i> you buy.</li>
@@ -471,9 +480,9 @@ a{color:var(--accent)}
       <ul class="cl">
         <li><b>Know the size first.</b> $5k–20k is roughly 75–300 oz — <b>5 to 20 lbs</b> of metal. Heavier and bulkier than people expect.</li>
         <li><b>Rule one: don't tell people you own it.</b> Not a joke — that's the whole security model.</li>
-        <li><b>Home safe</b> — bolted down, or it's a box with a handle. Then call your insurer: standard homeowner's policies cap precious metals around <b>$200–$1,000</b>. You need a scheduled rider, and it's cheap.</li>
+        <li><b>Home safe</b> — bolted down, or it's a box with a handle. Then call your insurer: standard homeowner's policies cap coins and bullion at <b>$200</b>, and few go past <b>$2,500</b>. You need a scheduled rider, and it's cheap.</li>
         <li><b>Bank box</b> — safest from theft and fire, but <b>not FDIC insured</b>, and you can't reach it on a weekend. Fine for a hold, annoying if you want to flip fast.</li>
-        <li><b>Texas Bullion Depository</b> (Austin) — state-run, fully insured. Overkill now, worth knowing if you keep stacking.</li>
+        <li><b>Texas Bullion Depository</b> (Leander, just north of Austin) — state-run, guarded by Texas State Police. Overkill now, worth knowing if you keep stacking.</li>
       </ul>
     </div>
   </section>
@@ -494,7 +503,7 @@ a{color:var(--accent)}
   </section>
 
   <footer>
-    Built 23 Sep 2026. Spot is live from gold-api.com and refreshes when you open the page or tap refresh —
+    Built and fact-checked 23 Sep 2026 — every shop number re-verified against the shop’s own listing, every premium band re-cut against live dealer pricing that day. Spot is live from gold-api.com and refreshes when you open the page or tap refresh —
     if the feed dies, tap the price and type it in by hand. Premium bands are judgment calls on late-2026
     conditions, not quotes. Nothing here is financial advice.
   </footer>
@@ -562,12 +571,12 @@ function money(n){ return isFinite(n) ? "$"+n.toLocaleString("en-US",{minimumFra
 
 /* ---------- data ---------- */
 var P = {
-  junk:    {name:"90% junk silver", unit:"per $1 face value",  short:"90% junk, per $1 face", oz:0.715, good:3, ok:9,  note:"cheapest + most divisible right now"},
-  junkbag: {name:"90% junk silver", unit:"per $100 face bag",  short:"90% junk, per $100 face bag", oz:71.5, good:3, ok:9, note:"same math, bigger lot"},
-  bar10:   {name:"10 oz bar",       unit:"each",               short:"a 10 oz bar", oz:10,  good:4, ok:7,  note:"best bulk value"},
-  bar100:  {name:"100 oz bar",      unit:"each",               short:"a 100 oz bar", oz:100, good:3, ok:5,  note:"cheapest per oz, hardest to resell in pieces"},
-  round:   {name:"1 oz round",      unit:"generic, each",      short:"1 oz generic rounds", oz:1, good:6, ok:10, note:"solid middle ground"},
-  ase:     {name:"Silver Eagle",    unit:"1 oz, each",         short:"American Silver Eagles", oz:1, good:8, ok:12, note:"you pay for the name"}
+  junk:    {name:"90% junk silver", unit:"per $1 face value",  short:"90% junk, per $1 face", oz:0.715, good:-2, ok:3,  note:"online sits near −5% — do not pay a premium"},
+  junkbag: {name:"90% junk silver", unit:"per $100 face bag",  short:"90% junk, per $100 face bag", oz:71.5, good:-2, ok:3, note:"same math, bigger lot"},
+  bar10:   {name:"10 oz bar",       unit:"each",               short:"a 10 oz bar", oz:10,  good:3, ok:6,  note:"best bulk value"},
+  bar100:  {name:"100 oz bar",      unit:"each",               short:"a 100 oz bar", oz:100, good:2, ok:5,  note:"cheapest per oz, hardest to resell in pieces"},
+  round:   {name:"1 oz round",      unit:"generic, each",      short:"1 oz generic rounds", oz:1, good:3, ok:6, note:"online sits near spot — push hard"},
+  ase:     {name:"Silver Eagle",    unit:"1 oz — ask random year", short:"American Silver Eagles, random year", oz:1, good:6, ok:10, note:"random year ~4% online; dated 2026 costs ~7–8%"}
 };
 var ORDER = ["junk","bar10","bar100","round","ase"];
 var CHIPS = ["junk","junkbag","bar10","bar100","round","ase"];
@@ -581,12 +590,12 @@ var JUNK = [
 ];
 
 var SHOPS = [
-  {n:"J.R. Bullion",                a:"106 Bay View Dr Ste A, Sugar Land", t:"2813025448", g:"Does 90% junk silver specifically", hot:1},
-  {n:"U.S. Coins and Jewelry",      a:"8501 Katy Fwy, Houston",            t:"7134646868", g:"Biggest name in Houston"},
-  {n:"Houston Numismatic Exchange", a:"2486 Times Blvd, Rice Village",     t:"8002313650", g:"Since 1965 · deep bullion stock"},
-  {n:"Houston Gold & Silver",       a:"19333 US-59 N #100, Humble",        t:"2813613377", g:"Publishes 90–98% buyback"},
-  {n:"Royal Coin & Jewelry",        a:"4658 Beechnut St, Houston",         t:"8009726467", g:"Bullion + scrap"},
-  {n:"Collectors Coin Shop",        a:"6503 S. Rice Ave, Bellaire",        t:"7139522646", g:"Collector-leaning, still does bullion"}
+  {n:"J.R. Bullion",                a:"106 Bay View Dr Ste A, Sugar Land", t:"2813025448", h:"Mon–Fri 9–5 · Sat 9–4", g:"Buys + sells 90%, 40% and 35% silver coin", hot:1},
+  {n:"U.S. Coins and Jewelry",      a:"8501 Katy Fwy, Houston",            t:"7135976367", h:"Mon–Fri 9–5 · Sat 10–3", g:"Biggest name in Houston"},
+  {n:"Houston Numismatic Exchange", a:"2486 Times Blvd, Rice Village",     t:"7135282135", h:"Tue–Sat 10–3 ONLY — five-hour window", g:"Since 1965 · deep bullion stock"},
+  {n:"Royal Coins",                 a:"4658 Beechnut St, Houston",         t:"7136640881", h:"Tue–Fri 9:30–6 · Sat 9:30–3 · Mon by appt", g:"Bullion + scrap"},
+  {n:"Collectors Coin Shop",        a:"6503 S. Rice Ave, Bellaire",        t:"7139522646", h:"About 10–5 — confirm, an old location reads closed", g:"Collector-leaning, still does bullion"},
+  {n:"Houston Gold & Silver",       a:"4721 Westheimer · also Humble, 19333 US-59 N", t:"7137838200", h:"Westheimer Mon–Fri 2–6 · Humble Mon–Fri 9–5", g:"MOSTLY A BUYER — ask if they will sell"}
 ];
 
 var FLAGS = [
@@ -747,21 +756,18 @@ function renderDC(){
   var melt=spot*p.oz, prem=((px-melt)/melt)*100, cls,big,why,say;
   var tGood=melt*(1+p.good/100), tOk=melt*(1+p.ok/100);
 
-  if(prem<0){
-    cls="v-good"; big="BELOW MELT";
-    why="Under spot — that's the 2026 junk-silver dislocation. If it's genuine 90% and they'll test it in front of you, <b>take it</b>.";
-    say=null;
-  } else if(prem<=p.good){
+  var sub = prem<0 ? " It is under melt — that is the 2026 junk-silver dislocation. Make them test it in front of you." : "";
+  if(prem<=p.good){
     cls="v-good"; big="BUY IT";
-    why="At or under the good band for "+p.name.toLowerCase()+". Don't overthink it.";
+    why="At or under the good band for "+p.name.toLowerCase()+"."+sub;
     say=null;
   } else if(prem<=p.ok){
     cls="v-fair"; big="FAIR — PUSH";
-    why="Reasonable, but there's room, and at your size they move.";
+    why="Reasonable, but there is room, and at your size they move."+sub;
     say="Can you do "+money(tGood)+" on that?";
   } else {
     cls="v-bad"; big="TOO HIGH";
-    why="You should be around <b>"+money(tGood)+"</b> and no more than <b>"+money(tOk)+"</b>.";
+    why="You should be around <b>"+money(tGood)+"</b> and no more than <b>"+money(tOk)+"</b>."+sub;
     say="That's about "+prem.toFixed(0)+"% over spot — what's your best on "+money(tGood)+"?";
   }
 
@@ -814,6 +820,7 @@ function renderShops(){
     h += '<div class="shop" data-i="'+i+'"><div class="rk">Best so far</div>'
       +  '<div class="st"><div style="flex:1;min-width:0">'
       +  '<div class="sn">'+s.n+'</div><div class="sa">'+s.a+'</div>'
+      +  '<div class="sa" style="color:var(--silver2)">'+s.h+'</div>'
       +  '<span class="tg'+(s.hot?" hot":"")+'">'+s.g+'</span></div>'
       +  '<a class="dial" href="tel:'+s.t+'" aria-label="Call '+s.n+'" data-ic="Phone" data-sz="21"></a></div>'
       +  '<div class="qz"><input data-q="'+i+'" inputmode="decimal" placeholder="Their price"><div class="qv" data-v="'+i+'">—</div></div>'
