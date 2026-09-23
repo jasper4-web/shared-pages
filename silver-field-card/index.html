@@ -20,7 +20,7 @@
   --pad:16px;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:116px}
 body{
   margin:0; background:var(--bg); color:var(--txt);
   font:16px/1.55 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
@@ -36,6 +36,7 @@ h1,h2,h3{margin:0;line-height:1.2;letter-spacing:-.02em}
   background:rgba(11,13,16,.93); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
   border-bottom:1px solid var(--line);
   padding-top:env(safe-area-inset-top);
+  transform:translateZ(0); will-change:transform;
 }
 .spotbar .inner{max-width:560px;margin:0 auto;padding:10px var(--pad) 11px;display:flex;align-items:center;gap:12px}
 .spotlabel{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:1px}
@@ -57,7 +58,7 @@ header.hero .sub{color:var(--dim);font-size:14.5px;margin-top:7px}
 .pill{display:inline-block;background:var(--card2);border:1px solid var(--line2);color:var(--ag2);
   font-size:11px;padding:4px 9px;border-radius:99px;margin:8px 6px 0 0;letter-spacing:.01em}
 
-section{margin-top:26px}
+section{margin-top:26px;scroll-margin-top:116px}
 .sec-h{display:flex;align-items:baseline;gap:9px;margin-bottom:11px}
 .sec-n{font-size:11px;font-weight:700;color:var(--bg);background:var(--ag2);width:20px;height:20px;
   border-radius:6px;display:flex;align-items:center;justify-content:center;flex:none;align-self:center}
@@ -129,7 +130,7 @@ ul.clean li b{color:#fff}
 .flag li::before{content:"⛔";position:absolute;left:0;top:10px;font-size:13px}
 
 /* ---------- checklist ---------- */
-.chk{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.chk{scroll-margin-top:124px;display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
 .chk:last-child{border-bottom:0}
 .box{flex:none;width:24px;height:24px;border:2px solid var(--line2);border-radius:7px;margin-top:1px;
   display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--bg);transition:.12s}
