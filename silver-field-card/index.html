@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b0d10">
+<title>Silver Field Card</title>
+<meta name="description" content="Houston silver buying field card — live spot, deal checker, break-even math, shop call log.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥈</text></svg>">
+<style>
+:root{
+  --bg:#0b0d10; --bg2:#12161b; --card:#151a21; --card2:#1b222b;
+  --line:#242c37; --line2:#2f3947;
+  --txt:#e8edf4; --dim:#95a2b3; --faint:#67737f;
+  --ag:#c8d4e0; --ag2:#8fa3b8;
+  --good:#3ddc84; --fair:#ffc94d; --bad:#ff5e5e;
+  --accent:#6ea8ff;
+  --r:14px;
+  --pad:16px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--txt);
+  font:16px/1.55 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  padding:0 0 64px; overflow-x:hidden;
+  padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right);
+}
+.wrap{max-width:560px;margin:0 auto;padding:0 var(--pad)}
+h1,h2,h3{margin:0;line-height:1.2;letter-spacing:-.02em}
+
+/* ---------- sticky spot header ---------- */
+.spotbar{
+  position:sticky; top:0; z-index:50;
+  background:rgba(11,13,16,.93); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+  padding-top:env(safe-area-inset-top);
+}
+.spotbar .inner{max-width:560px;margin:0 auto;padding:10px var(--pad) 11px;display:flex;align-items:center;gap:12px}
+.spotlabel{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:1px}
+.spotval{font-size:27px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:#fff}
+.spotval small{font-size:13px;font-weight:500;color:var(--dim);letter-spacing:0}
+.spotmeta{font-size:11px;color:var(--faint);margin-top:2px}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--good);margin-right:5px;vertical-align:1px}
+.dot.stale{background:var(--fair)} .dot.off{background:var(--bad)}
+.refresh{
+  margin-left:auto;flex:none;background:var(--card2);border:1px solid var(--line2);color:var(--ag);
+  border-radius:11px;padding:11px 13px;font-size:13px;font-weight:600;cursor:pointer;min-height:44px
+}
+.refresh:active{background:#232c37}
+
+/* ---------- blocks ---------- */
+header.hero{padding:22px 0 6px}
+header.hero h1{font-size:30px;font-weight:800}
+header.hero .sub{color:var(--dim);font-size:14.5px;margin-top:7px}
+.pill{display:inline-block;background:var(--card2);border:1px solid var(--line2);color:var(--ag2);
+  font-size:11px;padding:4px 9px;border-radius:99px;margin:8px 6px 0 0;letter-spacing:.01em}
+
+section{margin-top:26px}
+.sec-h{display:flex;align-items:baseline;gap:9px;margin-bottom:11px}
+.sec-n{font-size:11px;font-weight:700;color:var(--bg);background:var(--ag2);width:20px;height:20px;
+  border-radius:6px;display:flex;align-items:center;justify-content:center;flex:none;align-self:center}
+.sec-h h2{font-size:19px;font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px}
+.card + .card{margin-top:10px}
+.note{color:var(--dim);font-size:14px}
+.tiny{font-size:12.5px;color:var(--faint);line-height:1.5}
+
+/* ---------- inputs ---------- */
+label.fl{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+input,select,textarea{
+  width:100%;background:var(--bg2);border:1px solid var(--line2);color:var(--txt);
+  border-radius:11px;padding:13px 13px;font-size:16.5px;font-family:inherit;min-height:48px;
+  font-variant-numeric:tabular-nums;-webkit-appearance:none;appearance:none
+}
+input:focus,select,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px}
+select{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' stroke='%2395a2b3' stroke-width='1.8' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field + .field{margin-top:11px}
+
+/* ---------- verdict ---------- */
+.verdict{margin-top:13px;border-radius:12px;padding:15px;border:1px solid var(--line2);background:var(--bg2);text-align:center}
+.verdict .big{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.verdict .prem{font-size:14px;color:var(--dim);margin-top:4px;font-variant-numeric:tabular-nums}
+.verdict .why{font-size:13.5px;margin-top:9px;line-height:1.5}
+.v-good{border-color:rgba(61,220,132,.42);background:rgba(61,220,132,.09)} .v-good .big{color:var(--good)}
+.v-fair{border-color:rgba(255,201,77,.42);background:rgba(255,201,77,.09)} .v-fair .big{color:var(--fair)}
+.v-bad{border-color:rgba(255,94,94,.42);background:rgba(255,94,94,.09)} .v-bad .big{color:var(--bad)}
+.v-idle{color:var(--faint)} .v-idle .big{font-size:15px;font-weight:600;color:var(--faint)}
+
+/* ---------- tables ---------- */
+.tbl{width:100%;border-collapse:collapse;font-size:14.5px;font-variant-numeric:tabular-nums}
+.tbl th{text-align:left;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  font-weight:600;padding:0 0 9px;border-bottom:1px solid var(--line)}
+.tbl td{padding:11px 0;border-bottom:1px solid var(--line)}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td:last-child,.tbl th:last-child{text-align:right}
+.tbl .nm{font-weight:600}
+.tbl .sub{display:block;font-size:11.5px;color:var(--faint);font-weight:400;margin-top:2px;letter-spacing:0}
+.pgood{color:var(--good);font-weight:700} .pfair{color:var(--fair);font-weight:700} .pbad{color:var(--bad);font-weight:700}
+
+/* ---------- shops ---------- */
+.shop{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.shop.best{border-color:rgba(61,220,132,.45)}
+.shop-top{display:flex;gap:11px;align-items:flex-start}
+.shop-nm{font-weight:700;font-size:15.5px}
+.shop-ad{font-size:12.5px;color:var(--faint);margin-top:3px;line-height:1.45}
+.tag{display:inline-block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  background:var(--card2);border:1px solid var(--line2);color:var(--ag2);padding:3px 7px;border-radius:6px;margin-top:7px}
+.tag.hot{background:rgba(61,220,132,.13);border-color:rgba(61,220,132,.4);color:var(--good)}
+.call{flex:none;background:var(--accent);color:#04101f;font-weight:700;text-decoration:none;
+  border-radius:11px;padding:12px 15px;font-size:14px;min-height:46px;display:flex;align-items:center}
+.call:active{opacity:.75}
+.qrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
+.qrow input{padding:10px 11px;font-size:15px;min-height:44px}
+
+/* ---------- script / lists ---------- */
+.script{background:var(--bg2);border-left:3px solid var(--accent);border-radius:0 11px 11px 0;
+  padding:14px 15px;font-size:15.5px;line-height:1.62}
+.script b{color:#fff}
+.script .ins{color:var(--accent);font-weight:600}
+ul.clean{margin:0;padding:0;list-style:none}
+ul.clean li{padding:11px 0;border-bottom:1px solid var(--line);font-size:14.5px;line-height:1.5}
+ul.clean li:last-child{border-bottom:0}
+ul.clean li b{color:#fff}
+.flag li{padding-left:26px;position:relative}
+.flag li::before{content:"⛔";position:absolute;left:0;top:10px;font-size:13px}
+
+/* ---------- checklist ---------- */
+.chk{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.chk:last-child{border-bottom:0}
+.box{flex:none;width:24px;height:24px;border:2px solid var(--line2);border-radius:7px;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--bg);transition:.12s}
+.chk.on .box{background:var(--good);border-color:var(--good)}
+.chk.on .box::after{content:"✓";font-weight:900}
+.chk .t{font-size:14.5px;line-height:1.45}
+.chk.on .t{color:var(--faint);text-decoration:line-through}
+
+.callout{background:linear-gradient(160deg,rgba(110,168,255,.13),rgba(110,168,255,.04));
+  border:1px solid rgba(110,168,255,.3);border-radius:var(--r);padding:15px}
+.callout h3{font-size:15px;color:var(--accent);margin-bottom:7px}
+.callout p{margin:0;font-size:14.5px;line-height:1.55;color:var(--txt)}
+.warn{background:rgba(255,201,77,.08);border:1px solid rgba(255,201,77,.32)}
+.warn h3{color:var(--fair)}
+
+footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);color:var(--faint);font-size:12px;line-height:1.6}
+a{color:var(--accent)}
+.jump{display:flex;gap:7px;overflow-x:auto;padding:12px 0 2px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.jump::-webkit-scrollbar{display:none}
+.jump a{flex:none;background:var(--card2);border:1px solid var(--line2);color:var(--ag);
+  text-decoration:none;font-size:13px;padding:9px 13px;border-radius:99px;min-height:40px;display:flex;align-items:center}
+</style>
+</head>
+<body>
+
+<div class="spotbar">
+  <div class="inner">
+    <div>
+      <div class="spotlabel">Silver spot</div>
+      <div class="spotval" id="spotVal">$--.--<small>/oz</small></div>
+      <div class="spotmeta" id="spotMeta"><span class="dot off"></span>loading…</div>
+    </div>
+    <button class="refresh" id="btnRefresh">Refresh</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header class="hero">
+  <h1>Silver Field Card</h1>
+  <div class="sub">Houston · built for a $5k–$20k first buy. Everything on this page recalculates off live spot.</div>
+  <div>
+    <span class="pill">$5k–20k</span>
+    <span class="pill">Hedge + flip + barter</span>
+    <span class="pill">Will drive anywhere</span>
+  </div>
+  <div class="jump">
+    <a href="#check">Deal checker</a>
+    <a href="#targets">Target prices</a>
+    <a href="#junk">Junk silver</a>
+    <a href="#even">Break-even</a>
+    <a href="#shops">Call log</a>
+    <a href="#script">Script</a>
+    <a href="#flags">Red flags</a>
+  </div>
+</header>
+
+<!-- ============ THE PLAN ============ -->
+<section id="plan">
+  <div class="sec-h"><div class="sec-n">1</div><h2>Your play tomorrow</h2></div>
+  <div class="callout">
+    <h3>The one thing to understand</h3>
+    <p>You never pay spot — you pay <b>spot + premium</b>. The premium is the entire game. At your size,
+    a 4% difference between two shops is <b>$200–$800</b>. That is worth three phone calls.</p>
+  </div>
+  <div class="card" style="margin-top:10px">
+    <ul class="clean">
+      <li><b>You said you'd flip it if it spiked.</b> That makes premium <i>doubly</i> important — every point you
+      overpay is a point silver has to climb before you're even. Check the break-even tool below before you buy.</li>
+      <li><b>You said barter matters too.</b> Junk silver serves both: it's currently the cheapest silver
+      on the board <i>and</i> the most divisible. Lead with it.</li>
+      <li><b>Target mix:</b> ~50% junk silver, ~35% 10 oz bars, ~15% Eagles or generic rounds.
+      That covers cheap ounces, easy resale, and small-piece divisibility in one trip.</li>
+      <li><b>Buy about half your budget tomorrow.</b> You said it depends how it goes — so make tomorrow
+      a learning run. Find the shop that treated you straight, then go back with the rest.</li>
+    </ul>
+  </div>
+  <div class="card warn callout" style="margin-top:10px">
+    <h3>Payment — you said undecided</h3>
+    <p><b>Debit card.</b> Same price as cash at almost every shop, no counting risk, no Form 8300 paperwork.
+    Credit adds 3–4%, which at your size burns <b>$200–$800</b> for nothing. If you do pay cash over $10,000
+    the dealer files IRS Form 8300 — totally routine, but never split payments to dodge it; <i>that</i> is the actual crime.</p>
+  </div>
+</section>
+
+<!-- ============ DEAL CHECKER ============ -->
+<section id="check">
+  <div class="sec-h"><div class="sec-n">2</div><h2>Deal checker</h2></div>
+  <div class="note" style="margin-bottom:11px">Dealer quotes you a number. Type it here. Find out instantly if it's fair.</div>
+  <div class="card">
+    <div class="field">
+      <label class="fl" for="dcProd">What are they quoting?</label>
+      <select id="dcProd">
+        <option value="junk">90% junk silver — per $1 face value</option>
+        <option value="junkbag">90% junk silver — per $100 face bag</option>
+        <option value="bar10">10 oz bar</option>
+        <option value="bar100">100 oz bar</option>
+        <option value="round">1 oz generic round</option>
+        <option value="ase">1 oz American Silver Eagle</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="fl" for="dcPrice">Their price (out the door)</label>
+      <input id="dcPrice" type="number" inputmode="decimal" step="0.01" placeholder="e.g. 690.00">
+    </div>
+    <div class="verdict v-idle" id="dcOut">
+      <div class="big">Enter a price</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TARGETS ============ -->
+<section id="targets">
+  <div class="sec-h"><div class="sec-n">3</div><h2>What you should be paying</h2></div>
+  <div class="note" style="margin-bottom:11px">Live off spot. <span class="pgood">Green</span> = buy it.
+  <span class="pfair">Yellow</span> = fair, try to negotiate. Above that, walk.</div>
+  <div class="card" style="padding:15px 15px 4px">
+    <table class="tbl">
+      <thead><tr><th>Product</th><th>Great</th><th>Still OK</th></tr></thead>
+      <tbody id="tgtBody"></tbody>
+    </table>
+  </div>
+  <div class="tiny" style="margin-top:9px">Local shops run 1–3% above online dealers — that's the price of walking out
+  with it today, and it's baked into these bands.</div>
+</section>
+
+<!-- ============ JUNK SILVER ============ -->
+<section id="junk">
+  <div class="sec-h"><div class="sec-n">4</div><h2>Junk silver — your edge</h2></div>
+  <div class="callout">
+    <h3>Ask for this first, at every shop</h3>
+    <p>Refineries hit capacity in 2026 and stopped buying 90% coin, so dealers are stuck holding it for weeks.
+    It has been trading <b>at or below spot</b> — nearly unheard of, it normally carries a 3–25% premium.
+    If a shop sells near melt, it's the cheapest silver in the building.</p>
+  </div>
+  <div class="card" style="margin-top:10px;padding:15px 15px 4px">
+    <table class="tbl">
+      <thead><tr><th>Pre-1965 coin</th><th>Silver</th><th>Melt now</th></tr></thead>
+      <tbody id="junkBody"></tbody>
+    </table>
+  </div>
+  <div class="card warn callout" style="margin-top:10px">
+    <h3>Don't get these mixed in</h3>
+    <p><b>1965–70 half dollars are only 40% silver</b> and war nickels are 35%. They're worth far less per coin.
+    Say the words <i>"90% only"</i> when you ask, and check dates.</p>
+  </div>
+</section>
+
+<!-- ============ BREAK EVEN ============ -->
+<section id="even">
+  <div class="sec-h"><div class="sec-n">5</div><h2>Break-even — read before you flip</h2></div>
+  <div class="note" style="margin-bottom:11px">You buy above spot and sell below it. This shows what silver
+  actually has to hit before you make a dollar.</div>
+  <div class="card">
+    <div class="row2">
+      <div class="field" style="margin:0">
+        <label class="fl" for="beSpend">Total you spent</label>
+        <input id="beSpend" type="number" inputmode="decimal" placeholder="10000">
+      </div>
+      <div class="field" style="margin:0">
+        <label class="fl" for="beOz">Ounces you got</label>
+        <input id="beOz" type="number" inputmode="decimal" step="0.01" placeholder="145">
+      </div>
+    </div>
+    <div class="field">
+      <label class="fl" for="beBuyback">Shop pays back (% of spot)</label>
+      <select id="beBuyback">
+        <option value="98">98% — best case, big clean bars</option>
+        <option value="95" selected>95% — typical</option>
+        <option value="92">92% — typical for junk/odd lots</option>
+        <option value="90">90% — worst case</option>
+      </select>
+    </div>
+    <div class="verdict v-idle" id="beOut"><div class="big">Enter what you spent</div></div>
+  </div>
+</section>
+
+<!-- ============ SHOPS ============ -->
+<section id="shops">
+  <div class="sec-h"><div class="sec-n">6</div><h2>Call log — do this first</h2></div>
+  <div class="note" style="margin-bottom:11px">You said you'd drive anywhere, so call all six. Tap to dial.
+  Log the quotes — they save on this page.</div>
+  <div id="shopList"></div>
+  <div class="tiny">Hours drift at coin shops and inventory is thin in this market — confirm both on the call.
+  Most are Mon–Fri ~9–5, Saturdays short.</div>
+</section>
+
+<!-- ============ SCRIPT ============ -->
+<section id="script">
+  <div class="sec-h"><div class="sec-n">7</div><h2>What to say</h2></div>
+  <div class="script">
+    "Hi — what's your out-the-door price today on <span class="ins">[90% junk silver per dollar face]</span>?
+    <b>What spot are you using?</b> And <b>what would you pay me for it back today?</b>"
+  </div>
+  <div class="card" style="margin-top:10px">
+    <ul class="clean">
+      <li><b>That last question is the whole thing.</b> It exposes the full spread in one sentence and tells the
+      dealer you're not a mark. A shop that dodges it is a shop you don't buy from.</li>
+      <li><b>At $5k–20k, say your number out loud.</b> "I'm looking to spend about $10,000 today — what can you do
+      on that?" Dealers move at that size. They will not volunteer it.</li>
+      <li><b>Never accept a flat dollar price.</b> Always convert: "what is that as a percent over spot?"</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ AUTHENTICATION ============ -->
+<section id="auth">
+  <div class="sec-h"><div class="sec-n">8</div><h2>At the counter</h2></div>
+  <div class="card">
+    <ul class="clean">
+      <li><b>"Do you have a Sigma verifier? Can you test it in front of me?"</b> Good shops have one and
+      will happily do it. A dealer who gets defensive about testing their own product is the single biggest
+      red flag there is.</li>
+      <li><b>Magnet slide.</b> Real silver isn't magnetic, but a strong magnet sliding down a real bar visibly
+      <i>slows</i>. A steel-core fake sticks; a lead or tungsten core slides off with no drag at all.</li>
+      <li><b>Ping it.</b> Real silver rings like a tuning fork for a second or two. A fake goes <i>thud</i>.</li>
+      <li><b>An Eagle is exactly 40.6mm wide, 2.98mm thick, 31.103g.</b> Fakes almost always miss on thickness —
+      nothing else has silver's density.</li>
+      <li><b>Prefer known names:</b> Asahi, Sunshine, Geiger, PAMP, Royal Canadian Mint. Sealed mint tubes for rounds.
+      Skip no-name bars with no serial.</li>
+      <li><b>Texas charges zero sales tax on gold and silver bullion</b> — no minimum. If tax appears on the metal,
+      stop the transaction. (Tubes, capsules and safes <i>are</i> taxed. So is palladium.)</li>
+      <li><b>Get an itemized receipt</b> showing date, item, quantity, <b>the spot price they used</b>, premium,
+      and total. Photograph it before you leave the lot. That's your cost basis — and the IRS taxes silver as a
+      collectible at up to 28%, so you will want it.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ RED FLAGS ============ -->
+<section id="flags">
+  <div class="sec-h"><div class="sec-n">9</div><h2>Walk out if…</h2></div>
+  <div class="card">
+    <ul class="clean flag">
+      <li>They won't tell you what spot price they're using</li>
+      <li>They won't quote a buyback number</li>
+      <li><b>They steer you from bullion to graded, proof or "rare" coins.</b> This is the classic bait-and-switch.
+      Markups run 50–300% and you will never get it back. At your budget you are exactly the target.</li>
+      <li>Sales tax appears on bullion in Texas</li>
+      <li>"This price is only good today"</li>
+      <li>Talk of dollar collapse, confiscation, or "untraceable" metal</li>
+      <li>They refuse to test a piece in front of you</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ STORAGE ============ -->
+<section id="storage">
+  <div class="sec-h"><div class="sec-n">10</div><h2>Where it lives — you hadn't decided</h2></div>
+  <div class="card">
+    <ul class="clean">
+      <li><b>Know the size first.</b> $5k–20k is roughly 75–300 oz — <b>5 to 20 lbs</b> of metal. It is heavier and
+      bulkier than people expect. 300 oz of junk silver is a genuinely large, loud pile.</li>
+      <li><b>Rule one: don't tell people you own it.</b> Not a joke. This is the whole security model.</li>
+      <li><b>Home safe</b> — must be bolted down; an unbolted safe is a box with a handle. Then call your insurer:
+      standard homeowner's policies cap precious metals around <b>$200–$1,000</b>. You need a scheduled rider,
+      and it's cheap.</li>
+      <li><b>Bank safe deposit box</b> — safest from theft and fire, but <b>not FDIC insured</b>, and you can't get
+      at it on a weekend. Fine for a hold, annoying if you want to flip fast.</li>
+      <li><b>Texas Bullion Depository</b> (Austin) — state-run and fully insured. Overkill at your size but worth
+      knowing if you keep stacking.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ CHECKLIST ============ -->
+<section id="list">
+  <div class="sec-h"><div class="sec-n">11</div><h2>Tomorrow</h2></div>
+  <div class="card" id="chkList"></div>
+  <div class="tiny" style="margin-top:9px">Checkmarks and quotes save on this device.</div>
+</section>
+
+<footer>
+  Built 23 Sep 2026. Spot is live from gold-api.com and refreshes when you open or tap Refresh — if the feed is
+  down, tap the price and type it in by hand. Premium bands are judgment calls based on late-2026 market
+  conditions, not quotes. Nothing here is financial advice.
+</footer>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------------- state ---------------- */
+var spot = 0;
+var manual = false;
+
+/* ---------------- storage (must never throw) ---------------- */
+function save(k,v){ try{ localStorage.setItem("ag_"+k, v); }catch(e){} }
+function load(k){ try{ return localStorage.getItem("ag_"+k); }catch(e){ return null; } }
+
+/* ---------------- money ---------------- */
+function money(n){
+  if(!isFinite(n)) return "$--";
+  return "$" + n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function money0(n){
+  if(!isFinite(n)) return "$--";
+  return "$" + n.toLocaleString("en-US",{maximumFractionDigits:0});
+}
+
+/* ---------------- product definitions ----------------
+   oz     = troy ounces of silver in one unit
+   good   = premium % at or under which it's a great buy
+   ok     = premium % at or under which it's still fair
+------------------------------------------------------- */
+var PRODUCTS = {
+  junk:    {name:"90% junk silver",      unit:"per $1 face",   oz:0.715,  good:3,  ok:9,  note:"cheapest + most divisible right now"},
+  junkbag: {name:"90% junk silver",      unit:"per $100 face", oz:71.5,   good:3,  ok:9,  note:"same math, bigger lot"},
+  bar10:   {name:"10 oz bar",            unit:"each",          oz:10,     good:4,  ok:7,  note:"best bulk value"},
+  bar100:  {name:"100 oz bar",           unit:"each",          oz:100,    good:3,  ok:5,  note:"cheapest per oz, hardest to resell in pieces"},
+  round:   {name:"1 oz generic round",   unit:"each",          oz:1,      good:6,  ok:10, note:"solid middle ground"},
+  ase:     {name:"1 oz Silver Eagle",    unit:"each",          oz:1,      good:8,  ok:12, note:"you pay for the name"}
+};
+var TARGET_ORDER = ["junk","bar10","bar100","round","ase"];
+
+/* ---------------- junk silver coins ---------------- */
+var JUNK = [
+  {n:"Dime",            d:"Mercury / Roosevelt",   oz:0.0715},
+  {n:"Quarter",         d:"Washington",            oz:0.17875},
+  {n:"Half dollar",     d:"Walking Liberty / Franklin / '64 Kennedy", oz:0.35875},
+  {n:"$1 face value",   d:"any mix of the above",  oz:0.715},
+  {n:"$100 face bag",   d:"the standard trade lot", oz:71.5}
+];
+
+/* ---------------- shops ---------------- */
+var SHOPS = [
+  {n:"J.R. Bullion",               a:"106 Bay View Dr Ste A, Sugar Land",     t:"2813025448", tag:"Does 90% junk silver specifically", hot:true},
+  {n:"U.S. Coins and Jewelry",     a:"8501 Katy Fwy, Houston",                t:"7134646868", tag:"Biggest name in Houston"},
+  {n:"Houston Numismatic Exchange",a:"2486 Times Blvd (Rice Village)",        t:"8002313650", tag:"Since 1965 · deep bullion stock"},
+  {n:"Houston Gold & Silver",      a:"19333 US-59 N #100, Humble",            t:"2813613377", tag:"Publishes 90–98% buyback"},
+  {n:"Royal Coin & Jewelry",       a:"4658 Beechnut St, Houston",             t:"8009726467", tag:"Bullion + scrap"},
+  {n:"Collectors Coin Shop",       a:"6503 S. Rice Ave, Bellaire",            t:"7139522646", tag:"Collector-leaning, still does bullion"}
+];
+
+/* ---------------- checklist ---------------- */
+var CHECKS = [
+  "Check spot on this page in the parking lot — it moves all day",
+  "Call all six shops before driving anywhere",
+  "Ask every one: 'what would you pay me for it back today?'",
+  "Ask specifically for 90% junk silver, per dollar of face value",
+  "Say your budget out loud and ask what they can do",
+  "Run their quote through the deal checker before you agree",
+  "Pay by debit — not credit",
+  "Confirm zero sales tax on the metal",
+  "Ask them to Sigma-test it in front of you",
+  "Itemized receipt showing the spot price they used",
+  "Photograph the receipt before you leave the lot"
+];
+
+/* ================= SPOT ================= */
+function paintSpot(srcLabel, cls){
+  var el = document.getElementById("spotVal");
+  var m  = document.getElementById("spotMeta");
+  el.innerHTML = (spot>0 ? "$" + spot.toFixed(2) : "$--.--") + "<small>/oz</small>";
+  m.innerHTML = '<span class="dot ' + cls + '"></span>' + srcLabel;
+}
+
+function fetchSpot(){
+  if(manual) return;
+  document.getElementById("spotMeta").innerHTML = '<span class="dot stale"></span>updating…';
+  fetch("https://api.gold-api.com/price/XAG", {cache:"no-store"})
+    .then(function(r){ if(!r.ok) throw new Error("bad status"); return r.json(); })
+    .then(function(j){
+      var p = parseFloat(j && j.price);
+      if(!isFinite(p) || p<=0) throw new Error("bad price");
+      spot = p;
+      save("spot", String(p));
+      save("spotAt", String(Date.now()));
+      var t = new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+      paintSpot("live · " + t, "");
+      renderAll();
+    })
+    .catch(function(){
+      var cached = parseFloat(load("spot"));
+      if(isFinite(cached) && cached>0){
+        spot = cached;
+        paintSpot("last known — tap price to set by hand", "stale");
+      }else{
+        spot = 64.59;
+        paintSpot("feed down — tap price to set by hand", "off");
+      }
+      renderAll();
+    });
+}
+
+/* tap the price to type it in manually */
+document.getElementById("spotVal").addEventListener("click", function(){
+  var v = prompt("Enter silver spot price per ounce (what the dealer or Kitco says):",
+                 spot>0 ? spot.toFixed(2) : "");
+  if(v===null) return;
+  var p = parseFloat(String(v).replace(/[^0-9.]/g,""));
+  if(isFinite(p) && p>0){
+    spot = p; manual = true;
+    paintSpot("set by hand — tap Refresh for live", "stale");
+    renderAll();
+  }
+});
+
+document.getElementById("btnRefresh").addEventListener("click", function(){
+  manual = false;
+  fetchSpot();
+});
+
+/* ================= RENDER ================= */
+function renderTargets(){
+  var b = document.getElementById("tgtBody");
+  if(!b) return;
+  var h = "";
+  for(var i=0;i<TARGET_ORDER.length;i++){
+    var k = TARGET_ORDER[i], p = PRODUCTS[k];
+    var base = spot * p.oz;
+    h += '<tr>'
+      +  '<td class="nm">'+p.name+'<span class="sub">'+p.unit+' · '+p.note+'</span></td>'
+      +  '<td class="pgood">'+money(base*(1+p.good/100))+'</td>'
+      +  '<td class="pfair">'+money(base*(1+p.ok/100))+'</td>'
+      +  '</tr>';
+  }
+  b.innerHTML = h;
+}
+
+function renderJunk(){
+  var b = document.getElementById("junkBody");
+  if(!b) return;
+  var h = "";
+  for(var i=0;i<JUNK.length;i++){
+    var j = JUNK[i];
+    h += '<tr>'
+      +  '<td class="nm">'+j.n+'<span class="sub">'+j.d+'</span></td>'
+      +  '<td>'+j.oz.toFixed(4)+' oz</td>'
+      +  '<td class="pgood">'+money(j.oz*spot)+'</td>'
+      +  '</tr>';
+  }
+  b.innerHTML = h;
+}
+
+function renderDealCheck(){
+  var out  = document.getElementById("dcOut");
+  var key  = document.getElementById("dcProd").value;
+  var raw  = document.getElementById("dcPrice").value;
+  var px   = parseFloat(raw);
+  var p    = PRODUCTS[key];
+
+  if(!isFinite(px) || px<=0 || spot<=0){
+    out.className = "verdict v-idle";
+    out.innerHTML = '<div class="big">Enter a price</div>';
+    return;
+  }
+  var melt = spot * p.oz;
+  var prem = ((px - melt) / melt) * 100;
+  var cls, big, why;
+
+  if(prem <= p.good){
+    cls="v-good"; big="BUY IT";
+    why = "That's at or under the good band for " + p.name.toLowerCase() + ". Don't overthink it.";
+  } else if(prem <= p.ok){
+    cls="v-fair"; big="FAIR — PUSH";
+    why = "Reasonable, but there's room. Say: “can you do " + money(melt*(1+p.good/100)) +
+          "?” At your budget they will often move.";
+  } else {
+    cls="v-bad"; big="TOO HIGH";
+    why = "You should be paying around " + money(melt*(1+p.good/100)) + " and no more than " +
+          money(melt*(1+p.ok/100)) + ". Call the next shop.";
+  }
+  if(prem < 0){
+    big = "BELOW MELT"; cls="v-good";
+    why = "Under spot. That's the 2026 junk-silver dislocation — if it's genuine 90% and they'll let you test it, take it.";
+  }
+
+  out.className = "verdict " + cls;
+  out.innerHTML =
+      '<div class="big">'+big+'</div>'
+    + '<div class="prem">'+(prem>=0?"+":"")+prem.toFixed(1)+'% over melt · melt is '+money(melt)+'</div>'
+    + '<div class="why">'+why+'</div>';
+}
+
+function renderBreakEven(){
+  var out   = document.getElementById("beOut");
+  var spend = parseFloat(document.getElementById("beSpend").value);
+  var oz    = parseFloat(document.getElementById("beOz").value);
+  var bb    = parseFloat(document.getElementById("beBuyback").value) / 100;
+
+  if(!isFinite(spend) || !isFinite(oz) || spend<=0 || oz<=0){
+    out.className = "verdict v-idle";
+    out.innerHTML = '<div class="big">Enter what you spent</div>';
+    return;
+  }
+  var perOz    = spend / oz;
+  var needSpot = perOz / bb;
+  var movePct  = spot>0 ? ((needSpot - spot) / spot) * 100 : NaN;
+  var cls = movePct <= 8 ? "v-good" : (movePct <= 15 ? "v-fair" : "v-bad");
+
+  out.className = "verdict " + cls;
+  out.innerHTML =
+      '<div class="big">'+money(needSpot)+'</div>'
+    + '<div class="prem">silver has to reach this before you break even</div>'
+    + '<div class="why">You paid <b>'+money(perOz)+'</b>/oz. Selling back at '+(bb*100).toFixed(0)+
+      '% of spot, you need a <b>'+(isFinite(movePct)?movePct.toFixed(1):"--")+'%</b> move from today’s '+
+      money(spot)+'. That gap is the real cost of buying physical — it is why this is a hold, not a trade.</div>';
+}
+
+function renderShops(){
+  var w = document.getElementById("shopList");
+  if(!w) return;
+  var h = "";
+  for(var i=0;i<SHOPS.length;i++){
+    var s = SHOPS[i];
+    h += '<div class="shop'+(s.hot?" best":"")+'">'
+      +   '<div class="shop-top">'
+      +     '<div style="flex:1;min-width:0">'
+      +       '<div class="shop-nm">'+s.n+'</div>'
+      +       '<div class="shop-ad">'+s.a+'</div>'
+      +       '<span class="tag'+(s.hot?" hot":"")+'">'+s.tag+'</span>'
+      +     '</div>'
+      +     '<a class="call" href="tel:'+s.t+'">Call</a>'
+      +   '</div>'
+      +   '<div class="qrow">'
+      +     '<input data-q="'+i+'a" placeholder="Their price" inputmode="decimal">'
+      +     '<input data-q="'+i+'b" placeholder="Buyback %" inputmode="decimal">'
+      +   '</div>'
+      + '</div>';
+  }
+  w.innerHTML = h;
+
+  var qs = w.querySelectorAll("input[data-q]");
+  for(var k=0;k<qs.length;k++){
+    (function(el){
+      var id = el.getAttribute("data-q");
+      var v = load("q"+id);
+      if(v) el.value = v;
+      el.addEventListener("input", function(){ save("q"+id, el.value); });
+    })(qs[k]);
+  }
+}
+
+function renderChecks(){
+  var w = document.getElementById("chkList");
+  if(!w) return;
+  var h = "";
+  for(var i=0;i<CHECKS.length;i++){
+    var on = load("c"+i) === "1";
+    h += '<div class="chk'+(on?" on":"")+'" data-c="'+i+'"><div class="box"></div><div class="t">'+CHECKS[i]+'</div></div>';
+  }
+  w.innerHTML = h;
+  var rows = w.querySelectorAll(".chk");
+  for(var k=0;k<rows.length;k++){
+    (function(el){
+      el.addEventListener("click", function(){
+        var on = el.classList.toggle("on");
+        save("c"+el.getAttribute("data-c"), on ? "1" : "0");
+      });
+    })(rows[k]);
+  }
+}
+
+function renderAll(){
+  renderTargets();
+  renderJunk();
+  renderDealCheck();
+  renderBreakEven();
+}
+
+/* ================= WIRE UP ================= */
+document.getElementById("dcProd").addEventListener("change", renderDealCheck);
+document.getElementById("dcPrice").addEventListener("input", renderDealCheck);
+document.getElementById("beSpend").addEventListener("input", renderBreakEven);
+document.getElementById("beOz").addEventListener("input", renderBreakEven);
+document.getElementById("beBuyback").addEventListener("change", renderBreakEven);
+
+/* boot with cached spot so nothing is ever blank */
+var boot = parseFloat(load("spot"));
+spot = (isFinite(boot) && boot>0) ? boot : 64.59;
+paintSpot("loading…", "stale");
+renderShops();
+renderChecks();
+renderAll();
+fetchSpot();
+
+/* refresh when he comes back to the tab at the shop */
+document.addEventListener("visibilitychange", function(){
+  if(!document.hidden && !manual) fetchSpot();
+});
+
+window.__agReady = true;
+})();
+</script>
+</body>
+</html>
