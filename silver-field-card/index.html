@@ -77,7 +77,7 @@ body::after{
 }
 .wrap{max-width:580px;margin:0 auto;padding:0 var(--pad);position:relative;z-index:1}
 
-h1,h2,h3{margin:0;font-family:var(--f-head);font-weight:600;line-height:1.15;letter-spacing:-.015em}
+h1,h2,h3{margin:0;font-family:var(--f-head);font-weight:600;line-height:1.15;letter-spacing:-.008em;word-spacing:.08em}
 .num{font-family:var(--f-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 
 /* hairline with a metallic sheen */
@@ -115,7 +115,7 @@ main{padding-bottom:calc(var(--bar) + env(safe-area-inset-bottom) + 26px);min-he
 @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 .ph{padding:20px 0 4px}
-.ph h1{font-size:25px;font-weight:600;letter-spacing:-.025em}
+.ph h1{font-size:25px;font-weight:600;letter-spacing:-.012em;word-spacing:.09em}
 .ph p{margin:6px 0 0;color:var(--dim);font-size:14px;line-height:1.5}
 
 section{margin-top:24px}
@@ -157,7 +157,7 @@ select{font-family:var(--f-body);font-size:15px;
 /* ============ VERDICT — the signature moment ============ */
 .vd{margin-top:13px;border-radius:13px;padding:17px 15px;text-align:center;
   border:1px solid var(--line2);background:var(--panel2);overflow:hidden;position:relative}
-.vd .big{font-family:var(--f-head);font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.05}
+.vd .big{font-family:var(--f-head);font-size:28px;font-weight:700;letter-spacing:-.005em;word-spacing:.1em;line-height:1.05}
 .vd .pr{font-family:var(--f-num);font-size:13px;color:var(--dim);margin-top:6px;letter-spacing:-.01em}
 .vd .why{font-size:13.5px;line-height:1.5;margin-top:10px;color:var(--txt)}
 .vd .why b{color:#fff}
@@ -189,11 +189,11 @@ select{font-family:var(--f-body);font-size:15px;
 .shop{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:9px;
   transition:.2s;position:relative}
 .shop.win{border-color:rgba(52,211,153,.5);background:linear-gradient(180deg,rgba(52,211,153,.07),transparent)}
-.shop .rk{position:absolute;top:-8px;right:12px;background:var(--good);color:#04221a;font-size:9.5px;
+.shop .rk{position:absolute;top:-8px;left:12px;background:var(--good);color:#04221a;font-size:9.5px;
   font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:6px;display:none}
 .shop.win .rk{display:block}
 .st{display:flex;gap:11px;align-items:flex-start}
-.sn{font-weight:600;font-size:15px;font-family:var(--f-head)}
+.sn{font-weight:600;font-size:15px;font-family:var(--f-head);word-spacing:.08em}
 .sa{font-size:12px;color:var(--faint);margin-top:3px;line-height:1.4}
 .tg{display:inline-block;font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;background:var(--panel2);
   border:1px solid var(--line2);color:var(--silver2);padding:3px 7px;border-radius:6px;margin-top:8px}
@@ -282,7 +282,7 @@ a{color:var(--accent)}
       <div class="sb-v" id="spotVal"><span class="num" id="spotNum">--.--</span><span class="u">/oz</span></div>
       <div class="sb-m" id="spotMeta"><span class="dot off"></span><span id="spotSrc">loading</span></div>
     </div>
-    <button class="btn-r" id="btnRefresh" aria-label="Refresh price"></button>
+    <button class="btn-r" id="btnRefresh" data-ic="RefreshCw" data-sz="19" aria-label="Refresh price"></button>
   </div>
   <hr class="sheen">
 </div>
