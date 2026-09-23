@@ -757,11 +757,14 @@ function renderDC(){
   var tGood=melt*(1+p.good/100), tOk=melt*(1+p.ok/100);
 
   var sub = prem<0 ? " It is under melt — that is the 2026 junk-silver dislocation. Make them test it in front of you." : "";
-  if(prem<=p.good){
+  /* float noise makes an exact-band quote read as 3.0000000001 and drop a tier.
+     A dealer who hits the number deserves the green light. */
+  var E = 0.005;
+  if(prem<=p.good+E){
     cls="v-good"; big="BUY IT";
     why="At or under the good band for "+p.name.toLowerCase()+"."+sub;
     say=null;
-  } else if(prem<=p.ok){
+  } else if(prem<=p.ok+E){
     cls="v-fair"; big="FAIR — PUSH";
     why="Reasonable, but there is room, and at your size they move."+sub;
     say="Can you do "+money(tGood)+" on that?";
