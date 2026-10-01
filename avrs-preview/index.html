@@ -3,77 +3,72 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>A private preview for Anthony — AVRS Automotive × SANO</title>
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex">
+<title>A private preview for Anthony · AVRS Automotive × SANO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#060608; --bg2:#0c0c11; --panel:#14141b; --panel2:#1b1b24;
-    --blue:#0070F3; --blue2:#338EF7; --cyan:#00D4FF;
+    --blue:#0070F3; --blue2:#338EF7; --cyan:#00D4FF; --job:#0B5FD6;
     --amber:#E8943A; --amber-soft:rgba(232,148,58,.14);
     --grad:linear-gradient(135deg,#0070F3,#00D4FF);
-    --ink:#F2EBE0; --mut:#a8b0c0; --dim:#6b7280; --line:rgba(255,255,255,.10);
-    --good:#22c55e;
+    --ink:#F2EBE0; --mut:#a8b0c0; --dim:#8a93a3; --line:rgba(255,255,255,.10);
     --font:'Space Grotesk',sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  html{color-scheme:dark;scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;overflow-x:hidden}
   body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;overscroll-behavior-y:none}
   .wrap{max-width:780px;margin:0 auto;position:relative}
-  h1,h2,h3{font-family:var(--font);letter-spacing:-.02em;line-height:1.06;text-wrap:balance}
+  h1,h2,h3{font-family:var(--font);letter-spacing:-.02em;line-height:1.08;text-wrap:balance}
   p{text-wrap:pretty}
+  .vh{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-  /* ===== touch polish =====
-     Without touch-action:manipulation, two quick taps on any control register
-     as double-tap-to-zoom — which is exactly what happens when you tap through
-     the demo tabs. This kills that without disabling deliberate pinch-zoom. */
-  a,button,label,.btn,.tool,.qa,.sb-chip,.sb-launch{
-    -webkit-tap-highlight-color:transparent;
-    touch-action:manipulation;
-  }
-  a,button,label,.btn,.sb-chip,.sb-launch,.eyebrow,.stage-kicker,.amber-tag,.kills{
-    -webkit-user-select:none;user-select:none;
-  }
-  /* keyboard users still get a clear focus ring; mouse/touch users don't see it */
-  a:focus-visible,button:focus-visible,input:focus-visible,label:focus-visible{
-    outline:2px solid var(--cyan);outline-offset:3px;border-radius:8px;
-  }
-  /* hover effects are for real pointers only — on touch they stick after a tap
-     and make the page look frozen mid-animation */
+  /* Two quick taps on a control must never read as double-tap-to-zoom. */
+  a,button,label,.btn,.sb-chip,.sb-launch{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  a,button,label,.btn,.sb-chip,.sb-launch,.eyebrow,.stage-kicker{-webkit-user-select:none;user-select:none}
+  a:focus-visible,button:focus-visible,input:focus-visible,label:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:8px}
+  /* hover is for real pointers only; on touch it sticks after a tap */
   @media (hover:none){
     .phones-stage .demo:hover .phone{transform:rotateX(3deg);box-shadow:0 30px 60px -24px rgba(0,0,0,.85),0 0 0 1px rgba(0,212,255,.12)}
-    .tool:hover{border-color:var(--line)}
     .btn-ghost:hover{border-color:var(--line);color:var(--ink)}
     .sb-chip:hover{border-color:var(--line)}
   }
   .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
   section{padding:54px 24px}
   .eyebrow{font-family:var(--font);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);font-weight:600}
-  .amber-tag{display:inline-flex;align-items:center;gap:7px;font-family:var(--font);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
-    color:var(--amber);background:var(--amber-soft);border:1px solid rgba(232,148,58,.4);border-radius:999px;padding:5px 13px}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font);font-weight:600;
-    border:none;border-radius:12px;padding:15px 22px;font-size:15px;cursor:pointer;text-decoration:none;transition:transform .15s,box-shadow .15s}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font);font-weight:600;min-height:48px;
+    border:none;border-radius:12px;padding:14px 22px;font-size:15px;cursor:pointer;text-decoration:none;transition:transform .15s,box-shadow .15s}
   .btn:active{transform:scale(.97)}
   .btn-pri{background:var(--grad);color:#05121f;box-shadow:0 10px 26px -8px rgba(0,112,243,.6)}
   .btn-ghost{background:rgba(255,255,255,.04);color:var(--ink);border:1.5px solid var(--line)}
   .btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
 
   .sano-bar{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:space-between;
-    padding:11px 18px;background:rgba(6,6,8,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    padding:11px 18px;background:rgba(6,6,8,.85);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
   .sano-bar .mk{font-family:var(--font);font-weight:700;letter-spacing:.14em;font-size:15px;display:flex;align-items:center;gap:9px}
   .sano-bar .founding{font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);border:1px solid rgba(232,148,58,.45);border-radius:6px;padding:2px 7px}
   .sano-bar .by{font-size:10.5px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase}
 
-  /* stage */
+  /* ===== hero ===== */
   .stage{position:relative;overflow:hidden;padding:46px 24px 52px;background:radial-gradient(130% 95% at 50% -8%, #0a1a33 0%, #07080d 55%, var(--bg) 100%)}
   .stage-glow{position:absolute;inset:-25% -12% auto -12%;height:520px;pointer-events:none;z-index:0;
     background:radial-gradient(48% 60% at 28% 28%, rgba(0,112,243,.32), transparent 70%),radial-gradient(46% 55% at 76% 18%, rgba(0,212,255,.22), transparent 72%)}
   .stage:before{content:"";position:absolute;inset:0;z-index:0;opacity:.4;background-image:repeating-linear-gradient(115deg,rgba(0,212,255,.05) 0 2px,transparent 2px 26px)}
   .stage-inner{position:relative;z-index:2;max-width:710px;margin:0 auto;text-align:center}
-  .hero-copy h1{font-size:clamp(30px,6.4vw,48px);margin-bottom:14px}
-  .hero-copy .sub{color:var(--mut);max-width:470px;margin:0 auto 14px;font-size:16px}
-  .trustline{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;font-family:var(--font);font-weight:600;font-size:12.5px;color:var(--ink);margin-top:4px}
+  .hero-copy h1{font-size:clamp(30px,6.4vw,46px);margin-bottom:16px}
+  .hero-copy .sub{color:var(--mut);max-width:520px;margin:0 auto 16px;font-size:16px}
+  .hero-copy .sub b{color:var(--ink);font-weight:600}
+  .once{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;text-align:left;max-width:600px;margin:4px auto 18px}
+  .once-col{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.28);border-radius:14px;padding:13px 15px}
+  .once-h{font-family:var(--font);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px;line-height:1.3}
+  .once ul{list-style:none;display:grid;gap:5px}
+  .once li{font-size:13.5px;color:#d8dde8;line-height:1.4;padding-left:16px;position:relative}
+  .once li:before{content:"";position:absolute;left:2px;top:.55em;width:6px;height:6px;border-radius:50%;background:var(--cyan)}
+  .once p{font-size:14px;color:var(--ink);line-height:1.45}
+  .trustline{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;font-family:var(--font);font-weight:600;font-size:12.5px;color:var(--ink);margin-top:2px}
   .trustline b{color:var(--cyan)}
   .stage-kicker{margin:32px 0 22px;font-family:var(--font);font-weight:600;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan)}
   .stage-kicker span{display:inline-flex;align-items:center;gap:12px}
@@ -83,12 +78,12 @@
   .phone{position:relative;width:300px;max-width:86vw;height:630px;border-radius:34px;padding:8px;background:linear-gradient(160deg,#10131c,#06080e);box-shadow:0 30px 60px -24px rgba(0,0,0,.85),0 0 0 1px rgba(0,212,255,.12);overflow:hidden;transition:transform .55s cubic-bezier(.2,.8,.2,1),box-shadow .55s}
   .phone .notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:88px;height:22px;border-radius:14px;background:#05080f;z-index:6}
   .frame-clip{position:relative;width:100%;height:100%;border-radius:27px;overflow:hidden;background:#0b0e16}
-  .frame-clip iframe{position:absolute;top:0;left:0;width:390px;height:844px;border:0;transform:scale(.7282);transform-origin:top left}
+  .frame-clip iframe{position:absolute;top:0;left:0;width:391px;height:845px;border:0;transform:scale(.7263);transform-origin:top left}
   .demo .phone{transform:rotateX(3deg)}
   .phones-stage .demo:hover .phone{transform:rotateX(0) translateY(-10px);box-shadow:0 42px 84px -28px rgba(0,0,0,.85),0 0 0 1px var(--cyan)}
   .demo-cap{text-align:center}
   .demo-cap b{font-family:var(--font);font-weight:600;font-size:16px;display:block}
-  .demo-cap span{display:block;font-size:12.5px;color:var(--mut);margin:3px 0 12px;max-width:320px}
+  .demo-cap span{display:block;font-size:12.5px;color:var(--mut);margin:3px auto 12px;max-width:320px}
   .opener{width:300px;max-width:86vw}
   .stage-foot{position:relative;z-index:2;text-align:center;color:var(--dim);font-size:13px;margin:32px auto 0;max-width:420px}
 
@@ -96,91 +91,107 @@
   .sec-head h2{font-size:clamp(26px,5.4vw,36px);margin:8px 0 12px}
   .sec-head p{color:var(--mut);font-size:15.5px}
 
-  /* direction note */
-  .dirnote{padding:40px 24px}
-  .dirnote-card{max-width:600px;margin:0 auto;text-align:center;background:var(--panel);border:1px solid rgba(232,148,58,.3);border-radius:18px;padding:30px 26px}
-  .dirnote-card h2{font-size:clamp(22px,4.6vw,30px);margin:14px 0 12px}
-  .dirnote-card p{color:var(--mut);font-size:15.5px;max-width:520px;margin:0 auto}
-  .dirnote-card p b{color:var(--ink)}
+  /* ===== scheduling ===== */
+  .sched{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .rules{list-style:none;counter-reset:r;max-width:640px;margin:0 auto;display:grid;gap:10px}
+  .rules li{counter-increment:r;position:relative;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 16px 15px 52px}
+  .rules li:before{content:counter(r);position:absolute;left:15px;top:14px;width:24px;height:24px;border-radius:50%;background:rgba(0,112,243,.18);color:var(--cyan);font-family:var(--font);font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center}
+  .rules b{font-family:var(--font);font-size:15.5px;display:block;margin-bottom:4px;color:var(--ink)}
+  .rules p{font-size:14px;color:var(--mut);line-height:1.55}
 
-  /* package boom layout */
-  .pack{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .tools{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:680px;margin:0 auto}
-  .tool{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 18px;transition:border-color .2s}
-  .tool:hover{border-color:rgba(0,212,255,.4)}
-  .tool .t-ico{width:38px;height:38px;border-radius:11px;background:rgba(0,112,243,.16);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
-  .tool .t-ico svg{width:20px;height:20px;stroke:var(--cyan);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-  .tool b{font-family:var(--font);font-size:15.5px;display:block;margin-bottom:5px}
-  .tool p{font-size:13px;color:var(--mut);line-height:1.5}
-  .tool .how{display:block;margin-top:9px;font-size:12.5px;color:#9aa4b5;border-left:2px solid rgba(0,212,255,.35);padding-left:9px}
-  .tool .kills{display:block;margin-top:9px;font-family:var(--font);font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--amber)}
-  .alsoinc{max-width:680px;margin:16px auto 0;background:rgba(0,112,243,.07);border:1px solid rgba(0,212,255,.2);
-    border-radius:14px;padding:16px 18px;font-size:13.5px;line-height:1.6}
-  .alsoinc b{font-family:var(--font);display:block;margin-bottom:5px;color:var(--ink);font-size:13.5px}
-  .alsoinc span{color:var(--mut);display:block}
-  .alsoinc em{font-style:normal;color:var(--dim);display:block;margin-top:8px;font-size:12.5px}
-  .pack-foot{text-align:center;color:var(--mut);font-size:14.5px;max-width:520px;margin:26px auto 0}
-  .pack-foot b{color:var(--ink)}
+  /* the example day: time runs down the page so it fits any phone without sideways scrolling */
+  .day{max-width:640px;margin:22px auto 0;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 14px 16px}
+  .day-h{font-size:18px;margin:0 2px 4px}
+  .day-sub{font-size:13px;color:var(--mut);margin:0 2px 14px}
+  .day-grid{--q:12px;display:grid;grid-template-columns:40px minmax(0,1fr) minmax(0,1fr);column-gap:8px;align-items:start}
+  .day-head{font-family:var(--font);font-weight:600;font-size:13.5px;color:var(--ink);padding:0 2px 8px}
+  .day-axis,.lane{display:grid;grid-template-rows:repeat(32,var(--q));grid-template-columns:minmax(0,1fr);position:relative}
+  .lane{border-left:1px solid var(--line);padding-left:6px;
+    background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--q)*4 - 1px),rgba(255,255,255,.06) calc(var(--q)*4 - 1px),rgba(255,255,255,.06) calc(var(--q)*4))}
+  .tick{grid-column:1;font-size:11px;line-height:1;color:var(--dim);font-family:var(--font);font-weight:500;white-space:nowrap;align-self:start}
+  .tick.w{color:var(--cyan);font-weight:700}
+  .win{grid-column:1;border-top:2px solid rgba(0,212,255,.55);background:rgba(0,112,243,.06);border-radius:0 0 6px 6px;z-index:0}
+  .blk{grid-column:1;z-index:1;margin:2px 0;border-radius:7px;padding:3px 7px;font-size:11.5px;line-height:1.25;min-width:0;overflow:hidden;overflow-wrap:anywhere}
+  .blk .t{display:block;font-weight:600}
+  .blk.job{background:var(--job);color:#fff}
+  .blk.drive{display:flex;align-items:center;padding:0 7px;line-height:1.1;background:repeating-linear-gradient(135deg,rgba(168,176,192,.24) 0 3px,rgba(168,176,192,.06) 3px 7px);color:#d6dbe5;font-size:11px;border:1px solid rgba(255,255,255,.1)}
+  .blk.held{background:repeating-linear-gradient(135deg,rgba(242,235,224,.16) 0 3px,rgba(242,235,224,.05) 3px 8px);border:1px solid rgba(242,235,224,.5);color:var(--ink)}
+  .blk.room{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.35);color:#cfeaf2}
+  .blk.tw{border:1.5px dashed rgba(255,255,255,.3);color:#c3c9d4;background:rgba(255,255,255,.02)}
+  .legend{list-style:none;display:flex;flex-wrap:wrap;gap:8px 16px;margin:16px 2px 0;font-size:12px;color:var(--mut)}
+  .legend li{display:inline-flex;align-items:center;gap:7px}
+  .sw{width:20px;height:11px;border-radius:3px;display:inline-block;flex:none}
+  .sw.job{background:var(--job)} .sw.drive{background:repeating-linear-gradient(135deg,rgba(168,176,192,.5) 0 2px,transparent 2px 5px);border:1px solid rgba(255,255,255,.18)}
+  .sw.held{background:repeating-linear-gradient(135deg,rgba(242,235,224,.45) 0 2px,transparent 2px 5px);border:1px solid rgba(242,235,224,.6)}
+  .sw.room{background:rgba(0,212,255,.12);border:1px solid rgba(0,212,255,.5)} .sw.tw{border:1.5px dashed rgba(255,255,255,.45)}
+  .day figcaption{font-size:12.5px;color:var(--mut);margin:12px 2px 0;line-height:1.5}
 
-  /* offer */
-  .offer{}
+  /* ===== the rest of the package ===== */
+  .pk-list{list-style:none;max-width:600px;margin:0 auto;display:grid;gap:9px}
+  .pk-list li{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:12px 15px;font-size:14px;color:var(--mut);line-height:1.5}
+  .pk-list b{color:var(--ink);font-family:var(--font);font-weight:600}
+  .pk-note{max-width:600px;margin:12px auto 0;text-align:center;font-size:13.5px;color:var(--ink)}
+
+  /* ===== the deal ===== */
   .pricecard{max-width:560px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden}
   .pricecard .ptop{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:22px 24px;background:var(--panel2);border-bottom:1px solid var(--line);flex-wrap:wrap}
   .pricecard h3{font-size:20px}
   .pricecard .psub{font-size:12.5px;color:var(--mut);margin-top:3px}
-  .pricecard .pbig{font-family:var(--font);font-weight:700;font-size:34px;text-align:right}
-  .pricecard .pbig span{font-size:13px;color:var(--mut);font-weight:500;display:block;letter-spacing:.02em}
-  .includes{list-style:none;padding:18px 24px 8px}
-  .includes li{display:flex;gap:11px;align-items:flex-start;padding:9px 0;font-size:14.5px;color:#c7cdda}
+  .pricecard .pbig{font-family:var(--font);font-weight:700;font-size:34px;text-align:right;line-height:1.1}
+  .pricecard .pbig span{font-size:13px;color:var(--mut);font-weight:500;display:block;letter-spacing:.02em;margin-top:4px}
+  .includes{list-style:none;padding:16px 24px 6px}
+  .includes li{display:flex;gap:11px;align-items:flex-start;padding:9px 0;font-size:14.5px;color:#c7cdda;border-bottom:1px solid rgba(255,255,255,.05)}
+  .includes li:last-child{border-bottom:0}
   .includes .ck{flex:none;width:20px;height:20px;border-radius:50%;background:rgba(0,112,243,.18);color:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:2px}
   .includes b{color:var(--ink);font-weight:600}
-  .pricecard .pfoot{padding:14px 24px 22px;font-size:12.5px;color:var(--dim);text-align:center}
-  .anti{text-align:center;color:var(--mut);font-size:14.5px;max-width:500px;margin:22px auto 0}
-  .anti b{color:var(--ink)}
+  .includes s{color:var(--dim);text-decoration-thickness:2px}
+  .pricecard .pfoot{padding:12px 24px 20px;font-size:12.5px;color:var(--dim);text-align:center}
 
-  /* roadmap */
-  .road{background:radial-gradient(120% 90% at 50% 0%, #0a1a33 0%, var(--bg) 65%);text-align:center;border-top:1px solid var(--line);padding-top:46px;padding-bottom:30px}
-  .road h2{font-size:clamp(24px,5vw,32px);margin-bottom:14px}
-  .road p.lead{color:var(--mut);font-size:16px;max-width:560px;margin:0 auto}
+  /* ===== after yes ===== */
+  .nextsec{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .steps{list-style:none;counter-reset:s;max-width:600px;margin:0 auto;position:relative}
+  .steps li{counter-increment:s;position:relative;padding:0 0 20px 50px;font-size:14.5px;color:var(--mut);line-height:1.55}
+  .steps li:before{content:counter(s);position:absolute;left:0;top:-2px;width:32px;height:32px;border-radius:50%;background:var(--grad);color:#05121f;font-family:var(--font);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+  .steps li:after{content:"";position:absolute;left:15.5px;top:34px;bottom:4px;width:1px;background:var(--line)}
+  .steps li:last-child{padding-bottom:0}
+  .steps li:last-child:after{display:none}
+  .steps b{color:var(--ink);font-family:var(--font);font-weight:600;font-size:15.5px}
+  .btn-sched{margin-top:12px;background:rgba(0,212,255,.08);color:var(--cyan);border:1.5px solid rgba(0,212,255,.6)}
+  .btn-sched:active{background:rgba(0,212,255,.16)}
 
-  /* cta */
-  .cta{text-align:center}
-  .cta h2{font-size:clamp(26px,5.4vw,36px);margin-bottom:14px}
-  .cta .big{font-size:17px;color:var(--mut);max-width:520px;margin:0 auto 8px}
-  .cta .big b{color:var(--cyan)}
-  .scarcity{display:inline-block;margin:6px auto 0;font-family:var(--font);font-size:12.5px;font-weight:600;color:var(--amber);background:var(--amber-soft);border:1px solid rgba(232,148,58,.4);border-radius:999px;padding:7px 15px}
-  .cta .reassure{font-size:13px;color:var(--dim);margin:16px 0 24px}
-  .cta-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
-  .faq{max-width:580px;margin:36px auto 0;text-align:left}
-  .faq h3{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);text-align:center;margin-bottom:16px;font-family:var(--font)}
-  .qa{border-top:1px solid var(--line);padding:14px 4px}
-  .qa .q{font-family:var(--font);font-weight:600;font-size:14.5px;margin-bottom:4px}
-  .qa .a{color:var(--mut);font-size:13.5px}
-  /* the day-to-day answer carries more weight than the rest — give it room */
+  /* ===== answers ===== */
+  .faq{max-width:600px;margin:0 auto}
+  .faq-h{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);text-align:center;margin-bottom:16px;font-family:var(--font)}
+  .qa{border-top:1px solid var(--line);padding:15px 4px}
+  .qa h3{font-family:var(--font);font-weight:600;font-size:15px;margin-bottom:5px;letter-spacing:-.01em;line-height:1.3}
+  .qa p{color:var(--mut);font-size:14px}
+  .qa p b{color:var(--ink);font-weight:600}
   .qa-lead{background:var(--panel);border:1px solid rgba(0,212,255,.22);border-radius:16px;padding:18px 17px;margin-bottom:6px}
-  .qa-lead .q{font-size:15.5px;color:var(--ink);margin-bottom:9px}
-  .qa-lead .a p{font-size:13.5px;line-height:1.62}
-  .qa-lead .a p + p{margin-top:11px}
-  .qa-lead .a b{color:var(--ink)}
-  .qa-lead .a i{font-style:normal;color:var(--cyan)}
+  .qa-lead h3{font-size:16px;margin-bottom:9px}
+  .qa-lead p + p{margin-top:11px}
 
-  footer{text-align:center;padding:30px 24px calc(120px + env(safe-area-inset-bottom));color:var(--dim);font-size:12px;border-top:1px solid var(--line)}
+  /* ===== call to action ===== */
+  .cta{text-align:center;background:radial-gradient(120% 90% at 50% 0%, #0a1a33 0%, var(--bg) 65%);border-top:1px solid var(--line)}
+  .cta h2{font-size:clamp(26px,5.4vw,36px);margin:8px 0 14px}
+  .cta .big{font-size:17px;color:var(--mut);max-width:520px;margin:0 auto 22px}
+  .cta .big b{color:var(--cyan)}
+  .cta-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+  .cta .reassure{font-size:13.5px;color:var(--mut);margin:18px auto 0;max-width:460px}
+  .cta .reassure a{color:var(--cyan);text-decoration:none;display:inline-block;padding:12px 0;margin:-12px 0}
+
+  footer{text-align:center;padding:30px 24px calc(90px + env(safe-area-inset-bottom));color:var(--dim);font-size:12px;border-top:1px solid var(--line)}
   footer .mk{font-family:var(--font);font-weight:700;letter-spacing:.14em;color:var(--ink);font-size:14px;margin-bottom:6px}
-
-  .sticky{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:780px;z-index:70;display:flex;gap:10px;align-items:center;justify-content:center;padding:11px 16px calc(11px + env(safe-area-inset-bottom));background:rgba(6,6,8,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
-  .sticky .lab{font-family:var(--font);font-weight:600;font-size:13px;color:var(--mut);margin-right:auto}
-  .sticky .btn{padding:11px 18px;font-size:14px}
 
 
   /* ===== SANO Assistant ===== */
-  .sb-launch{position:fixed;right:18px;bottom:calc(74px + env(safe-area-inset-bottom));z-index:75;display:inline-flex;align-items:center;gap:9px;
+  .sb-launch{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:75;display:inline-flex;align-items:center;gap:9px;
     background:var(--grad);color:#05121f;font-family:var(--font);font-weight:600;font-size:13.5px;
     border:none;border-radius:999px;padding:13px 18px;min-height:46px;cursor:pointer;box-shadow:0 12px 30px -8px rgba(0,112,243,.6)}
   .sb-launch{transition:opacity .28s ease, transform .28s ease}
   .sb-launch.sb-hidden{opacity:0;transform:translateY(14px) scale(.92);pointer-events:none}
   @media (prefers-reduced-motion:reduce){.sb-launch{transition:none}}
   .sb-launch svg{width:17px;height:17px;stroke:#05121f;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-  .sb-panel{position:fixed;right:18px;bottom:calc(74px + env(safe-area-inset-bottom));z-index:76;width:370px;max-width:calc(100vw - 32px);
+  .sb-panel{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:76;width:370px;max-width:calc(100vw - 32px);
     background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;
     box-shadow:0 30px 70px -20px rgba(0,0,0,.85);display:none;flex-direction:column}
   .sb-panel.open{display:flex}
@@ -190,7 +201,7 @@
   .sb-id{display:flex;flex-direction:column;line-height:1.25}
   .sb-id b{font-family:var(--font);font-size:13.5px}
   .sb-st{font-size:11px;color:var(--mut)}
-  .sb-x{margin-left:auto;background:none;border:none;color:var(--mut);font-size:22px;cursor:pointer;line-height:1;padding:0 4px}
+  .sb-x{margin-left:auto;background:none;border:none;color:var(--mut);font-size:24px;cursor:pointer;line-height:1;min-width:44px;min-height:44px;margin-right:-10px}
   .sb-x:hover{color:var(--ink)}
   .sb-body{padding:14px;height:330px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;overscroll-behavior:contain}
   .sb-msg{max-width:90%;padding:10px 13px;border-radius:14px;font-size:13.5px;line-height:1.5;word-wrap:break-word}
@@ -210,21 +221,20 @@
   .sb-input input{flex:1;min-width:0;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:10px;
     padding:10px 12px;color:var(--ink);font-family:'Inter',sans-serif;font-size:16px;outline:none}
   .sb-input input:focus{border-color:var(--cyan)}
-  .sb-input button{background:var(--grad);color:#05121f;border:none;border-radius:10px;padding:0 15px;
+  .sb-input button{background:var(--grad);color:#05121f;border:none;border-radius:10px;padding:0 15px;min-height:44px;
     font-family:var(--font);font-weight:600;font-size:13px;cursor:pointer;flex:none}
-  @media (max-width:680px){
-    .sb-launch{bottom:calc(70px + env(safe-area-inset-bottom));right:14px}
-    .sb-panel{right:12px;left:12px;bottom:calc(70px + env(safe-area-inset-bottom));width:auto;max-width:none}
-    .sb-body{height:min(46vh,340px)}
-  }
 
+  @media (min-width:681px){ .day-grid{--q:13px} }
   @media (max-width:680px){
+    .sb-launch{bottom:calc(14px + env(safe-area-inset-bottom));right:14px}
+    .sb-panel{right:12px;left:12px;bottom:calc(14px + env(safe-area-inset-bottom));width:auto;max-width:none}
+    .sb-body{height:min(46vh,340px)}
     .sano-bar .by{display:none}
-    .tools{grid-template-columns:1fr}
-    .sticky .lab{display:none}
-    .sticky{justify-content:stretch}
-    .sticky .btn{flex:1}
+    .once{grid-template-columns:1fr}
+    .pricecard .ptop{flex-direction:column;align-items:flex-start;gap:10px}
+    .pricecard .pbig{text-align:left}
   }
+  @media (max-width:360px){ .day-grid{grid-template-columns:34px minmax(0,1fr) minmax(0,1fr);column-gap:6px} .blk{padding:3px 5px;font-size:11px} }
   .riseIn{opacity:1}
   .reveal{opacity:1;transform:none}
   @media (prefers-reduced-motion:no-preference){
@@ -246,195 +256,220 @@
     <div class="by">Private preview · built for Anthony</div>
   </div>
 
-  <!-- STAGE -->
-  <section class="stage">
+  <main>
+  <!-- 1. HERO -->
+  <section class="stage" aria-labelledby="hero-h">
     <div class="stage-glow" aria-hidden="true"></div>
     <div class="stage-inner">
       <div class="hero-copy riseIn">
-        <h1>Anthony — we built <span style="white-space:nowrap">AVRS</span><br><span class="grad">a front office.</span></h1>
-        <p class="sub">Fixing cars is already a full day. Building the system that answers your phone, books your jobs, and chases your reviews is a whole second job — so that part's ours. We build it, wire it up, and hand it over already running.</p>
-        <div class="trustline"><span><b>5.0★</b> Google</span><span><b>12</b> reviews</span><span>Conroe → Houston · <b>we come to you</b></span></div>
+        <h1 id="hero-h">Anthony, here's your day: organized, on time, <span class="grad">and nothing forgotten.</span></h1>
+        <p class="sub">You told me the hard part is the time blocks and the drive. So every job gets its real length, each window leaves room for the drive, and reminders go out on their own.</p>
+        <div class="once">
+          <div class="once-col">
+            <h2 class="once-h">What you'll do once</h2>
+            <ul>
+              <li>Fill in your schedule, or talk it through with me</li>
+              <li>Text me “I'm in”</li>
+              <li>Answer the setup questions</li>
+              <li>Install the app</li>
+              <li>Ten test bookings with your tech</li>
+              <li>One phone setting for missed calls</li>
+              <li>Your website person posts a privacy page and terms</li>
+              <li>Three short videos</li>
+            </ul>
+          </div>
+          <div class="once-col">
+            <h2 class="once-h">The one habit after that</h2>
+            <p>The jobs you book yourself go on the calendar.</p>
+          </div>
+        </div>
+        <div class="trustline"><span><b>5.0★</b> on Google</span><span><b>44</b> reviews</span></div>
       </div>
-      <div class="stage-kicker riseIn r2"><span>Tap through it — it's yours</span></div>
+      <div class="stage-kicker riseIn r2"><span>Tap through: a sketch of what you'll see</span></div>
       <div class="phones-stage">
         <div class="demo riseIn r3">
           <div class="phone"><div class="notch"></div>
-            <div class="frame-clip"><iframe loading="lazy" title="AVRS app preview" src="avrs-app.html"></iframe></div>
+            <div class="frame-clip"><iframe loading="lazy" title="A sketch of what you'll see, with sample customers" src="avrs-app.html"></iframe></div>
           </div>
-          <div class="demo-cap"><b>The AVRS app</b><span>Messages, calendar, customers, reviews — your whole operation in your pocket. Tap the tabs at the bottom.</span>
+          <div class="demo-cap"><b>A sketch of what you'll see</b><span>The real app is a standard business app from your phone's app store, laid out differently. We set it up and log you in. Sample shop, sample numbers.</span>
             <a class="btn btn-ghost opener" href="avrs-app.html" target="_blank" rel="noopener">Open it full screen ↗</a></div>
         </div>
       </div>
-      <p class="stage-foot">Everything inside is a working example — sample customers and example numbers, so you can see how it feels. Your real one starts from your real business.</p>
     </div>
   </section>
 
-  <!-- THE PACKAGE (boom layout) -->
-  <section class="pack">
+  <!-- 2. SCHEDULING -->
+  <section class="sched" id="scheduling" aria-labelledby="sched-h">
     <div class="sec-head reveal">
-      <div class="eyebrow">This is what you're getting</div>
-      <h2>Seven jobs come off <span class="grad">your</span> plate.</h2>
+      <div class="eyebrow">How your scheduling works</div>
+      <h2 id="sched-h">Your jobs, your lengths, <span class="grad">and room for the drive.</span></h2>
     </div>
-    <div class="tools reveal">
-      <div class="tool">
-        <div class="t-ico"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
-        <b>Missed-call text-back</b>
-        <p>You're under a car, a call comes in, you can't grab it. Seconds later they get a text from AVRS — and the conversation keeps going without you.</p>
-        <span class="how">Most people won't leave a voicemail, but almost everyone answers a text. This is the difference between that job going to you or to the next shop they call.</span>
-        <span class="kills">Kills: lost jobs from missed calls</span>
+    <ol class="rules reveal">
+      <li><b>Your menu, at your lengths.</b><p>Diag an hour, front or rear brakes an hour and a half, full brakes three. Customers only see start times the job fits in; unknowns book as a diag first.</p></li>
+      <li><b>Room for the drive.</b><p>Each window leaves room for the drive. We size that room from the longest drive between your home towns, which you give us on the schedule page. If that's 45 minutes, the windows are spaced for 45 minutes. A town farther than that calls or texts you instead. A long job takes the next start with it. We'd suggest arrival windows over exact minutes; your call.</p></li>
+      <li><b>You approve at first.</b><p>Each online booking is a request you confirm from your phone. Once you trust it, and our tests show the checks hold, simple jobs close to home can book themselves.</p></li>
+      <li><b>One window a day stays yours</b><p>for no-starts and fleet. If a car won't start, the booking form tells them to call or text you.</p></li>
+      <li><b>Big trucks and far towns go through you.</b><p>For diesels, anything 3/4-ton or bigger and far towns, the booking form tells them to call or text you. You size them and put them on your days.</p></li>
+      <li><b>One calendar.</b><p>When you book a job yourself, you add it to the same calendar, so online booking won't offer that time.</p></li>
+    </ol>
+
+    <figure class="day reveal" aria-labelledby="day-h">
+      <h3 class="day-h" id="day-h">An example day</h3>
+      <div class="day-grid">
+        <div class="day-head" aria-hidden="true"></div>
+        <div class="day-head" id="lane-you">You</div>
+        <div class="day-head" id="lane-tech">Your tech</div>
+
+        <div class="day-axis" aria-hidden="true">
+          <span class="tick w" style="grid-row:1">8:00</span>
+          <span class="tick" style="grid-row:5">9</span>
+          <span class="tick" style="grid-row:9">10</span>
+          <span class="tick w" style="grid-row:11">10:30</span>
+          <span class="tick" style="grid-row:17">12</span>
+          <span class="tick w" style="grid-row:21">1:00</span>
+          <span class="tick" style="grid-row:25">2</span>
+          <span class="tick" style="grid-row:29">3</span>
+        </div>
+
+        <div class="lane" role="list" aria-labelledby="lane-you">
+          <span class="win" aria-hidden="true" style="grid-row:1 / 11"></span>
+          <span class="win" aria-hidden="true" style="grid-row:11 / 21"></span>
+          <div class="blk job" role="listitem" style="grid-row:1 / 5"><span class="vh">8:00 window, 8:00 to 9:00: </span><span class="t">Diag</span>1 hr</div>
+          <div class="blk room" role="listitem" style="grid-row:5 / 9"><span class="vh">9:00 to 10:00: </span>Room to fix it on the spot, or drive</div>
+          <div class="blk job" role="listitem" style="grid-row:11 / 17"><span class="vh">10:30 window, 10:30 to 12:00: </span><span class="t">Front brakes</span>1½ hr</div>
+          <div class="blk drive" role="listitem" style="grid-row:17 / 20"><span class="vh">12:00 to 12:45: </span>drive</div>
+          <div class="blk held" role="listitem" style="grid-row:21 / 31"><span class="vh">1:00 window: </span><span class="t">Held off the online calendar</span>For no-starts and fleet</div>
+        </div>
+
+        <div class="lane" role="list" aria-labelledby="lane-tech">
+          <div class="blk tw" role="listitem" style="grid-row:1 / 11"><span class="vh">8:00 window: </span>Set from your tech's own answers</div>
+          <div class="blk tw" role="listitem" style="grid-row:11 / 21"><span class="vh">10:30 window: </span>Set from your tech's own answers</div>
+          <div class="blk tw" role="listitem" style="grid-row:21 / 31"><span class="vh">1:00 window: </span>Set from your tech's own answers</div>
+        </div>
       </div>
-      <div class="tool">
-        <div class="t-ico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-        <b>Auto-answers</b>
-        <p>"Do you come to Willis?" "How much is a brake job roughly?" "Can you do it while I'm at work?" The questions you answer twenty times a week get answered instantly — in your words, not a script.</p>
-        <span class="how">You give us your five or six most common ones once. Anything it hasn't been taught, it hands straight to you instead of guessing.</span>
-        <span class="kills">Kills: the same questions, all day</span>
-      </div>
-      <div class="tool">
-        <div class="t-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-        <b>Real-availability booking</b>
-        <p>People book straight into the times you actually work — with travel time built in between stops, so you're never booked in Conroe and Katy back to back. You just get a text when one lands.</p>
-        <span class="how">You set the rules once. It can't book you outside your hours, can't double-book you, and can't hand out a slot you already filled.</span>
-        <span class="kills">Kills: checking your schedule mid-job</span>
-      </div>
-      <div class="tool">
-        <div class="t-ico"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-        <b>Review engine</b>
-        <p>After every finished job the customer gets a short text with your Google link. You're at a <b>5.0 with 12 reviews</b> — the rating is already perfect, the count is what's holding you back against shops with eighty.</p>
-        <span class="how">This is the highest-leverage one on the list for you. It compounds every single month, and you never have to ask another human being for a favor.</span>
-        <span class="kills">Kills: chasing people for reviews</span>
-      </div>
-      <div class="tool">
-        <div class="t-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-        <b>Customer log</b>
-        <p>Every customer, their vehicle, their plate, and every job you've done for them — two taps. "What did I do on the Watts truck last spring?" There it is, with the date and the amount.</p>
-        <span class="how">Nothing lives in your head or in a notebook in the door pocket anymore. When a repeat customer calls, you know their car before they finish the sentence.</span>
-        <span class="kills">Kills: keeping it all in your head</span>
-      </div>
-      <div class="tool">
-        <div class="t-ico"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
-        <b>Your number, untouched</b>
-        <p>(936) 444-3031 stays on your truck, your site, and your Google page. We route it behind the scenes — and every automatic text identifies itself as AVRS Automotive in the first line.</p>
-        <span class="how">Nothing to re-letter, no listings to update, nobody to tell. If you ever walked away, your line is exactly as it is today.</span>
-        <span class="kills">Kills: re-lettering the truck</span>
-      </div>
-      <div class="tool">
-        <div class="t-ico"><svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></div>
-        <b>The app + monthly numbers</b>
-        <p>The app you just tapped through, on your phone from day one — plus a plain-English monthly rundown: jobs booked without a call, questions handled, reviews earned, hours given back.</p>
-        <span class="how">No dashboard homework. If those numbers ever stop being worth $999 to you, you'll see it before we do — and you can leave that month.</span>
-        <span class="kills">Kills: wondering if it's working</span>
-      </div>
-    </div>
-    <div class="alsoinc reveal">
-      <b>Also in the Growth package, because you're getting all of it:</b>
-      <span>Your Google listing tuned up so you actually show in Maps · automatic follow-up on anyone who goes quiet · Instagram and Facebook messages answered in the same inbox as your calls and texts · customers brought back when they're due — rebooking on their natural cycle, win-backs, day-after check-ins · email and text campaigns for when you want them · the full customer pipeline behind the scenes · and the hiring &amp; team systems, for when you're ready to grow the team: a hiring pipeline with automatic follow-up, your training turned into a portal with quizzes, tryout scorecards, onboarding paperwork signed electronically†, and simple inventory with low-stock alerts.</span>
-      <em>None of these are things you'd have to run either. They're there when you want them.</em>
-      <em>†Paperwork collection &amp; e-signature — not HR, payroll, or classification compliance. How you classify and pay your team is a question for an employment attorney or payroll service — and we'll say so.</em>
-    </div>
-    <p class="pack-foot reveal"><b>The point isn't more tech.</b> It's that nothing falls through the cracks — and your evenings stop being admin time. Every one of these is yours on day one, at the same price.</p>
+      <ul class="legend" aria-hidden="true">
+        <li><span class="sw job"></span>Job</li>
+        <li><span class="sw room"></span>Fix on the spot, or drive</li>
+        <li><span class="sw drive"></span>Drive</li>
+        <li><span class="sw held"></span>Held</li>
+        <li><span class="sw tw"></span>Your tech's windows</li>
+      </ul>
+      <figcaption>An example, not your real day. If your tech rides with you, it's one row, not two.</figcaption>
+    </figure>
   </section>
 
-  <!-- DIRECTION NOTE (moved: lands after he's seen what he gets) -->
-  <section class="dirnote">
-    <div class="dirnote-card reveal">
-      <span class="amber-tag">Your side of it</span>
-      <h2>You change nothing. It runs behind your number.</h2>
-      <p>Your phone number stays on the truck, your website, and your Google page — <b>nothing about how customers reach you changes.</b> No new number to learn, nothing to re-letter, no telling your regulars anything. We plug the system in behind the line you already have.</p>
-      <p style="margin-top:14px">Your whole job is <b>one 10-minute form</b> — your real hours, your services, and the questions you're sick of answering. That's the only thing nobody can do for you. We build the rest.</p>
+  <!-- 3. THE REST OF THE PACKAGE -->
+  <section class="pack" id="package" aria-labelledby="pack-h">
+    <div class="sec-head reveal">
+      <div class="eyebrow">The rest of your package</div>
+      <h2 id="pack-h">The other things you told me about, <span class="grad">handled.</span></h2>
+      <p>Help on calls, the same random questions, chasing reviews.</p>
     </div>
+    <ul class="pk-list reveal">
+      <li><b>Reminders that send themselves:</b> a confirmation and a reminder the day before, by email from the start.</li>
+      <li><b>A text back when you miss a call,</b> starting “AVRS Automotive:”. The automatic texts come from a new AVRS texting number we set up. Your own numbers stay yours, and calls you miss forward to it. That starts once a test shows your phone passes the caller's number along.</li>
+      <li><b>Common questions answered by text.</b> Questions texted to the AVRS number get answered right away, from answers we draft from your site and your trade and you fix. Anything it wasn't taught goes to you, and it's tested before it goes on.</li>
+      <li><b>One review ask after each job,</b> signed AVRS Automotive, by email from the start. Cancelled jobs don't get one.</li>
+      <li><b>Customers on file:</b> name, number, car, VIN and where it's parked.</li>
+    </ul>
+    <p class="pk-note reveal">The texting pieces switch on once the carriers approve AVRS.</p>
   </section>
 
-  <!-- OFFER -->
-  <section class="offer">
+  <!-- 4. THE DEAL -->
+  <section class="offer" id="deal" aria-labelledby="deal-h">
     <div class="sec-head reveal">
       <div class="eyebrow">The founding-client deal</div>
-      <h2>You're first. So the deal is stupid.</h2>
-      <p>I'm building SANO to give local businesses the systems the big guys have. You're the first shop in — I need to prove it on a real business, and you get it for basically nothing.</p>
+      <h2 id="deal-h">You're first. So the deal is stupid.</h2>
+      <p>I need to prove this on a real business, so your first three months cost three dollars.</p>
     </div>
     <div class="pricecard reveal">
       <div class="ptop">
-        <div><h3>AVRS Founding Client</h3><div class="psub">The <b style="color:var(--ink)">Growth</b> package — set up for you</div></div>
-        <div class="pbig">$1<span>a month, for six months</span></div>
+        <div><h3>AVRS founding client</h3><div class="psub">The base package, built and run for you</div></div>
+        <div class="pbig">$1<span>a month, for three months</span></div>
       </div>
       <ul class="includes">
-        <li><span class="ck">✓</span><div><b>The whole Growth package</b> — built, connected and tested for AVRS. You fill out one 10-minute form; we do everything else.</div></li>
-        <li><span class="ck">✓</span><div><b>The $2,497 setup fee — waived entirely.</b> In trade: three short phone videos on how it's going (day one, 30 days, 90 days). That's your whole cost of entry.</div></li>
-        <li><span class="ck">✓</span><div><b>After six months: $999/mo</b> — the regular price of Growth. Said out loud from day one so there's no surprise at month seven. No discounted rate that quietly expires; the six months <i>is</i> the deal.</div></li>
-        <li><span class="ck">✓</span><div><b>Cancel anytime. No contract.</b> Walk away and your number, Google page, and truck are exactly as they were.</div></li>
-        <li><span class="ck">✓</span><div><b>Live in about 30 days.</b> That's our standard build time for this package — and you're my first, so I'd rather hold to it than rush you.</div></li>
+        <li><span class="ck" aria-hidden="true">✓</span><div><b>No setup fee.</b> Setup is normally <s><span class="vh">(crossed out) </span>$997</s>; yours is <b>$0</b>.</div></li>
+        <li><span class="ck" aria-hidden="true">✓</span><div><b>In return, three short videos</b> about how it's going. Friendly, no script.</div></li>
+        <li><span class="ck" aria-hidden="true">✓</span><div><b>Your three months start <span class="clock">the day you text me you're in</span>.</b></div></li>
+        <li><span class="ck" aria-hidden="true">✓</span><div><b>Then $397 a month, plus usage on its own line: about $460–600 a month all in, after your three months.</b> Usage is “the texts, emails, call minutes and AI your department actually uses”, and SANO's price list puts it at about $60–200 a month on this package. It's covered during your three $1 months, and we'll show you your real number before month four. Month to month; thirty days' notice ends it.</div></li>
+        <li><span class="ck" aria-hidden="true">✓</span><div><b>That's $2,185 you don't pay.</b></div></li>
+        <li><span class="ck" aria-hidden="true">✓</span><div><b>The app is included.</b></div></li>
+        <li><span class="ck" aria-hidden="true">✓</span><div><b>Rain days stay yours to call,</b> with what we set up.</div></li>
+        <li><span class="ck" aria-hidden="true">✓</span><div><b>Your Google listing tidy-up comes later,</b> only if you want it.</div></li>
       </ul>
-      <div class="pfoot">$1 a month on a card — so it's a real account, not a favor. Cancel in one text if it's not for you.</div>
+      <div class="pfoot">$1 a month, billed to your card once your account is set up.</div>
     </div>
-    <p class="anti reveal">Six months of Growth is <b>$5,994</b>, and setup is another <b>$2,497</b>. You’re paying <b>$6</b>. That’s <b>$8,485</b> you don’t pay — because you’re first, and because I need one real shop to prove this on.</p>
   </section>
 
-  <!-- ROADMAP -->
-  <section class="road reveal">
-    <div class="eyebrow">The partnership</div>
-    <h2 style="margin-top:8px">And it keeps getting better — without you doing anything.</h2>
-    <p class="lead">SANO's whole job is keeping up with this stuff so you don't have to. As the tools evolve, your setup evolves with them — same price, no "upgrade fees." Founding clients get everything new first.</p>
+  <!-- 5. WHAT HAPPENS NEXT -->
+  <section class="nextsec" id="after-yes" aria-labelledby="next-h">
+    <div class="sec-head reveal">
+      <div class="eyebrow">What happens next</div>
+      <h2 id="next-h">In order, from today.</h2>
+      <p>No dates on purpose: the pace is mostly set by the carriers' approval for texting and the tests we run before anything goes live.</p>
+    </div>
+    <ol class="steps reveal">
+      <li><b>Now: “Your schedule.”</b> It's mostly your schedule, plus your towns and longest drive. Fill it in with your tech for his part, or talk it through with me.<br><a class="btn btn-sched" id="schedule-btn" href="schedule/">Tell me how your day runs</a></li>
+      <li><b>You text me “I'm in.”</b> Your three months start <span class="clock">the day you text me you're in</span>.</li>
+      <li><b>“Getting you set up”:</b> the paperwork questions.</li>
+      <li><b>We build it; you install the app;</b> ten test bookings with you and your tech.</li>
+      <li><b>Booking turns on,</b> with your approvals at first.</li>
+      <li><b>Your website person posts a privacy page and terms</b> (we write both), and the carriers approve AVRS.</li>
+      <li><b>The texting pieces switch on;</b> missed-call texts once the phone setting passes its test.</li>
+    </ol>
   </section>
 
-  <!-- CTA + FAQ -->
-  <section class="cta">
+  <!-- 6. STRAIGHT ANSWERS -->
+  <section class="answers" id="answers" aria-labelledby="faq-h">
+    <div class="faq reveal">
+      <h2 class="faq-h" id="faq-h">Straight answers</h2>
+      <div class="qa qa-lead">
+        <h3>What does this actually look like for me, day to day?</h3>
+        <p>A booking arrives on your phone with the name, car, job and where it's parked. At first you confirm each one; once you trust it, and our tests show the checks hold, simple jobs close to home can book themselves.</p>
+        <p><b>You answer your own calls like now.</b> The app shows tomorrow's jobs, a customer's car and your review asks. Every text and email we send says AVRS Automotive.</p>
+      </div>
+      <div class="qa"><h3>When do my three months start?</h3><p><span class="clock">The day you text me you're in</span>. Booking turns on after the build and the tests.</p></div>
+      <div class="qa"><h3>Does it route around traffic?</h3><p>No live-traffic routing, and it won't pick the closest tech. Each window's room comes from your longest home-town drive.</p></div>
+      <div class="qa"><h3>Will jobs still run long?</h3><p>Yes. A long job takes the next start with it, and your held window gives you room. The questionnaire asks who tells the next customer.</p></div>
+      <div class="qa"><h3>Do I have to sign anything?</h3><p>Not to start. Your text saying you're in is the yes.</p></div>
+      <div class="qa"><h3>What if it doesn't work for me?</h3><p>After your three months it's month to month; thirty days' notice ends it. Your numbers, Google listing and customer list stay yours.</p></div>
+    </div>
+  </section>
+
+  <!-- 7. CALL TO ACTION -->
+  <section class="cta" id="yes" aria-labelledby="cta-h">
     <div class="reveal">
       <div class="eyebrow">Your move</div>
-      <h2 style="margin-top:8px">Poke around, then just text me.</h2>
-      <p class="big">Tap through the app again, read the answers below — then <b>shoot me a text</b> and tell me what you think. Straight up, either way.</p>
-      <div class="scarcity">Founding-client deal — this exact offer only exists for you</div>
-      <p class="reassure">No commitment to look. Questions are free.</p>
+      <h2 id="cta-h">Organized, in control, and not forgetting things. <span class="grad">Want it?</span></h2>
+      <p class="big">If you're in, text me <b>“I'm in.”</b> Your text saying you're in is the yes.</p>
       <div class="cta-row">
-        <a class="btn btn-pri" href="sms:+18323962496">Text me back ↗</a>
+        <a class="btn btn-pri" id="cta-yes" href="sms:+18323962496?&amp;body=I%27m%20in%3A%20%241%2Fmo%20for%203%20months%20starting%20today%2C%20no%20setup%20fee%2C%203%20short%20videos%2C%20then%20%24397%2Fmo%20plus%20usage%2C%20month%20to%20month.">Text me “I'm in”</a>
+        <a class="btn btn-ghost" id="cta-ask" href="sms:+18323962496">Ask me a question first</a>
       </div>
-      <p class="reassure" style="margin-top:12px">SANO · <a href="sms:+18323962496" style="color:var(--cyan);text-decoration:none;display:inline-block;padding:12px 10px;margin:-8px 0">(832) 396-2496</a></p>
-    </div>
-    <div class="faq reveal">
-      <h3>The honest answers</h3>
-      <div class="qa qa-lead">
-        <div class="q">What does this actually look like for me, day to day?</div>
-        <div class="a">
-          <p>Mostly it looks like your phone buzzing with things that already happened. A job books itself and you get a text with the name, the vehicle and the time. Somebody asks a question at 9pm and it's answered — you just see it in the morning. <b>You answer your own calls exactly like you do now;</b> the system only steps in when you can't get to it.</p>
-          <p><b>You also get your own app, free, from day one</b> — the one you tapped through at the top. That's where you look things up whenever you feel like it: what you did on a truck last spring, what your week looks like, how your reviews are doing. It's yours, it's on your phone, and it's included.</p>
-          <p>One straight answer about that app: <b>you never have to run it.</b> No updates, no settings, no maintenance, nothing to keep alive. That's ours, permanently — it's most of what you're actually paying for. And everything your <i>customers</i> ever see says AVRS Automotive.</p>
-          <p><b>If you never opened the app once, everything would still work.</b> It's there for when you want to look, not something else you have to keep up with.</p>
-        </div>
-      </div>
-      <div class="qa"><div class="q">What's it cost, really?</div><div class="a"><b>$1 a month for your first six months</b> — six dollars total, on a card. After that it's <b>$999/mo</b>, the regular price of the Growth package, cancel anytime, no contract. The <b>$2,497 setup fee is waived entirely</b>, in trade for three short phone videos about how it's going. All in, that's <b>$8,485</b> you don't pay.</div></div>
-      <div class="qa"><div class="q">What do I actually have to do?</div><div class="a">One 10-minute form — your real hours, your services, the questions you're tired of answering. We build everything else. Bookings and updates just start showing up as texts on your phone.</div></div>
-      <div class="qa"><div class="q">How long until it's running?</div><div class="a">About <b>30 days</b> — that's our standard build time for this package, and I'd rather hold to it than rush you. One piece isn't in my hands: the phone carriers have to approve the number before it can send automatic texts, which takes a week or two on its own. Everything else gets built while that's pending.</div></div>
-      <div class="qa"><div class="q">What if it doesn't work for me?</div><div class="a">Cancel anytime with one text — you're out a few dollars. Your number, your Google page, your truck: all untouched, exactly as they were. Worst case, you got six months of a full business system for six bucks.</div></div>
-      <div class="qa"><div class="q">Do I have to change my number?</div><div class="a">No. (936) 444-3031 stays everywhere it already is. We route it behind the scenes; every automatic text clearly identifies AVRS Automotive.</div></div>
-      <div class="qa"><div class="q">Why is it $1? What's the catch?</div><div class="a">You're client #1. I need to prove this on a real shop and learn from a real owner — that's worth more to me than six months of fees. The "catch" is the three phone videos, and that I'll ask you a lot of questions along the way.</div></div>
-      <div class="qa"><div class="q">Are those numbers in the app real?</div><div class="a">No — it's a working example with sample customers so you can feel how it works. Your real app starts from zero and fills up with your actual business.</div></div>
+      <p class="reassure">The first button fills in the deal. Questions are free, and so is saying no. Both text me, Jasper, at <a href="sms:+18323962496">(832) 396-2496</a>.</p>
     </div>
   </section>
+  </main>
 
   <footer>
     <div class="mk"><span class="grad">SANO</span></div>
-    A private preview built for Anthony · AVRS Automotive · Conroe, TX<br>
-    The app preview uses sample customers &amp; example numbers. Your real system is built from your real business.
+    A private preview built for Anthony · AVRS Automotive · Conroe, TX
   </footer>
 
-  <div class="sticky">
-    <span class="lab">Like it? Just text me.</span>
-    <a class="btn btn-pri" href="sms:+18323962496">Text (832) 396-2496</a>
-  </div>
-
 </div>
-
 
 <script>
   document.documentElement.classList.add('js');
   var rv=document.querySelectorAll('.reveal');
-  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08,rootMargin:'0px 0px -6% 0px'});
-  rv.forEach(function(el){io.observe(el);});
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08,rootMargin:'0px 0px -6% 0px'});
+    rv.forEach(function(el){io.observe(el);});
+  }
   setTimeout(function(){rv.forEach(function(el){el.classList.add('in');});},2000);
   window.addEventListener('load',function(){setTimeout(function(){rv.forEach(function(el){el.classList.add('in');});},1000);});
-
 </script>
 
-<!-- SANO Assistant: reusable engine + AVRS-specific knowledge base -->
+<!-- assistant -->
 <script src="avrs-kb.js"></script>
 <script src="sano-bot.js"></script>
 </body>

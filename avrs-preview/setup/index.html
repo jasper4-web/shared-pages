@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="format-detection" content="telephone=no">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F3EEE6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#060608" media="(prefers-color-scheme: dark)">
+<title>AVRS Automotive &times; SANO &mdash; Getting you set up</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230070F3'/%3E%3Cpath d='M9 22L16 9l7 13' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;
+--bg:#F3EEE6;--panel:#FFFFFF;--panel2:#FAF7F2;--ink:#0B0D12;--mut:#4A5261;--dim:#646C7B;
+--line:rgba(11,13,18,.12);--line2:rgba(11,13,18,.22);--blue-ink:#0057C2;--cyan:#007FA3;
+--grad:linear-gradient(135deg,#0070F3,#00B4DC);--grad-ink:#04111F;--sel:#0066E0;--sel-ink:#FFFFFF;
+--chip:#FFFFFF;--tag:#00708F;--barbg:rgba(243,238,230,.94);--cuebg:#E7F3F8;--shadow:0 1px 2px rgba(11,13,18,.05);
+--font:'Space Grotesk',system-ui,-apple-system,sans-serif;--body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif}
+@media (prefers-color-scheme:dark){:root{
+--bg:#060608;--panel:#14141B;--panel2:#1B1B24;--ink:#F2EBE0;--mut:#A8B0C0;--dim:#8A91A0;
+--line:rgba(255,255,255,.10);--line2:rgba(255,255,255,.20);--blue-ink:#6AAEFF;--cyan:#00D4FF;
+--grad:linear-gradient(135deg,#0070F3,#00D4FF);--grad-ink:#05121F;--sel:#0070F3;--sel-ink:#FFFFFF;
+--chip:rgba(255,255,255,.04);--tag:#00D4FF;--barbg:rgba(6,6,8,.92);--cuebg:rgba(0,212,255,.08);--shadow:none}}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:680px;margin:0 auto;padding:0 16px calc(96px + env(safe-area-inset-bottom))}
+a{color:var(--blue-ink)}
+.top{padding:18px 0 4px}
+.eyebrow{font-family:var(--font);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);font-weight:700}
+h1{font-family:var(--font);font-weight:700;font-size:28px;line-height:1.15;letter-spacing:-.01em;margin:2px 0 8px}
+.lead{list-style:none;display:grid;gap:5px}
+.lead li{position:relative;padding-left:17px;font-size:15.5px;line-height:1.4;color:var(--ink)}
+.lead li:before{content:"";position:absolute;left:2px;top:.55em;width:7px;height:7px;border-radius:50%;background:var(--grad)}
+.toc{margin:12px 0 0;scroll-margin-top:10px}
+.toc ul{list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.toc a{display:inline-flex;align-items:center;gap:5px;min-height:44px;min-width:44px;padding:6px 9px;border:1.5px solid var(--line2);
+border-radius:12px;color:var(--ink);text-decoration:none;font-size:13.5px;font-weight:600;background:var(--chip);touch-action:manipulation;
+-webkit-tap-highlight-color:transparent}
+.toc .n{font-size:12px;color:var(--dim);font-weight:600;font-variant-numeric:tabular-nums}
+.toc a.some .n,.toc a.done .n{color:var(--blue-ink)}
+.toc a.done{border-color:var(--sel)}
+section.sect{scroll-margin-top:8px}
+.sec{font-family:var(--font);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);font-weight:700;
+margin:22px 0 8px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+.lede{color:var(--mut);font-size:15px;margin:0 0 12px}
+.q{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 14px 15px;margin-bottom:10px;box-shadow:var(--shadow)}
+.qt{font-size:17px;font-weight:600;line-height:1.35;overflow-wrap:break-word}
+.qt strong{font-weight:700}
+.hint{font-size:14.5px;color:var(--mut);margin-top:5px;overflow-wrap:break-word}
+.hint b{color:var(--ink);font-weight:600}
+.cue{border:1.5px solid var(--cyan);background:var(--cuebg);border-radius:14px;padding:14px;margin:4px 0 10px}
+.cue p{font-family:var(--font);font-size:18px;font-weight:700;line-height:1.3}
+.row{margin-top:11px}
+.rl{font-size:14.5px;font-weight:600;color:var(--mut);margin-bottom:6px;overflow-wrap:break-word}
+.rl small{display:block;font-weight:400;color:var(--dim);font-size:13.5px;margin-top:1px}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{-webkit-appearance:none;appearance:none;font-family:inherit;font-size:15px;font-weight:600;line-height:1.25;color:var(--ink);
+background:var(--chip);border:1.5px solid var(--line2);border-radius:12px;min-height:44px;min-width:44px;padding:10px 9px;cursor:pointer;
+touch-action:manipulation;-webkit-tap-highlight-color:transparent;text-align:center;max-width:100%;overflow-wrap:break-word}
+.opt[aria-pressed="true"]{background:var(--sel);border-color:var(--sel);color:var(--sel-ink)}
+.opt:disabled{opacity:.45;cursor:default}
+.opt .tag{display:block;font-size:11.5px;font-weight:600;color:var(--tag);margin-top:2px}
+.opt[aria-pressed="true"] .tag{color:inherit;opacity:.9}
+.opt.texted{border-style:dashed;border-color:var(--tag)}
+.opt.texted[aria-pressed="true"]{border-style:solid;border-color:var(--sel)}
+.opts.list{flex-direction:column}
+.opts.list .opt{width:100%;text-align:left}
+.opt:focus-visible,.toc a:focus-visible,.send:focus-visible,.rm:focus-visible,.up:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+input.val,textarea.val,input.other{display:block;width:100%;font-family:inherit;font-size:16px;color:var(--ink);background:var(--panel2);
+border:1.5px solid var(--line2);border-radius:12px;padding:11px 12px;min-height:46px;outline:none;-webkit-appearance:none;appearance:none}
+input.other{margin-top:8px}
+textarea.val{resize:vertical;min-height:84px;line-height:1.5}
+input.val:focus,textarea.val:focus,input.other:focus{border-color:var(--sel)}
+::placeholder{color:var(--dim);opacity:1}
+.pre{display:flex;align-items:center;gap:8px}
+.pre span{font-weight:700;color:var(--mut);font-size:17px}
+.pre input{flex:1;min-width:0;max-width:180px}
+.jobs{display:grid;gap:0;margin-top:6px}
+.job{border-top:1px solid var(--line);padding:12px 0 6px}
+.jobs .job:first-child{border-top:0;padding-top:6px}
+.jh{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px}
+.jn{font-weight:700;font-size:16.5px;line-height:1.3}
+.jsub{flex:1 1 100%;font-size:13px;color:var(--dim);line-height:1.35}
+.js{flex:1 1 100%;font-size:13.5px;color:var(--dim);line-height:1.35}
+.job.set .js{color:var(--blue-ink);font-weight:600}
+.job .row{margin-top:10px}
+.rm{-webkit-appearance:none;appearance:none;margin-left:auto;background:none;border:0;color:var(--blue-ink);font:inherit;font-size:14px;
+font-weight:600;min-height:44px;min-width:44px;padding:0 6px;cursor:pointer;touch-action:manipulation}
+.adds{margin-top:12px}
+.adds .own{font-weight:700}
+.row.town{padding-top:10px;margin-top:10px;border-top:1px solid var(--line)}
+.row.town .rl{color:var(--ink);font-size:15.5px}
+.row.town .opts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.row.town .opt{padding:8px 4px;font-size:13.5px;line-height:1.2;display:flex;align-items:center;justify-content:center}
+@media (max-width:340px){.row.town .opts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.up{display:inline-block;font-size:14px;color:var(--blue-ink);text-decoration:none;min-height:44px;line-height:44px;font-weight:600}
+.close{margin-top:22px;padding:16px 16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;display:grid;gap:8px}
+.close p{font-size:15.5px;color:var(--mut)}
+.close strong{color:var(--ink)}
+.close a{font-weight:700;white-space:nowrap}
+.talk{margin:22px 0 4px;text-align:center;display:grid;justify-items:center;gap:8px}
+.talk p{font-size:15.5px;color:var(--ink);font-weight:600}
+.talk .num{font-size:15px;color:var(--mut);font-weight:600;font-variant-numeric:tabular-nums}
+.callme{display:inline-flex;align-items:center;justify-content:center;min-height:48px;min-width:44px;padding:12px 22px;border-radius:12px;
+border:1.5px solid var(--sel);color:var(--blue-ink);background:var(--chip);font-family:var(--font);font-weight:700;font-size:16px;
+text-decoration:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.callme:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--barbg);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+border-top:1px solid var(--line);padding:9px 16px calc(9px + env(safe-area-inset-bottom))}
+.barin{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.barhint{flex:1;min-width:0;font-size:13.5px;color:var(--mut);line-height:1.3}
+.send{-webkit-appearance:none;appearance:none;flex:0 0 auto;font-family:var(--font);font-weight:700;font-size:15.5px;color:var(--grad-ink);background:var(--grad);
+border:0;border-radius:12px;min-height:48px;padding:12px 16px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.send:active{transform:translateY(1px)}
+.toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:30;max-width:calc(100% - 32px);width:max-content;
+background:var(--ink);color:var(--bg);border-radius:12px;padding:12px 16px;font-size:15px;font-weight:600;line-height:1.35;box-shadow:0 8px 24px rgba(0,0,0,.25);
+opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+.sheet{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;padding:12px}
+.sheetin{width:100%;max-width:640px;max-height:100%;display:flex;flex-direction:column;gap:10px;background:var(--panel);color:var(--ink);
+border:1px solid var(--line);border-radius:18px;padding:16px;overflow:auto}
+.fbh{font-family:var(--font);font-size:18px;font-weight:700}
+.fbp{font-size:15px;color:var(--mut)}
+.fbp strong{color:var(--ink)}
+#out{display:block;width:100%;flex:1 1 auto;min-height:110px;height:42vh;font:14px/1.45 ui-monospace,Menlo,Consolas,monospace;color:var(--ink);
+background:var(--panel2);border:1.5px solid var(--line2);border-radius:12px;padding:12px;-webkit-user-select:text;user-select:text;resize:none}
+#fbclose{width:100%}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body data-key="avrs-q2-setup" data-part="Part 2: Getting you set up">
+<div class="wrap">
+<header class="top"><p class="eyebrow">AVRS Automotive &times; SANO</p><h1>Getting you set up</h1><ul class="lead"><li>The setup details, now that you&rsquo;re in.</li><li>Skip anything you don&rsquo;t know. We&rsquo;ll sort it out together.</li></ul></header>
+<nav class="toc" id="top" aria-label="Sections"><ul><li class=""><a href="#s-carriers" data-sec="s-carriers"><span>Carriers</span><span class="n"></span></a></li><li class=""><a href="#s-site" data-sec="s-site"><span>Email &amp; site</span><span class="n"></span></a></li><li class=""><a href="#s-team" data-sec="s-team"><span>Team</span><span class="n"></span></a></li><li class=""><a href="#s-phone" data-sec="s-phone"><span>Phones</span><span class="n"></span></a></li></ul></nav>
+<section class="sect" id="s-carriers" data-say="FOR THE CARRIERS" aria-labelledby="h-carriers"><h2 class="sec" id="h-carriers">For the carriers</h2><p class="lede">The carriers approve AVRS before any business texts go out. They check your business name against IRS records, so exact matters.</p><div class="q unit"><div class="qt" id="q-carriers-1">Texas state records list your company as <strong>AVRS Automotive, LLC</strong>. Is that exactly how the IRS letter for your tax ID has it?</div><div class="row cnt" data-id="p2.legal" data-kind="one" data-say="Legal name is AVRS Automotive, LLC" data-ans="p2.legal"><div class="opts" role="group" aria-labelledby="q-carriers-1"><button type="button" class="opt" data-v="yes" data-say="Yes, exactly" aria-pressed="false">Yes, exactly</button><button type="button" class="opt" data-v="diff" data-say="No, it&#x27;s different" data-other aria-pressed="false">No, it&#x27;s different</button><button type="button" class="opt" data-v="unsure" data-say="Not sure" aria-pressed="false">Not sure</button></div><input class="other" type="text" data-for="p2.legal" placeholder="How does it read?" aria-label="How does it read?" autocomplete="off" hidden></div></div><div class="q unit"><div class="qt" id="q-carriers-2">Do you have that IRS letter handy?</div><div class="hint">We'll ask for the tax ID number itself when we file. Don't put it here.</div><div class="row cnt" data-id="p2.letter" data-kind="one" data-say="IRS letter handy" data-ans="p2.letter"><div class="opts" role="group" aria-labelledby="q-carriers-2"><button type="button" class="opt" data-v="yes" data-say="Yes" aria-pressed="false">Yes</button><button type="button" class="opt" data-v="nothandy" data-say="Not handy, but I have one" aria-pressed="false">Not handy, but I have one</button><button type="button" class="opt" data-v="noein" data-say="No tax ID yet" aria-pressed="false">No tax ID yet</button><button type="button" class="opt" data-v="unsure" data-say="Not sure" aria-pressed="false">Not sure</button></div></div></div><div class="q unit"><div class="qt" id="q-carriers-3">Who should the carriers contact? Usually that's you.</div><div class="row cnt" data-id="p2.cname" data-kind="text" data-say="Contact name" data-ans="p2.cname"><div class="rl" id="r-p2-cname-l">Name</div><input type="text" class="val" id="r-p2-cname-i" aria-labelledby="r-p2-cname-l" placeholder="Full name" autocomplete="name"></div><div class="row cnt" data-id="p2.ctitle" data-kind="one" data-say="Contact title" data-ans="p2.ctitle"><div class="rl" id="r-p2-ctitle-l">Title</div><div class="opts" role="group" aria-labelledby="r-p2-ctitle-l"><button type="button" class="opt" data-v="owner" data-say="Owner" aria-pressed="false">Owner</button><button type="button" class="opt" data-v="manager" data-say="Manager" aria-pressed="false">Manager</button><button type="button" class="opt" data-v="other" data-say="Other" data-other aria-pressed="false">Other</button><button type="button" class="opt" data-v="unsure" data-say="Not sure" aria-pressed="false">Not sure</button></div><input class="other" type="text" data-for="p2.ctitle" placeholder="What title?" aria-label="What title?" autocomplete="off" hidden></div><div class="row cnt" data-id="p2.cphone" data-kind="one" data-say="Contact phone" data-ans="p2.cphone"><div class="rl" id="r-p2-cphone-l">Phone</div><div class="opts" role="group" aria-labelledby="r-p2-cphone-l"><button type="button" class="opt" data-v="936" data-say="936-444-3031" aria-pressed="false">936-444-3031</button><button type="button" class="opt" data-v="281" data-say="281-309-1299" aria-pressed="false">281-309-1299</button><button type="button" class="opt" data-v="other" data-say="Another number" data-other aria-pressed="false">Another number</button><button type="button" class="opt" data-v="unsure" data-say="Not sure" aria-pressed="false">Not sure</button></div><input class="other" type="text" data-for="p2.cphone" placeholder="Which number?" aria-label="Which number?" autocomplete="off" hidden></div></div><a class="up" href="#top">Back to the sections</a></section><section class="sect" id="s-site" data-say="EMAIL AND WEBSITE" aria-labelledby="h-site"><h2 class="sec" id="h-site">Email and website</h2><div class="q unit"><div class="qt" id="q-site-4">Best email for booking confirmations</div><div class="hint">Booking alerts and confirmations reach you here.</div><div class="row cnt" data-id="p2.email" data-kind="text" data-say="Best email" data-ans="p2.email"><input type="email" class="val" id="r-p2-email-i" aria-labelledby="q-site-4" placeholder="you@example.com" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false"></div></div><div class="q unit"><div class="qt" id="q-site-5">Who runs your website?</div><div class="hint">Before any business texts go out, a privacy page and terms need to go up on your site. We write them; whoever runs your site puts them up.</div><div class="row cnt" data-id="p2.site" data-kind="one" data-say="Website run by" data-ans="p2.site"><div class="opts" role="group" aria-labelledby="q-site-5"><button type="button" class="opt" data-v="me" data-say="Me" aria-pressed="false">Me</button><button type="button" class="opt" data-v="someone" data-say="Someone else" data-other aria-pressed="false">Someone else</button><button type="button" class="opt" data-v="unsure" data-say="Not sure" aria-pressed="false">Not sure</button></div><input class="other" type="text" data-for="p2.site" placeholder="Their name, and number if you have it" aria-label="Their name, and number if you have it" autocomplete="off" hidden></div></div><div class="q cnt unit" data-ans="p2.review,p2.find"><div class="qt" id="q-site-6">Your Google review link</div><div class="hint">If you know where it is: your Business Profile, then <b>Read reviews</b>, then <b>Get more reviews</b>, then <b>Copy</b>. We don't need access to your listing, just the link.</div><div class="row" data-id="p2.review" data-kind="text" data-say="Google review link"><input type="url" class="val" id="r-p2-review-i" aria-labelledby="q-site-6" placeholder="Paste the link" autocomplete="off" inputmode="url" autocapitalize="off" spellcheck="false"></div><div class="row" data-id="p2.find" data-kind="one" data-say="Google review link"><div class="opts" role="group" aria-labelledby="q-site-6"><button type="button" class="opt" data-v="find" data-say="Find it for me" aria-pressed="false">Find it for me</button></div></div></div><a class="up" href="#top">Back to the sections</a></section><section class="sect" id="s-team" data-say="WHO WORKS WITH YOU" aria-labelledby="h-team"><h2 class="sec" id="h-team">Who works with you</h2><div class="q unit"><div class="qt" id="q-team-7">Quick check: does anyone else work jobs with you?</div><div class="row cnt" data-id="tech.who" data-kind="one" data-say="Works jobs with me" data-ans="tech.who"><div class="opts" role="group" aria-labelledby="q-team-7"><button type="button" class="opt" data-v="solo" data-say="Just me" aria-pressed="false">Just me</button><button type="button" class="opt" data-v="one" data-say="One other person" aria-pressed="false">One other person</button><button type="button" class="opt" data-v="two" data-say="Two or more" aria-pressed="false">Two or more</button><button type="button" class="opt" data-v="varies" data-say="It varies" aria-pressed="false">It varies</button></div></div></div><div class="q unit techonly" data-hide-if="tech.who=solo"><div class="qt" id="q-team-8">Job notices for your tech</div><div class="row cnt" data-id="p2.notices" data-kind="one" data-say="Tech said yes to job notices" data-ans="p2.notices"><div class="rl" id="r-p2-notices-l">Did your tech say yes to job notices?<small>Job notices are a notification in the app and an email.</small></div><div class="opts" role="group" aria-labelledby="r-p2-notices-l"><button type="button" class="opt" data-v="yes" data-say="Yes" aria-pressed="false">Yes</button><button type="button" class="opt" data-v="no" data-say="No" aria-pressed="false">No</button><button type="button" class="opt" data-v="unsure" data-say="Not sure" aria-pressed="false">Not sure</button></div></div><div class="row cnt" data-id="p2.techemail" data-kind="text" data-say="Tech&#x27;s email" data-ans="p2.techemail" data-show-if="p2.notices=yes"><div class="rl" id="r-p2-techemail-l">Your tech&#x27;s email<small>For his app login and email alerts.</small></div><input type="email" class="val" id="r-p2-techemail-i" aria-labelledby="r-p2-techemail-l" placeholder="Their email" autocomplete="off" inputmode="email" autocapitalize="off" spellcheck="false"></div></div><a class="up" href="#top">Back to the sections</a></section><section class="sect" id="s-phone" data-say="PHONES AND TEXTS" aria-labelledby="h-phone"><h2 class="sec" id="h-phone">Phones and texts</h2><p class="lede">For each number customers call: which phone company it's with, and roughly how many rings before voicemail. We use this to set up what happens to calls you miss.</p><div class="q unit"><div class="qt" id="q-phone-9">936-444-3031</div><div class="row cnt" data-id="p2.co936" data-kind="one" data-say="936-444-3031 phone company" data-ans="p2.co936"><div class="rl" id="r-p2-co936-l">Phone company</div><div class="opts" role="group" aria-labelledby="r-p2-co936-l"><button type="button" class="opt" data-v="att" data-say="AT&amp;T" aria-pressed="false">AT&amp;T</button><button type="button" class="opt" data-v="verizon" data-say="Verizon" aria-pressed="false">Verizon</button><button type="button" class="opt" data-v="tmobile" data-say="T-Mobile" aria-pressed="false">T-Mobile</button><button type="button" class="opt" data-v="other" data-say="Another one" data-other aria-pressed="false">Another one</button><button type="button" class="opt" data-v="unsure" data-say="Not sure" aria-pressed="false">Not sure</button></div><input class="other" type="text" data-for="p2.co936" placeholder="Which one?" aria-label="Which one?" autocomplete="off" hidden></div><div class="row cnt" data-id="p2.rings936" data-kind="one" data-say="936-444-3031 rings before voicemail" data-ans="p2.rings936"><div class="rl" id="r-p2-rings936-l">Rings before voicemail</div><div class="opts" role="group" aria-labelledby="r-p2-rings936-l"><button type="button" class="opt" data-v="3" data-say="3" aria-pressed="false">3</button><button type="button" class="opt" data-v="4" data-say="4" aria-pressed="false">4</button><button type="button" class="opt" data-v="5" data-say="5" aria-pressed="false">5</button><button type="button" class="opt" data-v="6" data-say="6 or more" aria-pressed="false">6 or more</button><button type="button" class="opt" data-v="unsure" data-say="Not sure" aria-pressed="false">Not sure</button></div></div></div><div class="q unit"><div class="qt" id="q-phone-10">281-309-1299</div><div class="row cnt" data-id="p2.co281" data-kind="one" data-say="281-309-1299 phone company" data-ans="p2.co281"><div class="rl" id="r-p2-co281-l">Phone company</div><div class="opts" role="group" aria-labelledby="r-p2-co281-l"><button type="button" class="opt" data-v="att" data-say="AT&amp;T" aria-pressed="false">AT&amp;T</button><button type="button" class="opt" data-v="verizon" data-say="Verizon" aria-pressed="false">Verizon</button><button type="button" class="opt" data-v="tmobile" data-say="T-Mobile" aria-pressed="false">T-Mobile</button><button type="button" class="opt" data-v="other" data-say="Another one" data-other aria-pressed="false">Another one</button><button type="button" class="opt" data-v="unsure" data-say="Not sure" aria-pressed="false">Not sure</button></div><input class="other" type="text" data-for="p2.co281" placeholder="Which one?" aria-label="Which one?" autocomplete="off" hidden></div><div class="row cnt" data-id="p2.rings281" data-kind="one" data-say="281-309-1299 rings before voicemail" data-ans="p2.rings281"><div class="rl" id="r-p2-rings281-l">Rings before voicemail</div><div class="opts" role="group" aria-labelledby="r-p2-rings281-l"><button type="button" class="opt" data-v="3" data-say="3" aria-pressed="false">3</button><button type="button" class="opt" data-v="4" data-say="4" aria-pressed="false">4</button><button type="button" class="opt" data-v="5" data-say="5" aria-pressed="false">5</button><button type="button" class="opt" data-v="6" data-say="6 or more" aria-pressed="false">6 or more</button><button type="button" class="opt" data-v="unsure" data-say="Not sure" aria-pressed="false">Not sure</button></div></div></div><div class="q unit"><div class="qt" id="q-phone-11">Who should see customers' text replies?</div><div class="row cnt techonly" data-id="p2.techagree" data-kind="one" data-say="Tech agrees to see customer replies (his answer)" data-ans="p2.techagree" data-hide-if="tech.who=solo"><div class="rl" id="r-p2-techagree-l">Your tech: do you agree to see customers&#x27; text replies?<small>Hand him the phone for this one. Only he can say yes.</small></div><div class="opts" role="group" aria-labelledby="r-p2-techagree-l"><button type="button" class="opt" data-v="yes" data-say="I agree" aria-pressed="false">I agree</button><button type="button" class="opt" data-v="no" data-say="I don&#x27;t" aria-pressed="false">I don&#x27;t</button><button type="button" class="opt" data-v="unsure" data-say="Not sure" aria-pressed="false">Not sure</button></div></div><div class="row cnt" data-id="p2.replies" data-kind="one" data-say="Sees customer text replies" data-ans="p2.replies"><div class="rl" id="r-p2-replies-l">Who sees them?</div><div class="opts" role="group" aria-labelledby="r-p2-replies-l"><button type="button" class="opt" data-v="me" data-say="Just me" aria-pressed="false">Just me<small class="tag">the default</small></button><button type="button" class="opt techonly" data-v="both" data-say="Me and my tech" data-show-if="p2.techagree=yes" data-hide-if="tech.who=solo" aria-pressed="false">Me and my tech</button><button type="button" class="opt" data-v="unsure" data-say="Not sure" aria-pressed="false">Not sure</button></div></div></div><a class="up" href="#top">Back to the sections</a></section>
+<div class="close"><p><strong>What happens next:</strong> we build it, test it with ten fake bookings with you<span class="techonly" data-hide-if="tech.who=solo"> and your tech</span>, then turn booking on.</p><p>For the $1 a month, we'll text you a secure link to put a card on file.</p><p>Tap <strong>Copy my answers</strong> and text them to Jasper, <a href="sms:+18323962496">(832) 396-2496</a>.</p><p>Your answers stay on this phone for a few days; copy them any time.</p><p>Never text us a password.</p></div>
+<div class="talk"><p>Easier to talk it through? Text Jasper and he&rsquo;ll call you.</p><a class="callme" href="sms:+18323962496">Text Jasper</a><p class="num">(832) 396-2496</p></div>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div class="bar"><div class="barin"><p class="barhint">Skip anything. Copy any time.</p>
+<button type="button" id="copy" class="send">Copy my answers</button></div></div>
+<div id="fallback" class="sheet" role="dialog" aria-modal="true" aria-labelledby="fbh" hidden><div class="sheetin">
+<p id="fbh" class="fbh">Your phone didn&rsquo;t let the button copy.</p>
+<p class="fbp">Press and hold the text below, tap <strong>Select All</strong>, then <strong>Copy</strong>, and paste it into a text to Jasper.</p>
+<textarea id="out" readonly aria-label="Your answers, ready to copy"></textarea>
+<button type="button" id="fbclose" class="send">Done</button>
+</div></div>
+<script>
+(function () {
+  'use strict';
+  var KEY = document.body.getAttribute('data-key'), PART = document.body.getAttribute('data-part');
+  var S = {};
+  try { S = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { S = {}; }
+  if (typeof S !== 'object' || Array.isArray(S)) S = {};
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function $(s, el) { return (el || document).querySelector(s); }
+  function $$(s, el) { return [].slice.call((el || document).querySelectorAll(s)); }
+  function has(v) { return Array.isArray(v) ? v.length > 0 : (v !== undefined && v !== null && String(v).trim() !== ''); }
+  function trim(v) { return String(v).replace(/\s+/g, ' ').trim(); }
+
+  function keysFor(key) {
+    if (key.slice(-2) !== '.*') return [key];
+    var p = key.slice(0, -1);
+    return Object.keys(S).filter(function (k) { return k.indexOf(p) === 0 && k.indexOf('~') < 0; });
+  }
+  function test(expr) {
+    var i = expr.indexOf('='), key = expr.slice(0, i), vals = expr.slice(i + 1).split(',');
+    return keysFor(key).some(function (k) {
+      var v = S[k];
+      if (!has(v)) return false;
+      if (vals.indexOf('__typed__') >= 0) return true;
+      if (Array.isArray(v)) return v.some(function (x) { return vals.indexOf(x) >= 0; });
+      return vals.indexOf(String(v)) >= 0;
+    });
+  }
+  function conditions() {
+    $$('[data-show-if],[data-hide-if]').forEach(function (el) {
+      var show = el.hasAttribute('data-show-if') ? test(el.getAttribute('data-show-if')) : true;
+      var hide = el.hasAttribute('data-hide-if') ? test(el.getAttribute('data-hide-if')) : false;
+      el.hidden = !(show && !hide);
+    });
+  }
+  function visible(el) { return !el.closest('[hidden]'); }
+
+  function paint(row) {
+    var id = row.getAttribute('data-id'), v = S[id], kind = row.getAttribute('data-kind');
+    if (kind === 'one' || kind === 'many') {
+      $$('.opt', row).forEach(function (b) {
+        var bv = b.getAttribute('data-v'), on = Array.isArray(v) ? v.indexOf(bv) >= 0 : v === bv;
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      var o = $('input.other', row);
+      if (o) {
+        o.hidden = !$$('.opt[data-other]', row).some(function (b) { return b.getAttribute('aria-pressed') === 'true'; });
+        if (document.activeElement !== o) o.value = S[id + '~other'] || '';
+      }
+    } else {
+      var f = $('.val', row);
+      if (f && document.activeElement !== f) f.value = has(v) ? v : '';
+    }
+  }
+  function pick(b) {
+    var row = b.closest('.row'), id = row.getAttribute('data-id'), kind = row.getAttribute('data-kind'), v = b.getAttribute('data-v');
+    if (kind === 'many') {
+      var a = Array.isArray(S[id]) ? S[id].slice() : [], i = a.indexOf(v);
+      if (i >= 0) a.splice(i, 1);
+      else if (b.hasAttribute('data-solo')) a = [v];
+      else {
+        a = a.filter(function (x) { var ob = $('.opt[data-v="' + x + '"]', row); return !(ob && ob.hasAttribute('data-solo')); });
+        a.push(v);
+      }
+      if (a.length) S[id] = a; else delete S[id];
+    } else {
+      if (S[id] === v) delete S[id]; else S[id] = v;
+    }
+    save(); paint(row); refresh();
+    if (b.hasAttribute('data-other') && b.getAttribute('aria-pressed') === 'true') {
+      var o = $('input.other', row); if (o) { try { o.focus({ preventScroll: true }); } catch (e) { o.focus(); } }
+    }
+  }
+  function setVal(k, v) { if (trim(v)) S[k] = v; else delete S[k]; save(); }
+
+  /* jobs: his four are fixed; up to four more he adds himself */
+  function rowOf(id) { return $('.row[data-id="' + id + '"]'); }
+  function optSay(row, v) {
+    var b = row && $('.opt[data-v="' + v + '"]', row);
+    return b ? (b.getAttribute('data-say') || trim(b.textContent)) : String(v);
+  }
+  function jobName(job) {
+    if (job.hasAttribute('data-custom')) {
+      var n = S['job.' + job.getAttribute('data-job') + '.name'];
+      return has(n) ? trim(n) : 'Added job';
+    }
+    return job.getAttribute('data-name');
+  }
+  function jobBits(job) {
+    var k = 'job.' + job.getAttribute('data-job') + '.', bits = [], t = S[k + 'time'], tr = rowOf(k + 'time');
+    if (has(t)) {
+      var ts = (t === 'other' && has(S[k + 'time~other'])) ? trim(S[k + 'time~other']) : optSay(tr, t);
+      var tx = job.getAttribute('data-texted');
+      if (tx) ts += (t === tx) ? ' (as texted)' : ' (texted ' + optSay(tr, tx) + ')';
+      bits.push(ts);
+    }
+    if (has(S[k + 'part'])) bits.push('part first: ' + optSay(rowOf(k + 'part'), S[k + 'part']).toLowerCase());
+    if (has(S[k + 'online'])) bits.push('online: ' + optSay(rowOf(k + 'online'), S[k + 'online']).toLowerCase());
+    var pr = rowOf(k + 'price');
+    if (has(S[k + 'price']) && pr && visible(pr)) bits.push('from $' + trim(S[k + 'price']).replace(/^\$+/, ''));
+    return bits;
+  }
+  function jobStatus(job) {
+    var bits = jobBits(job), tx = job.getAttribute('data-texted-label');
+    if (job.hasAttribute('data-custom')) $('.jn', job).textContent = jobName(job);
+    $('.js', job).textContent = bits.length ? bits.join(' · ')
+      : (tx ? 'Texted: ' + tx + '. Tap to confirm.' : 'Set how long it takes.');
+    job.classList.toggle('set', bits.length > 0);
+  }
+  function slotOn(s) { return S['job.' + s + '.on'] === '1'; }
+  function addJob(name) {
+    var slots = $$('.job[data-custom]').map(function (j) { return j.getAttribute('data-job'); });
+    var free = slots.filter(function (s) { return !slotOn(s); })[0];
+    if (!free) return;
+    S['job.' + free + '.on'] = '1';
+    if (name !== '__own__') S['job.' + free + '.name'] = name;
+    save(); $$('.row[data-id^="job.' + free + '."]').forEach(paint); refresh();
+    var j = $('.job[data-job="' + free + '"]');
+    if (name === '__own__') { var f = $('.val', j); try { f.focus({ preventScroll: true }); } catch (e) { f.focus(); } }
+  }
+  function removeJob(s) {
+    Object.keys(S).forEach(function (k) { if (k.indexOf('job.' + s + '.') === 0) delete S[k]; });
+    save(); $$('.row[data-id^="job.' + s + '."]').forEach(paint); refresh();
+  }
+  function addState() {
+    var on = $$('.job[data-custom]').filter(function (j) { return slotOn(j.getAttribute('data-job')); });
+    var names = on.map(function (j) { return jobName(j).toLowerCase(); }), full = on.length >= 4;
+    $$('[data-job-add]').forEach(function (b) {
+      var n = b.getAttribute('data-job-add');
+      b.disabled = full || (n !== '__own__' && names.indexOf(n.toLowerCase()) >= 0);
+    });
+    var jf = $('#jobsfull'); if (jf) jf.hidden = !full;
+  }
+
+  /* progress lives in the section list only */
+  function answered(el) {
+    return el.getAttribute('data-ans').split(',').some(function (k) {
+      return keysFor(k).some(function (kk) { return has(S[kk]); });
+    });
+  }
+  function unitDone(u) {
+    if (u.hasAttribute('data-ans')) return answered(u);
+    return $$('.cnt[data-ans]', u).filter(visible).some(answered);
+  }
+  function swap() {
+    var he = S['tech.answerer'] === 'owner';
+    $$('.sw').forEach(function (e) { e.textContent = e.getAttribute(he ? 'data-he' : 'data-you'); });
+  }
+  function refresh() {
+    conditions();
+    swap();
+    $$('.job').forEach(jobStatus);
+    addState();
+    var units = $$('.unit').filter(visible);
+    $$('.toc a[data-sec]').forEach(function (a) {
+      var sec = document.getElementById(a.getAttribute('data-sec'));
+      var mine = units.filter(function (el) { return sec.contains(el); }), n = mine.filter(unitDone).length;
+      $('.n', a).textContent = mine.length ? n + '/' + mine.length : '';
+      a.classList.toggle('done', mine.length > 0 && n === mine.length);
+      a.classList.toggle('some', n > 0 && n < mine.length);
+    });
+  }
+
+  /* the text that gets copied */
+  function rowText(row) {
+    var id = row.getAttribute('data-id'), kind = row.getAttribute('data-kind'), v = S[id];
+    if (!has(v)) return '';
+    if (kind === 'text') {
+      var pf = row.getAttribute('data-prefix') || '', tv = trim(v);
+      return (pf && tv.indexOf(pf) !== 0 ? pf : '') + tv;
+    }
+    return (Array.isArray(v) ? v : [v]).filter(function (x) {
+      var b = $('.opt[data-v="' + x + '"]', row);
+      return !(b && b.closest('[hidden]'));
+    }).map(function (x) {
+      var s = optSay(row, x), b = $('.opt[data-v="' + x + '"]', row);
+      if (b && b.hasAttribute('data-other') && has(S[id + '~other'])) s += ' - ' + trim(S[id + '~other']);
+      return s;
+    }).join(', ');
+  }
+  function sayOf(row) {
+    var nf = row.getAttribute('data-name-from');
+    if (nf && has(S[nf])) return trim(S[nf]);
+    return row.getAttribute('data-say');
+  }
+  function build() {
+    var date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    var out = ['AVRS questionnaire - ' + date, PART], count = 0;
+    $$('section.sect').forEach(function (sec) {
+      var lines = [];
+      $$('.row[data-id], .job', sec).forEach(function (el) {
+        if (!visible(el)) return;
+        if (el.classList.contains('job')) {
+          var bits = jobBits(el), custom = el.hasAttribute('data-custom');
+          if (bits.length || (custom && slotOn(el.getAttribute('data-job')))) {
+            lines.push(jobName(el) + ': ' + (bits.length ? bits.join('; ') : 'added, no details yet')); count++;
+          }
+          return;
+        }
+        if (el.closest('.job')) return;
+        if (el.getAttribute('data-id').indexOf('where.othername') === 0) return;
+        var t = rowText(el);
+        if (t) { lines.push(sayOf(el) + ': ' + t); count++; }
+      });
+      if (lines.length) { out.push(''); out.push(sec.getAttribute('data-say')); out = out.concat(lines); }
+    });
+    if (!count) { out.push(''); out.push('Nothing answered yet.'); }
+    return out.join('\n');
+  }
+
+  /* copying: the clipboard first, then the older way, then a box he can select by hand */
+  var toastTimer;
+  function toast(msg) {
+    var t = $('#toast'); t.textContent = msg; t.classList.add('on');
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove('on'); }, 8000);
+  }
+  function copied() { toast('Copied. Now paste it into a text to Jasper, (832) 396-2496.'); }
+  function legacy(text) {
+    var ok = false, ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px;';
+    document.body.appendChild(ta);
+    try { ta.focus(); ta.select(); ta.setSelectionRange(0, text.length); ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok === true;
+  }
+  function manual(text) {
+    var sh = $('#fallback'), box = $('#out');
+    box.value = text; sh.hidden = false;
+    setTimeout(function () {
+      try { box.focus(); box.select(); box.setSelectionRange(0, box.value.length); box.scrollTop = 0; } catch (e) {}
+    }, 30);
+  }
+  function copy() {
+    var text = build();
+    function fail() { if (legacy(text)) copied(); else manual(text); }
+    try {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(text).then(copied, fail);
+        return;
+      }
+    } catch (e) {}
+    fail();
+  }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target; if (!t || !t.closest) return;
+    var a = t.closest('[data-job-add]'); if (a) { if (!a.disabled) addJob(a.getAttribute('data-job-add')); return; }
+    var r = t.closest('[data-job-rm]'); if (r) { removeJob(r.getAttribute('data-job-rm')); return; }
+    var b = t.closest('.opt'); if (b && b.closest('.row[data-id]')) { pick(b); return; }
+    if (t.closest('#copy')) { copy(); return; }
+    if (t.closest('#fbclose')) { $('#fallback').hidden = true; return; }
+  });
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    if (t.classList.contains('val')) { setVal(t.closest('.row').getAttribute('data-id'), t.value); refresh(); }
+    else if (t.classList.contains('other')) { setVal(t.getAttribute('data-for') + '~other', t.value); refresh(); }
+  });
+
+  $$('.row[data-id]').forEach(paint);
+  refresh();
+})();
+</script>
+</body></html>
