@@ -437,7 +437,7 @@ window.SANO_CAPS_BY_INDUSTRY = {
 /* Per-trade content for the in-page app demo. Customer names are shared across
    trades on purpose; everything that would look absurd on the wrong trade is
    written per trade. All of it is sample data and the app says so. */
-window.SANO_APP_PEOPLE = [['JW','James Watts'],['AD','Amy Donham'],['MR','Marcus Reyes'],['DC','Danny Cole'],['RT','Ray Tucker'],['BH','Bo Hendricks'],['TG','Tanya Guillory']];
+window.SANO_APP_PEOPLE = [['SE','Sam Example'],['PS','Pat Sample'],['AD','Alex Demo'],['CE','Chris Example'],['LS','Lee Sample'],['DD','Drew Demo'],['TE','Terry Example']];
 window.SANO_APP = {
   'hvac': {
     biz: 'Ridgeline Heating &amp; Air',
@@ -448,8 +448,8 @@ window.SANO_APP = {
     subs: ['3-ton split · installed 2019','Heat pump · maintenance plan','Rooftop units ×2 · commercial','Furnace · 2016','16-SEER condenser','Strip mall · 4 units','Mini-split · 2 zones'],
     miss: ['AC quit last night — house is 84 already','We can be out today. 11:30 or late afternoon?','11:30. It is the upstairs unit','Booked ✓ Today 11:30 AM. What is the address? You will get a text when the tech is on the way.'],
     q: ['Do you charge for a diagnostic, and do you cover the north side?','Yes to both — there is a flat diagnostic fee and it comes off the repair if you go ahead.','What is your soonest?','Thursday 8:00 AM or 10:30 AM are open — want me to hold one?','Thursday 8 works','Done ✓ Thursday 8:00 AM. You will get a text when the tech is on the way.'],
-    ev: [['James Watts — No cooling','9:00 AM · 3-ton split'],['Ray Tucker — AC not cooling','11:30 AM · diagnostic'],['Bo Hendricks — Rooftop PM','2:15 PM · commercial ×2']],
-    rev: [['AD','Amy Donham','Came out the same evening the AC died. House was cool by bedtime.'],['JW','James Watts','Told me what failed and what it cost before touching anything.']],
+    ev: [['Sam Example — No cooling','9:00 AM · 3-ton split'],['Lee Sample — AC not cooling','11:30 AM · diagnostic'],['Drew Demo — Rooftop PM','2:15 PM · commercial ×2']],
+    rev: [['PS','Pat Sample','Came out the same evening the AC died. House was cool by bedtime.'],['SE','Sam Example','Told me what failed and what it cost before touching anything.']],
     rec: [['System','3-ton split · installed 2019'],['Filter size','20×25×1'],['Last service','Capacitor replaced · 3 weeks ago'],['Plan','Maintenance — renews in 5 months'],['Next due','Fall heating check'],['Preference','Early mornings']],
   },
   'plumbing': {
@@ -461,8 +461,8 @@ window.SANO_APP = {
     subs: ['50-gal gas water heater','Slab leak repair · Aug','Tankless · annual flush','Main line · cast iron','Softener + RO','Duplex ×2 · rental','Well pump · 2021'],
     miss: ['Water heater is leaking all over the garage floor','Shut the valve on top if you can reach it. This is an emergency, so it goes to the on-call plumber now — not into tomorrow’s queue.','Valve is off. How soon can someone get here?','Booked ✓ Today 11:30 AM. The plumber has been alerted and you will get a text before he arrives.'],
     q: ['Do you do tankless installs, and roughly what does one run?','We do. Install depends on the gas line and venting, so we give you an upfront number after a look — no charge for the quote.','How soon could someone look?','Thursday 8:00 AM or 10:30 AM are open — want me to hold one?','Thursday 8 is good','Done ✓ Thursday 8:00 AM. You will get a text when the plumber is on the way.'],
-    ev: [['James Watts — Water heater','9:00 AM · 50-gal gas'],['Ray Tucker — Leak, garage','11:30 AM · emergency'],['Bo Hendricks — Drain clear','2:15 PM · duplex ×2']],
-    rev: [['AD','Amy Donham','Called at 7am with a burst line. Someone was here before 9.'],['JW','James Watts','Quoted it before starting and the number did not move.']],
+    ev: [['Sam Example — Water heater','9:00 AM · 50-gal gas'],['Lee Sample — Leak, garage','11:30 AM · emergency'],['Drew Demo — Drain clear','2:15 PM · duplex ×2']],
+    rev: [['PS','Pat Sample','Called at 7am with a burst line. Someone was here before 9.'],['SE','Sam Example','Quoted it before starting and the number did not move.']],
     rec: [['Water heater','50-gal gas · installed 2018'],['Shutoff','Garage, left of the door'],['Last service','Kitchen line cleared · 3 weeks ago'],['Known issue','Slow master bath drain'],['Next due','Water-heater flush'],['Preference','Text before arriving']],
   },
   'roofing': {
@@ -474,8 +474,8 @@ window.SANO_APP = {
     subs: ['2,400 sq ft · architectural','Hail claim · filed Aug','Metal standing seam','Flat TPO · commercial','1,800 sq ft · 3-tab','Storm damage · inspected','Tile · partial replace'],
     miss: ['Roof started leaking after last night’s hail','We can get an inspector out today. 11:30 or late afternoon?','11:30 works — there is a stain on the ceiling','Booked ✓ Today 11:30 AM. Put a bucket under it and photograph the stain if you can.'],
     q: ['Do you handle the insurance claim, or is that on me?','We meet the adjuster with you and document everything — you do not run the claim alone.','How fast can someone look at it?','Thursday 8:00 AM or 10:30 AM are open — want me to hold one?','Thursday 8','Done ✓ Thursday 8:00 AM. You will get a text when the inspector is on the way.'],
-    ev: [['James Watts — Storm inspection','9:00 AM · 2,400 sq ft'],['Ray Tucker — Leak, hail','11:30 AM · emergency'],['Bo Hendricks — Flat roof PM','2:15 PM · commercial']],
-    rev: [['AD','Amy Donham','Crew was out the morning after the storm. Tarped it same day.'],['JW','James Watts','Sat with the adjuster and made sure nothing got missed.']],
+    ev: [['Sam Example — Storm inspection','9:00 AM · 2,400 sq ft'],['Lee Sample — Leak, hail','11:30 AM · emergency'],['Drew Demo — Flat roof PM','2:15 PM · commercial']],
+    rev: [['PS','Pat Sample','Crew was out the morning after the storm. Tarped it same day.'],['SE','Sam Example','Sat with the adjuster and made sure nothing got missed.']],
     rec: [['Roof','2,400 sq ft · architectural shingle'],['Age','11 years'],['Last visit','Storm inspection · 3 weeks ago'],['Claim','Hail — adjuster met last week'],['Next due','Gutter check before winter'],['Preference','Call, do not text']],
   },
   'home-services': {
@@ -487,8 +487,8 @@ window.SANO_APP = {
     subs: ['Quarterly pest · exterior','Weekly mow · corner lot','Panel upgrade quoted','Deep clean · biweekly','Irrigation · 6 zones','Rental ×2 · turnover','Tree trim · seasonal'],
     miss: ['Wasp nest right over the back door — kids can’t go out','We can get someone out today. 11:30 or late afternoon?','11:30 please','Booked ✓ Today 11:30 AM. Keep everyone clear of that door until then.'],
     q: ['Do you cover the north side, and is the quote free?','Yes to both — someone comes out, looks, and gives you an upfront number before any work.','What is your soonest?','Thursday 8:00 AM or 10:30 AM are open — want me to hold one?','Thursday 8 works','Done ✓ Thursday 8:00 AM. You will get a text when the tech is on the way.'],
-    ev: [['James Watts — Quarterly service','9:00 AM · exterior + interior'],['Ray Tucker — Wasp nest','11:30 AM · urgent'],['Bo Hendricks — Rental turnover','2:15 PM · 2 units']],
-    rev: [['AD','Amy Donham','Same crew every time and they always text before they show up.'],['JW','James Watts','Booked it by text in about a minute. No phone tag.']],
+    ev: [['Sam Example — Quarterly service','9:00 AM · exterior + interior'],['Lee Sample — Wasp nest','11:30 AM · urgent'],['Drew Demo — Rental turnover','2:15 PM · 2 units']],
+    rev: [['PS','Pat Sample','Same crew every time and they always text before they show up.'],['SE','Sam Example','Booked it by text in about a minute. No phone tag.']],
     rec: [['Property','Corner lot · back gate code 4471'],['Service','Quarterly exterior + interior on request'],['Last visit','Quarterly service · 3 weeks ago'],['Pets','Two dogs — call before entering'],['Next due','Fall quarterly'],['Preference','Text before arriving']],
   },
   'auto': {
@@ -500,8 +500,8 @@ window.SANO_APP = {
     subs: ['2019 Silverado 1500','2020 Honda CR-V','2016 F-250 diesel','2014 Ram 1500','2018 Ford F-150','Fleet ×4 · vans','2017 Nissan Rogue'],
     miss: ['Brakes are grinding bad, I don’t trust it','Do not drive it far. Today at 11:30, or late afternoon?','11:30 works','Booked ✓ Today 11:30 AM. Bring it in slow — we will look at the rotors too.'],
     q: ['Do you do diagnostics, and what does it cost just to look at a check-engine light?','We do — there is a flat diagnostic fee and it comes off the repair if you go ahead.','What is your soonest?','Thursday 8:00 AM or 10:30 AM are open — want me to hold one?','Thursday 8 works','Done ✓ Thursday 8:00 AM. You will get a text when it is on the lift.'],
-    ev: [['James Watts — Brakes','9:00 AM · Silverado 1500'],['Ray Tucker — Brakes grinding','11:30 AM · F-150'],['Bo Hendricks — Fleet service','2:15 PM · 4 vans']],
-    rev: [['AD','Amy Donham','Battery died in my driveway and they came right out. Fast and fair.'],['JW','James Watts','Showed me the old rotors instead of just telling me.']],
+    ev: [['Sam Example — Brakes','9:00 AM · Silverado 1500'],['Lee Sample — Brakes grinding','11:30 AM · F-150'],['Drew Demo — Fleet service','2:15 PM · 4 vans']],
+    rev: [['PS','Pat Sample','Battery died in my driveway and they came right out. Fast and fair.'],['SE','Sam Example','Showed me the old rotors instead of just telling me.']],
     rec: [['Vehicle','2019 Chevy Silverado 1500'],['Plate','KLM-4471'],['Last service','Brakes &amp; rotors · 3 weeks ago'],['Mileage','88,400 at last visit'],['Next due','Oil change'],['Preference','Early mornings']],
   },
   'med-spa': {
@@ -513,8 +513,8 @@ window.SANO_APP = {
     subs: ['Lash fill · 3-week cycle','Color & gloss · Saturday','Consultation · injectables','Laser · package 3 of 6','Facial · monthly member','Brow lamination · new client','Membership · lapsed'],
     miss: ['Hi — do you have any consultation openings this week?','We do. Today at 11:30, or Thursday morning?','11:30 please','Booked ✓ Today 11:30 AM for your consultation. You will get a text before it.'],
     q: ['How much is a first consultation, and is there any downtime?','The consultation is complimentary, and your provider walks you through downtime for whatever you are considering before you commit to anything.','What is your soonest?','Thursday 10:30 AM or 2:00 PM are open — want me to hold one?','Thursday 10:30','Done ✓ Thursday 10:30 AM. You will get a reminder the day before.'],
-    ev: [['Amy Donham — Lash fill','9:00 AM · 3-week cycle'],['Tanya Guillory — Color & gloss','11:30 AM · new client'],['Ray Tucker — Laser, session 3','2:15 PM · package']],
-    rev: [['AD','Amy Donham','Booked a consult at 10pm on my phone and had a slot by morning.'],['JW','James Watts','Never felt sold to. They explained everything first.']],
+    ev: [['Pat Sample — Lash fill','9:00 AM · 3-week cycle'],['Terry Example — Color & gloss','11:30 AM · new client'],['Lee Sample — Laser, session 3','2:15 PM · package']],
+    rev: [['PS','Pat Sample','Booked a consult at 10pm on my phone and had a slot by morning.'],['SE','Sam Example','Never felt sold to. They explained everything first.']],
     rec: [['Interest','Lash fill + brow shape'],['History','Full set 3 weeks ago · two facials this spring'],['Membership','Monthly — active'],['Notes','Prefers afternoons, no downtime before events'],['Next due','6-month review'],['Preference','Text, not calls']],
   },
   'dental': {
@@ -526,8 +526,8 @@ window.SANO_APP = {
     subs: ['New patient · exam booked','6-month recall · due','Crown · seat appointment','Hygiene · overdue','Whitening consult','Family ×4 · recall','Night guard · follow-up'],
     miss: ['Do you take new patients? I need a cleaning','We do. Today at 11:30, or Thursday morning?','11:30 works','Booked ✓ Today 11:30 AM. We will text the new-patient form so you are not filling it out in the waiting room.'],
     q: ['Do you take my insurance, and how much is a new-patient visit?','You are in-network on that plan. A new-patient visit depends on what your plan covers, so I am passing your details to the front desk for an exact number — they will confirm before you come in.','What is your soonest?','Thursday 8:00 AM or 10:30 AM are open — want me to hold one?','Thursday 8','Done ✓ Thursday 8:00 AM. Your form will arrive by text tonight.'],
-    ev: [['Amy Donham — Crown seat','9:00 AM · follow-up'],['Ray Tucker — New patient exam','11:30 AM · cleaning'],['Bo Hendricks — Family recall','2:15 PM · 4 patients']],
-    rev: [['AD','Amy Donham','Booked online after hours and had the forms done before I arrived.'],['JW','James Watts','It put me straight through to the front desk and I had my exact portion before the appointment, not after.']],
+    ev: [['Pat Sample — Crown seat','9:00 AM · follow-up'],['Lee Sample — New patient exam','11:30 AM · cleaning'],['Drew Demo — Family recall','2:15 PM · 4 patients']],
+    rev: [['PS','Pat Sample','Booked online after hours and had the forms done before I arrived.'],['SE','Sam Example','It put me straight through to the front desk and I had my exact portion before the appointment, not after.']],
     rec: [['Status','Active patient — hygiene booked'],['Recall','Due in 6 months'],['Last visit','Cleaning &amp; exam · 3 weeks ago'],['Notes','Prefers morning, anxious about drilling'],['Next due','Hygiene recall'],['Preference','Text reminders only']],
   },
   'retail': {
@@ -539,8 +539,8 @@ window.SANO_APP = {
     subs: ['Class booked · Saturday','Special order · in transit','Member · monthly','Fitting booked · Thu','Repair drop-off','Gift registry','Waitlist · restock'],
     miss: ['Are you open today? And do you have it in stock?','We are open until 6. It is in — want us to hold one?','Yes please, I can come by after 4','Held ✓ Under your name until close tomorrow. We will text if anything changes.'],
     q: ['Do you run classes, and do I need to book ahead?','We do, and yes — they fill up. There are two spots left on Saturday.','Can I take one?','Saturday 10:00 AM or 2:00 PM — want me to hold one?','10 works','Done ✓ Saturday 10:00 AM. You will get a reminder the day before.'],
-    ev: [['Amy Donham — Fitting','9:00 AM · in store'],['Saturday class — 8 booked','11:30 AM · 2 spots left'],['Bo Hendricks — Special order','2:15 PM · pickup']],
-    rev: [['AD','Amy Donham','Asked about stock at 9pm and had an answer before I went to bed.'],['JW','James Watts','They held it for me without me having to call twice.']],
+    ev: [['Pat Sample — Fitting','9:00 AM · in store'],['Saturday class — 8 booked','11:30 AM · 2 spots left'],['Drew Demo — Special order','2:15 PM · pickup']],
+    rev: [['PS','Pat Sample','Asked about stock at 9pm and had an answer before I went to bed.'],['SE','Sam Example','They held it for me without me having to call twice.']],
     rec: [['Status','Member — monthly'],['Last purchase','3 weeks ago'],['Special order','In transit — arrives Fri'],['Notes','Waitlisted for the restock'],['Next due','Class on Saturday'],['Preference','Text when it arrives']],
   },
 };
