@@ -66,7 +66,7 @@ window.SANO_INDUSTRIES = [
     objection: ['“The big franchises have 24/7 phone staff.”', 'Now so do you — without hiring a single person or paying a night shift.'],
     faqs: [
       ['Can it answer while I am on a job?', 'That is exactly when it works hardest. On Starter it texts back within seconds. From Growth up it picks up the phone live. It does not matter whether you are free or elbow-deep under a sink.'],
-      ['Will customers know it is not me?', 'It sounds like a friendly, professional person on your team, and it speaks English and Spanish. Anything it cannot answer comes straight to you.'],
+      ['Will customers know it is not me?', 'Yes. It answers as your shop’s assistant and says it is an AI assistant at the start of every call and text. It is friendly and professional, and it speaks English and Spanish. Anything it cannot answer comes straight to you.'],
       ['Does it help me get paid faster?', 'Yes — invoicing and pay-by-text come in at the Scale level. It sends the invoice and a secure pay-by-text link right after the job, instead of it waiting until you get home.'],
     ]
   },
