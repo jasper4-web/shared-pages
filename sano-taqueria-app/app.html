@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<script>try{if(sessionStorage.getItem("sano_taq_unlock")!=="1")location.replace("./");}catch(e){}</script>
+
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Taquería Ejemplo App</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: a phone-width owner app (max 440px, centered on wide screens) — sticky header, scrolling screen, fixed tab bar, bottom sheets.
+   Cilantro green = go/done, chile red = needs you, masa amber = money pending; neutrals lean slightly green. */
+:root {
+  --bg: #eef2ef; --surface: #ffffff; --sunk: #f3f6f4; --line: #dfe5e1; --ink: #14201a; --soft: #5b6a62;
+  --go: #1d6b45; --go-ink: #ffffff; --go-soft: #e3f3ea;
+  --need: #c2410c; --need-soft: #fff1ea; --need-line: #f6cdb9;
+  --money: #8a5a00; --money-soft: #fff5dc; --money-line: #efd79a;
+  --alert: #b42318; --alert-soft: #fdecea;
+  --link: #1f5fbf;
+  --kds-bg: #0f1412; --kds-card: #1a221e; --kds-line: #2b3631; --kds-ink: #eef3f0; --kds-soft: #9aa8a0;
+  --shadow: 0 8px 24px rgba(20, 32, 26, .12);
+  --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Figtree", -apple-system, "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0c110e; --surface: #151c18; --sunk: #1b241f; --line: #2a3530; --ink: #e9f0ec; --soft: #9aa9a1;
+  --go: #2f9d66; --go-ink: #04140b; --go-soft: #15301f;
+  --need: #f07b45; --need-soft: #2c1a12; --need-line: #5a2f1b;
+  --money: #f0c159; --money-soft: #2a220f; --money-line: #5a4716;
+  --alert: #ff8a7a; --alert-soft: #331614; --link: #7fb0ff;
+  --shadow: 0 8px 24px rgba(0, 0, 0, .45); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0c110e; --surface: #151c18; --sunk: #1b241f; --line: #2a3530; --ink: #e9f0ec; --soft: #9aa9a1;
+  --go: #2f9d66; --go-ink: #04140b; --go-soft: #15301f;
+  --need: #f07b45; --need-soft: #2c1a12; --need-line: #5a2f1b;
+  --money: #f0c159; --money-soft: #2a220f; --money-line: #5a4716;
+  --alert: #ff8a7a; --alert-soft: #331614; --link: #7fb0ff;
+  --shadow: 0 8px 24px rgba(0, 0, 0, .45); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.4 var(--f-body); -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid var(--link); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+h1, h2, h3 { font-family: var(--f-display); letter-spacing: -.01em; text-wrap: balance; margin: 0; }
+
+.shell { max-width: 440px; margin: 0 auto; min-height: 100%; background: var(--bg); position: relative; padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+.demo { padding-block: 10px 8px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); font-size: 12px; color: var(--soft); display: grid; gap: 7px; }
+.demo .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.demo b { color: var(--ink); }
+.seg { display: flex; background: var(--sunk); border: 1px solid var(--line); border-radius: 12px; padding: 3px; gap: 2px; }
+.seg button { flex: 1; padding: 7px 6px; border-radius: 9px; font-weight: 700; font-size: 13px; color: var(--soft); white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+
+header.app { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 8px 8px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; border-bottom: 1px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+header.app .who { min-width: 0; }
+header.app .biz { font-size: 12.5px; color: var(--soft); }
+header.app h1 { font-size: 26px; font-weight: 800; }
+.status { text-align: right; display: grid; gap: 3px; justify-items: end; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; font-size: 12.5px; border-radius: 999px; padding: 5px 10px; white-space: nowrap; }
+.pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.pill.open { background: var(--go-soft); color: var(--go); }
+.pill.paused { background: var(--money-soft); color: var(--money); }
+.pill.off { background: var(--alert-soft); color: var(--alert); }
+.conn { font-size: 11.5px; color: var(--soft); }
+
+main { padding-block: 10px 16px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 10px; }
+.label { font-size: 11.5px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--soft); display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-top: 4px; }
+.label button { color: var(--link); font-weight: 700; letter-spacing: 0; text-transform: none; font-size: 13px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 11px 12px; display: grid; gap: 4px; }
+button.card { text-align: left; width: 100%; }
+.card .t { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; font-weight: 800; }
+.card .t span:first-child { min-width: 0; }
+.sub { font-size: 13px; color: var(--soft); }
+.chip { display: inline-block; font-size: 11.5px; font-weight: 800; border-radius: 999px; padding: 3px 8px; white-space: nowrap; }
+.chip.ok { background: var(--go-soft); color: var(--go); }
+.chip.due { background: var(--money-soft); color: var(--money); }
+.chip.bad { background: var(--alert-soft); color: var(--alert); }
+.chip.neutral { background: var(--sunk); color: var(--soft); }
+.money { font-size: 13px; }
+.money b { font-variant-numeric: tabular-nums; }
+.allergy { background: var(--alert); color: var(--surface); font-weight: 800; border-radius: 10px; padding: 7px 10px; font-size: 13.5px; }
+
+.needbar { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--need); color: var(--surface); border-radius: 14px; padding: 11px 13px; font-weight: 800; font-size: 15px; }
+.needbar small { font-weight: 600; opacity: .95; font-size: 13px; }
+.needbar.fine { background: var(--go-soft); color: var(--go); }
+.need { display: flex; gap: 10px; align-items: center; background: var(--need-soft); border: 1px solid var(--need-line); border-left: 5px solid var(--need); border-radius: 13px; padding: 10px 11px; }
+.need.money { border-left-color: var(--money); background: var(--money-soft); border-color: var(--money-line); }
+.need .bd { flex: 1; min-width: 0; }
+.need b { display: block; font-size: 14.5px; }
+.need .sub { font-size: 12.5px; }
+.act { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.btn { font-weight: 800; font-size: 13.5px; border-radius: 10px; padding: 9px 12px; background: var(--ink); color: var(--surface); white-space: nowrap; }
+.btn.go { background: var(--go); color: var(--go-ink); }
+.btn.ghost { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+.btn.warn { background: var(--alert-soft); color: var(--alert); }
+.btn.big { font-size: 16px; padding: 13px 14px; border-radius: 12px; }
+.btn.wide { width: 100%; text-align: center; }
+.later { font-size: 12.5px; color: var(--soft); background: var(--sunk); border-radius: 11px; padding: 8px 10px; }
+.notice { display: flex; gap: 10px; align-items: flex-start; background: var(--money-soft); border: 1px solid var(--money-line); color: var(--ink); border-radius: 12px; padding: 9px 10px; font-size: 12.5px; }
+.notice .x { margin-left: auto; font-weight: 800; color: var(--soft); padding: 0 4px; }
+.offline { background: var(--alert); color: var(--surface); border-radius: 12px; padding: 11px 12px; font-weight: 800; font-size: 14px; }
+.offline small { display: block; font-weight: 600; opacity: .9; }
+.kv { display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; padding: 3px 0; }
+.kv span { color: var(--soft); } .kv b { text-align: right; font-variant-numeric: tabular-nums; }
+.kv.total { border-top: 1px solid var(--line); margin-top: 3px; padding-top: 6px; }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.meter { height: 7px; border-radius: 4px; background: var(--sunk); overflow: hidden; }
+.meter i { display: block; height: 100%; background: var(--need); }
+.search { width: 100%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 11px; padding: 10px 11px; font: inherit; font-size: 14px; }
+.list { display: grid; gap: 7px; }
+.row2 { display: flex; gap: 8px; align-items: center; }
+.row2 .bd { flex: 1; min-width: 0; }
+.fab { position: fixed; z-index: 6; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); right: max(16px, calc((100vw - 440px) / 2 + 16px)); background: var(--need); color: var(--surface); font-weight: 800; border-radius: 999px; padding: 13px 18px; box-shadow: var(--shadow); }
+
+/* window mode (always dark: it lives next to a plancha) */
+.kds { background: var(--kds-bg); color: var(--kds-ink); border-radius: 18px; padding: 12px; display: grid; gap: 10px; }
+.kds .top { display: flex; gap: 6px; flex-wrap: wrap; }
+.kds .k { font-size: 12.5px; font-weight: 800; border-radius: 10px; padding: 8px 10px; background: var(--kds-card); border: 1px solid var(--kds-line); color: var(--kds-ink); }
+.kds .k.on { color: #8fe0ad; border-color: #1f5c36; }
+.kds .k.p { color: #ffd77a; border-color: #8a6a12; }
+.pace { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.pace button { background: var(--kds-card); border: 1px solid var(--kds-line); color: var(--kds-soft); border-radius: 11px; padding: 9px 4px; font-weight: 800; font-size: 14px; }
+.pace button small { display: block; font-weight: 600; font-size: 11px; }
+.pace button[aria-pressed="true"] { color: #fff; border-color: #c2410c; background: #3a1d10; }
+.tk { background: var(--kds-card); border: 2px solid var(--kds-line); border-radius: 16px; padding: 12px; display: grid; gap: 4px; }
+.tk .a { display: flex; justify-content: space-between; color: var(--kds-soft); font-size: 14px; }
+.tk .a b { color: #fff; font-size: 24px; font-family: var(--f-display); }
+.tk .n { font-family: var(--f-display); font-size: 24px; font-weight: 800; letter-spacing: .01em; }
+.tk .i { font-size: 20px; font-weight: 800; line-height: 1.2; }
+.tk .mod { font-size: 17px; font-weight: 800; color: #ff9b85; }
+.tk .pr { font-size: 14px; color: var(--kds-soft); }
+.tk .tag { justify-self: start; font-size: 11.5px; font-weight: 900; border-radius: 6px; padding: 2px 7px; background: #2b3631; color: #cfe; }
+.tk .tag.truck { background: #213a5c; color: #cfe0ff; }
+.tk .tag.flag { background: #4a1712; color: #ffb4a8; }
+.tk.waiting { border-color: #8a6a12; } .tk.waiting .a b { color: #ffd77a; font-size: 18px; }
+.tk .go { margin-top: 6px; text-align: center; font-weight: 900; font-size: 22px; border-radius: 13px; padding: 14px; background: #1f7a45; color: #fff; }
+.tk .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+.tk .two button { font-weight: 900; font-size: 17px; border-radius: 12px; padding: 13px 4px; background: #2a332e; color: #eef3f0; }
+.tk .two button.nv { background: #3a1414; color: #ffb4a8; }
+.sold { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.sold button { background: var(--kds-card); border: 1px solid var(--kds-line); color: var(--kds-ink); border-radius: 12px; padding: 12px 4px; font-weight: 900; font-size: 15px; }
+.sold button[aria-pressed="true"] { background: #3a1414; border-color: #6b2020; color: #ffb4a8; text-decoration: line-through; }
+.kds .lbl { font-size: 11.5px; font-weight: 800; letter-spacing: .08em; color: var(--kds-soft); }
+.kds .demo-ctl { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.kds .demo-ctl button { border: 1px dashed #4a5a52; color: var(--kds-soft); border-radius: 11px; padding: 9px 4px; font-weight: 700; font-size: 12.5px; }
+.kds .off { background: #3a1414; border: 2px solid #b42318; color: #ffd2cb; border-radius: 13px; padding: 11px 12px; font-weight: 800; }
+
+/* ring */
+.ring { position: fixed; inset: 0; z-index: 40; background: #17703f; color: #fff; display: grid; place-items: center; text-align: center; padding: max(24px, env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px)); }
+.ring .in { max-width: 380px; display: grid; gap: 8px; }
+.ring .k { font-weight: 800; letter-spacing: .14em; font-size: 13px; animation: pulse 1.1s infinite; }
+.ring .big { font-family: var(--f-display); font-size: 40px; font-weight: 800; }
+.ring .what { font-size: 18px; font-weight: 700; }
+.ring button { justify-self: center; margin-top: 12px; background: #fff; color: #17703f; font-weight: 900; font-size: 19px; border-radius: 16px; padding: 15px 28px; }
+.ring .fine { font-size: 12.5px; opacity: .9; }
+@keyframes pulse { 50% { opacity: .55; } }
+@media (prefers-reduced-motion: reduce) { .ring .k { animation: none; } }
+
+/* sheets */
+.scrim { position: fixed; inset: 0; z-index: 30; background: rgba(8, 14, 11, .5); display: flex; align-items: flex-end; justify-content: center; }
+.sheet { width: 100%; max-width: 440px; max-height: 88vh; overflow: auto; background: var(--surface); color: var(--ink); border-radius: 20px 20px 0 0; padding-block: 10px calc(16px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 10px; box-shadow: var(--shadow); }
+.sheet .grab { width: 40px; height: 4px; background: var(--line); border-radius: 2px; justify-self: center; }
+.sheet h2 { font-size: 21px; }
+.msg { background: var(--sunk); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; font-size: 14px; white-space: pre-wrap; }
+.field { display: grid; gap: 4px; font-size: 12.5px; font-weight: 700; color: var(--soft); }
+.field input, .field select, .field textarea { font: inherit; font-size: 15px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; width: 100%; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips button { border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; font-weight: 700; font-size: 13.5px; background: var(--surface); }
+.chips button[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.stepper { display: flex; align-items: center; gap: 10px; } .stepper button { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); font-weight: 800; font-size: 18px; }
+.stepper b { min-width: 48px; text-align: center; font-size: 18px; }
+.toast { position: fixed; z-index: 50; left: 50%; transform: translateX(-50%); bottom: calc(92px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--surface); font-weight: 700; font-size: 14px; border-radius: 12px; padding: 10px 14px; box-shadow: var(--shadow); max-width: 90vw; }
+
+nav.tabs { position: fixed; z-index: 8; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 440px; background: var(--surface); border-top: 1px solid var(--line); display: flex; padding-block: 6px calc(8px + env(safe-area-inset-bottom, 0px)); padding-left: max(4px, env(safe-area-inset-left, 0px)); padding-right: max(4px, env(safe-area-inset-right, 0px)); }
+nav.tabs button { flex: 1; display: grid; justify-items: center; gap: 2px; font-size: 11px; font-weight: 700; color: var(--soft); padding: 4px 0; position: relative; }
+nav.tabs button[aria-current="page"] { color: var(--ink); font-weight: 800; }
+nav.tabs svg { width: 22px; height: 22px; }
+nav.tabs .bdg { position: absolute; top: 0; left: calc(50% + 6px); background: var(--need); color: var(--surface); font-size: 10.5px; font-weight: 800; border-radius: 999px; padding: 0 6px; line-height: 17px; }
+.msgrow .ch { font-size: 10.5px; font-weight: 800; border-radius: 6px; padding: 2px 6px; background: var(--sunk); color: var(--soft); }
+.msgrow .ch.wa { background: #dcf5e3; color: #146c3a; } .msgrow .ch.ig { background: #fbe3f0; color: #9b1f62; } .msgrow .ch.call { background: var(--money-soft); color: var(--money); }
+.stars { color: var(--money); letter-spacing: 1px; }
+.hint { font-size: 12px; color: var(--soft); }
+</style>
+
+<div class="shell">
+  <div class="demo">
+    <div><b>Muestra para mostrar a dueños.</b> Negocio, clientes y cifras inventados. En español; cada persona escoge su idioma.</div>
+    <div class="seg" role="group" aria-label="Tipo de negocio">
+      <button id="bt-taq" data-biz="taq">Taquería + troca</button>
+      <button id="bt-troca" data-biz="troca">Solo troca</button>
+      <button id="bt-rest" data-biz="rest">Restaurante</button>
+    </div>
+  </div>
+  <header class="app">
+    <div class="who"><div class="biz" id="h-biz"></div><h1 id="h-title"></h1></div>
+    <div class="status"><span class="pill open" id="h-pill">Abierto</span><span class="conn" id="h-conn">en línea · sonido activado</span></div>
+  </header>
+  <main id="main"></main>
+  <nav class="tabs" id="tabs" aria-label="Secciones"></nav>
+</div>
+<div id="layer"></div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (s) { return document.querySelector(s); };
+  var money = function (n) { return "$" + Math.round(n).toLocaleString("en-US"); };
+  var money2 = function (n) { return "$" + n.toFixed(2); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var ICON = {
+    hoy: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+    grandes: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3.5h6v3H9zM9 11h6M9 15h4"/>',
+    ventana: '<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/>',
+    troca: '<path d="M2 7h11v9H2zM13 10h4l3 3v3h-7z"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>',
+    mensajes: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+    resenas: '<polygon points="12 3 14.8 8.8 21 9.6 16.5 14 17.6 20.2 12 17.2 6.4 20.2 7.5 14 3 9.6 9.2 8.8"/>',
+    mas: '<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>'
+  };
+
+  /* ---------------- sample state (all made up) ---------------- */
+  var S = {
+    biz: "taq", tab: "hoy", onlyMine: false, bigSeg: "semana", waitBanner: true, status: "open", offline: false, pace: "Ocupado",
+    trucks: { arrived: false, spot: "Obra en Bissonnet", late: false, closed: false },
+    sold: { Pastor: true, Asada: false, Barbacoa: true, Pollo: false, Lengua: false, Menudo: false },
+    costs: { pastor: 4.2, asada: 7.5, tortillaDz: 1.1, salsas: 25, desechables: 18, propano: 15, taquero: 18, ayudante: 14 },
+    needs: {
+      taq: [
+        { id: "n1", kind: "need", t: "Pedido grande sin pagar", s: "60 tacos para la 1:15 · número nuevo. Si no contesta en 10 min, se rechaza solo y se le avisa al cliente.", btns: [["Sí", "accept"], ["No", "decline"]] },
+        { id: "n2", kind: "need", t: "Se acabó la barbacoa", s: "El pedido #218 de la 1:00 la lleva · Memo E. · (713) 555-0148", btns: [["Llamar", "call"]] },
+        { id: "n3", kind: "money", t: "Bautizo del sábado: falta el anticipo", s: "$230 · vence el jueves · Rosa Ejemplo", btns: [["Recordar", "remind"]] }
+      ],
+      troca: [
+        { id: "m1", kind: "need", t: "Falta la carta del baño del bar", s: "Esta noche estacionan ahí · pídala antes de las 8", btns: [["Ya la tengo", "letter"]] },
+        { id: "m2", kind: "need", t: "Se acabó el pastor", s: "2 pedidos de la cuadrilla lo llevan", btns: [["Ver", "go-troca"]] }
+      ],
+      rest: [
+        { id: "r1", kind: "need", t: "Quince · 150 personas sin contestar", s: "por Instagram · hace 3 h · pide precio", btns: [["Cotizar", "quote-q1"]] },
+        { id: "r2", kind: "money", t: "Bautizo del sábado: falta el anticipo", s: "$230 · vence el jueves · Rosa Ejemplo", btns: [["Recordar", "remind"]] },
+        { id: "r3", kind: "need", t: "Reseña de 2 estrellas", s: "Jorge: \"Tardaron con mi pedido\"", btns: [["Responder", "reply-review"]] },
+        { id: "r4", kind: "money", t: "Cerrar el número: boda del 8 nov", s: "Hoy vence · 120 personas por ahora", btns: [["Confirmar", "lockcount"]] }
+      ]
+    },
+    pickups: [
+      { id: 214, name: "Lupe", when: "12:45", items: ["4 pastor", "2 asada"], mod: "SIN CEBOLLA", price: 16.50, state: "new" },
+      { id: 216, name: "Carmen", when: "12:45", items: ["8 tacos mixtos"], mod: "VERDE EXTRA", price: 24.00, state: "new", truck: true },
+      { id: 213, name: "Rosa", when: "12:30", items: ["4 tacos", "1 menudo"], price: 14.25, state: "ready", wait: 3, noShows: 1 },
+      { id: 215, name: "Daniel", when: "1:00", items: ["3 tacos", "1 quesadilla"], price: 13.75, state: "new" }
+    ],
+    truckOrders: [
+      { id: 301, name: "Cuadrilla · Beto (12 bolsas)", when: "11:30", items: ["24 pastor", "12 asada", "por nombre en cada bolsa"], price: 72.00, state: "new", crew: true },
+      { id: 302, name: "Toño", when: "11:45", items: ["5 asada"], price: 12.50, state: "new" },
+      { id: 303, name: "Memo", when: "12:00", items: ["3 pastor", "2 lengua"], mod: "SIN CILANTRO", price: 13.00, state: "new", noShows: 2 }
+    ],
+    inquiries: [
+      { id: "q1", name: "Quince · Familia Ejemplo", people: 150, date: "sáb 13 dic", from: "Instagram", ago: "hace 3 h" },
+      { id: "q2", name: "Cumpleaños · Ana Demo", people: 25, date: "vie 31 oct", from: "llamada", ago: "hace 1 día" }
+    ],
+    events: [
+      { id: "e1", name: "Bautizo · Rosa Ejemplo", day: "Sáb 25 oct", time: "3:00", people: 60, perPerson: 13, delivery: 0, tax: false,
+        deposit: { amount: 230, paid: false, due: "jue" }, phone: "(713) 555-0172", addr: "4521 Calle Ejemplo, Houston", allergy: "1 invitada sin cacahuate",
+        timeline: [["Sale el carro", "1:45"], ["Llega y monta", "2:15"], ["Servicio", "3:00 – 6:00"], ["Recoger equipo", "6:30"]],
+        food: [["Pastor", "15 lb", 15, "pastor"], ["Asada", "10 lb", 10, "asada"]], tortillas: 20, salsas: "roja, verde, cebolla y cilantro, limones",
+        staff: [["Taquero", "Chuy", 5, "taquero"], ["Ayudante", "Lalo", 5, "ayudante"]], equip: [["Trompo", true], ["Propano", true], ["2 chafers", false], ["Hielera", false]],
+        note: "Chuy termina 6:30 · la troca abre a las 8:00 · no choca" },
+      { id: "e2", name: "Comida de oficina · Grupo Ejemplo", day: "Vie 31 oct", time: "11:30", people: 40, perPerson: 12, delivery: 0, tax: true,
+        deposit: { amount: 150, paid: true, how: "Zelle", by: "Martha", date: "14 oct" }, phone: "(713) 555-0110", addr: "Recoge en el local", allergy: "",
+        timeline: [["Listo para recoger", "11:15"], ["Recoge", "11:30"]], food: [["Pastor", "8 lb", 8, "pastor"], ["Asada", "6 lb", 6, "asada"]], tortillas: 12, salsas: "roja, verde",
+        staff: [["Cocina", "Martha", 2, "ayudante"]], equip: [["Platos y cubiertos (40)", false]], note: "" },
+      { id: "e3", name: "Boda · Familia Muestra", day: "Sáb 8 nov", time: "6:00", people: 120, perPerson: 14, delivery: 40, tax: false,
+        deposit: { amount: 500, paid: true, how: "efectivo", by: "Martha", date: "2 oct" }, phone: "(281) 555-0133", addr: "Salón Ejemplo, Pasadena", allergy: "",
+        timeline: [["Sale el carro", "4:30"], ["Servicio", "6:00 – 10:00"]], food: [["Pastor", "30 lb", 30, "pastor"], ["Asada", "20 lb", 20, "asada"]], tortillas: 40, salsas: "4 salsas, limones",
+        staff: [["Taquero", "Chuy", 7, "taquero"], ["Ayudante", "Lalo", 7, "ayudante"], ["Ayudante", "Sergio", 7, "ayudante"]], equip: [["Trompo", false], ["4 chafers", false]], note: "El número se cierra hoy" }
+    ],
+    done: [{ name: "Taquiza · Oficina Ejemplo · 45", day: "vie 17 oct", charged: 520, food: 171, labor: 72, other: 10 }],
+    tamales: [
+      { id: "t1", name: "Ana Demo", what: "2 puerco, 1 rajas", total: 60, paid: 30, done: false, day: "24" },
+      { id: "t2", name: "Lupe Muestra", what: "4 puerco", total: 80, paid: 0, done: false, day: "24" },
+      { id: "t3", name: "Familia Ejemplo", what: "6 pollo", total: 120, paid: 120, done: true, day: "24" },
+      { id: "t4", name: "Oficina Ejemplo", what: "10 mixtos", total: 200, paid: 100, done: false, day: "23" }
+    ],
+    messages: [
+      { ch: "ig", chn: "Instagram", who: "Familia Ejemplo", t: "¿Cuánto por una quince de 150 personas el 13 de diciembre?", tag: "Necesita precio", conv: true },
+      { ch: "wa", chn: "WhatsApp", who: "Lupe Muestra", t: "¿Hoy hay menudo?", tag: "Contestado solo: \"Sábado y domingo, hasta que se acabe\"" },
+      { ch: "call", chn: "Llamada perdida", who: "(832) 555-0190", t: "12:31 · le llegó su enlace para pedir", tag: "Pidió: #216" },
+      { ch: "ig", chn: "Instagram", who: "Toño", t: "¿Dónde están hoy?", tag: "Contestado solo con el lugar de hoy" }
+    ],
+    reviews: [
+      { stars: 2, who: "Jorge", t: "Tardaron con mi pedido.", answered: false },
+      { stars: 5, who: "Rosa Ejemplo", t: "Apuntaron cada detalle de nuestra taquiza.", answered: true },
+      { stars: 5, who: "Miguel Muestra", t: "Pedí a las 11:50 y a las 12:15 ya estaba con mi nombre.", answered: true }
+    ]
+  };
+  var BIZ = {
+    taq: { name: "Taquería Ejemplo", tabs: ["hoy", "grandes", "ventana", "troca", "mas"] },
+    troca: { name: "Taquería Ejemplo · la troca", tabs: ["troca", "grandes", "mensajes", "mas"] },
+    rest: { name: "Restaurante Ejemplo", tabs: ["hoy", "grandes", "mensajes", "resenas", "mas"] }
+  };
+  var TABNAME = { hoy: "Hoy", grandes: "Grandes", ventana: "Ventana", troca: "Troca", mensajes: "Mensajes", resenas: "Reseñas", mas: "Más" };
+
+  /* ---------------- money for an event ---------------- */
+  function ev(e) {
+    var sub = e.perPerson * e.people + e.delivery;
+    var tax = e.tax ? sub * 0.0825 : 0;
+    var total = sub + tax;
+    var paid = e.deposit.paid ? e.deposit.amount : 0;
+    var c = S.costs, food = 0;
+    e.food.forEach(function (f) { food += f[2] * (c[f[3]] || 0); });
+    food += e.tortillas * c.tortillaDz + c.salsas + c.desechables + (e.people > 50 ? c.propano : 0);
+    var labor = 0; e.staff.forEach(function (s) { labor += s[2] * (c[s[3]] || 0); });
+    return { sub: sub, tax: tax, total: total, paid: paid, rest: total - e.deposit.amount, owedNow: total - paid, food: food, labor: labor, profit: total - food - labor };
+  }
+
+  /* ---------------- helpers ---------------- */
+  function needsList() { return S.needs[S.biz].filter(function (n) { return !n.done; }); }
+  function toast(t) { document.querySelectorAll(".toast").forEach(function (x) { x.remove(); }); var el = document.createElement("div"); el.className = "toast"; el.setAttribute("role", "status"); el.textContent = t; document.body.appendChild(el); setTimeout(function () { el.remove(); }, 2600); }
+  function sheet(html) { $("#layer").innerHTML = '<div class="scrim" data-close="1"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>' + html + '</div></div>'; var f = $("#layer .sheet button, #layer .sheet input"); if (f) f.focus({ preventScroll: true }); }
+  function closeSheet() { $("#layer").innerHTML = ""; }
+  function copy(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(function () { toast("Copiado"); }, function () { toast("Seleccione el texto y cópielo"); }); }
+    else toast("Seleccione el texto y cópielo");
+  }
+  function waSheet(title, text, doneLabel, onDone) {
+    sheet('<h2>' + esc(title) + '</h2><div class="hint">Mientras se aprueban los textos automáticos, esto se manda desde su propio WhatsApp. Ya va escrito:</div>' +
+      '<div class="msg" id="wa-text">' + esc(text) + '</div><div class="split"><button class="btn ghost big" data-act="copywa">Copiar</button><button class="btn go big" data-act="wa-done">' + esc(doneLabel || "Ya lo mandé") + '</button></div>');
+    S._waDone = onDone || null;
+  }
+
+  /* ---------------- render ---------------- */
+  function render() {
+    var B = BIZ[S.biz];
+    if (B.tabs.indexOf(S.tab) < 0) S.tab = B.tabs[0];
+    document.querySelectorAll(".demo .seg button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.biz === S.biz)); });
+    $("#h-biz").textContent = B.name + " · viernes";
+    $("#h-title").textContent = TABNAME[S.tab] === "Troca" ? "La troca" : (S.tab === "grandes" ? "Pedidos grandes" : (S.tab === "resenas" ? "Reseñas" : TABNAME[S.tab]));
+    var pill = $("#h-pill");
+    if (S.offline) { pill.className = "pill off"; pill.textContent = "Pausado: sin conexión"; }
+    else if (S.status === "paused") { pill.className = "pill paused"; pill.textContent = "Pausado hasta 1:02"; }
+    else if (S.biz === "troca" && S.trucks.closed) { pill.className = "pill off"; pill.textContent = "Hoy no salimos"; }
+    else { pill.className = "pill open"; pill.textContent = S.biz === "rest" ? "Página al día" : "Abierto"; }
+    $("#h-conn").textContent = S.offline ? "sin internet · avisamos a su teléfono" : (S.biz === "rest" ? "llamadas y mensajes al día" : "en línea · sonido activado");
+    var n = needsList().length;
+    $("#tabs").innerHTML = B.tabs.map(function (t) {
+      var bdg = (t === B.tabs[0] && n) ? '<span class="bdg">' + n + '</span>' : "";
+      return '<button data-tab="' + t + '"' + (t === S.tab ? ' aria-current="page"' : "") + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[t] + '</svg>' + TABNAME[t] + bdg + '</button>';
+    }).join("");
+    var html = ({ hoy: viewHoy, grandes: viewGrandes, ventana: viewVentana, troca: viewTroca, mensajes: viewMensajes, resenas: viewResenas, mas: viewMas })[S.tab]();
+    $("#main").innerHTML = html;
+  }
+
+  function needsBlock(full) {
+    var list = needsList();
+    if (!list.length) return '<div class="needbar fine">Todo bien ✓ <small>nada necesita a usted</small></div>';
+    var bar = S.onlyMine
+      ? '<button class="needbar" data-act="toggle-mine" aria-expanded="true">Solo lo suyo · ' + list.length + ' <small>ver todo ▴</small></button>'
+      : '<button class="needbar" data-act="toggle-mine" aria-expanded="false">Necesita a usted · ' + list.length + ' <small>ver solo esto ▾</small></button>';
+    var items = list.map(function (x) {
+      return '<div class="need ' + (x.kind === "money" ? "money" : "") + '"><div class="bd"><b>' + esc(x.t) + '</b><div class="sub">' + esc(x.s) + '</div></div><div class="act">' +
+        x.btns.map(function (b) { return '<button class="btn" data-act="' + b[1] + '" data-need="' + x.id + '">' + esc(b[0]) + '</button>'; }).join("") + '</div></div>';
+    }).join("");
+    if (full) return '<div class="needbar" style="cursor:default">Necesita a usted · ' + list.length + ' <small>' + (S.biz === "troca" ? "antes de salir" : "") + '</small></div>' + items;
+    return bar + (S.onlyMine ? items : "");
+  }
+
+  function eventCard(e) {
+    var m = ev(e);
+    var st = e.deposit.paid ? '<span class="chip ok">Anticipo ✓</span>' : '<span class="chip due">Falta anticipo</span>';
+    var line = e.deposit.paid
+      ? 'Total <b>' + money(m.total) + '</b> · anticipo ' + money(e.deposit.amount) + ' (' + e.deposit.how + ', ' + e.deposit.by + ') · resta <b>' + money(m.owedNow) + '</b>'
+      : 'Total <b>' + money(m.total) + '</b> · anticipo ' + money(e.deposit.amount) + ' vence ' + e.deposit.due + ' · resta <b>' + money(m.rest) + '</b> después del anticipo';
+    return '<button class="card" data-act="open-event" data-ev="' + e.id + '"><div class="t"><span>' + esc(e.day) + ' · ' + esc(e.time) + ' · ' + esc(e.name.split(" · ")[0]) + ' · ' + e.people + '</span>' + st + '</div>' +
+      '<div class="money">' + line + '</div>' + (e.allergy ? '<div class="sub" style="color:var(--alert);font-weight:800">⚠ ' + esc(e.allergy) + '</div>' : '') + '</button>';
+  }
+
+  function viewHoy() {
+    var out = [];
+    if (S.offline) out.push('<div class="offline">Sin conexión: su página se pausó sola a las 12:46 <small>Se reabre sola al volver el internet. Le avisamos a su teléfono.</small></div>');
+    out.push(needsBlock());
+    if (S.onlyMine) {
+      out.push('<div class="later">Después del turno (2:30): ' + (S.biz === "rest" ? '1 cotización por revisar · 2 mensajes de catering' : 'reseña ★★ de Jorge por contestar · 1 cotización de quince por hacer') + '</div>');
+      out.push('<div class="label">Siempre a la vista</div>');
+      if (S.biz === "rest") out.push('<div class="card"><div class="t"><span>Hoy: comida de oficina 11:30 · 40</span><span class="chip ok">Anticipo ✓</span></div><div class="sub">Recoge en el local · listo 11:15</div></div>');
+      else {
+        out.push('<div class="card"><div class="t"><span>' + (S.status === "paused" ? "Pausado" : "Abierto") + ' · ritmo ' + S.pace.toLowerCase() + '</span></div><div class="sub">Se acabó: ' + (Object.keys(S.sold).filter(function (k) { return S.sold[k]; }).join(", ").toLowerCase() || "nada") + '</div></div>');
+        out.push('<div class="card"><div class="t"><span>Próximos: 12:45 (2) · 1:00 (1)</span></div><div class="sub">Lupe #214 <b style="color:var(--alert)">SIN CEBOLLA</b></div></div>');
+        out.push('<div class="card"><div class="t"><span>La troca: obra en Bissonnet</span><span class="chip ok">en línea</span></div><div class="sub">10:30 – 2:00</div></div>');
+      }
+      out.push('<button class="needbar fine" data-act="toggle-mine">Lo demás va bien: 12 cosas <small>ver todo</small></button>');
+      return out.join("");
+    }
+    if (S.waitBanner && S.biz !== "rest") out.push('<div class="notice"><div>Textos automáticos en aprobación (1–4 semanas). Mientras, "Listo" abre su WhatsApp con el mensaje escrito.</div><button class="x" data-act="close-wait" aria-label="Cerrar aviso">✕</button></div>');
+    out.push('<div class="label">Pedidos grandes · esta semana <button data-tab-go="grandes">ver todos</button></div>');
+    out.push(S.events.slice(0, 2).map(eventCard).join(""));
+    if (S.biz === "taq") {
+      var live = S.pickups.filter(function (p) { return p.state !== "gone"; });
+      out.push('<div class="label">En la ventanilla ahora</div>');
+      out.push('<button class="card" data-tab-go="ventana"><div class="t"><span>' + live.length + ' pedidos · ritmo ' + S.pace.toLowerCase() + '</span><span class="chip neutral">Abrir modo ventana →</span></div><div class="sub">1 es de la troca · Rosa #213 lleva 3 min esperando</div></button>');
+    } else {
+      out.push('<div class="label">Hoy</div>');
+      out.push('<div class="card"><div class="t"><span>7 llamadas perdidas → 4 pidieron</span></div><div class="sub">A cada una le llegó su enlace de pedidos de Toast. No hay un segundo sistema de pedidos.</div></div>');
+      out.push('<div class="card"><div class="t"><span>3 mensajes de catering hoy</span><button class="chip neutral" data-tab-go="mensajes">ver →</button></div><div class="sub">1 sin contestar: quince de 150 (hace 3 h)</div></div>');
+    }
+    out.push('<button class="needbar fine" data-act="noop">12 cosas más van bien <small>ver todo</small></button>');
+    return out.join("");
+  }
+
+  function viewGrandes() {
+    var segs = [["cotizar", "Por cotizar (" + S.inquiries.length + ")"], ["semana", "Confirmados"], ["hechos", "Hechos"]];
+    if (S.biz !== "rest") segs.splice(2, 0, ["tamales", "Tamales"]);
+    var out = ['<div class="seg" role="group" aria-label="Pedidos grandes">' + segs.map(function (s) { return '<button data-big="' + s[0] + '" aria-pressed="' + (S.bigSeg === s[0]) + '">' + s[1] + '</button>'; }).join("") + '</div>'];
+    if (S.bigSeg === "cotizar") {
+      if (!S.inquiries.length) out.push('<div class="later">No hay pedidos por cotizar. Los que lleguen por llamada, WhatsApp o Instagram aparecen aquí.</div>');
+      S.inquiries.forEach(function (q) {
+        out.push('<div class="card"><div class="row2"><div class="bd"><div class="t"><span>' + esc(q.name) + ' · ' + q.people + '</span></div><div class="sub">' + esc(q.date) + ' · por ' + esc(q.from) + ' · ' + esc(q.ago) + '</div></div><button class="btn" data-act="quote" data-q="' + q.id + '">Cotizar</button></div></div>');
+      });
+    } else if (S.bigSeg === "semana") {
+      out.push('<div class="hint">' + esc(S.events[0].note) + '</div>');
+      out.push(S.events.map(eventCard).join(""));
+    } else if (S.bigSeg === "tamales") {
+      out.push(viewTamales());
+    } else {
+      S.done.forEach(function (d) {
+        var p = d.charged - d.food - d.labor - d.other;
+        out.push('<div class="card"><div class="t"><span>' + esc(d.name) + '</span><span class="chip ok">Ganancia ' + money(p) + '</span></div><div class="sub">' + esc(d.day) + '</div>' +
+          '<div class="kv"><span>Cobrado</span><b>' + money(d.charged) + '</b></div><div class="kv"><span>Comida</span><b>−' + money(d.food) + '</b></div><div class="kv"><span>Gente</span><b>−' + money(d.labor) + '</b></div><div class="kv"><span>Otros</span><b>−' + money(d.other) + '</b></div>' +
+          '<div class="kv total"><span>Ganancia real</span><b>' + money(p) + ' (' + Math.round(p / d.charged * 100) + '%)</b></div><button class="btn ghost" data-act="repeat">Repetir este pedido</button></div>');
+      });
+    }
+    out.push('<button class="fab" data-act="new-big">+ Nuevo</button>');
+    return out.join("");
+  }
+
+  function viewTamales() {
+    var q = (S.tamQ || "").toLowerCase();
+    var rows = S.tamales.filter(function (t) { return !q || t.name.toLowerCase().indexOf(q) >= 0; });
+    return '<div class="hint">Pedidos hasta el 20 dic · límite 60 docenas por día · $20 la docena</div>' +
+      '<div class="split"><div class="card"><div class="sub">Mar 23 dic</div><b class="num" style="font-size:20px">41 / 60 dz</b><div class="meter"><i style="width:68%"></i></div></div><div class="card"><div class="sub">Mié 24 dic</div><b class="num" style="font-size:20px">58 / 60 dz</b><div class="meter"><i style="width:97%"></i></div></div></div>' +
+      '<div class="card"><div class="label" style="margin:0">Para hacer · 99 docenas</div><div class="sub">Puerco en rojo 52 · pollo en verde 29 · rajas 18</div><div class="kv"><span>Masa</span><b>~150 lb</b></div><div class="kv"><span>Hojas</span><b>~1,250</b></div></div>' +
+      '<input class="search" id="tam-q" type="search" placeholder="Buscar nombre o teléfono · 24 dic" value="' + esc(S.tamQ || "") + '" aria-label="Buscar tamales">' +
+      '<div class="list">' + rows.map(function (t) {
+        var owe = t.total - t.paid;
+        return '<div class="card"><div class="row2"><div class="bd"><div class="t"><span>' + esc(t.name) + '</span></div><div class="sub">' + esc(t.what) + ' · ' + t.day + ' dic</div><div class="money">' + money(t.total) + (t.paid ? ' · pagó ' + money(t.paid) : '') + (owe > 0 ? ' · resta <b>' + money(owe) + '</b>' : ' · pagado ✓') + '</div></div>' +
+          (t.done ? '<span class="chip ok">Entregado ✓</span>' : '<button class="btn go" data-act="tam-give" data-t="' + t.id + '">Entregado</button>') + '</div></div>';
+      }).join("") + (rows.length ? "" : '<div class="later">Nadie con ese nombre.</div>') + '</div>';
+  }
+
+  function tkHtml(p, list) {
+    var tags = (p.truck ? '<span class="tag truck">TROCA</span>' : '') + (p.crew ? '<span class="tag">CUADRILLA</span>' : '') + (p.noShows >= 2 ? '<span class="tag flag">NO VINO ' + p.noShows + ' VECES</span>' : '');
+    var head = p.state === "ready" ? '<div class="a"><b>Esperando ' + (p.wait || 0) + ' min</b>#' + p.id + '</div>' : '<div class="a"><b>' + p.when + '</b>#' + p.id + '</div>';
+    var foot = p.state === "ready"
+      ? '<div class="two"><button data-act="picked" data-p="' + p.id + '" data-list="' + list + '">RECOGIÓ</button><button class="nv" data-act="noshow" data-p="' + p.id + '" data-list="' + list + '">NO VINO</button></div>'
+      : '<button class="go" data-act="ready" data-p="' + p.id + '" data-list="' + list + '">LISTO</button>';
+    return '<div class="tk' + (p.state === "ready" ? " waiting" : "") + '">' + (tags ? '<div style="display:flex;gap:6px;flex-wrap:wrap">' + tags + '</div>' : '') + head +
+      '<div class="n">' + esc(p.name.toUpperCase()) + '</div><div class="i">' + p.items.map(esc).join("<br>").toUpperCase() + '</div>' + (p.mod ? '<div class="mod">' + esc(p.mod) + '</div>' : '') +
+      '<div class="pr num">' + money2(p.price) + ' · paga aquí</div>' + foot + '</div>';
+  }
+
+  function kdsControls() {
+    var paces = [["Normal", "40 tacos / 15 min"], ["Ocupado", "20 tacos / 15 min"], ["Parar", "nada en línea"]];
+    return '<div class="top"><span class="k on">● ' + (S.offline ? "Sin conexión" : "En línea · 🔊") + '</span><button class="k p" data-act="pause">' + (S.status === "paused" ? "Reanudar" : "❚❚ Pausar 20 min") + '</button><span class="k" id="wl">' + (S.wakeOk ? "Pantalla despierta ✓" : "Déjelo conectado") + '</span></div>' +
+      '<div class="lbl">RITMO DE PEDIDOS EN LÍNEA</div><div class="pace">' + paces.map(function (p) { return '<button data-pace="' + p[0] + '" aria-pressed="' + (S.pace === p[0]) + '">' + p[0] + '<small>' + p[1] + '</small></button>'; }).join("") + '</div>';
+  }
+  function soldGrid() {
+    return '<div class="lbl">SE ACABÓ (TOQUE PARA MARCAR · VUELVE MAÑANA SOLO)</div><div class="sold">' + Object.keys(S.sold).map(function (k) { return '<button data-sold="' + k + '" aria-pressed="' + S.sold[k] + '">' + k.toUpperCase() + '</button>'; }).join("") + '</div>';
+  }
+
+  function viewVentana() {
+    var live = S.pickups.filter(function (p) { return p.state !== "gone"; });
+    return '<div class="kds">' + (S.offline ? '<div class="off">SIN CONEXIÓN · su página se pausó sola y se reabre sola al volver el internet</div>' : '') + kdsControls() +
+      (S.status === "paused" ? '<div class="off" style="background:#3a2e08;border-color:#8a6a12;color:#ffe6a6">Pausado hasta la 1:02. Pause también las tabletas de DoorDash y Uber.</div>' : '') +
+      '<div class="lbl">PARA RECOGER · ' + live.length + '</div>' + (live.length ? live.map(function (p) { return tkHtml(p, "pickups"); }).join("") : '<div class="pr">Sin pedidos por ahora.</div>') +
+      soldGrid() + '<div class="lbl">PARA PROBAR</div><div class="demo-ctl"><button data-act="sim-order">Simular pedido nuevo</button><button data-act="sim-offline">' + (S.offline ? "Volver a conectar" : "Simular sin internet") + '</button></div></div>' +
+      '<div class="hint">En la tableta de la ventanilla esto se ve en pantalla completa. Nada privado (anticipos, teléfonos) aparece aquí.</div>';
+  }
+
+  function viewTroca() {
+    var T = S.trucks, out = [];
+    var needs = S.biz === "troca" ? needsBlock(!T.arrived) : "";
+    if (needs) out.push(needs);
+    if (T.closed) {
+      out.push('<div class="offline">Hoy no salimos <small>Su página y Google dicen "cerrado hoy". Avisamos a 3 clientes con pedido.</small></div><button class="btn ghost wide big" data-act="truck-reopen">Sí salimos (deshacer)</button>');
+      return out.join("");
+    }
+    if (T.arrived) {
+      out.push('<div class="card" style="border-color:var(--go)"><div class="t"><span>📍 ' + esc(T.spot) + '</span><span class="chip ok">' + (S.offline ? "sin conexión" : "en línea") + '</span></div><div class="sub">' + (T.late ? "Avisamos: llegamos 20 min tarde · " : "") + 'pedidos por adelantado hasta las 10:15 · noche en el bar: solo en persona</div>' +
+        '<div class="act" style="justify-content:flex-start"><button class="btn ghost" data-act="truck-move">Nos movimos</button><button class="btn ghost" data-act="truck-post">Publicar en todo</button></div></div>');
+      out.push('<div class="kds">' + soldGrid() + '<div class="lbl">PEDIDOS · ' + S.truckOrders.filter(function (p) { return p.state !== "gone"; }).length + '</div>' +
+        S.truckOrders.filter(function (p) { return p.state !== "gone"; }).map(function (p) { return tkHtml(p, "truckOrders"); }).join("") + '</div>');
+      return out.join("");
+    }
+    out.push('<div class="card" style="background:#2b1d12;color:#f5ead9;border-color:#2b1d12"><div class="sub" style="color:#e2cdb4">COMIDA</div><b style="font-size:18px;color:#fff">Obra en Bissonnet · 10:30 – 2:00</b><div class="sub" style="color:#e2cdb4">Pedidos por adelantado hasta las 10:15 · 3 ya pidieron</div>' +
+      '<div class="split" style="margin-top:6px"><button class="btn go big" data-act="truck-arrive">Llegamos</button><button class="btn ghost big" data-act="truck-late">Vamos tarde</button></div></div>');
+    out.push('<div class="card" style="background:#1b2233;color:#dfe6f5;border-color:#1b2233"><div class="sub" style="color:#b9c5df">NOCHE</div><b style="font-size:18px;color:#fff">Estacionamiento del bar · 8:00 – 1:00</b><div class="sub" style="color:#b9c5df">Solo en persona (pedidos por adelantado apagados)</div></div>');
+    out.push('<div class="split"><button class="btn ghost" data-act="truck-post">Publicar en todo</button><button class="btn warn" data-act="truck-close">Hoy no salimos</button></div>');
+    out.push('<div class="later">"¿Dónde están?" se contesta solo con el lugar de hoy (Instagram y WhatsApp desde Growth · por texto cuando se aprueben los textos).</div>');
+    out.push('<div class="card"><div class="label" style="margin:0">La semana</div><div class="kv"><span>Lun – Jue</span><b>Obra en Bissonnet · 10:30–2</b></div><div class="kv"><span>Vie</span><b>Bissonnet · 10:30–2 · bar 8–1</b></div><div class="kv"><span>Sáb</span><b>Bar · 8–1</b></div></div>');
+    var letter = S.needs.troca[0].done;
+    out.push('<div class="card"><div class="label" style="margin:0">Papeles</div><div class="kv"><span>Comisariato hoy</span><b style="color:var(--go)">6:40 a.m. ✓</b></div><div class="kv"><span>Permiso estatal</span><b style="color:var(--go)">al día</b></div><div class="kv"><span>Inspección de bomberos</span><b>14 nov</b></div><div class="kv"><span>Carta del baño · Bissonnet</span><b style="color:var(--go)">✓</b></div><div class="kv"><span>Carta del baño · el bar</span><b style="color:' + (letter ? "var(--go)" : "var(--alert)") + '">' + (letter ? "✓" : "FALTA") + '</b></div></div>');
+    return out.join("");
+  }
+
+  function viewMensajes() {
+    return '<div class="hint">Llamadas perdidas, textos, WhatsApp, Instagram y Facebook en un solo lugar. Lo que se puede contestar solo, se contesta; lo demás llega aquí.</div>' +
+      S.messages.map(function (m, i) {
+        return '<div class="card msgrow"><div class="t"><span>' + esc(m.who) + '</span><span class="ch ' + m.ch + '">' + esc(m.chn) + '</span></div><div>' + esc(m.t) + '</div><div class="sub">' + esc(m.tag) + '</div>' +
+          (m.conv ? '<div class="act" style="justify-content:flex-start"><button class="btn" data-act="msg-to-big" data-m="' + i + '">Convertir en pedido grande</button></div>' : '') + '</div>';
+      }).join("");
+  }
+
+  function viewResenas() {
+    return '<div class="split"><div class="card"><div class="sub">Promedio</div><b style="font-size:22px">4.8 <span class="stars">★</span></b></div><div class="card"><div class="sub">Nuevas esta semana</div><b style="font-size:22px" class="num">6</b></div></div>' +
+      S.reviews.map(function (r, i) {
+        return '<div class="card"><div class="t"><span>' + esc(r.who) + '</span><span class="stars">' + "★★★★★".slice(0, r.stars) + '<span style="opacity:.3">' + "★★★★★".slice(r.stars) + '</span></span></div><div>' + esc(r.t) + '</div>' +
+          (r.answered ? '<div class="sub">Contestada ✓</div>' : '<div class="act" style="justify-content:flex-start"><button class="btn" data-act="reply-review" data-r="' + i + '">Responder</button></div>') + '</div>';
+      }).join("") + '<div class="hint">Las reseñas de 1 a 3 estrellas llegan a "Necesita a usted" el mismo día, con una respuesta ya escrita.</div>';
+  }
+
+  function viewMas() {
+    var c = S.costs;
+    var f = function (k, l) { return '<label class="field">' + l + '<input type="number" step="0.1" inputmode="decimal" id="cost-' + k + '" data-cost="' + k + '" value="' + c[k] + '"></label>'; };
+    return '<div class="card"><div class="label" style="margin:0">Sus costos (para la ganancia de cada evento)</div><div class="split">' + f("pastor", "Pastor $/lb") + f("asada", "Asada $/lb") + f("tortillaDz", "Tortillas $/docena") + f("salsas", "Salsas y limones $/evento") + f("taquero", "Taquero $/hora") + f("ayudante", "Ayudante $/hora") + '</div><div class="hint">Cambie un número y la ganancia de cada evento se recalcula.</div></div>' +
+      '<div class="card"><div class="label" style="margin:0">Idioma de cada persona</div><div class="kv"><span>Martha (dueña)</span><b>Español</b></div><div class="kv"><span>Daniela (redes)</span><b>English</b></div><div class="kv"><span>Ventanilla</span><b>Español</b></div></div>' +
+      '<div class="card"><div class="label" style="margin:0">Aparatos</div><div class="kv"><span>Tableta de la ventanilla</span><b style="color:var(--go)">en línea · todo</b></div><div class="kv"><span>Teléfono de Martha</span><b>abre en "solo lo suyo"</b></div><div class="kv"><span>Si nadie toca un pedido en 2 min</span><b>texto a Martha</b></div></div>' +
+      '<div class="card"><div class="label" style="margin:0">El texto de cada lunes</div><div class="msg">Su semana (13–19 oct)\nLo que trajimos:\n• 74 pedidos por adelantado de su página: $1,186\n• 19 llamadas perdidas → 11 pedidos: $162\nLo que usted apuntó: 3 pedidos grandes ($2,940; anticipos $650)\n• 6 reseñas nuevas, promedio 4.8 ★ · 3 no vinieron</div><div class="hint">Solo contamos como nuestro lo que llegó por su página o por una llamada perdida.</div></div>';
+  }
+
+  /* ---------------- event sheet, quote, payment ---------------- */
+  function openEvent(id) {
+    var e = S.events.filter(function (x) { return x.id === id; })[0]; if (!e) return; var m = ev(e);
+    var dep = e.deposit.paid ? '<b style="color:var(--go)">' + money(e.deposit.amount) + ' pagado · ' + esc(e.deposit.how) + ', ' + esc(e.deposit.by) + ', ' + esc(e.deposit.date) + '</b>' : '<b style="color:var(--money)">' + money(e.deposit.amount) + ' pendiente · vence ' + e.deposit.due + '</b>';
+    sheet('<div class="hint">' + esc(e.day) + ' · ' + esc(e.time) + '</div><h2>' + esc(e.name) + '</h2>' +
+      '<div class="act" style="justify-content:flex-start"><button class="btn ghost" data-act="copy-phone" data-v="' + esc(e.phone) + '">📞 ' + esc(e.phone) + '</button><span class="sub">📍 ' + esc(e.addr) + '</span></div>' +
+      (e.allergy ? '<div class="allergy">⚠ ALERGIA: ' + esc(e.allergy) + '</div>' : '') +
+      '<div class="card"><div class="label" style="margin:0">Horario</div>' + e.timeline.map(function (t) { return '<div class="kv"><span>' + t[0] + '</span><b>' + t[1] + '</b></div>'; }).join("") + (e.note ? '<div class="hint">' + esc(e.note) + '</div>' : '') + '</div>' +
+      '<div class="card"><div class="label" style="margin:0">Comida · ' + e.people + ' personas</div>' + e.food.map(function (f) { return '<div class="kv"><span>' + f[0] + '</span><b>' + f[1] + '</b></div>'; }).join("") + '<div class="kv"><span>Tortillas</span><b>' + e.tortillas + ' docenas</b></div><div class="kv"><span>Salsas</span><b>' + esc(e.salsas) + '</b></div></div>' +
+      '<div class="card"><div class="label" style="margin:0">Gente y equipo</div>' + e.staff.map(function (s) { return '<div class="kv"><span>' + s[0] + '</span><b>' + s[1] + ' · ' + s[2] + ' h</b></div>'; }).join("") +
+        e.equip.map(function (q, i) { return '<label class="kv" style="cursor:pointer"><span>' + esc(q[0]) + '</span><b><input type="checkbox" id="eq-' + e.id + '-' + i + '" data-eq="' + e.id + ':' + i + '"' + (q[1] ? " checked" : "") + '> regresó</b></label>'; }).join("") + '</div>' +
+      '<div class="card"><div class="label" style="margin:0">Dinero (solo se apunta aquí)</div><div class="kv"><span>' + money(e.perPerson) + ' × ' + e.people + (e.delivery ? ' + entrega ' + money(e.delivery) : '') + '</span><b>' + money(m.sub) + '</b></div>' +
+        (e.tax ? '<div class="kv"><span>Impuesto 8.25%</span><b>' + money(m.tax) + '</b></div>' : '') + '<div class="kv total"><span>Total</span><b>' + money(m.total) + '</b></div>' +
+        '<div class="kv"><span>Anticipo</span>' + dep + '</div><div class="kv"><span>' + (e.deposit.paid ? "Resta el día" : "Resta después del anticipo") + '</span><b>' + money(e.deposit.paid ? m.owedNow : m.rest) + '</b></div>' +
+        '<div class="kv total"><span>Ganancia estimada</span><b style="color:var(--go)">' + money(m.profit) + ' (' + Math.round(m.profit / m.total * 100) + '%)</b></div><div class="hint">Comida ' + money(m.food) + ' + gente ' + money(m.labor) + ', con sus costos de "Más".</div></div>' +
+      '<div class="split">' + (e.deposit.paid ? '<button class="btn ghost big" data-act="pay" data-ev="' + e.id + '">Registrar pago</button>' : '<button class="btn big" data-act="remind-ev" data-ev="' + e.id + '">Recordar por WhatsApp</button>') +
+        (e.deposit.paid ? '<button class="btn big" data-act="prep">Lista de preparación</button>' : '<button class="btn ghost big" data-act="pay" data-ev="' + e.id + '">Registrar pago</button>') + '</div>' +
+      (e.deposit.paid ? '' : '<button class="btn ghost wide" data-act="prep">Lista de preparación del día</button>') +
+      '<button class="btn ghost wide" data-close="1">Cerrar</button>');
+  }
+
+  function quoteSheet(qid) {
+    var q = S.inquiries.filter(function (x) { return x.id === qid; })[0] || { id: qid, name: "Quince · Familia Ejemplo", people: 150, date: "sáb 13 dic", from: "Instagram" };
+    S._q = { q: q, pkg: 13, people: q.people, taquero: true, delivery: 40, tax: false, depPct: 30 };
+    drawQuote();
+  }
+  function drawQuote() {
+    var Q = S._q, sub = Q.pkg * Q.people + (Q.taquero ? 120 : 0) + Q.delivery, tax = Q.tax ? sub * 0.0825 : 0, total = sub + tax, dep = Math.round(total * Q.depPct / 100 / 5) * 5;
+    sheet('<div class="hint">' + esc(Q.q.date) + ' · por ' + esc(Q.q.from) + '</div><h2>Cotizar: ' + esc(Q.q.name) + '</h2>' +
+      '<div class="field">Paquete<div class="chips"><button data-pkg="11" aria-pressed="' + (Q.pkg === 11) + '">Taquiza sencilla $11</button><button data-pkg="13" aria-pressed="' + (Q.pkg === 13) + '">Taquiza completa $13</button><button data-pkg="16" aria-pressed="' + (Q.pkg === 16) + '">Con arroz y frijoles $16</button></div></div>' +
+      '<div class="field">Personas<div class="stepper"><button data-ppl="-10" aria-label="Menos 10">−</button><b class="num">' + Q.people + '</b><button data-ppl="10" aria-label="Más 10">+</button></div></div>' +
+      '<div class="chips"><button data-qopt="taquero" aria-pressed="' + Q.taquero + '">Taquero en el lugar +$120</button><button data-qopt="delivery" aria-pressed="' + (Q.delivery > 0) + '">Entrega +$40</button><button data-qopt="tax" aria-pressed="' + Q.tax + '">Con impuesto (factura)</button></div>' +
+      '<div class="card"><div class="kv"><span>' + money(Q.pkg) + ' × ' + Q.people + '</span><b>' + money(Q.pkg * Q.people) + '</b></div>' + (Q.taquero ? '<div class="kv"><span>Taquero</span><b>$120</b></div>' : '') + (Q.delivery ? '<div class="kv"><span>Entrega</span><b>$40</b></div>' : '') + (Q.tax ? '<div class="kv"><span>Impuesto 8.25%</span><b>' + money(tax) + '</b></div>' : '') +
+      '<div class="kv total"><span>Total</span><b>' + money(total) + '</b></div><div class="kv"><span>Anticipo (' + Q.depPct + '%)</span><b>' + money(dep) + '</b></div><div class="kv"><span>Resta después del anticipo</span><b>' + money(total - dep) + '</b></div></div>' +
+      '<button class="btn go big wide" data-act="send-quote">Mandar cotización por WhatsApp</button><div class="hint">El cliente confirma contestando "sí". Usted cobra el anticipo como hoy (efectivo, Zelle o tarjeta) y aquí solo se apunta.</div>');
+    S._qTotal = total; S._qDep = dep;
+  }
+
+  function paySheet(id) {
+    var e = S.events.filter(function (x) { return x.id === id; })[0];
+    S._pay = { ev: id, how: "Zelle", by: "Martha", amount: e.deposit.paid ? Math.round(ev(e).owedNow) : e.deposit.amount };
+    sheet('<h2>Registrar pago · ' + esc(e.name.split(" · ")[0]) + '</h2><div class="hint">El dinero no pasa por nosotros. Aquí solo apunta lo que ya recibió.</div>' +
+      '<label class="field">Cuánto recibió<input type="number" id="pay-amt" inputmode="decimal" value="' + S._pay.amount + '"></label>' +
+      '<div class="field">Cómo<div class="chips" id="pay-how">' + ["Efectivo", "Zelle", "Tarjeta"].map(function (h) { return '<button data-how="' + h + '" aria-pressed="' + (S._pay.how === h) + '">' + h + '</button>'; }).join("") + '</div></div>' +
+      '<div class="field">Quién lo recibió<div class="chips">' + ["Martha", "Daniela", "Chuy"].map(function (h) { return '<button data-by="' + h + '" aria-pressed="' + (S._pay.by === h) + '">' + h + '</button>'; }).join("") + '</div></div>' +
+      '<button class="btn go big wide" data-act="pay-save">Guardar</button>');
+  }
+
+  function prepSheet() {
+    sheet('<div class="hint">Viernes, para mañana · bautizo (60) + la troca en el bar + pedidos para recoger (estimado del sábado pasado)</div><h2>Preparación · sábado 25</h2><div class="allergy">⚠ Bautizo: 1 invitada sin cacahuate</div>' +
+      '<div class="card"><div class="label" style="margin:0">Carnes</div><div class="kv"><span>Pastor</span><b>27 lb</b></div><div class="kv"><span>Asada</span><b>18 lb</b></div><div class="kv"><span>Pollo</span><b>6 lb</b></div><div class="kv"><span>Barbacoa (desayuno)</span><b>12 lb</b></div></div>' +
+      '<div class="card"><div class="label" style="margin:0">Tortillas y salsas</div><div class="kv"><span>Tortillas de maíz</span><b>35 docenas</b></div><div class="kv"><span>Salsa roja</span><b>4 cuartos</b></div><div class="kv"><span>Salsa verde</span><b>4 cuartos</b></div><div class="kv"><span>Cebolla y cilantro</span><b>3 cuartos</b></div><div class="kv"><span>Limones</span><b>2 cajas</b></div></div>' +
+      '<div class="card"><div class="label" style="margin:0">Equipo</div><div class="kv"><span>Trompo, propano, 2 chafers, hielera</span><b>bautizo</b></div><div class="kv"><span>Platos y cubiertos</span><b>60</b></div></div>' +
+      '<button class="btn big wide" data-act="prep-send">Mandar a la cocina por WhatsApp</button>');
+  }
+
+  /* ---------------- ring + sound ---------------- */
+  var ringTimer = null, actx = null;
+  function beep() {
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      [0, .22].forEach(function (d) {
+        var o = actx.createOscillator(), g = actx.createGain();
+        o.type = "square"; o.frequency.value = d ? 1180 : 880; g.gain.value = .0001;
+        o.connect(g); g.connect(actx.destination);
+        var t = actx.currentTime + d; g.gain.exponentialRampToValueAtTime(.18, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + .18);
+        o.start(t); o.stop(t + .2);
+      });
+    } catch (e) {}
+  }
+  function ring() {
+    $("#layer").innerHTML = '<div class="ring" role="alertdialog" aria-label="Pedido nuevo"><div class="in"><div class="k">PEDIDO NUEVO · SONANDO</div><div class="big num">#220 · 1:15</div><div class="what">Memo E.<br>6 campechanos con todo · 2 horchatas</div><div class="fine">De su página · paga en la ventanilla · $23.50 · ya está aceptado</div><button data-act="ring-ack">Ya lo vi</button><div class="fine">Suena distinto a DoorDash y sigue sonando hasta que alguien lo toque. Si nadie lo toca en 2 minutos, le llega un texto a Martha.</div></div></div>';
+    beep(); clearInterval(ringTimer); ringTimer = setInterval(beep, 1300);
+    var b = $("#layer .ring button"); if (b) b.focus({ preventScroll: true });
+  }
+  function stopRing() { clearInterval(ringTimer); ringTimer = null; closeSheet(); }
+  function wake() {
+    try { if (navigator.wakeLock && navigator.wakeLock.request) navigator.wakeLock.request("screen").then(function () { S.wakeOk = true; var w = $("#wl"); if (w) w.textContent = "Pantalla despierta ✓"; }, function () {}); } catch (e) {}
+  }
+
+  /* ---------------- events ---------------- */
+  function resolveNeed(id, msg) { S.needs[S.biz].forEach(function (n) { if (n.id === id) n.done = true; }); if (msg) toast(msg); render(); }
+  function findOrder(list, id) { return S[list].filter(function (p) { return String(p.id) === String(id); })[0]; }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("button, [data-close], label");
+    if (!t) return;
+    if (t.dataset.close && e.target === t) { closeSheet(); return; }
+    if (t.matches(".demo .seg button")) { S.biz = t.dataset.biz; S.tab = BIZ[S.biz].tabs[0]; S.onlyMine = false; S.bigSeg = "semana"; render(); window.scrollTo(0, 0); return; }
+    if (t.dataset.tab) { S.tab = t.dataset.tab; S.onlyMine = false; render(); window.scrollTo(0, 0); if (S.tab === "ventana") wake(); return; }
+    if (t.dataset.tabGo) { S.tab = t.dataset.tabGo; S.onlyMine = false; render(); window.scrollTo(0, 0); if (S.tab === "ventana") wake(); return; }
+    if (t.dataset.big) { S.bigSeg = t.dataset.big; render(); return; }
+    if (t.dataset.pace) { S.pace = t.dataset.pace; toast(S.pace === "Parar" ? "Pedidos en línea parados. Los de antes siguen." : "Ritmo: " + S.pace.toLowerCase()); render(); return; }
+    if (t.dataset.sold) { var k = t.dataset.sold; S.sold[k] = !S.sold[k]; toast(S.sold[k] ? k + ": se acabó. Ya no sale en su página." : k + ": otra vez a la venta"); render(); return; }
+    if (t.dataset.pkg) { S._q.pkg = +t.dataset.pkg; drawQuote(); return; }
+    if (t.dataset.ppl) { S._q.people = Math.max(10, S._q.people + +t.dataset.ppl); drawQuote(); return; }
+    if (t.dataset.qopt) { var o = t.dataset.qopt; if (o === "delivery") S._q.delivery = S._q.delivery ? 0 : 40; else S._q[o] = !S._q[o]; drawQuote(); return; }
+    if (t.dataset.how) { S._pay.how = t.dataset.how; document.querySelectorAll("[data-how]").forEach(function (b) { b.setAttribute("aria-pressed", String(b === t)); }); return; }
+    if (t.dataset.by) { S._pay.by = t.dataset.by; document.querySelectorAll("[data-by]").forEach(function (b) { b.setAttribute("aria-pressed", String(b === t)); }); return; }
+    var a = t.dataset.act; if (!a) return;
+    var p;
+    switch (a) {
+      case "toggle-mine": S.onlyMine = !S.onlyMine; render(); window.scrollTo(0, 0); break;
+      case "close-wait": S.waitBanner = false; render(); break;
+      case "noop": toast("Vista de muestra: aquí se abre todo lo del día."); break;
+      case "accept": resolveNeed(t.dataset.need, "Aceptado. Le avisamos al cliente que paga al recoger."); break;
+      case "decline": resolveNeed(t.dataset.need, "Rechazado. Le avisamos al cliente con su enlace para un pedido más chico."); break;
+      case "call": sheet('<h2>Llamar a Memo E.</h2><div class="msg num">(713) 555-0148</div><div class="hint">Su pedido #218 de la 1:00 lleva barbacoa. Ofrézcale otra carne.</div><div class="split"><button class="btn ghost big" data-act="copy-phone" data-v="(713) 555-0148">Copiar número</button><button class="btn go big" data-act="called" data-need="' + t.dataset.need + '">Ya le avisé</button></div>'); break;
+      case "called": closeSheet(); resolveNeed(t.dataset.need, "Listo: Memo ya sabe."); break;
+      case "remind": case "remind-ev":
+        S._needToResolve = t.dataset.need || (S.biz === "rest" ? "r2" : "n3");
+        waSheet("Recordar el anticipo", "Hola Rosa, le escribe Taquería Ejemplo. Para apartar el bautizo del sábado 25 (60 personas) nos falta el anticipo de $230. Puede pagarlo en efectivo aquí en el local o por Zelle a pagos@taqueriaejemplo.com. ¡Gracias!", "Ya lo mandé", function () { resolveNeed(S._needToResolve, "Recordatorio mandado. Le avisamos si no paga para el jueves."); });
+        break;
+      case "copywa": copy($("#wa-text").textContent); break;
+      case "wa-done": var fn = S._waDone; closeSheet(); if (fn) fn(); else toast("Listo"); break;
+      case "open-event": openEvent(t.dataset.ev); break;
+      case "copy-phone": copy(t.dataset.v); break;
+      case "pay": paySheet(t.dataset.ev); break;
+      case "pay-save":
+        var e1 = S.events.filter(function (x) { return x.id === S._pay.ev; })[0]; var amt = +($("#pay-amt").value || 0);
+        if (!amt) { toast("Escriba cuánto recibió"); break; }
+        if (!e1.deposit.paid) { e1.deposit = { amount: amt, paid: true, how: S._pay.how, by: S._pay.by, date: "19 oct" }; S.needs[S.biz].forEach(function (n) { if (/anticipo/.test(n.t)) n.done = true; }); }
+        else { e1.deposit.amount += amt; }
+        closeSheet(); toast("Apuntado: " + money(amt) + " por " + S._pay.how.toLowerCase() + " (" + S._pay.by + ")"); render(); break;
+      case "prep": prepSheet(); break;
+      case "prep-send": waSheet("Mandar a la cocina", "Preparación sábado 25: pastor 27 lb · asada 18 lb · pollo 6 lb · barbacoa 12 lb · tortillas 35 dz · salsa roja 4 qt · verde 4 qt · cebolla y cilantro 3 qt · limones 2 cajas. Bautizo: 1 invitada SIN CACAHUATE.", "Ya lo mandé", function () { toast("Mandado a la cocina"); }); break;
+      case "quote": case "quote-q1": quoteSheet(t.dataset.q || "q1"); break;
+      case "send-quote":
+        var Q = S._q;
+        waSheet("Mandar cotización", "Hola, le escribe Taquería Ejemplo. Su " + Q.q.name.split(" · ")[0].toLowerCase() + " para " + Q.people + " personas (" + Q.q.date + "): " + money(S._qTotal) + " en total. Para apartar la fecha, anticipo de " + money(S._qDep) + " (efectivo o Zelle). Conteste \"sí\" y se la apartamos.", "Ya la mandé", function () {
+          S.inquiries = S.inquiries.filter(function (x) { return x.id !== Q.q.id; });
+          S.needs.rest.forEach(function (n) { if (n.id === "r1") n.done = true; });
+          toast("Cotización mandada. Le avisamos cuando conteste."); render();
+        }); break;
+      case "new-big":
+        sheet('<h2>Nuevo pedido grande</h2><div class="hint">Mientras está en el teléfono. Lo demás se llena después.</div><label class="field">Nombre<input id="nb-name" value="Lupe Muestra"></label><label class="field">Teléfono<input id="nb-phone" inputmode="tel" value="(713) 555-0166"></label><div class="split"><label class="field">Fecha<input id="nb-date" value="sáb 15 nov"></label><label class="field">Personas<input id="nb-ppl" type="number" inputmode="numeric" value="35"></label></div><div class="field">Llegó por<div class="chips"><button data-from="llamada" aria-pressed="true">Llamada</button><button data-from="WhatsApp" aria-pressed="false">WhatsApp</button><button data-from="mostrador" aria-pressed="false">Mostrador</button></div></div><button class="btn go big wide" data-act="nb-save">Guardar en "Por cotizar"</button>');
+        break;
+      case "nb-save":
+        S.inquiries.unshift({ id: "q" + Date.now(), name: "Fiesta · " + ($("#nb-name").value || "Sin nombre"), people: +($("#nb-ppl").value || 0), date: $("#nb-date").value || "sin fecha", from: (document.querySelector('[data-from][aria-pressed="true"]') || {}).dataset ? document.querySelector('[data-from][aria-pressed="true"]').dataset.from : "llamada", ago: "ahora" });
+        S.bigSeg = "cotizar"; S.tab = "grandes"; closeSheet(); toast("Guardado en \"Por cotizar\""); render(); break;
+      case "repeat": toast("Copiado como pedido nuevo en \"Por cotizar\"."); S.inquiries.unshift({ id: "q" + Date.now(), name: "Taquiza · Oficina Ejemplo", people: 45, date: "vie 21 nov", from: "repetido", ago: "ahora" }); render(); break;
+      case "tam-give":
+        var tm = S.tamales.filter(function (x) { return x.id === t.dataset.t; })[0], owe = tm.total - tm.paid;
+        if (owe > 0) sheet('<h2>' + esc(tm.name) + ' · ' + esc(tm.what) + '</h2><div class="msg">Todavía debe <b>' + money(owe) + '</b>. ¿Ya se lo cobró?</div><div class="split"><button class="btn go big" data-act="tam-paid" data-t="' + tm.id + '">Sí, cobré ' + money(owe) + '</button><button class="btn warn big" data-act="tam-owe" data-t="' + tm.id + '">No, sigue debiendo</button></div>');
+        else { tm.done = true; toast("Entregado"); render(); }
+        break;
+      case "tam-paid": var t2 = S.tamales.filter(function (x) { return x.id === t.dataset.t; })[0]; t2.paid = t2.total; t2.done = true; closeSheet(); toast("Cobrado y entregado"); render(); break;
+      case "tam-owe": var t3 = S.tamales.filter(function (x) { return x.id === t.dataset.t; })[0]; t3.done = true; closeSheet(); toast("Entregado. Sigue debiendo; queda en su lista."); render(); break;
+      case "ready":
+        p = findOrder(t.dataset.list, t.dataset.p); p.state = "ready"; p.wait = 0;
+        waSheet("Avisar a " + p.name.split(" ")[0], "Taquería Ejemplo: ¡su pedido #" + p.id + " está listo! Pase al mostrador de pedidos, ahí paga (" + money2(p.price) + ").", "Ya le avisé", function () { render(); });
+        render(); break;
+      case "picked": p = findOrder(t.dataset.list, t.dataset.p); p.state = "gone"; toast("Recogió ✓"); render(); break;
+      case "noshow": p = findOrder(t.dataset.list, t.dataset.p); p.state = "gone"; toast("No vino. Si vuelve a pedir, se marca \"no vino " + ((p.noShows || 0) + 1) + " veces\"."); render(); break;
+      case "pause": S.status = S.status === "paused" ? "open" : "paused"; toast(S.status === "paused" ? "Pausado 20 min. Se reabre solo a la 1:02." : "Abierto otra vez"); render(); break;
+      case "sim-order": ring(); break;
+      case "ring-ack": stopRing(); toast("Visto. Ya está en la lista."); S.pickups.push({ id: 220, name: "Memo E.", when: "1:15", items: ["6 campechanos con todo", "2 horchatas"], price: 23.50, state: "new" }); render(); break;
+      case "sim-offline": S.offline = !S.offline; toast(S.offline ? "Sin internet: su página se pausó sola y le avisamos a su teléfono." : "Conectado. Su página se reabrió sola."); render(); break;
+      case "truck-arrive": S.trucks.arrived = true; toast("Llegamos ✓ Su página y Google ya dicen dónde están."); render(); window.scrollTo(0, 0); break;
+      case "truck-late": S.trucks.late = true; waSheet("Avisar que van tarde", "Tacos Ejemplo: vamos 20 minutos tarde a la obra de Bissonnet. Su pedido sale a tiempo de llegar. ¡Perdón!", "Ya avisé a los 3", function () { toast("Avisados los 3 clientes con pedido"); render(); }); break;
+      case "truck-move":
+        sheet('<h2>¿A dónde se movieron?</h2><div class="chips"><button data-spot="Airline y Tidwell" aria-pressed="false">Airline y Tidwell</button><button data-spot="Shell de Bellaire (atrás)" aria-pressed="false">Shell de Bellaire (atrás)</button><button data-spot="Obra en Westheimer" aria-pressed="false">Obra en Westheimer</button></div><div class="hint">Se cambia en su página y en Google, y les avisamos a los clientes que ya pidieron.</div>'); break;
+      case "truck-close": sheet('<h2>¿Hoy no salen?</h2><div class="hint">Su página y Google dirán "cerrado hoy", y les avisamos a los 3 clientes que ya pidieron.</div><div class="split"><button class="btn warn big" data-act="truck-close-yes">Sí, hoy no salimos</button><button class="btn ghost big" data-close="1">No, sí salimos</button></div>'); break;
+      case "truck-close-yes": S.trucks.closed = true; closeSheet(); render(); break;
+      case "truck-reopen": S.trucks.closed = false; render(); break;
+      case "truck-post": waSheet("Publicar en todo", "📍 Hoy, " + (S.trucks.spot || "Obra en Bissonnet") + " de 10:30 a 2:00, y en la noche en el bar de 8:00 a 1:00. Pida por adelantado: [su enlace]", "Ya lo publiqué", function () { toast("Publicado"); }); break;
+      case "letter": resolveNeed(t.dataset.need, "Carta del baño del bar apuntada ✓"); break;
+      case "go-troca": S.trucks.arrived = true; S.tab = "troca"; resolveNeed(t.dataset.need); break;
+      case "msg-to-big": var m0 = S.messages[+t.dataset.m]; S.inquiries.unshift({ id: "q" + Date.now(), name: "Quince · " + m0.who, people: 150, date: "sáb 13 dic", from: "Instagram", ago: "hace 3 h" }); m0.conv = false; m0.tag = "Convertido en pedido grande"; toast("Ya está en \"Por cotizar\""); render(); break;
+      case "reply-review":
+        S._rv = t.dataset.r; sheet('<h2>Responder a Jorge (★★)</h2><label class="field">Respuesta (ya escrita, cámbiela si quiere)<textarea id="rv-text" rows="5">Jorge, gracias por decirnos. Tiene razón: el viernes se nos juntaron los pedidos y tardamos. Ya ajustamos cuántos pedidos tomamos por hora para que no vuelva a pasar. La próxima vez pregunte por Martha y se la invitamos.</textarea></label><div class="split"><button class="btn ghost big" data-act="rv-copy">Copiar</button><button class="btn go big" data-act="rv-done">Publicar respuesta</button></div>'); break;
+      case "rv-copy": copy($("#rv-text").value); break;
+      case "rv-done": if (S.reviews[0]) S.reviews[0].answered = true; S.needs.rest.forEach(function (n) { if (n.id === "r3") n.done = true; }); closeSheet(); toast("Respuesta lista para publicar en Google"); render(); break;
+      case "lockcount": resolveNeed(t.dataset.need, "Número cerrado: 120 personas. La lista de preparación ya lo usa."); break;
+    }
+    if (t.dataset.spot) { S.trucks.spot = t.dataset.spot; closeSheet(); toast("Cambiado a " + t.dataset.spot + ". Avisamos a los 3 clientes con pedido."); render(); }
+    if (t.dataset.from) { document.querySelectorAll("[data-from]").forEach(function (b) { b.setAttribute("aria-pressed", String(b === t)); }); }
+  });
+  document.addEventListener("change", function (e) {
+    var t = e.target;
+    if (t.dataset.cost) { var v = parseFloat(t.value); if (!isNaN(v)) { S.costs[t.dataset.cost] = v; toast("Costos guardados. La ganancia de cada evento se recalculó."); } }
+    if (t.dataset.eq) { var parts = t.dataset.eq.split(":"); var e1 = S.events.filter(function (x) { return x.id === parts[0]; })[0]; e1.equip[+parts[1]][1] = t.checked; }
+  });
+  document.addEventListener("input", function (e) { if (e.target.id === "tam-q") { S.tamQ = e.target.value; var pos = e.target.selectionStart; render(); var i = $("#tam-q"); if (i) { i.focus(); try { i.setSelectionRange(pos, pos); } catch (x) {} } } });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") { if (ringTimer) stopRing(); else closeSheet(); } });
+
+  render();
+})();
+</script>
+
+</html>
