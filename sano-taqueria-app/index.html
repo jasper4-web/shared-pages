@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Taquería Ejemplo App</title>
+<style>
+:root{--bg:#eef2ef;--card:#fff;--ink:#14201a;--soft:#5b6a62;--go:#1d6b45;--line:#dfe5e1;--bad:#b42318}
+@media (prefers-color-scheme:dark){:root{--bg:#0c110e;--card:#151c18;--ink:#e9f0ec;--soft:#9aa9a1;--go:#2f9d66;--line:#2a3530;--bad:#ff8a7a;color-scheme:dark}}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,"Segoe UI",system-ui,sans-serif;display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 22px;width:100%;max-width:380px;display:grid;gap:12px}
+h1{font-size:22px;margin:0}p{margin:0;color:var(--soft);font-size:14.5px}
+input{width:100%;font:inherit;font-size:17px;padding:13px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+button{width:100%;font:inherit;font-weight:800;font-size:17px;padding:13px;border:0;border-radius:12px;background:var(--go);color:#fff;cursor:pointer}
+.err{color:var(--bad);font-size:14px;font-weight:700;display:none}.err.show{display:block}
+</style>
+</head>
+<body>
+<form class="box" id="f">
+<h1>Taquería Ejemplo · app de muestra</h1>
+<p>Muestra privada de SANO Systems. Escriba la contraseña para verla.</p>
+<input type="password" id="pw" autocomplete="current-password" aria-label="Contraseña" autofocus>
+<button type="submit">Entrar</button>
+<div class="err" id="err">Contraseña equivocada.</div>
+</form>
+<script>
+var HASH="8c8542f3ff62429890abfc6397e03ca508fbd065c67edd59bf72081e4920df64";
+try{if(sessionStorage.getItem("sano_taq_unlock")==="1")location.replace("app.html");}catch(e){}
+document.getElementById("f").addEventListener("submit",async function(e){e.preventDefault();
+var v=document.getElementById("pw").value.trim();
+var d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(v));
+var hex=Array.from(new Uint8Array(d)).map(function(b){return b.toString(16).padStart(2,"0")}).join("");
+if(hex===HASH){try{sessionStorage.setItem("sano_taq_unlock","1")}catch(x){}location.replace("app.html");}
+else{document.getElementById("err").classList.add("show");}});
+</script>
+</body>
+</html>
