@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Your First Week</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+ --bg:#000;--card:#0c0c0f;--card2:#121217;
+ --line:rgba(240,230,211,.12);--line2:rgba(240,230,211,.24);
+ --text:#F2EBE0;--text2:#DDD6CB;--muted:#B5AEA3;
+ --blue:#0070F3;--blueb:#338EF7;--cyan:#00D4FF;--amber:#E8943A;--green:#37d67a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',system-ui,-apple-system,sans-serif;
+ line-height:1.5;-webkit-font-smoothing:antialiased;padding:0 16px calc(48px + env(safe-area-inset-bottom))}
+.glow{position:fixed;top:-30%;left:50%;transform:translateX(-50%);width:900px;max-width:200vw;height:560px;pointer-events:none;
+ background:radial-gradient(ellipse at center,rgba(0,112,243,.16),transparent 68%);z-index:0}
+.wrap{position:relative;z-index:1;max-width:640px;margin:0 auto}
+a{color:var(--blueb)}
+header{padding:36px 0 8px}
+.brand{font-size:13px;letter-spacing:.18em;font-weight:600;color:var(--muted)}
+h1{font-size:38px;font-weight:700;letter-spacing:-.035em;line-height:1.05;margin-top:10px}
+h1 .g{background:linear-gradient(100deg,#00D4FF,#338EF7);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:15px;margin-top:8px}
+
+.note{margin-top:22px;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--amber);
+ border-radius:14px;padding:16px 18px;font-size:15.5px;color:var(--text2)}
+.note b{color:var(--text)}
+.note .sig{margin-top:8px;color:var(--muted);font-size:14px}
+
+.progress{margin-top:22px}
+.progress .row{display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}
+.bar{height:8px;background:var(--card2);border-radius:99px;margin-top:8px;overflow:hidden;border:1px solid var(--line)}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--blueb));border-radius:99px;transition:width .3s}
+
+details.day{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+details.day[open]{border-color:var(--line2)}
+details.day>summary{list-style:none;cursor:pointer;padding:18px 18px;display:flex;align-items:center;gap:12px}
+details.day>summary::-webkit-details-marker{display:none}
+.emoji{font-size:26px;line-height:1;flex:none}
+.dt{flex:1;min-width:0}
+.dname{font-size:13px;letter-spacing:.12em;font-weight:600;color:var(--muted)}
+.dname .today{display:none;margin-left:8px;color:#000;background:var(--cyan);border-radius:99px;padding:1px 8px;letter-spacing:.06em;font-size:11px}
+details.day.is-today .dname .today{display:inline-block}
+.dtitle{font-size:20px;font-weight:600;letter-spacing:-.01em;margin-top:2px}
+.dcount{flex:none;font-size:13px;color:var(--muted);border:1px solid var(--line2);border-radius:99px;padding:3px 10px;white-space:nowrap}
+.dcount.done{color:#000;background:var(--green);border-color:var(--green)}
+.chev{flex:none;color:var(--muted);transition:transform .2s;font-size:14px}
+details.day[open] .chev{transform:rotate(180deg)}
+.body{padding:0 18px 20px}
+.goal{font-size:15.5px;color:var(--text2);background:rgba(0,112,243,.08);border:1px solid rgba(51,142,247,.25);
+ border-radius:12px;padding:12px 14px}
+.goal b{color:var(--text)}
+
+ul.tasks{list-style:none;margin-top:14px}
+ul.tasks li+li{margin-top:8px}
+label.task{display:flex;gap:12px;align-items:flex-start;background:var(--card2);border:1px solid var(--line);
+ border-radius:12px;padding:13px 14px;cursor:pointer;min-height:48px}
+label.task input{position:absolute;opacity:0;width:1px;height:1px}
+.box{flex:none;width:24px;height:24px;border-radius:7px;border:2px solid var(--line2);margin-top:1px;
+ display:grid;place-items:center;transition:background .15s,border-color .15s}
+.box svg{width:14px;height:14px;opacity:0}
+label.task input:checked+.box{background:var(--green);border-color:var(--green)}
+label.task input:checked+.box svg{opacity:1}
+label.task input:focus-visible+.box{outline:2px solid var(--cyan);outline-offset:2px}
+.tt{font-size:16px;color:var(--text)}
+.tt small{display:block;font-size:14px;color:var(--muted);margin-top:2px}
+label.task:has(input:checked) .tt{color:var(--muted)}
+.opt{font-size:11px;letter-spacing:.08em;color:var(--amber);border:1px solid rgba(232,148,58,.4);border-radius:99px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+
+h3{font-size:15px;font-weight:600;margin-top:22px;letter-spacing:.01em}
+h3 .hint{font-weight:400;color:var(--muted)}
+p.small{font-size:14.5px;color:var(--muted);margin-top:6px}
+.links{display:grid;gap:8px;margin-top:10px}
+.links a{display:flex;justify-content:space-between;align-items:center;gap:10px;text-decoration:none;color:var(--text);
+ background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-size:15.5px}
+.links a span{color:var(--muted);font-size:13.5px}
+.links a::after{content:"→";color:var(--blueb)}
+
+.ask{margin-top:10px;display:grid;gap:6px;font-size:15px;color:var(--text2);padding-left:2px}
+.ask div::before{content:"?";display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;
+ background:rgba(0,212,255,.12);color:var(--cyan);font-size:12px;font-weight:700;margin-right:8px;vertical-align:1px}
+
+.group{margin-top:12px}
+.group .gname{font-size:13px;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+label.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);border-radius:99px;
+ padding:9px 13px;font-size:14.5px;cursor:pointer;min-height:40px;background:var(--card2)}
+label.chip input{position:absolute;opacity:0;width:1px;height:1px}
+label.chip .dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line2);flex:none}
+label.chip:has(input:checked){border-color:var(--green);color:var(--text)}
+label.chip:has(input:checked) .dot{background:var(--green);border-color:var(--green)}
+label.chip input:focus-visible ~ .dot{outline:2px solid var(--cyan);outline-offset:2px}
+.covered{font-size:14px;color:var(--muted);margin-top:10px}
+
+.field{margin-top:12px}
+.field label{display:block;font-size:14.5px;color:var(--text2);margin-bottom:6px}
+textarea,input[type=text],input[type=number]{width:100%;background:#08080a;color:var(--text);border:1px solid var(--line2);
+ border-radius:12px;padding:12px 13px;font:inherit;font-size:16px;line-height:1.45}
+textarea{min-height:110px;resize:vertical}
+textarea.big{min-height:220px}
+textarea:focus,input:focus{outline:none;border-color:var(--blueb);box-shadow:0 0 0 3px rgba(51,142,247,.2)}
+::placeholder{color:#7d776f}
+.counter{font-size:14px;color:var(--muted);margin-top:6px}
+.counter b{color:var(--cyan)}
+.three{display:grid;grid-template-columns:1fr;gap:8px}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.nums label{font-size:13px}
+
+.send{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
+.btn{appearance:none;border:0;border-radius:12px;font:inherit;font-weight:600;font-size:16px;padding:14px 18px;cursor:pointer;min-height:50px}
+.btn.primary{flex:1 1 220px;background:linear-gradient(100deg,var(--blue),var(--blueb));color:#fff}
+.btn.ghost{flex:0 0 auto;background:var(--card2);color:var(--text);border:1px solid var(--line2)}
+.sendnote{font-size:13.5px;color:var(--muted);margin-top:8px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
+ background:var(--green);color:#000;font-weight:600;border-radius:99px;padding:10px 18px;font-size:15px;opacity:0;
+ transition:opacity .2s,transform .2s;pointer-events:none;z-index:9}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.after{margin-top:16px;font-size:15px;color:var(--text2);border-top:1px solid var(--line);padding-top:14px}
+footer{margin-top:28px;font-size:14.5px;color:var(--muted);text-align:center}
+footer p+p{margin-top:6px}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="wrap">
+
+<header>
+ <div class="brand">SANO SYSTEMS</div>
+ <h1>Your first week, <span class="g">Sebastian</span></h1>
+ <div class="sub">Tuesday to Friday · tap a day to open it</div>
+</header>
+
+<div class="note">
+ <b>This is a new position, and it's yours.</b> Nothing here is set in stone: this plan, the tools, the Field Deck.
+ They'll change as you work. If something needs to change to help you win, tell me.
+ <div class="sig">Jasper</div>
+</div>
+
+<div class="progress">
+ <div class="row"><span>Your week</span><span id="pTxt">0 of 0 done</span></div>
+ <div class="bar"><i id="pBar"></i></div>
+</div>
+
+<!-- ============ TUESDAY ============ -->
+<details class="day" data-day="tue" data-date="2026-10-20">
+ <summary>
+  <span class="emoji">📚</span>
+  <span class="dt"><span class="dname">TUESDAY<span class="today">TODAY</span></span><span class="dtitle" style="display:block">Learn every service</span></span>
+  <span class="dcount" data-count="tue"></span><span class="chev">▼</span>
+ </summary>
+ <div class="body">
+  <div class="goal"><b>Today is all about learning.</b> Understand every service we offer: what it does, how far it goes, and
+   where it stops. By tonight, send me a long list of questions. Your questions are how I'll see how much you learned, so make
+   them specific.</div>
+
+  <ul class="tasks">
+   <li><label class="task"><input type="checkbox" data-k="tue-pack"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Read the study pack, top to bottom<small>Same password as your offer page</small></span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="tue-open"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Open every service in "Everything we do"<small>Tap "Open all" in the study pack</small></span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="tue-demos"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Play with both demos until you know them<small>The taller demo and the taco truck demo</small></span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="tue-services"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Tick off every service below once you get it</span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="tue-write"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Write your questions as you go<small>In the box below. Aim for 25 or more.</small></span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="tue-send"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Text me your questions tonight</span></label></li>
+  </ul>
+
+  <h3>Where to learn it</h3>
+  <div class="links">
+   <a href="https://jasper4-web.github.io/shared-pages/sano-field-rep-2/study/" target="_blank" rel="noopener">The study pack <span>everything we do</span></a>
+   <a href="https://sano-demo.sano-systems.workers.dev/" target="_blank" rel="noopener">The taller demo <span>demo page</span></a>
+   <a href="https://sano-demo-food.sano-systems.workers.dev/" target="_blank" rel="noopener">The taco truck demo <span>restaurants</span></a>
+  </div>
+  <p class="small">Want to see the website too? Ask me and I'll send it.</p>
+
+  <h3>Ask these about every service</h3>
+  <div class="ask">
+   <div>What does it actually do, day to day?</div>
+   <div>What does the owner see? What do their customers see?</div>
+   <div>Does it work today, or do we build it after the yes?</div>
+   <div>Which package has it?</div>
+   <div>What do we need from the owner to set it up?</div>
+   <div>Where does it stop? What can't it do?</div>
+   <div>How far could we take it for a taller, a taco truck, a salon?</div>
+   <div>What would I say if an owner asked me about it?</div>
+  </div>
+
+  <h3>Every service <span class="hint">· tick it when you get it</span></h3>
+  <div id="services"></div>
+  <div class="covered" id="covTxt"></div>
+
+  <h3>Your questions <span class="hint">· one per line</span></h3>
+  <div class="field">
+   <textarea class="big" data-f="questions" id="questions" placeholder="Can the voice assistant book a job straight into the owner's calendar?&#10;What happens if an owner already uses Square?&#10;…"></textarea>
+   <div class="counter" id="qCount"><b>0</b> questions so far</div>
+  </div>
+  <div class="send">
+   <button class="btn primary" data-send="tue">Text my questions to Jasper</button>
+   <button class="btn ghost" data-copy="tue">Copy</button>
+  </div>
+  <div class="sendnote">Opens Messages with everything written in. Pick me and send.</div>
+
+  <div class="after">Once your questions are in, I'll send you the <b>Field Deck</b>, your sales app. It'll keep changing as you use it.</div>
+ </div>
+</details>
+
+<!-- ============ WEDNESDAY ============ -->
+<details class="day" data-day="wed" data-date="2026-10-21">
+ <summary>
+  <span class="emoji">🎤</span>
+  <span class="dt"><span class="dname">WEDNESDAY<span class="today">TODAY</span></span><span class="dtitle" style="display:block">Your pitches + your plan</span></span>
+  <span class="dcount" data-count="wed"></span><span class="chev">▼</span>
+ </summary>
+ <div class="body">
+  <div class="goal"><b>Today you make it yours.</b> Pick the three kinds of business you want to go after, write how you'd pitch
+   each one, and write your plan of attack. Pitch it your way. I want to hear it, or at least read it.</div>
+
+  <ul class="tasks">
+   <li><label class="task"><input type="checkbox" data-k="wed-trades"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Pick your top 3 trades<small>Auto shops, plus 2 of your choice</small></span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="wed-pitches"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Write a pitch for each one<small>How you open, what you show, how you book the meeting</small></span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="wed-practice"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Practice them out loud</span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="wed-sendpitch"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Send me all 3<small>Written below, or recorded as a video or voice memo</small></span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="wed-live"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Run one for me live on FaceTime</span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="wed-owner"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Try one on an owner you already know<span class="opt">BONUS</span></span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="wed-plan"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Write your plan of attack<small>Below</small></span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="wed-send"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Text me your pitches + plan tonight</span></label></li>
+  </ul>
+
+  <h3>Your top 3 trades</h3>
+  <div class="three field">
+   <input type="text" data-f="trade1" placeholder="1. Auto shops">
+   <input type="text" data-f="trade2" placeholder="2. Your pick">
+   <input type="text" data-f="trade3" placeholder="3. Your pick">
+  </div>
+
+  <h3>Your pitches <span class="hint">· how you open, what you show, how you book the meeting</span></h3>
+  <div class="field"><label id="p1l">Pitch 1</label><textarea data-f="pitch1"></textarea></div>
+  <div class="field"><label id="p2l">Pitch 2</label><textarea data-f="pitch2"></textarea></div>
+  <div class="field"><label id="p3l">Pitch 3</label><textarea data-f="pitch3"></textarea></div>
+
+  <h3>Your plan of attack</h3>
+  <div class="field"><label>Where in Houston you start, and why</label><textarea data-f="planArea"></textarea></div>
+  <div class="field"><label>Your 3 trades, and why you'll win there</label><textarea data-f="planTrades"></textarea></div>
+  <div class="field"><label>Your first 20 businesses</label><textarea class="big" data-f="planFirst20" placeholder="One per line: name, street, trade"></textarea></div>
+  <div class="field"><label>Your weekly goals: doors, conversations, demos</label><textarea data-f="planGoals"></textarea></div>
+  <div class="field"><label>How you'll earn owners' trust</label><textarea data-f="planTrust"></textarea></div>
+
+  <div class="send">
+   <button class="btn primary" data-send="wed">Text my pitches + plan to Jasper</button>
+   <button class="btn ghost" data-copy="wed">Copy</button>
+  </div>
+  <div class="sendnote">Opens Messages with everything written in. Pick me and send.</div>
+ </div>
+</details>
+
+<!-- ============ THURSDAY ============ -->
+<details class="day" data-day="thu" data-date="2026-10-22">
+ <summary>
+  <span class="emoji">🚪</span>
+  <span class="dt"><span class="dname">THURSDAY<span class="today">TODAY</span></span><span class="dtitle" style="display:block">First doors</span></span>
+  <span class="dcount" data-count="thu"></span><span class="chev">▼</span>
+ </summary>
+ <div class="body">
+  <div class="goal"><b>Not about selling yet.</b> Get in a groove talking to owners. Then tell me everything you'll need to
+   win at this job: tools, info, materials, training, help from me.</div>
+
+  <ul class="tasks">
+   <li><label class="task"><input type="checkbox" data-k="thu-area"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Go to the area you picked</span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="thu-doors"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">15 or more doors</span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="thu-log"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Log every visit in the Field Deck<small>That's what makes the business yours</small></span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="thu-stumped"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Write down every question you couldn't answer</span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="thu-needs"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Write your "what I need to win" list</span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="thu-send"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Text me your list tonight</span></label></li>
+  </ul>
+
+  <h3>Questions owners asked that you couldn't answer</h3>
+  <div class="field"><textarea data-f="stumped" placeholder="One per line"></textarea></div>
+
+  <h3>What I need to win at this job</h3>
+  <p class="small">Anything: tools, info, materials, training, changes to the Field Deck, help from me.</p>
+  <div class="field"><textarea class="big" data-f="needs" placeholder="One per line"></textarea></div>
+
+  <div class="send">
+   <button class="btn primary" data-send="thu">Text my list to Jasper</button>
+   <button class="btn ghost" data-copy="thu">Copy</button>
+  </div>
+  <div class="sendnote">Opens Messages with everything written in. Pick me and send.</div>
+ </div>
+</details>
+
+<!-- ============ FRIDAY ============ -->
+<details class="day" data-day="fri" data-date="2026-10-23">
+ <summary>
+  <span class="emoji">📋</span>
+  <span class="dt"><span class="dname">FRIDAY<span class="today">TODAY</span></span><span class="dtitle" style="display:block">Doors + wrap-up</span></span>
+  <span class="dcount" data-count="fri"></span><span class="chev">▼</span>
+ </summary>
+ <div class="body">
+  <div class="goal"><b>Finish the week strong.</b> More doors, then tell me how it went and what you need from me next week.</div>
+
+  <ul class="tasks">
+   <li><label class="task"><input type="checkbox" data-k="fri-doors"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">More doors: your second trade</span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="fri-pitches"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Tighten your 3 pitches<small>Edit them under Wednesday with what you learned</small></span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="fri-needs"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Finish your "what I need to win" list<small>It's under Thursday</small></span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="fri-recap"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Fill in your recap</span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="fri-send"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Text me your wrap-up</span></label></li>
+   <li><label class="task"><input type="checkbox" data-k="fri-invoice"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
+    <span class="tt">Text me your invoice for the week</span></label></li>
+  </ul>
+
+  <h3>Your recap <span class="hint">· Thursday + Friday</span></h3>
+  <div class="nums field">
+   <div><label>Doors</label><input type="number" inputmode="numeric" min="0" data-f="doors"></div>
+   <div><label>Conversations</label><input type="number" inputmode="numeric" min="0" data-f="convos"></div>
+   <div><label>Demos booked</label><input type="number" inputmode="numeric" min="0" data-f="demos"></div>
+  </div>
+  <div class="field"><label>What owners said</label><textarea data-f="ownersSaid"></textarea></div>
+  <div class="field"><label>What worked, and what you'd change</label><textarea data-f="worked"></textarea></div>
+
+  <div class="send">
+   <button class="btn primary" data-send="fri">Text my wrap-up to Jasper</button>
+   <button class="btn ghost" data-copy="fri">Copy</button>
+  </div>
+  <div class="sendnote">Your wrap-up includes your recap, your updated pitches and your full "what I need" list.</div>
+ </div>
+</details>
+
+<footer>
+ <p>Paperwork + Zelle: anytime before Friday so I can pay you.</p>
+ <p>Your checks and notes save on this phone.</p>
+</footer>
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+(function(){
+ var KEY='sano-week1-sebastian-v1';
+ var SERVICES=[
+  ['STAY ORGANIZED',['The owner’s app on their phone','Online booking + reminders','Quotes and leads followed up','Hiring and team systems']],
+  ['NEVER MISS A CUSTOMER',['Missed calls and texts answered by text','The voice assistant on their phone','The website assistant','Instagram + Facebook in one inbox','WhatsApp in the same inbox']],
+  ['GET FOUND + GET REVIEWS',['Their website','A review request after every job','Their Google listing']],
+  ['BRING CUSTOMERS BACK',['Their customer list brought in','Customers brought back when due','Email + text campaigns']],
+  ['GET PAID + GROW',['Invoices + pay-by-text','Ads, landing pages, strategy call']],
+  ['TOTAL TRANSFORMATION',['A dedicated manager + tech team','The app with their own name + logo']],
+  ['THE BUSINESS SIDE',['The 4 packages','How owners pay','What happens after the yes','What we don’t do']]
+ ];
+ var state={c:{},f:{}};
+ try{var raw=localStorage.getItem(KEY);if(raw){var p=JSON.parse(raw);if(p&&typeof p==='object'){state.c=p.c||{};state.f=p.f||{};}}}catch(e){}
+ function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+
+ // build the service chips
+ var host=document.getElementById('services'),n=0;
+ SERVICES.forEach(function(g){
+  var d=document.createElement('div');d.className='group';
+  var h=document.createElement('div');h.className='gname';h.textContent=g[0];d.appendChild(h);
+  var c=document.createElement('div');c.className='chips';
+  g[1].forEach(function(name){
+   var k='svc-'+(n++);
+   var l=document.createElement('label');l.className='chip';
+   var i=document.createElement('input');i.type='checkbox';i.setAttribute('data-k',k);i.setAttribute('data-svc',name);
+   var dot=document.createElement('span');dot.className='dot';
+   var t=document.createElement('span');t.textContent=name;
+   l.appendChild(i);l.appendChild(dot);l.appendChild(t);c.appendChild(l);
+  });
+  d.appendChild(c);host.appendChild(d);
+ });
+
+ var checks=[].slice.call(document.querySelectorAll('input[type=checkbox][data-k]'));
+ var fields=[].slice.call(document.querySelectorAll('[data-f]'));
+ checks.forEach(function(i){
+  i.checked=!!state.c[i.getAttribute('data-k')];
+  i.addEventListener('change',function(){state.c[i.getAttribute('data-k')]=i.checked;save();refresh();});
+ });
+ fields.forEach(function(el){
+  var k=el.getAttribute('data-f');
+  if(typeof state.f[k]==='string')el.value=state.f[k];
+  el.addEventListener('input',function(){state.f[k]=el.value;save();refresh();});
+ });
+
+ function lines(s){return (s||'').split('\n').map(function(x){return x.trim();}).filter(Boolean);}
+ function v(k){return (state.f[k]||'').trim();}
+ function dayTasks(day){return checks.filter(function(i){var k=i.getAttribute('data-k');return k.indexOf(day+'-')===0;});}
+ function svcChecks(){return checks.filter(function(i){return i.hasAttribute('data-svc');});}
+ function tradeName(n,fallback){return v('trade'+n)||fallback;}
+
+ function refresh(){
+  var all=checks.filter(function(i){return !i.hasAttribute('data-svc');});
+  var done=all.filter(function(i){return i.checked;}).length;
+  document.getElementById('pTxt').textContent=done+' of '+all.length+' done';
+  document.getElementById('pBar').style.width=(all.length?Math.round(done/all.length*100):0)+'%';
+  ['tue','wed','thu','fri'].forEach(function(d){
+   var t=dayTasks(d),x=t.filter(function(i){return i.checked;}).length;
+   var el=document.querySelector('[data-count="'+d+'"]');
+   el.textContent=x===t.length?'Done':x+'/'+t.length;el.classList.toggle('done',x===t.length);
+  });
+  var s=svcChecks(),sx=s.filter(function(i){return i.checked;}).length;
+  document.getElementById('covTxt').textContent=sx+' of '+s.length+' services covered';
+  var q=lines(state.f.questions).length;
+  document.getElementById('qCount').innerHTML='<b>'+q+'</b> question'+(q===1?'':'s')+' so far';
+  document.getElementById('p1l').textContent='Pitch 1 · '+tradeName(1,'Auto shops');
+  document.getElementById('p2l').textContent='Pitch 2 · '+tradeName(2,'your pick');
+  document.getElementById('p3l').textContent='Pitch 3 · '+tradeName(3,'your pick');
+ }
+
+ function numbered(s){return lines(s).map(function(x,i){return (i+1)+'. '+x;}).join('\n');}
+ function block(title,body){return body?('\n\n'+title+'\n'+body):'';}
+ function tally(day){var t=dayTasks(day);return t.filter(function(i){return i.checked;}).length+'/'+t.length+' done';}
+ function pitches(){
+  return block('PITCH 1 · '+tradeName(1,'Auto shops'),v('pitch1'))
+   +block('PITCH 2 · '+tradeName(2,'trade 2'),v('pitch2'))
+   +block('PITCH 3 · '+tradeName(3,'trade 3'),v('pitch3'));
+ }
+ function message(day){
+  if(day==='tue'){
+   var s=svcChecks(),sx=s.filter(function(i){return i.checked;}).length;
+   var q=lines(state.f.questions);
+   return 'Sebastian · Tuesday questions ('+q.length+')\nServices covered: '+sx+'/'+s.length+' · Tuesday '+tally('tue')
+    +(q.length?'\n\n'+numbered(state.f.questions):'\n\n(no questions yet)');
+  }
+  if(day==='wed'){
+   var tr=[tradeName(1,'Auto shops'),v('trade2'),v('trade3')].filter(Boolean).join(', ');
+   return 'Sebastian · Wednesday pitches + plan · '+tally('wed')
+    +(tr?'\nMy 3 trades: '+tr:'')
+    +pitches()
+    +block('WHERE I START',v('planArea'))
+    +block('MY 3 TRADES + WHY I WIN',v('planTrades'))
+    +block('FIRST 20 BUSINESSES',numbered(state.f.planFirst20))
+    +block('WEEKLY GOALS',v('planGoals'))
+    +block('EARNING TRUST',v('planTrust'));
+  }
+  if(day==='thu'){
+   return 'Sebastian · Thursday · '+tally('thu')
+    +block('WHAT I NEED TO WIN',numbered(state.f.needs))
+    +block('QUESTIONS I COULDN’T ANSWER',numbered(state.f.stumped));
+  }
+  var nums=[['Doors',v('doors')],['Conversations',v('convos')],['Demos booked',v('demos')]]
+   .filter(function(x){return x[1]!=='';}).map(function(x){return x[0]+': '+x[1];}).join(' · ');
+  return 'Sebastian · Friday wrap-up · week '+(function(){var a=checks.filter(function(i){return !i.hasAttribute('data-svc');});return a.filter(function(i){return i.checked;}).length+'/'+a.length;})()+' done'
+   +(nums?'\n'+nums:'')
+   +block('WHAT OWNERS SAID',v('ownersSaid'))
+   +block('WHAT WORKED + WHAT I’D CHANGE',v('worked'))
+   +block('WHAT I NEED TO WIN',numbered(state.f.needs))
+   +block('QUESTIONS I COULDN’T ANSWER',numbered(state.f.stumped))
+   +pitches();
+ }
+
+ var toast=document.getElementById('toast'),tt;
+ function showToast(t){toast.textContent=t;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove('show');},1800);}
+ function copy(text){
+  function fallback(){
+   var ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.top='-1000px';
+   document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,text.length);
+   var ok=false;try{ok=document.execCommand('copy');}catch(e){}
+   document.body.removeChild(ta);showToast(ok?'Copied':'Couldn’t copy');
+  }
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(function(){showToast('Copied');},fallback);}
+  else fallback();
+ }
+ document.querySelectorAll('[data-copy]').forEach(function(b){
+  b.addEventListener('click',function(){copy(message(b.getAttribute('data-copy')));});
+ });
+ document.querySelectorAll('[data-send]').forEach(function(b){
+  b.addEventListener('click',function(){
+   var body=message(b.getAttribute('data-send'));
+   window.__lastSms=body;
+   window.location.href='sms:?&body='+encodeURIComponent(body);
+  });
+ });
+
+ // open today's day (Houston time); before the week -> Tuesday, after -> Friday
+ var today;
+ try{today=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
+ catch(e){var d=new Date();today=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+ var days=[].slice.call(document.querySelectorAll('details.day'));
+ var pick=days.filter(function(d){return d.getAttribute('data-date')===today;})[0];
+ if(pick)pick.classList.add('is-today');
+ else pick=today<days[0].getAttribute('data-date')?days[0]:days[days.length-1];
+ pick.open=true;
+
+ window.__week={message:message};
+ refresh();
+})();
+</script>
+</body>
+</html>
