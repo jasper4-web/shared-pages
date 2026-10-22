@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Website Finish Line</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#09090B; --ink-soft:#3A3A40; --ink-mut:#63636B;
+  --blue:#0070F3; --blue-d:#0050C8; --blue-t:#E8F1FE;
+  --white:#FFFFFF; --paper:#f5f0e8; --paper-2:#EDE6DA; --line:#E3DCD0;
+  --green:#127A3E; --green-t:#E5F4EA; --amber:#B86E00; --amber-t:#FDF1DC; --red:#B4231B; --red-t:#FBE7E5;
+  --violet:#5B3FC4; --violet-t:#EEEAFB;
+  --radius:16px; --shadow:0 10px 40px rgba(9,9,11,.08);
+  --sans:"Space Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color-scheme:only light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+.wrap{max-width:860px;margin:0 auto;padding:28px 16px 64px}
+h1{font-size:clamp(28px,6vw,40px);line-height:1.1;margin:10px 0;letter-spacing:-.02em}
+h2{font-size:20px;margin:0;letter-spacing:-.01em}
+p{margin:0 0 10px}
+.mut{color:var(--ink-mut)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.chip{display:inline-flex;align-items:center;font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--white);border:1px solid var(--line)}
+.alert{background:var(--red-t);border:1px solid #F1C6C2;border-radius:var(--radius);padding:14px 16px;margin:18px 0}
+.alert b{color:var(--red)}
+.alert ul{margin:6px 0 0;padding-left:20px;font-size:15px}
+.phase{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin:14px 0}
+.ph-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+.num{flex:0 0 34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.phase.now .num{background:var(--blue)}
+.ph-head p{margin:2px 0 0;font-size:14px;color:var(--ink-soft)}
+.row{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line);font-size:15px}
+.who{flex:0 0 92px;font-size:12px;font-weight:700;text-align:center;border-radius:8px;padding:3px 6px;margin-top:2px}
+.who.you{background:var(--blue-t);color:var(--blue-d)}
+.who.me{background:var(--green-t);color:var(--green)}
+.who.seb{background:var(--amber-t);color:var(--amber)}
+.who.deck{background:var(--violet-t);color:var(--violet)}
+.row small{display:block;color:var(--ink-mut);font-size:13px}
+.rec{font-size:12px;font-weight:700;color:var(--blue-d);background:var(--blue-t);border-radius:6px;padding:1px 6px}
+.done{background:var(--green-t);border:1px solid #BFE3CC;border-radius:var(--radius);padding:14px 16px;margin:18px 0;font-size:15px}
+.done b{color:var(--green)}
+.path{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;word-break:break-all;color:var(--ink-soft)}
+.foot{margin-top:36px;font-size:13px;color:var(--ink-mut)}
+@media (max-width:520px){ .who{flex-basis:78px} .row{font-size:14.5px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="chips"><span class="chip">The website</span><span class="chip">Oct 22, 2026</span></div>
+  <h1>Everything between today and a finished website.</h1>
+  <p class="mut">Six stages. Every item says who does it. Checked against all your rulings (10/7, 10/14, 10/19, 10/20), the bug sweep, the Spanish review and yesterday's audit.</p>
+
+  <div class="alert"><b>What the public sees today is out of date.</b>
+    <ul>
+      <li>Your social bios point at the <b>old GitHub copy</b> from 10/14: it still has the false AI-vendor privacy line and shows the demo phone number.</li>
+      <li><b>sano-solutions.pages.dev</b> is still up with the old "SANO Solutions" name, a fake 555 number and a $47 price.</li>
+    </ul>
+    <p style="margin:8px 0 0;font-size:14px">Stage 1 fixes both.</p></div>
+
+  <div class="phase now">
+    <div class="ph-head"><div class="num">1</div><div><h2>Put the site on sanosystems.co</h2><p>Fixes what the public sees, gives you hello@sanosystems.co, unlocks texting registration and Sebastian's QR cards.</p></div></div>
+    <div class="row"><span class="who you">You · 3 min</span><div>The Cloudflare step (add 3 permissions). <small>Still not done as of this morning. Then say "Cloudflare done".</small></div></div>
+    <div class="row"><span class="who you">You</span><div>Three calls: pay buttons <span class="rec">off until Stripe</span> · Spanish <span class="rec">switch now, marked under review</span> or wait for Sebastian · daily-limit <span class="rec">free fix first</span></div></div>
+    <div class="row"><span class="who me">Me</span><div>The free daily-limit fix (Harold checks it) → the switch → checkout return address → old GitHub links forward → every page checked on the real address.</div></div>
+    <div class="row"><span class="who you">You · 5 clicks</span><div>Forward the old sano-solutions.pages.dev site. Then click Cloudflare's "verify" email for hello@.</div></div>
+    <div class="row"><span class="who deck">Deck window</span><div>Point the Field Deck's pricing + booking links at sanosystems.co (note #8).</div></div>
+    <div class="row"><span class="who you">You + me</span><div>After: the 7 social bios · Google (Search Console + your Business listing) · texting registration (1–4 weeks) · Sebastian's QR cards print.</div></div>
+  </div>
+
+  <div class="phase">
+    <div class="ph-head"><div class="num">2</div><div><h2>Finish the Spanish</h2><p>Your 10/14 rule: Sebastian reads all of it before it counts. He has read 0 of 37 sections so far.</p></div></div>
+    <div class="row"><span class="who me">Me</span><div>Rebuild his review packet. <small>It's from 10/16 and misses all 10 Spanish sample apps and everything since.</small></div></div>
+    <div class="row"><span class="who seb">Sebastian</span><div>Read it all, answer 7 word questions (e.g. «instalación», «cotización»), OK his cell on the Spanish pages, listen to the Spanish example video, give a personal email for sebastian@.</div></div>
+    <div class="row"><span class="who me">Me</span><div>Apply his notes, then let Google show the Spanish pages and turn Spanish signatures on.</div></div>
+  </div>
+
+  <div class="phase">
+    <div class="ph-head"><div class="num">3</div><div><h2>Make the sample apps match your 10/19 rulings</h2><p>A few demos still say what you ruled against.</p></div></div>
+    <div class="row"><span class="who me">Me</span><div>Plumbing: "who owes you" + one-tap check-ins + the second seat (it still says "Scale, not built yet" / "from Growth") · Auto: the body-shop supplement amount · Home services: the own-cell answer · Restaurants: Harold's leftovers · take internal staff notes out of 7 sample apps.</div></div>
+    <div class="row"><span class="who you">You</span><div>OK three new pricing lines: money records, one-tap check-ins, salons' walk-in + short-notice list.</div></div>
+  </div>
+
+  <div class="phase">
+    <div class="ph-head"><div class="num">4</div><div><h2>Take real money</h2><p>Separate from the switch; the site works without it.</p></div></div>
+    <div class="row"><span class="who you">You</span><div>Open Stripe ("SANO SYSTEMS LLC") · a mailing address · the Texas sales-tax call · yes/no on the 6 agreement lines · the AI vendors' written opt-out.</div></div>
+    <div class="row"><span class="who me">Me</span><div>Connect Stripe's real payment form (~1–2 days) → a $1 live test → pay buttons back on.</div></div>
+  </div>
+
+  <div class="phase">
+    <div class="ph-head"><div class="num">5</div><div><h2>Four calls from the 10/7 site audit, never answered</h2><p>None blocks launch; each changes what the site says.</p></div></div>
+    <div class="row"><span class="who you">You</span><div><b>A</b> Re-cut the packages? (hiring "on request", Scale minutes cap, things delivered but not listed) · <b>D</b> Put the "Why SANO" story + Jefe film on the site? · <b>E</b> One phrase: "Fortune 500 tools" or "same systems the giants have"? · Where the line "special requirements like HIPAA are scoped with you and may cost more" goes (not on the medical pages).</div></div>
+  </div>
+
+  <div class="phase">
+    <div class="ph-head"><div class="num">6</div><div><h2>Polish</h2><p>Nothing a visitor would stop on; worth doing before you push traffic.</p></div></div>
+    <div class="row"><span class="who me">Me</span><div>Google titles/descriptions that run too long (21) · small leftover bugs from the 10/15 sweep + a second sweep · one consistent line on Spanish voice · a few copy tidies (only an HVAC sample blueprint, mobile mechanics on Auto) · real Android/in-app-browser checks.</div></div>
+  </div>
+
+  <div class="done"><b>Already done:</b> one site in English + Spanish (29 + 29 pages, 10 sample apps) · language follows the phone · every trade problem-first with its own sample app · medical pages frozen as you ruled · pricing rulings · booking types · demo number gone (new site) · example video (English) · checkout built in test mode · yesterday's legal audit live on the test site.</div>
+
+  <p><b>What I can start now without you:</b> the free daily-limit fix, rebuilding Sebastian's packet, and Stage 3 + Stage 6. Going live with any of it waits for your OK.</p>
+  <p class="foot">SANO Systems · website finish line · Oct 22, 2026</p>
+</div>
+</body>
+</html>
