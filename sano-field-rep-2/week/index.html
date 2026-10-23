@@ -97,6 +97,9 @@ label.chip:has(input:checked){border-color:var(--green);color:var(--text)}
 label.chip:has(input:checked) .dot{background:var(--green);border-color:var(--green)}
 label.chip input:focus-visible ~ .dot{outline:2px solid var(--cyan);outline-offset:2px}
 .covered{font-size:14px;color:var(--muted);margin-top:10px}
+.svc{margin-top:10px}
+.svc label{display:block;font-size:14.5px;font-weight:600;color:var(--text);margin-bottom:5px}
+textarea.line{min-height:64px}
 
 .field{margin-top:12px}
 .field label{display:block;font-size:14.5px;color:var(--text2);margin-bottom:6px}
@@ -185,8 +188,9 @@ footer p+p{margin-top:6px}
  </summary>
  <div class="body">
   <div class="goal"><b>Today is all about learning.</b> Understand every service we offer: what it does, how far it goes, and
-   where it stops. By the end of today you should have a real grip on the job. Tonight, send me a long list of questions. Your questions are how I'll see how much you learned, so make
-   them specific.</div>
+   where it stops. By the end of today you should have a real grip on the job. <b>Tonight, send me two things:</b> every
+   service and package explained in one line, in your own words, and a long list of questions. That's how I'll see how much
+   you learned, so make them specific.</div>
 
   <ul class="tasks">
    <li><label class="task"><input type="checkbox" data-k="fri-pack"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
@@ -196,11 +200,11 @@ footer p+p{margin-top:6px}
    <li><label class="task"><input type="checkbox" data-k="fri-demos"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
     <span class="tt">Play with both demos until you know them<small>The taller demo and the taco truck demo</small></span></label></li>
    <li><label class="task"><input type="checkbox" data-k="fri-services"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
-    <span class="tt">Tick off every service below once you get it</span></label></li>
+    <span class="tt">Explain every service and package below<small>One line each, in your own words: what it does for an owner</small></span></label></li>
    <li><label class="task"><input type="checkbox" data-k="fri-write"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
     <span class="tt">Write your questions as you go<small>In the box below. Aim for 25 or more.</small></span></label></li>
    <li><label class="task"><input type="checkbox" data-k="fri-send"><span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#000" stroke-width="2.6"><path d="M3 8.5l3.2 3L13 4.5"/></svg></span>
-    <span class="tt">Text me your questions tonight</span></label></li>
+    <span class="tt">Text me your explanations + questions tonight</span></label></li>
   </ul>
 
   <h3>Where to learn it</h3>
@@ -223,7 +227,8 @@ footer p+p{margin-top:6px}
    <div>What would I say if an owner asked me about it?</div>
   </div>
 
-  <h3>Every service <span class="hint">· tick it when you get it</span></h3>
+  <h3>Explain it back <span class="hint">· one line each, your own words</span></h3>
+  <p class="small">What does it do for the owner? If you can't say it simply, go back to the study pack.</p>
   <div id="services"></div>
   <div class="covered" id="covTxt"></div>
 
@@ -233,7 +238,7 @@ footer p+p{margin-top:6px}
    <div class="counter" id="qCount"><b>0</b> questions so far</div>
   </div>
   <div class="send">
-   <button class="btn primary" data-send="fri">Text my questions to Jasper</button>
+   <button class="btn primary" data-send="fri">Text my explanations + questions to Jasper</button>
    <button class="btn ghost" data-copy="fri">Copy</button>
   </div>
   <div class="sendnote">Opens Messages with everything written in. Pick me and send.</div>
@@ -424,28 +429,28 @@ footer p+p{margin-top:6px}
   ['BRING CUSTOMERS BACK',['Their customer list brought in','Customers brought back when due','Email + text campaigns']],
   ['GET PAID + GROW',['Invoices + pay-by-text','Ads, landing pages, strategy call']],
   ['TOTAL TRANSFORMATION',['A dedicated manager + tech team','The app with their own name + logo']],
-  ['THE BUSINESS SIDE',['The 4 packages','How owners pay','What happens after the yes','What we don’t do']]
+  ['THE 4 PACKAGES · who each one is for',['Starter','Growth','Scale','Total Transformation']],
+  ['THE BUSINESS SIDE',['How owners pay','What happens after the yes','What we don’t do']]
  ];
  var state={c:{},f:{}};
  try{var raw=localStorage.getItem(KEY);if(raw){var p=JSON.parse(raw);if(p&&typeof p==='object'){state.c=p.c||{};state.f=p.f||{};}}
   else{var o=JSON.parse(localStorage.getItem(OLD)||'null');if(o&&o.f&&typeof o.f==='object')state.f=o.f;}}catch(e){}
  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 
- // build the service chips
+ // build the explain-it-back boxes: one line per service, in his words (saved like every other field)
  var host=document.getElementById('services'),n=0;
  SERVICES.forEach(function(g){
   var d=document.createElement('div');d.className='group';
   var h=document.createElement('div');h.className='gname';h.textContent=g[0];d.appendChild(h);
-  var c=document.createElement('div');c.className='chips';
   g[1].forEach(function(name){
-   var k='svc-'+(n++);
-   var l=document.createElement('label');l.className='chip';
-   var i=document.createElement('input');i.type='checkbox';i.setAttribute('data-k',k);i.setAttribute('data-svc',name);
-   var dot=document.createElement('span');dot.className='dot';
-   var t=document.createElement('span');t.textContent=name;
-   l.appendChild(i);l.appendChild(dot);l.appendChild(t);c.appendChild(l);
+   var k='explain-'+(n++);
+   var w=document.createElement('div');w.className='svc';
+   var l=document.createElement('label');l.textContent=name;l.setAttribute('for',k);
+   var ta=document.createElement('textarea');ta.className='line';ta.id=k;ta.setAttribute('data-f',k);
+   ta.setAttribute('data-svc',name);ta.setAttribute('data-group',g[0]);ta.placeholder='In your words: what it does for the owner';
+   w.appendChild(l);w.appendChild(ta);d.appendChild(w);
   });
-  d.appendChild(c);host.appendChild(d);
+  host.appendChild(d);
  });
 
  var checks=[].slice.call(document.querySelectorAll('input[type=checkbox][data-k]'));
@@ -463,7 +468,8 @@ footer p+p{margin-top:6px}
  function lines(s){return (s||'').split('\n').map(function(x){return x.trim();}).filter(Boolean);}
  function v(k){return (state.f[k]||'').trim();}
  function dayTasks(day){return checks.filter(function(i){var k=i.getAttribute('data-k');return k.indexOf(day+'-')===0;});}
- function svcChecks(){return checks.filter(function(i){return i.hasAttribute('data-svc');});}
+ function svcBoxes(){return fields.filter(function(el){return el.hasAttribute('data-svc');});}
+ function explained(){return svcBoxes().filter(function(el){return v(el.getAttribute('data-f'))!=='';}).length;}
  function tradeName(n,fallback){return v('trade'+n)||fallback;}
 
  function refresh(){
@@ -476,8 +482,7 @@ footer p+p{margin-top:6px}
    var el=document.querySelector('[data-count="'+d+'"]');
    el.textContent=x===t.length?'Done':x+'/'+t.length;el.classList.toggle('done',x===t.length);
   });
-  var s=svcChecks(),sx=s.filter(function(i){return i.checked;}).length;
-  document.getElementById('covTxt').textContent=sx+' of '+s.length+' services covered';
+  document.getElementById('covTxt').textContent=explained()+' of '+svcBoxes().length+' explained';
   var q=lines(state.f.questions).length;
   document.getElementById('qCount').innerHTML='<b>'+q+'</b> question'+(q===1?'':'s')+' so far';
   document.getElementById('p1l').textContent='Pitch 1 · '+tradeName(1,'Auto shops');
@@ -495,10 +500,15 @@ footer p+p{margin-top:6px}
  }
  function message(day){
   if(day==='fri'){
-   var s=svcChecks(),sx=s.filter(function(i){return i.checked;}).length;
-   var q=lines(state.f.questions);
-   return 'Sebastian · Friday questions ('+q.length+')\nServices covered: '+sx+'/'+s.length+' · Friday '+tally('fri')
-    +(q.length?'\n\n'+numbered(state.f.questions):'\n\n(no questions yet)');
+   var q=lines(state.f.questions),out='',grp='';
+   svcBoxes().forEach(function(el){
+    var g=el.getAttribute('data-group');
+    if(g!==grp){grp=g;out+='\n\n'+g;}
+    out+='\n· '+el.getAttribute('data-svc')+': '+(v(el.getAttribute('data-f'))||'(blank)');
+   });
+   return 'Sebastian · Friday explained '+explained()+'/'+svcBoxes().length+' · '+q.length+' questions · Friday '+tally('fri')
+    +'\n\nIN MY OWN WORDS'+out
+    +'\n\nMY QUESTIONS'+(q.length?'\n'+numbered(state.f.questions):'\n(no questions yet)');
   }
   if(day==='mon'){
    var tr=[tradeName(1,'Auto shops'),v('trade2'),v('trade3')].filter(Boolean).join(', ');
