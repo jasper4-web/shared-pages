@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Kitchen Week</title>
+<meta name="description" content="Sunday prep, where everything goes, and Monday–Thursday meals.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A5%95%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f6f3ec; --card:#ffffff; --ink:#1d2320; --muted:#5f6862; --line:#e4dfd4;
+  --accent:#2f6b4f; --accent-soft:#e3efe7; --warn:#a4471f; --warn-soft:#f8e6dc;
+  --gold:#8a6a12; --gold-soft:#f5ecd2; --blue:#2c5b86; --blue-soft:#e2ecf5;
+  --done:#9aa39d; --shadow:0 1px 2px rgba(0,0,0,.05),0 2px 10px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121614; --card:#1b201d; --ink:#e9eee9; --muted:#9aa59e; --line:#2b322e;
+    --accent:#7cc4a0; --accent-soft:#1f3329; --warn:#f0a07a; --warn-soft:#3a2419;
+    --gold:#e3c46a; --gold-soft:#332b14; --blue:#8fbbe6; --blue-soft:#1a2836;
+    --done:#5d665f; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121614; --card:#1b201d; --ink:#e9eee9; --muted:#9aa59e; --line:#2b322e;
+  --accent:#7cc4a0; --accent-soft:#1f3329; --warn:#f0a07a; --warn-soft:#3a2419;
+  --gold:#e3c46a; --gold-soft:#332b14; --blue:#8fbbe6; --blue-soft:#1a2836;
+  --done:#5d665f; --shadow:none;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:17px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px 48px}
+header{padding:22px 0 10px}
+h1{font-size:28px;line-height:1.15;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:15px;margin:0}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 10px;margin:0 -16px;padding-left:16px;padding-right:16px;
+  border-bottom:1px solid var(--line)}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tabs button{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);
+  font-family:inherit;font-weight:600;font-size:15px;line-height:1;padding:12px 4px;border-radius:12px;cursor:pointer;min-height:44px}
+.tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+section[hidden]{display:none}
+h2{font-size:21px;margin:22px 0 4px}
+h3{font-size:17px;margin:0 0 6px}
+.lead{color:var(--muted);font-size:15px;margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:12px 0;box-shadow:var(--shadow)}
+.note{border-radius:14px;padding:12px 14px;margin:12px 0;font-size:15.5px}
+.note.warn{background:var(--warn-soft);color:var(--ink);border-left:4px solid var(--warn)}
+.note.good{background:var(--accent-soft);border-left:4px solid var(--accent)}
+.note.gold{background:var(--gold-soft);border-left:4px solid var(--gold)}
+.note b{font-weight:700}
+ul.clean{list-style:none;margin:0;padding:0}
+ul.clean li{padding:9px 0;border-top:1px solid var(--line)}
+ul.clean li:first-child{border-top:0;padding-top:2px}
+.tag{display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:.02em;padding:3px 8px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);margin-left:6px;vertical-align:1px;white-space:nowrap}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.tag.gold{background:var(--gold-soft);color:var(--gold)}
+.tag.blue{background:var(--blue-soft);color:var(--blue)}
+.small{font-size:14.5px;color:var(--muted)}
+/* checklist */
+.progress{display:flex;align-items:center;gap:12px;margin:6px 0 4px}
+.bar{flex:1;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+.count{font-weight:700;font-size:15px;min-width:64px;text-align:right}
+.step{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:14px 14px;margin:10px 0;box-shadow:var(--shadow);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.step input{appearance:none;-webkit-appearance:none;flex:none;width:28px;height:28px;margin:1px 0 0;border:2px solid var(--accent);
+  border-radius:8px;display:grid;place-content:center;cursor:pointer;background:var(--card)}
+.step input:checked{background:var(--accent)}
+.step input:checked::after{content:"";width:8px;height:14px;border:solid var(--bg);border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.step .body{flex:1;min-width:0}
+.step .title{font-weight:700;display:block;margin-bottom:3px}
+.step .how{font-size:15.5px}
+.step .to{display:block;margin-top:6px;font-size:14px;color:var(--accent);font-weight:600}
+.step.done .title,.step.done .how{color:var(--done);text-decoration:line-through}
+.step.done .to{color:var(--done)}
+.reset{appearance:none;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:inherit;font-weight:600;font-size:14px;
+  padding:10px 14px;border-radius:10px;cursor:pointer;margin-top:6px}
+/* storage */
+.place h3{display:flex;align-items:center;gap:8px}
+.place .ico{font-size:20px}
+.item{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.item .what{font-weight:600}
+.item .when{flex:none;font-size:13.5px;color:var(--muted);text-align:right}
+.item + .detail,.detail{display:block;font-size:14.5px;color:var(--muted);margin-top:2px}
+/* week */
+.day{position:relative}
+.day.today{border:2px solid var(--accent)}
+.day .dhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.day .dname{font-size:20px;font-weight:800}
+.meal{padding:10px 0;border-top:1px solid var(--line)}
+.meal .time{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.meal .m{font-weight:600;margin-top:2px}
+.meal .x{font-size:15px;color:var(--muted)}
+/* cook */
+ol.steps{margin:0;padding-left:22px}
+ol.steps li{margin:8px 0}
+ol.steps .t{font-weight:700;color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{padding:8px 4px;border-top:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-top:0}
+td.num{text-align:right;white-space:nowrap;font-weight:600}
+footer{margin-top:28px;color:var(--muted);font-size:13.5px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Kitchen Week</h1>
+    <p class="sub">Prep veg Sunday · cook meat &amp; potatoes fresh · Mon Oct 26 – Thu Oct 29</p>
+  </header>
+
+  <nav>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="t-prep" aria-controls="prep" aria-selected="true">Prep</button>
+      <button role="tab" id="t-store" aria-controls="store" aria-selected="false">Store</button>
+      <button role="tab" id="t-week" aria-controls="week" aria-selected="false">Week</button>
+      <button role="tab" id="t-cook" aria-controls="cook" aria-selected="false">Cook</button>
+    </div>
+  </nav>
+
+  <!-- ============ PREP ============ -->
+  <section id="prep" role="tabpanel" aria-labelledby="t-prep">
+    <h2>Sunday prep · about 75 min</h2>
+    <p class="lead">Tap a step when it's done. Your checks stay saved on this phone.</p>
+    <div class="progress"><div class="bar"><i id="bar"></i></div><span class="count" id="count">0 of 11</span></div>
+
+    <div class="note gold"><b>First:</b> oven to <b>425°F</b>. Big pot of <b>salted water</b> on to boil. A bowl of <b>ice water</b> next to the stove.</div>
+
+    <label class="step"><input type="checkbox" data-k="eggplant"><span class="body">
+      <span class="title">1 · Roast the eggplant</span>
+      <span class="how">Cut into 1-inch cubes. Toss with 1½ tbsp olive oil + salt. One layer on a sheet pan. Roast 25–30 min, flip halfway. Taste one warm. That's how you find out if you like it.</span>
+      <span class="to">→ Cool 20 min on the pan, then container “Eggplant” · fridge</span></span></label>
+
+    <label class="step"><input type="checkbox" data-k="rabe"><span class="body">
+      <span class="title">2 · Blanch the broccoli rabe</span>
+      <span class="how">Trim ½ inch off the stems. Boil 2 min. Straight into the ice water for 1 min. Squeeze hard, rough chop. This takes most of the bitterness out and makes it keep longer.</span>
+      <span class="to">→ Container “Rabe” with a paper towel · fridge</span></span></label>
+
+    <label class="step"><input type="checkbox" data-k="collards"><span class="body">
+      <span class="title">3 · Collards → ribbons</span>
+      <span class="how">Strip the leaves off the thick center stems. Stack, roll up tight, slice into ½-inch ribbons. Dry them really well (towel or spinner). Wet greens go slimy.</span>
+      <span class="to">→ Container “Collards” with a paper towel · fridge</span></span></label>
+
+    <label class="step"><input type="checkbox" data-k="carrots"><span class="body">
+      <span class="title">4 · Carrots → coins</span>
+      <span class="how">Tops off. Peel or scrub 4 carrots. Slice into ¼-inch coins.</span>
+      <span class="to">→ Container “Carrots” with a paper towel · fridge</span></span></label>
+
+    <label class="step"><input type="checkbox" data-k="peponion"><span class="body">
+      <span class="title">5 · Peppers + onion</span>
+      <span class="how">Dice 3 bell peppers and 1 yellow onion, about ½ inch. Same container is fine.</span>
+      <span class="to">→ Container “Pepper/Onion” · fridge</span></span></label>
+
+    <label class="step"><input type="checkbox" data-k="zucchini"><span class="body">
+      <span class="title">6 · Slice 1 zucchini</span>
+      <span class="how">½-inch half-moons. <b>No salt.</b> Keep the second zucchini whole as a backup for Wed/Thu if you don't like the eggplant.</span>
+      <span class="to">→ Container “Zucchini” with a paper towel · fridge</span></span></label>
+
+    <label class="step"><input type="checkbox" data-k="pom"><span class="body">
+      <span class="title">7 · Seed the pomegranate</span>
+      <span class="how">Score around the middle, pull it apart in a bowl of water, push the seeds out. Seeds sink, white pith floats. Skim, drain.</span>
+      <span class="to">→ Container “Pom” · fridge (Mon + Wed bowls)</span></span></label>
+
+    <label class="step"><input type="checkbox" data-k="garlic"><span class="body">
+      <span class="title">8 · Peel the garlic</span>
+      <span class="how">Peel about 10 cloves, keep them whole. Don't mince ahead, it turns harsh.</span>
+      <span class="to">→ Small container · fridge</span></span></label>
+
+    <label class="step"><input type="checkbox" data-k="cilantro"><span class="body">
+      <span class="title">9 · Cilantro in a jar</span>
+      <span class="how">If it's wet, pat it dry. Trim the stem ends. Stand it in a jar with an inch of water and put a loose bag over the top.</span>
+      <span class="to">→ Fridge door or shelf · lasts 1–2 weeks</span></span></label>
+
+    <label class="step"><input type="checkbox" data-k="meat"><span class="body">
+      <span class="title">10 · Thaw Monday's meat</span>
+      <span class="how"><b>1 beef pack + 1 chicken pack only</b>, on a plate. Anything else you pulled out goes back in the freezer.</span>
+      <span class="to">→ Bottom shelf of the fridge, away from the veggie containers</span></span></label>
+
+    <label class="step"><input type="checkbox" data-k="putaway"><span class="body">
+      <span class="title">11 · Put the rest away</span>
+      <span class="how">Use the <b>Store</b> tab. Short version: don't wash grapes or potatoes, tomatoes stay on the counter, apples get their own drawer.</span>
+      <span class="to">→ Done. Kitchen's set through Thursday.</span></span></label>
+
+    <button class="reset" id="reset" type="button">Clear all checks</button>
+  </section>
+
+  <!-- ============ STORE ============ -->
+  <section id="store" role="tabpanel" aria-labelledby="t-store" hidden>
+    <h2>Where everything goes</h2>
+    <p class="lead">The date on the right is when to eat it by.</p>
+
+    <div class="card place">
+      <h3><span class="ico">🥡</span> Fridge · prepped containers</h3>
+      <ul class="clean">
+        <li><div class="item"><span class="what">Pepper + onion</span><span class="when">thru Thu</span></div></li>
+        <li><div class="item"><span class="what">Zucchini, sliced</span><span class="when">Mon–Tue</span></div><span class="detail">Gets slimy after ~3 days. That's why the eggplant takes Wed/Thu.</span></li>
+        <li><div class="item"><span class="what">Roasted eggplant</span><span class="when">Wed–Thu</span></div></li>
+        <li><div class="item"><span class="what">Broccoli rabe, blanched</span><span class="when">Mon–Tue</span></div><span class="detail">Good to Wed at the latest. Most delicate thing you have.</span></li>
+        <li><div class="item"><span class="what">Collards, ribbons</span><span class="when">Wed–Thu</span></div><span class="detail">Keeps a week. Sturdiest green.</span></li>
+        <li><div class="item"><span class="what">Carrot coins</span><span class="when">all week</span></div></li>
+        <li><div class="item"><span class="what">Pomegranate seeds</span><span class="when">Mon + Wed</span></div></li>
+        <li><div class="item"><span class="what">Peeled garlic</span><span class="when">all week</span></div></li>
+      </ul>
+      <p class="small" style="margin:10px 0 0">Change the paper towel if it gets soaked.</p>
+    </div>
+
+    <div class="card place">
+      <h3><span class="ico">🧊</span> Fridge · shelves</h3>
+      <ul class="clean">
+        <li><div class="item"><span class="what">Skyr tubs</span><span class="when">1 a day</span></div></li>
+        <li><div class="item"><span class="what">Zuppa + chowder</span><span class="when">Wed · Thu · Fri</span></div></li>
+        <li><div class="item"><span class="what">Cilantro jar</span><span class="when">1–2 weeks</span></div></li>
+        <li><div class="item"><span class="what">Ripe avocados</span><span class="when">½ a day</span></div><span class="detail">Dark skin, gives a little when you press. The fridge holds them there for days.</span></li>
+        <li><div class="item"><span class="what">Thawing meat · bottom shelf</span><span class="when">1–2 days</span></div><span class="detail">On a plate so it can't drip on anything.</span></li>
+      </ul>
+    </div>
+
+    <div class="card place">
+      <h3><span class="ico">🥒</span> Crisper drawer 1 · vegetables</h3>
+      <ul class="clean">
+        <li><div class="item"><span class="what">Cucumbers, whole</span><span class="when">½ a day</span></div><span class="detail">Wrapped in a paper towel.</span></li>
+        <li><div class="item"><span class="what">2nd zucchini, whole</span><span class="when">backup</span></div></li>
+        <li><div class="item"><span class="what">Extra peppers, red chili</span><span class="when">1 week+</span></div></li>
+      </ul>
+    </div>
+
+    <div class="card place">
+      <h3><span class="ico">🍎</span> Crisper drawer 2 · fruit only</h3>
+      <ul class="clean">
+        <li><div class="item"><span class="what">Apples</span><span class="when">weeks</span></div></li>
+        <li><div class="item"><span class="what">Grapes, unwashed, in their bag</span><span class="when">Tue + Thu</span></div></li>
+      </ul>
+      <div class="note warn" style="margin-bottom:0"><b>Why apples get their own drawer:</b> they give off a gas that makes greens and cucumbers go bad faster.</div>
+    </div>
+
+    <div class="card place">
+      <h3><span class="ico">🍅</span> Counter</h3>
+      <ul class="clean">
+        <li><div class="item"><span class="what">Tomatoes, stem side down</span><span class="when">Mon–Wed</span></div><span class="detail">Not the fridge. Cold kills the flavor and texture.</span></li>
+        <li><div class="item"><span class="what">Hard green avocados</span><span class="when">2–4 days</span></div><span class="detail">Move to the fridge once they give a little.</span></li>
+      </ul>
+    </div>
+
+    <div class="card place">
+      <h3><span class="ico">🥔</span> Cupboard · cool &amp; dark</h3>
+      <ul class="clean">
+        <li><div class="item"><span class="what">Gold potatoes, sweet potatoes</span><span class="when">weeks</span></div><span class="detail">Unwashed. Not the fridge. Not next to the onions, which make potatoes sprout.</span></li>
+        <li><div class="item"><span class="what">Whole onions, red onion, garlic</span><span class="when">weeks</span></div><span class="detail">Dry spot, away from the potatoes.</span></li>
+        <li><div class="item"><span class="what">Pouches, pumpkin seeds, honey, olive oil</span><span class="when">—</span></div><span class="detail">Rice, beans, dal, lentils, lupini all stay here.</span></li>
+      </ul>
+    </div>
+
+    <div class="card place">
+      <h3><span class="ico">❄️</span> Freezer · thaw schedule</h3>
+      <table>
+        <tr><th>When</th><th>Move to fridge</th><th>For</th></tr>
+        <tr><td><b>Sun</b> (today)</td><td>1 beef + 1 chicken</td><td>Mon + Tue</td></tr>
+        <tr><td><b>Tue</b> morning</td><td>1 beef</td><td>Wed + Thu</td></tr>
+      </table>
+      <p class="small" style="margin:10px 0 0">Thawed raw meat is good 1–2 days. If plans change, meat thawed in the fridge can go back in the freezer.</p>
+    </div>
+
+    <div class="note warn"><b>Don't wash until you eat them:</b> grapes, potatoes, sweet potatoes, tomatoes, avocados, apples. Water on stored produce = rot and mold.</div>
+  </section>
+
+  <!-- ============ WEEK ============ -->
+  <section id="week" role="tabpanel" aria-labelledby="t-week" hidden>
+    <h2>Monday – Thursday</h2>
+    <p class="lead">Same three meals every day. Only the sides rotate. Today's card is outlined.</p>
+
+    <div class="note good"><b>Every skyr bowl:</b> whole tub + 1 apple + <b>1 oz (28 g) pumpkin seeds</b> + <b>1 tbsp honey</b> + that day's fruit below.</div>
+
+    <div class="card day" data-dow="1">
+      <div class="dhead"><span class="dname">Monday</span><span class="tag">Chicken night</span></div>
+      <div class="meal"><div class="time">After gym · ~10:30</div><div class="m">Skyr bowl + ½ cup pomegranate</div></div>
+      <div class="meal"><div class="time">3:30</div><div class="m">Beef + gold potatoes</div><div class="x">Pepper/onion · zucchini · cucumber-tomato-avocado salad</div></div>
+      <div class="meal"><div class="time">6:00</div><div class="m">Chicken + cilantro-lime rice + ½ black beans</div><div class="x">Broccoli rabe · carrots · cilantro</div></div>
+    </div>
+
+    <div class="card day" data-dow="2">
+      <div class="dhead"><span class="dname">Tuesday</span><span class="tag">Chicken night</span></div>
+      <div class="note gold" style="margin:4px 0 6px">☀️ Morning: move <b>1 beef pack</b> to the fridge.</div>
+      <div class="meal"><div class="time">After gym · ~10:30</div><div class="m">Skyr bowl + 1 cup grapes</div></div>
+      <div class="meal"><div class="time">3:30</div><div class="m">Beef + sweet potatoes</div><div class="x">Pepper/onion · zucchini · cucumber-tomato-avocado salad</div></div>
+      <div class="meal"><div class="time">6:00</div><div class="m">Rest of the chicken + Mexican yellow rice + other ½ black beans</div><div class="x">Broccoli rabe · carrots · cilantro</div></div>
+    </div>
+
+    <div class="card day" data-dow="3">
+      <div class="dhead"><span class="dname">Wednesday</span><span class="tag gold">Soup night</span></div>
+      <div class="meal"><div class="time">After gym · ~10:30</div><div class="m">Skyr bowl + ½ cup pomegranate</div></div>
+      <div class="meal"><div class="time">3:30</div><div class="m">Beef + gold potatoes</div><div class="x">Pepper/onion · eggplant · cucumber-tomato-avocado salad</div></div>
+      <div class="meal"><div class="time">6:00</div><div class="m">Zuppa Toscana, 2 cups</div><div class="x">Stir in collards + carrots · optional 2 fried duck eggs</div></div>
+    </div>
+
+    <div class="card day" data-dow="4">
+      <div class="dhead"><span class="dname">Thursday</span><span class="tag gold">Soup night</span></div>
+      <div class="meal"><div class="time">After gym · ~10:30</div><div class="m">Skyr bowl + 1 cup grapes</div></div>
+      <div class="meal"><div class="time">3:30</div><div class="m">Beef + sweet potatoes</div><div class="x">Pepper/onion · eggplant · cucumber-avocado salad</div></div>
+      <div class="meal"><div class="time">6:00</div><div class="m">Rest of the Zuppa, 2 cups</div><div class="x">Stir in collards + carrots · optional 2 fried duck eggs</div></div>
+    </div>
+
+    <div class="note warn"><b>Friday dinner = the chicken corn chowder.</b> It won't last the weekend.</div>
+
+    <div class="card">
+      <h3>The numbers (estimates)</h3>
+      <table>
+        <tr><th>Day type</th><th style="text-align:right">Calories</th><th style="text-align:right">Protein</th></tr>
+        <tr><td>Chicken nights (Mon, Tue)</td><td class="num">≈ 3,000</td><td class="num">≈ 195 g</td></tr>
+        <tr><td>Soup nights (Wed, Thu)</td><td class="num">≈ 2,700</td><td class="num">≈ 155 g</td></tr>
+        <tr><td>…with the 2 duck eggs</td><td class="num">≈ 2,950</td><td class="num">≈ 170 g</td></tr>
+      </table>
+      <p class="small" style="margin:10px 0 0">Skyr tub = 720 cal · 68 g protein (from the label). Beef counted as 85/15 since the label has no %. Soup is a guess, and that's fine.</p>
+    </div>
+
+    <div class="card">
+      <h3>Left after Thursday</h3>
+      <p class="small" style="margin:0">2 skyr · 4 lb beef + the other chicken (frozen) · all 17 eggs · 4 rice pouches · refried beans, baked beans, lupini, both dals, Peruvian lentils · potatoes. Plenty for Fri–Sun.</p>
+    </div>
+  </section>
+
+  <!-- ============ COOK ============ -->
+  <section id="cook" role="tabpanel" aria-labelledby="t-cook" hidden>
+    <h2>How to cook it</h2>
+    <p class="lead">Season everything your way. Weigh on the scale, raw.</p>
+
+    <div class="card">
+      <h3>🥩 3:30 beef bowl <span class="tag">start 3:00</span></h3>
+      <ol class="steps">
+        <li><span class="t">3:00</span> Oven to 425°F. Weigh <b>350 g potatoes</b>, cut ¾-inch cubes, toss with 2 tsp olive oil + salt on a sheet pan.</li>
+        <li><span class="t">3:05</span> Potatoes in. 25–30 min, flip at 15. Sweet potatoes run a few minutes faster.</li>
+        <li><span class="t">3:15</span> Skillet, medium-high. <b>8 oz beef</b> (half a pack). Break it up, brown about 7 min. Spoon off extra fat.</li>
+        <li>Add a big handful of pepper/onion + zucchini <i>or</i> eggplant + 2 garlic cloves (chop them now). 4 min. Season.</li>
+        <li><b>Salad:</b> ½ cucumber, ½ tomato, ½ avocado, cilantro, olive oil, salt.</li>
+      </ol>
+      <div class="note good" style="margin-bottom:0">Beef is done at no pink (160°F). The other half of the pack: wrap it tight, bottom shelf, it's tomorrow's.</div>
+    </div>
+
+    <div class="card">
+      <h3>🍗 6:00 chicken plate <span class="tag">Mon · Tue</span> <span class="tag blue">start 5:40</span></h3>
+      <ol class="steps">
+        <li>Weigh <b>7 oz (200 g) raw chicken</b>. Cut into 1-inch pieces. Rest of the pack: wrap it, bottom shelf, it's Tuesday's.</li>
+        <li>Skillet, medium-high, 1 tsp oil. Chicken 8–9 min, turning a few times. Cut the thickest piece: no pink, clear juice (165°F).</li>
+        <li>Push it aside. Broccoli rabe + a handful of carrots + 1–2 garlic cloves, 3–4 min.</li>
+        <li><b>No microwave:</b> squeeze the rice pouch + ½ the black beans into a small pan with 2 tbsp water. Stir 3–4 min until hot.</li>
+        <li>Cilantro on top.</li>
+      </ol>
+      <div class="note warn" style="margin-bottom:0">Wash the board, knife and your hands after raw chicken, before you touch the veg.</div>
+    </div>
+
+    <div class="card">
+      <h3>🍲 6:00 soup night <span class="tag gold">Wed · Thu</span></h3>
+      <ol class="steps">
+        <li>Pot, medium heat: 2 cups Zuppa + a big handful of collards + a handful of carrot coins.</li>
+        <li>Simmer 6–8 min, until the collards soften and the carrots are tender.</li>
+        <li>Want the protein back? Fry 2 duck eggs on the side, 3 min.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h3>🥣 Skyr bowl <span class="tag">right after the gym</span></h3>
+      <ol class="steps">
+        <li>Whole tub into a big bowl.</li>
+        <li>Chop 1 apple on top. Add ½ cup pomegranate (Mon/Wed) or 1 cup grapes (Tue/Thu). Rinse the grapes now.</li>
+        <li>28 g pumpkin seeds + 1 tbsp honey.</li>
+      </ol>
+    </div>
+
+    <div class="note gold"><b>Weigh-in:</b> same scale, every morning after the bathroom and before the gym. Only the weekly average matters. Goal: up ¼–½ lb a week.</div>
+  </section>
+
+  <footer>Kitchen Week · Oct 25, 2026</footer>
+</div>
+
+<script>
+(function(){
+  var KEY='kitchen-week-v1';
+  function load(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}}
+  function save(s){try{localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}}
+  var state=load();
+  var now=new Date(), today=now.getFullYear()+'-'+(now.getMonth()+1)+'-'+now.getDate();
+
+  // tabs
+  var tabs=[].slice.call(document.querySelectorAll('[role="tab"]'));
+  function show(id,scroll){
+    tabs.forEach(function(t){
+      var on=t.getAttribute('aria-controls')===id;
+      t.setAttribute('aria-selected',on?'true':'false');
+      document.getElementById(t.getAttribute('aria-controls')).hidden=!on;
+    });
+    state.tab=id;state.tabDay=today;save(state);
+    if(scroll!==false)window.scrollTo(0,0);
+  }
+  tabs.forEach(function(t){t.addEventListener('click',function(){show(t.getAttribute('aria-controls'))})});
+
+  // checklist
+  var boxes=[].slice.call(document.querySelectorAll('.step input'));
+  state.done=state.done||{};
+  function paint(){
+    var n=0;
+    boxes.forEach(function(b){
+      b.checked=!!state.done[b.dataset.k];
+      b.closest('.step').classList.toggle('done',b.checked);
+      if(b.checked)n++;
+    });
+    document.getElementById('count').textContent=n+' of '+boxes.length;
+    document.getElementById('bar').style.width=(n/boxes.length*100)+'%';
+  }
+  boxes.forEach(function(b){b.addEventListener('change',function(){state.done[b.dataset.k]=b.checked;save(state);paint()})});
+  document.getElementById('reset').addEventListener('click',function(){state.done={};save(state);paint()});
+  paint();
+
+  // today: outline the card; open the right tab
+  var q=location.search.match(/[?&]day=(\d)/), dow=q?+q[1]:now.getDay();
+  var card=document.querySelector('.day[data-dow="'+dow+'"]');
+  if(card){
+    card.classList.add('today');
+    var tag=document.createElement('span');tag.className='tag warn';tag.textContent='Today';
+    card.querySelector('.dname').appendChild(tag);
+  }
+  // same day: reopen the last tab. New day: meal days open on Week at today's card.
+  if(state.tabDay===today&&state.tab){show(state.tab,false);}
+  else if(card){
+    show('week',false);
+    var navH=document.querySelector('nav').offsetHeight;
+    window.scrollTo(0,card.getBoundingClientRect().top+window.pageYOffset-navH-8);
+  } else show('prep',false);
+})();
+</script>
+</body>
+</html>
