@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>For Darryn · Heavy's Development × SANO</title>
+<meta property="og:title" content="For Darryn · Heavy's Development">
+<meta property="og:description" content="What I found on your site, what I'd fix and what it costs. Jasper, SANO Systems">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#09090B; --ink-soft:#3A3A40; --ink-mut:#63636B;
+    --blue:#0070F3; --blue-d:#0050C8; --blue-t:#E8F1FE;
+    --white:#FFFFFF; --paper:#f5f0e8; --paper-2:#EDE6DA; --line:#E3DCD0;
+    --amber:#F5A623; --red:#D93025;
+    --sans:"Space Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
+  body{font-family:var(--sans);color:var(--ink);background:var(--white);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit}
+  img{max-width:100%;display:block}
+  h1,h2,h3{letter-spacing:-.02em;line-height:1.1;text-wrap:balance}
+  p{text-wrap:pretty}
+  .wrap{max-width:640px;margin:0 auto}
+  section{padding:44px 20px}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+  h2{font-size:clamp(26px,7vw,36px);font-weight:700;margin:8px 0 18px}
+  .lead{font-size:16px;color:var(--ink-soft)}
+  .lead b{color:var(--ink)}
+
+  /* top bar */
+  .bar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:12px 20px;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .mk{display:flex;align-items:center;gap:9px;font-weight:700;font-size:18px;letter-spacing:.02em}
+  .mk i{width:26px;height:26px;border-radius:7px;background:var(--blue);display:inline-block;position:relative}
+  .mk i:after{content:"";position:absolute;inset:7px;border-radius:3px;border:3px solid #fff;border-right-color:transparent;border-bottom-color:transparent}
+  .for{font-size:12.5px;color:var(--ink-mut);text-align:right;line-height:1.3}
+  .for b{color:var(--ink);font-weight:600}
+
+  /* hero */
+  .hero{background:var(--paper);border-bottom:1px solid var(--line);padding:40px 20px 36px}
+  .hero .eyebrow{color:var(--ink-mut);letter-spacing:.04em;text-transform:none;font-size:15px;font-weight:500}
+  .hero h1{font-size:clamp(32px,9vw,50px);font-weight:700;margin:14px 0 16px}
+  .hero h1 span{color:var(--blue)}
+  .hero p{font-size:16.5px;color:var(--ink-soft);max-width:520px}
+
+  /* findings */
+  .finds{display:grid;gap:14px}
+  .find{border:1px solid var(--line);border-radius:16px;padding:18px;background:var(--white)}
+  .find.hot{border-color:rgba(217,48,37,.4);box-shadow:0 14px 34px -26px rgba(217,48,37,.55)}
+  .find .hd{display:flex;gap:12px;align-items:flex-start}
+  .find .hd>div:last-child{flex:1;min-width:0}
+  .find .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--ink);color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .find.hot .n{background:var(--red)}
+  .find h3{font-size:19px;font-weight:700;margin-bottom:6px}
+  .find p{font-size:15px;color:var(--ink-soft)}
+  .find p b{color:var(--ink)}
+  .shot{margin-top:14px;border-radius:12px;overflow:hidden;border:1px solid var(--line);max-width:300px}
+  .shot img{width:100%;height:auto}
+  .shot figcaption{font-size:12px;color:var(--ink-mut);padding:8px 10px;background:var(--paper)}
+  .nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px;margin-top:12px}
+  .num{background:var(--paper);border-radius:12px;padding:10px 12px}
+  .num small{display:block;font-size:12px;color:var(--ink-mut);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+  .num b{font-size:16px;white-space:nowrap}
+  .fixbox{margin-top:18px;background:var(--blue-t);border-radius:16px;padding:18px;font-size:15.5px;color:var(--ink)}
+  .fixbox b{color:var(--blue-d)}
+
+  /* already yours */
+  .alt{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .rows{display:grid;gap:10px}
+  .rw{display:flex;gap:14px;align-items:flex-start;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+  .rw .ic{flex:none;font-size:22px;line-height:1.2}
+  .rw h3{font-size:16.5px;font-weight:700;margin-bottom:3px}
+  .rw p{font-size:14.5px;color:var(--ink-soft)}
+  .small{font-size:14px;color:var(--ink-mut);margin-top:16px}
+
+  /* right leads */
+  .flow{display:grid;gap:10px}
+  .fl{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--line)}
+  .fl:last-child{border-bottom:0}
+  .fl .t{flex:none;min-width:66px;font-weight:700;font-size:14px;color:var(--blue)}
+  .fl p{font-size:15.5px;color:var(--ink-soft)}
+  .fl p b{color:var(--ink)}
+  .qs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .q{font-size:13px;font-weight:600;background:var(--blue-t);color:var(--blue-d);border-radius:999px;padding:6px 11px}
+
+  /* mockup */
+  .door{display:flex;flex-direction:column;align-items:center;gap:16px}
+  .phone{width:290px;max-width:88vw;border-radius:34px;padding:9px;background:#111;box-shadow:0 30px 60px -28px rgba(9,9,11,.5)}
+  .scr{border-radius:26px;overflow:hidden;background:#fff}
+  .hv-top{background:#1f2a6b;color:#fff;padding:22px 16px 14px;text-align:center;border-bottom:5px solid #c8203e}
+  .hv-top b{display:block;font-size:22px;letter-spacing:.08em}
+  .hv-top span{font-size:11.5px;opacity:.85}
+  .hv-body{padding:16px 14px 18px;text-align:center}
+  .hv-body .h{font-size:17px;font-weight:700;margin-bottom:12px;color:#1f2a6b}
+  .pick{display:block;width:100%;margin-bottom:8px;padding:12px;border-radius:10px;border:2px solid #1f2a6b;font-weight:700;font-size:14px;color:#1f2a6b;background:#fff;text-align:center}
+  .pick.y{background:#ffd400;border-color:#ffd400;color:#111}
+  .hv-call{margin-top:10px;font-size:13px;color:#444}
+  .hv-call b{display:block;font-size:19px;color:#1f2a6b}
+  .cap{font-size:13.5px;color:var(--ink-mut);text-align:center;max-width:330px}
+
+  /* price */
+  .card{border:2px solid var(--blue);border-radius:20px;overflow:hidden;background:var(--white)}
+  .card .top{background:var(--blue);color:#fff;padding:18px 20px}
+  .card .tag{font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+  .card .name{font-size:26px;font-weight:700;margin-top:4px}
+  .card .price{font-size:40px;font-weight:700;line-height:1;margin-top:10px}
+  .card .price small{font-size:15px;font-weight:500}
+  .card .terms{font-size:13.5px;opacity:.92;margin-top:8px}
+  .inc{list-style:none;padding:14px 20px 8px}
+  .inc li{display:flex;gap:10px;padding:8px 0;font-size:15px;color:var(--ink-soft);border-bottom:1px solid var(--paper-2)}
+  .inc li:last-child{border-bottom:0}
+  .inc li:before{content:"✓";flex:none;color:var(--blue);font-weight:700}
+  .inc b{color:var(--ink)}
+  .card.two{border-color:var(--line);margin-top:14px}
+  .card.two .top{background:var(--ink)}
+  .card.two .price{font-size:30px}
+  .card.two p{padding:14px 20px 18px;font-size:15px;color:var(--ink-soft)}
+  .card.two p b{color:var(--ink)}
+  .fine{font-size:13.5px;color:var(--ink-mut);margin-top:12px}
+  .promise{display:grid;gap:6px;margin-top:18px;background:var(--ink);color:#fff;border-radius:16px;padding:16px 18px}
+  .promise b{font-size:16.5px}
+  .wide{display:flex;width:100%;margin-top:14px}
+  .siglink{display:inline-block;padding:12px 4px;color:#9a9aa3}
+
+  /* cta */
+  .cta{background:var(--ink);color:#fff;text-align:center;padding:48px 20px 56px}
+  .cta h2{color:#fff}
+  .cta p{color:#c9c9cf;font-size:16px;max-width:440px;margin:0 auto 22px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 24px;border-radius:999px;font-weight:700;font-size:16px;text-decoration:none;border:2px solid transparent}
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+  .cta .btn-ghost{color:#fff;border-color:#3A3A40}
+  .row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .sig{margin-top:22px;font-size:14px;color:#9a9aa3}
+  .sig b{color:#fff}
+
+  footer{text-align:center;padding:26px 20px calc(96px + env(safe-area-inset-bottom));font-size:12px;color:var(--ink-mut);background:var(--white)}
+  footer a{color:var(--ink-mut)}
+
+  .sticky{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;justify-content:center;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+  .sticky .btn{width:100%;max-width:420px}
+
+  @media (max-width:360px){
+    .nums{grid-template-columns:1fr}
+    section{padding:38px 16px}
+    .hero{padding:34px 16px 30px}
+    .bar{padding:10px 16px}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="mk"><i aria-hidden="true"></i>SANO</div>
+  <div class="for">For <b>Darryn</b><br>Heavy's Development</div>
+</div>
+
+<main class="wrap">
+
+  <section class="hero">
+    <p class="eyebrow">Erin told me about you, so I looked you up.</p>
+    <h1>You want the right leads. <span>Some of the best ones are already in your phone.</span></h1>
+    <p>Here's what I found on your site, what I'd fix and what it costs.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Found on your site this week</div>
+    <h2>3 things I'd fix first</h2>
+    <div class="finds">
+      <div class="find hot">
+        <div class="hd"><div class="n">1</div><div>
+          <h3>The price tool on your quote page is dead.</h3>
+          <p>Scroll down your <b>Request a Quote</b> page: it says <b>"Oops! The page you're looking for cannot be found!"</b> with Roofr's 1-844 number, not yours. Your Need Crews page has the same dead tool.</p>
+        </div></div>
+        <figure class="shot"><img src="img/quote-broken.jpg" width="780" height="910" alt="Phone screenshot: further down the Heavy's quote page, Roofr's price tool shows Oops, page not found, and a 1-844 number" loading="lazy"><figcaption>Further down your Request a Quote page, Oct 25</figcaption></figure>
+      </div>
+      <div class="find">
+        <div class="hd"><div class="n">2</div><div>
+          <h3>Google and your website give out different numbers.</h3>
+          <p>If one of these doesn't ring you, those calls go nowhere.</p>
+          <div class="nums">
+            <div class="num"><small>Google</small><b>(832) 334-2009</b></div>
+            <div class="num"><small>Your site's main number</small><b>(832) 846-1377</b></div>
+          </div>
+        </div></div>
+      </div>
+      <div class="find">
+        <div class="hd"><div class="n">3</div><div>
+          <h3>Your estimate form can't tell a homeowner from a property manager.</h3>
+          <p>Name, email, phone, comments. <b>Every lead looks the same until you call it back.</b></p>
+        </div></div>
+      </div>
+    </div>
+    <div class="fixbox"><b>Every package includes your website, built and run by us, and it's yours</b> (a full site on Growth). These three get fixed. Anything else you don't like about it, tell us and we'll go through it together.</div>
+  </section>
+
+  <section class="alt">
+    <div class="eyebrow">Before you pay for one more lead</div>
+    <h2>The money that's already yours</h2>
+    <div class="rows">
+      <div class="rw"><div class="ic" aria-hidden="true">🏠</div><div><h3>Roofs you inspected that went quiet</h3><p>Followed up until they say yes or no.</p></div></div>
+      <div class="rw"><div class="ic" aria-hidden="true">⭐</div><div><h3>Happy customers</h3><p>Asked for a review after every job.</p></div></div>
+      <div class="rw"><div class="ic" aria-hidden="true">🔨</div><div><h3>Fences, gutters, barndos</h3><p>Past customers reminded you do more than roofs.</p></div></div>
+    </div>
+    <p class="small">We load your open estimates and past jobs, and you can follow up with one tap from your own phone. Automatic texts only go to people who've said yes in writing, and we ask every new customer.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">The right leads, first</div>
+    <h2>Every call answered. The serious ones on top.</h2>
+    <div class="flow">
+      <div class="fl"><div class="t">Any hour</div><p>A call comes in when you can't pick up: 2 a.m., or up on a roof.</p></div>
+      <div class="fl"><div class="t">Seconds</div><p><b>It gets answered:</b> out loud on Growth, by text on every package. It asks your questions:
+        <span class="qs"><span class="q">Home or business?</span><span class="q">Own the property?</span><span class="q">Leak now or a quote?</span><span class="q">How soon?</span></span></p></div>
+      <div class="fl"><div class="t">Your phone</div><p><b>You get a text:</b> name, number, what they need. Water coming in? It rings you.</p></div>
+    </div>
+    <p class="small">The voice is an AI assistant, and it says so. Automatic texts start once the phone companies approve your business.</p>
+  </section>
+
+  <section class="alt">
+    <div class="eyebrow">Your new front door</div>
+    <h2>Three buttons. Quote requests that reach you.</h2>
+    <div class="door">
+      <div class="phone" aria-label="Sketch of a new Heavy's Development home page">
+        <div class="scr">
+          <div class="hv-top"><b>HEAVYS</b><span>America's roof, Heavys built.</span></div>
+          <div class="hv-body">
+            <div class="h">Who's the roof for?</div>
+            <span class="pick y">I own a home</span>
+            <span class="pick">Business or apartments</span>
+            <span class="pick">I'm a roofer, I need crews</span>
+            <div class="hv-call">Answered day and night<b>(832) 846-1377</b></div>
+          </div>
+        </div>
+      </div>
+      <p class="cap">A sketch, not the final. You tell us how it should look.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">What it costs</div>
+    <h2>Start with Growth. Scale runs your ads when you're ready.</h2>
+    <div class="card">
+      <div class="top">
+        <div class="tag">Where most owners start</div>
+        <div class="name">Growth</div>
+        <div class="price">$999<small>/month</small></div>
+        <div class="terms">$2,497 setup · 3-month minimum · plus usage at cost, usually $60–200/mo</div>
+      </div>
+      <ul class="inc">
+        <li><span><b>Your website</b>, built and run by us, and your Google listing kept sharp</span></li>
+        <li><span><b>Calls answered out loud</b>, day and night: 500 minutes a month, and we tell you before you run out</span></li>
+        <li><span><b>Missed calls texted back</b> in seconds</span></li>
+        <li><span><b>Every estimate followed up</b> until yes or no</span></li>
+        <li><span><b>A review asked for</b> after every job</span></li>
+        <li><span><b>Past customers brought back</b>, with their permission</span></li>
+        <li><span><b>Every job on one board</b> in your phone, down to what's still owed</span></li>
+        <li><span><b>English and Spanish</b></span></li>
+      </ul>
+    </div>
+    <div class="card two">
+      <div class="top">
+        <div class="tag">Step 2</div>
+        <div class="name">Scale</div>
+        <div class="price">$1,995<small>/month</small></div>
+        <div class="terms">$4,997 setup, or $2,500 more if you move up from Growth · 3-month minimum · usage included</div>
+      </div>
+      <p>Everything in Growth, plus <b>your ads planned and run</b>, landing pages for them, 2,000 voice minutes and pay-by-text invoices. Ad money goes to Google or Meta, on top.</p>
+    </div>
+    <div class="promise"><b>No shared leads, ever.</b><b>Your customers and your number stay yours.</b></div>
+    <p class="fine">Setup: all up front, or half now and half the day it starts answering. Not working in the first 30 days after go-live? Your monthly fee back (setup isn't refunded once work starts).</p>
+    <a class="btn btn-ghost wide" href="https://sanosystems.co/pricing" target="_blank" rel="noopener">See all four packages ↗</a>
+  </section>
+
+  <section class="cta">
+    <h2>20 minutes. That's it.</h2>
+    <p>Text me and we'll find a time. I'll show you how it works for Heavy's.</p>
+    <div class="row">
+      <a class="btn btn-blue" href="sms:+18323962496?&amp;body=Hey%20Jasper%2C%20it%27s%20Darryn%20from%20Heavy%27s.%20Let%27s%20talk.">Text Jasper</a>
+      <a class="btn btn-ghost" href="tel:+18323962496">Call (832) 396-2496</a>
+    </div>
+    <p class="sig"><b>Jasper</b> · SANO Systems · <a class="siglink" href="https://sanosystems.co" target="_blank" rel="noopener">sanosystems.co</a></p>
+  </section>
+
+</main>
+
+<footer>Made for Darryn at Heavy's Development · screenshot taken Oct 25, 2026<br>SANO Systems · You run your business. We run the systems.</footer>
+
+<div class="sticky"><a class="btn btn-blue" href="sms:+18323962496?&amp;body=Hey%20Jasper%2C%20it%27s%20Darryn%20from%20Heavy%27s.%20Let%27s%20talk.">Text Jasper: 20 minutes</a></div>
+
+</body>
+</html>
