@@ -104,6 +104,19 @@ table{width:100%;border-collapse:collapse;font-size:15px}
 td,th{padding:8px 4px;border-top:1px solid var(--line);text-align:left;vertical-align:top}
 th{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-top:0}
 td.num{text-align:right;white-space:nowrap;font-weight:600}
+/* week rows */
+.row{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line);color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.row img{width:64px;height:64px;border-radius:12px;object-fit:cover;flex:none;background:var(--line)}
+.row .rt{flex:1;min-width:0;display:flex;flex-direction:column}
+.row .rt b{font-size:17px}
+.row .x{font-size:15px;color:var(--muted)}
+.row .go{flex:none;font-size:26px;line-height:1;color:var(--muted);padding-right:2px}
+/* cook cards */
+.card.cook{padding-top:0;overflow:hidden}
+.hero{display:block;width:calc(100% + 32px);margin:0 -16px 12px;aspect-ratio:4/3;object-fit:cover;background:var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;list-style:none;padding:0;margin:8px 0 10px}
+.chips li{background:var(--accent-soft);color:var(--ink);padding:6px 10px;border-radius:999px;font-size:14.5px}
+.tip{font-size:14.5px;color:var(--muted);margin:10px 0 0;padding-top:10px;border-top:1px solid var(--line)}
 footer{margin-top:28px;color:var(--muted);font-size:13.5px;text-align:center}
 </style>
 </head>
@@ -272,109 +285,106 @@ footer{margin-top:28px;color:var(--muted);font-size:13.5px;text-align:center}
   <!-- ============ WEEK ============ -->
   <section id="week" role="tabpanel" aria-labelledby="t-week" hidden>
     <h2>Monday – Thursday</h2>
-    <p class="lead">Same three meals every day. Only the sides rotate. Today's card is outlined.</p>
-
-    <div class="note good"><b>Every skyr bowl:</b> whole tub + 1 apple + <b>1 oz (28 g) pumpkin seeds</b> + <b>1 tbsp honey</b> + that day's fruit below.</div>
+    <p class="lead">Tap a meal to see how to make it.</p>
 
     <div class="card day" data-dow="1">
-      <div class="dhead"><span class="dname">Monday</span><span class="tag">Chicken night</span></div>
-      <div class="meal"><div class="time">After gym · ~10:30</div><div class="m">Skyr bowl + ½ cup pomegranate</div></div>
-      <div class="meal"><div class="time">3:30</div><div class="m">Beef + gold potatoes</div><div class="x">Pepper/onion · zucchini · cucumber-tomato-avocado salad</div></div>
-      <div class="meal"><div class="time">6:00</div><div class="m">Chicken + cilantro-lime rice + ½ black beans</div><div class="x">Broccoli rabe · carrots · cilantro</div></div>
+      <div class="dhead"><span class="dname">Monday</span></div>
+      <a class="row" href="#c-skyr"><img src="skyr.jpg" alt=""><span class="rt"><b>10:30 · Yogurt bowl</b><span class="x">with pomegranate</span></span><span class="go">›</span></a>
+      <a class="row" href="#c-beef"><img src="beef.jpg" alt=""><span class="rt"><b>3:30 · Beef bowl</b><span class="x">gold potatoes + zucchini</span></span><span class="go">›</span></a>
+      <a class="row" href="#c-chicken"><img src="chicken.jpg" alt=""><span class="rt"><b>6:00 · Chicken plate</b><span class="x">cilantro-lime rice</span></span><span class="go">›</span></a>
     </div>
 
     <div class="card day" data-dow="2">
-      <div class="dhead"><span class="dname">Tuesday</span><span class="tag">Chicken night</span></div>
-      <div class="note gold" style="margin:4px 0 6px">☀️ Morning: move <b>1 beef pack</b> to the fridge.</div>
-      <div class="meal"><div class="time">After gym · ~10:30</div><div class="m">Skyr bowl + 1 cup grapes</div></div>
-      <div class="meal"><div class="time">3:30</div><div class="m">Beef + sweet potatoes</div><div class="x">Pepper/onion · zucchini · cucumber-tomato-avocado salad</div></div>
-      <div class="meal"><div class="time">6:00</div><div class="m">Rest of the chicken + Mexican yellow rice + other ½ black beans</div><div class="x">Broccoli rabe · carrots · cilantro</div></div>
+      <div class="dhead"><span class="dname">Tuesday</span></div>
+      <div class="note gold" style="margin:4px 0 6px">☀️ Morning: move <b>1 beef pack</b> from the freezer to the fridge.</div>
+      <a class="row" href="#c-skyr"><img src="skyr.jpg" alt=""><span class="rt"><b>10:30 · Yogurt bowl</b><span class="x">with grapes</span></span><span class="go">›</span></a>
+      <a class="row" href="#c-beef"><img src="beef.jpg" alt=""><span class="rt"><b>3:30 · Beef bowl</b><span class="x">sweet potatoes + zucchini</span></span><span class="go">›</span></a>
+      <a class="row" href="#c-chicken"><img src="chicken.jpg" alt=""><span class="rt"><b>6:00 · Chicken plate</b><span class="x">yellow rice · rest of the chicken</span></span><span class="go">›</span></a>
     </div>
 
     <div class="card day" data-dow="3">
-      <div class="dhead"><span class="dname">Wednesday</span><span class="tag gold">Soup night</span></div>
-      <div class="meal"><div class="time">After gym · ~10:30</div><div class="m">Skyr bowl + ½ cup pomegranate</div></div>
-      <div class="meal"><div class="time">3:30</div><div class="m">Beef + gold potatoes</div><div class="x">Pepper/onion · eggplant · cucumber-tomato-avocado salad</div></div>
-      <div class="meal"><div class="time">6:00</div><div class="m">Zuppa Toscana, 2 cups</div><div class="x">Stir in collards + carrots · optional 2 fried duck eggs</div></div>
+      <div class="dhead"><span class="dname">Wednesday</span></div>
+      <a class="row" href="#c-skyr"><img src="skyr.jpg" alt=""><span class="rt"><b>10:30 · Yogurt bowl</b><span class="x">with pomegranate</span></span><span class="go">›</span></a>
+      <a class="row" href="#c-beef"><img src="beef.jpg" alt=""><span class="rt"><b>3:30 · Beef bowl</b><span class="x">gold potatoes + eggplant</span></span><span class="go">›</span></a>
+      <a class="row" href="#c-soup"><img src="soup.jpg" alt=""><span class="rt"><b>6:00 · Soup night</b><span class="x">Zuppa, half the tub</span></span><span class="go">›</span></a>
     </div>
 
     <div class="card day" data-dow="4">
-      <div class="dhead"><span class="dname">Thursday</span><span class="tag gold">Soup night</span></div>
-      <div class="meal"><div class="time">After gym · ~10:30</div><div class="m">Skyr bowl + 1 cup grapes</div></div>
-      <div class="meal"><div class="time">3:30</div><div class="m">Beef + sweet potatoes</div><div class="x">Pepper/onion · eggplant · cucumber-avocado salad</div></div>
-      <div class="meal"><div class="time">6:00</div><div class="m">Rest of the Zuppa, 2 cups</div><div class="x">Stir in collards + carrots · optional 2 fried duck eggs</div></div>
+      <div class="dhead"><span class="dname">Thursday</span></div>
+      <a class="row" href="#c-skyr"><img src="skyr.jpg" alt=""><span class="rt"><b>10:30 · Yogurt bowl</b><span class="x">with grapes</span></span><span class="go">›</span></a>
+      <a class="row" href="#c-beef"><img src="beef.jpg" alt=""><span class="rt"><b>3:30 · Beef bowl</b><span class="x">sweet potatoes + eggplant</span></span><span class="go">›</span></a>
+      <a class="row" href="#c-soup"><img src="soup.jpg" alt=""><span class="rt"><b>6:00 · Soup night</b><span class="x">the rest of the Zuppa</span></span><span class="go">›</span></a>
     </div>
 
-    <div class="note warn"><b>Friday dinner = the chicken corn chowder.</b> It won't last the weekend.</div>
+    <div class="note warn"><b>Friday dinner:</b> the chicken corn chowder. It won't last the weekend.</div>
 
     <div class="card">
-      <h3>The numbers (estimates)</h3>
-      <table>
-        <tr><th>Day type</th><th style="text-align:right">Calories</th><th style="text-align:right">Protein</th></tr>
-        <tr><td>Chicken nights (Mon, Tue)</td><td class="num">≈ 3,000</td><td class="num">≈ 195 g</td></tr>
-        <tr><td>Soup nights (Wed, Thu)</td><td class="num">≈ 2,700</td><td class="num">≈ 155 g</td></tr>
-        <tr><td>…with the 2 duck eggs</td><td class="num">≈ 2,950</td><td class="num">≈ 170 g</td></tr>
-      </table>
-      <p class="small" style="margin:10px 0 0">Skyr tub = 720 cal · 68 g protein (from the label). Beef counted as 85/15 since the label has no %. Soup is a guess, and that's fine.</p>
-    </div>
-
-    <div class="card">
-      <h3>Left after Thursday</h3>
-      <p class="small" style="margin:0">2 skyr · 4 lb beef + the other chicken (frozen) · all 17 eggs · 4 rice pouches · refried beans, baked beans, lupini, both dals, Peruvian lentils · potatoes. Plenty for Fri–Sun.</p>
+      <h3>Your numbers</h3>
+      <p style="margin:0 0 6px"><b>Chicken days:</b> about 3,000 calories · 195 g protein</p>
+      <p style="margin:0"><b>Soup days:</b> about 2,700 calories · 155 g protein<br><span class="small">Add the 2 duck eggs → about 2,950 · 170 g</span></p>
     </div>
   </section>
 
   <!-- ============ COOK ============ -->
   <section id="cook" role="tabpanel" aria-labelledby="t-cook" hidden>
-    <h2>How to cook it</h2>
-    <p class="lead">Season everything your way. Weigh on the scale, raw.</p>
+    <h2>How to make it</h2>
+    <p class="lead">Season it your way. Weigh everything raw.</p>
 
-    <div class="card">
-      <h3>🥩 3:30 beef bowl <span class="tag">start 3:00</span></h3>
-      <ol class="steps">
-        <li><span class="t">3:00</span> Oven to 425°F. Weigh <b>350 g potatoes</b>, cut ¾-inch cubes, toss with 2 tsp olive oil + salt on a sheet pan.</li>
-        <li><span class="t">3:05</span> Potatoes in. 25–30 min, flip at 15. Sweet potatoes run a few minutes faster.</li>
-        <li><span class="t">3:15</span> Skillet, medium-high. <b>8 oz beef</b> (half a pack). Break it up, brown about 7 min. Spoon off extra fat.</li>
-        <li>Add a big handful of pepper/onion + zucchini <i>or</i> eggplant + a spoonful of garlic. Extra collards? Throw a handful in. 4 min. Season.</li>
-        <li><b>Salad:</b> ½ cucumber, ½ tomato, ½ avocado, cilantro, olive oil, salt.</li>
-      </ol>
-      <div class="note good" style="margin-bottom:0">Beef is done at no pink (160°F). The other half of the pack: wrap it tight, bottom shelf, it's tomorrow's.</div>
-    </div>
-
-    <div class="card">
-      <h3>🍗 6:00 chicken plate <span class="tag">Mon · Tue</span> <span class="tag blue">start 5:40</span></h3>
-      <ol class="steps">
-        <li>Weigh <b>7 oz (200 g) raw chicken</b>. Cut into 1-inch pieces. Rest of the pack: wrap it, bottom shelf, it's Tuesday's.</li>
-        <li>Skillet, medium-high, 1 tsp oil. Chicken 8–9 min, turning a few times. Cut the thickest piece: no pink, clear juice (165°F).</li>
-        <li>Push it aside. Broccoli rabe + a handful of carrots + a spoonful of garlic, 3 min.</li>
-        <li><b>No microwave:</b> squeeze the rice pouch + ½ the black beans into a small pan with 2 tbsp water. Stir 3–4 min until hot.</li>
-        <li>Cilantro on top.</li>
-      </ol>
-      <div class="note warn" style="margin-bottom:0">Wash the board, knife and your hands after raw chicken, before you touch the veg.</div>
-    </div>
-
-    <div class="card">
-      <h3>🍲 6:00 soup night <span class="tag gold">Wed · Thu</span></h3>
-      <ol class="steps">
-        <li>Pot, medium heat: 2 cups Zuppa + a big handful of collards + a handful of carrot coins.</li>
-        <li>Simmer about 5 min, until the carrots are tender. The collards are cut small, so they're done by then.</li>
-        <li>Want the protein back? Fry 2 duck eggs on the side, 3 min.</li>
-      </ol>
-    </div>
-
-    <div class="card">
-      <h3>🥣 Skyr bowl <span class="tag">right after the gym</span></h3>
+    <div class="card cook" id="c-skyr">
+      <img class="hero" src="skyr.jpg" alt="Yogurt bowl with apple, pomegranate, pumpkin seeds and honey">
+      <h3>Yogurt bowl <span class="tag">right after the gym</span></h3>
+      <ul class="chips"><li>1 skyr tub</li><li>1 apple</li><li>fruit of the day</li><li>28 g pumpkin seeds</li><li>1 tbsp honey</li></ul>
       <ol class="steps">
         <li>Whole tub into a big bowl.</li>
-        <li>Chop 1 apple on top. Add ½ cup pomegranate (Mon/Wed) or 1 cup grapes (Tue/Thu). Rinse the grapes now.</li>
-        <li>28 g pumpkin seeds + 1 tbsp honey.</li>
+        <li>Chop the apple on top.</li>
+        <li>Add the fruit: <b>½ cup pomegranate</b> (Mon, Wed) or <b>1 cup grapes</b>, rinsed (Tue, Thu).</li>
+        <li>Pumpkin seeds + honey. Done.</li>
       </ol>
     </div>
 
-    <div class="note gold"><b>Weigh-in:</b> same scale, every morning after the bathroom and before the gym. Only the weekly average matters. Goal: up ¼–½ lb a week.</div>
+    <div class="card cook" id="c-beef">
+      <img class="hero" src="beef.jpg" alt="Beef bowl with roasted potatoes and a side salad">
+      <h3>Beef bowl <span class="tag">3:30 · start at 3:00</span></h3>
+      <ul class="chips"><li>350 g potatoes</li><li>8 oz beef (½ pack)</li><li>handful pepper + onion</li><li>handful zucchini or eggplant</li><li>spoon of garlic</li></ul>
+      <ol class="steps">
+        <li><span class="t">3:00</span> Oven to 425°F. Cube the potatoes. Oil + salt. Onto the pan.</li>
+        <li><span class="t">3:05</span> Potatoes in, 25–30 min. Flip once.</li>
+        <li><span class="t">3:15</span> Beef in a hot pan. Break it up. Cook till no pink, about 7 min.</li>
+        <li>Add the veggies + garlic. 4 min. Season.</li>
+        <li>Side salad: cucumber, tomato, avocado, cilantro, oil, salt.</li>
+      </ol>
+      <p class="tip">Eggplant days: put the eggplant in first and let it sit 1–2 min so it browns.<br>Other half of the beef: wrap it, bottom shelf. That's tomorrow's.</p>
+    </div>
+
+    <div class="card cook" id="c-chicken">
+      <img class="hero" src="chicken.jpg" alt="Chicken plate with rice, black beans, broccoli rabe and carrots">
+      <h3>Chicken plate <span class="tag blue">6:00 · start at 5:40</span></h3>
+      <ul class="chips"><li>7 oz chicken (200 g)</li><li>1 rice pouch</li><li>½ black beans</li><li>handful broccoli rabe</li><li>handful carrots</li><li>spoon of garlic</li></ul>
+      <ol class="steps">
+        <li>Cut the chicken into bite-size pieces.</li>
+        <li>Hot pan, a little oil. Chicken 8–9 min, turn it a few times. Cut the biggest piece: no pink.</li>
+        <li>Add the broccoli rabe, carrots + garlic. 3–4 min.</li>
+        <li>Small pan: rice + beans + 2 tbsp water. Stir 3–4 min.</li>
+        <li>Cilantro on top.</li>
+      </ol>
+      <p class="tip">Wash your hands and the board after raw chicken.<br>Rest of the chicken: wrap it, bottom shelf. That's tomorrow's.</p>
+    </div>
+
+    <div class="card cook" id="c-soup">
+      <img class="hero" src="soup.jpg" alt="Bowl of Zuppa Toscana with greens and two fried eggs on the side">
+      <h3>Soup night <span class="tag gold">Wed · Thu</span></h3>
+      <ul class="chips"><li>2 cups Zuppa</li><li>handful collards</li><li>handful carrots</li><li>2 duck eggs (optional)</li></ul>
+      <ol class="steps">
+        <li>Soup, collards + carrots into a pot. Medium heat.</li>
+        <li>Simmer about 5 min, till the carrots are soft.</li>
+        <li>Want more protein? Fry 2 duck eggs, 3 min.</li>
+      </ol>
+    </div>
+
+    <div class="note gold"><b>Weigh-in:</b> every morning, before the gym. Only the weekly average counts. Goal: up ¼–½ lb a week.</div>
   </section>
 
-  <footer>Kitchen Week · Oct 25, 2026</footer>
+  <footer>Kitchen Week · Oct 25, 2026 · meal pictures are AI-made examples</footer>
 </div>
 
 <script>
@@ -397,6 +407,17 @@ footer{margin-top:28px;color:var(--muted);font-size:13.5px;text-align:center}
     if(scroll!==false)window.scrollTo(0,0);
   }
   tabs.forEach(function(t){t.addEventListener('click',function(){show(t.getAttribute('aria-controls'))})});
+
+  // week rows jump to the recipe on the Cook tab
+  [].slice.call(document.querySelectorAll('a.row')).forEach(function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      show('cook',false);
+      var el=document.querySelector(a.getAttribute('href'));
+      var navH=document.querySelector('nav').offsetHeight;
+      window.scrollTo(0,el.getBoundingClientRect().top+window.pageYOffset-navH-8);
+    });
+  });
 
   // checklist
   var boxes=[].slice.call(document.querySelectorAll('.step input'));
