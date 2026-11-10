@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>For Debbie · Ms. Dragon Print &amp; Copy</title>
+<meta name="description" content="Less back-and-forth. More time for you.">
+<style>
+:root{color-scheme:only light;
+  --paper:#F5F0E8;--card:#FFFFFF;--ink:#111114;--soft:#33333A;--mut:#4A4A52;
+  --line:#E3DCD0;--line2:#CFC6B7;--blue:#0060D6;--green:#1F7A3F;--green-t:#E7F4EC;--green-l:#BFDCC9;
+  --red:#A3301C;--grey-t:#EFEAE1;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;background:var(--paper)}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:20px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-wrap:break-word}
+.wrap{max-width:780px;margin:0 auto;padding:0 18px}
+h1,h2,h3{line-height:1.2;letter-spacing:-.01em;text-wrap:balance;break-after:avoid;page-break-after:avoid}
+p,li{text-wrap:pretty}
+a{color:var(--blue)}
+b,strong{font-weight:700}
+.ico{width:28px;height:28px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.top{padding:20px 0 16px;border-bottom:1px solid var(--line);font-size:18px;color:var(--mut);line-height:1.45}
+.top b{color:var(--ink)}
+
+.hero{padding:30px 0 26px}
+.hero h1{font-size:clamp(34px,9vw,48px);margin:0 0 14px}
+.hero p{font-size:21px;color:var(--soft)}
+
+section{padding:28px 0;border-top:1px solid var(--line)}
+section h2{font-size:clamp(26px,6.6vw,32px);margin:0 0 8px}
+.say{color:var(--mut);font-size:19px;margin:0 0 18px}
+.note{margin:14px 0 0;font-size:19px;color:var(--soft)}
+
+/* two cards side by side: today / with us. On a phone they stack. */
+.vs{display:grid;gap:14px;grid-template-columns:1fr}
+.card{background:var(--card);border:2px solid var(--line2);border-radius:16px;overflow:hidden;break-inside:avoid;display:flex;flex-direction:column}
+.card.new{border-color:var(--green)}
+.card h3{font-size:22px;padding:12px 16px;background:var(--grey-t);color:var(--soft)}
+.card.new h3{background:var(--green-t);color:var(--green)}
+.card ul{list-style:none}
+.card li{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border-top:1px solid var(--line)}
+.card li .ico{margin-top:1px;color:var(--soft)}
+/* side by side: every row lines up with the row next to it */
+@media (min-width:640px){
+  .vs{grid-template-columns:1fr 1fr;column-gap:14px;row-gap:0}
+  .vs .card{display:grid;grid-template-rows:subgrid;grid-row:span var(--rows)}
+  .vs .card ul{display:contents}
+}
+
+/* the crossed-off list */
+.todo li b{font-weight:600}
+.todo li.gone .ico{color:var(--green)}
+.todo li.gone s{color:#5F5F67;text-decoration-thickness:2px;text-decoration-color:#5F5F67}
+.by{display:block;font-weight:700;font-size:18px;margin-top:2px}
+.todo li.gone .by{color:var(--green)}
+.todo li.keep b{font-weight:700}
+.todo li.keep .by{color:var(--mut);font-weight:400}
+
+/* one order, start to finish */
+.story{list-style:none;display:grid;gap:12px;grid-template-columns:1fr}
+@media (min-width:640px){.story{grid-template-columns:1fr 1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px 16px;break-inside:avoid;display:flex;flex-direction:column;gap:10px}
+.pn{display:flex;gap:10px;align-items:center;font-weight:700;font-size:20px;line-height:1.3}
+.num{flex:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--green-t);color:var(--green);font-weight:700;font-size:18px}
+.form{border:2px solid var(--line2);border-radius:12px;padding:8px 12px;font-size:18px;background:#FCFBF8}
+.row{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px dashed var(--line)}
+.row span{color:var(--mut)}
+.row b{font-weight:600}
+.row.price b{color:var(--green)}
+.btn{margin-top:10px;text-align:center;background:var(--green);color:#fff;border-radius:10px;padding:8px 10px;font-weight:700;font-size:18px}
+.alert{display:flex;gap:10px;align-items:flex-start;background:#fff;border:2px solid var(--line2);border-radius:14px;padding:10px 12px;font-size:19px;line-height:1.4;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.alert .ico{color:var(--green);width:26px;height:26px;margin-top:1px}
+.alert b{display:block}
+.bubble{background:#2B7CE9;color:#fff;border-radius:18px;padding:10px 14px;font-size:19px;line-height:1.4;align-self:flex-end;max-width:90%}
+.big{width:60px;height:60px;color:var(--soft);align-self:center}
+.cap{font-size:18px;color:var(--soft);line-height:1.4}
+
+/* problems / fixes */
+.marks li{font-size:19px;line-height:1.45}
+.marks li .ico{width:26px;height:26px}
+.marks li.x .ico{color:var(--red)}
+.marks li.ok .ico{color:var(--green)}
+
+.same{list-style:none;display:grid;gap:12px}
+.same li{display:flex;gap:12px;align-items:flex-start;break-inside:avoid}
+.same li .ico{color:var(--green);margin-top:1px}
+
+/* questions she might have */
+.qa{list-style:none;display:grid;gap:12px;grid-template-columns:1fr}
+@media (min-width:640px){.qa{grid-template-columns:1fr 1fr}.qa li.wide{grid-column:1/-1}}
+.qa li{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;break-inside:avoid}
+.q{display:flex;gap:10px;align-items:flex-start;font-weight:700;font-size:20px;line-height:1.3;margin-bottom:6px}
+.q .ico{color:var(--blue);margin-top:-1px}
+.a{font-size:19px;color:var(--soft);line-height:1.45}
+.fill{margin-top:12px;border:2px dashed var(--line2);border-radius:12px;padding:10px 14px 12px;font-size:19px;background:#FCFBF8}
+.fill b{display:block}
+.fill .ln{display:none}
+.fill .hint{color:var(--mut);font-weight:400;font-size:18px}
+.fill .later{display:block;margin-top:4px;color:var(--soft)}
+.sig span{display:block}
+
+.close{padding:30px 0 44px;border-top:1px solid var(--line);break-inside:avoid}
+.close h2{font-size:clamp(26px,6.6vw,32px);margin-bottom:12px}
+.close p{font-size:20px;color:var(--soft)}
+.sig{margin-top:20px;font-size:20px;line-height:1.5;color:var(--ink)}
+.sig a{display:inline-block;padding:11px 0;font-weight:700;text-decoration:none}
+
+@media print{
+  @page{size:letter;margin:0.45in}
+  html,body{background:#fff}
+  body{font-size:12.5pt;line-height:1.35}
+  .wrap{max-width:none;padding:0}
+  .top{padding:0 0 6pt;font-size:11pt}
+  .hero{padding:9pt 0 7pt}
+  .hero h1{font-size:23pt;margin-bottom:5pt}
+  .hero p{font-size:13pt}
+  section,.close{padding:8pt 0}
+  section h2,.close h2{font-size:17pt;margin-bottom:4pt}
+  .say,.note,.close p,.sig{font-size:12.5pt}
+  .say{margin-bottom:7pt}
+  .note{margin-top:7pt}
+  .vs{grid-template-columns:1fr 1fr;column-gap:10pt;row-gap:0}
+  .vs .card{display:grid;grid-template-rows:subgrid;grid-row:span var(--rows)}
+  .vs .card ul{display:contents}
+  .card h3{font-size:14pt;padding:4pt 10pt}
+  .card li{padding:3pt 10pt;gap:8pt}
+  .ico{width:17pt;height:17pt}
+  .by{font-size:12pt;margin-top:0}
+  .marks li{font-size:12.5pt}
+  .marks li .ico{width:16pt;height:16pt}
+  .story{grid-template-columns:1fr 1fr;gap:7pt}
+  .panel{padding:7pt 10pt;gap:5pt;border-radius:10pt}
+  .pn{font-size:13pt;gap:7pt}
+  .num{width:18pt;height:18pt;font-size:10.5pt}
+  .form{font-size:12pt;line-height:1.3;padding:2pt 8pt;border-radius:8pt}
+  .row{padding:1pt 0}
+  .story{break-inside:avoid}
+  .p2{break-before:page;border-top:none;padding-top:0}
+  .vs{break-inside:avoid}
+  .btn{font-size:12pt;padding:3pt 6pt;margin-top:4pt;border-radius:6pt}
+  .alert{font-size:12pt;padding:5pt 8pt;border-radius:9pt;box-shadow:none}
+  .alert .ico{width:15pt;height:15pt}
+  .bubble{font-size:12pt;padding:5pt 10pt;border-radius:12pt}
+  .big{width:34pt;height:34pt}
+  .cap{font-size:12pt}
+  .same{gap:5pt}
+  .same li .ico{width:16pt;height:16pt}
+  .p3{break-before:page;border-top:none;padding-top:0}
+  .qa{grid-template-columns:1fr 1fr;gap:7pt}
+  .qa li.wide{grid-column:1/-1}
+  .qa li{padding:6pt 10pt;border-radius:10pt}
+  .q{font-size:13pt;gap:6pt;margin-bottom:2pt}
+  .q .ico{width:15pt;height:15pt;margin-top:1pt}
+  .a{font-size:12.5pt;line-height:1.35}
+  .fill{margin-top:5pt;padding:4pt 10pt 5pt;font-size:12.5pt;border-radius:8pt}
+  .fill .ln{display:block;height:26pt;border-bottom:1.5px solid #9A9080}
+  .fill .later{display:none}
+  .fill .hint{font-size:12pt}
+  .sig span{display:inline}
+  .sig span+span::before{content:" · "}
+  .sig{margin-top:8pt}
+  .sig a{padding:0}
+  a{color:var(--ink);text-decoration:none}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-calc" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><rect x="7.5" y="5.5" width="9" height="4" rx=".5"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01" stroke-width="2.6"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-print" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16.5 9l-6 6-3-3"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></symbol>
+  <symbol id="i-q" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01" stroke-width="2.6"/></symbol>
+</svg>
+<main class="wrap">
+
+  <header class="top">
+    <b>For Debbie</b> · Ms. Dragon Print &amp; Copy, Altadena<br>
+    From Brandon at SANO Systems
+  </header>
+
+  <div class="hero">
+    <h1>Less back-and-forth. More time for you.</h1>
+    <p>For simple copy jobs, your customer sees the price, sends the file and pays, all on a website we make for you. Then you print it. Tricky jobs still come to you, just like now.</p>
+  </div>
+
+  <section>
+    <h2>Your list for one copy job</h2>
+    <p class="say">Everything crossed off under "With us" is done for you.</p>
+    <div class="vs" style="--rows:5">
+      <div class="card">
+        <h3>Today</h3>
+        <ul class="todo" role="list">
+          <li><svg class="ico"><use href="#i-calc"/></svg><b>Work out the price</b></li>
+          <li><svg class="ico"><use href="#i-mail"/></svg><b>Email or call them back with the price</b></li>
+          <li><svg class="ico"><use href="#i-clock"/></svg><b>Wait for a yes</b></li>
+          <li><svg class="ico"><use href="#i-print"/></svg><b>Print it</b></li>
+        </ul>
+      </div>
+      <div class="card new">
+        <h3>With us</h3>
+        <ul class="todo" role="list">
+          <li class="gone"><svg class="ico"><use href="#i-check"/></svg><span><s>Work out the price</s><span class="by">The website shows your price</span></span></li>
+          <li class="gone"><svg class="ico"><use href="#i-check"/></svg><span><s>Email or call them back with the price</s><span class="by">They already saw it</span></span></li>
+          <li class="gone"><svg class="ico"><use href="#i-check"/></svg><span><s>Wait for a yes</s><span class="by">They already paid</span></span></li>
+          <li class="keep"><svg class="ico"><use href="#i-print"/></svg><span><b>Print it</b><span class="by">Same as now</span></span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>One order, start to finish</h2>
+    <p class="say">An example. Your own prices go in when I come by.</p>
+    <ol class="story">
+      <li class="panel">
+        <p class="pn"><span class="num">1</span>Your customer orders online</p>
+        <div class="form" role="img" aria-label="An order page: size, pages, copies, color, price, and a button to send the file and pay">
+          <div class="row"><span>Size</span><b>Letter</b></div>
+          <div class="row"><span>Pages</span><b>1</b></div>
+          <div class="row"><span>Copies</span><b>200</b></div>
+          <div class="row"><span>Color</span><b>Black &amp; white</b></div>
+          <div class="row price"><span>Price</span><b>Your price</b></div>
+          <div class="btn">Send file and pay</div>
+        </div>
+      </li>
+      <li class="panel">
+        <p class="pn"><span class="num">2</span>Your phone lets you know</p>
+        <div class="alert"><svg class="ico"><use href="#i-bell"/></svg><span><b>New order, paid</b>200 copies · letter · black &amp; white</span></div>
+        <p class="cap">Their file comes to your email, like it does now.</p>
+      </li>
+      <li class="panel">
+        <p class="pn"><span class="num">3</span>You print it</p>
+        <svg class="ico big"><use href="#i-print"/></svg>
+        <p class="cap">If a file needs fixing, you call them, same as now.</p>
+      </li>
+      <li class="panel">
+        <p class="pn"><span class="num">4</span>You tap "ready" on your phone</p>
+        <div class="bubble">Your order is ready.</div>
+        <p class="cap">The text to your customer is written for you. You tap send.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="p2">
+    <h2>When people look you up</h2>
+    <p class="say">When I searched "print shop Altadena," you came up first. A few things still need fixing.</p>
+    <div class="vs" style="--rows:4">
+      <div class="card">
+        <h3>Today</h3>
+        <ul class="marks" role="list">
+          <li class="x"><svg class="ico"><use href="#i-x"/></svg><span>Your hours are different on different websites. One says you're open Sundays. Google says closed Sundays.</span></li>
+          <li class="x"><svg class="ico"><use href="#i-x"/></svg><span>Your shop's Google page has no website.</span></li>
+          <li class="x"><svg class="ico"><use href="#i-x"/></svg><span>Some people think you closed. A customer wrote on Yelp: "They are not closed."</span></li>
+        </ul>
+      </div>
+      <div class="card new">
+        <h3>What we fix</h3>
+        <ul class="marks" role="list">
+          <li class="ok"><svg class="ico"><use href="#i-check"/></svg><span>Tell me your real hours. We correct them on Google, Yelp and Nextdoor.</span></li>
+          <li class="ok"><svg class="ico"><use href="#i-check"/></svg><span>We add your website to your Google page, so people can see your prices and order.</span></li>
+          <li class="ok"><svg class="ico"><use href="#i-check"/></svg><span>With your OK, we take new photos of your shop for your Google page, so people can see you're open.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What stays the same</h2>
+    <ul class="same">
+      <li><svg class="ico"><use href="#i-check"/></svg><span>Your regulars can still email, call or walk in. The website is just one more way to order.</span></li>
+      <li><svg class="ico"><use href="#i-check"/></svg><span>You still answer your own phone.</span></li>
+      <li><svg class="ico"><use href="#i-check"/></svg><span>The money from online orders goes into your own bank account. We set that up with you.</span></li>
+      <li><svg class="ico"><use href="#i-check"/></svg><span>We keep your website, your prices and your Google page up to date. The new things for you are two buttons on your phone, "ready" and "closed today." I'll show you where they are.</span></li>
+    </ul>
+  </section>
+
+  <section class="p3">
+    <h2>Questions you might have</h2>
+    <p class="say">If I missed one, just ask me. My number is at the bottom.</p>
+    <ul class="qa" role="list">
+      <li class="wide">
+        <p class="q"><svg class="ico"><use href="#i-q"/></svg>There are a lot of little details to my job. How do I know you'll get them right?</p>
+        <p class="a">We ask you a lot of questions first, in person at your shop. More than you'd expect, on purpose: how you price, what paper you use, how you like files sent. Then we build it from your answers, so it fits how you work. Nothing goes to your customers until you say it's right.</p>
+      </li>
+      <li class="wide">
+        <p class="q"><svg class="ico"><use href="#i-q"/></svg>What if someone wants a job I don't do?</p>
+        <p class="a">Your website lists the jobs you do. For the ones you send somewhere else, it says so kindly, and where to go.</p>
+        <div class="fill"><b>Jobs you send somewhere else <span class="hint">(and where, if you like)</span></b><span class="ln"></span><span class="ln"></span><span class="ln"></span><span class="later">We'll write these down together when I come by.</span></div>
+      </li>
+      <li>
+        <p class="q"><svg class="ico"><use href="#i-q"/></svg>My prices depend on a lot of things. Can a website do that?</p>
+        <p class="a">For simple copy jobs, yes. You give me your prices for how many, paper, color and one side or two. The order page adds them up.</p>
+      </li>
+      <li>
+        <p class="q"><svg class="ico"><use href="#i-q"/></svg>What about tricky jobs, like booklets?</p>
+        <p class="a">You pick which jobs go on the order page. Everything else still comes to you. The website asks for the details and the file up front, so most of what you need is in the first email.</p>
+      </li>
+      <li>
+        <p class="q"><svg class="ico"><use href="#i-q"/></svg>Do I have to watch my phone all day?</p>
+        <p class="a">No. Paid orders wait for you, like your email does now. The order page tells customers when their order will be ready, using the timing you pick.</p>
+      </li>
+      <li>
+        <p class="q"><svg class="ico"><use href="#i-q"/></svg>What if I need a day off?</p>
+        <p class="a">Tap "closed today" on your phone. Your website shows you're closed, and online orders pause until the next day. No call or text needed.</p>
+      </li>
+    </ul>
+  </section>
+
+  <div class="close">
+    <h2>Next step: I come by and we talk</h2>
+    <p>If you'd like, I'll come by the shop. We'll write down what you charge for simple copy jobs and the jobs you send somewhere else. Then I'll show you what your order page would look like with your prices on it.</p>
+    <p class="sig"><span>Brandon</span><span>SANO Systems</span><span>Call or text: <a href="tel:+16264298352">(626) 429-8352</a></span></p>
+  </div>
+
+</main>
+</body>
+</html>
