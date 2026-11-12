@@ -57,6 +57,21 @@ ul.plain li{margin:4px 0}
 .no{background:var(--bad-bg);border-color:transparent}
 .no h3{color:var(--bad);font-size:16px;margin:0 0 4px}
 .foot{color:var(--soft);font-size:14px;margin-top:28px}
+.mine{border:2px solid var(--accent)}
+.mine h2{margin:0 0 4px}
+.add{display:flex;gap:8px;margin:10px 0 4px}
+.add input{flex:1;min-width:0;font:inherit;font-size:17px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.add button,.rm{font:inherit;cursor:pointer;border-radius:10px}
+.add button{flex:none;font-weight:700;color:#fff;background:var(--accent);border:0;padding:10px 16px}
+:root[data-theme="dark"] .add button{color:#10201b}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .add button{color:#10201b}}
+.tiny{color:var(--soft);font-size:13px;margin:6px 0 0}
+#myList .q{margin:8px 0}
+#myList .q label{flex:1;min-width:0}
+#myList .row{display:flex;gap:8px;align-items:flex-start}
+#myList .t{overflow-wrap:anywhere}
+.rm{flex:none;font-size:13px;color:var(--soft);background:transparent;border:1px solid var(--line);padding:4px 10px}
+.rm.armed{color:var(--bad);border-color:var(--bad)}
 @media (min-width:600px){.two{grid-template-columns:1fr 1fr}}
 </style>
 </head>
@@ -84,6 +99,17 @@ ul.plain li{margin:4px 0}
     <li>Don't know? "I don't know yet. I'll text you today." Write it down.</li>
     <li>No signing today. The offer comes in writing.</li>
   </ul>
+</div>
+
+<div class="box mine" id="mine">
+  <h2>Your questions</h2>
+  <p class="why">Add any you think of on the way. Tap a question at lunch to tick it off.</p>
+  <form class="add" id="addForm" autocomplete="off">
+    <input id="newQ" type="text" enterkeyhint="done" placeholder="Type or dictate a question" aria-label="New question">
+    <button type="submit" id="addBtn">Add</button>
+  </form>
+  <div id="myList"></div>
+  <p class="tiny" id="saveNote">Saved on this phone only.</p>
 </div>
 
 <h2>1 · Open <span class="mins">· 2 min</span></h2>
@@ -219,9 +245,42 @@ ul.plain li{margin:4px 0}
 </main>
 <script>
 (function(){
-  var KEY="sitdown-nisa-1112", s={};
-  try{ s=JSON.parse(localStorage.getItem(KEY)||"{}")||{}; }catch(e){ s={}; }
-  var boxes=document.querySelectorAll('.q input[type=checkbox]');
+  var KEY="sitdown-nisa-1112", s={}, ok=true;
+  try{ s=JSON.parse(localStorage.getItem(KEY)||"{}")||{}; }catch(e){ s={}; ok=false; }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(s)); }catch(e){ ok=false; note(); } }
+  function note(){ if(!ok) document.getElementById('saveNote').textContent="This browser isn't saving: keep this tab open."; }
+  note();
+
+  /* his own questions */
+  if(!Array.isArray(s.mine)) s.mine=[];
+  var list=document.getElementById('myList'), input=document.getElementById('newQ');
+  function render(){
+    list.innerHTML='';
+    s.mine.forEach(function(m,i){
+      var card=document.createElement('div'); card.className='q'+(m.done?' done':'');
+      var row=document.createElement('div'); row.className='row';
+      var lab=document.createElement('label');
+      var cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!m.done;
+      var sp=document.createElement('span'); var t=document.createElement('span'); t.className='t'; t.textContent=m.t;
+      sp.appendChild(t); lab.appendChild(cb); lab.appendChild(sp);
+      cb.addEventListener('change',function(){ m.done=cb.checked; card.classList.toggle('done',cb.checked); save(); });
+      var rm=document.createElement('button'); rm.type='button'; rm.className='rm'; rm.textContent='Remove';
+      rm.addEventListener('click',function(){
+        if(rm.dataset.armed!=='1'){ rm.dataset.armed='1'; rm.classList.add('armed'); rm.textContent='Tap again';
+          setTimeout(function(){ if(rm.isConnected){ rm.dataset.armed=''; rm.classList.remove('armed'); rm.textContent='Remove'; } },3000); return; }
+        s.mine.splice(i,1); save(); render();
+      });
+      row.appendChild(lab); row.appendChild(rm); card.appendChild(row); list.appendChild(card);
+    });
+  }
+  document.getElementById('addForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var v=(input.value||'').trim(); if(!v) { input.focus(); return; }
+    s.mine.push({t:v,done:false}); save(); render(); input.value='';
+  });
+  render();
+
+  var boxes=document.querySelectorAll('main > .q input[type=checkbox]');
   for(var i=0;i<boxes.length;i++){
     (function(b){
       var card=b.closest('.q');
@@ -229,7 +288,7 @@ ul.plain li{margin:4px 0}
       b.addEventListener('change',function(){
         card.classList.toggle('done',b.checked);
         s[b.dataset.k]=b.checked;
-        try{ localStorage.setItem(KEY,JSON.stringify(s)); }catch(e){}
+        save();
       });
     })(boxes[i]);
   }
