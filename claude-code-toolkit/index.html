@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code Toolkit</title>
+<meta name="description" content="9 free add-ons from GitHub that turn Claude Code from a chat into a helper that does the work.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F6F3EC;
+    --card: #FFFFFF;
+    --ink: #17171A;
+    --muted: #5C5C66;
+    --line: #E6E1D6;
+    --accent: #2B5BFF;
+    --accent-soft: #E9EEFF;
+    --code-bg: #17171A;
+    --code-ink: #F2F2F2;
+    --star: #B7791F;
+    --warn-bg: #FFF6E5;
+    --warn-line: #F1D7A6;
+    --fav-line: #2B5BFF;
+    --shadow: 0 1px 2px rgba(23,23,26,.05), 0 6px 20px rgba(23,23,26,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111114;
+      --card: #1A1A1F;
+      --ink: #F2F1EE;
+      --muted: #A3A3AD;
+      --line: #2C2C33;
+      --accent: #7C9BFF;
+      --accent-soft: #1F2742;
+      --code-bg: #0A0A0C;
+      --code-ink: #EDEDED;
+      --star: #E3B358;
+      --warn-bg: #2A2416;
+      --warn-line: #4A3D20;
+      --fav-line: #7C9BFF;
+      --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111114; --card: #1A1A1F; --ink: #F2F1EE; --muted: #A3A3AD; --line: #2C2C33;
+    --accent: #7C9BFF; --accent-soft: #1F2742; --code-bg: #0A0A0C; --code-ink: #EDEDED;
+    --star: #E3B358; --warn-bg: #2A2416; --warn-line: #4A3D20; --fav-line: #7C9BFF; --shadow: none;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.55 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    overflow-x: hidden;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px 64px; }
+
+  /* Header */
+  header { padding: 44px 0 20px; }
+  .eyebrow {
+    display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--accent); background: var(--accent-soft);
+    padding: 5px 10px; border-radius: 999px;
+  }
+  h1 { font-size: clamp(30px, 7vw, 44px); line-height: 1.08; letter-spacing: -.025em; margin: 14px 0 12px; font-weight: 800; }
+  .lede { font-size: 18px; color: var(--muted); margin: 0; max-width: 620px; }
+
+  /* Start box */
+  .start {
+    margin: 26px 0 8px; background: var(--card); border: 1px solid var(--line);
+    border-radius: 18px; padding: 20px 20px 18px; box-shadow: var(--shadow);
+  }
+  .start h2 { font-size: 17px; margin: 0 0 12px; }
+  .start ol { margin: 0; padding-left: 22px; }
+  .start li { margin: 0 0 8px; }
+  .tip {
+    margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: var(--accent-soft);
+    font-size: 15px;
+  }
+  kbd, .inline-code {
+    font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: .86em;
+    background: var(--accent-soft); color: var(--ink); padding: 1px 6px; border-radius: 6px;
+    overflow-wrap: anywhere;
+  }
+
+  /* Jump list */
+  .jump { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 6px; padding: 0; list-style: none; }
+  .jump a {
+    display: inline-block; text-decoration: none; color: var(--ink); background: var(--card);
+    border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; font-size: 14px; font-weight: 500;
+  }
+  .jump a:hover { border-color: var(--accent); }
+
+  /* Sections */
+  section { margin-top: 38px; }
+  .sec-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+  .sec-head h2 { font-size: 22px; letter-spacing: -.015em; margin: 0; }
+  .sec-sub { color: var(--muted); margin: 0 0 14px; font-size: 15px; }
+
+  /* Cards */
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+    padding: 20px; margin: 0 0 14px; box-shadow: var(--shadow); scroll-margin-top: 16px;
+  }
+  .card.fav { border: 2px solid var(--fav-line); }
+  .fav-badge {
+    display: inline-block; font-size: 12.5px; font-weight: 700; color: #fff; background: var(--accent);
+    padding: 4px 10px; border-radius: 999px; margin-bottom: 12px;
+  }
+  :root[data-theme="dark"] .fav-badge { color: #0B0B10; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .fav-badge { color: #0B0B10; } }
+  .card-top { display: flex; gap: 12px; align-items: flex-start; }
+  .num {
+    flex: 0 0 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
+    background: var(--ink); color: var(--bg); font-weight: 700; font-size: 15px;
+  }
+  .card h3 { margin: 2px 0 2px; font-size: 19px; line-height: 1.25; letter-spacing: -.01em; }
+  .card h3 a { color: var(--ink); text-decoration: none; }
+  .card h3 a:hover { color: var(--accent); }
+  .by { margin: 0; color: var(--muted); font-size: 14px; }
+  .by .stars { color: var(--star); font-weight: 600; white-space: nowrap; }
+  .card p.row { margin: 12px 0 0; }
+  .card p.row b { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 2px; }
+
+  .get { margin-top: 14px; }
+  .get-label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 700; margin-bottom: 6px; }
+  .get-label span { text-transform: none; letter-spacing: 0; font-weight: 500; }
+  .cmd {
+    position: relative; background: var(--code-bg); color: var(--code-ink); border-radius: 12px;
+    padding: 44px 14px 12px 14px; margin: 0 0 8px;
+  }
+  .cmd code {
+    display: block; font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: 13.5px; line-height: 1.6;
+    white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word;
+  }
+  .copy {
+    position: absolute; top: 8px; right: 8px; font: 600 13px Inter, sans-serif; color: var(--code-bg);
+    background: var(--code-ink); border: 0; border-radius: 8px; padding: 6px 10px; cursor: pointer; min-width: 64px;
+  }
+  .cmd::before {
+    content: "Copy this"; position: absolute; top: 13px; left: 14px; font: 600 11px Inter, sans-serif;
+    letter-spacing: .06em; text-transform: uppercase; color: #8A8A94;
+  }
+  .copy.done { background: #3FB950; color: #fff; }
+  .then { margin: 6px 0 0; font-size: 15px; }
+  .warn {
+    margin-top: 12px; background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 12px;
+    padding: 10px 12px; font-size: 14.5px;
+  }
+  .pair {
+    margin-top: 12px; border-top: 1px dashed var(--line); padding-top: 12px; font-size: 14.5px; color: var(--muted);
+  }
+  .gh {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; text-decoration: none;
+    font-weight: 600; font-size: 15px; color: var(--ink); border: 1px solid var(--line);
+    border-radius: 10px; padding: 9px 14px; background: var(--bg);
+  }
+  .gh:hover { border-color: var(--accent); color: var(--accent); }
+  .gh svg { width: 18px; height: 18px; fill: currentColor; }
+
+  footer { margin-top: 44px; }
+  .footbox { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+  .footbox h2 { font-size: 17px; margin: 0 0 10px; }
+  .footbox ul { margin: 0; padding-left: 20px; }
+  .footbox li { margin-bottom: 8px; }
+  .fine { color: var(--muted); font-size: 13px; margin-top: 18px; text-align: center; }
+
+  @media (max-width: 420px) {
+    .card { padding: 16px; }
+    .start { padding: 16px; }
+    .lede { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="gh" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></symbol></svg>
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">Free · Open source · Nov 2026</span>
+  <h1>The Claude Code toolkit</h1>
+  <p class="lede">9 free add-ons from GitHub that turn Claude Code from a chat into a helper that actually does the work. Tap a name to see it on GitHub. Copy the line to install it.</p>
+
+  <div class="start">
+    <h2>Before you start</h2>
+    <ol>
+      <li>You need <a href="https://code.claude.com/docs/en/overview">Claude Code</a>. Everything here plugs into it.</li>
+      <li>A few need <a href="https://nodejs.org/">Node.js</a> (free). On a Mac, one needs <a href="https://brew.sh/">Homebrew</a> (free).</li>
+      <li>Lines that start with <span class="inline-code">/</span> go in the Claude Code chat. Everything else goes in Terminal.</li>
+    </ol>
+    <div class="tip"><strong>Easiest way:</strong> paste any GitHub link below into Claude Code and say <em>“install this for me and tell me what it changes.”</em></div>
+  </div>
+
+  <ul class="jump" aria-label="Jump to a tool">
+    <li><a href="#chrome-devtools">Browser control</a></li>
+    <li><a href="#whisper">Audio → text</a></li>
+    <li><a href="#i-have-adhd">Answer first</a></li>
+    <li><a href="#attention-span">Plain-English style</a></li>
+    <li><a href="#fixing-opus">No more fluff</a></li>
+    <li><a href="#superpowers">Prove it's done</a></li>
+    <li><a href="#visual-explainer">Picture pages</a></li>
+    <li><a href="#safety-net">Safety net</a></li>
+    <li><a href="#trail-of-bits">Pro safety settings</a></li>
+  </ul>
+</header>
+
+<main>
+
+<!-- ============ 1. HANDS ============ -->
+<section>
+  <div class="sec-head"><h2>Give Claude hands</h2></div>
+  <p class="sec-sub">So it can do things for you, not just tell you how.</p>
+
+  <article class="card fav" id="chrome-devtools">
+    <span class="fav-badge">★ The favorite: Claude runs your browser</span>
+    <div class="card-top">
+      <div class="num">1</div>
+      <div>
+        <h3><a href="https://github.com/ChromeDevTools/chrome-devtools-mcp">Chrome DevTools for agents</a></h3>
+        <p class="by">by Google’s Chrome team · <span class="stars">★ 58k</span></p>
+      </div>
+    </div>
+    <p class="row"><b>What it does</b>Lets Claude drive your real Chrome: open pages, click, type, fill in forms, take screenshots and read what’s on the screen.</p>
+    <p class="row"><b>How it helps</b>Hand Claude the boring web chores (setting up accounts, filling in listings, checking your site at phone size) and watch it do them in the Chrome you’re already signed into.</p>
+    <div class="get">
+      <div class="get-label">Get it · <span>in Terminal</span></div>
+      <div class="cmd"><code>claude mcp add chrome-devtools --scope user -- npx -y chrome-devtools-mcp@latest --autoConnect --no-usage-statistics</code><button class="copy" type="button">Copy</button></div>
+      <p class="then">Then in Chrome, open <span class="inline-code">chrome://inspect/#remote-debugging</span>, turn it on, and click <strong>Allow</strong> when Chrome asks. Start a new Claude Code chat. <em>(“autoConnect” = use your own signed-in Chrome. “no-usage-statistics” = don’t send Google usage stats.)</em></p>
+    </div>
+    <div class="warn"><strong>Heads up:</strong> it can see and click anything in that Chrome, banking included. Watch it the first few times, and tell Claude: “ask me before you click Send, Post, Pay or Delete.”</div>
+    <div class="pair"><strong>Pairs well with:</strong> <a href="https://code.claude.com/docs/en/chrome">Claude in Chrome</a>, Anthropic’s own Chrome extension (an official add-on, not on GitHub).</div>
+    <a class="gh" href="https://github.com/ChromeDevTools/chrome-devtools-mcp"><svg viewBox="0 0 16 16" aria-hidden="true"><use href="#gh"/></svg>Open on GitHub</a>
+  </article>
+
+  <article class="card" id="whisper">
+    <div class="card-top">
+      <div class="num">2</div>
+      <div>
+        <h3><a href="https://github.com/ggml-org/whisper.cpp">whisper.cpp</a></h3>
+        <p class="by">OpenAI’s Whisper, made to run on your own computer · <span class="stars">★ 55k</span></p>
+      </div>
+    </div>
+    <p class="row"><b>What it does</b>Turns any audio or video file into text, right on your computer. Free, works offline, and handles Spanish and many other languages.</p>
+    <p class="row"><b>How it helps</b>Send Claude a voice memo, a call recording or a video and it can actually read it: transcripts, captions, meeting notes.</p>
+    <div class="get">
+      <div class="get-label">Get it · <span>in Terminal (Mac)</span></div>
+      <div class="cmd"><code>brew install whisper-cpp</code><button class="copy" type="button">Copy</button></div>
+      <p class="then">Then tell Claude: <em>“whisper is installed. Download a speech model for it and use it whenever I send you audio.”</em> (One-time download.)</p>
+    </div>
+    <a class="gh" href="https://github.com/ggml-org/whisper.cpp"><svg viewBox="0 0 16 16" aria-hidden="true"><use href="#gh"/></svg>Open on GitHub</a>
+  </article>
+</section>
+
+<!-- ============ 2. TALK ============ -->
+<section>
+  <div class="sec-head"><h2>Make Claude talk like a person</h2></div>
+  <p class="sec-sub">Answer first, plain English, no wall of text.</p>
+
+  <article class="card" id="i-have-adhd">
+    <div class="card-top">
+      <div class="num">3</div>
+      <div>
+        <h3><a href="https://github.com/ayghri/i-have-adhd">i-have-adhd</a></h3>
+        <p class="by">“No ADHD diagnosis needed!” · <span class="stars">★ 62k</span></p>
+      </div>
+    </div>
+    <p class="row"><b>What it does</b>Stops Claude from burying the answer. The answer comes first, steps come numbered, and the “Hope this helps!” filler goes away.</p>
+    <p class="row"><b>How it helps</b>You read the first line and you know what happened. Great if you skim, or talk to Claude by voice.</p>
+    <div class="get">
+      <div class="get-label">Get it · <span>in Terminal</span></div>
+      <div class="cmd"><code>claude plugin marketplace add ayghri/i-have-adhd
+claude plugin install i-have-adhd@i-have-adhd</code><button class="copy" type="button">Copy</button></div>
+      <p class="then">Then type <span class="inline-code">/i-have-adhd</span> in Claude Code.</p>
+    </div>
+    <a class="gh" href="https://github.com/ayghri/i-have-adhd"><svg viewBox="0 0 16 16" aria-hidden="true"><use href="#gh"/></svg>Open on GitHub</a>
+  </article>
+
+  <article class="card" id="attention-span">
+    <div class="card-top">
+      <div class="num">4</div>
+      <div>
+        <h3><a href="https://github.com/alexgreensh/attention-span">attention-span</a></h3>
+        <p class="by">Ready-made talking styles · <span class="stars">★ 1.6k</span></p>
+      </div>
+    </div>
+    <p class="row"><b>What it does</b>Gives Claude a standing “here’s how to talk to me” note (an <em>output style</em>) that applies to every chat, not just one.</p>
+    <p class="row"><b>How it helps</b>Short, skimmable, plain-English replies every time, without asking. Its “Attention-kind” style is a great starting point for building your own.</p>
+    <div class="get">
+      <div class="get-label">Get it · <span>in the Claude Code chat</span></div>
+      <div class="cmd"><code>/plugin install attention-span --marketplace alexgreensh/attention-span</code><button class="copy" type="button">Copy</button></div>
+      <p class="then">Then type <span class="inline-code">/config</span> → <strong>Output style</strong> → pick one.</p>
+    </div>
+    <a class="gh" href="https://github.com/alexgreensh/attention-span"><svg viewBox="0 0 16 16" aria-hidden="true"><use href="#gh"/></svg>Open on GitHub</a>
+  </article>
+
+  <article class="card" id="fixing-opus">
+    <div class="card-top">
+      <div class="num">5</div>
+      <div>
+        <h3><a href="https://github.com/disler/fixing-smartass-opus-5">Fixing Opus 5</a></h3>
+        <p class="by">One rules file · <span class="stars">★ 370</span></p>
+      </div>
+    </div>
+    <p class="row"><b>What it does</b>One file of rules that cuts Claude’s verbal tics: the padding, the “you’re absolutely right”, the six headings for a one-line answer.</p>
+    <p class="row"><b>How it helps</b>Tight, straight answers. It does only what you asked, never says “done” without evidence, and labels its questions (Q1, Q2) so you can answer by number.</p>
+    <div class="get">
+      <div class="get-label">Get it · <span>in Terminal</span></div>
+      <div class="cmd"><code>curl -O https://raw.githubusercontent.com/disler/fixing-smartass-opus-5/main/sr_opus_5_system_prompt.md
+claude --append-system-prompt "$(cat sr_opus_5_system_prompt.md)"</code><button class="copy" type="button">Copy</button></div>
+      <p class="then">The first line downloads the rules file; the second starts Claude with it. Or skip Terminal: ask Claude to copy the rules you like into your own settings.</p>
+    </div>
+    <a class="gh" href="https://github.com/disler/fixing-smartass-opus-5"><svg viewBox="0 0 16 16" aria-hidden="true"><use href="#gh"/></svg>Open on GitHub</a>
+  </article>
+</section>
+
+<!-- ============ 3. FINISH ============ -->
+<section>
+  <div class="sec-head"><h2>Make Claude finish the job</h2></div>
+  <p class="sec-sub">Real proof it worked, and answers you can see.</p>
+
+  <article class="card" id="superpowers">
+    <div class="card-top">
+      <div class="num">6</div>
+      <div>
+        <h3><a href="https://github.com/obra/superpowers">Superpowers</a></h3>
+        <p class="by">The most-starred Claude add-on on GitHub · <span class="stars">★ 322k</span></p>
+      </div>
+    </div>
+    <p class="row"><b>What it does</b>A set of work habits for Claude: plan first, build in small steps, test as it goes, and check the result before it’s allowed to say “done”.</p>
+    <p class="row"><b>How it helps</b>Fewer “it’s finished!” moments that turn out broken. Its “verification before completion” skill makes Claude prove the thing works.</p>
+    <div class="get">
+      <div class="get-label">Get it · <span>in the Claude Code chat</span></div>
+      <div class="cmd"><code>/plugin install superpowers@claude-plugins-official</code><button class="copy" type="button">Copy</button></div>
+      <p class="then">It’s in Anthropic’s official plugin store, so this one line is all it takes.</p>
+    </div>
+    <a class="gh" href="https://github.com/obra/superpowers"><svg viewBox="0 0 16 16" aria-hidden="true"><use href="#gh"/></svg>Open on GitHub</a>
+  </article>
+
+  <article class="card" id="visual-explainer">
+    <div class="card-top">
+      <div class="num">7</div>
+      <div>
+        <h3><a href="https://github.com/nicobailon/visual-explainer">visual-explainer</a></h3>
+        <p class="by">Answers as pictures · <span class="stars">★ 11k</span></p>
+      </div>
+    </div>
+    <p class="row"><b>What it does</b>Turns long answers, plans and recaps into a good-looking page with diagrams and tables that opens in your browser, instead of a wall of text.</p>
+    <p class="row"><b>How it helps</b>“Show me how this works” gets you a picture you can actually follow. Great if you’re visual.</p>
+    <div class="get">
+      <div class="get-label">Get it · <span>in the Claude Code chat</span></div>
+      <div class="cmd"><code>/plugin marketplace add nicobailon/visual-explainer
+/plugin install visual-explainer@visual-explainer-marketplace</code><button class="copy" type="button">Copy</button></div>
+      <p class="then">Then just ask: <em>“draw me a diagram of how this works.”</em></p>
+    </div>
+    <a class="gh" href="https://github.com/nicobailon/visual-explainer"><svg viewBox="0 0 16 16" aria-hidden="true"><use href="#gh"/></svg>Open on GitHub</a>
+  </article>
+</section>
+
+<!-- ============ 4. SAFETY ============ -->
+<section>
+  <div class="sec-head"><h2>Keep it safe</h2></div>
+  <p class="sec-sub">So you can let Claude work on its own without worrying.</p>
+
+  <article class="card" id="safety-net">
+    <div class="card-top">
+      <div class="num">8</div>
+      <div>
+        <h3><a href="https://github.com/kenryu42/cc-safety-net">cc-safety-net</a></h3>
+        <p class="by">A guard on every command · <span class="stars">★ 2.1k</span></p>
+      </div>
+    </div>
+    <p class="row"><b>What it does</b>Checks every command before Claude runs it, and blocks the ones that wipe folders, overwrite your saved work, or read your passwords and keys.</p>
+    <p class="row"><b>How it helps</b>Mistakes get stopped before they happen. When it blocks something, it tells Claude why, so Claude picks a safer way on its own.</p>
+    <div class="get">
+      <div class="get-label">Get it · <span>in Terminal (needs Node.js 22 or newer)</span></div>
+      <div class="cmd"><code>npx -y cc-safety-net@latest install
+npx -y cc-safety-net@latest doctor</code><button class="copy" type="button">Copy</button></div>
+      <p class="then">The first line installs it. The second checks that it’s working.</p>
+    </div>
+    <a class="gh" href="https://github.com/kenryu42/cc-safety-net"><svg viewBox="0 0 16 16" aria-hidden="true"><use href="#gh"/></svg>Open on GitHub</a>
+  </article>
+
+  <article class="card" id="trail-of-bits">
+    <div class="card-top">
+      <div class="num">9</div>
+      <div>
+        <h3><a href="https://github.com/trailofbits/claude-code-config">Trail of Bits Claude Code setup</a></h3>
+        <p class="by">A security company’s own settings · <span class="stars">★ 2.1k</span></p>
+      </div>
+    </div>
+    <p class="row"><b>What it does</b>The Claude Code setup a well-known security firm uses every day: blocks Claude from reading your keys and passwords, sets safer defaults, and adds good work habits.</p>
+    <p class="row"><b>How it helps</b>You copy the pros’ safety settings instead of figuring them out yourself. It walks you through each piece and skips what you already have.</p>
+    <div class="get">
+      <div class="get-label">Get it · <span>in Terminal</span></div>
+      <div class="cmd"><code>git clone https://github.com/trailofbits/claude-code-config.git
+cd claude-code-config
+claude</code><button class="copy" type="button">Copy</button></div>
+      <p class="then">Then type <span class="inline-code">/trailofbits:config</span> in that chat and follow along.</p>
+    </div>
+    <a class="gh" href="https://github.com/trailofbits/claude-code-config"><svg viewBox="0 0 16 16" aria-hidden="true"><use href="#gh"/></svg>Open on GitHub</a>
+  </article>
+</section>
+
+</main>
+
+<footer>
+  <div class="footbox">
+    <h2>Good to know</h2>
+    <ul>
+      <li><strong>All 9 are free</strong> and open source. Stars (★) = how many people bookmarked it on GitHub.</li>
+      <li><strong>Install from these links only.</strong> Copycat projects with similar names exist.</li>
+      <li><strong>Add one at a time</strong> and use it for a day, so you know what changed.</li>
+      <li><strong>Restart Claude Code</strong> (or start a new chat) after installing anything.</li>
+    </ul>
+  </div>
+  <p class="fine">Links and install steps checked against each project’s own GitHub page, Nov 19, 2026.</p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+  function flash(btn, label) {
+    btn.textContent = label;
+    btn.classList.toggle('done', label === 'Copied ✓');
+    clearTimeout(btn._t);
+    btn._t = setTimeout(function () { btn.textContent = 'Copy'; btn.classList.remove('done'); }, 1600);
+  }
+  document.querySelectorAll('.cmd').forEach(function (box) {
+    var btn = box.querySelector('.copy');
+    var code = box.querySelector('code');
+    btn.addEventListener('click', function () {
+      var text = code.textContent;
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function () { flash(btn, 'Copied ✓'); },
+          function () { flash(btn, fallbackCopy(text) ? 'Copied ✓' : 'Select it'); });
+      } else {
+        flash(btn, fallbackCopy(text) ? 'Copied ✓' : 'Select it');
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
