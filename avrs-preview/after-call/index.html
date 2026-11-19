@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="format-detection" content="telephone=no">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F3EEE6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#060608" media="(prefers-color-scheme: dark)">
+<title>AVRS Automotive &times; SANO &mdash; Your setup, step by step</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230070F3'/%3E%3Cpath d='M9 22L16 9l7 13' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;
+--bg:#F3EEE6;--panel:#FFFFFF;--panel2:#FAF7F2;--ink:#0B0D12;--mut:#4A5261;--dim:#646C7B;
+--line:rgba(11,13,18,.12);--line2:rgba(11,13,18,.22);--blue-ink:#0057C2;--cyan:#007FA3;
+--grad:linear-gradient(135deg,#0070F3,#00B4DC);--grad-ink:#04111F;--sel:#0066E0;--sel-ink:#FFFFFF;
+--chip:#FFFFFF;--tag:#00708F;--barbg:rgba(243,238,230,.94);--cuebg:#E7F3F8;--shadow:0 1px 2px rgba(11,13,18,.05);
+--font:'Space Grotesk',system-ui,-apple-system,sans-serif;--body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif}
+@media (prefers-color-scheme:dark){:root{
+--bg:#060608;--panel:#14141B;--panel2:#1B1B24;--ink:#F2EBE0;--mut:#A8B0C0;--dim:#8A91A0;
+--line:rgba(255,255,255,.10);--line2:rgba(255,255,255,.20);--blue-ink:#6AAEFF;--cyan:#00D4FF;
+--grad:linear-gradient(135deg,#0070F3,#00D4FF);--grad-ink:#05121F;--sel:#0070F3;--sel-ink:#FFFFFF;
+--chip:rgba(255,255,255,.04);--tag:#00D4FF;--barbg:rgba(6,6,8,.92);--cuebg:rgba(0,212,255,.08);--shadow:none}}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:680px;margin:0 auto;padding:0 16px calc(96px + env(safe-area-inset-bottom))}
+a{color:var(--blue-ink)}
+.top{padding:18px 0 4px}
+.eyebrow{font-family:var(--font);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);font-weight:700}
+h1{font-family:var(--font);font-weight:700;font-size:28px;line-height:1.15;letter-spacing:-.01em;margin:2px 0 8px}
+.lead{list-style:none;display:grid;gap:5px}
+.lead li{position:relative;padding-left:17px;font-size:15.5px;line-height:1.4;color:var(--ink)}
+.lead li:before{content:"";position:absolute;left:2px;top:.55em;width:7px;height:7px;border-radius:50%;background:var(--grad)}
+.toc{margin:12px 0 0;scroll-margin-top:10px}
+.toc ul{list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.toc a{display:inline-flex;align-items:center;gap:5px;min-height:44px;min-width:44px;padding:6px 9px;border:1.5px solid var(--line2);
+border-radius:12px;color:var(--ink);text-decoration:none;font-size:13.5px;font-weight:600;background:var(--chip);touch-action:manipulation;
+-webkit-tap-highlight-color:transparent}
+.toc .n{font-size:12px;color:var(--dim);font-weight:600;font-variant-numeric:tabular-nums}
+.toc a.some .n,.toc a.done .n{color:var(--blue-ink)}
+.toc a.done{border-color:var(--sel)}
+section.sect{scroll-margin-top:8px}
+.sec{font-family:var(--font);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);font-weight:700;
+margin:22px 0 8px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+.lede{color:var(--mut);font-size:15px;margin:0 0 12px}
+.q{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 14px 15px;margin-bottom:10px;box-shadow:var(--shadow)}
+.qt{font-size:17px;font-weight:600;line-height:1.35;overflow-wrap:break-word}
+.qt strong{font-weight:700}
+.hint{font-size:14.5px;color:var(--mut);margin-top:5px;overflow-wrap:break-word}
+.hint b{color:var(--ink);font-weight:600}
+.cue{border:1.5px solid var(--cyan);background:var(--cuebg);border-radius:14px;padding:14px;margin:4px 0 10px}
+.cue p{font-family:var(--font);font-size:18px;font-weight:700;line-height:1.3}
+.row{margin-top:11px}
+.rl{font-size:14.5px;font-weight:600;color:var(--mut);margin-bottom:6px;overflow-wrap:break-word}
+.rl small{display:block;font-weight:400;color:var(--dim);font-size:13.5px;margin-top:1px}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{-webkit-appearance:none;appearance:none;font-family:inherit;font-size:15px;font-weight:600;line-height:1.25;color:var(--ink);
+background:var(--chip);border:1.5px solid var(--line2);border-radius:12px;min-height:44px;min-width:44px;padding:10px 9px;cursor:pointer;
+touch-action:manipulation;-webkit-tap-highlight-color:transparent;text-align:center;max-width:100%;overflow-wrap:break-word}
+.opt[aria-pressed="true"]{background:var(--sel);border-color:var(--sel);color:var(--sel-ink)}
+.opt:disabled{opacity:.45;cursor:default}
+.opt .tag{display:block;font-size:11.5px;font-weight:600;color:var(--tag);margin-top:2px}
+.opt[aria-pressed="true"] .tag{color:inherit;opacity:.9}
+.opt.texted{border-style:dashed;border-color:var(--tag)}
+.opt.texted[aria-pressed="true"]{border-style:solid;border-color:var(--sel)}
+.opts.list{flex-direction:column}
+.opts.list .opt{width:100%;text-align:left}
+.opt:focus-visible,.toc a:focus-visible,.send:focus-visible,.rm:focus-visible,.up:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+input.val,textarea.val,input.other{display:block;width:100%;font-family:inherit;font-size:16px;color:var(--ink);background:var(--panel2);
+border:1.5px solid var(--line2);border-radius:12px;padding:11px 12px;min-height:46px;outline:none;-webkit-appearance:none;appearance:none}
+input.other{margin-top:8px}
+textarea.val{resize:vertical;min-height:84px;line-height:1.5}
+input.val:focus,textarea.val:focus,input.other:focus{border-color:var(--sel)}
+::placeholder{color:var(--dim);opacity:1}
+.pre{display:flex;align-items:center;gap:8px}
+.pre span{font-weight:700;color:var(--mut);font-size:17px}
+.pre input{flex:1;min-width:0;max-width:180px}
+.jobs{display:grid;gap:0;margin-top:6px}
+.job{border-top:1px solid var(--line);padding:12px 0 6px}
+.jobs .job:first-child{border-top:0;padding-top:6px}
+.jh{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px}
+.jn{font-weight:700;font-size:16.5px;line-height:1.3}
+.jsub{flex:1 1 100%;font-size:13px;color:var(--dim);line-height:1.35}
+.js{flex:1 1 100%;font-size:13.5px;color:var(--dim);line-height:1.35}
+.job.set .js{color:var(--blue-ink);font-weight:600}
+.job .row{margin-top:10px}
+.rm{-webkit-appearance:none;appearance:none;margin-left:auto;background:none;border:0;color:var(--blue-ink);font:inherit;font-size:14px;
+font-weight:600;min-height:44px;min-width:44px;padding:0 6px;cursor:pointer;touch-action:manipulation}
+.adds{margin-top:12px}
+.adds .own{font-weight:700}
+.row.town{padding-top:10px;margin-top:10px;border-top:1px solid var(--line)}
+.row.town .rl{color:var(--ink);font-size:15.5px}
+.row.town .opts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.row.town .opt{padding:8px 4px;font-size:13.5px;line-height:1.2;display:flex;align-items:center;justify-content:center}
+@media (max-width:340px){.row.town .opts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.note{margin-top:10px}
+.notebtn{-webkit-appearance:none;appearance:none;background:none;border:0;color:var(--blue-ink);font:inherit;font-size:14.5px;
+font-weight:600;min-height:44px;min-width:44px;padding:0 8px 0 0;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.notebtn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.notebox{display:block;width:100%;font-family:inherit;font-size:16px;line-height:1.5;color:var(--ink);background:var(--panel2);
+border:1.5px dashed var(--line2);border-radius:12px;padding:11px 12px;min-height:64px;outline:none;-webkit-appearance:none;appearance:none;resize:vertical}
+.notebox:focus{border-color:var(--sel);border-style:solid}
+.up{display:inline-block;font-size:14px;color:var(--blue-ink);text-decoration:none;min-height:44px;line-height:44px;font-weight:600}
+.close{margin-top:22px;padding:16px 16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;display:grid;gap:8px}
+.close p{font-size:15.5px;color:var(--mut)}
+.close strong{color:var(--ink)}
+.close a{font-weight:700;white-space:nowrap}
+.start{margin:14px 0 16px;padding:18px 16px;background:var(--panel);border:1.5px solid var(--sel);border-radius:18px;display:grid;gap:10px;box-shadow:var(--shadow)}
+.start h2{font-family:var(--font);font-size:22px;line-height:1.15;color:var(--ink)}
+.start p{font-size:15.5px;color:var(--mut)}
+.start .nexth{font-family:var(--font);font-weight:700;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-top:2px}
+.start .nextsteps{list-style:none;display:grid;gap:8px}
+.start .nextsteps li{display:grid;grid-template-columns:72px 1fr;gap:10px;align-items:baseline;font-size:15.5px;color:var(--mut)}
+.start .nextsteps li b{font-family:var(--font);color:var(--ink)}
+.start .price{color:var(--ink);font-weight:600}
+.startbtn{display:flex;align-items:center;justify-content:center;min-height:52px;padding:14px 22px;border-radius:14px;background:var(--grad);
+color:var(--grad-ink);font-family:var(--font);font-weight:700;font-size:17px;text-decoration:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.startbtn:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+.start .startsmall{font-size:13.5px;color:var(--dim);text-align:center}
+.start .started{color:var(--ink);font-weight:700}
+.talk{margin:22px 0 4px;text-align:center;display:grid;justify-items:center;gap:8px}
+.talk p{font-size:15.5px;color:var(--ink);font-weight:600}
+.talk .num{font-size:15px;color:var(--mut);font-weight:600;font-variant-numeric:tabular-nums}
+.callme{display:inline-flex;align-items:center;justify-content:center;min-height:48px;min-width:44px;padding:12px 22px;border-radius:12px;
+border:1.5px solid var(--sel);color:var(--blue-ink);background:var(--chip);font-family:var(--font);font-weight:700;font-size:16px;
+text-decoration:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.callme:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--barbg);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+border-top:1px solid var(--line);padding:9px 16px calc(9px + env(safe-area-inset-bottom))}
+.barin{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.barhint{flex:1;min-width:0;font-size:13.5px;color:var(--mut);line-height:1.3}
+.send{-webkit-appearance:none;appearance:none;flex:0 0 auto;font-family:var(--font);font-weight:700;font-size:15.5px;color:var(--grad-ink);background:var(--grad);
+border:0;border-radius:12px;min-height:48px;padding:12px 16px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.send:active{transform:translateY(1px)}
+.toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:30;max-width:calc(100% - 32px);width:max-content;
+background:var(--ink);color:var(--bg);border-radius:12px;padding:12px 16px;font-size:15px;font-weight:600;line-height:1.35;box-shadow:0 8px 24px rgba(0,0,0,.25);
+opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+.sheet{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;padding:12px}
+.sheetin{width:100%;max-width:640px;max-height:100%;display:flex;flex-direction:column;gap:10px;background:var(--panel);color:var(--ink);
+border:1px solid var(--line);border-radius:18px;padding:16px;overflow:auto}
+.fbh{font-family:var(--font);font-size:18px;font-weight:700}
+.fbp{font-size:15px;color:var(--mut)}
+.fbp strong{color:var(--ink)}
+#out{display:block;width:100%;flex:1 1 auto;min-height:110px;height:42vh;font:14px/1.45 ui-monospace,Menlo,Consolas,monospace;color:var(--ink);
+background:var(--panel2);border:1.5px solid var(--line2);border-radius:12px;padding:12px;-webkit-user-select:text;user-select:text;resize:none}
+#fbclose{width:100%}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.tl{margin:14px 0 6px;padding:18px 16px 6px;background:var(--panel);border:1.5px solid var(--sel);border-radius:18px;box-shadow:var(--shadow)}
+.tl h2{font-family:var(--font);font-size:22px;line-height:1.15;color:var(--ink)}
+.tltotal{font-size:15.5px;color:var(--ink);margin:6px 0 0;line-height:1.4}
+.tltotal b{font-weight:700}
+.tlintro{font-size:15px;color:var(--mut);margin:6px 0 14px}
+.tlsteps{list-style:none;display:grid}
+.tlsteps li{position:relative;padding:0 0 9px 28px}
+.tlsteps li:before{content:"";position:absolute;left:2px;top:3px;width:16px;height:16px;border-radius:50%;box-sizing:border-box;
+border:2.5px solid var(--sel);background:var(--panel)}
+.tlsteps li:after{content:"";position:absolute;left:9px;top:22px;bottom:2px;width:2px;background:var(--line2)}
+.tlsteps li:last-child:after{display:none}
+.tlsteps li.done:before{content:"\2713";background:var(--sel);color:var(--sel-ink);font-size:11px;font-weight:700;line-height:11px;
+text-align:center}
+.tlstep{font-size:15px;line-height:1.42;color:var(--mut);overflow-wrap:break-word}
+.tlwhen{font-family:var(--font);font-weight:700;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--cyan);
+white-space:nowrap;margin-right:2px}
+.tlwhen.tlwrap{white-space:normal}
+.tlab{margin:6px 0 4px}
+.tlstep strong{color:var(--ink);font-weight:600}
+.who,.onlya{font-family:var(--body);font-size:12.5px;font-weight:600;color:var(--ink);border-radius:999px;padding:1px 7px;
+white-space:nowrap;margin-right:2px}
+.who{border:1px solid var(--line2);background:var(--chip)}
+.onlya{border:1.5px dashed var(--sel)}
+.hint p+p{margin-top:7px}
+.msg{margin-top:8px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--ink);
+font-size:14.5px;line-height:1.45;overflow-wrap:break-word}
+.msg small{display:block;margin-top:6px;font-size:12.5px;color:var(--dim)}
+.nw{white-space:nowrap}
+.tlstep b{color:var(--ink);font-weight:600}
+.parth{font-family:var(--font);font-size:22px;line-height:1.15;margin:22px 0 8px}
+.doc{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;margin-top:10px;padding:12px 14px;
+border:1.5px solid var(--sel);border-radius:12px;color:var(--blue-ink);background:var(--chip);font-family:var(--font);font-weight:700;
+font-size:16px;text-decoration:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.doc:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.lead a,.close a{position:relative}
+.lead a:after,.close a:after{content:"";position:absolute;left:-4px;right:-4px;top:-13px;bottom:-13px}
+</style></head><body data-key="avrs-q6-aftercall" data-part="After the setup call (Nov 18)">
+<div class="wrap">
+<header class="top"><p class="eyebrow">AVRS Automotive &times; SANO</p><h1>Your setup, step by step</h1>
+<ul class="lead"><li>Thanks for the call. Here&rsquo;s the rest of what we need for now, on your own time: tonight or tomorrow.</li>
+<li>Tap your answers. They save on this phone as you go. Skip anything you&rsquo;re not sure about.</li>
+<li>When you&rsquo;re done, tap <b>Copy my answers</b> at the bottom and paste them into a text to Brandon.</li></ul>
+<section class="tl" id="timeline" aria-labelledby="tl-h"><h2 id="tl-h">What happens next</h2><ol class="tlsteps">
+<li><p class="tlstep"><span class="tlwhen">Next</span> <span class="who">We</span> <b>once your website pages are up, we file your texting</b> with the phone companies. They take 1 to 4 weeks, usually December, sometimes January. Their pace, so we won&rsquo;t promise a day.</p></li>
+<li><p class="tlstep"><span class="tlwhen">January</span> <span class="who">You + Brandon</span> <b>a call about your regular price</b> before Feb 6 (it starts only after your OK), and we switch your trip fee and towns when you move to Cypress.</p></li>
+</ol></section></header>
+<nav class="toc" id="top" aria-label="Sections"><ul><li><a href="#s-text" data-sec="s-text"><span>1. Texting</span><span class="n"></span></a></li><li><a href="#s-book" data-sec="s-book"><span>2. Booking</span><span class="n"></span></a></li><li><a href="#s-app" data-sec="s-app"><span>3. Your web app</span><span class="n"></span></a></li></ul></nav>
+<section class="sect" id="s-text" data-say="TEXTING" aria-labelledby="h-s-text"><h2 class="sec" id="h-s-text">1. Your automatic texting</h2><p class="lede">What we send the phone companies so they approve your texting. Your tax ID and the call-forwarding test were done on our call.</p><div class="q unit"><div class="qt" id="q-1">Call forwarding is off again?</div><div class="hint">After the test on our call you dial <b>*73</b> to turn forwarding off. Until your texting is approved, missed calls should keep going to your usual voicemail. Not sure? Dial *73 now; doing it twice is fine.</div><div class="row cnt" data-id="t.73" data-kind="one" data-say="Dialed *73 after the test" data-ans="t.73"><div class="rl" id="r-t-73-l">Did you dial *73 after the test?</div><div class="opts" role="group" aria-labelledby="r-t-73-l"><button type="button" class="opt" data-v="yes" data-say="Yes, forwarding is off" aria-pressed="false">Yes, it&rsquo;s off</button><button type="button" class="opt" data-v="no" data-say="Not yet" aria-pressed="false">Not yet</button><button type="button" class="opt" data-v="unsure" data-say="Not sure" aria-pressed="false">Not sure</button></div></div><div class="note" data-note="note.t.73"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><div class="q unit"><div class="qt" id="q-2">The contact person the phone companies list</div><div class="hint">They need one contact person: you, as Owner, with info@avrsautomotive.com and your cell, (936) 444-3031.</div><div class="row cnt" data-id="t.name" data-kind="text" data-say="Your full legal name, exactly as it is on your ID" data-ans="t.name"><div class="rl" id="r-t-name-l">Your full legal name, exactly as it is on your ID</div><textarea class="val" id="r-t-name-i" aria-labelledby="r-t-name-l" placeholder="First and last name" autocomplete="off" rows="1"></textarea></div><div class="row cnt" data-id="t.contact" data-kind="one" data-say="Owner + info@ + cell still right" data-ans="t.contact"><div class="rl" id="r-t-contact-l">Owner, info@avrsautomotive.com and (936) 444-3031: still right?</div><div class="opts" role="group" aria-labelledby="r-t-contact-l"><button type="button" class="opt" data-v="yes" data-say="All right" aria-pressed="false">All right</button><button type="button" class="opt" data-v="other" data-say="Change something" data-other aria-pressed="false">Change something</button></div><input class="other" type="text" data-for="t.contact" placeholder="What should change?" aria-label="What should change?" autocomplete="off" hidden></div><div class="note" data-note="note.t.name"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><div class="q unit"><div class="qt" id="q-3">Your info@ email on your phone</div><div class="hint">When we file, the phone companies may email a code to info@avrsautomotive.com, and you read it to Brandon by phone that day. You told us it only pings when your phone is charging. That&rsquo;s usually one setting: on your iPhone open <b>Settings &rarr; Mail &rarr; Accounts &rarr; Fetch New Data</b> (on iOS 18 and newer: <b>Settings &rarr; Apps &rarr; Mail &rarr; Mail Accounts &rarr; Fetch New Data</b>), take a screenshot and text it to Brandon. He&rsquo;ll tell you what to flip.</div><div class="row cnt" data-id="t.mail" data-kind="one" data-say="Mail settings screenshot" data-ans="t.mail"><div class="rl" id="r-t-mail-l">Screenshot sent?</div><div class="opts" role="group" aria-labelledby="r-t-mail-l"><button type="button" class="opt" data-v="sent" data-say="Sent it" aria-pressed="false">Sent it</button><button type="button" class="opt" data-v="fine" data-say="It pings fine now" aria-pressed="false">It pings fine now</button><button type="button" class="opt" data-v="cant" data-say="Can't find that screen" aria-pressed="false">Can&rsquo;t find that screen</button></div></div><div class="note" data-note="note.t.mail"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><div class="q unit"><div class="qt" id="q-4">Your website: who makes the changes?</div><div class="hint">The phone companies check your website before they approve: your privacy page and terms have to be up, and two of your call buttons still dial your old 281 number. Marjean can do it, or we can. If you&rsquo;d like us to, Brandon confirms with you what that covers first.</div><div class="row cnt" data-id="t.web" data-kind="one" data-say="Who fixes my website" data-ans="t.web"><div class="rl" id="r-t-web-l">Who should make these changes?</div><div class="opts" role="group" aria-labelledby="r-t-web-l"><button type="button" class="opt" data-v="marjean" data-say="Marjean" aria-pressed="false">Marjean</button><button type="button" class="opt" data-v="us" data-say="Brandon's team" aria-pressed="false">Brandon&rsquo;s team</button><button type="button" class="opt" data-v="unsure" data-say="Not sure" aria-pressed="false">Not sure</button></div></div><div data-show-if="t.web=us"><div class="row cnt" data-id="t.login" data-kind="one" data-say="WordPress login for us" data-ans="t.login"><div class="rl" id="r-t-login-l">Can you or Marjean add a login for us on your WordPress site this week?</div><div class="opts" role="group" aria-labelledby="r-t-login-l"><button type="button" class="opt" data-v="me" data-say="I'll add it" aria-pressed="false">I&rsquo;ll add it</button><button type="button" class="opt" data-v="marjean" data-say="Marjean will" aria-pressed="false">Marjean will</button><button type="button" class="opt" data-v="help" data-say="Need help" aria-pressed="false">I need help with it</button></div></div><p class="hint">Never send a password. A login of our own keeps yours private.</p></div><div class="note" data-note="note.t.web"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><div class="q unit"><div class="qt" id="q-5">How your regulars say yes to texts</div><div class="hint">For regulars who don&rsquo;t book online: after a job, you show them a QR code on your phone and they tick a box saying yes to reminders. Brandon sends you the QR code once your texting is approved. A spoken yes is fine for appointment texts, but oil-change reminders need that written yes.</div><div class="row cnt" data-id="t.qr" data-kind="one" data-say="Does that work for you?" data-ans="t.qr"><div class="rl" id="r-t-qr-l">Does that work for you?</div><div class="opts" role="group" aria-labelledby="r-t-qr-l"><button type="button" class="opt" data-v="yes" data-say="QR code on my phone works" aria-pressed="false">Yes, a QR code on my phone</button><button type="button" class="opt" data-v="talk" data-say="Let's talk about it" aria-pressed="false">Let&rsquo;s talk about it</button></div></div><div class="note" data-note="note.t.qr"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><div class="q unit"><div class="qt" id="q-6">When customers text your new number</div><div class="hint">Every text a customer sends your new AVRS number comes straight to you. No automatic answers at first; the answers to common questions you picked on Nov 9 come later, once texting has been running. Plus one line after 9 PM: &ldquo;Got it, Anthony replies in the morning.&rdquo; Before texting turns on, we set up together where you answer them. Until then, customers keep texting your cell, (936) 444-3031.</div><div class="row cnt" data-id="t.replies" data-kind="one" data-say="All texts to you, plus the after-9 line?" data-ans="t.replies"><div class="rl" id="r-t-replies-l">All texts to you, plus the after-9 line?</div><div class="opts" role="group" aria-labelledby="r-t-replies-l"><button type="button" class="opt" data-v="yes" data-say="Yes" aria-pressed="false">Yes, that works</button><button type="button" class="opt" data-v="other" data-say="Change something" data-other aria-pressed="false">Change something</button></div><input class="other" type="text" data-for="t.replies" placeholder="What would you change?" aria-label="What would you change?" autocomplete="off" hidden></div><div class="note" data-note="note.t.replies"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><div class="q unit"><div class="qt" id="q-7">A sample text for the phone companies</div><div class="hint"><p>We send the phone companies a few sample texts, like this one. Does it sound like you?</p><p style="margin:8px 0;padding:10px 12px;border-left:3px solid currentColor;opacity:.9">&ldquo;AVRS Automotive: Hi Maria, this is Anthony. Reminder: your brake job is tomorrow, Thursday, with a 2-hour arrival window starting 10:00 AM. Questions? Just reply here. Reply STOP to opt out.&rdquo;</p></div><div class="row cnt" data-id="t.s1" data-kind="one" data-say="Sample reminder text" data-ans="t.s1"><div class="rl" id="r-t-s1-l">The reminder text</div><div class="opts" role="group" aria-labelledby="r-t-s1-l"><button type="button" class="opt" data-v="ok" data-say="Sounds like me" aria-pressed="false">Sounds like me</button><button type="button" class="opt" data-v="other" data-say="Change it" data-other aria-pressed="false">Change it</button></div><input class="other" type="text" data-for="t.s1" placeholder="How would you say it?" aria-label="How would you say it?" autocomplete="off" hidden></div><div class="note" data-note="note.t.s1"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><a class="up" href="#top">Back to the sections</a></section>
+<section class="sect" id="s-book" data-say="BOOKING" aria-labelledby="h-s-book"><h2 class="sec" id="h-s-book">2. Your booking page</h2><p class="lede">Your booking pages are built with what you told us: your jobs, your towns, the 2-hour arrival window. A few last calls on times and prices.</p><div class="q unit"><div class="qt" id="q-8">Last online start</div><div class="hint">You finish by 6 PM. With the 2-hour arrival window, a customer who books a 1-hour job at 3 PM could see you anywhere up to 5, so you&rsquo;re still done by 6. Book later than that and you could run past 6. That&rsquo;s for a 1-hour job; longer jobs get an earlier last start, so they still finish by 6. You can always add later jobs yourself in your web app.</div><div class="row cnt" data-id="b.last" data-kind="one" data-say="Last online start" data-ans="b.last"><div class="rl" id="r-b-last-l">Last start customers can book online</div><div class="opts" role="group" aria-labelledby="r-b-last-l"><button type="button" class="opt" data-v="3" data-say="3 PM" aria-pressed="false">3 PM</button><button type="button" class="opt" data-v="other" data-say="A different time" data-other aria-pressed="false">A different time</button></div><input class="other" type="text" data-for="b.last" placeholder="What time?" aria-label="What time?" autocomplete="off" hidden></div><div class="note" data-note="note.b.last"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><div class="q unit"><div class="qt" id="q-9">Inspections before dark</div><div class="hint">Want the last online inspection at 2 PM, so you&rsquo;re done before dark?</div><div class="row cnt" data-id="b.insp" data-kind="one" data-say="Last online inspection" data-ans="b.insp"><div class="rl" id="r-b-insp-l">Last online inspection</div><div class="opts" role="group" aria-labelledby="r-b-insp-l"><button type="button" class="opt" data-v="2" data-say="2 PM" aria-pressed="false">2 PM</button><button type="button" class="opt" data-v="other" data-say="A different time" data-other aria-pressed="false">A different time</button></div><input class="other" type="text" data-for="b.insp" placeholder="What time?" aria-label="What time?" autocomplete="off" hidden></div><div class="note" data-note="note.b.insp"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><div class="q unit"><div class="qt" id="q-10">Prices on your booking page</div><div class="hint">On Nov 9 you asked us to keep the diagnostic line off your terms. Your booking emails still say the diagnostic is &ldquo;its own charge; doesn&rsquo;t come off the repair&rdquo;.</div><div class="row cnt" data-id="b.diag" data-kind="one" data-say="Diagnostic line in booking emails" data-ans="b.diag"><div class="rl" id="r-b-diag-l">Keep that line in your booking emails?</div><div class="opts" role="group" aria-labelledby="r-b-diag-l"><button type="button" class="opt" data-v="keep" data-say="Keep it" aria-pressed="false">Keep it</button><button type="button" class="opt" data-v="out" data-say="Take it out" aria-pressed="false">Take it out</button></div></div><div class="row cnt" data-id="b.battery" data-kind="text" data-say="A starting price for batteries? (from $&hellip;)" data-ans="b.battery"><div class="rl" id="r-b-battery-l">A starting price for batteries? (from $&hellip;)</div><textarea class="val" id="r-b-battery-i" aria-labelledby="r-b-battery-l" placeholder="e.g. from $&hellip; or leave blank" autocomplete="off" rows="1"></textarea></div><div class="row cnt" data-id="b.brakes" data-kind="text" data-say="Front and rear brakes together, from what?" data-ans="b.brakes"><div class="rl" id="r-b-brakes-l">Front and rear brakes together, from what?</div><textarea class="val" id="r-b-brakes-i" aria-labelledby="r-b-brakes-l" placeholder="e.g. from $&hellip; or leave blank" autocomplete="off" rows="1"></textarea></div><div class="row cnt" data-id="b.drive" data-kind="one" data-say="Inspections: the same drive charge, $2 a mile, one way, past the first 20?" data-ans="b.drive"><div class="rl" id="r-b-drive-l">Inspections: the same drive charge, $2 a mile, one way, past the first 20?</div><div class="opts" role="group" aria-labelledby="r-b-drive-l"><button type="button" class="opt" data-v="same" data-say="Same $2 a mile past 20" aria-pressed="false">Yes, same $2 rule</button><button type="button" class="opt" data-v="other" data-say="Different" data-other aria-pressed="false">Different</button></div><input class="other" type="text" data-for="b.drive" placeholder="What should it be?" aria-label="What should it be?" autocomplete="off" hidden></div><div class="note" data-note="note.b.diag"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><div class="q unit"><div class="qt" id="q-11">When they&rsquo;re not home</div><div class="hint">Some customers leave the keys out and aren&rsquo;t there when you finish.</div><div class="row cnt" data-id="b.pay" data-kind="many" data-say="How they pay when not home" data-ans="b.pay"><div class="rl" id="r-b-pay-l">How should they pay you the same day?</div><div class="opts" role="group" aria-labelledby="r-b-pay-l"><button type="button" class="opt" data-v="zelle" data-say="Zelle" aria-pressed="false">Zelle</button><button type="button" class="opt" data-v="cashapp" data-say="Cash App" aria-pressed="false">Cash App</button><button type="button" class="opt" data-v="venmo" data-say="Venmo" aria-pressed="false">Venmo</button><button type="button" class="opt" data-v="applepay" data-say="Apple Pay" aria-pressed="false">Apple Pay</button><button type="button" class="opt" data-v="chime" data-say="Chime" aria-pressed="false">Chime</button><button type="button" class="opt" data-v="other" data-say="Other" data-other aria-pressed="false">Other</button></div><input class="other" type="text" data-for="b.pay" placeholder="How else?" aria-label="How else?" autocomplete="off" hidden></div><div class="row cnt" data-id="b.noshow" data-kind="text" data-say="A no-show inside 20 miles (there&rsquo;s no drive charge there): do they owe you anything?" data-ans="b.noshow"><div class="rl" id="r-b-noshow-l">A no-show inside 20 miles (there&rsquo;s no drive charge there): do they owe you anything?</div><textarea class="val" id="r-b-noshow-i" aria-labelledby="r-b-noshow-l" placeholder="e.g. nothing, or a set fee" autocomplete="off" rows="1"></textarea></div><div class="row cnt" data-id="b.supplier" data-kind="one" data-say="If the supplier never sends a part: no 20% restocking fee, right?" data-ans="b.supplier"><div class="rl" id="r-b-supplier-l">If the supplier never sends a part: no 20% restocking fee, right?</div><div class="opts" role="group" aria-labelledby="r-b-supplier-l"><button type="button" class="opt" data-v="right" data-say="No fee" aria-pressed="false">Right, no fee</button><button type="button" class="opt" data-v="other" data-say="Not quite" data-other aria-pressed="false">Not quite</button></div><input class="other" type="text" data-for="b.supplier" placeholder="What happens then?" aria-label="What happens then?" autocomplete="off" hidden></div><div class="note" data-note="note.b.pay"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><div class="q unit"><div class="qt" id="q-12">Your oil-change regulars</div><div class="hint">We pull your oil regulars and when you last did them from your calendar screen recording, so you don&rsquo;t have to list them. No cell numbers needed now: each customer gives their own when they say yes to reminders.</div><div class="row cnt" data-id="b.rec" data-kind="one" data-say="Calendar recording" data-ans="b.rec"><div class="rl" id="r-b-rec-l">Your calendar screen recording (the last 6 months and the next few weeks)</div><div class="opts" role="group" aria-labelledby="r-b-rec-l"><button type="button" class="opt" data-v="sent" data-say="Already sent it" aria-pressed="false">Already sent it</button><button type="button" class="opt" data-v="today" data-say="Sending it today" aria-pressed="false">I&rsquo;ll send it today</button><button type="button" class="opt" data-v="how" data-say="How do I record it?" aria-pressed="false">How do I record it?</button></div></div><div data-show-if="b.rec=how"><p class="hint">If there&rsquo;s no record button yet, add it: Settings &rarr; Control Center &rarr; Screen Recording. Then open Control Center (on an iPhone with a home button, swipe up from the bottom) and tap the round record button. Open Calendar, tap the list button at the top so the job names show, and scroll back 6 months, then ahead a few weeks. Tap the red bar to stop; it saves to Photos. Text it to Brandon.</p></div><div class="row cnt" data-id="b.oilall" data-kind="one" data-say="Oil change and maintenance = an oil change" data-ans="b.oilall"><div class="rl" id="r-b-oilall-l">Some jobs in your calendar say &ldquo;oil change and maintenance&rdquo;. Does that always include an oil change?</div><div class="opts" role="group" aria-labelledby="r-b-oilall-l"><button type="button" class="opt" data-v="always" data-say="Always" aria-pressed="false">Always</button><button type="button" class="opt" data-v="sometimes" data-say="Not always" aria-pressed="false">Not always</button><button type="button" class="opt" data-v="unsure" data-say="Not sure" aria-pressed="false">Not sure</button></div></div><div class="row cnt" data-id="b.oilextra" data-kind="text" data-say="Anyone you do oil changes for who isn&rsquo;t on your calendar?" data-ans="b.oilextra"><div class="rl" id="r-b-oilextra-l">Anyone you do oil changes for who isn&rsquo;t on your calendar?</div><textarea class="val" id="r-b-oilextra-i" aria-labelledby="r-b-oilextra-l" placeholder="Names, or leave blank" autocomplete="off" rows="2"></textarea></div><div class="row cnt" data-id="b.never" data-kind="text" data-say="Any customer who asked you not to text or email them?" data-ans="b.never"><div class="rl" id="r-b-never-l">Any customer who asked you not to text or email them?</div><textarea class="val" id="r-b-never-i" aria-labelledby="r-b-never-l" placeholder="Names, or leave blank" autocomplete="off" rows="2"></textarea></div><div class="note" data-note="note.b.rec"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><div class="q unit"><div class="qt" id="q-13">Your website words</div><div class="row cnt" data-id="b.guar" data-kind="one" data-say="Guarantee line" data-ans="b.guar"><div class="rl" id="r-b-guar-l">OK with &ldquo;Every repair backed by my 1-week labor guarantee&rdquo;, with no guarantee on parts the customer brings?</div><div class="opts" role="group" aria-labelledby="r-b-guar-l"><button type="button" class="opt" data-v="yes" data-say="Yes" aria-pressed="false">Yes</button><button type="button" class="opt" data-v="other" data-say="Change it" data-other aria-pressed="false">Change it</button></div><input class="other" type="text" data-for="b.guar" placeholder="How would you put it?" aria-label="How would you put it?" autocomplete="off" hidden></div><div class="row cnt" data-id="b.workhrs" data-kind="text" data-say="Your work hours (when you take jobs)" data-ans="b.workhrs"><div class="rl" id="r-b-workhrs-l">Your work hours (when you take jobs)</div><textarea class="val" id="r-b-workhrs-i" aria-labelledby="r-b-workhrs-l" placeholder="Days and times" autocomplete="off" rows="1"></textarea></div><div class="row cnt" data-id="b.phonehrs" data-kind="text" data-say="Your phone hours (when you answer calls)" data-ans="b.phonehrs"><div class="rl" id="r-b-phonehrs-l">Your phone hours (when you answer calls)</div><textarea class="val" id="r-b-phonehrs-i" aria-labelledby="r-b-phonehrs-l" placeholder="Days and times" autocomplete="off" rows="1"></textarea></div><div class="row cnt" data-id="b.towns" data-kind="one" data-say="Website + Google name the instant towns" data-ans="b.towns"><div class="rl" id="r-b-towns-l">Your booking page lets these towns book instantly: Conroe, Spring, Magnolia, Montgomery, Willis, The Woodlands, Cut and Shoot, Shenandoah, Oak Ridge North and Panorama Village. Should your website and Google name the same towns?</div><div class="opts" role="group" aria-labelledby="r-b-towns-l"><button type="button" class="opt" data-v="yes" data-say="Yes, the same" aria-pressed="false">Yes, the same</button><button type="button" class="opt" data-v="other" data-say="Change it" data-other aria-pressed="false">Change it</button></div><input class="other" type="text" data-for="b.towns" placeholder="What should change?" aria-label="What should change?" autocomplete="off" hidden></div><div class="note" data-note="note.b.guar"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><div class="q unit"><div class="qt" id="q-14">Your calendar</div><div class="hint">Your iPhone calendar runs on iCloud, which can&rsquo;t sync both ways with your web app. We&rsquo;d make your web app your one calendar, and only add a copy into your iPhone Calendar if we can prove it works.</div><div class="row cnt" data-id="b.cal" data-kind="one" data-say="Web app as your one calendar?" data-ans="b.cal"><div class="rl" id="r-b-cal-l">Web app as your one calendar?</div><div class="opts" role="group" aria-labelledby="r-b-cal-l"><button type="button" class="opt" data-v="yes" data-say="Yes" aria-pressed="false">Yes</button><button type="button" class="opt" data-v="talk" data-say="Let's talk about it" aria-pressed="false">Let&rsquo;s talk about it</button></div></div><div class="note" data-note="note.b.cal"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><a class="up" href="#top">Back to the sections</a></section>
+<section class="sect" id="s-app" data-say="WEB APP" aria-labelledby="h-s-app"><h2 class="sec" id="h-s-app">3. Your web app on your phone</h2><p class="lede">Everything in it right now is sample data: made-up customers and jobs, so you can see it full and play with it. It&rsquo;s all cleared before your real customers go in.</p><div class="q unit"><div class="qt" id="q-15">Put it on your home screen</div><div class="hint"><ol style="margin:0;padding-left:20px"><li>Open the web app link in the same text as this page, in Safari.</li><li>Tap <b>Share</b>, then <b>Add to Home Screen</b>. Your AVRS logo is the icon.</li><li>Open it from your home screen and put in your PIN (the one Brandon gave you on the call).</li></ol></div><div class="row cnt" data-id="a.ios" data-kind="text" data-say="iOS version" data-ans="a.ios"><div class="rl" id="r-a-ios-l">Your iPhone&rsquo;s version: Settings &rarr; General &rarr; About &rarr; iOS Version</div><textarea class="val" id="r-a-ios-i" aria-labelledby="r-a-ios-l" placeholder="e.g. 17.6" autocomplete="off" rows="1"></textarea></div><div class="note" data-note="note.a.ios"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><div class="q unit"><div class="qt" id="q-16">Alerts and Touch ID</div><div class="hint"><p>These need iOS 16.4 or newer. If yours is older, skip this one: your PIN still works and your booking emails stay on.</p><ol style="margin:0;padding-left:20px"><li>Tap <b>AVRS Automotive</b> at the top of your web app: that&rsquo;s your Settings.</li><li>Flip the switch next to <b>Buzz on this phone</b>, then tap <b>Allow</b>.</li><li>Flip the switch next to <b>Face ID / Touch ID</b> and touch your home button.</li><li>Tap <b>Test</b> next to Buzz, then lock your phone. Did the alert show up?</li><li>Close the web app, open it again and tap <b>Unlock with Face ID / Touch ID</b>.</li></ol></div><div class="row cnt" data-id="a.buzz" data-kind="one" data-say="Test alert showed up" data-ans="a.buzz"><div class="rl" id="r-a-buzz-l">Did the test alert show up?</div><div class="opts" role="group" aria-labelledby="r-a-buzz-l"><button type="button" class="opt" data-v="yes" data-say="Yes" aria-pressed="false">Yes</button><button type="button" class="opt" data-v="no" data-say="No" aria-pressed="false">No</button><button type="button" class="opt" data-v="skip" data-say="Skipped, older iOS" aria-pressed="false">Skipped (older iOS)</button></div></div><div class="row cnt" data-id="a.touch" data-kind="one" data-say="Touch ID opens it" data-ans="a.touch"><div class="rl" id="r-a-touch-l">Does Touch ID open it?</div><div class="opts" role="group" aria-labelledby="r-a-touch-l"><button type="button" class="opt" data-v="yes" data-say="Yes" aria-pressed="false">Yes</button><button type="button" class="opt" data-v="no" data-say="No, PIN only" aria-pressed="false">No, I use the PIN</button><button type="button" class="opt" data-v="skip" data-say="Skipped, older iOS" aria-pressed="false">Skipped (older iOS)</button></div></div><div class="note" data-note="note.a.buzz"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><div class="q unit"><div class="qt" id="q-17">Try the inspection checklist</div><div class="hint"><ol style="margin:0;padding-left:20px"><li>Open today&rsquo;s first job and tap <b>Start the checklist</b>: 46 points in the order you&rsquo;d walk around a car. Tap a section to open it.</li><li>Tap <b>Good</b>, <b>Soon</b> or <b>Now</b> on a few items. Open Brakes, tap Front brake pads and type a thickness: it picks the color for you. The &#128274; box is only for you (upsell ideas, part numbers).</li><li>It&rsquo;s your list: tap <b>Edit list</b> to hide, rename, move or add items and sections.</li><li>Tap <b>Finish &amp; make the report</b>, then <b>Open the report</b>. That&rsquo;s what your customer gets, and it saves as a PDF. It&rsquo;s a sample customer, so tap Open the report, not Text it.</li></ol></div><div class="row cnt" data-id="a.sheet" data-kind="one" data-say="Use my own inspection sheet" data-ans="a.sheet"><div class="rl" id="r-a-sheet-l">Do you already use an inspection sheet of your own?</div><div class="opts" role="group" aria-labelledby="r-a-sheet-l"><button type="button" class="opt" data-v="yes" data-say="Yes, photo coming" aria-pressed="false">Yes (I&rsquo;ll text Brandon a photo)</button><button type="button" class="opt" data-v="no" data-say="No" aria-pressed="false">No</button></div></div><div class="row cnt" data-id="a.list" data-kind="text" data-say="What would you add to the list, or take off?" data-ans="a.list"><div class="rl" id="r-a-list-l">What would you add to the list, or take off?</div><textarea class="val" id="r-a-list-i" aria-labelledby="r-a-list-l" placeholder="Optional" autocomplete="off" rows="2"></textarea></div><div class="note" data-note="note.a.sheet"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><div class="q unit"><div class="qt" id="q-18">Your Settings</div><div class="hint">Tap <b>AVRS Automotive</b> at the top: dark mode, bigger text, Touch ID, when your morning rundown comes, and <b>My texts</b>, the ready texts you send with one tap. Change any of them word for word; put back the original any time.</div><div class="row cnt" data-id="a.settings" data-kind="text" data-say="Settings: anything to change" data-ans="a.settings"><div class="rl" id="r-a-settings-l">Anything you&rsquo;d change in there?</div><textarea class="val" id="r-a-settings-i" aria-labelledby="r-a-settings-l" placeholder="Optional" autocomplete="off" rows="2"></textarea></div><div class="note" data-note="note.a.settings"><button type="button" class="notebtn">+ Add a note</button><textarea class="notebox" rows="2" placeholder="Anything to add or explain? Say it here. It comes along when you copy." aria-label="Your note on this question" autocomplete="off" hidden></textarea></div></div><a class="up" href="#top">Back to the sections</a></section>
+<div class="close"><p>Your answers save on this phone as you go, but a phone can clear them if the page sits unopened. Send them to Brandon when you finish.</p></div>
+<div class="talk"><p>Easier to talk it through? Text Brandon and he&rsquo;ll call you.</p><a class="callme" href="sms:+18323962496">Text Brandon</a><p class="num">(832) 396-2496</p></div>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div class="bar"><div class="barin"><p class="barhint">Skip anything. Copy any time.</p>
+<button type="button" id="copy" class="send">Copy my answers</button></div></div>
+<div id="fallback" class="sheet" role="dialog" aria-modal="true" aria-labelledby="fbh" hidden><div class="sheetin">
+<p id="fbh" class="fbh">Your phone didn&rsquo;t let the button copy.</p>
+<p class="fbp">Press and hold the text below, tap <strong>Select All</strong>, then <strong>Copy</strong>, and paste it into a text to Brandon.</p>
+<textarea id="out" readonly aria-label="Your answers, ready to copy"></textarea>
+<button type="button" id="fbclose" class="send">Done</button>
+</div></div>
+<script>
+(function () {
+  'use strict';
+  var KEY = document.body.getAttribute('data-key'), PART = document.body.getAttribute('data-part');
+  var S = {};
+  try { S = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { S = {}; }
+  if (typeof S !== 'object' || Array.isArray(S)) S = {};
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  // the start step: the secure card page sends him back with ?started=1 after paying; this phone remembers it, so the
+  // button gives way to "You're started" (the card link itself takes one payment only)
+  (function () {
+    var b = document.getElementById('startbtn'), d = document.getElementById('started'), sm = document.getElementById('startsmall');
+    if (!b || !d) return;
+    var on = false;
+    try { if (/[?&]started=1(?:&|$)/.test(location.search)) localStorage.setItem(KEY + ':started', '1'); on = localStorage.getItem(KEY + ':started') === '1'; } catch (e) {}
+    if (on) { b.hidden = true; if (sm) sm.hidden = true; d.hidden = false; }
+  })();
+  function $(s, el) { return (el || document).querySelector(s); }
+  function $$(s, el) { return [].slice.call((el || document).querySelectorAll(s)); }
+  function has(v) { return Array.isArray(v) ? v.length > 0 : (v !== undefined && v !== null && String(v).trim() !== ''); }
+  function trim(v) { return String(v).replace(/\s+/g, ' ').trim(); }
+
+  function keysFor(key) {
+    if (key.slice(-2) !== '.*') return [key];
+    var p = key.slice(0, -1);
+    return Object.keys(S).filter(function (k) { return k.indexOf(p) === 0 && k.indexOf('~') < 0; });
+  }
+  function test(expr) {
+    var i = expr.indexOf('='), key = expr.slice(0, i), vals = expr.slice(i + 1).split(',');
+    return keysFor(key).some(function (k) {
+      var v = S[k];
+      if (!has(v)) return false;
+      if (vals.indexOf('__typed__') >= 0) return true;
+      if (Array.isArray(v)) return v.some(function (x) { return vals.indexOf(x) >= 0; });
+      return vals.indexOf(String(v)) >= 0;
+    });
+  }
+  function conditions() {
+    $$('[data-show-if],[data-hide-if]').forEach(function (el) {
+      var show = el.hasAttribute('data-show-if') ? test(el.getAttribute('data-show-if')) : true;
+      var hide = el.hasAttribute('data-hide-if') ? test(el.getAttribute('data-hide-if')) : false;
+      el.hidden = !(show && !hide);
+    });
+  }
+  function visible(el) { return !el.closest('[hidden]'); }
+
+  function paint(row) {
+    var id = row.getAttribute('data-id'), v = S[id], kind = row.getAttribute('data-kind');
+    if (kind === 'one' || kind === 'many') {
+      $$('.opt', row).forEach(function (b) {
+        var bv = b.getAttribute('data-v'), on = Array.isArray(v) ? v.indexOf(bv) >= 0 : v === bv;
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      var o = $('input.other', row);
+      if (o) {
+        o.hidden = !$$('.opt[data-other]', row).some(function (b) { return b.getAttribute('aria-pressed') === 'true'; });
+        if (document.activeElement !== o) o.value = S[id + '~other'] || '';
+      }
+    } else {
+      var f = $('.val', row);
+      if (f && document.activeElement !== f) f.value = has(v) ? v : '';
+    }
+  }
+  function pick(b) {
+    var row = b.closest('.row'), id = row.getAttribute('data-id'), kind = row.getAttribute('data-kind'), v = b.getAttribute('data-v');
+    if (kind === 'many') {
+      var a = Array.isArray(S[id]) ? S[id].slice() : [], i = a.indexOf(v);
+      if (i >= 0) a.splice(i, 1);
+      else if (b.hasAttribute('data-solo')) a = [v];
+      else {
+        a = a.filter(function (x) { var ob = $('.opt[data-v="' + x + '"]', row); return !(ob && ob.hasAttribute('data-solo')); });
+        a.push(v);
+      }
+      if (a.length) S[id] = a; else delete S[id];
+    } else {
+      if (S[id] === v) delete S[id]; else S[id] = v;
+    }
+    save(); paint(row); refresh();
+    if (b.hasAttribute('data-other') && b.getAttribute('aria-pressed') === 'true') {
+      var o = $('input.other', row); if (o) { try { o.focus({ preventScroll: true }); } catch (e) { o.focus(); } }
+    }
+  }
+  function setVal(k, v) { if (trim(v)) S[k] = v; else delete S[k]; save(); }
+
+  /* his own note on any question: the button steps aside; once opened the box stays (an empty note never ships) */
+  function note(w, focus) {
+    var x = $('.notebox', w);
+    $('.notebtn', w).hidden = true; x.hidden = false;
+    if (document.activeElement !== x) x.value = S[w.getAttribute('data-note')] || '';
+    if (focus) { try { x.focus({ preventScroll: true }); } catch (e) { x.focus(); } }
+  }
+
+  /* jobs: his four are fixed; up to four more he adds himself */
+  function rowOf(id) { return $('.row[data-id="' + id + '"]'); }
+  function optSay(row, v) {
+    var b = row && $('.opt[data-v="' + v + '"]', row);
+    return b ? (b.getAttribute('data-say') || trim(b.textContent)) : String(v);
+  }
+  function jobName(job) {
+    if (job.hasAttribute('data-custom')) {
+      var n = S['job.' + job.getAttribute('data-job') + '.name'];
+      return has(n) ? trim(n) : 'Added job';
+    }
+    return job.getAttribute('data-name');
+  }
+  function jobBits(job) {
+    var k = 'job.' + job.getAttribute('data-job') + '.', bits = [], t = S[k + 'time'], tr = rowOf(k + 'time');
+    if (has(t)) {
+      var ts = (t === 'other' && has(S[k + 'time~other'])) ? trim(S[k + 'time~other']) : optSay(tr, t);
+      var tx = job.getAttribute('data-texted');
+      if (tx) ts += (t === tx) ? ' (as texted)' : ' (texted ' + optSay(tr, tx) + ')';
+      bits.push(ts);
+    }
+    if (has(S[k + 'part'])) bits.push('part first: ' + optSay(rowOf(k + 'part'), S[k + 'part']).toLowerCase());
+    if (has(S[k + 'online'])) bits.push('online: ' + optSay(rowOf(k + 'online'), S[k + 'online']).toLowerCase());
+    var pr = rowOf(k + 'price');
+    if (has(S[k + 'price']) && pr && visible(pr)) bits.push('from $' + trim(S[k + 'price']).replace(/^\$+/, ''));
+    return bits;
+  }
+  function jobStatus(job) {
+    var bits = jobBits(job), tx = job.getAttribute('data-texted-label');
+    if (job.hasAttribute('data-custom')) $('.jn', job).textContent = jobName(job);
+    $('.js', job).textContent = bits.length ? bits.join(' · ')
+      : (tx ? 'Texted: ' + tx + '. Tap to confirm.' : 'Set how long it takes.');
+    job.classList.toggle('set', bits.length > 0);
+  }
+  function slotOn(s) { return S['job.' + s + '.on'] === '1'; }
+  function addJob(name) {
+    var slots = $$('.job[data-custom]').map(function (j) { return j.getAttribute('data-job'); });
+    var free = slots.filter(function (s) { return !slotOn(s); })[0];
+    if (!free) return;
+    S['job.' + free + '.on'] = '1';
+    if (name !== '__own__') S['job.' + free + '.name'] = name;
+    save(); $$('.row[data-id^="job.' + free + '."]').forEach(paint); refresh();
+    var j = $('.job[data-job="' + free + '"]');
+    if (name === '__own__') { var f = $('.val', j); try { f.focus({ preventScroll: true }); } catch (e) { f.focus(); } }
+  }
+  function removeJob(s) {
+    Object.keys(S).forEach(function (k) { if (k.indexOf('job.' + s + '.') === 0) delete S[k]; });
+    save(); $$('.row[data-id^="job.' + s + '."]').forEach(paint); refresh();
+  }
+  function addState() {
+    var on = $$('.job[data-custom]').filter(function (j) { return slotOn(j.getAttribute('data-job')); });
+    var names = on.map(function (j) { return jobName(j).toLowerCase(); }), full = on.length >= 4;
+    $$('[data-job-add]').forEach(function (b) {
+      var n = b.getAttribute('data-job-add');
+      b.disabled = full || (n !== '__own__' && names.indexOf(n.toLowerCase()) >= 0);
+    });
+    var jf = $('#jobsfull'); if (jf) jf.hidden = !full;
+  }
+
+  /* progress lives in the section list only */
+  function answered(el) {
+    return el.getAttribute('data-ans').split(',').some(function (k) {
+      return keysFor(k).some(function (kk) { return has(S[kk]); });
+    });
+  }
+  function unitDone(u) {
+    if (u.hasAttribute('data-ans')) return answered(u);
+    return $$('.cnt[data-ans]', u).filter(visible).some(answered);
+  }
+  function swap() {
+    var he = S['tech.answerer'] === 'owner';
+    $$('.sw').forEach(function (e) { e.textContent = e.getAttribute(he ? 'data-he' : 'data-you'); });
+  }
+  function refresh() {
+    conditions();
+    swap();
+    $$('.job').forEach(jobStatus);
+    addState();
+    var units = $$('.unit').filter(visible);
+    $$('.toc a[data-sec]').forEach(function (a) {
+      var sec = document.getElementById(a.getAttribute('data-sec'));
+      var mine = units.filter(function (el) { return sec.contains(el); }), n = mine.filter(unitDone).length;
+      $('.n', a).textContent = mine.length ? n + '/' + mine.length : '';
+      a.classList.toggle('done', mine.length > 0 && n === mine.length);
+      a.classList.toggle('some', n > 0 && n < mine.length);
+    });
+  }
+
+  /* the text that gets copied */
+  function rowText(row) {
+    var id = row.getAttribute('data-id'), kind = row.getAttribute('data-kind'), v = S[id];
+    if (!has(v)) return '';
+    if (kind === 'text') {
+      var pf = row.getAttribute('data-prefix') || '', tv = trim(v);
+      return (pf && tv.indexOf(pf) !== 0 ? pf : '') + tv;
+    }
+    return (Array.isArray(v) ? v : [v]).filter(function (x) {
+      var b = $('.opt[data-v="' + x + '"]', row);
+      return !(b && b.closest('[hidden]'));
+    }).map(function (x) {
+      var s = optSay(row, x), b = $('.opt[data-v="' + x + '"]', row);
+      if (b && b.hasAttribute('data-other') && has(S[id + '~other'])) s += ' - ' + trim(S[id + '~other']);
+      return s;
+    }).join(', ');
+  }
+  function sayOf(row) {
+    var nf = row.getAttribute('data-name-from');
+    if (nf && has(S[nf])) return trim(S[nf]);
+    return row.getAttribute('data-say');
+  }
+  function build() {
+    var date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    var out = ['AVRS setup answers - ' + date, PART], count = 0;
+    $$('section.sect').forEach(function (sec) {
+      var lines = [];
+      $$('.row[data-id], .job, .note', sec).forEach(function (el) {
+        if (!visible(el)) return;
+        if (el.classList.contains('note')) {
+          var nv = S[el.getAttribute('data-note')];
+          if (has(nv)) {
+            var qt = $('.qt', el.closest('.q')), q = qt ? trim(qt.textContent) : 'this one';
+            if (q.length > 90) q = q.slice(0, 90).replace(/\s+\S*$/, '') + '...';
+            lines.push('My note (' + q + '): ' + trim(nv)); count++;
+          }
+          return;
+        }
+        if (el.classList.contains('job')) {
+          var bits = jobBits(el), custom = el.hasAttribute('data-custom');
+          if (bits.length || (custom && slotOn(el.getAttribute('data-job')))) {
+            lines.push(jobName(el) + ': ' + (bits.length ? bits.join('; ') : 'added, no details yet')); count++;
+          }
+          return;
+        }
+        if (el.closest('.job')) return;
+        if (el.getAttribute('data-id').indexOf('where.othername') === 0) return;
+        var t = rowText(el);
+        if (t) { lines.push(sayOf(el) + ': ' + t); count++; }
+      });
+      if (lines.length) { out.push(''); out.push(sec.getAttribute('data-say')); out = out.concat(lines); }
+    });
+    if (!count) { out.push(''); out.push('Nothing answered yet.'); }
+    return out.join('\n');
+  }
+
+  /* copying: the clipboard first, then the older way, then a box he can select by hand */
+  var toastTimer;
+  function toast(msg) {
+    var t = $('#toast'); t.textContent = msg; t.classList.add('on');
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove('on'); }, 8000);
+  }
+  function copied() { toast('Copied. Now paste it into a text to Brandon, (832) 396-2496.'); }
+  function legacy(text) {
+    var ok = false, ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px;';
+    document.body.appendChild(ta);
+    try { ta.focus(); ta.select(); ta.setSelectionRange(0, text.length); ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok === true;
+  }
+  function manual(text) {
+    var sh = $('#fallback'), box = $('#out');
+    box.value = text; sh.hidden = false;
+    setTimeout(function () {
+      try { box.focus(); box.select(); box.setSelectionRange(0, box.value.length); box.scrollTop = 0; } catch (e) {}
+    }, 30);
+  }
+  function copy() {
+    var text = build();
+    function fail() { if (legacy(text)) copied(); else manual(text); }
+    try {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(text).then(copied, fail);
+        return;
+      }
+    } catch (e) {}
+    fail();
+  }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target; if (!t || !t.closest) return;
+    var a = t.closest('[data-job-add]'); if (a) { if (!a.disabled) addJob(a.getAttribute('data-job-add')); return; }
+    var r = t.closest('[data-job-rm]'); if (r) { removeJob(r.getAttribute('data-job-rm')); return; }
+    var b = t.closest('.opt'); if (b && b.closest('.row[data-id]')) { pick(b); return; }
+    var nb = t.closest('.notebtn'); if (nb) { note(nb.closest('.note'), true); return; }
+    if (t.closest('#copy')) { copy(); return; }
+    if (t.closest('#fbclose')) { $('#fallback').hidden = true; return; }
+  });
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    if (t.classList.contains('val')) { setVal(t.closest('.row').getAttribute('data-id'), t.value); refresh(); }
+    else if (t.classList.contains('other')) { setVal(t.getAttribute('data-for') + '~other', t.value); refresh(); }
+    else if (t.classList.contains('notebox')) { setVal(t.closest('.note').getAttribute('data-note'), t.value); }
+  });
+
+  $$('.row[data-id]').forEach(paint);
+  $$('.note').forEach(function (w) { if (has(S[w.getAttribute('data-note')])) note(w); });
+  refresh();
+})();
+</script>
+</body></html>
