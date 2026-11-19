@@ -1,0 +1,64 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>AVRS online booking</title>
+<style>
+:root{--ink:#14181f;--mut:#4a5263;--bg:#f6f7f9;--card:#fff;--line:#dfe3ea;--blue:#1f4fd8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,system-ui,Segoe UI,Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 60px}h1{font-size:26px;margin:0 0 6px}
+.sub{color:var(--mut);margin:0 0 20px}section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 14px}
+h2{font-size:19px;margin:0 0 8px}ol{margin:6px 0;padding-left:22px}li{margin:4px 0}code{background:#eef1f6;border-radius:5px;padding:1px 5px}
+textarea{width:100%;font:12.5px/1.4 ui-monospace,Menlo,monospace;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fbfcfd;color:var(--ink);resize:vertical}
+.cp,.go{display:inline-block;margin-top:8px;min-height:44px;padding:11px 22px;border:0;border-radius:10px;background:var(--blue);color:#fff;font-weight:700;font-size:15px;cursor:pointer;text-decoration:none}
+.note{color:var(--mut);font-size:14.5px}
+</style></head><body><main>
+<h1>AVRS online booking</h1>
+<p class="sub">The second part: customers book Anthony right on his website. About 10 minutes. Thank you!</p>
+
+<section><h2>1. See how it will look</h2>
+<p>Anthony&rsquo;s Book Auto Repair Now page with the booking calendar added at the top:</p>
+<a class="go" href="https://jasper4-web.github.io/shared-pages/avrs-preview/book-page/" target="_blank" rel="noopener">Open the preview</a>
+<p class="note">The calendar in the preview is real: a booking made there goes straight to Anthony.</p></section>
+
+<section><h2>2. Add it to the page</h2>
+<ol><li>Open the <b>Book Auto Repair Now</b> page in Elementor.</li>
+<li>Drag an <b>HTML widget</b> to the very top of the page, above the map.</li>
+<li>Paste this in, then <b>Update</b>.</li></ol>
+<textarea id="book" readonly rows="9" spellcheck="false">&lt;!-- AVRS online booking: paste into an Elementor HTML widget at the top of the Book Auto Repair Now page. --&gt;
+&lt;style&gt;
+.avrs-book{max-width:760px;margin:0 auto;padding:32px 16px 16px;text-align:center;color:#1a1a1a}
+.avrs-book h2{font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:700;color:#253993;font-size:34px;line-height:1.15;margin:0 0 8px}
+.avrs-book p{font-family:&quot;Open Sans&quot;,Helvetica,Arial,sans-serif}
+.avrs-book .ab-lead{font-size:17px;line-height:1.5;color:#4a4a4a;margin:0 0 20px}
+.avrs-book iframe{display:block;width:100%;min-height:760px;border:0;overflow:hidden;background:#fff}
+.avrs-book .ab-far{margin:18px auto 0;max-width:560px;padding:18px 16px;background:#fff;border:1px solid #dadeef}
+.avrs-book .ab-far p{font-size:16px;line-height:1.5;margin:0 0 12px}
+.avrs-book .ab-btn{display:inline-block;min-height:48px;padding:13px 26px;border:2px solid #253993;color:#253993;background:#fff;font:700 15px/1.2 &quot;Open Sans&quot;,Helvetica,Arial,sans-serif;text-transform:uppercase;letter-spacing:.05em;text-decoration:none}
+.avrs-book .ab-btn:hover{background:#253993;color:#fff}
+.avrs-book .ab-call{font-size:16px;margin:18px 0 0}
+.avrs-book .ab-call a{color:#253993;font-weight:700;text-decoration:none;white-space:nowrap}
+&lt;/style&gt;
+&lt;div class=&quot;avrs-book&quot; id=&quot;book-online&quot;&gt;
+  &lt;h2&gt;Book your mobile mechanic&lt;/h2&gt;
+  &lt;p class=&quot;ab-lead&quot;&gt;Pick a job and a time. We come to you.&lt;/p&gt;
+  &lt;iframe src=&quot;https://api.leadconnectorhq.com/widget/groups/book-avrs&quot; title=&quot;Book AVRS Automotive&quot;&gt;&lt;/iframe&gt;
+  &lt;div class=&quot;ab-far&quot;&gt;
+    &lt;p&gt;&lt;b&gt;Car in another town?&lt;/b&gt; Pick a time and we&amp;rsquo;ll call or text to confirm it.&lt;/p&gt;
+    &lt;a class=&quot;ab-btn&quot; href=&quot;https://api.leadconnectorhq.com/widget/groups/avrs-request&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Request a time&lt;/a&gt;
+  &lt;/div&gt;
+  &lt;p class=&quot;ab-call&quot;&gt;Rather talk to us? Call or text &lt;a href=&quot;tel:+19364443031&quot;&gt;(936) 444-3031&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;script src=&quot;https://link.msgsndr.com/js/form_embed.js&quot;&gt;&lt;/script&gt;
+</textarea>
+<button type="button" class="cp" data-for="book">Copy</button>
+<p class="note">Everything below it on the page can stay as it is. The calendar is already connected to Anthony&rsquo;s schedule: his open times show, and every booking lands in his web app.</p></section>
+</main>
+<script>
+document.querySelectorAll('.cp').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var t = document.getElementById(b.getAttribute('data-for'));
+    function ok() { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 2000); }
+    function old() { t.focus(); t.select(); try { if (document.execCommand('copy')) return ok(); } catch (e) {} b.textContent = 'Press Cmd+C'; }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t.value).then(ok, old); else old();
+  });
+});
+</script></body></html>
