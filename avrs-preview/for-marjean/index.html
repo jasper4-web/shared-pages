@@ -1,0 +1,298 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>AVRS website updates</title>
+<style>
+:root{--ink:#14181f;--mut:#4a5263;--bg:#f6f7f9;--card:#fff;--line:#dfe3ea;--blue:#1f4fd8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,system-ui,Segoe UI,Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 60px}h1{font-size:26px;margin:0 0 6px}
+.sub{color:var(--mut);margin:0 0 20px}section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 14px}
+h2{font-size:19px;margin:0 0 8px}ol,ul{margin:6px 0;padding-left:22px}li{margin:4px 0}code{background:#eef1f6;border-radius:5px;padding:1px 5px}
+textarea{width:100%;font:12.5px/1.4 ui-monospace,Menlo,monospace;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fbfcfd;color:var(--ink);resize:vertical}
+.cp{margin-top:8px;min-height:44px;padding:0 22px;border:0;border-radius:10px;background:var(--blue);color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+.note{color:var(--mut);font-size:14.5px}
+</style></head><body><main>
+<h1>AVRS website updates</h1>
+<p class="sub">Everything for Anthony&rsquo;s site, ready to copy and paste. About 20 minutes. Thank you!</p>
+
+<section><h2>1. Fix two phone links (on every page)</h2>
+<ol><li>The <b>&ldquo;Get Auto Repair Now&rdquo;</b> buttons in the header call <b>(281) 309-1299</b>, an old number. Point both to <b>(936) 444-3031</b> (link: <code>tel:+19364443031</code>).</li>
+<li>In the footer, the link that shows <b>(936) 444-3031</b> actually dials 936-444-301 (one digit missing). Change the link to <code>tel:+19364443031</code>.</li></ol></section>
+
+<section><h2>2. Privacy Policy page</h2>
+<ol><li>Edit the existing <b>Privacy Policy</b> page (address <code>privacy-policy</code>). Please don&rsquo;t make a new one: it would become <code>privacy-policy-2</code>.</li>
+<li>Add an <b>Elementor HTML widget</b> (not the Text Editor) and paste this in. Hide the page title (the page has its own).</li></ol>
+<textarea id="priv" readonly rows="8" spellcheck="false">&lt;div class=&quot;avrs-legal&quot;&gt;
+&lt;style&gt;
+  .avrs-legal{--avrs-blue:#1B4F9C;max-width:720px;margin:0 auto;padding:32px 18px 64px;color:#1f2430;
+    font-size:16px;line-height:1.65;font-family:inherit;box-sizing:border-box;overflow-wrap:anywhere}
+  .avrs-legal *{box-sizing:border-box}
+  .avrs-legal h1,.avrs-legal h2{text-transform:none;letter-spacing:normal}
+  .avrs-legal h1{font-size:28px;line-height:1.25;margin:0 0 4px;color:#111}
+  .avrs-legal .avrs-sub{color:#5a6070;font-size:14px;margin:0 0 24px}
+  .avrs-legal h2{font-size:19px;line-height:1.3;margin:30px 0 8px;color:var(--avrs-blue)}
+  .avrs-legal p{margin:0 0 12px}
+  .avrs-legal ul{list-style:disc;padding-left:20px;margin:0 0 12px}
+  .avrs-legal li{list-style:inherit;margin:6px 0}
+  .avrs-legal a{color:var(--avrs-blue)}
+  .avrs-legal a[href^=&quot;tel:&quot;],.avrs-legal a[href^=&quot;mailto:&quot;]{display:inline-block;padding:9px 0}
+  .avrs-legal .avrs-box{background:#f2f6fc;border:1px solid #cddcf2;border-left:4px solid var(--avrs-blue);
+    border-radius:8px;padding:14px 16px;margin:14px 0}
+  .avrs-legal .avrs-box p:last-child{margin-bottom:0}
+  .avrs-legal .avrs-foot{margin-top:36px;padding-top:16px;border-top:1px solid #e2e6ee;font-size:15px}
+  .avrs-legal .avrs-foot a{display:inline-block;padding:10px 0}
+&lt;/style&gt;
+
+&lt;h1&gt;Privacy Policy&lt;/h1&gt;
+&lt;p class=&quot;avrs-sub&quot;&gt;AVRS Automotive, LLC · Effective November 19, 2026&lt;/p&gt;
+
+&lt;p&gt;AVRS Automotive, LLC is my mobile auto repair business. I&#x27;m Anthony Simmons, the owner, and I&#x27;m the
+mechanic who comes to you. This page explains what I keep about you, why I keep it, who else handles it,
+and how to have me stop contacting you or delete it.&lt;/p&gt;
+
+&lt;h2&gt;What I keep&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;You:&lt;/strong&gt; your name, cell number and email.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Where the car is:&lt;/strong&gt; the address, town and zip where I do the work.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Your car:&lt;/strong&gt; year, make, model, VIN, plate, mileage, photos you send me (like the door
+      sticker), what it&#x27;s doing and what I did.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Your jobs:&lt;/strong&gt; bookings, quotes, the date of your last oil change, and the texts and
+      emails between us.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Your texting choices:&lt;/strong&gt; whether you agreed to texts, which kind, when and where you
+      agreed, and the wording you saw, so I can show you asked for them. This may include your device&#x27;s
+      internet (IP) address. If you text STOP, I keep that too.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;How I use it&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;To book, confirm and do the work you ask for, and remind you the day before.&lt;/li&gt;
+  &lt;li&gt;To keep you posted about your job, send you quotes and answer your questions.&lt;/li&gt;
+  &lt;li&gt;To remind you when your oil change is due, follow up on a quote I gave you, and ask for a review
+      after a job. These come by text, only to customers who agreed.&lt;/li&gt;
+  &lt;li&gt;To keep a service record for your car, and for taxes and other legal records.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Texting and your mobile information&lt;/h2&gt;
+&lt;div class=&quot;avrs-box&quot;&gt;
+  &lt;p&gt;No mobile information will be shared with third parties/affiliates for marketing/promotional
+  purposes. Information sharing to subcontractors in support services, such as customer service, is
+  permitted. All other use case categories exclude text messaging originator opt-in data and consent;
+  this information will not be shared with any third parties.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;My texting number, (936) 284-4329, only texts you if you agreed to texts, texted it first, or
+called me, got my voicemail, and heard my greeting say a text is coming (one text back), and agreeing is never required to book or to get service. How texting works, including STOP and HELP, is
+on my &lt;a href=&quot;https://avrsautomotive.com/terms/&quot;&gt;Terms page&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2&gt;Who else handles it&lt;/h2&gt;
+&lt;p&gt;I don&#x27;t sell your information. A few outside services help me run the business, and each one gets only
+what it needs to do that job for me:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;My booking and messaging platform&lt;/strong&gt; keeps my customer list and calendar, takes
+      online bookings, and sends my texts and emails.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;My web app host&lt;/strong&gt; runs the web app I work from on my phone. It can also read a photo, like a
+      VIN plate, to fill in the details for me.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Phone carriers and email services&lt;/strong&gt; deliver the texts and emails.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;The tech company that set up these tools for me&lt;/strong&gt; and keeps them running sees your
+      details only to set up, fix and run them.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Another mechanic I hire to finish a repair&lt;/strong&gt; gets the details of that job, like where the car
+      is and what it needs.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Vehicle lookups and parts suppliers&lt;/strong&gt; get only the car details needed, like the
+      VIN, to identify your car and order the right parts.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;When the law requires it&lt;/strong&gt;, or to protect my rights in a dispute.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;My website&lt;/h2&gt;
+&lt;p&gt;When you visit avrsautomotive.com, it uses cookies and tags from Google (Google Analytics and Google
+Ads) to count visits and see how my ads are doing. Google explains how it uses that information
+&lt;a href=&quot;https://policies.google.com/technologies/partner-sites&quot;&gt;here&lt;/a&gt;. You can block or delete
+cookies in your browser settings.&lt;/p&gt;
+
+&lt;h2&gt;How long I keep it&lt;/h2&gt;
+&lt;p&gt;For as long as you&#x27;re a customer, and as long as tax and other legal records require. If you ask me to
+delete your details, I delete everything except records the law makes me keep and a note of any STOP, so
+you&#x27;re never texted again.&lt;/p&gt;
+
+&lt;h2&gt;Your choices&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Stop texts:&lt;/strong&gt; reply STOP to any text from my texting number. You&#x27;ll get one text
+      confirming it, then no more texts from that number. You can also tell me in your own words, by
+      text, call or email.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Stop oil-change reminders, quote follow-ups and review asks:&lt;/strong&gt; just tell me by call,
+      text or email.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;See, fix or delete what I have:&lt;/strong&gt; call, text or email me (details below).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Keeping it safe&lt;/h2&gt;
+&lt;p&gt;I use established services with secure connections, and I limit who can see your details. No system
+is perfectly secure, but I take reasonable care.&lt;/p&gt;
+
+&lt;h2&gt;Changes&lt;/h2&gt;
+&lt;p&gt;If I change this policy, I&#x27;ll post the new version here with a new effective date.&lt;/p&gt;
+
+&lt;div class=&quot;avrs-foot&quot;&gt;
+  &lt;p&gt;&lt;strong&gt;AVRS Automotive, LLC&lt;/strong&gt; · Anthony Simmons, owner&lt;br&gt;
+  Call or text: &lt;a href=&quot;tel:+19364443031&quot;&gt;(936)&amp;nbsp;444-3031&lt;/a&gt;&lt;br&gt;
+  Email: &lt;a href=&quot;mailto:info@avrsautomotive.com&quot;&gt;info@avrsautomotive.com&lt;/a&gt;&lt;br&gt;
+  &lt;a href=&quot;https://avrsautomotive.com/terms/&quot;&gt;Terms of Service and Texting Terms&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;</textarea><button type="button" class="cp" data-for="priv">Copy</button></section>
+
+<section><h2>3. Terms page</h2>
+<ol><li>Make a new page with the address <code>terms</code>.</li><li>Same as above: Elementor HTML widget, paste this, hide the page title.</li></ol>
+<textarea id="terms" readonly rows="8" spellcheck="false">&lt;div class=&quot;avrs-legal&quot;&gt;
+&lt;style&gt;
+  .avrs-legal{--avrs-blue:#1B4F9C;max-width:720px;margin:0 auto;padding:32px 18px 64px;color:#1f2430;
+    font-size:16px;line-height:1.65;font-family:inherit;box-sizing:border-box;overflow-wrap:anywhere}
+  .avrs-legal *{box-sizing:border-box}
+  .avrs-legal h1,.avrs-legal h2{text-transform:none;letter-spacing:normal}
+  .avrs-legal h1{font-size:28px;line-height:1.25;margin:0 0 4px;color:#111}
+  .avrs-legal .avrs-sub{color:#5a6070;font-size:14px;margin:0 0 24px}
+  .avrs-legal h2{font-size:19px;line-height:1.3;margin:30px 0 8px;color:var(--avrs-blue)}
+  .avrs-legal p{margin:0 0 12px}
+  .avrs-legal ul{list-style:disc;padding-left:20px;margin:0 0 12px}
+  .avrs-legal li{list-style:inherit;margin:6px 0}
+  .avrs-legal a{color:var(--avrs-blue)}
+  .avrs-legal a[href^=&quot;tel:&quot;],.avrs-legal a[href^=&quot;mailto:&quot;]{display:inline-block;padding:9px 0}
+  .avrs-legal .avrs-box{background:#f2f6fc;border:1px solid #cddcf2;border-left:4px solid var(--avrs-blue);
+    border-radius:8px;padding:14px 16px;margin:14px 0}
+  .avrs-legal .avrs-box p:last-child{margin-bottom:0}
+  .avrs-legal dl{margin:8px 0 12px}
+  .avrs-legal dt{font-weight:700;margin-top:14px;color:#111}
+  .avrs-legal dd{margin:2px 0 0}
+  .avrs-legal dd ul{margin-top:4px}
+  .avrs-legal .avrs-foot{margin-top:36px;padding-top:16px;border-top:1px solid #e2e6ee;font-size:15px}
+  .avrs-legal .avrs-foot a{display:inline-block;padding:10px 0}
+&lt;/style&gt;
+
+&lt;h1&gt;Terms of Service and Texting Terms&lt;/h1&gt;
+&lt;p class=&quot;avrs-sub&quot;&gt;AVRS Automotive, LLC · Effective November 19, 2026&lt;/p&gt;
+
+&lt;p&gt;These are the terms for working with AVRS Automotive, LLC, my mobile auto repair business. I&#x27;m Anthony
+Simmons, the owner, and I come to you. By booking a job with me or getting service from me, you agree to
+them. The texting terms are further down.&lt;/p&gt;
+
+&lt;h2&gt;How the work goes&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;I work where your car is. I need access to the car and a safe, legal place to work. I also need to park
+      within two standard parking spaces of the car, and I won&#x27;t work on the side of a busy road or highway. If I can&#x27;t
+      do the job safely there, we&#x27;ll find another time or place.&lt;/li&gt;
+  &lt;li&gt;Some online bookings, usually farther from my area, are requests until I confirm them.&lt;/li&gt;
+  &lt;li&gt;If you&#x27;re sure what your car needs, you can book that repair without a diagnostic. If your diagnosis turns
+      out to be wrong and the repair doesn&#x27;t fix the problem, I&#x27;m not responsible for that. The 1-week guarantee
+      covers my work, not a diagnosis you made.&lt;/li&gt;
+  &lt;li&gt;I tell you the price before I start. If I find something different once I&#x27;m into the job, I&#x27;ll
+      tell you and get your OK before doing more.&lt;/li&gt;
+  &lt;li&gt;Payment is due when the job is done, unless we agree otherwise ahead of time. Parts I have to order
+      are paid up front (below). You can pay by cash, card, Zelle, Cash App, Venmo, Apple Pay or Chime.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Parts I have to order&lt;/h2&gt;
+&lt;p&gt;If your job needs parts I can&#x27;t get locally and have to order, you pay for those parts up front. If
+you cancel any time after I&#x27;ve ordered them, I keep 20% of the parts price as a restocking fee. If a part can&#x27;t go
+back to the supplier, you pay for that part.&lt;/p&gt;
+&lt;p&gt;If a part doesn&#x27;t arrive in time, I call or text you and we set a new day.&lt;/p&gt;
+
+&lt;h2&gt;Cancelling or moving a job&lt;/h2&gt;
+&lt;p&gt;Call or text me as early as you can, so I can give the time to someone else. If I&#x27;ve already ordered parts for
+your job, moving it is no problem as long as the new day stays inside the parts&#x27; return window.&lt;/p&gt;
+
+&lt;h2&gt;Guarantee&lt;/h2&gt;
+&lt;p&gt;If a repair I did fails within 1 week, I redo the labor free of charge: I come back and do it myself, or I hire
+another mobile mechanic to do it. Parts I supply carry the maker&#x27;s or parts store&#x27;s warranty. If you bring your own
+parts, that job has no guarantee from me, parts or labor.&lt;/p&gt;
+
+&lt;h2&gt;Texting terms&lt;/h2&gt;
+&lt;div class=&quot;avrs-box&quot;&gt;
+  &lt;p&gt;&lt;strong&gt;AVRS Automotive texts&lt;/strong&gt; come from AVRS Automotive, LLC (Anthony Simmons) at
+  (936) 284-4329, only to people who agreed to them, texted that number first, or called me, got my voicemail, and heard my
+  greeting say a text is coming.&lt;/p&gt;
+&lt;/div&gt;
+&lt;dl&gt;
+  &lt;dt&gt;What you&#x27;ll get&lt;/dt&gt;
+  &lt;dd&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;If you agreed to appointment texts:&lt;/strong&gt; booking confirmations, a reminder the day
+          before, and answers to your questions.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;If you agreed to reminders and follow-ups (marketing texts):&lt;/strong&gt; a reminder when
+          your oil change is due, a follow-up on a quote I gave you, and a request to review my work after a
+          job.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;If you text this number:&lt;/strong&gt; you&#x27;ll get an answer from me, or from answers I&#x27;ve approved.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;If you call me at (936) 444-3031, I miss the call, and my voicemail greeting says a text is
+          coming:&lt;/strong&gt; that&#x27;s one text from my texting number so you can reach me by text. It answers your call
+          only, never ads or offers. Reply STOP and I won&#x27;t text you.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/dd&gt;
+
+  &lt;dt&gt;How you sign up&lt;/dt&gt;
+  &lt;dd&gt;By ticking a box when you book online. For appointment texts only, you can also tell me in person or by
+      phone, and I&#x27;ll text once to confirm. Each box is a separate choice, and neither one is required to book or
+      to buy anything.&lt;/dd&gt;
+
+  &lt;dt&gt;How often&lt;/dt&gt;
+  &lt;dd&gt;Message frequency varies.&lt;/dd&gt;
+
+  &lt;dt&gt;Cost&lt;/dt&gt;
+  &lt;dd&gt;Message and data rates may apply. They come from your phone company, not from me. Questions about
+      your plan go to your phone company.&lt;/dd&gt;
+
+  &lt;dt&gt;How to stop&lt;/dt&gt;
+  &lt;dd&gt;Reply &lt;strong&gt;STOP&lt;/strong&gt; to any text from my texting number. You&#x27;ll get one text confirming it, then no
+      more texts from that number. You can also tell me in your own words, by text, call or email. To start again, sign
+      up the same way you did the first time.&lt;/dd&gt;
+
+  &lt;dt&gt;How to get help&lt;/dt&gt;
+  &lt;dd&gt;Reply &lt;strong&gt;HELP&lt;/strong&gt; to any text, call or text me at
+      &lt;a href=&quot;tel:+19364443031&quot;&gt;(936)&amp;nbsp;444-3031&lt;/a&gt;, or email
+      &lt;a href=&quot;mailto:info@avrsautomotive.com&quot;&gt;info@avrsautomotive.com&lt;/a&gt;.&lt;/dd&gt;
+
+  &lt;dt&gt;Your number&lt;/dt&gt;
+  &lt;dd&gt;By signing up, you confirm the number is yours or that you&#x27;re its regular user. If it changes or
+      you give it up, let me know so texts don&#x27;t go to someone else.&lt;/dd&gt;
+
+  &lt;dt&gt;Carriers&lt;/dt&gt;
+  &lt;dd&gt;Carriers are not liable for delayed or undelivered messages.&lt;/dd&gt;
+
+  &lt;dt&gt;Privacy&lt;/dt&gt;
+  &lt;dd&gt;How I handle your number and your texting choices is in my
+      &lt;a href=&quot;https://avrsautomotive.com/privacy-policy/&quot;&gt;Privacy Policy&lt;/a&gt;.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;h2&gt;Booking emails and follow-ups&lt;/h2&gt;
+&lt;p&gt;I email confirmations and reminders for jobs you book. To stop my oil-change reminders, quote follow-ups
+and review asks, just tell me by call, text or email.&lt;/p&gt;
+
+&lt;h2&gt;Limits&lt;/h2&gt;
+&lt;p&gt;As far as the law allows, my responsibility for any job is limited to what you paid for that job, and
+I&#x27;m not responsible for indirect losses. Nothing here takes away rights Texas law gives you.&lt;/p&gt;
+
+&lt;h2&gt;Texas law and changes&lt;/h2&gt;
+&lt;p&gt;These terms follow Texas law. If I change them, I&#x27;ll post the new version here with a new effective
+date.&lt;/p&gt;
+
+&lt;div class=&quot;avrs-foot&quot;&gt;
+  &lt;p&gt;&lt;strong&gt;AVRS Automotive, LLC&lt;/strong&gt; · Anthony Simmons, owner&lt;br&gt;
+  Call or text: &lt;a href=&quot;tel:+19364443031&quot;&gt;(936)&amp;nbsp;444-3031&lt;/a&gt;&lt;br&gt;
+  Email: &lt;a href=&quot;mailto:info@avrsautomotive.com&quot;&gt;info@avrsautomotive.com&lt;/a&gt;&lt;br&gt;
+  &lt;a href=&quot;https://avrsautomotive.com/privacy-policy/&quot;&gt;Privacy Policy&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;</textarea><button type="button" class="cp" data-for="terms">Copy</button></section>
+
+<section><h2>4. Footer on every page</h2>
+<p>The business name plus links to both pages (the phone companies check for these):</p>
+<textarea id="foot" readonly rows="3" spellcheck="false">&lt;p style=&quot;text-align:center;font-size:14px&quot;&gt;AVRS Automotive, LLC &amp;middot; &lt;a href=&quot;/terms/&quot;&gt;Terms&lt;/a&gt; &amp;middot; &lt;a href=&quot;/privacy-policy/&quot;&gt;Privacy Policy&lt;/a&gt;&lt;/p&gt;</textarea><button type="button" class="cp" data-for="foot">Copy</button></section>
+
+<section><h2>5. Two quick questions</h2>
+<ol><li>Has anyone ever set AVRS up for business texting (Podium, Jobber, Square or anything like it)?</li>
+<li>Do you manage Anthony&rsquo;s Google Business listing? If so, we&rsquo;ll send you the email to add us as a Manager.</li></ol></section>
+
+<p class="note">Both pages are dated November 19, 2026. If they go up on a different day, change the date at the top of each to that day. Coming in one more message later: a &ldquo;Book online&rdquo; page and a few homepage words.</p>
+</main>
+<script>
+document.querySelectorAll('.cp').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var t = document.getElementById(b.getAttribute('data-for'));
+    function ok() { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 2000); }
+    function old() { t.focus(); t.select(); try { if (document.execCommand('copy')) return ok(); } catch (e) {} b.textContent = 'Press Cmd+C'; }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t.value).then(ok, old); else old();
+  });
+});
+</script></body></html>
