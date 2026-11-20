@@ -15,42 +15,82 @@ textarea{width:100%;font:12.5px/1.4 ui-monospace,Menlo,monospace;border:1px soli
 <p class="sub">The second part: customers book Anthony right on his website. About 10 minutes. Thank you!</p>
 
 <section><h2>1. See how it will look</h2>
-<p>Anthony&rsquo;s Book Auto Repair Now page with the booking calendar added at the top:</p>
+<p>Anthony&rsquo;s Book Auto Repair Now page with the new &ldquo;Book a Service&rdquo; button added at the top. Tap it to try the booking screens:</p>
 <a class="go" href="https://jasper4-web.github.io/shared-pages/avrs-preview/book-page/" target="_blank" rel="noopener">Open the preview</a>
-<p class="note">The calendar in the preview is real: a booking made there goes straight to Anthony.</p></section>
+<p class="note">Nothing gets booked from the preview.</p></section>
 
 <section><h2>2. Add it to the page</h2>
 <ol><li>Open the <b>Book Auto Repair Now</b> page in Elementor.</li>
 <li>Drag an <b>HTML widget</b> to the very top of the page, above the map.</li>
 <li>Paste this in, then <b>Update</b>.</li></ol>
-<textarea id="book" readonly rows="9" spellcheck="false">&lt;!-- AVRS online booking: paste into an Elementor HTML widget at the top of the Book Auto Repair Now page. --&gt;
+<textarea id="book" readonly rows="9" spellcheck="false">&lt;!-- AVRS online booking: paste into an Elementor HTML widget at the very top of the Book Auto Repair Now page. --&gt;
 &lt;style&gt;
-.avrs-book{max-width:760px;margin:0 auto;padding:32px 16px 16px;text-align:center;color:#1a1a1a}
-.avrs-book h2{font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:700;color:#253993;font-size:34px;line-height:1.15;margin:0 0 8px}
-.avrs-book p{font-family:&quot;Open Sans&quot;,Helvetica,Arial,sans-serif}
-.avrs-book .ab-lead{font-size:17px;line-height:1.5;color:#4a4a4a;margin:0 0 20px}
-.avrs-book iframe{display:block;width:100%;min-height:760px;border:0;overflow:hidden;background:#fff}
-.avrs-book .ab-far{margin:18px auto 0;max-width:560px;padding:18px 16px;background:#fff;border:1px solid #dadeef}
-.avrs-book .ab-far p{font-size:16px;line-height:1.5;margin:0 0 12px}
-.avrs-book .ab-btn{display:inline-block;min-height:48px;padding:13px 26px;border:2px solid #253993;color:#253993;background:#fff;font:700 15px/1.2 &quot;Open Sans&quot;,Helvetica,Arial,sans-serif;text-transform:uppercase;letter-spacing:.05em;text-decoration:none}
-.avrs-book .ab-btn:hover{background:#253993;color:#fff}
-.avrs-book .ab-call{font-size:16px;margin:18px 0 0}
-.avrs-book .ab-call a{color:#253993;font-weight:700;text-decoration:none;white-space:nowrap}
+.avrs-bk{max-width:760px;margin:0 auto;padding:26px 16px 22px;text-align:center}
+.avrs-bk__btn{display:block;max-width:520px;margin:0 auto;border-radius:22px;background:#253993;color:#fff !important;padding:30px 16px 24px;text-decoration:none !important;box-shadow:0 10px 24px rgba(37,57,147,.32);transition:transform .1s}
+.avrs-bk__btn:active{transform:scale(.98)}
+.avrs-bk__btn span{display:block;font:900 44px/1 Roboto,Arial,sans-serif;letter-spacing:-.5px;text-transform:uppercase;color:#fff}
+.avrs-bk__btn em{display:inline-block;margin-top:14px;font:600 15px &quot;Open Sans&quot;,Arial,sans-serif;font-style:normal;background:rgba(255,255,255,.16);padding:8px 16px;border-radius:99px;color:#fff}
+.avrs-bk__call{margin:14px 0 0;color:#5a6072;font:15px/1.4 &quot;Open Sans&quot;,Arial,sans-serif}
+.avrs-bk__call a{color:#253993;font-weight:700;text-decoration:none}
+.avrs-sheet{position:fixed;inset:0;z-index:2147483000;visibility:hidden;transition:visibility 0s .35s}
+.avrs-sheet.is-open{visibility:visible;transition:none}
+.avrs-sheet__dim{position:absolute;inset:0;background:rgba(10,15,40,.5);opacity:0;transition:opacity .3s}
+.avrs-sheet.is-open .avrs-sheet__dim{opacity:1}
+.avrs-sheet__panel{position:absolute;left:0;right:0;bottom:0;top:44px;margin:0 auto;max-width:560px;background:#fff;border-radius:22px 22px 0 0;overflow:hidden;transform:translateY(105%);transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+.avrs-sheet.is-open .avrs-sheet__panel{transform:none}
+.avrs-sheet__panel iframe{display:block;width:100%;height:100%;border:0}
+@media (min-width:700px){.avrs-sheet__panel{top:4vh;bottom:4vh;border-radius:22px}}
+html.avrs-lock,html.avrs-lock body{overflow:hidden !important}
 &lt;/style&gt;
-&lt;div class=&quot;avrs-book&quot; id=&quot;book-online&quot;&gt;
-  &lt;h2&gt;Book your mobile mechanic&lt;/h2&gt;
-  &lt;p class=&quot;ab-lead&quot;&gt;Pick a job and a time. We come to you.&lt;/p&gt;
-  &lt;iframe src=&quot;https://api.leadconnectorhq.com/widget/groups/book-avrs&quot; title=&quot;Book AVRS Automotive&quot;&gt;&lt;/iframe&gt;
-  &lt;div class=&quot;ab-far&quot;&gt;
-    &lt;p&gt;&lt;b&gt;Car in another town?&lt;/b&gt; Pick a time and we&amp;rsquo;ll call or text to confirm it.&lt;/p&gt;
-    &lt;a class=&quot;ab-btn&quot; href=&quot;https://api.leadconnectorhq.com/widget/groups/avrs-request&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Request a time&lt;/a&gt;
-  &lt;/div&gt;
-  &lt;p class=&quot;ab-call&quot;&gt;Rather talk to us? Call or text &lt;a href=&quot;tel:+19364443031&quot;&gt;(936) 444-3031&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&quot;avrs-bk&quot; id=&quot;book-online&quot;&gt;
+  &lt;a class=&quot;avrs-bk__btn&quot; href=&quot;https://avrs.sano-systems.workers.dev/booking&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; data-avrs-book&gt;&lt;span&gt;Book a&lt;br&gt;Service&lt;/span&gt;&lt;em&gt;We come to you &amp;rarr;&lt;/em&gt;&lt;/a&gt;
+  &lt;p class=&quot;avrs-bk__call&quot;&gt;Rather talk? Call or text &lt;a href=&quot;tel:+19364443031&quot;&gt;(936) 444-3031&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
-&lt;script src=&quot;https://link.msgsndr.com/js/form_embed.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(function () {
+  var ORIGIN = &quot;https://avrs.sano-systems.workers.dev&quot;, sheet, frame, booked = false, back = null;
+  function build() {
+    sheet = document.createElement(&quot;div&quot;);
+    sheet.className = &quot;avrs-sheet&quot;; sheet.setAttribute(&quot;role&quot;, &quot;dialog&quot;); sheet.setAttribute(&quot;aria-modal&quot;, &quot;true&quot;); sheet.setAttribute(&quot;aria-label&quot;, &quot;Book a Service&quot;);
+    sheet.innerHTML = &#x27;&lt;div class=&quot;avrs-sheet__dim&quot;&gt;&lt;/div&gt;&lt;div class=&quot;avrs-sheet__panel&quot;&gt;&lt;iframe title=&quot;Book a Service&quot; src=&quot;&#x27; + ORIGIN + &#x27;/booking?embed=1&quot;&gt;&lt;/iframe&gt;&lt;/div&gt;&#x27;;
+    document.body.appendChild(sheet);
+    frame = sheet.querySelector(&quot;iframe&quot;);
+    sheet.querySelector(&quot;.avrs-sheet__dim&quot;).addEventListener(&quot;click&quot;, close);
+  }
+  function open(e) {
+    if (e) e.preventDefault();
+    if (!sheet) build();
+    back = document.activeElement;
+    document.documentElement.classList.add(&quot;avrs-lock&quot;);
+    sheet.offsetHeight;
+    sheet.classList.add(&quot;is-open&quot;);
+    setTimeout(function () { try { frame.focus(); } catch (x) {} }, 360);
+  }
+  function close() {
+    if (!sheet || !sheet.classList.contains(&quot;is-open&quot;)) return;
+    sheet.classList.remove(&quot;is-open&quot;);
+    document.documentElement.classList.remove(&quot;avrs-lock&quot;);
+    if (booked) { booked = false; setTimeout(function () { frame.contentWindow.postMessage({ avrsBook: &quot;reset&quot; }, ORIGIN); }, 400); }
+    if (back) try { back.focus(); } catch (x) {}
+  }
+  window.addEventListener(&quot;message&quot;, function (e) {
+    if (e.origin !== ORIGIN || !e.data) return;
+    var m = e.data.avrsBook;
+    if (m === &quot;booked-ok&quot;) booked = true;
+    if (m === &quot;close&quot;) close();
+    if (m === &quot;booked&quot;) { booked = true; close(); }
+  });
+  document.addEventListener(&quot;keydown&quot;, function (e) { if (e.key === &quot;Escape&quot;) close(); });
+  [].forEach.call(document.querySelectorAll(&quot;[data-avrs-book]&quot;), function (a) { a.addEventListener(&quot;click&quot;, open); });
+  // load the screens in the background once the page is quiet, so the panel opens instantly
+  var warm = function () { if (!sheet) build(); };
+  if (&quot;requestIdleCallback&quot; in window) requestIdleCallback(warm, { timeout: 3000 }); else setTimeout(warm, 2000);
+})();
+&lt;/script&gt;
 </textarea>
 <button type="button" class="cp" data-for="book">Copy</button>
-<p class="note">Everything below it on the page can stay as it is. The calendar is already connected to Anthony&rsquo;s schedule: his open times show, and every booking lands in his web app.</p></section>
+<p class="note">Everything below it on the page can stay as it is. It&rsquo;s already connected to Anthony&rsquo;s schedule: his open times show, and every booking lands in his web app.</p>
+<p class="note">Once it&rsquo;s up, just let us know and we&rsquo;ll test it on the live page.</p></section>
 </main>
 <script>
 document.querySelectorAll('.cp').forEach(function (b) {
