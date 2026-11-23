@@ -1,0 +1,116 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>AVRS booking: your script, ready to swap</title>
+<style>
+:root{--ink:#14181f;--mut:#4a5263;--bg:#f6f7f9;--card:#fff;--line:#dfe3ea;--blue:#1f4fd8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,system-ui,Segoe UI,Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 60px}h1{font-size:26px;margin:0 0 6px}
+.sub{color:var(--mut);margin:0 0 20px}section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 14px}
+h2{font-size:19px;margin:0 0 8px}ol,ul{margin:6px 0;padding-left:22px}li{margin:5px 0}code{background:#eef1f6;border-radius:5px;padding:1px 5px;word-break:break-all}
+textarea{width:100%;font:12.5px/1.4 ui-monospace,Menlo,monospace;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fbfcfd;color:var(--ink);resize:vertical}
+.cp{display:inline-block;margin-top:8px;min-height:44px;padding:11px 22px;border:0;border-radius:10px;background:var(--blue);color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+.note{color:var(--mut);font-size:14.5px}
+</style></head><body><main>
+<h1>AVRS booking: your script, ready to swap</h1>
+<p class="sub">Thank you! The script looks good: one copy for the whole site, any button can open it, plus the Google tags. We tested it with the booking screens, so go ahead and swap it in.</p>
+
+<section><h2>What we added</h2>
+<ul><li>A <b>&ldquo;Loading&hellip;&rdquo;</b> line inside the panel. Your version loads the booking screens when someone taps, so on a phone the panel can slide up blank for a second or two. Now it says Loading&hellip; until the screens appear.</li>
+<li>Plain spaces in place of the special ones texting adds. Nothing else changed.</li></ul></section>
+
+<section><h2>Swapping it in</h2>
+<ol><li><b>Remove both old HTML widgets</b> on the Book Auto Repair Now page: the one at the top, and the one at the bottom under &ldquo;Mobile Mechanic &ndash; We Come To You&rdquo;. Right now each one carries its own copy of the old script, so one tap opens two booking panels stacked on top of each other.</li>
+<li>Add the script below <b>once</b>, site-wide, wherever you planned to put it.</li>
+<li>Point any button&rsquo;s Link at <code>https://avrs.sano-systems.workers.dev/booking</code>. Use as many buttons as you like. A slash on the end works too.</li></ol>
+<textarea id="code" readonly rows="10" spellcheck="false">&lt;!-- AVRS booking sheet (no custom button).
+     Opens the sheet from any of these:
+       1) any link whose URL is https://avrs.sano-systems.workers.dev/booking  (just set the theme button&#x27;s Link)
+       2) any element with the CSS class avrs-book                         
+       3) any element with the attribute data-avrs-book
+     If JS fails or is blocked, the link still opens the booking page normally. --&gt;
+&lt;style&gt;
+.avrs-sheet{position:fixed;inset:0;z-index:2147483000;visibility:hidden;transition:visibility 0s .35s}
+.avrs-sheet.is-open{visibility:visible;transition:none}
+.avrs-sheet__dim{position:absolute;inset:0;background:rgba(10,15,40,.5);opacity:0;transition:opacity .3s}
+.avrs-sheet.is-open .avrs-sheet__dim{opacity:1}
+.avrs-sheet__panel{position:absolute;left:0;right:0;bottom:0;top:44px;margin:0 auto;max-width:560px;background:#fff;border-radius:22px 22px 0 0;overflow:hidden;transform:translateY(105%);transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+.avrs-sheet.is-open .avrs-sheet__panel{transform:none}
+.avrs-sheet__panel::before{content:&quot;Loading\2026&quot;;position:absolute;top:45%;left:0;right:0;text-align:center;color:#5a6072;font:16px Arial,sans-serif}
+.avrs-sheet__panel iframe{position:relative;display:block;width:100%;height:100%;border:0}
+@media (min-width:700px){.avrs-sheet__panel{top:4vh;bottom:4vh;border-radius:22px}}
+html.avrs-lock,html.avrs-lock body{overflow:hidden !important}
+&lt;/style&gt;
+&lt;script&gt;
+(function () {
+  var ORIGIN = &quot;https://avrs.sano-systems.workers.dev&quot;, BOOK_URL = ORIGIN + &quot;/booking&quot;,
+      TRIGGER = &#x27;a[href^=&quot;&#x27; + BOOK_URL + &#x27;&quot;], .avrs-book, [data-avrs-book]&#x27;,
+      sheet, frame, booked = false, back = null;
+
+  function track(name) { (window.dataLayer = window.dataLayer || []).push({ event: name, booking_location: location.pathname }); }
+  function trigger(el) { return el &amp;&amp; el.closest ? el.closest(TRIGGER) : null; }
+
+  function build() {
+    sheet = document.createElement(&quot;div&quot;);
+    sheet.className = &quot;avrs-sheet&quot;; sheet.setAttribute(&quot;role&quot;, &quot;dialog&quot;); sheet.setAttribute(&quot;aria-modal&quot;, &quot;true&quot;); sheet.setAttribute(&quot;aria-label&quot;, &quot;Book a Service&quot;);
+    sheet.innerHTML = &#x27;&lt;div class=&quot;avrs-sheet__dim&quot;&gt;&lt;/div&gt;&lt;div class=&quot;avrs-sheet__panel&quot;&gt;&lt;iframe title=&quot;Book a Service&quot; src=&quot;&#x27; + BOOK_URL + &#x27;?embed=1&quot;&gt;&lt;/iframe&gt;&lt;/div&gt;&#x27;;
+    document.body.appendChild(sheet);
+    frame = sheet.querySelector(&quot;iframe&quot;);
+    sheet.querySelector(&quot;.avrs-sheet__dim&quot;).addEventListener(&quot;click&quot;, close);
+  }
+  function open() {
+    if (!sheet) build();
+    back = document.activeElement;
+    document.documentElement.classList.add(&quot;avrs-lock&quot;);
+    sheet.offsetHeight;
+    sheet.classList.add(&quot;is-open&quot;);
+    track(&quot;avrs_booking_open&quot;);
+    setTimeout(function () { try { frame.focus(); } catch (x) {} }, 360);
+  }
+  function close() {
+    if (!sheet || !sheet.classList.contains(&quot;is-open&quot;)) return;
+    sheet.classList.remove(&quot;is-open&quot;);
+    document.documentElement.classList.remove(&quot;avrs-lock&quot;);
+    if (booked) { booked = false; setTimeout(function () { frame.contentWindow.postMessage({ avrsBook: &quot;reset&quot; }, ORIGIN); }, 400); }
+    if (back) try { back.focus(); } catch (x) {}
+  }
+  function markBooked() { if (!booked) { booked = true; track(&quot;avrs_booking_complete&quot;); } }
+
+  // One delegated listener: works for header, footer, popups and buttons Elementor renders late.
+  document.addEventListener(&quot;click&quot;, function (e) {
+    var t = trigger(e.target);
+    if (!t || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return; // let new-tab clicks through
+    e.preventDefault(); open();
+  });
+
+  // Load the booking app only when someone shows intent (hover, touch, focus), not on every page view.
+  [&quot;pointerover&quot;, &quot;touchstart&quot;, &quot;focusin&quot;].forEach(function (ev) {
+    document.addEventListener(ev, function (e) { if (!sheet &amp;&amp; trigger(e.target)) build(); }, { passive: true });
+  });
+
+  window.addEventListener(&quot;message&quot;, function (e) {
+    if (e.origin !== ORIGIN || !e.data) return;
+    var m = e.data.avrsBook;
+    if (m === &quot;booked-ok&quot;) markBooked();
+    if (m === &quot;booked&quot;) { markBooked(); close(); }
+    if (m === &quot;close&quot;) close();
+  });
+  document.addEventListener(&quot;keydown&quot;, function (e) { if (e.key === &quot;Escape&quot;) close(); });
+})();
+&lt;/script&gt;
+</textarea>
+<button type="button" class="cp" data-for="code">Copy</button>
+<p class="note">The same link works outside the site too (Google profile, emails): there it opens the booking page full screen.</p></section>
+
+<section><h2>After it&rsquo;s up</h2>
+<p>Just let us know and we&rsquo;ll check it on the live page: one tap, one panel.</p></section>
+</main>
+<script>
+document.querySelectorAll('.cp').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var t = document.getElementById(b.getAttribute('data-for'));
+    function ok() { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 2000); }
+    function old() { t.focus(); t.select(); try { if (document.execCommand('copy')) return ok(); } catch (e) {} b.textContent = 'Press Cmd+C'; }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t.value).then(ok, old); else old();
+  });
+});
+</script></body></html>
