@@ -1,0 +1,124 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>AVRS website: this round of changes</title>
+<style>
+:root{--ink:#14181f;--mut:#4a5263;--bg:#f6f7f9;--card:#fff;--line:#dfe3ea;--blue:#1f4fd8;--old:#8a2d2d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,system-ui,Segoe UI,Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 60px}h1{font-size:26px;margin:0 0 6px}
+.sub{color:var(--mut);margin:0 0 20px}section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 14px}
+h2{font-size:19px;margin:0 0 8px}ol,ul{margin:6px 0;padding-left:22px}li{margin:5px 0}code{background:#eef1f6;border-radius:5px;padding:1px 5px;word-break:break-all}
+textarea{width:100%;font:15px/1.45 -apple-system,system-ui,Segoe UI,Roboto,sans-serif;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fbfcfd;color:var(--ink);resize:vertical}
+#code{font:12.5px/1.4 ui-monospace,Menlo,monospace}
+.cp{display:inline-block;margin-top:8px;min-height:44px;padding:11px 22px;border:0;border-radius:10px;background:var(--blue);color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+.note{color:var(--mut);font-size:14.5px;margin:8px 0 0}
+.chg{border-top:1px solid var(--line);padding:14px 0 6px}.chg:first-of-type{border-top:0;padding-top:4px}
+.where{font-weight:700;margin:0 0 6px}.lbl{font-size:13px;color:var(--mut);margin:6px 0 2px;text-transform:uppercase;letter-spacing:.04em}
+.plain{margin:0;font-weight:600}.now{margin:0;color:var(--old);text-decoration:line-through;text-decoration-thickness:1px;white-space:pre-line}
+</style></head><body><main>
+<h1>AVRS website: this round of changes</h1>
+<p class="sub">Thank you for all the work so far! This is everything from Anthony&rsquo;s latest answers, in one place. Each change shows what&rsquo;s on the site now and exactly what to put instead. Copy buttons give you the exact words.</p>
+<section><h2>1. Booking: one tap, one panel</h2><p>Right now each of the two old HTML widgets on the Book Auto Repair Now page (the one at the top, and the one at the bottom under &ldquo;Mobile Mechanic &ndash; We Come To You&rdquo;) carries its own copy of the old booking script, so one tap opens two panels stacked on top of each other. The Book a Service button and the &ldquo;Rather talk?&rdquo; line live inside those same widgets, so <b>don&rsquo;t delete the widgets</b>:</p><ol><li>Open <b>each</b> of the two HTML widgets, select everything in it, and paste this instead (the same button and call line, just without the old script). Same code in both.</li></ol><textarea id="c1" readonly rows="9">&lt;!-- AVRS Book a Service button (the booking panel opens from your site-wide script) --&gt;
+&lt;style&gt;
+.avrs-bk{max-width:760px;margin:0 auto;padding:26px 16px 22px;text-align:center}
+.avrs-bk__btn{display:block;max-width:520px;margin:0 auto;border-radius:22px;background:#253993;color:#fff !important;padding:30px 16px 24px;text-decoration:none !important;box-shadow:0 10px 24px rgba(37,57,147,.32);transition:transform .1s}
+.avrs-bk__btn:active{transform:scale(.98)}
+.avrs-bk__btn span{display:block;font:900 44px/1 Roboto,Arial,sans-serif;letter-spacing:-.5px;text-transform:uppercase;color:#fff}
+.avrs-bk__btn em{display:inline-block;margin-top:14px;font:600 15px &quot;Open Sans&quot;,Arial,sans-serif;font-style:normal;background:rgba(255,255,255,.16);padding:8px 16px;border-radius:99px;color:#fff}
+.avrs-bk__call{margin:14px 0 0;color:#5a6072;font:15px/1.4 &quot;Open Sans&quot;,Arial,sans-serif}
+.avrs-bk__call a{color:#253993;font-weight:700;text-decoration:none}
+&lt;/style&gt;
+&lt;div class=&quot;avrs-bk&quot;&gt;
+  &lt;a class=&quot;avrs-bk__btn&quot; href=&quot;https://avrs.sano-systems.workers.dev/booking&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; data-avrs-book&gt;&lt;span&gt;Book a&lt;br&gt;Service&lt;/span&gt;&lt;em&gt;We come to you &amp;rarr;&lt;/em&gt;&lt;/a&gt;
+  &lt;p class=&quot;avrs-bk__call&quot;&gt;Rather talk? Call or text &lt;a href=&quot;tel:+19364443031&quot;&gt;(936) 444-3031&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+</textarea><button type="button" class="cp" data-for="c1">Copy</button><ol start="2"><li>Add <b>your site-wide script</b> once, for the whole site (wherever your Google Tag Manager code is works). It&rsquo;s yours from 11/23, plus a &ldquo;Loading&hellip;&rdquo; line so the panel never slides up blank on a phone.</li></ol><textarea id="code" readonly rows="8" spellcheck="false">&lt;!-- AVRS booking sheet (no custom button).
+     Opens the sheet from any of these:
+       1) any link whose URL is https://avrs.sano-systems.workers.dev/booking  (just set the theme button&#x27;s Link)
+       2) any element with the CSS class avrs-book                         
+       3) any element with the attribute data-avrs-book
+     If JS fails or is blocked, the link still opens the booking page normally. --&gt;
+&lt;style&gt;
+.avrs-sheet{position:fixed;inset:0;z-index:2147483000;visibility:hidden;transition:visibility 0s .35s}
+.avrs-sheet.is-open{visibility:visible;transition:none}
+.avrs-sheet__dim{position:absolute;inset:0;background:rgba(10,15,40,.5);opacity:0;transition:opacity .3s}
+.avrs-sheet.is-open .avrs-sheet__dim{opacity:1}
+.avrs-sheet__panel{position:absolute;left:0;right:0;bottom:0;top:44px;margin:0 auto;max-width:560px;background:#fff;border-radius:22px 22px 0 0;overflow:hidden;transform:translateY(105%);transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+.avrs-sheet.is-open .avrs-sheet__panel{transform:none}
+.avrs-sheet__panel::before{content:&quot;Loading\2026&quot;;position:absolute;top:45%;left:0;right:0;text-align:center;color:#5a6072;font:16px Arial,sans-serif}
+.avrs-sheet__panel iframe{position:relative;display:block;width:100%;height:100%;border:0}
+@media (min-width:700px){.avrs-sheet__panel{top:4vh;bottom:4vh;border-radius:22px}}
+html.avrs-lock,html.avrs-lock body{overflow:hidden !important}
+&lt;/style&gt;
+&lt;script&gt;
+(function () {
+  var ORIGIN = &quot;https://avrs.sano-systems.workers.dev&quot;, BOOK_URL = ORIGIN + &quot;/booking&quot;,
+      TRIGGER = &#x27;a[href^=&quot;&#x27; + BOOK_URL + &#x27;&quot;], .avrs-book, [data-avrs-book]&#x27;,
+      sheet, frame, booked = false, back = null;
+
+  function track(name) { (window.dataLayer = window.dataLayer || []).push({ event: name, booking_location: location.pathname }); }
+  function trigger(el) { return el &amp;&amp; el.closest ? el.closest(TRIGGER) : null; }
+
+  function build() {
+    sheet = document.createElement(&quot;div&quot;);
+    sheet.className = &quot;avrs-sheet&quot;; sheet.setAttribute(&quot;role&quot;, &quot;dialog&quot;); sheet.setAttribute(&quot;aria-modal&quot;, &quot;true&quot;); sheet.setAttribute(&quot;aria-label&quot;, &quot;Book a Service&quot;);
+    sheet.innerHTML = &#x27;&lt;div class=&quot;avrs-sheet__dim&quot;&gt;&lt;/div&gt;&lt;div class=&quot;avrs-sheet__panel&quot;&gt;&lt;iframe title=&quot;Book a Service&quot; src=&quot;&#x27; + BOOK_URL + &#x27;?embed=1&quot;&gt;&lt;/iframe&gt;&lt;/div&gt;&#x27;;
+    document.body.appendChild(sheet);
+    frame = sheet.querySelector(&quot;iframe&quot;);
+    sheet.querySelector(&quot;.avrs-sheet__dim&quot;).addEventListener(&quot;click&quot;, close);
+  }
+  function open() {
+    if (!sheet) build();
+    back = document.activeElement;
+    document.documentElement.classList.add(&quot;avrs-lock&quot;);
+    sheet.offsetHeight;
+    sheet.classList.add(&quot;is-open&quot;);
+    track(&quot;avrs_booking_open&quot;);
+    setTimeout(function () { try { frame.focus(); } catch (x) {} }, 360);
+  }
+  function close() {
+    if (!sheet || !sheet.classList.contains(&quot;is-open&quot;)) return;
+    sheet.classList.remove(&quot;is-open&quot;);
+    document.documentElement.classList.remove(&quot;avrs-lock&quot;);
+    if (booked) { booked = false; setTimeout(function () { frame.contentWindow.postMessage({ avrsBook: &quot;reset&quot; }, ORIGIN); }, 400); }
+    if (back) try { back.focus(); } catch (x) {}
+  }
+  function markBooked() { if (!booked) { booked = true; track(&quot;avrs_booking_complete&quot;); } }
+
+  // One delegated listener: works for header, footer, popups and buttons Elementor renders late.
+  document.addEventListener(&quot;click&quot;, function (e) {
+    var t = trigger(e.target);
+    if (!t || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return; // let new-tab clicks through
+    e.preventDefault(); open();
+  });
+
+  // Load the booking app only when someone shows intent (hover, touch, focus), not on every page view.
+  [&quot;pointerover&quot;, &quot;touchstart&quot;, &quot;focusin&quot;].forEach(function (ev) {
+    document.addEventListener(ev, function (e) { if (!sheet &amp;&amp; trigger(e.target)) build(); }, { passive: true });
+  });
+
+  window.addEventListener(&quot;message&quot;, function (e) {
+    if (e.origin !== ORIGIN || !e.data) return;
+    var m = e.data.avrsBook;
+    if (m === &quot;booked-ok&quot;) markBooked();
+    if (m === &quot;booked&quot;) { markBooked(); close(); }
+    if (m === &quot;close&quot;) close();
+  });
+  document.addEventListener(&quot;keydown&quot;, function (e) { if (e.key === &quot;Escape&quot;) close(); });
+})();
+&lt;/script&gt;
+</textarea><button type="button" class="cp" data-for="code">Copy</button><ol start="3"><li>Point these buttons&rsquo; Link at <code>https://avrs.sano-systems.workers.dev/booking</code> (right now they dial his phone):<ul><li>Home page: <b>BOOK A MOBILE REPAIR</b>, <b>GET AUTO SERVICE</b> and <b>BOOK NOW</b>.</li><li><b>GET AUTO REPAIR NOW</b> at the top of every page (it only shows on a computer; it&rsquo;s the button in Appearance &rarr; Customize &rarr; Header Builder).</li></ul>Leave <b>GET A QUOTE</b>, <b>CALL NOW</b>, <b>CALL OR TEXT US</b> and the phone numbers dialing his phone.</li></ol></section><section><h2>2. Footer and menu (each change shows on every page)</h2><p class="note">The footer is in Appearance &rarr; Customize &rarr; Footer Builder (the Contact Info widget and the bottom line).</p><div class="chg"><p class="where">Contact Info: the hours line</p><p class="lbl">Now:</p><p class="now">Everyday: 7:00 AM – 7:00 PM</p><p class="lbl">Change to:</p><textarea id="c2" readonly rows="2">Phone: every day, 7:00 AM – 7:00 PM</textarea><button type="button" class="cp" data-for="c2">Copy</button><textarea id="c3" readonly rows="2">On-site: Monday – Friday, 9:00 AM – 5:00 PM · weekends by arrangement</textarea><button type="button" class="cp" data-for="c3">Copy</button><p class="note">Two lines, so people know they can call any day and when he comes out.</p></div><div class="chg"><p class="where">Contact Info: add a line under “Call: (936) 444-3031”</p><p class="lbl">Now:</p><p class="now">(nothing there yet)</p><p class="lbl">Change to:</p><textarea id="c4" readonly rows="2">Email: info@avrsautomotive.com</textarea><button type="button" class="cp" data-for="c4">Copy</button><p class="note">The texting approval wants his email visible on every page.</p></div><div class="chg"><p class="where">Bottom line</p><p class="lbl">Now:</p><p class="now">Serving Texas Drivers in Houston, Conroe, Montgomery County, Bryan/College Station.</p><p class="lbl">Change to:</p><textarea id="c5" readonly rows="3">Serving Conroe, Cut and Shoot, Magnolia, Montgomery, Oak Ridge North, Panorama Village, Shenandoah, Spring, The Woodlands and Willis.</textarea><button type="button" class="cp" data-for="c5">Copy</button></div><div class="chg"><p class="where">Menu links (Appearance → Menus: Services, Why Choose AVRS, Testimonials, Contact Us)</p><p class="lbl">Now:</p><p class="now">#services   #why-avrs   #testimonials   #contact</p><p class="lbl">Change to:</p><p class="plain">/#services   /#why-avrs   /#testimonials   /#contact</p><p class="note">Add a slash in front of each. Right now they only work on the home page; on the Book, Terms and Privacy pages they go nowhere.</p></div></section><section><h2>3. Home page</h2><div class="chg"><p class="where">Top of the page</p><p class="lbl">Now:</p><p class="now">AVRS Automotive brings certified mobile mechanics to your home or office.</p><p class="lbl">Change to:</p><textarea id="c6" readonly rows="2">AVRS Automotive brings mobile auto repair to your home or office.</textarea><button type="button" class="cp" data-for="c6">Copy</button><p class="note">Anthony asked to drop &ldquo;certified&rdquo;. The rest of that paragraph stays.</p></div><div class="chg"><p class="where">Under “Make An Appointment”</p><p class="lbl">Now:</p><p class="now">Available 7 days a week.</p><p class="lbl">Change to:</p><textarea id="c7" readonly rows="2">Call or text 7 days a week.</textarea><button type="button" class="cp" data-for="c7">Copy</button></div><div class="chg"><p class="where">Working Hours box (two lines)</p><p class="lbl">Now:</p><p class="now">Week Days: 8:00 AM – 5:00 PM
+Weekends: 7:00 AM – 2:00 PM</p><p class="lbl">Change to:</p><textarea id="c8" readonly rows="2">Weekdays: 9:00 AM – 5:00 PM</textarea><button type="button" class="cp" data-for="c8">Copy</button><textarea id="c9" readonly rows="2">Weekends: by arrangement</textarea><button type="button" class="cp" data-for="c9">Copy</button></div><div class="chg"><p class="where">What We Do: first paragraph</p><p class="lbl">Now:</p><p class="now">drivers in Houston, Conroe, Montgomery County, and College Station.</p><p class="lbl">Change to:</p><textarea id="c10" readonly rows="2">drivers in Conroe, The Woodlands, Spring and nearby towns.</textarea><button type="button" class="cp" data-for="c10">Copy</button></div><div class="chg"><p class="where">What We Do: second paragraph</p><p class="lbl">Now:</p><p class="now">Whether you’re stuck at home, at work, or on the side of the road, our certified mobile mechanic comes to you</p><p class="lbl">Change to:</p><textarea id="c11" readonly rows="2">Whether you’re at home or at work, our mobile mechanic comes to you</textarea><button type="button" class="cp" data-for="c11">Copy</button><p class="note">Anthony doesn&rsquo;t do roadside work. The rest of the sentence stays.</p></div><div class="chg"><p class="where">What We Do: third paragraph (Anthony asked to add inspections to his services)</p><p class="lbl">Now:</p><p class="now">to suspension service and diagnostic checks,</p><p class="lbl">Change to:</p><textarea id="c12" readonly rows="2">to suspension service, diagnostic checks and pre-purchase inspections,</textarea><button type="button" class="cp" data-for="c12">Copy</button></div><div class="chg"><p class="where">Why Choose Us</p><p class="lbl">Now:</p><p class="now">servicing the Houston area</p><p class="lbl">Change to:</p><textarea id="c13" readonly rows="2">servicing the Conroe area</textarea><button type="button" class="cp" data-for="c13">Copy</button></div><div class="chg"><p class="where">Why Choose Us: “Guaranteed Service” card</p><p class="lbl">Now:</p><p class="now">Every repair backed by our satisfaction guarantee.</p><p class="lbl">Change to:</p><textarea id="c14" readonly rows="3">Repairs with parts we supply carry a 6-month / 6,000-mile limited warranty on parts and labor. Details on our Terms page.</textarea><button type="button" class="cp" data-for="c14">Copy</button></div><div class="chg"><p class="where">Why Choose Us: “Trusted Work” card</p><p class="lbl">Now:</p><p class="now">Skilled mechanics delivering dependable results every time.</p><p class="lbl">Change to:</p><textarea id="c15" readonly rows="2">A skilled mechanic delivering dependable results every time.</textarea><button type="button" class="cp" data-for="c15">Copy</button><p class="note">Anthony works on his own.</p></div><div class="chg"><p class="where">Bottom call-to-action</p><p class="lbl">Now:</p><p class="now">Available 7 Days A Week</p><p class="lbl">Change to:</p><textarea id="c16" readonly rows="2">Call or Text 7 Days A Week</textarea><button type="button" class="cp" data-for="c16">Copy</button></div><p class="note">Customer reviews stay exactly as they are, even where a customer mentions the side of the road.</p></section><section><h2>4. Book Auto Repair Now page</h2><div class="chg"><p class="where">Heading</p><p class="lbl">Now:</p><p class="now">SERVING THE GREATER HOUSTON AREA</p><p class="lbl">Change to:</p><textarea id="c17" readonly rows="2">SERVING CONROE AND NEARBY TOWNS</textarea><button type="button" class="cp" data-for="c17">Copy</button></div><div class="chg"><p class="where">Towns line, right under that heading</p><p class="lbl">Now:</p><p class="now">The Woodlands, Conroe, Spring, Montgomery, Magnolia, Houston, Katy, Tomball, Cypress, and more.</p><p class="lbl">Change to:</p><textarea id="c18" readonly rows="3">Conroe, Cut and Shoot, Magnolia, Montgomery, Oak Ridge North, Panorama Village, Shenandoah, Spring, The Woodlands and Willis. Farther out? Request a time and we&#x27;ll confirm it.</textarea><button type="button" class="cp" data-for="c18">Copy</button></div><div class="chg"><p class="where">Paragraph under the towns</p><p class="lbl">Now:</p><p class="now">suspension work, and general maintenance</p><p class="lbl">Change to:</p><textarea id="c19" readonly rows="2">suspension work, pre-purchase inspections, and general maintenance</textarea><button type="button" class="cp" data-for="c19">Copy</button></div></section><section><h2>5. What Google shows in search (the Yoast SEO box under each page&rsquo;s editor)</h2><p class="note">If a Yoast title box shows <code>%%title%%</code> or is empty, type the new title into it and leave the page&rsquo;s own name alone.</p><div class="chg"><p class="where">Home page: SEO title</p><p class="lbl">Now:</p><p class="now">Houston Mobile Mechanic | AVRS Automotive</p><p class="lbl">Change to:</p><textarea id="c20" readonly rows="2">Conroe Mobile Mechanic | AVRS Automotive</textarea><button type="button" class="cp" data-for="c20">Copy</button></div><div class="chg"><p class="where">Home page: meta description</p><p class="lbl">Now:</p><p class="now">AVRS Automotive offers fast, reliable mobile mechanic services in Houston, Montgomery County &amp; College Station. We come to you for repairs and maintenance.</p><p class="lbl">Change to:</p><textarea id="c21" readonly rows="3">Mobile mechanic serving Conroe, The Woodlands, Spring and nearby towns. Brakes, batteries, diagnostics, suspension and pre-purchase inspections.</textarea><button type="button" class="cp" data-for="c21">Copy</button></div><div class="chg"><p class="where">Book page: SEO title</p><p class="lbl">Now:</p><p class="now">Now Tow Brake Repair, Battery &amp; More | Houston Mobile Mechanic</p><p class="lbl">Change to:</p><textarea id="c22" readonly rows="2">Book a Mobile Mechanic | AVRS Automotive, Conroe TX</textarea><button type="button" class="cp" data-for="c22">Copy</button></div><div class="chg"><p class="where">Book page: meta description</p><p class="lbl">Now:</p><p class="now">Houston mobile mechanic. Brake repair, battery replacement, suspension, and more. Call or text to book an appointment today. (936) 444-3031</p><p class="lbl">Change to:</p><textarea id="c23" readonly rows="3">Conroe mobile mechanic. Brakes, batteries, diagnostics, suspension and pre-purchase inspections. Book online or call or text (936) 444-3031.</textarea><button type="button" class="cp" data-for="c23">Copy</button></div></section><section><h2>6. Terms page (five spots + the date)</h2><div class="chg"><p class="where">Top line</p><p class="lbl">Now:</p><p class="now">AVRS Automotive, LLC · Effective November 19, 2026</p><p class="lbl">Change to:</p><p class="plain">Change only the date, to the day you publish these changes (for example: Effective December 1, 2026).</p><p class="note">The terms promise a new date with every change.</p></div><div class="chg"><p class="where">How the work goes: add a new paragraph right after “…we'll find another time or place.”</p><p class="lbl">Now:</p><p class="now">(nothing there yet)</p><p class="lbl">Change to:</p><textarea id="c24" readonly rows="3">Weekend work is case by case and usually costs extra: $50 more per hour plus a $100 call-out fee, even for jobs close by. I&#x27;ll tell you the price before we book it.</textarea><button type="button" class="cp" data-for="c24">Copy</button></div><div class="chg"><p class="where">How the work goes: diagnosis paragraph</p><p class="lbl">Now:</p><p class="now">The 1-week guarantee covers my work, not a diagnosis you made.</p><p class="lbl">Change to:</p><textarea id="c25" readonly rows="2">My warranty doesn&#x27;t cover a diagnosis you made.</textarea><button type="button" class="cp" data-for="c25">Copy</button></div><div class="chg"><p class="where">How the work goes: payment paragraph</p><p class="lbl">Now:</p><p class="now">You can pay by cash, card, Zelle, Cash App, Venmo, Apple Pay or Chime.</p><p class="lbl">Change to:</p><textarea id="c26" readonly rows="2">You can pay by cash, card, Zelle, Cash App, Venmo, Apple Pay, Chime or a Square pay link.</textarea><button type="button" class="cp" data-for="c26">Copy</button></div><div class="chg"><p class="where">Parts I have to order: add right after “…we set a new day.”</p><p class="lbl">Now:</p><p class="now">(nothing there yet)</p><p class="lbl">Change to:</p><textarea id="c27" readonly rows="2">If a supplier never sends a part you&#x27;ve paid for, I refund what you paid for it in full, with no restocking fee.</textarea><button type="button" class="cp" data-for="c27">Copy</button></div><div class="chg"><p class="where">Guarantee section: replace the whole paragraph</p><p class="lbl">Now:</p><p class="now">If a repair I did fails within 1 week, I redo the labor free of charge: I come back and do it myself, or I hire another mobile mechanic to do it. Parts I supply carry the maker&#x27;s or parts store&#x27;s warranty. If you bring your own parts, that job has no guarantee from me, parts or labor.</p><p class="lbl">Change to:</p><textarea id="c28" readonly rows="6">Repairs where I supply the parts carry my limited warranty on parts and labor for 6 months or 6,000 miles, whichever comes first. If one of those repairs fails in that time, I fix it free of charge, or I hire another mobile mechanic to do it. If you bring your own parts, that job has no guarantee from me, parts or labor.</textarea><button type="button" class="cp" data-for="c28">Copy</button></div></section>
+<section><h2>When it&rsquo;s up</h2>
+<p>Just text Brandon and we&rsquo;ll check every page on the live site.</p>
+<p class="note">Two things will come later: a Text button once his business texting is approved, and his towns when he moves to Cypress in January.</p></section>
+</main>
+<script>
+document.querySelectorAll('.cp').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var t = document.getElementById(b.getAttribute('data-for'));
+    function ok() { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 2000); }
+    function old() { t.focus(); t.select(); try { if (document.execCommand('copy')) return ok(); } catch (e) {} b.textContent = 'Press Cmd+C'; }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t.value).then(ok, old); else old();
+  });
+});
+</script></body></html>
